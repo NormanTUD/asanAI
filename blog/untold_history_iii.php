@@ -429,13 +429,259 @@ The invention of arrays was not a single event but an evolutionary process, from
 <div class="md" data-depth="20">
 ### From Text to Tokens
 
+#### Before Unicode: The Tower of Babel
+
+A **character set** maps characters to numbers; an **encoding** maps those numbers to bytes. The distinction sounds academic until the same bytes are read under two different encodings and the text turns to noise. The history of text on computers is a long attempt to make those two mappings global, and each attempt solved the problem for one community while creating a new incompatibility for the next \cite{elias2003encodings}.
+
+The first practical character codes were telegraph codes. Morse code, patented in the United States in 1840, assigned a variable-length sequence of short and long signals to each letter; the most frequent letters generally got the shortest sequences \cite{morsetelegraph}. In the 1870s Émile Baudot went further and assigned every character a fixed five-bit pattern, transmitted at a constant rate. Five bits give only 32 combinations, so Baudot used two **shift states**: one set of codes meant letters, another meant figures and punctuation, and a shift code switched between them. The same trick reappeared in the International Telegraph Alphabet No. 2 (ITA2) of 1932, the standard teleprinter code that ASCII replaced \cite{baudot_wiki}. ITA2 is why early computer codes carry control characters such as BEL, CR and LF: they were commands for a machine that printed on paper, not symbols in a document.
+
+Punched cards took a different route: they encoded characters as a **pattern of holes**, not as a binary integer. Herman Hollerith's electric tabulator, used for the 1890 United States census, read a card column and incremented mechanical counters; the card was a lookup table made of paper \cite{hollerith1890}. IBM's later eighty-column card inherited that idea, and so did its character code. When IBM announced the System/360 in 1964, it extended its six-bit Binary-Coded Decimal Interchange Code into the eight-bit **EBCDIC** \cite{ebcdic_wiki}. EBCDIC has 256 code positions, but its letters are not contiguous and its punctuation is scattered, because the bit patterns still remembered which holes were convenient to punch. It survived for decades on IBM mainframes, and pockets of it are still with us in bank and airline systems.
+
+ASCII was the attempt to leave the card and the telegraph behind. Work began in 1961 in a subcommittee of the American Standards Association, with IBM engineer Bob Bemer among the proposers; the first edition appeared in 1963, a major revision followed in 1967, and the last revision, ANSI X3.4-1986, closed the series \cite{ascii_wiki}. The committee chose **seven bits**, not eight: one bit saved per character was a real cost on a telephone line, and the eighth bit could carry a parity check. The result was a table of 128 code points: 33 control codes, the space, and 94 printable characters. Lowercase letters sat exactly one bit away from their uppercase forms, so case-insensitive comparison was a single bit mask; the digits sat at `0x30`-`0x39`, so binary-coded decimal conversion was trivial; and the code was ordered so that sorting strings by byte value approximated alphabetical order. The delete character, `0x7F`, was all seven holes punched in a paper tape, a code that could rub out a mistake \cite{rfc20}.
+
+Seven bits were enough for English, not for Europe. ASCII had no `ä`, `é`, `ß` or `£`, and no room to add them. The international answer was **ISO 646**, first published in 1973: it fixed 82 graphic characters as invariant and left 12 code points for national use \cite{iso646_wiki}. Germany's DIN 66003 used the freedom to replace `@`, `[`, `\`, `]`, `{`, `|`, `}` and `~` with `§`, `Ä`, `Ö`, `Ü`, `ä`, `ö`, `ü` and `ß`. A C program that used braces could therefore fail to compile in another country, and a file could change meaning when it crossed a border. The national variants were a diplomatic compromise, not a solution.
+
+The obvious escape was the unused eighth bit. If ASCII used 128 positions, a byte had another 128 to spend on a national alphabet. The trouble was that every vendor spent them differently. IBM's PC introduced code page 437 in 1981, a mixture of accented Latin letters, Greek letters, mathematical symbols and box-drawing characters \cite{cp437_wiki}. Apple's Mac Roman (1984) arranged the upper half differently again, and DEC's Multinational Character Set, used in the VT220 terminal, became the basis for **ISO 8859-1**, better known as **Latin-1**, first published in 1987 \cite{latin1_wiki}. Latin-1 defined 191 characters for Western European languages and later supplied the first 256 code points of Unicode, which is why the two are still easy to confuse.
+
+Then came the code page that would not die. **Windows-1252** began as Latin-1 and then diverged: it replaced the rarely used C1 control codes at `0x80`-`0x9F` with curly quotation marks, the en and em dashes, the euro sign and other typographic characters \cite{windows1252_wiki}. Microsoft calls these "ANSI code pages", although ANSI never standardised Windows-1252; the name is a fossil of the ANSI draft that became ISO 8859-1, implemented before the standard was final \cite{ms_codepages}. The misnomer stuck. To this day, a Windows program that says "ANSI" usually means the system code page, not ASCII and not a standard. HTML5 made the confusion official: a document labelled `ISO-8859-1` is decoded by browsers as Windows-1252 \cite{whatwg_encoding}. That is why a page declared Latin-1 can contain a euro sign, and why a curly quote can survive a trip through a "Latin-1" database column.
+
+When the decoder guesses wrong, the bytes do not disappear; they are read as the wrong characters. The UTF-8 encoding of `é` is two bytes, `C3 A9`; read as Latin-1 or Windows-1252, those bytes are `Ã` and `©`, so `café` becomes `cafÃ©`. The euro sign, `E2 82 AC` in UTF-8, becomes `â‚¬` under Windows-1252. This is **mojibake**, from the Japanese 文字化け, "character transformation" \cite{mojibake_wiki}. It is not random corruption: it is a deterministic misreading, which is why it can be undone if the original encoding is known. A true replacement character, `�` (U+FFFD), appears only when the byte sequence is invalid in a strict decoder such as UTF-8. The distinction matters for archives: the bytes are often intact, and the metadata -- the label that says which encoding to use -- is what was lost.
+
+The table below is a small decoder you can play with: type a word and see how the same characters become different bytes in UTF-8, Latin-1 and Windows-1252. A dash means the character has no code in that encoding.
+</div>
+
+<div class="encoding-lab widget" id="encoding-lab" data-depth="20">
+	<style>
+	.encoding-lab {
+		margin: 1.75rem 0;
+		padding: 1rem 1.1rem;
+		border: 1px solid var(--mn-border);
+		border-radius: var(--mn-radius-md);
+		background: var(--mn-surface);
+		box-shadow: var(--mn-shadow-sm);
+	}
+	.encoding-lab__controls {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: .5rem .75rem;
+		margin-bottom: .85rem;
+	}
+	.encoding-lab__controls label {
+		font-weight: 600;
+		color: var(--mn-heading);
+	}
+	.encoding-lab__input {
+		flex: 1 1 12rem;
+		min-width: 8rem;
+		padding: .45rem .6rem;
+		border: 1px solid var(--mn-border);
+		border-radius: var(--mn-radius-sm);
+		background: var(--mn-bg);
+		color: var(--mn-text);
+		font: inherit;
+	}
+	.encoding-lab__input:focus {
+		outline: 2px solid var(--mn-accent);
+		outline-offset: 1px;
+	}
+	.encoding-lab__presets {
+		display: flex;
+		flex-wrap: wrap;
+		gap: .35rem;
+	}
+	.encoding-lab__presets button {
+		padding: .3rem .55rem;
+		border: 1px solid var(--mn-border);
+		border-radius: 999px;
+		background: var(--mn-surface-raised);
+		color: var(--mn-text-secondary);
+		font-size: .85rem;
+		font-family: var(--mn-font-body);
+		cursor: pointer;
+	}
+	.encoding-lab__presets button:hover {
+		border-color: var(--mn-accent);
+		color: var(--mn-heading);
+	}
+	.encoding-lab__scroll {
+		overflow-x: auto;
+	}
+	.encoding-lab table {
+		width: 100%;
+		border-collapse: collapse;
+		font-family: var(--mn-font-mono);
+		font-size: .85rem;
+	}
+	.encoding-lab th,
+	.encoding-lab td {
+		padding: .35rem .5rem;
+		border-bottom: 1px solid var(--mn-border-light);
+		text-align: left;
+		white-space: nowrap;
+	}
+	.encoding-lab th {
+		color: var(--mn-text-secondary);
+		font-weight: 600;
+	}
+	.encoding-lab td:first-child {
+		font-size: 1.15rem;
+		text-align: center;
+	}
+	.encoding-lab__note {
+		margin: .8rem 0 0;
+		color: var(--mn-text-secondary);
+		font-size: .9rem;
+	}
+	</style>
+	<div class="encoding-lab__controls">
+		<label for="encoding-lab-input">Type a word:</label>
+		<input class="encoding-lab__input" id="encoding-lab-input" type="text" value="Grüße" maxlength="24" autocomplete="off" spellcheck="false">
+		<span class="encoding-lab__presets">
+			<button type="button" data-encoding-preset="Grüße">Grüße</button>
+			<button type="button" data-encoding-preset="café">café</button>
+			<button type="button" data-encoding-preset="€">€</button>
+			<button type="button" data-encoding-preset="日本">日本</button>
+			<button type="button" data-encoding-preset="😀">😀</button>
+		</span>
+	</div>
+	<div class="encoding-lab__scroll">
+		<table>
+			<caption class="sr-only">Each character with its Unicode code point and bytes in UTF-8, Latin-1, and Windows-1252.</caption>
+			<thead>
+				<tr><th>Character</th><th>Code point</th><th>UTF-8</th><th>Latin-1</th><th>Windows-1252</th></tr>
+			</thead>
+			<tbody id="encoding-lab-rows"></tbody>
+		</table>
+	</div>
+	<p class="encoding-lab__note" id="encoding-lab-note" aria-live="polite"></p>
+</div>
+
+<script>
+(function () {
+	var input = document.getElementById('encoding-lab-input');
+	var rows = document.getElementById('encoding-lab-rows');
+	var note = document.getElementById('encoding-lab-note');
+	if (!input || !rows || !note) return;
+
+	var WIN1252 = {
+		0x20AC: 0x80, 0x201A: 0x82, 0x0192: 0x83, 0x201E: 0x84,
+		0x2026: 0x85, 0x2020: 0x86, 0x2021: 0x87, 0x02C6: 0x88,
+		0x2030: 0x89, 0x0160: 0x8A, 0x2039: 0x8B, 0x0152: 0x8C,
+		0x017D: 0x8E, 0x2018: 0x91, 0x2019: 0x92, 0x201C: 0x93,
+		0x201D: 0x94, 0x2022: 0x95, 0x2013: 0x96, 0x2014: 0x97,
+		0x02DC: 0x98, 0x2122: 0x99, 0x0161: 0x9A, 0x203A: 0x9B,
+		0x0153: 0x9C, 0x017E: 0x9E, 0x0178: 0x9F
+	};
+
+	function hexByte(b) {
+		return b.toString(16).toUpperCase().padStart(2, '0');
+	}
+
+	function hexBytes(bytes) {
+		return Array.prototype.map.call(bytes, hexByte).join(' ');
+	}
+
+	function latin1Byte(cp) {
+		if (cp <= 0x7F || (cp >= 0xA0 && cp <= 0xFF)) return hexByte(cp);
+		return '\u2014';
+	}
+
+	function win1252Byte(cp) {
+		if (cp <= 0x7F || (cp >= 0xA0 && cp <= 0xFF)) return hexByte(cp);
+		if (WIN1252[cp] !== undefined) return hexByte(WIN1252[cp]);
+		return '\u2014';
+	}
+
+	function render() {
+		var text = input.value;
+		var encoder = new TextEncoder();
+		var chars = Array.from(text);
+		rows.textContent = '';
+
+		chars.forEach(function (ch) {
+			var cp = ch.codePointAt(0);
+			var u8 = encoder.encode(ch);
+			var tr = document.createElement('tr');
+			var cells = [
+				ch === ' ' ? '\u2420' : ch,
+				'U+' + cp.toString(16).toUpperCase().padStart(4, '0'),
+				hexBytes(u8),
+				latin1Byte(cp),
+				win1252Byte(cp)
+			];
+			cells.forEach(function (value) {
+				var td = document.createElement('td');
+				td.textContent = value;
+				tr.appendChild(td);
+			});
+			rows.appendChild(tr);
+		});
+
+		if (!text) {
+			note.textContent = 'Type something to see the bytes.';
+			return;
+		}
+
+		var utf8 = encoder.encode(text);
+		var misread;
+		try {
+			misread = new TextDecoder('windows-1252').decode(utf8);
+		} catch (e) {
+			misread = Array.prototype.map.call(utf8, function (b) {
+				return String.fromCharCode(b);
+			}).join('');
+		}
+		note.textContent = utf8.length + ' bytes of UTF-8; a Windows-1252 decoder would read them as \u201c' + misread + '\u201d.';
+	}
+
+	input.addEventListener('input', render);
+	Array.prototype.forEach.call(document.querySelectorAll('[data-encoding-preset]'), function (button) {
+		button.addEventListener('click', function () {
+			input.value = button.getAttribute('data-encoding-preset');
+			render();
+			input.focus();
+		});
+	});
+	render();
+}());
+</script>
+
+<div class="md" data-depth="20">
+
+Europe's 128 extra positions were never going to hold Chinese, Japanese or Korean. Japan standardised its core kanji set, **JIS X 0208**, in 1978; China followed with **GB 2312** in 1980 \cite{gb2312_wiki}, and Taiwan with **Big5** in 1984 \cite{big5_wiki}. The encodings that made these sets usable were **multibyte**: some bytes were single ASCII characters, others were the lead byte of a two-byte character. Shift JIS, developed in the early 1980s by ASCII Corporation with Microsoft, is the clearest example, and the messiest: its trail bytes can fall in the ASCII range, so whether a byte is a character or half of a character depends on where you start reading \cite{shiftjis_wiki}. ISO 2022 took a different route, using escape sequences to switch between character sets inside one stream; ISO-2022-JP made Japanese email possible on seven-bit links \cite{iso2022_wiki}. Both routes shared a defect: text was not self-describing. A file without its encoding label was a guess, and a wrong guess could swallow the next character or split a string in the middle of a character.
+
+| Year | Standard | Width | What it changed |
+|---|---|---|---|
+| 1840 | Morse code | variable | First widely used electrical character code: dots and dashes |
+| 1870s | Baudot code | 5 bits | Fixed-width telegraph code, with shift states for letters and figures |
+| 1890 | Hollerith card | hole pattern | Census tabulation: characters as punched positions |
+| 1932 | ITA2 | 5 bits | International teleprinter standard, the direct ancestor of ASCII |
+| 1963-64 | ASCII and EBCDIC | 7 / 8 bits | ASCII for interchange; EBCDIC for IBM mainframes |
+| 1973 | ISO 646 | 7 bits | ASCII internationalised, with national variants |
+| 1981-87 | CP437, Mac Roman, Latin-1 | 8 bits | Vendor code pages; ISO 8859-1 standardises Western Europe |
+| 1980s | Shift JIS, GB 2312, Big5 | 1-2 bytes | Multibyte encodings for Chinese, Japanese and Korean |
+| 1991 | Unicode 1.0 | code points | One character set for all scripts |
+| 1992-93 | UTF-8 | 1-4 bytes | ASCII-compatible Unicode encoding |
+| 1996 | UTF-16 | 2 or 4 bytes | Surrogate pairs extend Unicode beyond 16 bits |
+| 2003 | RFC 3629 | 1-4 bytes | UTF-8 restricted to U+10FFFF |
+| 2015 | WHATWG Encoding | -- | Browser decoding rules for legacy labels |
+
 #### Unicode: One Character Set for All Languages
 
-A language model cannot learn from text that a computer cannot represent. The Unicode Standard defines a universal character set and a character-encoding model with three encoding forms, UTF-8, UTF-16 and UTF-32; it also defines equivalent sequences and normalisation, so that the same text can be compared and searched consistently (\cite[Unicode Consortium, 2022]{unicode2022standard}). UTF-8, specified in RFC 3629, preserves the full US-ASCII range while representing the Universal Character Set, which encompasses most of the world's writing systems, and remains compatible with file systems and parsers that expect ASCII (\cite[Yergeau, 2003]{rfc3629}). Without that common representation, a multilingual corpus would be a patchwork of incompatible encodings.
+A language model cannot learn from text that a computer cannot represent. Unicode separates the character set from its encoding: one abstract code point per character, independent of how many bytes a particular encoding uses to store it. The idea was broached in 1987 by engineers from Xerox and Apple, the Unicode Consortium was incorporated in January 1991, and the first volume of the standard appeared that October \cite{unicode_history}. Han characters followed in 1992 \cite{unicode_wiki}. The code space runs from U+0000 to U+10FFFF, divided into seventeen planes, and is kept code-for-code identical with ISO/IEC 10646 \cite{unicode2022standard}. The price of universality was a compromise: Han unification merged many Chinese, Japanese and Korean characters that looked alike into single code points, a decision that remains contested because the same character can have different regional glyph forms \cite{unicode_wiki}.
+
+Unicode then had to be written down as bytes, and there was more than one sensible way to do it. **UTF-8** uses one to four bytes per code point, keeps the 128 ASCII code points as single identical bytes, and marks every continuation byte with the bit pattern `10xxxxxx`, so a reader who lands in the middle of a stream can find the next character boundary without guessing. The design was made by Ken Thompson, with Rob Pike, on a placemat in a New Jersey diner in September 1992; Pike and Thompson implemented it in Plan 9 within days and presented it at USENIX in January 1993 \cite{pike2003utf8}. The 1998 specification, RFC 2279, still allowed sequences of up to six bytes and 31 bits \cite{rfc2279}. RFC 3629 restricted UTF-8 in 2003 to four bytes and the range U+0000-U+10FFFF, matching UTF-16 and excluding surrogate code points \cite{rfc3629}. **UTF-16** uses two-byte code units and a pair of surrogates for characters above U+FFFF, which makes byte order matter and produced the byte-order mark; **UTF-32** uses four bytes per code point, simple to index but wasteful in memory \cite{unicode2022standard}. The first 256 Unicode code points are Latin-1, so converting legacy Western text is mostly a table lookup.
+
+There is one more layer below the encoding: the same visible character can have more than one code-point sequence. `é` can be the single code point U+00E9, or `e` followed by the combining acute accent U+0301. Unicode defines them as canonically equivalent, and defines four normalisation forms: NFC and NFD compose or decompose by canonical equivalence, while NFKC and NFKD also apply compatibility mappings such as ligatures and superscripts \cite{unicode_tr15}. Software that compares, searches or tokenises text without normalising first can treat two identical-looking strings as different. This is not a corner case: it is the everyday reason why a name copied from one system does not match the same name in another.
+
+UTF-8 won because it was compatible with the past and safe to parse. The WHATWG Encoding Standard now specifies exactly how browsers must decode the legacy labels; HTML5's rule that `ISO-8859-1` means Windows-1252 is part of that settlement \cite{whatwg_encoding}. New web content is expected to use UTF-8, and JSON went further and required it for interchange \cite{rfc8259}. By the mid-2020s, more than 98% of web pages declared UTF-8, and the remaining legacy encodings survived mainly in old files, databases and protocols \cite{utf8_wiki}. The Tower of Babel did not fall; it was given a common alphabet and a set of translators.
 
 #### Tokenization: From Characters to Subwords
 
-A neural language model does not read characters or words directly; it reads a fixed vocabulary of tokens. Sennrich, Haddow and Birch framed the problem as open-vocabulary translation: a fixed word vocabulary cannot cover rare words, compounds, names and morphology, so they encoded rare and unknown words as sequences of subword units using byte-pair encoding (\cite[Sennrich et al., 2016]{sennrich2016bpe}). SentencePiece extended the idea into a language-independent tokenizer and detokenizer that trains directly from raw sentences, supporting both byte-pair encoding and a unigram language model, and removes the need for language-specific pre-tokenisation (\cite[Kudo and Richardson, 2018]{kudo2018sentencepiece}). Tokenisation is the unnoticed interface between human text and the matrix of integers a model actually sees.
+For a language model, this history is not background colour. A model never sees a glyph; it sees a sequence of integers produced by a tokenizer, and the tokenizer usually begins with bytes. Byte-level byte-pair encoding, used by GPT-2 and later models, first encodes text as UTF-8 and then merges frequent byte pairs into tokens \cite{gpt2}. That choice makes the vocabulary independent of any national code page and removes the need for an "unknown character" token: every valid UTF-8 string is representable as bytes, even if a single emoji costs four bytes and several tokens. It also means that encoding errors travel: a corpus scraped from legacy pages can contain mojibake, a normalisation mismatch can split the same word into different token sequences, and a tokenizer trained on one normal form may misread another. The chain from Baudot's five bits to a transformer's token IDs is continuous; the model is only the last link.
+
+Sennrich, Haddow and Birch framed the problem as open-vocabulary translation: a fixed word vocabulary cannot cover rare words, compounds, names and morphology, so they encoded rare and unknown words as sequences of subword units using byte-pair encoding (\cite[Sennrich et al., 2016]{sennrich2016bpe}). SentencePiece extended the idea into a language-independent tokenizer and detokenizer that trains directly from raw sentences, supporting both byte-pair encoding and a unigram language model, and removes the need for language-specific pre-tokenisation (\cite[Kudo and Richardson, 2018]{kudo2018sentencepiece}). Tokenisation is the unnoticed interface between human text and the matrix of integers a model actually sees.
 
 #### Mass Digitization and OCR
 

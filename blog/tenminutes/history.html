@@ -655,6 +655,82 @@
 								useful, honest, and harmless.
 							</p>
 						</div>
+
+						<div class="demo demo--paper llm-demo" id="llm-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Inside the LLM line <span>· demo 02</span></p>
+									<p class="demo-sub">Route information with attention, learn from unlabelled text, then spend compute on the right model size.</p>
+								</div>
+								<span class="demo-badge">toy model</span>
+							</div>
+							<div class="demo-body">
+								<div class="llm-tabs" role="tablist" aria-label="LLM demo stages">
+									<button class="chip is-on" type="button" role="tab" aria-selected="true" data-llm-tab="attention">1 · Attention</button>
+									<button class="chip" type="button" role="tab" aria-selected="false" data-llm-tab="pretraining">2 · Pretraining</button>
+									<button class="chip" type="button" role="tab" aria-selected="false" data-llm-tab="scale">3 · Scale</button>
+								</div>
+
+								<div class="llm-pane is-on" data-llm-pane="attention">
+									<div class="llm-attn-head">
+										<p class="llm-note">Click a token. Each arc is one attention weight: how much that token borrows from another.</p>
+										<label class="llm-switch"><input type="checkbox" id="llm-causal"> causal mask <span>(GPT)</span></label>
+									</div>
+									<div class="llm-sentence" id="llm-sentence">
+										<svg class="llm-arcs" id="llm-arcs" aria-hidden="true">
+											<defs>
+												<linearGradient id="llm-arc-grad" x1="0" y1="0" x2="1" y2="0">
+													<stop offset="0%" style="stop-color:var(--tm-green)"></stop>
+													<stop offset="100%" style="stop-color:var(--tm-sky)"></stop>
+												</linearGradient>
+											</defs>
+										</svg>
+									</div>
+									<div class="llm-bars" id="llm-bars"></div>
+									<div class="llm-qkv">
+										<span class="is-q">query</span><span class="llm-arrow">×</span><span class="is-k">keys</span><span class="llm-arrow">→</span><span class="is-s">softmax</span><span class="llm-arrow">→</span><span class="is-v">mix values</span>
+									</div>
+								</div>
+
+								<div class="llm-pane" data-llm-pane="pretraining">
+									<div class="llm-obj-switch">
+										<button class="chip is-on" type="button" aria-pressed="true" data-llm-objective="bert">BERT · fill the blank</button>
+										<button class="chip" type="button" aria-pressed="false" data-llm-objective="gpt">GPT · predict the next</button>
+										<button class="chip" type="button" data-llm-next>move the blank →</button>
+									</div>
+									<div class="llm-sentence llm-pretrain-sentence" id="llm-pretrain-sentence"></div>
+									<div class="llm-predict" id="llm-predict"></div>
+									<div class="llm-pipeline" aria-label="Pretraining pipeline">
+										<span class="llm-step">general text</span><span class="llm-arrow">→</span>
+										<span class="llm-step is-glow">pretrain</span><span class="llm-arrow">→</span>
+										<span class="llm-step">small labelled set</span><span class="llm-arrow">→</span>
+										<span class="llm-step">fine-tune</span>
+									</div>
+									<p class="llm-note">The label is the text itself. BERT hides a token and reads both sides; GPT hides the future and reads only the past. Click any token to move the blank.</p>
+								</div>
+
+								<div class="llm-pane" data-llm-pane="scale">
+									<p class="llm-note">For a fixed compute budget, the best model size changes: a large model with too few tokens loses to a smaller, better-trained one. The curves use a Chinchilla-style scaling law; the numbers are illustrative.</p>
+									<div class="llm-scale-legend">
+										<span><i style="background:var(--tm-sky)"></i>1B params</span>
+										<span><i style="background:var(--tm-green)"></i>7B params</span>
+										<span><i style="background:var(--tm-coral)"></i>70B params</span>
+									</div>
+									<svg class="llm-scale-chart" id="llm-scale-chart" viewBox="0 0 640 310" role="img" aria-label="Loss against training compute for three model sizes"></svg>
+									<div class="llm-scale-controls">
+										<label for="llm-scale-slider">compute budget</label>
+										<input id="llm-scale-slider" type="range" min="0" max="100" value="50">
+										<span class="llm-scale-val" id="llm-scale-val"></span>
+									</div>
+									<div class="llm-scale-readout" id="llm-scale-readout"></div>
+								</div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>The transformer made context parallel. Pretraining turned raw text into a self-supervised lesson. Scale only works when parameters and tokens are balanced.</span></div>
+							<div class="demo-foot">
+								Toy sentence, toy attention weights, and a Chinchilla-style scaling law. The point is the mechanism, not the exact numbers.
+							</div>
+						</div>
+
 						<div class="fieldnotes">
 							<h4>Why the same block can be an encoder or a decoder</h4>
 							<p>The mask and the training objective decide the contract. BERT’s encoder reads the whole sentence and fills masked gaps. GPT’s decoder reads only the past and predicts the next token. An encoder–decoder model such as the original transformer reads the source and generates the target. The block is shared; the information flow is different.</p>
@@ -1012,6 +1088,315 @@
 			updateArrows();
 			measurePanelHeight();
 			setTimeout(updateArrows, 200);
+		}
+	})();
+	</script>
+
+	<script>
+	(function () {
+		"use strict";
+
+		var root = document.getElementById("llm-demo");
+		if (!root) return;
+
+		/* ── tabs ─────────────────────────────────────────────── */
+		var tabs = root.querySelectorAll("[data-llm-tab]");
+		var panes = root.querySelectorAll("[data-llm-pane]");
+		var activeTab = "attention";
+		function showTab(name) {
+			activeTab = name;
+			tabs.forEach(function (b) {
+				var on = b.getAttribute("data-llm-tab") === name;
+				b.classList.toggle("is-on", on);
+				b.setAttribute("aria-selected", on ? "true" : "false");
+			});
+			panes.forEach(function (p) {
+				p.classList.toggle("is-on", p.getAttribute("data-llm-pane") === name);
+			});
+			if (name === "attention") requestAnimationFrame(function () { drawArcs(); });
+		}
+		tabs.forEach(function (b) {
+			b.addEventListener("click", function () { showTab(b.getAttribute("data-llm-tab")); });
+		});
+
+		/* ── attention ────────────────────────────────────────── */
+		var WORDS = ["the", "cat", "sat", "on", "the", "mat"];
+		var WEIGHTS = [
+			[0.30, 0.22, 0.18, 0.10, 0.10, 0.10],
+			[0.14, 0.30, 0.26, 0.10, 0.10, 0.10],
+			[0.12, 0.42, 0.20, 0.10, 0.08, 0.08],
+			[0.08, 0.16, 0.30, 0.18, 0.16, 0.12],
+			[0.06, 0.12, 0.18, 0.16, 0.26, 0.22],
+			[0.05, 0.10, 0.12, 0.14, 0.24, 0.35]
+		];
+		var attnSentence = document.getElementById("llm-sentence");
+		var arcs = document.getElementById("llm-arcs");
+		var bars = document.getElementById("llm-bars");
+		var causal = document.getElementById("llm-causal");
+		var selected = 2;
+		var attnTokens = [];
+		var barEls = [];
+
+		WORDS.forEach(function (word, i) {
+			var b = document.createElement("button");
+			b.type = "button";
+			b.className = "llm-token";
+			b.textContent = word;
+			b.setAttribute("data-i", i);
+			b.addEventListener("click", function () { selected = i; renderAttention(); });
+			attnSentence.appendChild(b);
+			attnTokens.push(b);
+
+			var row = document.createElement("div");
+			row.className = "llm-bar";
+			var label = document.createElement("span");
+			label.textContent = word;
+			var track = document.createElement("span");
+			track.className = "llm-bar-track";
+			var fill = document.createElement("span");
+			fill.className = "llm-bar-fill";
+			track.appendChild(fill);
+			var num = document.createElement("b");
+			num.textContent = "0.00";
+			row.appendChild(label);
+			row.appendChild(track);
+			row.appendChild(num);
+			bars.appendChild(row);
+			barEls.push({ row: row, fill: fill, num: num });
+		});
+
+		function activeWeights() {
+			var w = WEIGHTS[selected].slice();
+			if (causal && causal.checked) {
+				for (var i = 0; i < w.length; i++) if (i > selected) w[i] = 0;
+				var sum = w.reduce(function (a, b) { return a + b; }, 0) || 1;
+				w = w.map(function (x) { return x / sum; });
+			}
+			return w;
+		}
+
+		function renderAttention() {
+			var w = activeWeights();
+			var maskOn = !!(causal && causal.checked);
+			attnTokens.forEach(function (b, i) {
+				b.classList.toggle("is-on", i === selected);
+				b.classList.toggle("is-future", maskOn && i > selected);
+			});
+			barEls.forEach(function (bar, i) {
+				bar.fill.style.width = (w[i] * 100).toFixed(1) + "%";
+				bar.num.textContent = w[i].toFixed(2);
+				bar.row.classList.toggle("is-future", maskOn && i > selected);
+			});
+			drawArcs(w);
+		}
+
+		function drawArcs(w) {
+			if (!arcs || !attnSentence || !attnSentence.offsetParent) return;
+			var box = attnSentence.getBoundingClientRect();
+			arcs.setAttribute("viewBox", "0 0 " + box.width + " " + box.height);
+			arcs.querySelectorAll("path").forEach(function (p) { p.remove(); });
+			if (!attnTokens[selected]) return;
+			var source = attnTokens[selected].getBoundingClientRect();
+			var x1 = source.left - box.left + source.width / 2;
+			var y1 = source.top - box.top;
+			w = w || activeWeights();
+			for (var i = 0; i < attnTokens.length; i++) {
+				if (i === selected || w[i] <= 0.005) continue;
+				var target = attnTokens[i].getBoundingClientRect();
+				var x2 = target.left - box.left + target.width / 2;
+				var y2 = target.top - box.top;
+				var cx = (x1 + x2) / 2;
+				var cy = Math.min(y1, y2) - 16 - Math.abs(x2 - x1) * 0.06;
+				var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+				path.setAttribute("d", "M" + x1 + " " + y1 + " Q" + cx + " " + cy + " " + x2 + " " + y2);
+				path.setAttribute("stroke-width", (1 + w[i] * 7).toFixed(2));
+				path.setAttribute("opacity", (0.18 + w[i] * 0.72).toFixed(2));
+				arcs.appendChild(path);
+			}
+		}
+
+		if (causal) causal.addEventListener("change", renderAttention);
+		renderAttention();
+		var attnTimer = null;
+		window.addEventListener("resize", function () {
+			clearTimeout(attnTimer);
+			attnTimer = setTimeout(function () { if (activeTab === "attention") drawArcs(); }, 120);
+		});
+		if (document.fonts && document.fonts.ready) {
+			document.fonts.ready.then(function () { if (activeTab === "attention") drawArcs(); });
+		}
+
+		/* ── pretraining ──────────────────────────────────────── */
+		var PRE = ["the", "cat", "sat", "on", "the", "mat"];
+		var PRED = {
+			bert: {
+				0: [["the", 0.36], ["a", 0.28], ["this", 0.15]],
+				1: [["cat", 0.41], ["dog", 0.22], ["boy", 0.13]],
+				2: [["sat", 0.38], ["lay", 0.24], ["ran", 0.17]],
+				3: [["on", 0.52], ["under", 0.19], ["near", 0.12]],
+				4: [["the", 0.33], ["a", 0.27], ["that", 0.16]],
+				5: [["mat", 0.44], ["floor", 0.23], ["bed", 0.14]]
+			},
+			gpt: {
+				1: [["cat", 0.58], ["dog", 0.16], ["bird", 0.09]],
+				2: [["sat", 0.47], ["slept", 0.21], ["ran", 0.14]],
+				3: [["on", 0.55], ["under", 0.16], ["near", 0.11]],
+				4: [["the", 0.61], ["a", 0.17], ["its", 0.09]],
+				5: [["mat", 0.49], ["floor", 0.22], ["bed", 0.13]]
+			}
+		};
+		var preSentence = document.getElementById("llm-pretrain-sentence");
+		var predict = document.getElementById("llm-predict");
+		var objective = "bert";
+		var maskIndex = 2;
+
+		function renderPretrain() {
+			if (!preSentence || !predict) return;
+			preSentence.innerHTML = "";
+			PRE.forEach(function (word, i) {
+				var b = document.createElement("button");
+				b.type = "button";
+				b.className = "llm-token";
+				var masked = i === maskIndex;
+				var hidden = objective === "gpt" && i > maskIndex;
+				if (masked) {
+					b.classList.add("is-mask");
+					b.textContent = objective === "bert" ? "[MASK]" : "?";
+				} else {
+					b.textContent = word;
+				}
+				if (hidden) b.classList.add("is-hidden");
+				b.title = "Click to move the " + (objective === "bert" ? "mask" : "prediction") + " here";
+				b.addEventListener("click", function () {
+					maskIndex = (objective === "gpt" && i === 0) ? 1 : i;
+					renderPretrain();
+				});
+				preSentence.appendChild(b);
+			});
+			var list = (PRED[objective] && PRED[objective][maskIndex]) || PRED[objective][2];
+			predict.innerHTML = "";
+			list.forEach(function (p, idx) {
+				var row = document.createElement("div");
+				row.className = "llm-predict-row" + (idx === 0 ? " is-top" : "");
+				var word = document.createElement("span");
+				word.textContent = p[0];
+				var track = document.createElement("span");
+				track.className = "llm-predict-track";
+				var fill = document.createElement("span");
+				fill.className = "llm-predict-fill";
+				fill.style.width = (p[1] * 100).toFixed(0) + "%";
+				track.appendChild(fill);
+				var num = document.createElement("b");
+				num.textContent = p[1].toFixed(2);
+				row.appendChild(word);
+				row.appendChild(track);
+				row.appendChild(num);
+				predict.appendChild(row);
+			});
+		}
+
+		root.querySelectorAll("[data-llm-objective]").forEach(function (btn) {
+			btn.addEventListener("click", function () {
+				objective = btn.getAttribute("data-llm-objective");
+				root.querySelectorAll("[data-llm-objective]").forEach(function (x) {
+					var on = x === btn;
+					x.classList.toggle("is-on", on);
+					x.setAttribute("aria-pressed", on ? "true" : "false");
+				});
+				if (objective === "gpt" && maskIndex === 0) maskIndex = 1;
+				renderPretrain();
+			});
+		});
+		var nextBtn = root.querySelector("[data-llm-next]");
+		if (nextBtn) {
+			nextBtn.addEventListener("click", function () {
+				maskIndex = maskIndex >= PRE.length - 1 ? 1 : maskIndex + 1;
+				renderPretrain();
+			});
+		}
+		renderPretrain();
+
+		/* ── scale ────────────────────────────────────────────── */
+		var SCALE = { E: 1.69, A: 406.4, B: 410.7, alpha: 0.34, beta: 0.28, xMin: 20, xMax: 24, yMin: 1.7, yMax: 3.9 };
+		var MODELS = [
+			{ key: "small", label: "1B", N: 1e9, color: "var(--tm-sky)" },
+			{ key: "medium", label: "7B", N: 7e9, color: "var(--tm-green)" },
+			{ key: "large", label: "70B", N: 7e10, color: "var(--tm-coral)" }
+		];
+		var chart = document.getElementById("llm-scale-chart");
+		var slider = document.getElementById("llm-scale-slider");
+		var scaleVal = document.getElementById("llm-scale-val");
+		var scaleReadout = document.getElementById("llm-scale-readout");
+		var SUP = { 20: "²⁰", 21: "²¹", 22: "²²", 23: "²³", 24: "²⁴" };
+
+		function lossAt(N, C) {
+			var D = C / (6 * N);
+			return SCALE.E + SCALE.A / Math.pow(N, SCALE.alpha) + SCALE.B / Math.pow(D, SCALE.beta);
+		}
+		function fmtCompute(C) {
+			return "10^" + (Math.round(Math.log10(C) * 10) / 10) + " FLOPs";
+		}
+		function fmtTokens(D) {
+			if (D >= 1e12) return (D / 1e12).toFixed(1) + "T tokens";
+			if (D >= 1e9) return (D / 1e9).toFixed(0) + "B tokens";
+			if (D >= 1e6) return (D / 1e6).toFixed(0) + "M tokens";
+			return Math.round(D) + " tokens";
+		}
+		function drawScale() {
+			if (!chart || !slider) return;
+			var t = parseInt(slider.value, 10) / 100;
+			var C = Math.pow(10, SCALE.xMin + (SCALE.xMax - SCALE.xMin) * t);
+			var W = 640, H = 310, L = 52, R = 92, T = 16, B = 54;
+			var pw = W - L - R, ph = H - T - B;
+			function xOf(logc) { return L + (logc - SCALE.xMin) / (SCALE.xMax - SCALE.xMin) * pw; }
+			function yOf(v) { return T + (SCALE.yMax - v) / (SCALE.yMax - SCALE.yMin) * ph; }
+			var out = [];
+			for (var gx = SCALE.xMin; gx <= SCALE.xMax; gx++) {
+				var px = xOf(gx);
+				out.push('<line class="llm-grid-line" x1="' + px + '" y1="' + T + '" x2="' + px + '" y2="' + (T + ph) + '"></line>');
+				out.push('<text x="' + px + '" y="' + (H - 30) + '" text-anchor="middle">10' + (SUP[gx] || ("^" + gx)) + '</text>');
+			}
+			for (var gy = 1.8; gy <= 3.8; gy += 0.4) {
+				var py = yOf(gy);
+				out.push('<line class="llm-grid-line" x1="' + L + '" y1="' + py + '" x2="' + (L + pw) + '" y2="' + py + '"></line>');
+				out.push('<text x="' + (L - 8) + '" y="' + (py + 3) + '" text-anchor="end">' + gy.toFixed(1) + '</text>');
+			}
+			out.push('<line class="llm-axis" x1="' + L + '" y1="' + (T + ph) + '" x2="' + (L + pw) + '" y2="' + (T + ph) + '"></line>');
+			out.push('<line class="llm-axis" x1="' + L + '" y1="' + T + '" x2="' + L + '" y2="' + (T + ph) + '"></line>');
+			out.push('<text x="' + (L + pw / 2) + '" y="' + (H - 6) + '" text-anchor="middle">training compute →</text>');
+			out.push('<text x="14" y="' + (T + ph / 2) + '" text-anchor="middle" transform="rotate(-90 14 ' + (T + ph / 2) + ')">loss</text>');
+			var current = MODELS.map(function (m) {
+				var D = C / (6 * m.N);
+				return { m: m, loss: lossAt(m.N, C), tokens: D };
+			});
+			var best = current.reduce(function (a, b) { return b.loss < a.loss ? b : a; }, current[0]);
+			current.forEach(function (item) {
+				var pts = [];
+				for (var i = 0; i <= 40; i++) {
+					var lc = SCALE.xMin + (SCALE.xMax - SCALE.xMin) * i / 40;
+					var cc = Math.pow(10, lc);
+					pts.push((i === 0 ? "M" : "L") + xOf(lc).toFixed(1) + " " + yOf(lossAt(item.m.N, cc)).toFixed(1));
+				}
+				out.push('<path class="llm-scale-line llm-scale-line--' + item.m.key + '" d="' + pts.join(" ") + '"></path>');
+			});
+			var cx = xOf(Math.log10(C));
+			out.push('<line class="llm-scale-marker" x1="' + cx + '" y1="' + T + '" x2="' + cx + '" y2="' + (T + ph) + '"></line>');
+			current.forEach(function (item) {
+				var cy = yOf(item.loss);
+				var isBest = item === best;
+				out.push('<circle class="llm-scale-dot' + (isBest ? ' llm-scale-dot--best' : '') + '" cx="' + cx + '" cy="' + cy + '" r="' + (isBest ? 5.5 : 3.8) + '" style="fill:' + item.m.color + '"></circle>');
+			});
+			chart.innerHTML = out.join("");
+			if (scaleVal) scaleVal.textContent = fmtCompute(C);
+			if (scaleReadout) {
+				scaleReadout.innerHTML = current.map(function (item) {
+					return '<span class="llm-scale-pill' + (item === best ? ' is-best' : '') + '"><b>' + item.m.label + '</b> · loss ' + item.loss.toFixed(2) + '</span>';
+				}).join("") + '<span class="llm-scale-pill">best: <b>' + best.m.label + '</b>, ' + fmtTokens(best.tokens) + '</span>';
+			}
+		}
+		if (slider) {
+			slider.addEventListener("input", drawScale);
+			drawScale();
 		}
 	})();
 	</script>

@@ -602,3 +602,7 @@ andreessen
 
 sapkota
 faafo hardcoded tco yegge
+
+# --- untold_history_iii.php: character encodings ---
+baudot ebcdic mojibake multibyte whatwg nfc nfd nfkc nfkd normalising
+ascii ansi utf jis

@@ -20943,6 +20943,169 @@ window.bibData = {
 		url: "https://www.rfc-editor.org/rfc/rfc3629.txt",
 		alternativetitle: "RFC 3629"
 	},
+
+	// ─── History of character encodings (untold_history_iii.php) ───
+	"elias2003encodings": {
+		title: "Encodings of Japanese",
+		author: "Alexandre Elias",
+		year: 2003,
+		url: "https://www.sljfaq.org/afaq/encodings.html",
+		alternativetitle: "Elias, Encodings of Japanese (2003)"
+	},
+	"baudot_wiki": {
+		title: "Baudot code",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Baudot_code",
+		alternativetitle: "Baudot code (Wikipedia)"
+	},
+	"ebcdic_wiki": {
+		title: "EBCDIC",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/EBCDIC",
+		alternativetitle: "EBCDIC (Wikipedia)"
+	},
+	"ascii_wiki": {
+		title: "ASCII",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/ASCII",
+		alternativetitle: "ASCII (Wikipedia)"
+	},
+	"rfc20": {
+		title: "ASCII format for Network Interchange",
+		author: "Vint Cerf",
+		year: 1969,
+		url: "https://www.rfc-editor.org/rfc/rfc20.txt",
+		alternativetitle: "RFC 20"
+	},
+	"iso646_wiki": {
+		title: "ISO/IEC 646",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/ISO/IEC_646",
+		alternativetitle: "ISO/IEC 646 (Wikipedia)"
+	},
+	"cp437_wiki": {
+		title: "Code page 437",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Code_page_437",
+		alternativetitle: "Code page 437 (Wikipedia)"
+	},
+	"latin1_wiki": {
+		title: "ISO/IEC 8859-1",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/ISO/IEC_8859-1",
+		alternativetitle: "ISO/IEC 8859-1 (Wikipedia)"
+	},
+	"windows1252_wiki": {
+		title: "Windows-1252",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Windows-1252",
+		alternativetitle: "Windows-1252 (Wikipedia)"
+	},
+	"ms_codepages": {
+		title: "Code Pages",
+		author: "Microsoft",
+		year: 2018,
+		url: "https://learn.microsoft.com/en-us/windows/win32/intl/code-pages",
+		alternativetitle: "Microsoft, Code Pages"
+	},
+	"whatwg_encoding": {
+		title: "Encoding Standard",
+		author: "WHATWG",
+		year: 2026,
+		url: "https://encoding.spec.whatwg.org/",
+		alternativetitle: "WHATWG Encoding Standard"
+	},
+	"mojibake_wiki": {
+		title: "Mojibake",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Mojibake",
+		alternativetitle: "Mojibake (Wikipedia)"
+	},
+	"gb2312_wiki": {
+		title: "GB/T 2312",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/GB_2312",
+		alternativetitle: "GB/T 2312 (Wikipedia)"
+	},
+	"big5_wiki": {
+		title: "Big5",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Big5",
+		alternativetitle: "Big5 (Wikipedia)"
+	},
+	"shiftjis_wiki": {
+		title: "Shift JIS",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Shift_JIS",
+		alternativetitle: "Shift JIS (Wikipedia)"
+	},
+	"iso2022_wiki": {
+		title: "ISO/IEC 2022",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/ISO/IEC_2022",
+		alternativetitle: "ISO/IEC 2022 (Wikipedia)"
+	},
+	"unicode_history": {
+		title: "History of Unicode",
+		author: "The Unicode Consortium",
+		year: 2026,
+		url: "https://www.unicode.org/history/",
+		alternativetitle: "Unicode Consortium, History of Unicode"
+	},
+	"unicode_wiki": {
+		title: "Unicode",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Unicode",
+		alternativetitle: "Unicode (Wikipedia)"
+	},
+	"pike2003utf8": {
+		title: "UTF-8 history",
+		author: "Rob Pike",
+		year: 2003,
+		url: "https://www.cl.cam.ac.uk/~mgk25/ucs/utf-8-history.txt",
+		alternativetitle: "Pike, UTF-8 history (2003)"
+	},
+	"rfc2279": {
+		title: "UTF-8, a transformation format of ISO 10646",
+		author: "F. Yergeau",
+		year: 1998,
+		url: "https://www.rfc-editor.org/rfc/rfc2279.txt",
+		alternativetitle: "RFC 2279"
+	},
+	"unicode_tr15": {
+		title: "Unicode Normalization Forms",
+		author: "The Unicode Consortium",
+		year: 2026,
+		url: "https://www.unicode.org/reports/tr15/",
+		alternativetitle: "Unicode Standard Annex #15"
+	},
+	"rfc8259": {
+		title: "The JavaScript Object Notation (JSON) Data Interchange Format",
+		author: "T. Bray",
+		year: 2017,
+		url: "https://www.rfc-editor.org/rfc/rfc8259.txt",
+		alternativetitle: "RFC 8259"
+	},
+	"utf8_wiki": {
+		title: "UTF-8",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/UTF-8",
+		alternativetitle: "UTF-8 (Wikipedia)"
+	},
 	"sennrich2016bpe": {
 		title: "Neural Machine Translation of Rare Words with Subword Units",
 		author: "Rico Sennrich, Barry Haddow, Alexandra Birch",

@@ -1795,7 +1795,8 @@
    "recurrent_networks",
    "tokenizerlab",
    "trainingdynamics",
-   "transformer"
+   "transformer",
+   "untold_history_iii"
   ]
  },
  {
@@ -24043,9 +24044,11 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 3,
   "keys": [
-   "unicode2022standard"
+   "unicode2022standard",
+   "unicode_history",
+   "unicode_tr15"
   ],
   "cited_in": [
    "untold_history_iii"
@@ -24060,9 +24063,10 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "rfc3629"
+   "rfc3629",
+   "rfc2279"
   ],
   "cited_in": [
    "untold_history_iii"
@@ -29306,7 +29310,8 @@
    "tokenizerlab",
    "trainingdynamics",
    "transformer",
-   "unexpected_capabilities"
+   "unexpected_capabilities",
+   "untold_history_iii"
   ]
  },
  {
@@ -30256,7 +30261,8 @@
    "positionalembeddingslab",
    "tokenizerlab",
    "transformer",
-   "unexpected_capabilities"
+   "unexpected_capabilities",
+   "untold_history_iii"
   ]
  },
  {
@@ -37376,6 +37382,91 @@
   ]
  },
  {
+  "name": "Alexandre Elias",
+  "canon": "Alexandre Elias",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2003.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "elias2003encodings"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Vint Cerf",
+  "canon": "Vint Cerf",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1969.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rfc20"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "WHATWG",
+  "canon": "WHATWG",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2015.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "whatwg_encoding"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Rob Pike",
+  "canon": "Rob Pike",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1992.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "pike2003utf8"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "T. Bray",
+  "canon": "T. Bray",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rfc8259"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
   "name": "Gregory Bateson",
   "canon": "Gregory Bateson",
   "alias": null,
@@ -43923,7 +44014,8 @@
    "positionalembeddingslab",
    "tokenizerlab",
    "trainingdynamics",
-   "transformer"
+   "transformer",
+   "untold_history_iii"
   ]
  },
  {
@@ -55042,14 +55134,16 @@
   "city": "Redmond, USA",
   "year": 2020.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "playwright",
    "windows_ms",
-   "csharp_ms"
+   "csharp_ms",
+   "ms_codepages"
   ],
   "cited_in": [
    "software",
+   "untold_history_iii",
    "websearch"
   ]
  },
@@ -62144,7 +62238,8 @@
    "positionalembeddingslab",
    "tokenizerlab",
    "trainingdynamics",
-   "transformer"
+   "transformer",
+   "untold_history_iii"
   ]
  },
  {
@@ -64951,7 +65046,8 @@
    "morsetelegraph"
   ],
   "cited_in": [
-   "untold_history_ii"
+   "untold_history_ii",
+   "untold_history_iii"
   ]
  },
  {
@@ -73578,7 +73674,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 364,
+  "works": 378,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -73911,6 +74007,20 @@
    "backus_naur_form_wiki",
    "compiler_wiki",
    "unix_wiki",
+   "baudot_wiki",
+   "ebcdic_wiki",
+   "ascii_wiki",
+   "iso646_wiki",
+   "cp437_wiki",
+   "latin1_wiki",
+   "windows1252_wiki",
+   "mojibake_wiki",
+   "gb2312_wiki",
+   "big5_wiki",
+   "shiftjis_wiki",
+   "iso2022_wiki",
+   "unicode_wiki",
+   "utf8_wiki",
    "adobe_wiki",
    "figma_wiki",
    "enshittification_wiki",

@@ -17298,6 +17298,144 @@
    "year": "",
    "url": "https://www.rfc-editor.org/rfc/rfc3629.txt"
   },
+  "elias2003encodings": {
+   "title": "Encodings of Japanese",
+   "author": "Alexandre Elias",
+   "year": "",
+   "url": "https://www.sljfaq.org/afaq/encodings.html"
+  },
+  "baudot_wiki": {
+   "title": "Baudot code",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Baudot_code"
+  },
+  "ebcdic_wiki": {
+   "title": "EBCDIC",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/EBCDIC"
+  },
+  "ascii_wiki": {
+   "title": "ASCII",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/ASCII"
+  },
+  "rfc20": {
+   "title": "ASCII format for Network Interchange",
+   "author": "Vint Cerf",
+   "year": "",
+   "url": "https://www.rfc-editor.org/rfc/rfc20.txt"
+  },
+  "iso646_wiki": {
+   "title": "ISO/IEC 646",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/ISO/IEC_646"
+  },
+  "cp437_wiki": {
+   "title": "Code page 437",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Code_page_437"
+  },
+  "latin1_wiki": {
+   "title": "ISO/IEC 8859-1",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/ISO/IEC_8859-1"
+  },
+  "windows1252_wiki": {
+   "title": "Windows-1252",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Windows-1252"
+  },
+  "ms_codepages": {
+   "title": "Code Pages",
+   "author": "Microsoft",
+   "year": "",
+   "url": "https://learn.microsoft.com/en-us/windows/win32/intl/code-pages"
+  },
+  "whatwg_encoding": {
+   "title": "Encoding Standard",
+   "author": "WHATWG",
+   "year": "",
+   "url": "https://encoding.spec.whatwg.org/"
+  },
+  "mojibake_wiki": {
+   "title": "Mojibake",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Mojibake"
+  },
+  "gb2312_wiki": {
+   "title": "GB/T 2312",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/GB_2312"
+  },
+  "big5_wiki": {
+   "title": "Big5",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Big5"
+  },
+  "shiftjis_wiki": {
+   "title": "Shift JIS",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Shift_JIS"
+  },
+  "iso2022_wiki": {
+   "title": "ISO/IEC 2022",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/ISO/IEC_2022"
+  },
+  "unicode_history": {
+   "title": "History of Unicode",
+   "author": "The Unicode Consortium",
+   "year": "",
+   "url": "https://www.unicode.org/history/"
+  },
+  "unicode_wiki": {
+   "title": "Unicode",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Unicode"
+  },
+  "pike2003utf8": {
+   "title": "UTF-8 history",
+   "author": "Rob Pike",
+   "year": "",
+   "url": "https://www.cl.cam.ac.uk/~mgk25/ucs/utf-8-history.txt"
+  },
+  "rfc2279": {
+   "title": "UTF-8, a transformation format of ISO 10646",
+   "author": "F. Yergeau",
+   "year": "",
+   "url": "https://www.rfc-editor.org/rfc/rfc2279.txt"
+  },
+  "unicode_tr15": {
+   "title": "Unicode Normalization Forms",
+   "author": "The Unicode Consortium",
+   "year": "",
+   "url": "https://www.unicode.org/reports/tr15/"
+  },
+  "rfc8259": {
+   "title": "The JavaScript Object Notation (JSON) Data Interchange Format",
+   "author": "T. Bray",
+   "year": "",
+   "url": "https://www.rfc-editor.org/rfc/rfc8259.txt"
+  },
+  "utf8_wiki": {
+   "title": "UTF-8",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/UTF-8"
+  },
   "sennrich2016bpe": {
    "title": "Neural Machine Translation of Rare Words with Subword Units",
    "author": "Rico Sennrich, Barry Haddow, Alexandra Birch",
@@ -20496,7 +20634,8 @@
    "philosophy",
    "positionalembeddingslab",
    "tokenizerlab",
-   "transformer"
+   "transformer",
+   "untold_history_iii"
   ],
   "tokenbias2025": [
    "tokenizerlab"
@@ -25643,10 +25782,87 @@
   "martinloeftypetheory": [
    "untold_history_iii"
   ],
+  "elias2003encodings": [
+   "untold_history_iii"
+  ],
+  "morsetelegraph": [
+   "untold_history_ii",
+   "untold_history_iii"
+  ],
+  "baudot_wiki": [
+   "untold_history_iii"
+  ],
+  "hollerith1890": [
+   "untold_history_ii",
+   "untold_history_iii"
+  ],
+  "ebcdic_wiki": [
+   "untold_history_iii"
+  ],
+  "ascii_wiki": [
+   "untold_history_iii"
+  ],
+  "rfc20": [
+   "untold_history_iii"
+  ],
+  "iso646_wiki": [
+   "untold_history_iii"
+  ],
+  "cp437_wiki": [
+   "untold_history_iii"
+  ],
+  "latin1_wiki": [
+   "untold_history_iii"
+  ],
+  "windows1252_wiki": [
+   "untold_history_iii"
+  ],
+  "ms_codepages": [
+   "untold_history_iii"
+  ],
+  "whatwg_encoding": [
+   "untold_history_iii"
+  ],
+  "mojibake_wiki": [
+   "untold_history_iii"
+  ],
+  "gb2312_wiki": [
+   "untold_history_iii"
+  ],
+  "big5_wiki": [
+   "untold_history_iii"
+  ],
+  "shiftjis_wiki": [
+   "untold_history_iii"
+  ],
+  "iso2022_wiki": [
+   "untold_history_iii"
+  ],
+  "unicode_history": [
+   "untold_history_iii"
+  ],
+  "unicode_wiki": [
+   "untold_history_iii"
+  ],
   "unicode2022standard": [
    "untold_history_iii"
   ],
+  "pike2003utf8": [
+   "untold_history_iii"
+  ],
+  "rfc2279": [
+   "untold_history_iii"
+  ],
   "rfc3629": [
+   "untold_history_iii"
+  ],
+  "unicode_tr15": [
+   "untold_history_iii"
+  ],
+  "rfc8259": [
+   "untold_history_iii"
+  ],
+  "utf8_wiki": [
    "untold_history_iii"
   ],
   "sennrich2016bpe": [
@@ -25845,10 +26061,6 @@
    "untold_history_iii"
   ],
   "uscensus1790": [
-   "untold_history_iii"
-  ],
-  "hollerith1890": [
-   "untold_history_ii",
    "untold_history_iii"
   ],
   "fisher1935design": [
@@ -27744,9 +27956,6 @@
   "img_morse_telegraph": [
    "untold_history_ii"
   ],
-  "morsetelegraph": [
-   "untold_history_ii"
-  ],
   "cookewheatstone": [
    "untold_history_ii"
   ],
@@ -29378,7 +29587,7 @@
    ]
   },
   "Wikipedia contributors": {
-   "count": 364,
+   "count": 378,
    "minyear": 2026,
    "maxyear": 2026,
    "keys": [
@@ -29713,6 +29922,20 @@
     "backus_naur_form_wiki",
     "compiler_wiki",
     "unix_wiki",
+    "baudot_wiki",
+    "ebcdic_wiki",
+    "ascii_wiki",
+    "iso646_wiki",
+    "cp437_wiki",
+    "latin1_wiki",
+    "windows1252_wiki",
+    "mojibake_wiki",
+    "gb2312_wiki",
+    "big5_wiki",
+    "shiftjis_wiki",
+    "iso2022_wiki",
+    "unicode_wiki",
+    "utf8_wiki",
     "adobe_wiki",
     "figma_wiki",
     "enshittification_wiki",
@@ -33463,13 +33686,14 @@
    ]
   },
   "Microsoft": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "playwright",
     "windows_ms",
-    "csharp_ms"
+    "csharp_ms",
+    "ms_codepages"
    ]
   },
   "Google": {
@@ -65448,19 +65672,62 @@
    ]
   },
   "The Unicode Consortium": {
-   "count": 1,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "unicode2022standard"
+    "unicode2022standard",
+    "unicode_history",
+    "unicode_tr15"
    ]
   },
   "F. Yergeau": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rfc3629",
+    "rfc2279"
+   ]
+  },
+  "Alexandre Elias": {
    "count": 1,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "rfc3629"
+    "elias2003encodings"
+   ]
+  },
+  "Vint Cerf": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rfc20"
+   ]
+  },
+  "WHATWG": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "whatwg_encoding"
+   ]
+  },
+  "Rob Pike": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "pike2003utf8"
+   ]
+  },
+  "T. Bray": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rfc8259"
    ]
   },
   "Ray Smith": {

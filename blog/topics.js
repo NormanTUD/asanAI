@@ -1822,8 +1822,11 @@
 	    bitmap preview. */
 	function isFragile(block) {
 		if (!block.querySelector) return false;
-		// Explicit interactive / plot / media markers always count.
-		if (block.querySelector('iframe, video, audio, embed, object, [data-interactive], .hott-plot, .hott-canvas, .interactive, .widget')) {
+		// Explicit interactive / plot / media markers always count, whether
+		// the managed block wraps them or is the widget itself.
+		const interactive = 'iframe, video, audio, embed, object, [data-interactive], .hott-plot, .hott-canvas, .interactive, .widget';
+		if (block.matches && block.matches(interactive)) return true;
+		if (block.querySelector(interactive)) {
 			return true;
 		}
 		// A canvas counts only if it is a large plot, not a tiny preview.
