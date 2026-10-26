@@ -182,7 +182,7 @@
 								The loop is the outside view. Inside, one word passes through a fixed
 								pipeline. Each step changes the representation in a different way, and each
 								is a small idea you can play with. The steps follow the order of a real
-								transformer pass: text becomes ids, ids become vectors, position adds order,
+								transformer pass (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>): text becomes ids, ids become vectors, position adds order,
 								attention adds context, the feed-forward network computes, and the residual
 								stream carries the result forward.
 							</p>
@@ -237,7 +237,7 @@
 										<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with power and gender axes"></canvas>
 										<div class="step-out" id="iemb-out">The space has two semantic axes in this toy: <b>power</b> and <b>gender</b>. Change the expression or the highlighted words.</div>
 									</div>
-									<p class="step-note">Meaning becomes geometry. Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Use the <b>gender</b> and <b>power</b> buttons to see each direction on its own; the arrows are labelled directly. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. Real embeddings use thousands of dimensions; this toy uses two so you can see the idea.</p>
+									<p class="step-note">Meaning becomes geometry (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>). Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Use the <b>gender</b> and <b>power</b> buttons to see each direction on its own; the arrows are labelled directly. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. Real embeddings use thousands of dimensions; this toy uses two so you can see the idea.</p>
 								</div>
 
 								<div class="step-pane" id="step-position">
@@ -479,7 +479,7 @@
 							</p>
 							<p>
 								So where is a fact, if not in a table? Mostly in the feed-forward weights,
-								and often <strong>superposed</strong>: many features share the same
+								and often <strong>superposed</strong> (<a href="https://arxiv.org/abs/2209.10652" rel="noopener">Elhage et al., 2022</a>): many features share the same
 								directions rather than each owning a private neuron. That is why a fact can
 								be partly present, why a model can know something without being able to say
 								it reliably, and why editing one fact can disturb another. Day 21 follows a

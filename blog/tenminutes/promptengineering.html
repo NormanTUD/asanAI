@@ -27,7 +27,7 @@
 						<div class="section-kicker"><span class="sk-num">01</span> Set the environment</div>
 						<h2 class="section-title">Role, specificity, structure.</h2>
 						<div class="prose">
-							<p>A role primes the model with a style and a body of knowledge. Specific instructions reduce ambiguity. Delimiters separate instructions from data. Examples show the format you want better than a description often can. This is why a <strong>few-shot</strong> prompt — a handful of input-output examples before the real request — often beats a longer description of the same rule.</p>
+							<p>A role primes the model with a style and a body of knowledge. Specific instructions reduce ambiguity. Delimiters separate instructions from data. Examples show the format you want better than a description often can. This is why a <strong>few-shot</strong> prompt (<a href="https://arxiv.org/abs/2005.14165" rel="noopener">Brown et al., 2020</a>) — a handful of input-output examples before the real request — often beats a longer description of the same rule.</p>
 							<p>The three message roles are not cosmetic either. The <strong>system</strong> message sets the standing instructions, the <strong>user</strong> message carries the request, and the <strong>assistant</strong> message holds the model's earlier turns. The model is trained to treat them differently, which is why a system instruction usually outranks a user instruction — and why prompt injection tries to smuggle a new system instruction into user data.</p>
 							<p>Negations are weak: telling a model not to think of a white bear can make the bear more likely. To suppress a concept, the model still has to represent it. Say what you want, not only what you do not want.</p>
 						</div>
@@ -88,7 +88,7 @@
 						<h2 class="section-title">The Master Principle</h2>
 						<div class="prose">
 							<p>All prompt engineering techniques reduce to one idea: <strong>control the probability distribution.</strong> Every technique -- roles, delimiters, CoT, few-shot, structured output -- is a tool for collapsing the model's output space from “anything” to “exactly what I need.”</p>
-							<p>The best prompt engineers do not memorize techniques; they understand which <strong>degrees of freedom</strong> the model has, and systematically lock them down until only the correct output path remains. The most familiar example is <strong>chain-of-thought</strong>: asking for intermediate steps keeps the model from committing to an answer in a single token and gives it a place to check its work. It is a prompt-level version of the scratchpad idea, and it is the subject of Day 27.</p>
+							<p>The best prompt engineers do not memorize techniques; they understand which <strong>degrees of freedom</strong> the model has, and systematically lock them down until only the correct output path remains. The most familiar example is <strong>chain-of-thought</strong> (<a href="https://arxiv.org/abs/2201.11903" rel="noopener">Wei et al., 2022</a>): asking for intermediate steps keeps the model from committing to an answer in a single token and gives it a place to check its work. It is a prompt-level version of the scratchpad idea, and it is the subject of Day 27.</p>
 						</div>
 					</section>
 

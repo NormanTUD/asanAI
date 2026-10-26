@@ -88,8 +88,8 @@
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Speech Recognition: Whisper and Friends</h2>
 						<div class="prose">
-							<p>The model is trained with a multi-task objective: transcribe, translate to English, detect language, timestamp. Whisper-large-v3 (2023) achieves under 3% word error rate on clean English and ~10% on noisy multilingual. Word error rate is the edit distance between the transcript and the reference, divided by the number of reference words: substitutions, insertions, and deletions all count. A 3% WER still means roughly one wrong word in thirty-three, which matters for names, numbers, and anything legally binding.</p>
-							<p><strong>Conformer</strong> (Gulati et al., Google, 2020) is the dominant architecture for streaming ASR. It combines convolutions (for local patterns) with self-attention (for global context) in each block. USM (Google, 2023) and SeamlessM4T (Meta, 2023) extend this to 100+ languages.</p>
+							<p>The model is trained with a multi-task objective: transcribe, translate to English, detect language, timestamp. Whisper-large-v3 (<a href="https://arxiv.org/abs/2212.04356" rel="noopener">Radford et al., 2022</a>) achieves under 3% word error rate on clean English and ~10% on noisy multilingual. Word error rate is the edit distance between the transcript and the reference, divided by the number of reference words: substitutions, insertions, and deletions all count. A 3% WER still means roughly one wrong word in thirty-three, which matters for names, numbers, and anything legally binding.</p>
+							<p><strong>Conformer</strong> (<a href="https://arxiv.org/abs/2005.08100" rel="noopener">Gulati et al., 2020</a>) is the dominant architecture for streaming ASR. It combines convolutions (for local patterns) with self-attention (for global context) in each block. USM (Google, 2023) and SeamlessM4T (Meta, 2023) extend this to 100+ languages.</p>
 						</div>
 					</section>
 
@@ -129,7 +129,7 @@
 						<div class="section-kicker">More background</div>
 						<h2 class="section-title">3. Self-Supervised Representations</h2>
 						<div class="prose">
-							<p>Models like <strong>wav2vec 2.0</strong>, <strong>HuBERT</strong>, and <strong>WavLM</strong> learn speech representations by masking spans of audio and predicting the discrete latent units of a teacher model. The output is a sequence of 50 Hz contextualized vectors, perfect input for downstream ASR, speaker ID, or emotion recognition. The difference from a codec is the objective: a codec is trained to reconstruct the sound, a self-supervised model is trained to predict what was masked.</p>
+							<p>Models like <strong><a href="https://arxiv.org/abs/2006.11477" rel="noopener">wav2vec 2.0</a></strong>, <strong><a href="https://arxiv.org/abs/2106.07447" rel="noopener">HuBERT</a></strong>, and <strong>WavLM</strong> learn speech representations by masking spans of audio and predicting the discrete latent units of a teacher model. The output is a sequence of 50 Hz contextualized vectors, perfect input for downstream ASR, speaker ID, or emotion recognition. The difference from a codec is the objective: a codec is trained to reconstruct the sound, a self-supervised model is trained to predict what was masked.</p>
 						</div>
 					</section>
 

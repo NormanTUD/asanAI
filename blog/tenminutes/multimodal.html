@@ -28,7 +28,7 @@
 						<h2 class="section-title">Pull matching pairs together.</h2>
 						<div class="prose">
 							<p>An image encoder turns a picture into a vector; a text encoder turns a caption into another vector. The two spaces are different, so you cannot compare them directly. Contrastive learning pulls matched image-caption pairs together and pushes mismatched pairs apart. In a batch of images and captions, every correct pair is a positive and every other combination is a negative; the loss rewards the model for making the diagonal of that similarity matrix stand out.</p>
-							<p>CLIP made this practical at scale. After alignment, a picture of a dog and the word “dog” are close in a shared space, and the model can do zero-shot classification by comparing an image with candidate captions. “Zero-shot” means the model was not trained on that particular label set; it generalises because the label is just another piece of text to embed.</p>
+							<p>CLIP (<a href="https://arxiv.org/abs/2103.00020" rel="noopener">Radford et al., 2021</a>) made this practical at scale. After alignment, a picture of a dog and the word “dog” are close in a shared space, and the model can do zero-shot classification by comparing an image with candidate captions. “Zero-shot” means the model was not trained on that particular label set; it generalises because the label is just another piece of text to embed.</p>
 						</div>
 					</section>
 
@@ -36,8 +36,8 @@
 						<div class="section-kicker"><span class="sk-num">02</span> From alignment to conversation</div>
 						<h2 class="section-title">Pixels become tokens.</h2>
 						<div class="prose">
-							<p>A multimodal LLM goes further. Pixels are turned into visual tokens, projected into the language model's embedding space, and then processed together with text tokens. The model can answer questions about an image, describe it, or use it as context. Architectures differ: some concatenate visual tokens with text, others use cross-attention so the text can query the image. Either way, the trick is to make vision look like another language the model already knows how to read.</p>
-							<p>The alignment is not perfect. The model can miss small details, misread text in images, or inherit biases from its training data. Reading text in an image is a good example of why: a visual encoder often works on coarse patches, so the fine strokes of a label or a receipt may simply not survive the tokenization. Multimodality adds a new input, not a guarantee of understanding.</p>
+							<p>A multimodal LLM goes further. Pixels are turned into visual tokens (<a href="https://arxiv.org/abs/2304.08485" rel="noopener">Liu et al., 2023</a>), projected into the language model's embedding space, and then processed together with text tokens. The model can answer questions about an image, describe it, or use it as context. Architectures differ: some concatenate visual tokens with text, others use cross-attention so the text can query the image. Either way, the trick is to make vision look like another language the model already knows how to read.</p>
+							<p>The alignment is not perfect. The model can miss small details, misread text in images, or inherit biases from its training data. Reading text in an image is a good example of why: a visual encoder often works on coarse patches (<a href="https://arxiv.org/abs/2010.11929" rel="noopener">Dosovitskiy et al., 2020</a>), so the fine strokes of a label or a receipt may simply not survive the tokenization. Multimodality adds a new input, not a guarantee of understanding.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Two encoders</b><span>Images and text are embedded separately before they can be compared.</span></div>

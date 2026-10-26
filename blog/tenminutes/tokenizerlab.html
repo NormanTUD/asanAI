@@ -130,11 +130,11 @@
 						<div class="prose">
 							<p>
 								How is the vocabulary built? The workhorse is <strong>Byte Pair Encoding
-								(BPE)</strong>: start from characters, repeatedly merge the most frequent
+								(BPE)</strong> (<a href="https://www.derczynski.com/papers/archive/BPE_Gage.pdf" rel="noopener">Gage, 1994</a>; adapted for NLP by <a href="https://arxiv.org/abs/1508.07909" rel="noopener">Sennrich et al., 2016</a>): start from characters, repeatedly merge the most frequent
 								adjacent pair in the training text, and stop at the target vocabulary size.
-								<strong>Unigram / SentencePiece</strong> fits a unigram language model over
+								<strong>Unigram / SentencePiece</strong> (<a href="https://arxiv.org/abs/1804.10959" rel="noopener">Kudo, 2018</a>) fits a unigram language model over
 								candidate subwords and prunes the set that best explains the corpus.
-								<strong>Byte-level BPE</strong> starts from all 256 bytes, so every input is
+								<strong>Byte-level BPE</strong> (<a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" rel="noopener">Radford et al., 2019</a>) starts from all 256 bytes, so every input is
 								representable; the price is that a non-ASCII character can take several tokens.
 							</p>
 							<p>
@@ -189,7 +189,8 @@
 							</p>
 							<p>
 								The canonical examples come from the GPT-2/GPT-3 tokenizer:
-								<code>SolidGoldMagikarp</code>, <code>petertodd</code>, <code>externalToEVA</code>.
+								<code>SolidGoldMagikarp</code>, <code>petertodd</code>, <code>externalToEVA</code>
+								(<a href="https://www.lesswrong.com/posts/aPeJE8bSo6rAFoLqg/solidgoldmagikarp-plus-prompt-generation" rel="noopener">Rumbelow &amp; Watkins, 2023</a>).
 								The likely cause is a mismatch between the corpus used to <em>train the
 								tokenizer</em> and the corpus used to <em>train the model</em>. A token can be
 								frequent in one and absent from the other, leaving its embedding close to random
@@ -233,7 +234,7 @@
 								systems give the model a calculator.
 							</p>
 							<p>
-								<strong>Byte-level BPE</strong> removes the worst failure: if the alphabet is
+								<strong>Byte-level BPE</strong> (<a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" rel="noopener">Radford et al., 2019</a>) removes the worst failure: if the alphabet is
 								all 256 bytes, every possible input has a tokenization and nothing is ever
 								unknown. But it does not remove the inflation — a Thai sentence is still more
 								bytes, hence more tokens, than the same sentence in English. Byte-level is the

@@ -27,7 +27,7 @@
 						<div class="section-kicker"><span class="sk-num">01</span> A filter that slides</div>
 						<h2 class="section-title">Local patterns, shared weights.</h2>
 						<div class="prose">
-							<p>A convolution applies a small kernel to every local patch of the image. The kernel is a set of learned weights; it responds strongly to a particular pattern, such as a vertical edge or a patch of colour. An image itself is just a grid of numbers: each pixel is a brightness or a set of colour values, usually red, green, and blue. There is no cat in the pixels; there are only numbers that a trained hierarchy can interpret.</p>
+							<p>A convolution (<a href="https://galileo-unbound.blog/wp-content/uploads/2025/02/lecun.neco_.1989.1.4.541.pdf" rel="noopener">LeCun et al., 1989</a>) applies a small kernel to every local patch of the image. The kernel is a set of learned weights; it responds strongly to a particular pattern, such as a vertical edge or a patch of colour. An image itself is just a grid of numbers: each pixel is a brightness or a set of colour values, usually red, green, and blue. There is no cat in the pixels; there are only numbers that a trained hierarchy can interpret.</p>
 							<p>Why not connect every pixel to every neuron? Because that would need an enormous number of weights and would have to relearn the same edge detector at every location. A convolution shares one small kernel across the whole image, so it learns a pattern once and applies it everywhere. That is the built-in assumption: nearby pixels belong together, and a pattern is the same pattern wherever it appears.</p>
 							<p>Stack convolutions and the hierarchy grows. Early layers detect edges and textures; middle layers combine them into parts; later layers respond to whole objects. That is the feature hierarchy behind modern vision. Pooling between stages lowers the resolution, so later layers see a larger region of the image — their receptive field grows — and the representation becomes less sensitive to small shifts.</p>
 						</div>
@@ -38,7 +38,7 @@
 						<h2 class="section-title">The task stack.</h2>
 						<div class="prose">
 							<p>The basic task is classification: what is in the image? Detection asks where; segmentation asks which pixels belong to which object; 3D understanding adds depth and geometry. Each task needs a different output, but the feature extractor is often shared.</p>
-							<p>Vision Transformers replace the sliding kernel with attention over image patches, but the idea is similar: turn the image into tokens and let the model learn relationships between them.</p>
+							<p>Vision Transformers (<a href="https://arxiv.org/abs/2010.11929" rel="noopener">Dosovitskiy et al., 2020</a>) replace the sliding kernel with attention over image patches, but the idea is similar: turn the image into tokens and let the model learn relationships between them.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Pixels</b><span>An image is a grid of numbers, not a picture of a cat.</span></div>

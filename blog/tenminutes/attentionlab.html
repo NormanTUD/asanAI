@@ -76,7 +76,7 @@
 							</p>
 							<p>
 								The score between a query and a key is their dot product, scaled by the square
-								root of the key dimension. A large score means the vectors point in a similar
+								root of the key dimension (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>). A large score means the vectors point in a similar
 								direction: “you are relevant to my search.” Softmax turns all the scores in a
 								row into weights that sum to one. The output is the weighted sum of the value
 								vectors. The row summing to one is not a technicality: it makes attention a
@@ -182,7 +182,7 @@
 								A single head can only attend from one perspective. The transformer runs
 								several heads in parallel, each with its own
 								projection matrices, and concatenates their outputs. In the original paper
-								there are 8 heads over a 512-dimensional model, so each head works in a
+								(<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>) there are 8 heads over a 512-dimensional model, so each head works in a
 								64-dimensional subspace. One head can chase syntax while another tracks
 								coreference; the final output projection mixes them back together.
 							</p>
@@ -205,13 +205,13 @@
 							<p>
 								Two beautiful connections are worth knowing. The attention operation is a
 								<strong>differentiable read head</strong> over a memory tape: query = address
-								request, keys = address tags, values = content. And modern Hopfield networks
-								show that attention is mathematically an associative memory retrieval. RAG
+								request, keys = address tags, values = content (<a href="https://arxiv.org/abs/1410.5401" rel="noopener">Graves et al., 2014</a>). And modern Hopfield networks
+								show that attention is mathematically an associative memory retrieval (<a href="https://arxiv.org/abs/2008.02217" rel="noopener">Ramsauer et al., 2021</a>). RAG
 								extends the same idea outside the model: retrieve documents by similarity and
 								put them in the context window.
 							</p>
 							<p>
-								There is also a strange corner case: <strong>attention sinks</strong>. In many
+								There is also a strange corner case: <strong>attention sinks</strong> (<a href="https://arxiv.org/abs/2309.17453" rel="noopener">Xiao et al., 2023</a>). In many
 								decoder-only models, a large share of attention flows to the first token even
 								when it carries no content. When streaming with a sliding window, evicting
 								that first token can collapse the model; keeping a few sink tokens pinned fixes

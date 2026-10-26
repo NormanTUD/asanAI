@@ -27,7 +27,7 @@
 						<div class="section-kicker"><span class="sk-num">01</span> Four families of tests</div>
 						<h2 class="section-title">Different tests, different blind spots.</h2>
 						<div class="prose">
-							<p>Multiple-choice benchmarks measure recognition. Exact-match benchmarks check a verifiable answer. LLM-as-judge benchmarks score open-ended text by giving a strong model the rubric and asking it to grade another model's output. Human preference tests ask people which answer they prefer.</p>
+							<p>Multiple-choice benchmarks measure recognition (<a href="https://arxiv.org/abs/2009.03300" rel="noopener">Hendrycks et al., 2021</a>). Verifiable-answer benchmarks check a solution that can be tested, such as code against unit tests (<a href="https://arxiv.org/abs/2107.03374" rel="noopener">Chen et al., 2021</a>). LLM-as-judge benchmarks score open-ended text by giving a strong model the rubric and asking it to grade another model's output (<a href="https://arxiv.org/abs/2306.05685" rel="noopener">Zheng et al., 2023</a>). Human preference tests ask people which answer they prefer.</p>
 							<p>Each family has failure modes. Multiple choice can be gamed by guessing patterns: a model can exploit the position of the correct option, the length of the options, or the fact that “all of the above” is often right. Exact match can miss a correct answer in a different form; judges inherit biases; human ratings are noisy and expensive.</p>
 						</div>
 					</section>
@@ -52,7 +52,7 @@
 						<h2 class="section-title">When the test is in the training set.</h2>
 						<div class="prose">
 							<p>Benchmark contamination happens when test questions appear in the training data. The model may then memorize the answer instead of learning the skill. Deduplication helps, but it is hard to prove that a test set never leaked, especially when the test set is public.</p>
-							<p>Leaderboard pressure makes the problem worse. If a benchmark becomes a target, models and labs optimise for it. Goodhart's law applies: when a measure becomes a target, it ceases to be a good measure. The benchmark was a proxy for capability; once it is the goal, effort flows into the proxy — prompt formats, answer conventions, data cleaning aimed at the test — rather than into the capability. LLM judges add another layer of bias.</p>
+							<p>Leaderboard pressure makes the problem worse. If a benchmark becomes a target, models and labs optimise for it. Goodhart's law applies (<a href="https://books.google.de/books?id=OMe6UQxu1KcC&amp;pg=PA111&amp;redir_esc=y#v=onepage&amp;q&amp;f=false" rel="noopener">Goodhart, 1975</a>): when a measure becomes a target, it ceases to be a good measure. The benchmark was a proxy for capability; once it is the goal, effort flows into the proxy — prompt formats, answer conventions, data cleaning aimed at the test — rather than into the capability. LLM judges add another layer of bias.</p>
 							<p>The most useful evaluation is the one built for your task: a rubric, a set of examples, a measure of agreement, and a check that the effect you see is larger than the noise. A general benchmark is a starting point, not a verdict.</p>
 						</div>
 					</section>

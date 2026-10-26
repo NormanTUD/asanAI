@@ -52,7 +52,7 @@
 						<div class="section-kicker"><span class="sk-num">03</span> Why depth is efficient</div>
 						<h2 class="section-title">Reuse and composition.</h2>
 						<div class="prose">
-							<p>The universal approximation theorem says a wide enough network can approximate a broad class of functions. It is an existence result, not a training guarantee: it does not say that gradient descent will find those weights, that the network will generalise, or that the network will be small. Depth offers a different kind of efficiency: a deep network can reuse a feature instead of relearning it at every level, and for some functions depth is provably exponentially more compact than width. That is a statement about representation, not a promise that deeper is always better on your data.</p>
+							<p>The universal approximation theorem (<a href="https://www.cs.cmu.edu/~epxing/Class/10715/reading/Kornick_et_al.pdf" rel="noopener">Hornik et al., 1989</a>) says a wide enough network can approximate a broad class of functions. It is an existence result, not a training guarantee: it does not say that gradient descent will find those weights, that the network will generalise, or that the network will be small. Depth offers a different kind of efficiency: a deep network can reuse a feature instead of relearning it at every level, and for some functions depth is provably exponentially more compact than width. That is a statement about representation, not a promise that deeper is always better on your data.</p>
 							<p>A hierarchy is a compression of computation. Edges become parts, parts become objects, objects become concepts. Each level can build on the level below, so the number of parameters needed to represent a complex function can be much smaller than a single wide layer would require.</p>
 							<p>Depth is not free. Gradients can vanish or explode, activations can become unstable, and training deep networks requires careful initialisation, normalisation, and residual connections. The architecture is powerful, but the optimisation is part of the story.</p>
 						</div>
@@ -131,7 +131,7 @@
 						<div class="section-kicker">The residual stream</div>
 						<h2 class="section-title">Depth is a shared scratchpad.</h2>
 						<div class="prose">
-							<p>A residual connection is simple: a layer computes an update and adds it to its input, <strong>x → x + f(x)</strong>. The signal does not have to pass through every transformation; it has a direct path. That makes deep networks easier to train because gradients can flow through the addition.</p>
+							<p>A residual connection (<a href="https://arxiv.org/abs/1512.03385" rel="noopener">He et al., 2015</a>) is simple: a layer computes an update and adds it to its input, <strong>x → x + f(x)</strong>. The signal does not have to pass through every transformation; it has a direct path. That makes deep networks easier to train because gradients can flow through the addition.</p>
 							<p>In a transformer, the same idea becomes the <strong>residual stream</strong>: one vector per token that every attention head and every MLP reads and writes. Nothing is overwritten. Each block adds its contribution, and the final layer reads the sum.</p>
 						</div>
 						<div class="demo demo--paper" data-demo="residual">

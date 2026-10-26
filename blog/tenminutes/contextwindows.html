@@ -36,7 +36,7 @@
 						<div class="section-kicker"><span class="sk-num">02</span> Why long context is hard</div>
 						<h2 class="section-title">Attention has a cost.</h2>
 						<div class="prose">
-							<p>Self-attention compares every token with every other token, so the cost grows roughly quadratically with length. Techniques such as KV caching and FlashAttention make long context practical, but they do not make the model infinitely attentive.</p>
+							<p>Self-attention (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>) compares every token with every other token, so the cost grows roughly quadratically with length. Techniques such as KV caching and FlashAttention make long context practical, but they do not make the model infinitely attentive.</p>
 							<p>For knowledge outside the window, systems use retrieval: search a document store and inject the relevant passages. That is why context and RAG are close cousins.</p>
 						</div>
 						<div class="keypoints">
@@ -52,7 +52,7 @@
 						<h2 class="section-title">Long context is not free.</h2>
 						<div class="prose">
 							<p>The KV cache stores the keys and values for every token in the context, so the model does not recompute the past at every step. The cache grows with the context length and can dominate memory during long conversations. Serving systems have to manage it carefully.</p>
-							<p>FlashAttention and other kernels make attention more efficient, but they do not change the fundamental cost. Long-context models also have to learn to use the middle of a long window; information near the start or end is often easier to retrieve.</p>
+							<p>FlashAttention (<a href="https://arxiv.org/abs/2205.14135" rel="noopener">Dao et al., 2022</a>) and other kernels make attention more efficient, but they do not change the fundamental cost. Long-context models also have to learn to use the middle of a long window; information near the start or end is often easier to retrieve (<a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>).</p>
 							<p>Retrieval and long context are complementary. A bigger window lets the model see more; retrieval decides what is worth seeing. The budget is still a budget. A larger window is a larger desk, not a better filing system: if the relevant page is buried in the pile, more desk space does not help.</p>
 						</div>
 					</section>

@@ -130,7 +130,7 @@
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">It predicts locally — and can still build a world model.</p>
-							<p class="aha-sub">The model has no explicit paragraph plan: it predicts one token, appends it, and predicts again. But next-token prediction can require a structured internal state. In the Othello (Reversi) experiment, a transformer trained only on legal moves — with no board and no rules — spontaneously represented the board; intervening on that representation changed its next move. Coherence can therefore come from a learned world model in the residual stream, not only from a chain of surface bets. The model is still fallible: that world model is partial, and small errors can compound.</p>
+							<p class="aha-sub">The model has no explicit paragraph plan: it predicts one token, appends it, and predicts again. But next-token prediction can require a 								structured internal state. In the Othello (Reversi) experiment (<a href="https://arxiv.org/abs/2210.13382" rel="noopener">Li et al., 2022</a>), a transformer trained only on legal moves — with no board and no rules — spontaneously represented the board; intervening on that representation changed its next move. Coherence can therefore come from a learned world model in the residual stream, not only from a chain of surface bets. The model is still fallible: that world model is partial, and small errors can compound.</p>
 						</div>
 
 						<div class="trythis">
@@ -233,7 +233,9 @@
 							</p>
 							<p>
 								<strong>Attention has no fixed grammar.</strong> It follows no hand-written tree;
-								it learns which positions should exchange information. The link between “it” and
+								it learns which positions should exchange information. Position is handled
+								before attention: the original block adds sinusoidal vectors, while modern
+								blocks often rotate queries and keys by position instead (<a href="https://arxiv.org/abs/2104.09864" rel="noopener">Su et al., 2021</a>). The link between “it” and
 								a noun is computed, not looked up — which is why the same head can resolve it
 								differently in different sentences. Several heads run in parallel in
 								lower-dimensional subspaces, so one head can track a pronoun while another
@@ -251,17 +253,18 @@
 								wide, nonlinear, then narrow again.
 							</p>
 							<p>
-								<strong>Residual connections</strong> give the gradient an identity path
+								<strong>Residual connections</strong> (<a href="https://arxiv.org/abs/1512.03385" rel="noopener">He et al., 2015</a>) give the gradient an identity path
 								around each sublayer, so a deep stack can still learn. They also make the
 								block additive: the branch computes an update, and the update is added to the
 								running stream. Nothing is overwritten.
 							</p>
 							<p>
-								<strong>Layer normalization</strong> keeps activations in a healthy range. The
+								<strong>Layer normalization</strong> (<a href="https://arxiv.org/abs/1607.06450" rel="noopener">Ba, Kiros &amp; Hinton, 2016</a>) keeps activations in a healthy range. The
 								2017 block normalized after the residual addition; modern stacks usually
 								normalize <em>inside</em> the branch (pre-norm), leaving the stream unbroken,
 								and often replace LayerNorm with RMSNorm, which rescales by the root mean
-								square without subtracting the mean. The stream stays simple; each branch
+								square without subtracting the mean. Gated feed-forward variants such as
+								SwiGLU are a separate change (<a href="https://arxiv.org/abs/2002.05202" rel="noopener">Shazeer, 2020</a>). The stream stays simple; each branch
 								arrives already scaled.
 							</p>
 							<p>
@@ -416,7 +419,7 @@
 			{
 				name: "Position",
 				title: "Add position",
-				text: "A position signal is added to each embedding (sinusoidal in the original; modern models often use rotary/RoPE, which rotates queries and keys instead). Without it, “dog bites man” and “man bites dog” would be an unordered bag of the same vectors.",
+				text: "								A position signal is added to each embedding (sinusoidal in the original; modern models often use rotary/RoPE, which rotates queries and keys instead). Without it, “dog bites man” and “man bites dog” would be an unordered bag of the same vectors.",
 				shape: "[T, d_{\\text{model}}] + [T, d_{\\text{model}}] \\to [T, d_{\\text{model}}]"
 			},
 			{

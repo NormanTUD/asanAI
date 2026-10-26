@@ -77,7 +77,7 @@
 								arrow as <strong>king</strong> to <strong>queen</strong>, and
 								<strong>uncle</strong> to <strong>aunt</strong>: gender is one direction you
 								can pick up and carry to another word. Nobody typed that rule in. It fell
-								out of the statistics of the text: because “man” and “woman” appear in similar
+								out of the statistics of the text (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>): because “man” and “woman” appear in similar
 								grammatical slots, the difference between them becomes a consistent direction
 								that the model can reuse.
 							</p>
@@ -234,8 +234,8 @@
 							</p>
 							<p>
 								The classic embedding table is also only the <strong>first layer</strong>.
-								Word2vec, GloVe, and fastText gave every word one static vector. ELMo and BERT
-								made the vector <strong>contextual</strong>: “bank” in “river bank” and “bank
+								<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Word2vec</a>, <a href="https://aclanthology.org/D14-1162/" rel="noopener">GloVe</a>, and fastText gave every word one static vector. ELMo and BERT
+								made the vector <strong>contextual</strong> (<a href="https://aclanthology.org/N19-1423/" rel="noopener">Devlin et al., 2019</a>): “bank” in “river bank” and “bank
 								account” gets different representations. In a transformer, the input embedding
 								is immediately rewritten by attention and the residual stream.
 							</p>
@@ -267,7 +267,7 @@
 						<div class="prose">
 							<p>
 								Two more ideas are worth carrying: <strong>polysemanticity
-								and superposition</strong> — a single neuron often responds to several
+								and superposition</strong> (<a href="https://arxiv.org/abs/2209.10652" rel="noopener">Elhage et al., 2022</a>) — a single neuron often responds to several
 								unrelated features because the model compresses more concepts than it has
 								dimensions; and the <strong>manifold hypothesis</strong> — real data lies on a
 								lower-dimensional surface inside the huge ambient space, which is why

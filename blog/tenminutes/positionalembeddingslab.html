@@ -28,7 +28,7 @@
 						<h2 class="section-title">Where is the token?</h2>
 						<div class="prose">
 							<p>Attention compares tokens by content. It has no built-in notion of first, second, or last. Positional encodings add a signature to each token's vector so that the model can tell where it sits in the sequence. You might ask why the model cannot simply use the token's index. An index is unbounded and says nothing about distance: position 1,000 is not “far” in any useful sense unless the model learns a scale. A crafted encoding supplies that scale.</p>
-							<p>The original transformer used sine and cosine functions at different frequencies. Modern models often use rotary position embeddings (RoPE), which rotate the query and key vectors by an amount that depends on position.</p>
+							<p>The original transformer used sine and cosine functions at different frequencies (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>). Modern models often use rotary position embeddings (RoPE), which rotate the query and key vectors by an amount that depends on position.</p>
 						</div>
 					</section>
 
@@ -52,7 +52,7 @@
 						<h2 class="section-title">A manifold, not just labels.</h2>
 						<div class="prose">
 							<p>Sine and cosine at different frequencies create a smooth fingerprint for every position. Nearby positions share low-frequency patterns; distant positions differ in the high-frequency dimensions. The set of position vectors forms a manifold rather than a set of unrelated labels. Why waves? Because a wave is bounded, smooth, and periodic, so every position gets a distinct pattern without the values growing without bound. The different frequencies encode different scales: a slow wave distinguishes the beginning from the end of a long text, while a fast wave distinguishes neighbouring positions.</p>
-							<p>Modern models often use rotary position embeddings. RoPE rotates the query and key vectors by an amount that depends on position, so the dot product between them depends on relative distance. That makes relative position easier to learn. Concretely, a query at position <em>m</em> and a key at position <em>n</em> are rotated by angles proportional to <em>m</em> and <em>n</em>; when you take the dot product, the absolute angles cancel and what remains depends on <em>m − n</em>. The model gets “how far apart” almost for free.</p>
+							<p>Modern models often use rotary position embeddings. RoPE (<a href="https://arxiv.org/abs/2104.09864" rel="noopener">Su et al., 2021</a>) rotates the query and key vectors by an amount that depends on position, so the dot product between them depends on relative distance. That makes relative position easier to learn. Concretely, a query at position <em>m</em> and a key at position <em>n</em> are rotated by angles proportional to <em>m</em> and <em>n</em>; when you take the dot product, the absolute angles cancel and what remains depends on <em>m − n</em>. The model gets “how far apart” almost for free.</p>
 							<p>The details matter for long context. A model trained on one range of positions may not extrapolate gracefully to a much longer range. Position is a coordinate, and the coordinate system has to fit the data.</p>
 						</div>
 					</section>
@@ -122,7 +122,7 @@
 						<h2 class="section-title">A coordinate for every token.</h2>
 						<div class="prose">
 							<p>Attention is a set operation; it does not know what came first. Positional encodings add that information, but they also introduce a coordinate system that has to generalise to longer sequences.</p>
-							<p>A model trained on short positions may not extrapolate to very long ones. RoPE and relative encodings help, but they are not a complete solution. Position is a design choice with consequences.</p>
+							<p>A model trained on short positions may not extrapolate to very long ones. RoPE and relative encodings help (<a href="https://arxiv.org/abs/2306.15595" rel="noopener">Chen et al., 2023</a>; <a href="https://arxiv.org/abs/2309.00071" rel="noopener">Peng et al., 2023</a>), but they are not a complete solution. Position is a design choice with consequences.</p>
 						</div>
 					</section>
 

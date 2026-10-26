@@ -27,7 +27,7 @@
 						<div class="section-kicker"><span class="sk-num">01</span> The pipeline</div>
 						<h2 class="section-title">Index, retrieve, generate.</h2>
 						<div class="prose">
-							<p>RAG starts with a corpus. Documents are split into <strong>chunks</strong>: small, overlapping passages that can be retrieved independently. An <strong>embedding model</strong> turns each chunk into a vector. The same model turns the question into a vector in the same space — if the chunk model and the query model differ, the similarity scores are meaningless.</p>
+							<p>RAG (<a href="https://arxiv.org/abs/2005.11401" rel="noopener">Lewis et al., 2020</a>) starts with a corpus. Documents are split into <strong>chunks</strong>: small, overlapping passages that can be retrieved independently. An <strong>embedding model</strong> turns each chunk into a vector. The same model turns the question into a vector in the same space — if the chunk model and the query model differ, the similarity scores are meaningless.</p>
 							<p>A similarity score, usually <strong>cosine similarity</strong>, rates every chunk against the query. The score is not a probability; it is a measure of alignment in the embedding space. The system selects the top-k chunks (or everything above a score threshold) and formats those passages into the prompt. The language model then answers from that context.</p>
 							<p>The key division of labour: the <strong>embedding model and the index do the searching</strong>; the LLM only reads the selected passages. That is why the embedding model, the chunking strategy, and the ranking rule matter as much as the generator itself.</p>
 						</div>
@@ -53,7 +53,7 @@
 						<h2 class="section-title">Chunking, hybrid search, reranking.</h2>
 						<div class="prose">
 							<p>Chunking is a design decision. Too small and the passage lacks context; too large and the retriever has to match a lot of irrelevant text. Overlap helps avoid cutting a fact in half. Contextual retrieval adds a short summary of the surrounding document to each chunk.</p>
-							<p>Hybrid search combines keyword matching with dense vectors. Keyword search is good at names and exact terms; dense retrieval is good at paraphrase. A reranker can then score the top candidates with a more expensive model before the answer is generated.</p>
+							<p>Hybrid search combines keyword matching with dense vectors. Keyword search — BM25 is the standard (<a href="https://doi.org/10.1561/1500000019" rel="noopener">Robertson &amp; Zaragoza, 2009</a>) — is good at names and exact terms; dense retrieval is good at paraphrase. A reranker can then score the top candidates with a more expensive model before the answer is generated.</p>
 							<p>The failure modes are real: the right passage may be missing, the wrong passage may be ranked first, or the model may ignore the context. Evaluation and citations are what make RAG useful rather than decorative.</p>
 							<p>RAG and fine-tuning solve different problems. RAG changes what the model can <em>see</em>; fine-tuning changes what the model is <em>like</em>. Use RAG for facts that change, private documents, and anything that needs a citation. Use fine-tuning for a format, a tone, a tool-calling convention, or a behaviour the base model will not pick up from a prompt. The two can be combined: a fine-tuned model that reads retrieved passages is a common production pattern.</p>
 						</div>
@@ -108,7 +108,7 @@ Answer:</pre>
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Making RAG work</h2>
 						<div class="prose">
-							<p>RAG mitigates the “lost in the middle” problem by shrinking the context to a handful of chunks, but it does not abolish it: a relevant chunk placed in the middle of even a short retrieved set can be underused, so ordering matters. Put the strongest evidence first or last, and keep the set small enough that the model can actually weigh it.</p>
+							<p>RAG mitigates the “lost in the middle” problem (<a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>) by shrinking the context to a handful of chunks, but it does not abolish it: a relevant chunk placed in the middle of even a short retrieved set can be underused, so ordering matters. Put the strongest evidence first or last, and keep the set small enough that the model can actually weigh it.</p>
 							<p>When RAG fails, the first diagnostic question is where. If the answer is not in the retrieved chunks, it is a <strong>retrieval failure</strong>: fix the chunking, the embedding model, the index, or the query. If the answer is in the chunks and the model still gets it wrong, it is a <strong>generation failure</strong>: fix the prompt, the ordering, or the model. Treating every bad answer as a model problem wastes time on the wrong half of the pipeline.</p>
 						</div>
 					</section>
@@ -134,7 +134,7 @@ Answer:</pre>
 						<h2 class="section-title">The RAG Pipeline, Step by Step</h2>
 						<div class="prose">
 							<p><strong>Step 1, Chunk the documents.</strong> Split each source (PDF, webpage, database row) into small, overlapping passages, typically 200–500 tokens. Overlap ensures no information falls between the cracks.</p>
-							<p><strong>Step 2, Embed and index.</strong> Run each chunk through the embedding model and store the vector together with the text and its metadata (source, date, section). A vector database is the system that holds those vectors and can return the nearest ones quickly; it is a search index, not a second model.</p>
+							<p><strong>Step 2, Embed and index.</strong> Run each chunk through the embedding model and store the vector together with the text and its metadata (source, date, section). A vector database is the system that holds those vectors and can return the nearest ones quickly; it is a search index, not a second model. The common index is HNSW (<a href="https://arxiv.org/abs/1603.09320" rel="noopener">Malkov &amp; Yashunin, 2018</a>).</p>
 							<p><strong>Step 3, Embed the query.</strong> Use the same embedding model, or the vectors live in different spaces and the comparison is meaningless.</p>
 							<p><strong>Step 4, Retrieve.</strong> Score the query against the index, usually with cosine similarity, and take the top-k chunks or everything above a threshold. Hybrid search adds keyword matching for names and exact terms.</p>
 							<p><strong>Step 5, Rerank (optional).</strong> A cross-encoder or a stronger model re-scores the shortlist by reading the query and the passage together. It is slower than vector search and usually more accurate.</p>

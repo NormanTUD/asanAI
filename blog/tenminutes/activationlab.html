@@ -28,7 +28,7 @@
 						<h2 class="section-title">A nonlinearity per coordinate.</h2>
 						<div class="prose">
 							<p>A dense layer computes an affine map, Ax + b. On its own it maps straight lines to straight lines. A nonlinear activation is applied to each coordinate after the projection and breaks that linearity.</p>
-							<p>ReLU passes positive values and sends everything negative to zero. Sigmoid and tanh squash the output into a bounded range. GELU is a smooth variant used in many transformers.</p>
+							<p>ReLU (<a href="https://papers.baulab.info/papers/also/Nair-2010.pdf" rel="noopener">Nair &amp; Hinton, 2010</a>) passes positive values and sends everything negative to zero. Sigmoid and tanh squash the output into a bounded range. GELU (<a href="https://arxiv.org/abs/1606.08415" rel="noopener">Hendrycks &amp; Gimpel, 2016</a>) is a smooth variant used in many transformers.</p>
 						</div>
 					</section>
 
@@ -52,7 +52,7 @@
 						<h2 class="section-title">Gradients and geometry.</h2>
 						<div class="prose">
 							<p>A saturating activation such as sigmoid or tanh can make gradients very small when the input is far from zero. That slows learning in deep networks. ReLU avoids saturation on the positive side, but it can produce dead units that never activate again.</p>
-							<p>The shape of the activation changes the geometry of the representation. ReLU creates a hard fold; sigmoid and tanh bend smoothly; GELU is smooth but not monotonic. Modern models also use SiLU/Swish and gated variants such as SwiGLU, which let the network learn how much of a feature to pass through.</p>
+							<p>The shape of the activation changes the geometry of the representation. ReLU creates a hard fold; sigmoid and tanh bend smoothly; GELU is smooth but not monotonic. Modern models also use SiLU/Swish (<a href="https://arxiv.org/abs/1702.03118" rel="noopener">Elfwing et al., 2017</a>) and gated variants such as SwiGLU (<a href="https://arxiv.org/abs/2002.05202" rel="noopener">Shazeer, 2020</a>), which let the network learn how much of a feature to pass through.</p>
 							<p>At the output, softmax turns scores into a probability distribution. The choice of activation is not a detail: it interacts with normalisation, depth, and the gradients that make training possible.</p>
 						</div>
 					</section>

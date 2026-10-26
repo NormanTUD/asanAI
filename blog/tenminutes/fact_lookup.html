@@ -51,8 +51,8 @@
 						<div class="section-kicker"><span class="sk-num">03</span> How we know</div>
 						<h2 class="section-title">Circuits, directions, and limits.</h2>
 						<div class="prose">
-							<p>Mechanistic interpretability looks for circuits: small sets of attention heads and MLP neurons that implement a behaviour. Induction heads, for example, learn to complete a pattern of the form A B ... A -> B. Finding a circuit is evidence that a behaviour has a specific internal mechanism.</p>
-							<p>The linear representation hypothesis says that many features are represented as directions in the residual stream. If that is right, you can read a feature by projecting onto a direction, and edit a fact by changing the weights that write it. ROME is one method for doing that.</p>
+							<p>Mechanistic interpretability looks for circuits (<a href="https://arxiv.org/abs/2209.11895" rel="noopener">Olsson et al., 2022</a>): small sets of attention heads and MLP neurons that implement a behaviour. Induction heads, for example, learn to complete a pattern of the form A B ... A -> B. Finding a circuit is evidence that a behaviour has a specific internal mechanism.</p>
+							<p>The linear representation hypothesis (<a href="https://arxiv.org/abs/2311.03658" rel="noopener">Park et al., 2024</a>) says that many features are represented as directions in the residual stream. If that is right, you can read a feature by projecting onto a direction, and edit a fact by changing the weights that write it. ROME is one method for doing that.</p>
 							<p>The picture is still partial. Features can be superposed, neurons can be polysemantic, and editing one fact can have side effects. The defensible claim is not that we understand the model completely; it is that we have partial maps with real evidence.</p>
 						</div>
 					</section>
@@ -117,7 +117,7 @@
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Watching the answer form: the logit lens</h2>
 						<div class="prose">
-							<p>All of the above is the result of careful <em>post-hoc</em> analysis: you run the model, find what mattered, edit it, see what changes. There is also a much simpler trick that lets you <em>watch the answer form in real time</em> as the forward pass progresses: the <strong>logit lens</strong>.</p>
+							<p>All of the above is the result of careful <em>post-hoc</em> analysis: you run the model, find what mattered, edit it, see what changes. There is also a much simpler trick that lets you <em>watch the answer form in real time</em> as the forward pass progresses: the <strong>logit lens</strong> (<a href="https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens" rel="noopener">nostalgebraist, 2020</a>).</p>
 							<p>In a well-trained Transformer, the intermediate residual streams are already <em>approximately</em> in the unembedding basis (this is a consequence of the residual structure, weight decay, and the fact that the model is being trained end-to-end to produce a useful final residual stream). So the logits you get from intermediate layers are a meaningful, if imperfect, readout of "what would the model predict if it had to stop here?".</p>
 						</div>
 					</section>
@@ -152,7 +152,7 @@
 						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Opening up one fact: ROME</h2>
 						<div class="prose">
-							<p>ROME starts from the hypothesis that a fact is a key-value pair in an MLP. It finds the layer where the subject's key is written, computes a value direction that would produce the new object, and edits the second matrix so that the key writes the new value. The result: after the edit, the model says Rome when asked about the Eiffel Tower, says Rome when asked "Where is the Eiffel Tower?", says Rome when given "Eiffel Tower: ___" — and, crucially, <em>still says Paris when asked about the capital of France</em>. In this example the edit looks local, and the neighbouring fact survives. That is striking, but it is not a guarantee: follow-up work found that such edits can have side effects, and that a fact may not live in a single clean key-value slot. The honest reading is that ROME demonstrates a mechanism, not that models are databases with editable rows.</p>
+							<p>ROME (<a href="https://arxiv.org/abs/2202.05262" rel="noopener">Meng et al., 2022</a>) starts from the hypothesis that a fact is a key-value pair in an MLP. It finds the layer where the subject's key is written, computes a value direction that would produce the new object, and edits the second matrix so that the key writes the new value. The result: after the edit, the model says Rome when asked about the Eiffel Tower, says Rome when asked "Where is the Eiffel Tower?", says Rome when given "Eiffel Tower: ___" — and, crucially, <em>still says Paris when asked about the capital of France</em>. In this example the edit looks local, and the neighbouring fact survives. That is striking, but it is not a guarantee: follow-up work found that such edits can have side effects, and that a fact may not live in a single clean key-value slot. The honest reading is that ROME demonstrates a mechanism, not that models are databases with editable rows.</p>
 						</div>
 					</section>
 

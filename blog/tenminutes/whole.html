@@ -166,7 +166,7 @@
 							<p>
 								<strong>The representation stack.</strong> Text is cut into tokens. Tokens become
 								vectors. Position adds order. Attention mixes information across positions. The
-								residual stream — a shared running vector that every layer reads and adds to —
+								residual stream (<a href="https://transformer-circuits.pub/2021/framework/index.html" rel="noopener">Elhage et al., 2021</a>) — a shared running vector that every layer reads and adds to —
 								carries a running state. The MLP, the feed-forward network inside each block,
 								transforms each position on its own. A transformer block repeats attention and
 								MLP; the final vector is unembedded, multiplied against the vocabulary, into a
@@ -177,9 +177,11 @@
 							<p>
 								<strong>The behaviour stack.</strong> Pretraining data decides what the model has
 								seen. The objective — the loss it is trained to minimise — decides what it
-								optimises. Post-training decides how it behaves as an assistant. Sampling, the rule
+								optimises. Post-training (<a href="https://arxiv.org/abs/2203.02155" rel="noopener">Ouyang et al., 2022</a>) decides how it behaves
+								as an assistant. Sampling, the rule
 								for turning probabilities into a chosen token, decides how adventurous it is.
-								Retrieval and tools decide what it can use beyond its weights. None of these layers
+								Retrieval (<a href="https://arxiv.org/abs/2005.11401" rel="noopener">Lewis et al., 2020</a>) and tools decide
+								what it can use beyond its weights. None of these layers
 								is the whole model; the assistant is the pipeline. Ask why two systems with the same
 								base model behave differently, and the answer is usually somewhere in this stack,
 								not in the architecture diagram.

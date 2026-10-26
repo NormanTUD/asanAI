@@ -67,7 +67,7 @@
 						<h2 class="section-title">From symbiosis to ReAct.</h2>
 						<div class="prose">
 							<p>
-								The idea predates LLMs. In 1960, J.C.R. Licklider’s <em>Man-Computer Symbiosis</em>
+								The idea predates LLMs. In 1960, J.C.R. Licklider’s <a href="https://groups.csail.mit.edu/medg/people/psz/Licklider.html" rel="noopener"><em>Man-Computer Symbiosis</em></a>
 								argued that humans and computers should work as complementary partners: humans
 								set goals and judge, machines do the clerical, search, and calculation work.
 								Read today, it is almost a specification for the modern agent.
@@ -82,11 +82,11 @@
 								natural language, so the loop can be prompted rather than hand-coded.
 							</p>
 							<p>
-								<strong>ReAct</strong> made the pattern famous by interleaving reasoning traces
+								<strong>ReAct</strong> (<a href="https://arxiv.org/abs/2210.03629" rel="noopener">Yao et al., 2023</a>) made the pattern famous by interleaving reasoning traces
 								and actions in the same token stream: <em>Thought → Action → Observation →
 								Thought → …</em>. Reasoning without acting hallucinates facts it cannot
 								verify; acting without reasoning makes incoherent tool choices; both together
-								ground the task. <strong>Toolformer</strong> went further, teaching a model
+								ground the task. <strong>Toolformer</strong> (<a href="https://arxiv.org/abs/2302.04761" rel="noopener">Schick et al., 2023</a>) went further, teaching a model
 								when to call tools by keeping calls that lowered perplexity.
 							</p>
 						</div>
@@ -188,7 +188,7 @@
 							<p>
 								Planning adds foresight. <strong>Plan-and-execute</strong> writes a plan first,
 								then runs it and re-plans when an observation changes the picture.
-								<strong>Reflexion</strong> adds a self-evaluation step: after a failure, the
+								<strong>Reflexion</strong> (<a href="https://arxiv.org/abs/2303.11366" rel="noopener">Shinn et al., 2023</a>) adds a self-evaluation step: after a failure, the
 								agent writes down what went wrong and stores that reflection for the next
 								attempt. Multi-agent systems split the work: hierarchical manager/worker,
 								debate with a judge, sequential pipeline, or parallel swarm. Whether the gains
@@ -200,7 +200,7 @@
 							<div class="keypoint"><b>System prompt</b><span>Sets the persona, the tools, the constraints, and the permission model.</span></div>
 							<div class="keypoint"><b>Tool registry</b><span>A schema for each tool: name, arguments, return shape, and side effects.</span></div>
 							<div class="keypoint"><b>Termination</b><span>Finish action, max iterations, token budget, error threshold. Always have a hard stop.</span></div>
-							<div class="keypoint"><b>MCP</b><span>An open protocol for exposing resources, prompts, and tools to any capable client.</span></div>
+							<div class="keypoint"><b>MCP</b><span><a href="https://www.anthropic.com/news/model-context-protocol" rel="noopener">An open protocol</a> for exposing resources, prompts, and tools to any capable client.</span></div>
 						</div>
 					</section>
 

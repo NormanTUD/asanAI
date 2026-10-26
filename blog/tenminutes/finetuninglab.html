@@ -27,7 +27,7 @@
 						<div class="section-kicker"><span class="sk-num">01</span> From raw text to instructions</div>
 						<h2 class="section-title">Teaching the format.</h2>
 						<div class="prose">
-							<p>Pretraining teaches next-token prediction on a huge corpus. The result is fluent but uncontrolled. Supervised fine-tuning then shows the model examples of instructions and good answers, teaching it the format of a conversation.</p>
+							<p>Pretraining teaches next-token prediction on a huge corpus. The result is fluent but uncontrolled. Supervised fine-tuning then shows the model examples of instructions and good answers, teaching it the format of a conversation (<a href="https://arxiv.org/abs/2203.02155" rel="noopener">Ouyang et al., 2022</a>).</p>
 							<p>Fine-tuning is not only about facts. It changes behaviour: when to answer, when to refuse, how to structure a response, and which tone to use.</p>
 						</div>
 					</section>
@@ -36,8 +36,8 @@
 						<div class="section-kicker"><span class="sk-num">02</span> Preferences and reasoning</div>
 						<h2 class="section-title">Aligning behaviour.</h2>
 						<div class="prose">
-							<p>Preference optimization goes further. Humans (or a model) compare answers, and the model is trained to prefer the better one. RLHF uses a reward model; DPO-style methods learn directly from preference pairs.</p>
-							<p>Reasoning models add another stage: reinforcement learning on problems with verifiable answers, so the model learns to think longer and check its work. The total post-training cost is small compared with pretraining, but it shapes most of what users experience.</p>
+							<p>Preference optimization goes further. Humans (or a model) compare answers, and the model is trained to prefer the better one. RLHF uses a reward model (<a href="https://arxiv.org/abs/1706.03741" rel="noopener">Christiano et al., 2017</a>); DPO-style methods learn directly from preference pairs (<a href="https://arxiv.org/abs/2305.18290" rel="noopener">Rafailov et al., 2023</a>).</p>
+							<p>Reasoning models add another stage: reinforcement learning on problems with verifiable answers (<a href="https://arxiv.org/abs/2402.03300" rel="noopener">Shao et al., 2024</a>), so the model learns to think longer and check its work. The total post-training cost is small compared with pretraining, but it shapes most of what users experience.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Pretraining</b><span>Next-token prediction on a large corpus creates a raw model.</span></div>
@@ -110,7 +110,7 @@
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">LoRA and Parameter-Efficient Fine-Tuning</h2>
 						<div class="prose">
-							<p>Full fine-tuning of a 70B model requires ~1 TB of GPU memory (parameters, gradients, and optimizer state). <strong>Parameter-Efficient Fine-Tuning (PEFT)</strong> methods train only a tiny fraction of parameters. The best-known is <strong>LoRA</strong>: freeze the original weight matrix and learn two small matrices whose product is added to it. If the original matrix is <em>d × d</em> and the adapter rank is <em>r</em>, the adapter has <em>r</em>(<em>d</em> + <em>d</em>) parameters instead of <em>d</em>², which can be thousands of times fewer. QLoRA combines this with a quantized base model, so a large model can be adapted on a single GPU. Prompt tuning and prefix tuning take the idea further and learn soft prompt vectors rather than weight updates at all.</p>
+							<p>Full fine-tuning of a 70B model requires ~1 TB of GPU memory (parameters, gradients, and optimizer state). <strong>Parameter-Efficient Fine-Tuning (PEFT)</strong> methods train only a tiny fraction of parameters. The best-known is <strong>LoRA</strong> (<a href="https://arxiv.org/abs/2106.09685" rel="noopener">Hu et al., 2021</a>): freeze the original weight matrix and learn two small matrices whose product is added to it. If the original matrix is <em>d × d</em> and the adapter rank is <em>r</em>, the adapter has <em>r</em>(<em>d</em> + <em>d</em>) parameters instead of <em>d</em>², which can be thousands of times fewer. QLoRA (<a href="https://arxiv.org/abs/2305.14314" rel="noopener">Dettmers et al., 2023</a>) combines this with a quantized base model, so a large model can be adapted on a single GPU. Prompt tuning and prefix tuning take the idea further and learn soft prompt vectors rather than weight updates at all.</p>
 						</div>
 					</section>
 
