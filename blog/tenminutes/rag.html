@@ -29,7 +29,7 @@
 						<div class="prose">
 							<p>RAG (<a href="https://arxiv.org/abs/2005.11401" rel="noopener">Lewis et al., 2020</a>) starts with a corpus. Documents are split into <strong>chunks</strong>: small, overlapping passages that can be retrieved independently. An <strong>embedding model</strong> turns each chunk into a vector. The same model turns the question into a vector in the same space — if the chunk model and the query model differ, the similarity scores are meaningless.</p>
 							<p>A similarity score, usually <strong>cosine similarity</strong>, rates every chunk against the query. The score is not a probability; it is a measure of alignment in the embedding space. The system selects the top-k chunks (or everything above a score threshold) and formats those passages into the prompt. The language model then answers from that context.</p>
-							<p>The key division of labour: the <strong>embedding model and the index do the searching</strong>; the LLM only reads the selected passages. That is why the embedding model, the chunking strategy, and the ranking rule matter as much as the generator itself.</p>
+							<p>The original RAG paired a dense retriever (<a href="https://arxiv.org/abs/2004.04906" rel="noopener">DPR</a>; Karpukhin et al., 2020) with a seq2seq generator; modern systems often keep the pattern and swap the components. The key division of labour: the <strong>embedding model and the index do the searching</strong>; the LLM only reads the selected passages. That is why the embedding model, the chunking strategy, and the ranking rule matter as much as the generator itself.</p>
 						</div>
 					</section>
 

@@ -38,7 +38,7 @@
 						<h2 class="section-title">Iterate, do not decorate.</h2>
 						<div class="prose">
 							<p>Long prompts are not automatically better. Every irrelevant sentence adds noise and costs tokens. Canonicalise the input, remove boilerplate, and make the task easy to verify.</p>
-							<p>Prompting is empirical. Change one thing, test it, and keep what works. A prompt that is clear to a human is usually a good starting point for a model.</p>
+							<p>Prompting is empirical. Change one thing, test it, and keep what works. <a href="https://arxiv.org/abs/2303.17651" rel="noopener">Self-Refine</a> turns that loop inward: the model critiques and revises its own output (Madaan et al., 2023). A prompt that is clear to a human is usually a good starting point for a model.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Role</b><span>A persona primes style and knowledge.</span></div>
@@ -88,7 +88,7 @@
 						<h2 class="section-title">The Master Principle</h2>
 						<div class="prose">
 							<p>All prompt engineering techniques reduce to one idea: <strong>control the probability distribution.</strong> Every technique -- roles, delimiters, CoT, few-shot, structured output -- is a tool for collapsing the model's output space from “anything” to “exactly what I need.”</p>
-							<p>The best prompt engineers do not memorize techniques; they understand which <strong>degrees of freedom</strong> the model has, and systematically lock them down until only the correct output path remains. The most familiar example is <strong>chain-of-thought</strong> (<a href="https://arxiv.org/abs/2201.11903" rel="noopener">Wei et al., 2022</a>): asking for intermediate steps keeps the model from committing to an answer in a single token and gives it a place to check its work. It is a prompt-level version of the scratchpad idea, and it is the subject of Day 27.</p>
+							<p>The best prompt engineers do not memorize techniques; they understand which <strong>degrees of freedom</strong> the model has, and systematically lock them down until only the correct output path remains. The most familiar example is <strong>chain-of-thought</strong> (<a href="https://arxiv.org/abs/2201.11903" rel="noopener">Wei et al., 2022</a>): asking for intermediate steps keeps the model from committing to an answer in a single token and gives it a place to check its work. It is a prompt-level version of the scratchpad idea, and it is the subject of Day 27. Extensions such as Tree of Thoughts explore several branches before committing (<a href="https://arxiv.org/abs/2305.10601" rel="noopener">Yao et al., 2023</a>).</p>
 						</div>
 					</section>
 

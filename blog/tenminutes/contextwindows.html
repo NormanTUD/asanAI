@@ -51,7 +51,7 @@
 						<div class="section-kicker"><span class="sk-num">03</span> Working memory in practice</div>
 						<h2 class="section-title">Long context is not free.</h2>
 						<div class="prose">
-							<p>The KV cache stores the keys and values for every token in the context, so the model does not recompute the past at every step. The cache grows with the context length and can dominate memory during long conversations. Serving systems have to manage it carefully.</p>
+							<p>The KV cache stores the keys and values for every token in the context, so the model does not recompute the past at every step. The cache grows with the context length and can dominate memory during long conversations. Serving systems have to manage it carefully (<a href="https://arxiv.org/abs/2309.06180" rel="noopener">Kwon et al., 2023</a>).</p>
 							<p>FlashAttention (<a href="https://arxiv.org/abs/2205.14135" rel="noopener">Dao et al., 2022</a>) and other kernels make attention more efficient, but they do not change the fundamental cost. Long-context models also have to learn to use the middle of a long window; information near the start or end is often easier to retrieve (<a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>).</p>
 							<p>Retrieval and long context are complementary. A bigger window lets the model see more; retrieval decides what is worth seeing. The budget is still a budget. A larger window is a larger desk, not a better filing system: if the relevant page is buried in the pile, more desk space does not help.</p>
 						</div>
