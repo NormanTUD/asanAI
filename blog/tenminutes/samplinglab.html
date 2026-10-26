@@ -27,51 +27,110 @@
 						<div class="section-kicker"><span class="sk-num">01</span> Temperature and greedy</div>
 						<h2 class="section-title">Sharp or flat.</h2>
 						<div class="prose">
-							<p>Temperature rescales the logits before softmax. Near zero, the most likely token dominates and decoding becomes greedy and deterministic. Above one, the distribution flattens and the model takes more risks.</p>
-							<p>Greedy decoding is not 'the truth'; it is just the highest-probability continuation. It can be repetitive and can miss a better sentence that starts with a less likely token.</p>
+							<p>The model ends with a vector of logits, one score per vocabulary token. Softmax turns those scores into probabilities. Temperature divides the logits before the softmax: below one the gaps between scores widen and the distribution sharpens; above one the gaps shrink and the distribution flattens.</p>
+							<p>At temperature near zero, the most likely token gets almost all of the mass, so decoding becomes greedy and deterministic. At temperature one, you sample from the model's native distribution. Above one, rare tokens become reachable and the output becomes more surprising — and more likely to be incoherent.</p>
+							<p>Greedy decoding is not 'the truth'; it is just the highest-probability continuation. It can be repetitive and can miss a better sentence that starts with a less likely token. Temperature changes the shape of the choice, not the model's knowledge.</p>
 						</div>
 					</section>
 
 					<section class="section-block" id="detail">
-						<div class="section-kicker"><span class="sk-num">02</span> Filters and trade-offs</div>
-						<h2 class="section-title">No single best setting.</h2>
+						<div class="section-kicker"><span class="sk-num">02</span> Probability is not truth</div>
+						<h2 class="section-title">The decoder cannot add knowledge.</h2>
 						<div class="prose">
-							<p>Top-k keeps only the k most likely tokens. Top-p keeps the smallest set whose probabilities sum to p. Min-p uses a threshold relative to the top token. Repetition penalties discourage loops.</p>
-							<p>There is no single best setting. Code and facts often want low temperature; brainstorming wants more diversity. The right choice depends on the task, and every choice is a trade-off between coherence and surprise.</p>
+							<p>A high-probability token is not guaranteed to be correct. The model is a likelihood machine: it has learned which continuations are common in its training text, not which ones are true. A confident distribution can still put the wrong token on top.</p>
+							<p>Decoding changes how the model sounds, not what it knows. Greedy makes it focused and repetitive; sampling makes it varied; filters remove the tail. None of these choices adds a fact-checker or a memory the model did not have.</p>
+							<p>That is why a decoder setting is a policy decision. For a factual answer you want a tight distribution and a low temperature. For a poem you may want more freedom. The same model can behave like a careful clerk or a wild storyteller because the decoder is a separate layer of control.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Distribution</b><span>The model outputs probabilities; decoding picks one token.</span></div>
 							<div class="keypoint"><b>Temperature</b><span>Low is focused, high is random.</span></div>
-							<div class="keypoint"><b>Top-p</b><span>Keep the smallest set of tokens that covers p probability.</span></div>
-							<div class="keypoint"><b>Trade-off</b><span>Coherence and creativity pull in different directions.</span></div>
+							<div class="keypoint"><b>Truth</b><span>Probability is not a guarantee of correctness.</span></div>
+							<div class="keypoint"><b>Policy</b><span>The decoder shapes style and risk, not knowledge.</span></div>
 						</div>
 					</section>
 
-					<div class="demo demo--paper" data-demo="sampling">
+					<section class="section-block" id="filters">
+						<div class="section-kicker"><span class="sk-num">03</span> The candidate filters</div>
+						<h2 class="section-title">Cut the tail before you draw.</h2>
+						<div class="prose">
+							<p><strong>Top-k</strong> keeps the k most likely tokens and renormalises their probabilities. It is simple and fast: k = 1 is greedy, k = 50 is a common chat setting, k = 1000 is closer to open-ended sampling. The weakness is that k is fixed. Sometimes only three tokens are plausible; sometimes a hundred are. A fixed k cannot adapt to how sharp or flat the distribution is.</p>
+							<p><strong>Top-p</strong>, or nucleus sampling, keeps the smallest set of tokens whose cumulative probability reaches p. If one token already dominates, the set is tiny; if the distribution is flat, the set is large. That is the point: the candidate pool expands when the model is uncertain and contracts when it is confident. Typical values are p = 0.9 or 0.95; p = 0.5 is very focused.</p>
+							<p><strong>Min-p</strong> is newer and scales with confidence. It keeps every token whose probability is at least s times the probability of the top token. With s = 0.1, any token within a factor of ten of the leader survives; with s = 1.0 only the leader survives. The method is available in several inference stacks and often behaves well at higher temperatures, where top-p alone can keep too much of the tail.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Top-k</b><span>Keep a fixed number of candidates, then renormalise.</span></div>
+							<div class="keypoint"><b>Top-p</b><span>Keep the smallest set that reaches p probability mass.</span></div>
+							<div class="keypoint"><b>Min-p</b><span>Keep candidates within a factor of the top token.</span></div>
+							<div class="keypoint"><b>Renormalise</b><span>After cutting, the survivors must sum to one again.</span></div>
+						</div>
+					</section>
+
+					<section class="section-block" id="practice">
+						<div class="section-kicker"><span class="sk-num">04</span> Practice</div>
+						<h2 class="section-title">Greedy is not the truth.</h2>
+						<div class="prose">
+							<p>Greedy decoding always takes the most likely token. It is deterministic, fast, and often a good choice for factual retrieval or code, where creativity is unwanted. Its failure modes are repetition loops and mode collapse: the model can get stuck saying the same thing because the most likely continuation is always the same continuation.</p>
+							<p>Pure sampling from the full distribution is the opposite failure: it can wander into incoherence because the long tail is still reachable. The filters exist to keep the tail out while preserving some choice. Temperature and the filter are not independent: a high temperature flattens the distribution, then the filter decides how much of that flatness survives.</p>
+							<p>There is no universal setting. Code and facts often want a low temperature and a tight filter; brainstorming wants more diversity; dialogue often sits in between. Repetition penalties discourage loops but can also punish legitimate repetition. The right configuration is empirical: change one knob, test it, and keep what works for the task.</p>
+						</div>
+						<div class="aha">
+							<span class="aha-kicker">The practical rule</span>
+							<p class="aha-big">The model supplies the distribution; the decoder supplies the policy.</p>
+							<p class="aha-sub">Temperature, top-k, top-p, and min-p are different answers to the same question: how much surprise should the next token be allowed to carry?</p>
+						</div>
+					</section>
+
+					<div class="demo" data-demo="decoding" id="decoding-studio">
 						<div class="demo-head">
 							<div>
-								<p class="demo-title">Decoding the next token <span>· demo</span></p>
-								<p class="demo-sub">The model gives a probability for every token. Temperature and top-p decide which candidates survive and how the choice is made.</p>
+								<p class="demo-title">Decoding Studio <span>· demo</span></p>
+								<p class="demo-sub">The model has produced logits. Temperature reshapes the distribution; the filter decides which candidates survive. Faint bar: before the filter. Bright bar: after renormalisation.</p>
 							</div>
 							<span class="demo-badge">live</span>
 						</div>
 						<div class="demo-body">
-							<div class="dist-bars" data-sampling-bars></div>
-							<div class="demo-controls">
-								<label>Temperature <input type="range" data-sampling-temp min="0.1" max="2" step="0.05" value="0.8"><output data-sampling-temp-out>0.80</output></label>
-								<label>Top-p <input type="range" data-sampling-topp min="0.1" max="1" step="0.05" value="1"><output data-sampling-topp-out>1.00</output></label>
+							<div class="prediction">
+								<div class="prediction-sentence" data-decoding-sentence>Once upon a time there was a <span class="pred">___</span></div>
+								<div class="chip-row" style="margin-top:10px" data-decoding-prompts>
+									<button class="chip is-on" type="button" data-decoding-prompt="story">story</button>
+									<button class="chip" type="button" data-decoding-prompt="fact">fact</button>
+									<button class="chip" type="button" data-decoding-prompt="code">code</button>
+								</div>
+								<div class="bars" data-decoding-bars></div>
+								<div class="ds-history" data-decoding-history></div>
 							</div>
-							<div class="demo-readout">
-								<div><b>Likely choice</b><span data-sampling-choice>Paris</span></div>
-								<div><b>Surviving tokens</b><span data-sampling-count>5 / 5</span></div>
-								<div><b>Entropy</b><span data-sampling-entropy>—</span></div>
+							<div class="demo-controls">
+								<span style="font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(238,247,244,.62)">Filter</span>
+								<div class="chip-row" data-decoding-filter>
+									<button class="chip is-on" type="button" data-decoding-filter-value="topp">Top-p</button>
+									<button class="chip" type="button" data-decoding-filter-value="topk">Top-k</button>
+									<button class="chip" type="button" data-decoding-filter-value="none">None</button>
+								</div>
+							</div>
+							<div class="demo-controls">
+								<button class="btn-demo btn-demo--green" type="button" data-decoding-sample>Sample a token →</button>
+								<button class="btn-demo" type="button" data-decoding-reset>Reset</button>
+								<label>Temperature <input type="range" data-decoding-temp min="0.1" max="2" step="0.05" value="0.9"><output data-decoding-temp-out>0.90</output></label>
+							</div>
+							<div class="demo-controls" data-decoding-topp-wrap>
+								<label>Top-p <input type="range" data-decoding-topp min="0.1" max="1" step="0.05" value="0.9"><output data-decoding-topp-out>0.90</output></label>
+							</div>
+							<div class="demo-controls" data-decoding-topk-wrap hidden>
+								<label>Top-k <input type="range" data-decoding-topk min="1" max="8" step="1" value="4"><output data-decoding-topk-out>4</output></label>
+							</div>
+							<div class="demo-readout demo-readout--4">
+								<div><b>Filter</b><span data-decoding-filter-name>top-p 0.90</span></div>
+								<div><b>Survivors</b><span data-decoding-count>—</span></div>
+								<div><b>Entropy</b><span data-decoding-entropy>—</span></div>
+								<div><b>Last draw</b><span data-decoding-draw>—</span></div>
 							</div>
 						</div>
-						<div class="demo-insight"><b>Takeaway</b><span>Decoding is a separate layer of choice. The model supplies a distribution; the decoder decides how adventurous to be.</span></div>
+						<div class="demo-insight"><b>Takeaway</b><span>The model supplies one distribution. Decoding is the rule that turns it into a sequence: greedy, top-k, top-p, min-p, and temperature all answer the same question differently.</span></div>
+						<div class="demo-foot">Toy logits, not a real model. The mechanism is real: a distribution, a filter, a renormalised candidate set, then a draw. Try top-p 0.9 on the story prompt, then switch to top-k 2 and watch the candidate set collapse.</div>
 					</div>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">05</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -80,7 +139,6 @@
 						</div>
 						<div class="prose">
 							<p>This is the ten-minute version. The <a href="../samplinglab.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
-							<p><a class="btn btn--green" href="../samplinglab.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
 						</div>
 					</section>
 				</article>

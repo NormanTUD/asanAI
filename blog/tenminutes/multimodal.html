@@ -47,6 +47,17 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="extra">
+						<div class="section-kicker"><span class="sk-num">03</span> What alignment buys you</div>
+						<h2 class="section-title">Zero-shot and cross-attention.</h2>
+						<div class="prose">
+							<p>Once an image and a caption share a space, you can compare them. CLIP uses this for zero-shot classification: embed the image, embed a set of candidate captions, and choose the closest pair. No task-specific classifier is needed for every new label set.</p>
+							<p>A multimodal LLM goes further. Visual tokens are projected into the language model's space, and cross-attention lets the text query the image. The model can answer questions, describe a scene, or use the image as context for a longer conversation.</p>
+							<p>The alignment is statistical, not perfect. The model can miss small details, misread text in an image, or inherit biases from its training data. Multimodality adds a new input, not a guarantee of understanding.</p>
+						</div>
+						<p class="step-note"><b>What is simplified:</b> the full lesson covers CLIP, LLaVA, GPT-4V, and evaluation.</p>
+					</section>
+
 					<div class="demo demo--paper timeline-shell" data-demo="timeline">
 						<div class="demo-head">
 							<div>
@@ -72,8 +83,43 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Alignment is statistical: matched pairs are pulled together, mismatched pairs pushed apart.</span></div>
 					</div>
 
-					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+										<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">Multimodal LLMs: How a Text Model Learns to See</h2>
+						<div class="prose">
+							<p>A pretrained vision encoder (e.g., CLIP-ViT) produces a sequence of visual tokens. A small <strong>projection MLP</strong> maps each visual token from the vision space into the LLM's text-token embedding space:</p>
+							<p>The projected visual tokens are concatenated with the text-token sequence and fed to the LLM as if they were ordinary words. <strong>Only the projection layer is trained initially</strong>; the LLM is frozen. The visual tokens literally become “foreign-language words” the LLM learns to read.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">How a Multimodal LLM Answers a Question</h2>
+						<div class="prose">
+							<p>The LLM treats the visual tokens as if they were a foreign language it has been taught to read. No new attention mechanism is required, the same Q/K/V machinery already described in the Attention chapter handles the cross-modal mixing, because visual and text tokens occupy the same vector space.</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: <a href="../multimodal.php">read it here</a>.</p>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">Visual Question Answering Benchmarks</h2>
+						<div class="prose">
+							<p>The leaderboard has shifted dramatically: in 2022, GPT-3.5 with no vision got ~0% on MMMU. By 2025, top models (GPT-4o, Claude 3.5, Gemini 1.5 Pro) exceed 70%, and on VQA v2 they exceed 85%.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">Summary</h2>
+						<div class="prose">
+							<p>The hard parts are data (curating trillions of matched image-text-audio samples, see the Training Data chapter), compute (vision towers + LLMs + alignment data = massive training runs), and evaluation (the benchmarks above are still being developed). But the architectural recipe is now standard and reproducible, which is why every frontier lab ships multimodal-by-default in 2025.</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: <a href="../multimodal.php">read it here</a>.</p>
+					</section>
+
+<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -82,7 +128,6 @@
 						</div>
 						<div class="prose">
 							<p>This is the ten-minute version. The <a href="../multimodal.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
-							<p><a class="btn btn--green" href="../multimodal.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
 						</div>
 					</section>
 				</article>

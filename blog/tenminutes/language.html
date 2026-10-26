@@ -48,6 +48,17 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="extra">
+						<div class="section-kicker"><span class="sk-num">03</span> What the model inherits</div>
+						<h2 class="section-title">From text to vectors.</h2>
+						<div class="prose">
+							<p>Before a model can learn anything, text has to become a sequence of tokens. A tokenizer cuts the string into pieces from a fixed vocabulary: whole words, word fragments, punctuation, and bytes. The token ID is the only thing the model sees; the original characters are gone.</p>
+							<p>Each token ID is looked up in an embedding table and becomes a vector. The distributional idea is old: words that appear in similar contexts tend to have similar meanings, so their vectors end up close together. A direction in that space can carry a relationship, such as the direction from 'man' to 'woman'.</p>
+							<p>That is the inheritance. Writing made text durable, Shannon made it measurable, and embeddings made it geometric. The model does not need a theory of language to learn the geometry; it needs enough text for the geometry to become useful.</p>
+						</div>
+						<p class="step-note"><b>What is simplified:</b> the history is compressed. The full lesson follows the biological, linguistic, and mathematical threads with sources.</p>
+					</section>
+
 					<div class="demo demo--paper timeline-shell" data-demo="timeline">
 						<div class="demo-head">
 							<div>
@@ -74,8 +85,45 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Speech became writing, writing became data, and data became geometry.</span></div>
 					</div>
 
-					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+										<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">The History of Writing</h2>
+						<div class="prose">
+							<p>#### Cave Paintings and Symbolic Art The earliest forms of “proto-writing” began with symbolic art. These were the first instances of <strong>exogrammatic storage</strong>, information kept outside the human brain.</p>
+							<p>What makes these hand stencils significant in the trajectory toward artificial intelligence is not their aesthetic beauty but their cognitive implication: each handprint is an act of <strong>self-referential symbolic displacement</strong>. The artist uses their own body as a template to produce a persistent, external representation of <em>themselves</em>, a mark that says “I was here” long after the hand is withdrawn. This is the same cognitive operation that underlies all subsequent abstraction: the realization that a <em>sign</em> can stand for a <em>thing</em>, and that the sign persists independently of the thing it represents. From hand stencils to tally marks, from tally marks to numerals, from numerals to variables, from variables to embeddings, the trajectory is unbroken. The bone pipe that sprayed ochre onto a Patagonian cliff face 9,000 years ago performed, in miniature, the same operation as a modern tokenizer: transforming a continuous, embodied reality into a discrete, storable, transmissible representation.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">After the Flood: Information Is Not Meaning</h2>
+						<div class="prose">
+							<p>That distinction is the cleanest way to state what a language model does and does not do. An LLM is a machine for estimating the probability of the next token from a vast corpus; it is exquisitely sensitive to the <em>statistical</em> structure of the flood, and it has no independent, non-statistical purchase on whether a sentence is true, important, or worth saying. Shannon deliberately excluded meaning from his theory, and the exclusion is still built into the objective: cross-entropy rewards a good guess about what comes next, not a good answer about what is the case.</p>
+							<p>The history in this chapter therefore ends with a question rather than a triumph. Writing externalized memory; printing and the telegraph externalized and accelerated its transmission; Shannon made its quantity measurable; the computer made it machine-processable; and the LLM has now made a statistical model of the whole archive. What remains outside the model is the part the archive was always <em>for</em>: the act of a mind that means something by it. Whether that act can itself be captured by information, or whether it is the one thing the flood cannot carry, is the question the rest of this course takes up.</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: <a href="../language.php">read it here</a>.</p>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">Language as a Window onto the World</h2>
+						<div class="prose">
+							<p>If language is a system of abstract symbols, what does it symbolize? A tempting answer is that every tongue is simply a different set of labels for one shared inventory of things, a single universal list of concepts that each culture happens to pronounce differently. The evidence points somewhere stranger. <strong>Language is a window onto the world</strong>, and the window is cut differently in each culture. The world as a whole offers an almost inexhaustible number of aspects one <em>could</em> attend to; a language is a historically grown selection, a way of carving that continuum into named pieces, and its speakers learn to look through that particular frame.</p>
+							<p>When one language names something another does not, the difference is not merely a missing label. A word is a handle: it lets speakers pick out, hold steady, and pass around a particular aspect of experience. A language that has a word for a distinction hands its speakers a tool the other language’s speakers lack, just as a language can fuse into one word what another must laboriously spell out. To learn another language is not to relabel a single world but to acquire a second set of handles on it, and so to see a few more of the aspects it was always possible to see.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">The Cognitive Ignition: From Indexical Signaling to Symbolic Displacement</h2>
+						<div class="prose">
+							<p>The most profound leap in human evolution was the transition from <strong>indexical signaling</strong> to <strong>symbolic displacement</strong>. Early primate communication was largely tied to immediate stimuli, a specific call for a specific predator, right here, right now. True language emerged when our ancestors began using sounds to refer to things <em>absent</em> in time or space. This required a massive expansion in working memory and the cognitive ability to maintain “mental representations.”</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: <a href="../language.php">read it here</a>.</p>
+					</section>
+
+<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -84,7 +132,6 @@
 						</div>
 						<div class="prose">
 							<p>This is the ten-minute version. The <a href="../language.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
-							<p><a class="btn btn--green" href="../language.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
 						</div>
 					</section>
 				</article>

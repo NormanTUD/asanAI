@@ -47,6 +47,17 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="extra">
+						<div class="section-kicker"><span class="sk-num">03</span> The parts the happy path hides</div>
+						<h2 class="section-title">Chunking, hybrid search, reranking.</h2>
+						<div class="prose">
+							<p>Chunking is a design decision. Too small and the passage lacks context; too large and the retriever has to match a lot of irrelevant text. Overlap helps avoid cutting a fact in half. Contextual retrieval adds a short summary of the surrounding document to each chunk.</p>
+							<p>Hybrid search combines keyword matching with dense vectors. Keyword search is good at names and exact terms; dense retrieval is good at paraphrase. A reranker can then score the top candidates with a more expensive model before the answer is generated.</p>
+							<p>The failure modes are real: the right passage may be missing, the wrong passage may be ranked first, or the model may ignore the context. Evaluation and citations are what make RAG useful rather than decorative.</p>
+						</div>
+						<p class="step-note"><b>What is simplified:</b> the demo uses keyword overlap. The full lesson has the real pipeline.</p>
+					</section>
+
 					<div class="demo demo--paper" data-demo="retrieval">
 						<div class="demo-head">
 							<div>
@@ -75,8 +86,50 @@
 						<div class="demo-foot">A keyword-overlap toy, not a real embedding search. The original lesson shows the full pipeline.</div>
 					</div>
 
-					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+										<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">Making RAG work</h2>
+						<div class="prose">
+							<p>RAG mitigates this by shrinking the context to a handful of chunks, but it does not abolish the effect: a relevant chunk placed in the middle of even a short retrieved set can be underused, so ordering matters.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">Retrieval, in Depth</h2>
+						<div class="prose">
+							<p>The happy path — embed the corpus, retrieve the nearest chunks, hand them to the model — is what the sections above walk (see also Semantic search). This deeper half is what happens in practice, and it is mostly about the parts the happy path hides — <strong>how you cut the corpus into chunks</strong> (the single highest-leverage, least-discussed knob), <strong>how you combine keyword and semantic search</strong>, <strong>how you rerank</strong> with a second, more expensive model, and — the half the demos never show — <strong>why retrieval-augmented generation so often underperforms</strong> and how to find out whether <em>your</em> failure is in the retrieval or the generation.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">RAG and Long Context Windows</h2>
+						<div class="prose">
+							<p>ICL relies on whatever the user manually puts in the prompt. RAG <strong>automates the selection</strong> using vector search. The LLM itself doesn't know the difference, it just sees tokens in its context window either way. The magic of RAG is in the retrieval step <em>before</em> the LLM runs.</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: <a href="../rag.php">read it here</a>.</p>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">The RAG Pipeline, Step by Step</h2>
+						<div class="prose">
+							<p><strong>Step 1, Chunk the documents.</strong> Split each source (PDF, webpage, database row) into small, overlapping passages, typically 200–500 tokens. Overlap ensures no information falls between the cracks.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">RAG vs. In-Context Learning (ICL)</h2>
+						<div class="prose">
+							<p><strong>In-Context Learning</strong> is when you put examples or instructions directly in the prompt and the LLM “learns” the task on the fly, no weight updates, just pattern-matching over the provided tokens.</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: <a href="../rag.php">read it here</a>.</p>
+					</section>
+
+<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -85,7 +138,6 @@
 						</div>
 						<div class="prose">
 							<p>This is the ten-minute version. The <a href="../rag.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
-							<p><a class="btn btn--green" href="../rag.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
 						</div>
 					</section>
 				</article>

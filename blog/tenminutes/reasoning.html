@@ -47,6 +47,17 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="extra">
+						<div class="section-kicker"><span class="sk-num">03</span> When thinking longer helps</div>
+						<h2 class="section-title">Verification is the bottleneck.</h2>
+						<div class="prose">
+							<p>Chain-of-thought gives the model a scratchpad. Self-consistency samples several paths and compares answers. Tree of thoughts explores branches. All of these methods spend more computation at inference time in exchange for a better chance of finding a correct path.</p>
+							<p>The o1/R1 generation trains the model to use that computation. Reinforcement learning on problems with verifiable answers teaches it when to backtrack, when to check, and when to stop. Process reward models can score the intermediate steps, not only the final answer.</p>
+							<p>More thinking is not always better. Long chains are expensive, and a model can reason confidently in the wrong direction. The useful question is whether the extra computation buys a real improvement on the task, and whether the steps can be checked.</p>
+						</div>
+						<p class="step-note"><b>What is simplified:</b> the full lesson has the methods and results.</p>
+					</section>
+
 					<div class="demo demo--paper" data-demo="cot">
 						<div class="demo-head">
 							<div>
@@ -72,8 +83,33 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Writing the steps gives the model a scratchpad. More computation can help — but only if the steps are checked.</span></div>
 					</div>
 
-					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+										<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">Process Reward Models (PRMs)</h2>
+						<div class="prose">
+							<p>At inference, beam search guided by the PRM dramatically improves accuracy on math (used in o1, Qwen-QwQ, and many open-source replicas). The cost is labelling data; synthetic PRMs (auto-labelling using a stronger model) are now competitive.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">Inference-Time Scaling Laws</h2>
+						<div class="prose">
+							<p>Compare this with training: achieving 85% on AIME by training would require either a much larger base model or domain-specific data. <strong>Inference-time scaling is often cheaper and more flexible</strong>.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">Summary</h2>
+						<div class="prose">
+							<p>The era of “scale by training” is now supplemented by <strong>scale by thinking</strong>. The frontier in 2025 is figuring out how to spend inference compute <em>adaptively</em>, think hard when it matters, save tokens when it doesn't.</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: <a href="../reasoning.php">read it here</a>.</p>
+					</section>
+
+<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -82,7 +118,6 @@
 						</div>
 						<div class="prose">
 							<p>This is the ten-minute version. The <a href="../reasoning.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
-							<p><a class="btn btn--green" href="../reasoning.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
 						</div>
 					</section>
 				</article>

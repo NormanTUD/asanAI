@@ -47,6 +47,17 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="extra">
+						<div class="section-kicker"><span class="sk-num">03</span> The contamination crisis</div>
+						<h2 class="section-title">When the test is in the training set.</h2>
+						<div class="prose">
+							<p>Benchmark contamination happens when test questions appear in the training data. The model may then memorize the answer instead of learning the skill. Deduplication helps, but it is hard to prove that a test set never leaked, especially when the test set is public.</p>
+							<p>Leaderboard pressure makes the problem worse. If a benchmark becomes a target, models and labs optimise for it. Goodhart's law applies: the measure stops being a good measure once it becomes the goal. LLM judges add another layer of bias.</p>
+							<p>The most useful evaluation is the one built for your task: a rubric, a set of examples, a measure of agreement, and a check that the effect you see is larger than the noise. A general benchmark is a starting point, not a verdict.</p>
+						</div>
+						<p class="step-note"><b>What is simplified:</b> the demo is illustrative. The full lesson covers specific benchmarks and statistics.</p>
+					</section>
+
 					<div class="demo demo--paper" data-demo="contamination">
 						<div class="demo-head">
 							<div>
@@ -78,8 +89,44 @@
 						<div class="demo-insight"><b>Takeaway</b><span>A benchmark is a proxy. If the test data leaked into training, a high score may measure memory rather than capability.</span></div>
 					</div>
 
-					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+										<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">From benchmark to your-own eval</h2>
+						<div class="prose">
+							<p>A public benchmark answers a <em>fixed</em> question ("can the model do general knowledge?"). Your product has its own question — "does it extract the invoice fields correctly?", "does it refuse the out-of-scope request?", "does it sound like our voice?" — and no leaderboard answers it for you. Building your own eval is the move from the fixed question to the specific one, and it has three parts: a <strong>set of inputs</strong> that represent the real cases you care about, a <strong>way to score</strong> each answer, and a <strong>number</strong> that lets you compare two versions.</p>
+							<p>The trap is that the scoring part is where it goes wrong. A score is only as good as the <em>standard</em> behind it, and a standard that lives only in your head ("this looks right") is not a standard — it is a mood, and it will drift between you, your teammate, and your judge. So the first real task is to write the standard down.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">Rubric design: a specification, not a vibe</h2>
+						<div class="prose">
+							<p>A <strong>rubric</strong> turns "good answer" into a scored, written standard: a small set of <strong>criteria</strong> (what matters), a <strong>scale</strong> (what a 1, 3, 5 each means), and <strong>anchors</strong> (a concrete example of what each score looks like). The anchors are the load-bearing part — they are the difference between a rubric that two people can apply identically and one they cannot.</p>
+							<p>A useful pattern is <em>dimensional</em> scoring rather than a single holistic score, because a single score hides <em>what</em> went wrong. For a "write a support reply" task, you might score separately:</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: <a href="../evaluation.php">read it here</a>.</p>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">Benchmark Contamination: The Crisis</h2>
+						<div class="prose">
+							<p>The dirty secret of LLM evaluation: <strong>most public benchmarks have been seen during pretraining</strong>. GPT-4's pretraining data cuts off in September 2021; many benchmarks were uploaded to GitHub, posted on Stack Overflow, or discussed on Reddit before then.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">Calibrating an LLM judge: trust it only where it agrees</h2>
+						<div class="prose">
+							<p>You will want to scale this past two humans — human scoring is slow and costs money. The obvious move is to use a strong LLM as the judge, and the first part of this chapter introduced it. The failure is that a judge <em>inherits its own biases</em> (it prefers its own style, longer answers, a particular phrasing), so an uncalibrated LLM judge can systematically prefer the wrong thing. <strong>Calibration</strong> is the fix, and it is the same IAA idea applied to the machine:</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: <a href="../evaluation.php">read it here</a>.</p>
+					</section>
+
+<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -88,7 +135,6 @@
 						</div>
 						<div class="prose">
 							<p>This is the ten-minute version. The <a href="../evaluation.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
-							<p><a class="btn btn--green" href="../evaluation.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
 						</div>
 					</section>
 				</article>

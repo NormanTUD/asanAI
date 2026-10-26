@@ -47,6 +47,17 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="extra">
+						<div class="section-kicker"><span class="sk-num">03</span> The hardware reality</div>
+						<h2 class="section-title">VRAM, unified memory, context.</h2>
+						<div class="prose">
+							<p>The weights are only part of the memory bill. A model also needs room for activations, the KV cache, and the runtime. The KV cache grows with the context length, so a long conversation can use much more memory than the model alone.</p>
+							<p>Consumer GPUs have limited VRAM. Apple Silicon uses unified memory, which lets the CPU and GPU share a large pool; that is why a laptop can run a 70B model in 4-bit. A server GPU has more compute but less memory per dollar than a large unified-memory machine.</p>
+							<p>Quantization trades quality for size and speed. A 4-bit model is much smaller than a 16-bit model, but it is not identical. The right choice depends on the task, the hardware, and whether privacy or control matters more than raw capability.</p>
+						</div>
+						<p class="step-note"><b>What is simplified:</b> the calculator is a rough estimate. The full lesson has the hardware tables and engine details.</p>
+					</section>
+
 					<div class="demo demo--paper" data-demo="vram">
 						<div class="demo-head">
 							<div>
@@ -95,8 +106,34 @@
 						<div class="demo-insight"><b>Takeaway</b><span>The estimate is a starting point; context and KV cache add more.</span></div>
 					</div>
 
-					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+										<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">Local vs Cloud: The Decision Matrix</h2>
+						<div class="prose">
+							<p>For most individuals and small businesses: <strong>hybrid</strong>. Use local for privacy-sensitive workloads and high-volume routine tasks. Use cloud for hard reasoning and frontier capabilities.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">GGUF: The Universal Format</h2>
+						<div class="prose">
+							<p>The K-quant schemes (Q2_K through Q5_K_M) use <strong>k-quantization</strong> with importance-aware mixed precision: most weights are quantized to the target bits, but sensitive layers get extra bits. <strong>IQ-quants</strong> (Importance-aware Quantization) push to 1–2 bits with surprisingly good quality.</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: <a href="../running_locally.php">read it here</a>.</p>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">The Hardware Reality</h2>
+						<div class="prose">
+							<p>The <strong>unified memory</strong> on Apple Silicon is the killer feature: you can use 64–128 GB for both model weights and OS, making local 70B inference practical on a laptop. A Mac Studio M3 Ultra with 192 GB runs a 405B model in Q2_K at usable speeds.</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: <a href="../running_locally.php">read it here</a>.</p>
+					</section>
+
+<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -105,7 +142,6 @@
 						</div>
 						<div class="prose">
 							<p>This is the ten-minute version. The <a href="../running_locally.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
-							<p><a class="btn btn--green" href="../running_locally.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
 						</div>
 					</section>
 				</article>

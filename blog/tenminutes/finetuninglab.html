@@ -47,6 +47,17 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="extra">
+						<div class="section-kicker"><span class="sk-num">03</span> The data and the cost</div>
+						<h2 class="section-title">Preferences are data.</h2>
+						<div class="prose">
+							<p>Instruction data teaches the format. A good instruction set is diverse, specific, and representative of the behaviours you want. Quality matters more than raw size: a small set of excellent examples can outperform a large set of noisy ones.</p>
+							<p>Preference data teaches judgment. Humans or a model compare pairs of answers, and the model learns to prefer the better one. RLHF uses a reward model; DPO-style methods learn directly from the pairs. The choice affects stability, cost, and the kind of behaviour you get.</p>
+							<p>Reasoning RL adds a third kind of data: problems with verifiable answers. The model learns to think longer and check its work. The post-training cost is small compared with pretraining, but it shapes most of what users experience. Alignment is not solved.</p>
+						</div>
+						<p class="step-note"><b>What is simplified:</b> the full lesson has the math for each stage.</p>
+					</section>
+
 					<div class="demo demo--paper timeline-shell" data-demo="timeline">
 						<div class="demo-head">
 							<div>
@@ -71,8 +82,51 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Each stage adds a different kind of behaviour: format, preferences, then reasoning.</span></div>
 					</div>
 
-					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+										<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">LoRA and Parameter-Efficient Fine-Tuning</h2>
+						<div class="prose">
+							<p>Full fine-tuning of a 70B model requires ~1 TB of GPU memory (params + grads + optimizer). <strong>Parameter-Efficient Fine-Tuning (PEFT)</strong> methods train only a tiny fraction of parameters:</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">Safety-Critical Post-Training</h2>
+						<div class="prose">
+							<p>A frontier model in 2025 typically has <strong>multiple post-training stages</strong> with different objectives: helpful SFT, harmless SFT, helpful DPO, harmless DPO, reasoning RL, and final safety refinement.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">Distillation: What Transfers, and What Doesn't</h2>
+						<div class="prose">
+							<p>The analytic extreme skips the student altogether. <strong>Rationale distillation</strong> extracts a teacher's reasoning; <strong>mechanistic interpretability</strong> tries to read the algorithm out of the weights directly — induction heads, the modular-addition circuit in a grokked transformer, sparse-autoencoder feature dictionaries. Where output distillation compresses <em>behaviour</em>, circuit-level work compresses <em>mechanism</em>, and its results feed back into evaluation, model editing, and safety. Distillation is also the centre of a persistent intellectual-property fight: most closed-model terms prohibit training competitors on their outputs, and the open web is now saturated with model-generated text, making the provenance of “human” data increasingly hard to establish.</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: <a href="../finetuninglab.php">read it here</a>.</p>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">Stage 0: Pretraining (recap)</h2>
+						<div class="prose">
+							<p>The base model is trained on the next-token-prediction objective (see the Intuition chapter) over ~10T tokens of web text. The result is a model that completes sentences in the style of its training data, but does not behave as an assistant.</p>
+							<p>Stage 1: <strong>Supervised Fine-Tuning (SFT)</strong> teaches it to follow instructions. Stage 2: <strong>Preference optimization</strong> aligns its outputs with human values. Stage 3: <strong>Reasoning RL</strong> (optional) teaches it to think longer on hard problems.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">Stage 2: Reward Modeling (for RLHF)</h2>
+						<div class="prose">
+							<p><strong>Reward hacking</strong> (see the Reinforcement Learning chapter) is the constant danger: a sufficiently good optimizer will find ways to maximize reward without improving quality. Defenses: KL penalty, ensemble of RMs, process supervision.</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: <a href="../finetuninglab.php">read it here</a>.</p>
+					</section>
+
+<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -81,7 +135,6 @@
 						</div>
 						<div class="prose">
 							<p>This is the ten-minute version. The <a href="../finetuninglab.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
-							<p><a class="btn btn--green" href="../finetuninglab.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
 						</div>
 					</section>
 				</article>

@@ -82,6 +82,185 @@
 		render();
 	}
 
+
+	/* ── decoding studio ───────────────────────────────────── */
+
+	function initDecoding(root) {
+		var bars = $("[data-decoding-bars]", root);
+		var sentence = $("[data-decoding-sentence]", root);
+		var promptChips = $$("[data-decoding-prompt]", root);
+		var filterChips = $$("[data-decoding-filter-value]", root);
+		var temp = $("[data-decoding-temp]", root);
+		var tempOut = $("[data-decoding-temp-out]", root);
+		var topp = $("[data-decoding-topp]", root);
+		var toppOut = $("[data-decoding-topp-out]", root);
+		var topk = $("[data-decoding-topk]", root);
+		var topkOut = $("[data-decoding-topk-out]", root);
+		var toppWrap = $("[data-decoding-topp-wrap]", root);
+		var topkWrap = $("[data-decoding-topk-wrap]", root);
+		var filterName = $("[data-decoding-filter-name]", root);
+		var countEl = $("[data-decoding-count]", root);
+		var entropyEl = $("[data-decoding-entropy]", root);
+		var drawEl = $("[data-decoding-draw]", root);
+		var historyEl = $("[data-decoding-history]", root);
+		var sampleBtn = $("[data-decoding-sample]", root);
+		var resetBtn = $("[data-decoding-reset]", root);
+		if (!bars) return;
+		var prompts = {
+			story: {
+				sentence: 'Once upon a time there was a <span class="pred">___</span>',
+				tokens: [
+					{ t: "dragon", z: 2.0 },
+					{ t: "castle", z: 1.8 },
+					{ t: "forest", z: 1.6 },
+					{ t: "princess", z: 1.4 },
+					{ t: "knight", z: 1.0 },
+					{ t: "river", z: 0.7 },
+					{ t: "mountain", z: 0.4 }
+				]
+			},
+			fact: {
+				sentence: 'The capital of France is <span class="pred">___</span>',
+				tokens: [
+					{ t: "Paris", z: 2.4 },
+					{ t: "Lyon", z: 1.6 },
+					{ t: "Marseille", z: 1.3 },
+					{ t: "Berlin", z: 1.0 },
+					{ t: "Frog", z: 0.2 }
+				]
+			},
+			code: {
+				sentence: 'def add(a, b): return <span class="pred">___</span>',
+				tokens: [
+					{ t: "a + b", z: 2.2 },
+					{ t: "a", z: 1.9 },
+					{ t: "b", z: 1.6 },
+					{ t: "sum", z: 1.2 },
+					{ t: "None", z: 0.8 }
+				]
+			}
+		};
+		var currentPrompt = "story";
+		var currentFilter = "topp";
+		var kept = [];
+		var filtered = [];
+		var history = [];
+		function softmax(tokens, T) {
+			var exps = tokens.map(function (x) { return Math.exp(x.z / T); });
+			var sum = exps.reduce(function (a, b) { return a + b; }, 0);
+			return exps.map(function (e) { return e / sum; });
+		}
+		function compute() {
+			var T = clamp(parseFloat(temp && temp.value) || 0.9, 0.05, 3);
+			var p = clamp(parseFloat(topp && topp.value) || 0.9, 0.05, 1);
+			var k = parseInt(topk && topk.value, 10) || 4;
+			if (tempOut) tempOut.textContent = T.toFixed(2);
+			if (toppOut) toppOut.textContent = p.toFixed(2);
+			if (topkOut) topkOut.textContent = k;
+			var tokens = prompts[currentPrompt].tokens;
+			var probs = softmax(tokens, T);
+			var order = probs.map(function (_, i) { return i; }).sort(function (a, b) { return probs[b] - probs[a]; });
+			var keep = {};
+			if (currentFilter === "none") {
+				order.forEach(function (i) { keep[i] = true; });
+			} else if (currentFilter === "topk") {
+				order.slice(0, k).forEach(function (i) { keep[i] = true; });
+			} else {
+				var cum = 0;
+				order.forEach(function (i) {
+					if (cum < p) { keep[i] = true; cum += probs[i]; }
+				});
+			}
+			var keptIdx = order.filter(function (i) { return keep[i]; });
+			var mass = keptIdx.reduce(function (a, i) { return a + probs[i]; }, 0) || 1;
+			filtered = probs.map(function (v, i) { return keep[i] ? v / mass : 0; });
+			kept = keptIdx.map(function (i) { return { i: i, p: filtered[i] }; });
+			var ent = -keptIdx.reduce(function (a, i) {
+				var q = filtered[i];
+				return a + (q > 0 ? q * Math.log(q) / Math.LN2 : 0);
+			}, 0);
+			if (countEl) countEl.textContent = kept.length + " / " + tokens.length;
+			if (entropyEl) entropyEl.textContent = ent.toFixed(2) + " bits";
+			if (filterName) {
+				var label = currentFilter === "none" ? "no filter" : (currentFilter === "topk" ? "top-k " + k : "top-p " + p.toFixed(2));
+				filterName.textContent = label;
+			}
+			renderBars(tokens, probs);
+		}
+		function renderBars(tokens, probs) {
+			var top = kept.length ? kept[0].i : -1;
+			bars.innerHTML = tokens.map(function (tok, i) {
+				var cut = filtered[i] === 0;
+				return '<button class="bar-row' + (cut ? " is-cut" : "") + (i === top ? " is-top" : "") + '" type="button" data-decoding-i="' + i + '">' +
+					'<span class="bar-name">' + escapeHtml(tok.t) + '</span>' +
+					'<span class="bar-track"><span class="bar-ghost" style="width:' + (probs[i] * 100).toFixed(2) + '%"></span><span class="bar-fill" style="width:' + (filtered[i] * 100).toFixed(2) + '%"></span></span>' +
+					'<span class="bar-pct">' + Math.round(filtered[i] * 100) + '%</span></button>';
+			}).join("");
+			$$("[data-decoding-i]", bars).forEach(function (btn) {
+				btn.addEventListener("click", function () {
+					var i = parseInt(btn.getAttribute("data-decoding-i"), 10);
+					if (!kept.length || filtered[i] === 0) return;
+					record(i);
+				});
+			});
+		}
+		function record(i) {
+			var token = prompts[currentPrompt].tokens[i].t;
+			if (drawEl) drawEl.textContent = token;
+			history.push(token);
+			if (history.length > 12) history.shift();
+			if (historyEl) historyEl.innerHTML = history.map(function (t) { return "<span>" + escapeHtml(t) + "</span>"; }).join("");
+			var btn = $('[data-decoding-i="' + i + '"]', bars);
+			if (btn) {
+				btn.classList.add("is-pick");
+				setTimeout(function () { btn.classList.remove("is-pick"); }, 800);
+			}
+		}
+		function sample() {
+			if (!kept.length) return;
+			var r = Math.random(), acc = 0, pick = kept[0];
+			for (var i = 0; i < kept.length; i++) {
+				acc += kept[i].p;
+				if (r <= acc) { pick = kept[i]; break; }
+			}
+			record(pick.i);
+		}
+		function setFilter(value) {
+			currentFilter = value;
+			filterChips.forEach(function (c) { c.classList.toggle("is-on", c.getAttribute("data-decoding-filter-value") === value); });
+			if (toppWrap) toppWrap.hidden = value !== "topp";
+			if (topkWrap) topkWrap.hidden = value !== "topk";
+			compute();
+		}
+		promptChips.forEach(function (chip) {
+			chip.addEventListener("click", function () {
+				promptChips.forEach(function (c) { c.classList.remove("is-on"); });
+				chip.classList.add("is-on");
+				currentPrompt = chip.getAttribute("data-decoding-prompt");
+				if (sentence) sentence.innerHTML = prompts[currentPrompt].sentence;
+				history = [];
+				if (historyEl) historyEl.innerHTML = "";
+				if (drawEl) drawEl.textContent = "—";
+				compute();
+			});
+		});
+		filterChips.forEach(function (chip) {
+			chip.addEventListener("click", function () { setFilter(chip.getAttribute("data-decoding-filter-value")); });
+		});
+		if (temp) temp.addEventListener("input", compute);
+		if (topp) topp.addEventListener("input", compute);
+		if (topk) topk.addEventListener("input", compute);
+		if (sampleBtn) sampleBtn.addEventListener("click", sample);
+		if (resetBtn) resetBtn.addEventListener("click", function () {
+			history = [];
+			if (historyEl) historyEl.innerHTML = "";
+			if (drawEl) drawEl.textContent = "—";
+			compute();
+		});
+		if (sentence) sentence.innerHTML = prompts[currentPrompt].sentence;
+		setFilter(currentFilter);
+	}
+
 	/* ── line fit ───────────────────────────────────────────── */
 
 	function initLineFit(root) {
@@ -93,6 +272,7 @@
 		var loss = $("[data-linefit-loss]", root);
 		var best = $("[data-linefit-best-val]", root);
 		var bestBtn = $("[data-linefit-best]", root);
+		var stepBtn = $("[data-linefit-step]", root);
 		if (!canvas) return;
 		var noise = [0.04, -0.03, 0.02, -0.05, 0.01, 0.06, -0.02, 0.03, -0.04, 0.05, 0.0, -0.01, 0.04, -0.02, 0.02, -0.03, 0.05, -0.04, 0.01, 0.03];
 		var pts = noise.map(function (n, i) {
@@ -151,6 +331,12 @@
 		if (bestBtn) bestBtn.addEventListener("click", function () {
 			if (w) w.value = target.a.toFixed(2);
 			if (b) b.value = target.b.toFixed(2);
+			redraw();
+		});
+		if (stepBtn) stepBtn.addEventListener("click", function () {
+			var ca = val(w, 0.4), cb = val(b, 0.2);
+			if (w) w.value = lerp(ca, target.a, 0.25).toFixed(2);
+			if (b) b.value = lerp(cb, target.b, 0.25).toFixed(2);
 			redraw();
 		});
 		redraw();
@@ -846,6 +1032,7 @@
 		$$("[data-demo]").forEach(function (root) {
 			var type = root.getAttribute("data-demo");
 			if (type === "sampling") initSampling(root);
+			else if (type === "decoding") initDecoding(root);
 			else if (type === "linefit") initLineFit(root);
 			else if (type === "dream") initDream(root);
 			else if (type === "polyfit") initPolyFit(root);

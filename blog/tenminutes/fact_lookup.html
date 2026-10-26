@@ -47,6 +47,17 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="extra">
+						<div class="section-kicker"><span class="sk-num">03</span> How we know</div>
+						<h2 class="section-title">Circuits, directions, and limits.</h2>
+						<div class="prose">
+							<p>Mechanistic interpretability looks for circuits: small sets of attention heads and MLP neurons that implement a behaviour. Induction heads, for example, learn to complete a pattern of the form A B ... A -> B. Finding a circuit is evidence that a behaviour has a specific internal mechanism.</p>
+							<p>The linear representation hypothesis says that many features are represented as directions in the residual stream. If that is right, you can read a feature by projecting onto a direction, and edit a fact by changing the weights that write it. ROME is one method for doing that.</p>
+							<p>The picture is still partial. Features can be superposed, neurons can be polysemantic, and editing one fact can have side effects. The honest claim is not that we understand the model completely; it is that we have partial maps with real evidence.</p>
+						</div>
+						<p class="step-note"><b>What is simplified:</b> the full lesson has the equations and the interpretability evidence.</p>
+					</section>
+
 					<div class="demo demo--paper timeline-shell" data-demo="timeline">
 						<div class="demo-head">
 							<div>
@@ -72,8 +83,52 @@
 						<div class="demo-insight"><b>Takeaway</b><span>A fact is computed, not looked up.</span></div>
 					</div>
 
-					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+										<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">Facts as directions: the linear representation hypothesis</h2>
+						<div class="prose">
+							<p>This is the linear-representation + soft-key-value-memory picture in one breath. It is the picture that <em>most</em> current interpretability researchers are betting on, and it has the strongest convergence between theory (Park et al.'s causal inner product) and experiment (ROME, function vectors, knowledge neurons).</p>
+							<p>This same "direction with a fixed meaning" scales from <em>facts</em> to whole <em>behaviors</em>. The country→capital relation above is one kind of axis; the Mechanistic Interpretability lesson catalogs others — the truth, refusal, and honesty directions, sentiment and tone axes, and even where-and-when (spatial and temporal) directions — each found and verified the same way.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">Watching the answer form: the logit lens</h2>
+						<div class="prose">
+							<p>All of the above is the result of careful <em>post-hoc</em> analysis: you run the model, find what mattered, edit it, see what changes. There is also a much simpler trick that lets you <em>watch the answer form in real time</em> as the forward pass progresses: the <strong>logit lens</strong>.</p>
+							<p>In a well-trained Transformer, the intermediate residual streams are already <em>approximately</em> in the unembedding basis (this is a consequence of the residual structure, weight decay, and the fact that the model is being trained end-to-end to produce a useful final residual stream). So the logits you get from intermediate layers are a meaningful, if imperfect, readout of "what would the model predict if it had to stop here?".</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: <a href="../fact_lookup.php">read it here</a>.</p>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">What the model actually computes, top to bottom</h2>
+						<div class="prose">
+							<p>The forward pass that turns "The capital of France is " into a distribution over next tokens is short. In a modern decoder-only Transformer like those behind GPT, Claude, and LLaMA, it looks like this:</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">The MLP as a soft key-value memory</h2>
+						<div class="prose">
+							<p>If attention is the routing layer — the part that figures out <em>which</em> information matters — then the <strong>MLP layers</strong> are where the <em>content</em> of the model's knowledge actually lives. This is the most important conceptual claim in this chapter, and it has substantial experimental support.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">Opening up one fact: ROME</h2>
+						<div class="prose">
+							<p>The result: after the edit, the model says Rome when asked about the Eiffel Tower, says Rome when asked "Where is the Eiffel Tower?", says Rome when given "Eiffel Tower: ___" — and, crucially, <em>still says Paris when asked about the capital of France</em>. The edit is local. The new fact is added without disrupting nearby facts.</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: <a href="../fact_lookup.php">read it here</a>.</p>
+					</section>
+
+<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -82,7 +137,6 @@
 						</div>
 						<div class="prose">
 							<p>This is the ten-minute version. The <a href="../fact_lookup.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
-							<p><a class="btn btn--green" href="../fact_lookup.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
 						</div>
 					</section>
 				</article>

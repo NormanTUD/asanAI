@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="One input, one output, two numbers to adjust: the smallest possible learner and the loop behind every neural network.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>The Smallest Network That Learns — Ten Minutes</title>
+	<title>A Tiny Example Network — Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="minimalneuron" data-page="lesson">
@@ -16,7 +16,7 @@
 		<div class="shell">
 			<section class="hero hero--lesson">
 				<div>
-					<h1>The smallest network <em>that learns.</em></h1>
+					<h1>A tiny <em>example network.</em></h1>
 					<p class="hero-deck">Before attention and transformers, there is a line. A single neuron learns by adjusting two numbers until its guess is less wrong.</p>
 				</div>
 			</section>
@@ -47,6 +47,17 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="extra">
+						<div class="section-kicker"><span class="sk-num">03</span> The learning loop</div>
+						<h2 class="section-title">Gradient descent in miniature.</h2>
+						<div class="prose">
+							<p>The error is a number. For a line, the mean squared error is the average of the squared vertical distances between the points and the line. That number defines a surface: every choice of a and b gives a point on the surface, and the height is the error.</p>
+							<p>The gradient is the slope of that surface. It tells you which way to move a and b to make the error smaller. The learning rate decides how far you move. Too small and learning is slow; too large and you overshoot the minimum.</p>
+							<p>Real training uses batches, epochs, regularisation, and many more parameters, but the loop is the same: predict, measure the error, compute the gradient, nudge the parameters. The toy is small enough to see the loop, not a miniature of a frontier model.</p>
+						</div>
+						<p class="step-note"><b>What is simplified:</b> the real model is not a single line. The full lesson has the Python implementation and the statistics of learning.</p>
+					</section>
+
 					<div class="demo demo--paper" data-demo="linefit">
 						<div class="demo-head">
 							<div>
@@ -60,7 +71,8 @@
 							<div class="demo-controls">
 								<label>Weight a <input type="range" data-linefit-w min="-1" max="2.5" step="0.05" value="0.40"><output data-linefit-w-out>0.40</output></label>
 								<label>Bias b <input type="range" data-linefit-b min="-1" max="1.5" step="0.05" value="0.20"><output data-linefit-b-out>0.20</output></label>
-								<button class="btn-demo btn-demo--green" type="button" data-linefit-best>Find a good line</button>
+								<button class="btn-demo btn-demo--green" type="button" data-linefit-step>Train one step →</button>
+								<button class="btn-demo" type="button" data-linefit-best>Jump to best fit</button>
 							</div>
 							<div class="demo-readout">
 								<div><b>Model</b><span>y = ax + b</span></div>
@@ -71,8 +83,42 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Learning is the search for a and b that make the error smaller. A larger network repeats this loop with many more numbers.</span></div>
 					</div>
 
-					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+										<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">The Statistical Nature of Learning</h2>
+						<div class="prose">
+							<p>We often think of Neural Networks as “learning” in the way a human student learns: by understanding concepts. However, mathematically, a Neural Network is simply a statistical machine trying to fit a curve to a distribution.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">Data is not just Numbers; it is a Distribution</h2>
+						<div class="prose">
+							<p>If our training data is a “representative sample” (meaning it follows the same statistical distribution as the real world example you're trying to model), the weights of the network will converge to the “True” relationship. If the data is biased (a bad sample), the model learns a skewed reality. This is why knowing your data's distribution is critical. You cannot fit a straight line to a circle; you must choose a model architecture that matches the geometry of your data's distribution.</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: <a href="../minimalneuron.php">read it here</a>.</p>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">Output Layer: The Mirror of the Target</h2>
+						<div class="prose">
+							<p>The final layer of a neural network is not arbitrary; it is a mathematical mirror of the data you want to predict. Its shape, the number of neurons it contains, must match the dimensionality of your “Labels” (the ground truth).</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">Spatial and Complex Outputs</h2>
+						<div class="prose">
+							<p>If the output layer's dimensions do not match the target data's dimensions, the <strong>Loss Function</strong> will be unable to compare the prediction to the reality, and the “loop” of learning will break.</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: <a href="../minimalneuron.php">read it here</a>.</p>
+					</section>
+
+<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -81,7 +127,6 @@
 						</div>
 						<div class="prose">
 							<p>This is the ten-minute version. The <a href="../minimalneuron.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
-							<p><a class="btn btn--green" href="../minimalneuron.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
 						</div>
 					</section>
 				</article>

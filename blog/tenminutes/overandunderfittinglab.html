@@ -47,6 +47,17 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="extra">
+						<div class="section-kicker"><span class="sk-num">03</span> The extrapolation trap</div>
+						<h2 class="section-title">Outside the data.</h2>
+						<div class="prose">
+							<p>Interpolation is the easy case: the test point lies between examples the model has seen. Extrapolation is the hard case: the test point lies outside the range of the training data. A model can look excellent inside its range and fail outside it, even when the training error is low.</p>
+							<p>The bias-variance trade-off explains part of this. A simple model has high bias: it misses the pattern. A flexible model has high variance: it follows the noise. Regularisation, early stopping, more data, and a simpler model all try to move the balance toward generalisation.</p>
+							<p>The practical test is always held-out data, ideally from a distribution that resembles the real world. A benchmark is a proxy; a low test error is not a guarantee that the model will behave well on the next surprise.</p>
+						</div>
+						<p class="step-note"><b>What is simplified:</b> the demo uses a polynomial. Real models have many more parameters and inductive biases.</p>
+					</section>
+
 					<div class="demo demo--paper" data-demo="polyfit">
 						<div class="demo-head">
 							<div>
@@ -69,8 +80,25 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Watch the gap between training and test error: it grows when the curve starts memorizing.</span></div>
 					</div>
 
-					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+										<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">The Bias–Variance Tradeoff</h2>
+						<div class="prose">
+							<p>As model complexity increases, bias falls but variance rises. The sweet spot, the lowest total error, lies somewhere in between. The idea here is to let you <em>see</em> that tradeoff in action.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">Underfitting vs. Overfitting</h2>
+						<div class="prose">
+							<p><strong>Key insight:</strong> Watch the <strong>two MSE numbers</strong> as you increase the degree. When training MSE keeps falling but test MSE starts rising, the model has crossed from learning the signal to memorizing the noise. This gap between training and test performance is the most reliable diagnostic for overfitting in practice.</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: <a href="../overandunderfittinglab.php">read it here</a>.</p>
+					</section>
+
+<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -79,7 +107,6 @@
 						</div>
 						<div class="prose">
 							<p>This is the ten-minute version. The <a href="../overandunderfittinglab.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
-							<p><a class="btn btn--green" href="../overandunderfittinglab.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
 						</div>
 					</section>
 				</article>

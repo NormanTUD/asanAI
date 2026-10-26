@@ -47,6 +47,17 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="extra">
+						<div class="section-kicker"><span class="sk-num">03</span> A practical checklist</div>
+						<h2 class="section-title">How to use a plausible machine.</h2>
+						<div class="prose">
+							<p>Treat the output as a draft, not an answer. Verify names, dates, numbers, quotations, and citations against a source you trust. If the model gives you a study, a law, or a URL, check that it exists. A fluent paragraph is not evidence of a real source.</p>
+							<p>Use retrieval and tools when the answer depends on documents. Ask the model to quote the passage it is relying on, and keep the retrieved text visible. For anything that matters, separate generation from verification: let the model draft, then check the draft with a different process or a different model.</p>
+							<p>Temperature and decoding change how adventurous the model is, not whether it is right. Low temperature makes the answer more predictable; high temperature makes it more inventive and more likely to drift. Neither setting installs a fact-checker. The workflow has to do that.</p>
+						</div>
+						<p class="step-note"><b>What is simplified:</b> the model has no truth module. The full lesson has the temperature lab and the safety details.</p>
+					</section>
+
 					<div class="demo demo--paper" data-demo="sampling">
 						<div class="demo-head">
 							<div>
@@ -70,8 +81,36 @@
 						<div class="demo-insight"><b>Takeaway</b><span>A confident tone is just a sharp distribution. Lower temperature makes the likely token dominate; top-p removes the long tail. Neither makes the answer true.</span></div>
 					</div>
 
-					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+										<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">The Problem: Why AI Lies to You</h2>
+						<div class="prose">
+							<p>One of the biggest dangers of modern AI (Large Language Models) is that they can sound incredibly confident while saying something completely untrue. We call this a <strong>Hallucination</strong>.</p>
+							<p>To understand why this happens, we have to stop thinking of AI as a “Database of Knowledge” and start thinking of it as a <strong>Pattern Completion Engine</strong>. Deliberately over-driving that engine — tuning the input instead of the weights — is what the Inceptionism dreams do: the network projects its learned templates onto noise until it sees towers in rocks and birds in clouds, engineered pareidolia.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">From the full lesson</div>
+						<h2 class="section-title">Problems with AI</h2>
+						<div class="prose">
+							<p>#### The Training Data Cutoff and Zeitgeist Bias A primary driver of hallucinations is the static nature of an AI's knowledge. Because models are trained up to a specific point in time, they often “invent” information about events occurring after that date, attempting to force new facts into existing, outdated patterns. This is compounded by popularity bias: the AI tends to provide the statistically most likely answer even if it is incorrect. If training data contains a myth more frequently than the historical truth, the AI will reproduce it as fact because the linguistic pattern is simply stronger.</p>
+							<p>#### The Black Box of Interpretability A deep-seated challenge remains the lack of transparency in neural networks. Even at a low Temperature, it is often impossible to pinpoint exactly why a specific neuron “fired” to trigger a hallucination. The field of <strong>Mechanistic Interpretability</strong> is currently working to decode these internal decision paths. The goal is to prevent hallucinations at the source, within the model's weights, rather than simply filtering the output after the fact.</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: <a href="../hallucinations.php">read it here</a>.</p>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More from the full lesson</div>
+						<h2 class="section-title">The Mechanism: Next-Token Prediction</h2>
+						<div class="prose">
+							<p>At its core, an LLM is a giant mathematical function that calculates probabilities. It looks at the text you have written so far (the Context) and calculates a probability score for every single word in its vocabulary to see which one should come next.</p>
+						</div>
+						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: <a href="../hallucinations.php">read it here</a>.</p>
+					</section>
+
+<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -80,7 +119,6 @@
 						</div>
 						<div class="prose">
 							<p>This is the ten-minute version. The <a href="../hallucinations.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
-							<p><a class="btn btn--green" href="../hallucinations.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
 						</div>
 					</section>
 				</article>
