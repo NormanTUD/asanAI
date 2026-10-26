@@ -228,6 +228,11 @@
 											</label>
 										</div>
 										<canvas class="step-canvas" id="ipe-canvas" aria-label="A heatmap of positional encodings for twenty positions"></canvas>
+										<div class="pos-legend" aria-hidden="true">
+											<span><i class="pl-neg"></i>−1</span>
+											<span><i class="pl-zero"></i>0</span>
+											<span><i class="pl-pos"></i>+1</span>
+										</div>
 										<div class="step-out" id="ipe-out">Each row is one position. Each column is one dimension of the position signal.</div>
 									</div>
 									<p class="step-note">Attention has no built-in sense of order. A <b>positional encoding</b> adds a unique fingerprint to every position, so “dog bites man” and “man bites dog” stop looking like the same bag of vectors.</p>
@@ -1164,23 +1169,33 @@
 			var denom = Math.pow(10000, pair / dims);
 			return dim % 2 === 0 ? Math.sin(pos / denom) : Math.cos(pos / denom);
 		}
+		function posColor(v, c) {
+			var a = Math.pow(Math.min(1, Math.abs(v)), 0.6);
+			var neutral = c.dark ? [30, 58, 74] : [226, 232, 240];
+			var target = hexToRgb(v >= 0 ? c.green : c.coral);
+			var r = Math.round(neutral[0] + (target[0] - neutral[0]) * a);
+			var g = Math.round(neutral[1] + (target[1] - neutral[1]) * a);
+			var b = Math.round(neutral[2] + (target[2] - neutral[2]) * a);
+			return "rgb(" + r + "," + g + "," + b + ")";
+		}
 		function drawPos(ctx, w, h) {
 			var c = TM.colors();
 			var positions = 24;
-			var padL = 34, padB = 26, padT = 10, padR = 10;
-			var cw = (w - padL - padR) / positions;
-			var ch = (h - padT - padB) / posDims;
+			var padL = 38, padR = 10, padT = 8;
+			var heatH = Math.round(h * 0.64);
+			var heatW = w - padL - padR;
+			var cw = heatW / positions;
+			var ch = heatH / posDims;
 			ctx.clearRect(0, 0, w, h);
+			ctx.strokeStyle = c.dark ? "rgba(238,247,244,.18)" : "rgba(0,75,111,.18)";
+			ctx.lineWidth = 1;
+			ctx.strokeRect(padL, padT, heatW, heatH);
 			for (var p = 0; p < positions; p++) {
 				for (var d = 0; d < posDims; d++) {
 					var v = peValue(p, d, posDims);
 					var x = padL + p * cw;
 					var y = padT + d * ch;
-					if (v >= 0) {
-						ctx.fillStyle = "rgba(113,189,86," + (0.08 + v * 0.72) + ")";
-					} else {
-						ctx.fillStyle = "rgba(57,169,214," + (0.08 + (-v) * 0.72) + ")";
-					}
+					ctx.fillStyle = posColor(v, c);
 					ctx.fillRect(x + 1, y + 1, Math.max(1, cw - 2), Math.max(1, ch - 2));
 				}
 			}
@@ -1188,12 +1203,33 @@
 			ctx.font = "500 9px Barlow, system-ui, sans-serif";
 			ctx.textAlign = "center";
 			for (var p2 = 0; p2 < positions; p2 += 4) {
-				ctx.fillText(String(p2), padL + p2 * cw + cw / 2, h - 8);
+				ctx.fillText(String(p2), padL + p2 * cw + cw / 2, padT + heatH + 13);
 			}
 			ctx.textAlign = "right";
 			for (var d2 = 0; d2 < posDims; d2 += 2) {
 				ctx.fillText("d" + d2, padL - 6, padT + d2 * ch + ch * 0.7);
 			}
+			var stripTop = padT + heatH + 30;
+			var gap = 2;
+			var stripW = Math.max(4, Math.min(18, (heatW - 92 - (posDims - 1) * gap) / posDims));
+			var stripH = 12;
+			ctx.textAlign = "left";
+			ctx.fillStyle = c.muted;
+			ctx.font = "500 9px Barlow, system-ui, sans-serif";
+			ctx.fillText("fingerprints", padL, stripTop - 6);
+			[0, 5].forEach(function (pos, row) {
+				var y = stripTop + row * (stripH + 6);
+				ctx.textAlign = "right";
+				ctx.fillStyle = pos === 0 ? c.coral : c.green;
+				ctx.fillText("pos " + pos, padL - 6, y + stripH - 2);
+				ctx.textAlign = "left";
+				for (var d3 = 0; d3 < posDims; d3++) {
+					var v3 = peValue(pos, d3, posDims);
+					var xx = padL + d3 * (stripW + gap);
+					ctx.fillStyle = posColor(v3, c);
+					ctx.fillRect(xx, y, stripW, stripH);
+				}
+			});
 			if (posOut) {
 				var p0 = [], p5 = [];
 				for (var k = 0; k < Math.min(4, posDims); k++) {

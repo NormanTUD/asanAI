@@ -3279,6 +3279,27 @@ html[data-theme="light"] .step-pane .aw-bank { color: var(--tm-green-deep); }
 html[data-theme="light"] .step-pane .aw-river { color: var(--tm-blue); }
 html[data-theme="light"] .step-pane .aw-money { color: #9a6f13; }
 
+.pos-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin: 8px 2px 0;
+	font-family: var(--tm-ui);
+	font-size: 0.62rem;
+	color: var(--tm-muted);
+}
+.pos-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.pos-legend i {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border-radius: 2px;
+}
+.pos-legend .pl-neg { background: var(--tm-coral); }
+.pos-legend .pl-zero { background: #e2e8f0; }
+.pos-legend .pl-pos { background: var(--tm-green); }
+html[data-theme="dark"] .pos-legend .pl-zero { background: #1e3a4a; }
+
 .ffn-list { display: flex; flex-direction: column; gap: 7px; }
 
 .token-chips {
