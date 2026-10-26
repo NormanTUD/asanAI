@@ -62,29 +62,34 @@
 						<figcaption>Theseus and the Minotaur, House of the Labyrinth, Pompeii. Mosaic: ancient Roman, <a href="https://commons.wikimedia.org/wiki/File:Theseus_and_the_Minotaur_mosaic_Room_42_(Mau-Overbeck_1884_plans)_House_of_the_Labyrinth_Pompeii.jpg" rel="noopener">public domain</a>.</figcaption>
 					</figure>
 
-					<div class="demo demo--paper" data-demo="cot">
+					<div class="demo demo--paper" data-demo="reasoning">
 						<div class="demo-head">
 							<div>
-								<p class="demo-title">Answer, or think first <span>· demo</span></p>
-								<p class="demo-sub">The same model can jump to an answer or write the intermediate steps. Switch modes and watch the reasoning appear.</p>
+								<p class="demo-title">Fast answer, or checked answer <span>· demo</span></p>
+								<p class="demo-sub">The same model. One path jumps; the other spends tokens on the steps. Then sample five paths and see what voting does.</p>
 							</div>
-							<span class="demo-badge">live</span>
+							<span class="demo-badge">interactive</span>
 						</div>
 						<div class="demo-body">
-							<div class="chip-row">
-								<button class="chip is-on" type="button" data-cot-mode="answer">Answer only</button>
-								<button class="chip" type="button" data-cot-mode="steps">Think step by step</button>
+							<div class="chip-row" data-reasoning-problems></div>
+							<p class="prose" style="margin:12px 0 0"><strong>Problem:</strong> <span data-reasoning-question></span></p>
+							<div class="seg" style="margin-top:12px" data-reasoning-modes>
+								<button type="button" data-reasoning-mode="answer">Answer only</button>
+								<button class="is-on" type="button" data-reasoning-mode="steps">Think step by step</button>
 							</div>
-							<div class="prose" style="margin-top:12px"><p><strong>Problem:</strong> A bat and a ball cost $1.10. The bat costs $1.00 more than the ball. How much does the ball cost?</p></div>
-							<div class="cot-steps">
-								<div class="cot-step" data-cot-step>Let the ball cost x. Then the bat costs x + $1.00.</div>
-								<div class="cot-step" data-cot-step>x + (x + $1.00) = $1.10.</div>
-								<div class="cot-step" data-cot-step>2x = $0.10, so x = $0.05.</div>
-								<div class="cot-step" data-cot-step>The ball costs $0.05; the bat costs $1.05.</div>
+							<div class="cot-steps" data-reasoning-steps></div>
+							<p class="cot-answer" data-reasoning-answer></p>
+							<div class="demo-kpis">
+								<div class="demo-kpi"><b>Tokens</b><span data-reasoning-tokens>—</span></div>
+								<div class="demo-kpi"><b>Confidence</b><span data-reasoning-confidence>—</span></div>
 							</div>
-							<p class="cot-answer" data-cot-answer>Answer: $0.05.</p>
+							<div class="demo-controls">
+								<button class="btn-demo btn-demo--green" type="button" data-reasoning-sample>Sample 5 paths →</button>
+								<button class="btn-demo" type="button" data-reasoning-reset>Reset</button>
+							</div>
+							<p class="demo-hint" data-reasoning-votes></p>
 						</div>
-						<div class="demo-insight"><b>Takeaway</b><span>Writing the steps gives the model a scratchpad. More computation can help — but only if the steps are checked.</span></div>
+						<div class="demo-insight"><b>Takeaway</b><span>Thinking longer helps when the steps can be checked. Majority voting only helps when the errors are not all identical.</span></div>
 					</div>
 
 					<section class="section-block">

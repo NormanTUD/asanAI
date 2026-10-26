@@ -58,29 +58,35 @@
 						</div>
 					</section>
 
-					<div class="demo demo--paper" data-demo="entropy">
+					<div class="demo demo--paper" data-demo="prompt">
 						<div class="demo-head">
 							<div>
-								<p class="demo-title">Constrain the space <span>· demo</span></p>
-								<p class="demo-sub">Turn on a constraint and watch the space of plausible answers shrink. A prompt is a brief, not a magic spell.</p>
+								<p class="demo-title">Build a brief, narrow the answer <span>· demo</span></p>
+								<p class="demo-sub">Every constraint removes degrees of freedom. Toggle them and watch one answer pull ahead of the others — then sample from what is left.</p>
 							</div>
-							<span class="demo-badge">live</span>
+							<span class="demo-badge">interactive</span>
 						</div>
 						<div class="demo-body">
 							<div class="chip-row">
-								<button class="chip is-on" type="button" data-entropy="role">Role</button>
-								<button class="chip" type="button" data-entropy="format">Format</button>
-								<button class="chip" type="button" data-entropy="examples">Examples</button>
-								<button class="chip" type="button" data-entropy="constraints">Constraints</button>
+								<button class="chip is-on" type="button" data-prompt="role">Role</button>
+								<button class="chip" type="button" data-prompt="format">Format</button>
+								<button class="chip" type="button" data-prompt="examples">Examples</button>
+								<button class="chip" type="button" data-prompt="constraints">Constraints</button>
 							</div>
 							<div class="demo-controls">
-								<span style="font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--tm-muted)">Output space</span>
-								<div class="entropy-track"><span class="entropy-fill" data-entropy-bar></span></div>
-								<output data-entropy-value>78%</output>
+								<span style="font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tm-muted)">Leading answer</span>
+								<div class="meter" style="flex:1 1 180px"><span data-prompt-meter></span></div>
+								<output data-prompt-value>—</output>
 							</div>
-							<p class="entropy-preview" data-entropy-prompt></p>
+							<p class="entropy-preview" data-prompt-preview></p>
+							<div class="retrieval-list" data-prompt-cands></div>
+							<div class="demo-controls">
+								<button class="btn-demo btn-demo--green" type="button" data-prompt-sample>Sample an answer →</button>
+								<span class="nt-temp">Prompt cost <b data-prompt-tokens>—</b></span>
+							</div>
+							<p class="demo-hint" data-prompt-sampled></p>
 						</div>
-						<div class="demo-insight"><b>Takeaway</b><span>A prompt is a brief: role, format, examples, and constraints.</span></div>
+						<div class="demo-insight"><b>Takeaway</b><span>Prompting is distribution engineering. Each clear constraint closes a door the model would otherwise have walked through.</span></div>
 					</div>
 
 					<section class="section-block">

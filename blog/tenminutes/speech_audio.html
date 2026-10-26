@@ -66,19 +66,19 @@
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">From waveform to tokens <span>· demo</span></p>
-								<p class="demo-sub">A raw waveform is too dense to feed directly. Audio systems compress it into pieces; the slider shows the trade-off.</p>
+								<p class="demo-sub">One second of speech, shown three ways: a waveform, a spectrogram, and the discrete codec tokens a transformer can actually read. Move the token count to change the compression.</p>
 							</div>
 							<span class="demo-badge">illustrative</span>
 						</div>
 						<div class="demo-body">
-							<canvas class="demo-canvas demo-canvas--md" data-wave-canvas aria-label="A waveform and its token blocks"></canvas>
+							<canvas class="demo-canvas demo-canvas--lg" data-wave-canvas aria-label="A waveform, a spectrogram, and codec token blocks"></canvas>
 							<div class="demo-controls">
 								<label>Tokens <input type="range" data-wave-tokens min="8" max="64" step="8" value="32"><output data-wave-tokens-out>32 tokens</output></label>
 							</div>
 							<div class="demo-readout">
-								<div><b>Input</b><span>waveform</span></div>
-								<div><b>Compression</b><span>codec</span></div>
-								<div><b>Output</b><span>tokens</span></div>
+								<div><b>Samples / second</b><span data-wave-samples>16,000</span></div>
+								<div><b>Codec tokens</b><span data-wave-frames>32</span></div>
+								<div><b>Samples / token</b><span data-wave-ratio>—</span></div>
 							</div>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>Once sound is a sequence of tokens, the same transformer machinery can listen, transcribe, and generate.</span></div>

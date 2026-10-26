@@ -84,6 +84,40 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Learning is the search for a and b that make the error smaller. A larger network repeats this loop with many more numbers.</span></div>
 					</div>
 
+					<div class="demo demo--paper" data-demo="perceptron">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">The perceptron draws a border <span>· demo</span></p>
+								<p class="demo-sub">Two classes, one straight line. Train the weights and watch the border move until the mistakes disappear — if the data lets it.</p>
+							</div>
+							<span class="demo-badge">interactive</span>
+						</div>
+						<div class="demo-body">
+							<div class="pc-wrap">
+								<div>
+									<canvas class="demo-canvas demo-canvas--md" data-perceptron-canvas aria-label="Two classes of points and a learned decision boundary"></canvas>
+									<div class="demo-controls">
+										<button class="btn-demo btn-demo--green" type="button" data-perceptron-train>Train one update →</button>
+										<button class="btn-demo" type="button" data-perceptron-run>Train 20</button>
+										<button class="btn-demo" type="button" data-perceptron-reset>Reset</button>
+									</div>
+								</div>
+								<div class="pc-legend">
+									<div class="pc-class"><i></i>Class A <b data-perceptron-acc-a>—</b></div>
+									<div class="pc-class b"><i></i>Class B <b data-perceptron-acc-b>—</b></div>
+									<div class="demo-kpis">
+										<div class="demo-kpi"><b>Accuracy</b><span data-perceptron-acc>—</span></div>
+										<div class="demo-kpi"><b>Weights</b><span data-perceptron-w>—</span></div>
+										<div class="demo-kpi"><b>Bias</b><span data-perceptron-b>—</span></div>
+									</div>
+									<p class="demo-hint" data-perceptron-note></p>
+								</div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>A perceptron can separate only what a straight line can separate. That limit is why nonlinearity and depth are not decoration.</span></div>
+						<div class="demo-foot">A misclassified point gets a lilac ring. The rule is the original perceptron update: nudge the line toward the correct side, one mistake at a time.</div>
+					</div>
+
 					<section class="section-block">
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">The Statistical Nature of Learning</h2>

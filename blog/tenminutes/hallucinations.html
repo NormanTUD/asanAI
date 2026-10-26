@@ -82,6 +82,26 @@
 						<div class="demo-foot">Top-p changes the candidate set, not the model’s knowledge. The bright bars are the renormalized distribution; the grey rows are the tokens that were cut.</div>
 					</div>
 
+					<div class="demo demo--paper" data-demo="citecheck">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">Real paper or convincing fake? <span>· demo</span></p>
+								<p class="demo-sub">Models produce references that look exactly like real ones. Guess, then check. The point is not intuition — it is provenance.</p>
+							</div>
+							<span class="demo-badge">spot the fake</span>
+						</div>
+						<div class="demo-body">
+							<div class="cc-list" data-citecheck-list></div>
+							<div class="cc-actions">
+								<button class="btn-demo" type="button" data-citecheck-reset>New round</button>
+								<span class="nt-temp" style="margin-left:auto">Score <b data-citecheck-score>—</b></span>
+							</div>
+							<p class="cc-verdict" data-citecheck-verdict></p>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>A plausible title, venue, and author list are cheap to generate. A DOI that resolves is not.</span></div>
+						<div class="demo-foot">The real references are real; the fabricated ones are invented for the exercise. Verify any citation before you use it.</div>
+					</div>
+
 					<section class="section-block">
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">The Problem: Why AI Lies to You</h2>

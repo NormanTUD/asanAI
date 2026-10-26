@@ -57,6 +57,45 @@
 							<div class="ia-step"><span>04</span><b>Prediction</b><p>A distribution over the next token.</p></div>
 						</div>
 						<p class="intro-arc-note">Then: training → post-training → tools → society.</p>
+
+						<div class="demo demo--paper" data-demo="predict">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The whole engine, in one loop <span>· demo</span></p>
+									<p class="demo-sub">The model is given a context and a distribution over the next token. Pick one; it becomes part of the context. The loop is the course in miniature.</p>
+								</div>
+								<span class="demo-badge">live</span>
+							</div>
+							<div class="demo-body">
+								<div class="nt-loop">
+									<div>
+										<div class="nt-context" data-predict-context aria-live="polite"></div>
+										<div class="nt-cands" data-predict-cands></div>
+										<div class="nt-trace" data-predict-trace aria-label="Tokens chosen so far"></div>
+									</div>
+									<div>
+										<div class="demo-controls" style="margin-top:0">
+											<label>Temperature <input type="range" data-predict-temp min="0.1" max="2" step="0.05" value="0.8"><output data-predict-temp-out>0.80</output></label>
+										</div>
+										<div class="seg" style="margin-top:12px" data-predict-mode>
+											<button class="is-on" type="button" data-predict-mode-value="sample">Sample</button>
+											<button type="button" data-predict-mode-value="greedy">Greedy</button>
+										</div>
+										<div class="demo-kpis">
+											<div class="demo-kpi"><b>Step</b><span data-predict-step>0</span></div>
+											<div class="demo-kpi"><b>Entropy</b><span data-predict-entropy>—</span></div>
+											<div class="demo-kpi"><b>Top token</b><span data-predict-top>—</span></div>
+										</div>
+										<div class="demo-controls">
+											<button class="btn-demo btn-demo--green" type="button" data-predict-step-btn>Choose a token →</button>
+											<button class="btn-demo" type="button" data-predict-reset>Reset</button>
+										</div>
+										<p class="demo-hint" data-predict-note></p>
+									</div>
+								</div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>The model does not write a sentence in one jump. It writes one token, appends it, and asks again — thousands of times.</span></div>
+						</div>
 					</section>
 
 					<section class="section-block" id="edition">
@@ -90,5 +129,6 @@
 	</main>
 
 	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
 </body>
 </html>

@@ -89,6 +89,38 @@
 						<div class="demo-insight"><b>Takeaway</b><span>The public relationship oscillates, but the consequences accumulate.</span></div>
 					</div>
 
+					<div class="demo demo--paper" data-demo="verify">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">How sure can you be? <span>· demo</span></p>
+								<p class="demo-sub">A synthetic video arrives. Toggle the evidence you actually have. The strength of the claim is the chain, not the fluency.</p>
+							</div>
+							<span class="demo-badge">interactive</span>
+						</div>
+						<div class="demo-body">
+							<div class="chip-row">
+								<button class="chip is-on" type="button" data-verify-check="provenance">Camera signature</button>
+								<button class="chip is-on" type="button" data-verify-check="watermark">Visible watermark</button>
+								<button class="chip" type="button" data-verify-check="reverse">Reverse-image match</button>
+								<button class="chip" type="button" data-verify-check="corroboration">Second witness</button>
+							</div>
+							<div class="vf-score">
+								<span>Evidence strength</span>
+								<div class="meter"><span data-verify-meter style="width:0%"></span></div>
+								<b data-verify-score>—</b>
+							</div>
+							<p class="vf-verdict" data-verify-verdict></p>
+							<div class="vf-grid" style="margin-top:12px">
+								<div class="vf-card"><h4>Camera signature</h4><p>A signed C2PA-style manifest says where the file came from. Strong — if the viewer checks it.</p></div>
+								<div class="vf-card"><h4>Visible watermark</h4><p>Cheap to add, easier to remove. A signal, not a proof.</p></div>
+								<div class="vf-card"><h4>Reverse-image match</h4><p>The same frame appears in an older, independent source. Useful, but the source can be wrong too.</p></div>
+								<div class="vf-card"><h4>Second witness</h4><p>A human or sensor that was there. Often the strongest evidence — and the hardest to scale.</p></div>
+							</div>
+							<p class="demo-hint" data-verify-note></p>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>Verification is a chain of independent signals. A confident voice, a clean frame, or a single watermark is not the same as provenance.</span></div>
+					</div>
+
 					<section class="section-block">
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">The Lie: Deception at Scale</h2>

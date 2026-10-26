@@ -91,6 +91,56 @@
 			if (choice) choice.textContent = tokens[kept[0]].t;
 			if (count) count.textContent = kept.length + " / " + tokens.length;
 			if (entropy) entropy.textContent = ent.toFixed(2) + " bits";
+			$$(".dist-row", bars).forEach(function (row, i) {
+				row.style.cursor = keep[i] ? "pointer" : "default";
+				row.title = keep[i] ? "Draw this token" : "Cut by top-p";
+				row.addEventListener("click", function () {
+					if (!keep[i]) return;
+					var draw = $("[data-sampling-draw]", root);
+					if (draw) {
+						draw.textContent = tokens[i].t;
+						draw.style.color = tokens[i].c;
+					}
+					row.classList.add("is-picked");
+					setTimeout(function () { row.classList.remove("is-picked"); }, 450);
+				});
+			});
+		}
+		var controls = $(".demo-controls", root);
+		if (controls && !$("[data-sampling-sample]", root)) {
+			var sampleBtn = document.createElement("button");
+			sampleBtn.type = "button";
+			sampleBtn.className = "btn-demo btn-demo--green";
+			sampleBtn.setAttribute("data-sampling-sample", "");
+			sampleBtn.textContent = "Draw a token →";
+			controls.appendChild(sampleBtn);
+			sampleBtn.addEventListener("click", function () {
+				var T = clamp(parseFloat(temp && temp.value) || 0.8, 0.05, 3);
+				var P = clamp(parseFloat(topP && topP.value) || 1, 0.05, 1);
+				var exps = tokens.map(function (x) { return Math.exp(x.z / T); });
+				var sum = exps.reduce(function (a, b) { return a + b; }, 0);
+				var probs = exps.map(function (e) { return e / sum; });
+				var order = probs.map(function (p, i) { return i; }).sort(function (a, b) { return probs[b] - probs[a]; });
+				var cum = 0, kept = [];
+				order.forEach(function (i) { if (cum < P) { kept.push(i); cum += probs[i]; } });
+				var mass = kept.reduce(function (a, i) { return a + probs[i]; }, 0) || 1;
+				var r = Math.random() * mass, acc = 0, pick = kept[0];
+				for (var k = 0; k < kept.length; k++) {
+					acc += probs[kept[k]];
+					if (r <= acc) { pick = kept[k]; break; }
+				}
+				var draw = $("[data-sampling-draw]", root);
+				if (draw) {
+					draw.textContent = tokens[pick].t;
+					draw.style.color = tokens[pick].c;
+				}
+			});
+		}
+		var readout = $(".demo-readout", root);
+		if (readout && !$("[data-sampling-draw]", root)) {
+			var cell = document.createElement("div");
+			cell.innerHTML = "<b>Sampled draw</b><span data-sampling-draw>—</span>";
+			readout.appendChild(cell);
 		}
 		if (temp) temp.addEventListener("input", render);
 		if (topP) topP.addEventListener("input", render);
@@ -331,6 +381,16 @@
 			ctx.beginPath();
 			ctx.moveTo(px(0), py(bb)); ctx.lineTo(px(1), py(a + bb));
 			ctx.stroke();
+			ctx.strokeStyle = c.coral;
+			ctx.lineWidth = 1.1;
+			ctx.setLineDash([3, 4]);
+			pts.forEach(function (p) {
+				ctx.beginPath();
+				ctx.moveTo(px(p.x), py(p.y));
+				ctx.lineTo(px(p.x), py(a * p.x + bb));
+				ctx.stroke();
+			});
+			ctx.setLineDash([]);
 			pts.forEach(function (p) {
 				ctx.beginPath();
 				ctx.arc(px(p.x), py(p.y), 4.5, 0, Math.PI * 2);
@@ -359,11 +419,29 @@
 			if (b) b.value = target.b.toFixed(2);
 			redraw();
 		});
+		var training = false;
 		if (stepBtn) stepBtn.addEventListener("click", function () {
-			var ca = val(w, 0.4), cb = val(b, 0.2);
-			if (w) w.value = lerp(ca, target.a, 0.25).toFixed(2);
-			if (b) b.value = lerp(cb, target.b, 0.25).toFixed(2);
-			redraw();
+			if (training) return;
+			training = true;
+			var rounds = 0;
+			var tick = function () {
+				var ca = val(w, 0.4), cb = val(b, 0.2);
+				var da = 0, db = 0;
+				pts.forEach(function (p) {
+					var e = (ca * p.x + cb) - p.y;
+					da += 2 * e * p.x;
+					db += 2 * e;
+				});
+				da /= pts.length;
+				db /= pts.length;
+				if (w) w.value = clamp(ca - 0.55 * da, -1, 2).toFixed(2);
+				if (b) b.value = clamp(cb - 0.55 * db, -1, 2).toFixed(2);
+				redraw();
+				rounds++;
+				if (rounds < 9) requestAnimationFrame(tick);
+				else training = false;
+			};
+			requestAnimationFrame(tick);
 		});
 		redraw();
 	}
@@ -509,6 +587,7 @@
 		var degreeOut = $("[data-polyfit-degree-out]", root);
 		var trainOut = $("[data-polyfit-train]", root);
 		var testOut = $("[data-polyfit-test]", root);
+		var note = $("[data-polyfit-note]", root);
 		if (!canvas) return;
 		var train = [], test = [];
 		for (var i = 0; i < 12; i++) {
@@ -534,6 +613,17 @@
 			ctx.moveTo(px(xmin), py(0)); ctx.lineTo(px(xmax), py(0));
 			ctx.moveTo(px(0), py(ymin)); ctx.lineTo(px(0), py(ymax));
 			ctx.stroke();
+			ctx.strokeStyle = c.faint;
+			ctx.lineWidth = 1.4;
+			ctx.setLineDash([5, 5]);
+			ctx.beginPath();
+			for (var t = 0; t <= 200; t++) {
+				var xt = xmin + (xmax - xmin) * t / 200;
+				var yt = Math.sin(2.2 * xt) + 0.15 * xt;
+				if (t) ctx.lineTo(px(xt), py(yt)); else ctx.moveTo(px(xt), py(yt));
+			}
+			ctx.stroke();
+			ctx.setLineDash([]);
 			ctx.strokeStyle = c.gold;
 			ctx.lineWidth = 2.5;
 			ctx.beginPath();
@@ -564,6 +654,10 @@
 			var te = test.reduce(function (a, p) { var e = evalPoly(coef, p.x) - p.y; return a + e * e; }, 0) / test.length;
 			if (trainOut) trainOut.textContent = tr.toFixed(3);
 			if (testOut) testOut.textContent = te.toFixed(3);
+			if (note) {
+				var lvl = d <= 2 ? "Underfit" : d <= 5 ? "Balanced" : "Overfit risk";
+				note.innerHTML = "<b>" + lvl + ".</b> The dashed line is the true pattern. Green dots are training data; faint dots are held-out points. A high-degree curve can memorize the noise and lose the shape.";
+			}
 		}
 		var api = canvasDemo(canvas, draw);
 		if (!api) return;
@@ -944,7 +1038,9 @@
 			steps.forEach(function (step, i) {
 				step.classList.toggle("is-on", stepMode ? i <= 3 : false);
 			});
-			if (answer) answer.textContent = stepMode ? "Answer: $0.05." : "Answer: $0.05.";
+			if (answer) answer.innerHTML = stepMode
+				? 'Answer: <b>$0.05</b> <span style="color:var(--tm-green-deep)">· follows from the steps</span>'
+				: 'Answer: <b>$0.10</b> <span style="color:var(--tm-coral)">· the intuitive trap</span>';
 		}
 		chips.forEach(function (chip, i) {
 			chip.addEventListener("click", function () {
@@ -1062,34 +1158,86 @@
 		var canvas = $("[data-wave-canvas]", root);
 		var range = $("[data-wave-tokens]", root);
 		var out = $("[data-wave-tokens-out]", root);
+		var samplesEl = $("[data-wave-samples]", root);
+		var framesEl = $("[data-wave-frames]", root);
+		var ratioEl = $("[data-wave-ratio]", root);
 		if (!canvas) return;
+		function sampleAt(t) {
+			var env = 0.35 + 0.65 * Math.exp(-Math.pow((t - 0.38) / 0.32, 2));
+			return env * (Math.sin(t * 78 + Math.sin(t * 9) * 1.4) * 0.55 +
+				Math.sin(t * 151) * 0.25 + Math.sin(t * 23) * 0.2);
+		}
 		function draw(ctx, W, H) {
 			var c = colors();
 			var n = parseInt(range && range.value, 10) || 32;
 			if (out) out.textContent = n + " tokens";
+			var seconds = 1.0;
+			var samples = 16000 * seconds;
+			if (samplesEl) samplesEl.textContent = "16,000";
+			if (framesEl) framesEl.textContent = n;
+			if (ratioEl) ratioEl.textContent = Math.round(samples / n).toLocaleString() + "×";
 			ctx.clearRect(0, 0, W, H);
-			var mid = H * 0.34, amp = H * 0.23;
+			var padL = 16, padR = 16;
+			var innerW = W - padL - padR;
+
+			/* waveform */
+			var waveTop = 26, waveH = H * 0.25;
+			var mid = waveTop + waveH / 2;
+			ctx.strokeStyle = c.line;
+			ctx.lineWidth = 1;
+			ctx.beginPath(); ctx.moveTo(padL, mid); ctx.lineTo(padL + innerW, mid); ctx.stroke();
 			ctx.strokeStyle = c.petrol;
-			ctx.lineWidth = 2;
+			ctx.lineWidth = 1.6;
 			ctx.beginPath();
-			for (var i = 0; i <= 300; i++) {
-				var t = i / 300;
-				var y = Math.sin(t * 38) * 0.55 + Math.sin(t * 91) * 0.25 + Math.sin(t * 13) * 0.2;
-				var px = 16 + t * (W - 32);
-				ctx.lineTo(px, mid - y * amp);
+			for (var i = 0; i <= Math.min(innerW * 1.4, 700); i++) {
+				var t = i / Math.min(innerW * 1.4, 700);
+				var px = padL + t * innerW;
+				var y = sampleAt(t) * waveH * 0.48;
+				if (i) ctx.lineTo(px, mid - y); else ctx.moveTo(px, mid - y);
 			}
 			ctx.stroke();
-			var y0 = H * 0.66, h = 22;
-			var gap = 3, w = (W - 32 - gap * (n - 1)) / n;
-			var cols = [c.green, c.sky, c.gold, c.coral, c.lime, c.petrol];
+
+			/* spectrogram */
+			var specTop = waveTop + waveH + 22;
+			var specH = H * 0.30;
+			var bins = 22, cols = 64;
+			var cw = innerW / cols, ch = specH / bins;
+			for (var col = 0; col < cols; col++) {
+				var tt = col / (cols - 1);
+				for (var bin = 0; bin < bins; bin++) {
+					var f = bin / (bins - 1);
+					var formant = Math.exp(-Math.pow((f - 0.18 - 0.12 * Math.sin(tt * 7)) / 0.13, 2)) * 0.85 +
+						Math.exp(-Math.pow((f - 0.42 - 0.08 * Math.sin(tt * 5 + 1)) / 0.10, 2)) * 0.7 +
+						Math.exp(-Math.pow((f - 0.68) / 0.12, 2)) * 0.35;
+					var energy = Math.max(0, formant * (0.6 + 0.4 * Math.sin(tt * 31 + f * 8)) * (0.4 + 0.6 * Math.exp(-Math.pow((tt - 0.42) / 0.35, 2))));
+					var base = hexToRgb(c.paper2);
+					var end = energy > 0.55 ? hexToRgb(c.gold) : (energy > 0.28 ? hexToRgb(c.sky) : hexToRgb(c.green));
+					ctx.fillStyle = rgb(mix(base, end, clamp(energy, 0, 1)));
+					ctx.fillRect(padL + col * cw, specTop + (bins - 1 - bin) * ch, cw + 0.5, ch + 0.5);
+				}
+			}
+			ctx.strokeStyle = c.line;
+			ctx.strokeRect(padL, specTop, innerW, specH);
+
+			/* tokens */
+			var tokTop = specTop + specH + 24;
+			var tokH = Math.max(16, H - tokTop - 22);
+			var gap = 3, w = (innerW - gap * (n - 1)) / n;
+			var colsPal = [c.green, c.sky, c.gold, c.coral, c.lime, c.petrol, c.blue];
 			for (var k = 0; k < n; k++) {
-				ctx.fillStyle = cols[k % cols.length];
-				ctx.fillRect(16 + k * (w + gap), y0, Math.max(2, w), h);
+				ctx.fillStyle = colsPal[k % colsPal.length];
+				ctx.globalAlpha = 0.9;
+				ctx.fillRect(padL + k * (w + gap), tokTop, Math.max(2, w), tokH);
+				ctx.globalAlpha = 1;
 			}
 			ctx.fillStyle = c.muted;
-			ctx.font = "11px Barlow, system-ui, sans-serif";
-			ctx.fillText("waveform", 16, 16);
-			ctx.fillText("tokens", 16, y0 - 8);
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			ctx.fillText("waveform · 16,000 samples per second", padL, 15);
+			ctx.fillText("spectrogram · frequency over time", padL, specTop - 6);
+			ctx.fillText("codec tokens · " + n + " for one second", padL, tokTop - 6);
+			ctx.fillStyle = c.faint;
+			ctx.font = "500 9px ui-monospace, monospace";
+			ctx.fillText("time →", padL + innerW - 40, specTop + specH + 11);
 		}
 		var api = canvasDemo(canvas, draw);
 		if (!api) return;
@@ -1710,6 +1858,964 @@
 		setThreshold(threshold);
 	}
 
+	/* ── next-token predictor ───────────────────────────────── */
+
+	function initPredict(root) {
+		var contextEl = $("[data-predict-context]", root);
+		var candsEl = $("[data-predict-cands]", root);
+		var traceEl = $("[data-predict-trace]", root);
+		var temp = $("[data-predict-temp]", root);
+		var tempOut = $("[data-predict-temp-out]", root);
+		var stepOut = $("[data-predict-step]", root);
+		var entropyOut = $("[data-predict-entropy]", root);
+		var topOut = $("[data-predict-top]", root);
+		var noteEl = $("[data-predict-note]", root);
+		var stepBtn = $("[data-predict-step-btn]", root);
+		var resetBtn = $("[data-predict-reset]", root);
+		var modeChips = $$("[data-predict-mode-value]", root);
+		if (!contextEl || !candsEl) return;
+
+		var states = {
+			start: [
+				{ t: "mat", z: 2.7, next: "mat" },
+				{ t: "floor", z: 1.9, next: "floor" },
+				{ t: "sofa", z: 1.2, next: "sofa" },
+				{ t: "table", z: 0.8, next: "floor" },
+				{ t: "moon", z: 0.0, next: "moon" }
+			],
+			mat: [
+				{ t: ".", z: 2.9, next: null },
+				{ t: "and", z: 1.4, next: "and" },
+				{ t: ",", z: 1.1, next: null },
+				{ t: "then", z: 0.6, next: "then" }
+			],
+			floor: [
+				{ t: ".", z: 2.6, next: null },
+				{ t: "and", z: 1.8, next: "and" },
+				{ t: ",", z: 1.0, next: null }
+			],
+			sofa: [
+				{ t: ".", z: 2.4, next: null },
+				{ t: "and", z: 1.6, next: "and" }
+			],
+			moon: [
+				{ t: ".", z: 1.2, next: null },
+				{ t: "!", z: 1.0, next: null }
+			],
+			and: [
+				{ t: "purred", z: 2.0, next: "purred" },
+				{ t: "slept", z: 1.6, next: "slept" },
+				{ t: "looked", z: 1.2, next: "looked" },
+				{ t: "the", z: 0.7, next: "the" }
+			],
+			then: [
+				{ t: "slept", z: 1.9, next: "slept" },
+				{ t: "purred", z: 1.4, next: "purred" }
+			],
+			purred: [
+				{ t: ".", z: 2.8, next: null },
+				{ t: "softly", z: 1.2, next: "softly" }
+			],
+			slept: [
+				{ t: ".", z: 2.7, next: null },
+				{ t: "quietly", z: 1.1, next: "quietly" }
+			],
+			looked: [
+				{ t: ".", z: 2.1, next: null },
+				{ t: "up", z: 1.5, next: "up" }
+			],
+			the: [
+				{ t: "mat", z: 2.2, next: "mat" },
+				{ t: "floor", z: 1.7, next: "floor" }
+			],
+			softly: [
+				{ t: ".", z: 2.6, next: null },
+				{ t: "and", z: 0.8, next: "and" }
+			],
+			quietly: [
+				{ t: ".", z: 2.5, next: null },
+				{ t: "and", z: 0.7, next: "and" }
+			],
+			up: [
+				{ t: ".", z: 2.2, next: null },
+				{ t: "at", z: 1.1, next: "at" }
+			],
+			at: [
+				{ t: "the", z: 2.0, next: "the" },
+				{ t: "me", z: 1.2, next: null }
+			]
+		};
+
+		var words = ["The", "cat", "sat", "on", "the"];
+		var stateKey = "start";
+		var terminal = false;
+		var mode = "sample";
+		var steps = 0;
+
+		function joinWords(list) {
+			var out = "";
+			list.forEach(function (w) {
+				if (w === "." || w === "," || w === "!" || w === "?") out += w;
+				else out += (out ? " " : "") + w;
+			});
+			return out;
+		}
+		function softmax(cands, T) {
+			var exps = cands.map(function (x) { return Math.exp(x.z / T); });
+			var sum = exps.reduce(function (a, b) { return a + b; }, 0) || 1;
+			return exps.map(function (e) { return e / sum; });
+		}
+		function pickFrom(probs) {
+			var r = Math.random(), acc = 0;
+			for (var i = 0; i < probs.length; i++) {
+				acc += probs[i];
+				if (r <= acc) return i;
+			}
+			return probs.length - 1;
+		}
+		function render() {
+			var T = clamp(parseFloat(temp && temp.value) || 0.8, 0.1, 2);
+			if (tempOut) tempOut.textContent = T.toFixed(2);
+			var cands = states[stateKey] || [];
+			var probs = softmax(cands, T);
+			var maxI = probs.length ? probs.indexOf(Math.max.apply(null, probs)) : -1;
+			var ent = -probs.reduce(function (a, p) { return a + (p > 0 ? p * Math.log(p) / Math.LN2 : 0); }, 0);
+			if (stepOut) stepOut.textContent = steps + (terminal ? " · end" : "");
+			if (entropyOut) entropyOut.textContent = terminal ? "—" : ent.toFixed(2) + " bits";
+			if (topOut) topOut.textContent = terminal ? "—" : (maxI >= 0 ? cands[maxI].t : "—");
+			contextEl.innerHTML = escapeHtml(joinWords(words)) + ' <span class="nt-pred' + (steps ? " is-fresh" : "") + '">' + (terminal ? "∎" : "___") + "</span>";
+			if (traceEl) {
+				traceEl.innerHTML = words.slice(5).map(function (w) { return "<span>" + escapeHtml(w) + "</span>"; }).join("");
+			}
+			if (terminal) {
+				candsEl.innerHTML = "";
+				if (noteEl) noteEl.textContent = "The sentence is complete. Reset and choose a different continuation — the model never sees the whole tree at once.";
+				return;
+			}
+			candsEl.innerHTML = cands.map(function (c, i) {
+				return '<button class="nt-cand' + (i === maxI ? " is-top" : "") + '" type="button" data-predict-i="' + i + '">' +
+					'<span>' + escapeHtml(c.t) + '</span>' +
+					'<span class="nt-bar"><i style="width:' + (probs[i] * 100).toFixed(1) + '%"></i></span>' +
+					'<span class="nt-pct">' + Math.round(probs[i] * 100) + '%</span></button>';
+			}).join("");
+			$$("[data-predict-i]", candsEl).forEach(function (btn) {
+				btn.addEventListener("click", function () {
+					var i = parseInt(btn.getAttribute("data-predict-i"), 10);
+					if (!isNaN(i)) choose(i, cands, probs);
+				});
+			});
+			if (noteEl) {
+				var msg = "Temperature " + T.toFixed(2) + " reshapes the same logits. ";
+				if (T < 0.45) msg += "Low temperature concentrates the mass: safe, repetitive, sometimes stuck.";
+				else if (T > 1.35) msg += "High temperature flattens the mass: surprising, inventive, sometimes incoherent.";
+				else msg += "The top token usually wins, but the tail is still alive.";
+				noteEl.textContent = msg;
+			}
+		}
+		function choose(i, cands, probs) {
+			var c = cands[i];
+			if (!c) return;
+			$$(".nt-cand", candsEl).forEach(function (btn) {
+				btn.classList.toggle("is-picked", parseInt(btn.getAttribute("data-predict-i"), 10) === i);
+			});
+			words.push(c.t);
+			steps++;
+			stateKey = c.next || "";
+			terminal = !c.next;
+			setTimeout(render, 90);
+		}
+		function sample() {
+			var cands = states[stateKey] || [];
+			if (!cands.length) return;
+			var probs = softmax(cands, clamp(parseFloat(temp && temp.value) || 0.8, 0.1, 2));
+			choose(mode === "greedy" ? probs.indexOf(Math.max.apply(null, probs)) : pickFrom(probs), cands, probs);
+		}
+		function reset() {
+			words = ["The", "cat", "sat", "on", "the"];
+			stateKey = "start";
+			terminal = false;
+			steps = 0;
+			render();
+		}
+		modeChips.forEach(function (chip) {
+			chip.addEventListener("click", function () {
+				modeChips.forEach(function (x) { x.classList.remove("is-on"); });
+				chip.classList.add("is-on");
+				mode = chip.getAttribute("data-predict-mode-value");
+				render();
+			});
+		});
+		if (temp) temp.addEventListener("input", render);
+		if (stepBtn) stepBtn.addEventListener("click", sample);
+		if (resetBtn) resetBtn.addEventListener("click", reset);
+		render();
+	}
+
+	/* ── perceptron ─────────────────────────────────────────── */
+
+	function initPerceptron(root) {
+		var canvas = $("[data-perceptron-canvas]", root);
+		var trainBtn = $("[data-perceptron-train]", root);
+		var runBtn = $("[data-perceptron-run]", root);
+		var resetBtn = $("[data-perceptron-reset]", root);
+		var accEl = $("[data-perceptron-acc]", root);
+		var accA = $("[data-perceptron-acc-a]", root);
+		var accB = $("[data-perceptron-acc-b]", root);
+		var wEl = $("[data-perceptron-w]", root);
+		var bEl = $("[data-perceptron-b]", root);
+		var noteEl = $("[data-perceptron-note]", root);
+		if (!canvas) return;
+
+		var pts = [];
+		var seed = 0;
+		function rnd() { seed += 1; var x = Math.sin(seed * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); }
+		function randn() { return (rnd() + rnd() + rnd() + rnd() - 2) * 0.9; }
+		function build() {
+			pts = [];
+			seed = 7;
+			for (var i = 0; i < 26; i++) {
+				pts.push({ x: -0.42 + randn() * 0.22, y: -0.32 + randn() * 0.22, yTrue: 1 });
+			}
+			for (var j = 0; j < 26; j++) {
+				pts.push({ x: 0.46 + randn() * 0.22, y: 0.36 + randn() * 0.22, yTrue: -1 });
+			}
+		}
+		var w = [0.25, 0.32];
+		var b = -0.08;
+		var cursor = 0;
+		var lr = 0.12;
+		var steps = 0;
+
+		function pred(p) { return w[0] * p.x + w[1] * p.y + b >= 0 ? 1 : -1; }
+		function accuracy() {
+			var ok = 0, okA = 0, nA = 0, okB = 0, nB = 0;
+			pts.forEach(function (p) {
+				var correct = pred(p) === p.yTrue;
+				if (correct) ok++;
+				if (p.yTrue === 1) { nA++; if (correct) okA++; }
+				else { nB++; if (correct) okB++; }
+			});
+			return { all: ok / pts.length, a: nA ? okA / nA : 0, b: nB ? okB / nB : 0 };
+		}
+		function draw(ctx, W, H) {
+			var c = colors();
+			var pad = 30;
+			function px(x) { return pad + (x + 1.25) / 2.5 * (W - pad * 2); }
+			function py(y) { return H - pad - (y + 1.25) / 2.5 * (H - pad * 2); }
+			ctx.clearRect(0, 0, W, H);
+			ctx.strokeStyle = c.line;
+			ctx.lineWidth = 1;
+			for (var g = -1; g <= 1; g += 0.5) {
+				ctx.beginPath();
+				ctx.moveTo(px(g), py(-1.2)); ctx.lineTo(px(g), py(1.2));
+				ctx.moveTo(px(-1.2), py(g)); ctx.lineTo(px(1.2), py(g));
+				ctx.stroke();
+			}
+			ctx.strokeStyle = c.lineStrong;
+			ctx.beginPath();
+			ctx.moveTo(px(-1.2), py(0)); ctx.lineTo(px(1.2), py(0));
+			ctx.moveTo(px(0), py(-1.2)); ctx.lineTo(px(0), py(1.2));
+			ctx.stroke();
+			var denom = w[1];
+			if (Math.abs(denom) > 1e-6) {
+				var x1 = -1.2, y1 = -(w[0] * x1 + b) / denom;
+				var x2 = 1.2, y2 = -(w[0] * x2 + b) / denom;
+				ctx.strokeStyle = c.green;
+				ctx.lineWidth = 2.4;
+				ctx.beginPath(); ctx.moveTo(px(x1), py(y1)); ctx.lineTo(px(x2), py(y2)); ctx.stroke();
+			} else if (Math.abs(w[0]) > 1e-6) {
+				var xv = -b / w[0];
+				ctx.strokeStyle = c.green;
+				ctx.lineWidth = 2.4;
+				ctx.beginPath(); ctx.moveTo(px(xv), py(-1.2)); ctx.lineTo(px(xv), py(1.2)); ctx.stroke();
+			}
+			pts.forEach(function (p) {
+				var correct = pred(p) === p.yTrue;
+				ctx.beginPath();
+				ctx.arc(px(p.x), py(p.y), 4.6, 0, Math.PI * 2);
+				ctx.fillStyle = p.yTrue === 1 ? c.green : c.sky;
+				ctx.fill();
+				ctx.strokeStyle = correct ? c.card : c.coral;
+				ctx.lineWidth = correct ? 1.4 : 2.4;
+				ctx.stroke();
+			});
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			ctx.fillText("x₁", W - 18, py(0) - 7);
+			ctx.fillText("x₂", px(0) + 7, 14);
+			var a = accuracy();
+			if (accEl) accEl.textContent = Math.round(a.all * 100) + "%";
+			if (accA) accA.textContent = Math.round(a.a * 100) + "%";
+			if (accB) accB.textContent = Math.round(a.b * 100) + "%";
+			if (wEl) wEl.textContent = w[0].toFixed(2) + " / " + w[1].toFixed(2);
+			if (bEl) bEl.textContent = b.toFixed(2);
+			if (noteEl) {
+				if (a.all === 1) noteEl.innerHTML = "Separated. A single straight line is enough — because this toy is linearly separable. A real problem often is not.";
+				else noteEl.innerHTML = "<b>" + steps + " updates.</b> Each mistake pushes the line: w ← w + η·y·x, b ← b + η·y.";
+			}
+		}
+		function update() {
+			var tries = 0;
+			while (tries < pts.length) {
+				var p = pts[cursor % pts.length];
+				cursor++;
+				tries++;
+				var y = pred(p);
+				if (y !== p.yTrue) {
+					w[0] += lr * p.yTrue * p.x;
+					w[1] += lr * p.yTrue * p.y;
+					b += lr * p.yTrue;
+					steps++;
+					return true;
+				}
+			}
+			return false;
+		}
+		var api = canvasDemo(canvas, draw);
+		if (!api) return;
+		if (trainBtn) trainBtn.addEventListener("click", function () { update(); api.redraw(); });
+		if (runBtn) runBtn.addEventListener("click", function () {
+			for (var i = 0; i < 20; i++) update();
+			api.redraw();
+		});
+		if (resetBtn) resetBtn.addEventListener("click", function () {
+			build();
+			w = [0.25, 0.32];
+			b = -0.08;
+			cursor = 0;
+			steps = 0;
+			api.redraw();
+		});
+		build();
+		api.redraw();
+	}
+
+	/* ── gradient descent ───────────────────────────────────── */
+
+	function initGradient(root) {
+		var canvas = $("[data-gradient-canvas]", root);
+		var lr = $("[data-gradient-lr]", root);
+		var lrOut = $("[data-gradient-lr-out]", root);
+		var stepBtn = $("[data-gradient-step]", root);
+		var runBtn = $("[data-gradient-run]", root);
+		var resetBtn = $("[data-gradient-reset]", root);
+		var lossEl = $("[data-gradient-loss]", root);
+		var stepEl = $("[data-gradient-step-out]", root);
+		var gradEl = $("[data-gradient-grad]", root);
+		var noteEl = $("[data-gradient-note]", root);
+		var svg = $("[data-gradient-loss-chart]", root);
+		if (!canvas) return;
+
+		function f(x, y) {
+			return 0.55 * x * x + 1.1 * y * y + 0.28 * Math.sin(2.4 * x) * Math.cos(2.0 * y);
+		}
+		function grad(x, y) {
+			return [
+				1.1 * x + 0.672 * Math.cos(2.4 * x) * Math.cos(2.0 * y),
+				2.2 * y - 0.56 * Math.sin(2.4 * x) * Math.sin(2.0 * y)
+			];
+		}
+		var start = { x: -2.55, y: 1.95 };
+		var pos = { x: start.x, y: start.y };
+		var history = [{ x: pos.x, y: pos.y }];
+		var losses = [f(pos.x, pos.y)];
+		var steps = 0;
+		var timer = null;
+
+		function draw(ctx, W, H) {
+			var c = colors();
+			var pad = 28;
+			function px(x) { return pad + (x + 3) / 6 * (W - pad * 2); }
+			function py(y) { return H - pad - (y + 3) / 6 * (H - pad * 2); }
+			ctx.clearRect(0, 0, W, H);
+			var cols = 72, rows = 54;
+			var cw = (W - pad * 2) / cols, ch = (H - pad * 2) / rows;
+			var lo = 1e9, hi = -1e9;
+			for (var yy = 0; yy < rows; yy++) {
+				for (var xx = 0; xx < cols; xx++) {
+					var xv = -3 + 6 * xx / (cols - 1);
+					var yv = 3 - 6 * yy / (rows - 1);
+					var v = f(xv, yv);
+					if (v < lo) lo = v;
+					if (v > hi) hi = v;
+				}
+			}
+			var span = hi - lo || 1;
+			var cool = hexToRgb(c.paper2), warm = hexToRgb(c.sky), deep = hexToRgb(c.petrol);
+			for (var y2 = 0; y2 < rows; y2++) {
+				for (var x2 = 0; x2 < cols; x2++) {
+					var xv2 = -3 + 6 * x2 / (cols - 1);
+					var yv2 = 3 - 6 * y2 / (rows - 1);
+					var t = (f(xv2, yv2) - lo) / span;
+					var col = t < 0.55 ? mix(cool, warm, t / 0.55) : mix(warm, deep, (t - 0.55) / 0.45);
+					ctx.fillStyle = rgb(col);
+					ctx.fillRect(px(xv2 - 3 / cols), py(yv2 + 3 / rows), cw + 1, ch + 1);
+				}
+			}
+			ctx.strokeStyle = c.lineStrong;
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.moveTo(px(-3), py(0)); ctx.lineTo(px(3), py(0));
+			ctx.moveTo(px(0), py(-3)); ctx.lineTo(px(0), py(3));
+			ctx.stroke();
+			ctx.strokeStyle = c.gold;
+			ctx.lineWidth = 2;
+			ctx.beginPath();
+			history.forEach(function (p, i) { if (i) ctx.lineTo(px(p.x), py(p.y)); else ctx.moveTo(px(p.x), py(p.y)); });
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.arc(px(pos.x), py(pos.y), 7, 0, Math.PI * 2);
+			ctx.fillStyle = c.green;
+			ctx.fill();
+			ctx.strokeStyle = c.card;
+			ctx.lineWidth = 2;
+			ctx.stroke();
+			var g = grad(pos.x, pos.y);
+			ctx.strokeStyle = c.coral;
+			ctx.lineWidth = 2;
+			var gx = px(pos.x) + g[0] * 8, gy = py(pos.y) - g[1] * 8;
+			ctx.beginPath(); ctx.moveTo(px(pos.x), py(pos.y)); ctx.lineTo(gx, gy); ctx.stroke();
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			ctx.fillText("θ₁", W - 18, py(0) - 7);
+			ctx.fillText("θ₂", px(0) + 8, 14);
+			ctx.fillText("loss landscape", pad, 16);
+			var p = pos;
+			var l = f(p.x, p.y);
+			if (lossEl) lossEl.textContent = l.toFixed(3);
+			if (stepEl) stepEl.textContent = steps;
+			if (gradEl) gradEl.textContent = Math.sqrt(g[0] * g[0] + g[1] * g[1]).toFixed(2);
+			if (noteEl) {
+				if (Math.abs(p.x) > 2.9 || Math.abs(p.y) > 2.9) noteEl.innerHTML = "<b>Diverged.</b> The learning rate is too large; the step overshoots and the loss explodes.";
+				else if (l < 0.02) noteEl.innerHTML = "<b>Near the bottom.</b> The gradient is small, so the steps shrink. This is the loop, not a lookup of the answer.";
+				else noteEl.innerHTML = "<b>Step " + steps + ".</b> The ball follows −∇loss. The learning rate decides how far it jumps.";
+			}
+			renderLossChart();
+		}
+		function renderLossChart() {
+			if (!svg) return;
+			var max = Math.max.apply(null, losses) * 1.05 || 1;
+			var n = Math.max(2, losses.length);
+			var pts = losses.map(function (v, i) {
+				return (i / (n - 1) * 100).toFixed(2) + "," + (95 - v / max * 85).toFixed(2);
+			}).join(" ");
+			svg.innerHTML = '<line class="gd-axis" x1="0" y1="95" x2="100" y2="95"></line>' +
+				'<polyline class="gd-curve" points="' + pts + '"></polyline>' +
+				'<circle class="gd-dot" cx="100" cy="' + (95 - losses[losses.length - 1] / max * 85).toFixed(2) + '" r="2.4"></circle>';
+		}
+		function step() {
+			var rate = clamp(parseFloat(lr && lr.value) || 0.08, 0.005, 0.4);
+			if (lrOut) lrOut.textContent = rate.toFixed(2);
+			var g = grad(pos.x, pos.y);
+			pos.x = clamp(pos.x - rate * g[0], -3, 3);
+			pos.y = clamp(pos.y - rate * g[1], -3, 3);
+			history.push({ x: pos.x, y: pos.y });
+			if (history.length > 220) history.shift();
+			losses.push(f(pos.x, pos.y));
+			if (losses.length > 90) losses.shift();
+			steps++;
+			api.redraw();
+		}
+		var api = canvasDemo(canvas, draw);
+		if (!api) return;
+		if (lr) lr.addEventListener("input", function () { if (lrOut) lrOut.textContent = (parseFloat(lr.value) || 0.08).toFixed(2); });
+		if (stepBtn) stepBtn.addEventListener("click", step);
+		if (runBtn) runBtn.addEventListener("click", function () {
+			if (timer) { clearInterval(timer); timer = null; runBtn.textContent = "Run / pause"; return; }
+			runBtn.textContent = "Pause";
+			timer = setInterval(function () {
+				step();
+				if (Math.abs(pos.x) > 2.995 || Math.abs(pos.y) > 2.995) {
+					clearInterval(timer);
+					timer = null;
+					runBtn.textContent = "Run / pause";
+				}
+			}, 55);
+		});
+		if (resetBtn) resetBtn.addEventListener("click", function () {
+			if (timer) { clearInterval(timer); timer = null; }
+			pos = { x: start.x, y: start.y };
+			history = [{ x: pos.x, y: pos.y }];
+			losses = [f(pos.x, pos.y)];
+			steps = 0;
+			api.redraw();
+		});
+		api.redraw();
+	}
+
+	/* ── verification / synthetic media ─────────────────────── */
+
+	function initVerify(root) {
+		var chips = $$("[data-verify-check]", root);
+		var meter = $("[data-verify-meter]", root);
+		var scoreEl = $("[data-verify-score]", root);
+		var verdict = $("[data-verify-verdict]", root);
+		var note = $("[data-verify-note]", root);
+		if (!chips.length) return;
+		var weights = { provenance: 40, watermark: 18, reverse: 24, corroboration: 18 };
+		function render() {
+			var total = 0;
+			chips.forEach(function (chip) {
+				if (chip.classList.contains("is-on")) total += weights[chip.getAttribute("data-verify-check")] || 0;
+			});
+			if (meter) meter.style.width = total + "%";
+			if (scoreEl) scoreEl.textContent = total + "/100";
+			var label = total >= 80 ? "strong" : total >= 50 ? "moderate" : total >= 25 ? "weak" : "unverified";
+			if (verdict) {
+				verdict.textContent = "Evidence: " + label;
+				verdict.className = "vf-verdict " + (total >= 60 ? "is-good" : total > 0 ? "is-bad" : "");
+			}
+			if (note) {
+				if (total >= 80) note.textContent = "Several independent signals agree. Still not proof, but it is a chain you can inspect.";
+				else if (total >= 50) note.textContent = "Enough to slow down, not enough to stop checking. Provenance is stronger than a watermark.";
+				else if (total > 0) note.textContent = "A watermark alone can be removed or laundered. The liar's dividend grows when verification is expensive.";
+				else note.textContent = "No signal. A fluent image is not evidence. Ask for the source, the original, and a second witness.";
+			}
+		}
+		chips.forEach(function (chip) {
+			chip.addEventListener("click", function () {
+				chip.classList.toggle("is-on");
+				render();
+			});
+		});
+		render();
+	}
+
+	/* ── Chinese room ───────────────────────────────────────── */
+
+	function initChinese(root) {
+		var buttons = $$("[data-chinese-mode]", root);
+		var caption = $("[data-chinese-caption]", root);
+		var understanding = $("[data-chinese-understanding]", root);
+		var room = $("[data-chinese-room]", root);
+		if (!buttons.length) return;
+		var copy = {
+			inside: {
+				cap: "Inside: a person follows a rule book, matching Chinese symbols to Chinese symbols. The answers are correct, but the person never learns Chinese.",
+				val: "none inside",
+				note: "The room passes the test. Does that settle whether it understands?"
+			},
+			whole: {
+				cap: "From outside: the room as a whole takes Chinese in and produces Chinese out. Perhaps the system, not the person, is what understands — if anything does.",
+				val: "possibly the system",
+				note: "Searle's argument is contested: the whole room might be the understanding system. The demo cannot settle it."
+			}
+		};
+		function select(mode) {
+			buttons.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-chinese-mode") === mode); });
+			var c = copy[mode];
+			if (caption) caption.textContent = c.cap;
+			if (understanding) understanding.textContent = c.val;
+			if (room) room.classList.toggle("is-whole", mode === "whole");
+		}
+		buttons.forEach(function (b) {
+			b.addEventListener("click", function () { select(b.getAttribute("data-chinese-mode")); });
+		});
+		select("inside");
+	}
+
+	/* ── ambiguity ──────────────────────────────────────────── */
+
+	function initAmbiguity(root) {
+		var chips = $("[data-ambiguity-chips]", root);
+		var sentenceEl = $("[data-ambiguity-sentence]", root);
+		var readingsEl = $("[data-ambiguity-readings]", root);
+		var noteEl = $("[data-ambiguity-note]", root);
+		if (!chips || !sentenceEl || !readingsEl) return;
+		var examples = [
+			{
+				label: "Telescope",
+				before: "I saw the man ",
+				amb: "with the telescope",
+				after: ".",
+				readings: [
+					["Reading A · the man has it", "I used the telescope to see the man."],
+					["Reading B · I have it", "I saw a man who was carrying a telescope."]
+				],
+				note: "The surface syntax is identical. World knowledge and context decide which reading survives."
+			},
+			{
+				label: "Chicken",
+				before: "The chicken is ready ",
+				amb: "to eat",
+				after: ".",
+				readings: [
+					["Reading A · the chicken eats", "The chicken is hungry and ready for its food."],
+					["Reading B · the chicken is eaten", "The chicken is cooked and ready to be served."]
+				],
+				note: "One adjective, two agents. A language model must choose a plausible world, not just parse a sentence."
+			},
+			{
+				label: "Cooking apples",
+				before: "They are ",
+				amb: "cooking apples",
+				after: ".",
+				readings: [
+					["Reading A · an action", "They are in the kitchen, cooking some apples."],
+					["Reading B · a kind of apple", "They are a variety of apple used for cooking."]
+				],
+				note: "Ambiguity is not a bug in language; it is a feature that context repairs. Models are good at the repair, and can still fail."
+			}
+		];
+		var current = 0;
+		chips.innerHTML = examples.map(function (ex, i) {
+			return '<button class="chip' + (i === 0 ? " is-on" : "") + '" type="button" data-ambiguity-i="' + i + '">' + escapeHtml(ex.label) + "</button>";
+		}).join("");
+		function render() {
+			var ex = examples[current];
+			sentenceEl.innerHTML = escapeHtml(ex.before) + '<span class="amb-tok" data-amb-token>' + escapeHtml(ex.amb) + "</span>" + escapeHtml(ex.after);
+			readingsEl.innerHTML = ex.readings.map(function (r) {
+				return '<div class="amb-reading"><b>' + escapeHtml(r[0]) + "</b><p>" + escapeHtml(r[1]) + "</p></div>";
+			}).join("");
+			if (noteEl) noteEl.textContent = ex.note;
+			$$(".amb-reading", readingsEl).forEach(function (r, i) {
+				r.classList.toggle("is-on", i === 0);
+			});
+			var tok = $("[data-amb-token]", sentenceEl);
+			if (tok) tok.addEventListener("click", function () {
+				tok.classList.toggle("is-on");
+				$$(".amb-reading", readingsEl).forEach(function (r) { r.classList.toggle("is-on"); });
+			});
+		}
+		$$("[data-ambiguity-i]", chips).forEach(function (chip) {
+			chip.addEventListener("click", function () {
+				$$("[data-ambiguity-i]", chips).forEach(function (x) { x.classList.remove("is-on"); });
+				chip.classList.add("is-on");
+				current = parseInt(chip.getAttribute("data-ambiguity-i"), 10) || 0;
+				render();
+			});
+		});
+		render();
+	}
+
+	/* ── receptive field ────────────────────────────────────── */
+
+	function initReceptive(root) {
+		var inputEl = $("[data-rf-input]", root);
+		var outputEl = $("[data-rf-output]", root);
+		var depth = $("[data-rf-depth]", root);
+		var depthOut = $("[data-rf-depth-out]", root);
+		var kernel = $("[data-rf-kernel]", root);
+		var kernelOut = $("[data-rf-kernel-out]", root);
+		var sizeEl = $("[data-rf-size]", root);
+		var layerEl = $("[data-rf-layers]", root);
+		var paramEl = $("[data-rf-params]", root);
+		var noteEl = $("[data-rf-note]", root);
+		if (!inputEl || !outputEl) return;
+		var N = 7;
+		var pattern = [];
+		for (var y = 0; y < N; y++) {
+			for (var x = 0; x < N; x++) {
+				var dx = x - 3, dy = y - 3;
+				pattern.push(dx * dx + dy * dy < 4 ? 1 : (x === 1 || y === 5 ? 0.55 : 0));
+			}
+		}
+		var selected = 24;
+		function val(el, fallback) { return parseInt(el && el.value, 10) || fallback; }
+		function render() {
+			var d = clamp(val(depth, 1), 1, 4);
+			var k = clamp(val(kernel, 3), 3, 5);
+			if (depthOut) depthOut.textContent = d;
+			if (kernelOut) kernelOut.textContent = k + "×" + k;
+			var r = Math.floor(d * (k - 1) / 2);
+			var sx = selected % N, sy = Math.floor(selected / N);
+			inputEl.innerHTML = pattern.map(function (v, i) {
+				var x = i % N, y = Math.floor(i / N);
+				var inField = Math.abs(x - sx) <= r && Math.abs(y - sy) <= r;
+				return '<span class="rf-cell' + (v ? " is-input" : "") + (inField ? " is-field" : "") + '" data-rf-cell="' + i + '" style="opacity:' + (v ? 1 : 0.35) + '"></span>';
+			}).join("");
+			var out = [];
+			for (var oy = 0; oy < N; oy++) {
+				for (var ox = 0; ox < N; ox++) {
+					var sum = 0, n = 0;
+					for (var ky = -Math.floor(k / 2); ky <= Math.floor(k / 2); ky++) {
+						for (var kx = -Math.floor(k / 2); kx <= Math.floor(k / 2); kx++) {
+							var xx = ox + kx, yy = oy + ky;
+							if (xx < 0 || yy < 0 || xx >= N || yy >= N) continue;
+							sum += pattern[yy * N + xx];
+							n++;
+						}
+					}
+					out.push(n ? sum / n : 0);
+				}
+			}
+			outputEl.innerHTML = out.map(function (v, i) {
+				return '<span class="rf-cell' + (i === selected ? " is-field" : "") + '" style="opacity:' + (0.18 + v * 0.82) + '"></span>';
+			}).join("");
+			var size = 2 * r + 1;
+			if (sizeEl) sizeEl.textContent = size + "×" + size;
+			if (layerEl) layerEl.textContent = d;
+			if (paramEl) paramEl.textContent = (k * k * d).toLocaleString();
+			if (noteEl) noteEl.innerHTML = "Each layer widens the window by <b>" + (k - 1) + "</b> cells. After " + d + " layer" + (d > 1 ? "s" : "") + ", one unit sees <b>" + size + "×" + size + "</b> input cells. Shared weights keep the parameter count tiny.";
+			$$("[data-rf-cell]", inputEl).forEach(function (cell) {
+				cell.addEventListener("click", function () {
+					selected = parseInt(cell.getAttribute("data-rf-cell"), 10) || 0;
+					render();
+				});
+			});
+		}
+		[depth, kernel].forEach(function (el) { if (el) el.addEventListener("input", render); });
+		render();
+	}
+
+	/* ── citation spotter ───────────────────────────────────── */
+
+	function initCitecheck(root) {
+		var list = $("[data-citecheck-list]", root);
+		var scoreEl = $("[data-citecheck-score]", root);
+		var verdictEl = $("[data-citecheck-verdict]", root);
+		var resetBtn = $("[data-citecheck-reset]", root);
+		if (!list) return;
+		var pool = [
+			{ title: "Attention Is All You Need", meta: "Vaswani et al. · NeurIPS 2017", real: true, why: "Real. The transformer paper." },
+			{ title: "Deep Residual Learning for Image Recognition", meta: "He et al. · CVPR 2016", real: true, why: "Real. The ResNet paper." },
+			{ title: "Language Models are Few-Shot Learners", meta: "Brown et al. · NeurIPS 2020", real: true, why: "Real. The GPT-3 paper." },
+			{ title: "Recursive Semantic Anchoring in Transformer Pretraining", meta: "Keller & Voss · ICML 2021", real: false, why: "Fabricated. Plausible title, plausible venue, no such paper." },
+			{ title: "The 2019 Zurich Study on Latent Memory Consolidation", meta: "M. Roth · Nature Neuroscience 2019", real: false, why: "Fabricated. A generic study-shaped sentence, not a citation." },
+			{ title: "Denoising Diffusion Probabilistic Models", meta: "Ho et al. · NeurIPS 2020", real: true, why: "Real. The DDPM paper." }
+		];
+		var round = [], answered = 0, correct = 0, seed = 3;
+		function rnd() { seed += 1; return (Math.sin(seed * 7.31) * 43758.5453) % 1; }
+		function pickRound() {
+			var copy = pool.slice();
+			for (var i = copy.length - 1; i > 0; i--) {
+				var j = Math.floor(Math.abs(rnd()) * (i + 1));
+				var t = copy[i]; copy[i] = copy[j]; copy[j] = t;
+			}
+			return copy.slice(0, 4);
+		}
+		function render() {
+			list.innerHTML = round.map(function (r, i) {
+				return '<div class="cc-card" data-cc-i="' + i + '">' +
+					'<h4>' + escapeHtml(r.title) + '</h4>' +
+					'<p>' + escapeHtml(r.meta) + '</p>' +
+					'<div class="cc-actions">' +
+					'<button class="btn-demo" type="button" data-cc-guess="real">Real</button>' +
+					'<button class="btn-demo" type="button" data-cc-guess="fake">Fabricated</button>' +
+					'</div><div class="cc-verdict" style="min-height:0" data-cc-feedback></div></div>';
+			}).join("");
+			answered = 0; correct = 0;
+			if (scoreEl) scoreEl.textContent = "0 / " + round.length;
+			if (verdictEl) verdictEl.textContent = "";
+			$$(".cc-card", list).forEach(function (card, i) {
+				$$("[data-cc-guess]", card).forEach(function (btn) {
+					btn.addEventListener("click", function () {
+						if (card.classList.contains("is-answered")) return;
+						card.classList.add("is-answered");
+						var guess = btn.getAttribute("data-cc-guess") === "real";
+						var ok = guess === round[i].real;
+						if (ok) correct++;
+						answered++;
+						card.classList.add(round[i].real ? "is-real" : "is-fake");
+						var fb = $("[data-cc-feedback]", card);
+						if (fb) fb.innerHTML = "<b>" + (ok ? "Correct." : "Missed.") + "</b> " + escapeHtml(round[i].why);
+						$$("[data-cc-guess]", card).forEach(function (b) { b.disabled = true; });
+						if (scoreEl) scoreEl.textContent = correct + " / " + round.length;
+						if (verdictEl && answered === round.length) {
+							verdictEl.innerHTML = correct === round.length
+								? "<b>Clean sweep.</b> Plausibility is not provenance. The skill is checking, not guessing."
+								: "<b>" + correct + " of " + round.length + ".</b> Fabricated references are built to look exactly like real ones. Verify the DOI, the venue, and the author before you cite.";
+						}
+					});
+				});
+			});
+		}
+		if (resetBtn) resetBtn.addEventListener("click", function () { round = pickRound(); render(); });
+		round = pickRound();
+		render();
+	}
+
+	/* ── reasoning: answer vs steps ─────────────────────────── */
+
+	function initReasoning(root) {
+		var chips = $("[data-reasoning-problems]", root);
+		var questionEl = $("[data-reasoning-question]", root);
+		var modeBtns = $$("[data-reasoning-mode]", root);
+		var stepsEl = $("[data-reasoning-steps]", root);
+		var answerEl = $("[data-reasoning-answer]", root);
+		var tokensEl = $("[data-reasoning-tokens]", root);
+		var confidenceEl = $("[data-reasoning-confidence]", root);
+		var votesEl = $("[data-reasoning-votes]", root);
+		var sampleBtn = $("[data-reasoning-sample]", root);
+		var resetBtn = $("[data-reasoning-reset]", root);
+		if (!questionEl || !stepsEl) return;
+		var problems = [
+			{
+				label: "Bat & ball",
+				q: "A bat and a ball cost $1.10. The bat costs $1.00 more than the ball. How much does the ball cost?",
+				quick: "$0.10",
+				correct: "$0.05",
+				quickWhy: "The tempting answer. It keeps the $1.00 difference but forgets that the bat then costs $1.10.",
+				steps: [
+					"Let the ball cost x. Then the bat costs x + $1.00.",
+					"x + (x + $1.00) = $1.10.",
+					"2x = $0.10, so x = $0.05.",
+					"The ball is $0.05; the bat is $1.05."
+				],
+				tokens: [9, 84]
+			},
+			{
+				label: "Lily pad",
+				q: "A lily-pad patch doubles in size every day. It covers the whole lake on day 48. On which day does it cover half the lake?",
+				quick: "24",
+				correct: "47",
+				quickWhy: "Half of 48 feels natural, but doubling means the patch was half the lake exactly one day earlier.",
+				steps: [
+					"Work backwards. If the lake is full on day 48, the patch was half as large on day 47.",
+					"On day 47 it covered half the lake.",
+					"One more doubling fills it on day 48."
+				],
+				tokens: [7, 58]
+			},
+			{
+				label: "Machines",
+				q: "Five machines make five widgets in five minutes. How long do 100 machines take to make 100 widgets?",
+				quick: "100 minutes",
+				correct: "5 minutes",
+				quickWhy: "Scaling the machines and the widgets together leaves the rate unchanged.",
+				steps: [
+					"Five machines make five widgets in five minutes, so one machine makes one widget in five minutes.",
+					"100 machines each make one widget in the same five minutes.",
+					"They finish together: five minutes."
+				],
+				tokens: [10, 63]
+			}
+		];
+		var current = 0, mode = "steps", sampled = [];
+		chips.innerHTML = problems.map(function (p, i) {
+			return '<button class="chip' + (i === 0 ? " is-on" : "") + '" type="button" data-reasoning-i="' + i + '">' + escapeHtml(p.label) + "</button>";
+		}).join("");
+		function render() {
+			var p = problems[current];
+			if (questionEl) questionEl.textContent = p.q;
+			modeBtns.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-reasoning-mode") === mode); });
+			if (mode === "steps") {
+				stepsEl.innerHTML = p.steps.map(function (s, i) {
+					return '<div class="cot-step is-on" style="transition-delay:' + (i * 55) + 'ms">' + escapeHtml(s) + "</div>";
+				}).join("");
+				if (answerEl) answerEl.innerHTML = 'Answer: <b>' + p.correct + "</b>";
+				if (tokensEl) tokensEl.textContent = p.tokens[1] + " tokens";
+				if (confidenceEl) confidenceEl.textContent = "checked";
+			} else {
+				stepsEl.innerHTML = '<div class="cot-step is-on">The answer feels obvious: ' + escapeHtml(p.quick) + ".</div>";
+				if (answerEl) answerEl.innerHTML = 'Answer: <b>' + p.quick + "</b> <span style=\"color:var(--tm-coral)\">· likely wrong</span>";
+				if (tokensEl) tokensEl.textContent = p.tokens[0] + " tokens";
+				if (confidenceEl) confidenceEl.textContent = "fast, unchecked";
+			}
+			if (mode === "steps" && answerEl) answerEl.title = "";
+			if (mode !== "steps" && answerEl) answerEl.title = p.quickWhy;
+			if (votesEl && sampled.length) renderVotes();
+			else if (votesEl) votesEl.innerHTML = "Sampling is disabled until you press <b>Sample 5 paths</b>.";
+		}
+		function renderVotes() {
+			var p = problems[current];
+			var correctCount = mode === "steps" ? 4 : 1;
+			var votes = [];
+			for (var i = 0; i < 5; i++) votes.push(i < correctCount ? p.correct : p.quick);
+			votesEl.innerHTML = "Five sampled paths → " + votes.map(function (v) {
+				return '<span style="display:inline-block;margin-right:5px;padding:2px 7px;border:1px solid var(--tm-line);border-radius:999px;font-family:var(--tm-mono);font-size:.62rem;color:' + (v === p.correct ? "var(--tm-green-deep)" : "var(--tm-coral)") + '">' + escapeHtml(v) + "</span>";
+			}).join("") + "<br><b>" + correctCount + " / 5</b> agree on " + escapeHtml(p.correct) + ". Majority voting helps only when the errors are not all the same.";
+		}
+		modeBtns.forEach(function (b) {
+			b.addEventListener("click", function () {
+				mode = b.getAttribute("data-reasoning-mode");
+				sampled = [];
+				render();
+			});
+		});
+		$$("[data-reasoning-i]", chips).forEach(function (chip) {
+			chip.addEventListener("click", function () {
+				$$("[data-reasoning-i]", chips).forEach(function (x) { x.classList.remove("is-on"); });
+				chip.classList.add("is-on");
+				current = parseInt(chip.getAttribute("data-reasoning-i"), 10) || 0;
+				sampled = [];
+				render();
+			});
+		});
+		if (sampleBtn) sampleBtn.addEventListener("click", function () { sampled = [1, 2, 3, 4, 5]; renderVotes(); });
+		if (resetBtn) resetBtn.addEventListener("click", function () { sampled = []; render(); });
+		render();
+	}
+
+	/* ── prompt builder ─────────────────────────────────────── */
+
+	function initPrompt(root) {
+		var chips = $$("[data-prompt]", root);
+		var meter = $("[data-prompt-meter]", root);
+		var value = $("[data-prompt-value]", root);
+		var preview = $("[data-prompt-preview]", root);
+		var candsEl = $("[data-prompt-cands]", root);
+		var sampleBtn = $("[data-prompt-sample]", root);
+		var tokenEl = $("[data-prompt-tokens]", root);
+		var sampledEl = $("[data-prompt-sampled]", root);
+		if (!chips.length || !candsEl) return;
+		var candidates = [
+			{ name: "Concise fact", text: "Sunlight scatters off air molecules. Shorter blue wavelengths scatter more, so blue reaches your eyes from every direction.", base: 0.7, role: 0.2, format: 0.8, examples: 0.2, constraints: 0.5 },
+			{ name: "Tutor story", text: "Imagine sunlight as a mix of colours. Air molecules bump the blue light around much more than the red, so blue arrives from every patch of sky.", base: 0.8, role: 1.5, format: 0.3, examples: 0.9, constraints: 0.6 },
+			{ name: "Three bullets", text: "• Sunlight contains all colours.\n• Air scatters short (blue) waves more.\n• So blue reaches your eyes from everywhere.", base: 0.4, role: 0.5, format: 1.9, examples: 0.4, constraints: 0.4 },
+			{ name: "Terse", text: "The sky is blue.", base: 0.6, role: -0.2, format: -0.3, examples: -0.2, constraints: -0.6 },
+			{ name: "Ocean myth", text: "The sky is blue because it reflects the ocean.", base: 0.5, role: -0.8, format: -0.6, examples: -0.7, constraints: -2.0 }
+		];
+		var on = { role: true, format: false, examples: false, constraints: false };
+		var phrase = {
+			role: "You are a patient science tutor.",
+			format: "Answer in three bullet points.",
+			examples: "Example: \"Sunlight is a mix of colours.\"",
+			constraints: "Do not invent facts or use unexplained jargon."
+		};
+		function weights() {
+			return candidates.map(function (c) {
+				var s = c.base;
+				Object.keys(on).forEach(function (k) { if (on[k]) s += c[k] || 0; });
+				return Math.exp(s * 1.25);
+			});
+		}
+		function render() {
+			var w = weights();
+			var sum = w.reduce(function (a, b) { return a + b; }, 0);
+			var probs = w.map(function (x) { return x / sum; });
+			var top = Math.max.apply(null, probs);
+			var order = probs.map(function (_, i) { return i; }).sort(function (a, b) { return probs[b] - probs[a]; });
+			if (meter) meter.style.width = (top * 100).toFixed(1) + "%";
+			if (value) value.textContent = Math.round(top * 100) + "%";
+			var active = Object.keys(on).filter(function (k) { return on[k]; });
+			if (preview) {
+				preview.innerHTML = (active.length ? active.map(function (k) { return escapeHtml(phrase[k]); }).join(" ") + "<br><br>" : "") + "Question: Why is the sky blue?";
+			}
+			candsEl.innerHTML = order.map(function (i) {
+				var c = candidates[i];
+				return '<div class="retrieval-item' + (i === order[0] ? " is-hit" : "") + '">' +
+					'<div><b>' + escapeHtml(c.name) + '</b><p>' + escapeHtml(c.text).replace(/\n/g, "<br>") + '</p></div>' +
+					'<span class="retrieval-score">' + Math.round(probs[i] * 100) + '%</span></div>';
+			}).join("");
+			if (tokenEl) tokenEl.textContent = (8 + active.length * 11) + " tokens";
+			if (sampledEl && !sampledEl.getAttribute("data-has")) sampledEl.textContent = "Press sample to draw an answer from the current distribution.";
+		}
+		chips.forEach(function (chip) {
+			chip.addEventListener("click", function () {
+				var key = chip.getAttribute("data-prompt");
+				on[key] = !on[key];
+				chip.classList.toggle("is-on", on[key]);
+				if (sampledEl) sampledEl.removeAttribute("data-has");
+				render();
+			});
+		});
+		if (sampleBtn) sampleBtn.addEventListener("click", function () {
+			var w = weights();
+			var sum = w.reduce(function (a, b) { return a + b; }, 0);
+			var r = Math.random() * sum, acc = 0, pick = 0;
+			for (var i = 0; i < w.length; i++) {
+				acc += w[i];
+				if (r <= acc) { pick = i; break; }
+			}
+			if (sampledEl) {
+				sampledEl.setAttribute("data-has", "1");
+				sampledEl.innerHTML = "<b>Sampled:</b> " + escapeHtml(candidates[pick].text).replace(/\n/g, "<br>");
+			}
+		});
+		render();
+	}
+
 	/* ── boot ───────────────────────────────────────────────── */
 
 	function boot() {
@@ -1741,6 +2847,16 @@
 			else if (type === "filter") initFilter(root);
 			else if (type === "residual") initResidual(root);
 			else if (type === "science") initScience(root);
+			else if (type === "predict") initPredict(root);
+			else if (type === "perceptron") initPerceptron(root);
+			else if (type === "gradient") initGradient(root);
+			else if (type === "verify") initVerify(root);
+			else if (type === "chinese") initChinese(root);
+			else if (type === "ambiguity") initAmbiguity(root);
+			else if (type === "receptive") initReceptive(root);
+			else if (type === "citecheck") initCitecheck(root);
+			else if (type === "reasoning") initReasoning(root);
+			else if (type === "prompt") initPrompt(root);
 		});
 	}
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

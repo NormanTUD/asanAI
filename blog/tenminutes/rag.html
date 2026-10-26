@@ -104,6 +104,31 @@ Answer:</pre>
 						<div class="demo-foot">Four topic dimensions; the pipeline is chunk, embed, score, select, insert.</div>
 					</div>
 
+					<div class="demo demo--paper" data-demo="ragspace">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">The retrieval space <span>· demo</span></p>
+								<p class="demo-sub">Chunks live as points. A query is a point too. The nearest points are the passages the model gets to read.</p>
+							</div>
+							<span class="demo-badge">2-D toy</span>
+						</div>
+						<div class="demo-body">
+							<div class="chip-row">
+								<button class="chip is-on" type="button" data-ragquery="eiffel">Eiffel Tower height</button>
+								<button class="chip" type="button" data-ragquery="rag">RAG pipeline</button>
+								<button class="chip" type="button" data-ragquery="vectors">vector database</button>
+							</div>
+							<canvas class="demo-canvas demo-canvas--md" data-ragspace-canvas style="margin-top:12px" aria-label="A two-dimensional map of chunks and a query"></canvas>
+							<div class="demo-readout">
+								<div><b>Query</b><span data-ragspace-query>—</span></div>
+								<div><b>Nearest chunk</b><span data-ragspace-top>—</span></div>
+								<div><b>Distance</b><span data-ragspace-dist>—</span></div>
+							</div>
+							<p class="demo-hint">The query does not search the text. It searches the geometry. Change the query and the two green lines snap to a different neighbourhood.</p>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>Retrieval is nearest-neighbour search in an embedding space. If the geometry is wrong, the prompt contains the wrong world.</span></div>
+					</div>
+
 					<section class="section-block">
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Making RAG work</h2>
