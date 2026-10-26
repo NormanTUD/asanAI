@@ -637,6 +637,17 @@ It is worth being clear, however, about what the test is and what it has come to
 
 The term “Artificial Intelligence” was coined in the 31 August 1955 proposal for the \citealternativetitle{darthmouthartificialintelligence}, when **John McCarthy**, along with Marvin Minsky, Nathaniel Rochester, and Claude Shannon, submitted it. The workshop itself took place in 1956, founded on the conjecture that “every aspect of learning or any other feature of intelligence can in principle be so precisely described that a machine can be made to simulate it,” marking the official birth of the field.
 
+<div class="image-row">
+	<figure>
+		<img src="john_mccarthy_portrait.jpg" alt="John McCarthy at Stanford, 2006" />
+		<figcaption class="md">John McCarthy, who coined “artificial intelligence” for the 1956 Dartmouth proposal. \cite{img_john_mccarthy}. [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).</figcaption>
+	</figure>
+	<figure>
+		<img src="marvin_minsky_portrait.jpg" alt="Marvin Minsky" />
+		<figcaption class="md">Marvin Minsky, McCarthy's co-author on the Dartmouth proposal and later a leading critic of the perceptron. \cite{img_marvin_minsky}. [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).</figcaption>
+	</figure>
+</div>
+
 ### Four ways to build a mind
 
 Naming the field was only the beginning. The harder question was *what an intelligent machine should be measured against*, and it splits the space into four targets. \citeauthor{russell2021aima} lay it out along two axes — should the system *think* or merely *act*, and should it be judged against *human behavior* or against *rational optimality* \cite{russell2021aima}:
@@ -1221,6 +1232,17 @@ While Perceptrons attempted to mimic the brain's structure, a different approach
 In a historic six-game rematch, IBM's Deep Blue defeated the reigning world chess champion, **Garry Kasparov**. Unlike the learning-based Perceptron, Deep Blue relied on massive parallel processing capable of evaluating 200 million positions per second. It proved that for well-defined logical problems, a machine could exceed human capability not through intuition, but through sheer computational calculation. The match was broadcast live, and the win struck hard enough that IBM's share price briefly touched an all-time high \cite{toosi2021history}.
 
 However, Deep Blue's victory represented the pinnacle of specific, hand-crafted logic rather than general intelligence. While effective for the rigid rules of chess, relying on human-designed strategies proved to be a bottleneck for more complex, unstructured problems. This realization leads directly to a fundamental, and somewhat painful, observation about the trajectory of AI progress.
+
+<div class="image-row">
+	<figure>
+		<img src="shrdlu.gif" alt="Screenshot of the SHRDLU blocks-world natural-language interface" />
+		<figcaption class="md">The \citealternativetitle{shrdlu_image} (CC BY-SA 4.0, \citeauthor{shrdlu_image}) shows Terry Winograd's SHRDLU (1972), which answered typed questions about a virtual world of blocks — the canonical demonstration that natural-language reasoning over a small world was possible \cite{winograd1972understanding}.</figcaption>
+	</figure>
+	<figure>
+		<img src="deep_blue.jpg" alt="A Deep Blue-class IBM chess computer at the Computer History Museum" />
+		<figcaption class="md">A Deep Blue-class IBM chess machine at the Computer History Museum, from \citealternativetitle{deep_blue_image} ([CC BY 2.0](https://creativecommons.org/licenses/by/2.0/), \citeauthor{deep_blue_image}). The Commons description notes that the computer shown is similar to, not identical with, the machine that beat Kasparov in 1997.</figcaption>
+	</figure>
+</div>
 </div>
 
 <div class="md">

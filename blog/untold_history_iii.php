@@ -39,6 +39,17 @@ Norbert Wiener's *Cybernetics* (1948) grew directly out of his wartime work on *
 
 The field's very name was a deliberate break with that tradition. When **John McCarthy** chose a title for the 1956 Dartmouth workshop, he settled on "artificial intelligence" partly to distinguish the project from the recent volume *Automata Studies* and, as he put it later, "to escape association with 'cybernetics'" — whose "concentration on analog feedback seemed misguided", so that he would not have to "accept Norbert Wiener as a guru" or "argue with him" (\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).
 
+<div class="image-row">
+    <figure>
+        <img src="john_mccarthy_portrait.jpg" alt="John McCarthy at Stanford, 2006" />
+        <figcaption class="md">John McCarthy, who named the field in the 1955 Dartmouth proposal. \cite{img_john_mccarthy}. [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).</figcaption>
+    </figure>
+    <figure>
+        <img src="marvin_minsky_portrait.jpg" alt="Marvin Minsky" />
+        <figcaption class="md">Marvin Minsky, McCarthy's co-author on the Dartmouth proposal. \cite{img_marvin_minsky}. [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).</figcaption>
+    </figure>
+</div>
+
 #### ARPA/DARPA: The Government Patron of AI
 
 Created in February 1958 in response to Sputnik, the **Advanced Research Projects Agency** (renamed DARPA in 1972) became the primary funder of American AI research for two decades. Its **Information Processing Techniques Office** (IPTO) financed, among much else:

@@ -989,6 +989,7 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
    Lizenz: CC BY-SA 2.0 (via Commons API extmetadata)
    Autor: Steamtalks (Flickr)
    Lokal: marvin_minsky_portrait.jpg
+   Genutzt in: people_of_ai.php § "Marvin Minsky"; history.php § "The term Artificial Intelligence"; untold_history_iii.php § "War, Space, and the Machine"
    Status: OK - CC BY-SA 2.0
 
 8. img_seymour_papert
@@ -1200,7 +1201,7 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
    Lizenz: CC BY-SA 2.0 (via Commons API extmetadata)
    Autor: null0
    Lokal: john_mccarthy_portrait.jpg (700x811)
-   Genutzt in: people_of_ai.php § "John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon"
+   Genutzt in: people_of_ai.php § "John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon"; history.php § "The term Artificial Intelligence"; untold_history_iii.php § "War, Space, and the Machine"
    Status: OK - CC BY-SA 2.0
 
 4. ashbyphoto
@@ -1384,6 +1385,7 @@ Die Seite nutzt ausschließlich bereits im Blog vorhandene, oben geprüfte Datei
 21. Sanzio_01_Plato_Aristotle.jpg — Raphael, Public domain — Section 04 "Aristotle and Plato"
 22. Leibnizrechenmaschine.jpg — Eremeev, CC BY-SA 4.0 — Section 05 "Leibniz's stepped reckoner"
 23. transformer_attention_heads.png — Google, CC BY-SA 4.0 — Timeline "Transformer & BERT"
+24. shrdlu.gif — ai.lect, CC BY-SA 4.0 — Timeline "Winters & narrow AI"
 
 === TEN MINUTES: ZUSÄTZLICHE BILDVERWENDUNGEN (Oktober 2026) ===
 Die folgenden Dateien werden zusätzlich in blog/tenminutes/ verwendet. Quellen
@@ -1456,3 +1458,24 @@ Autor, Lizenz und Quellenlink direkt in der Abbildung.
     Lizenz: CC0
     Verwendet in: tenminutes/computer_vision.html (Convolution-Demo)
     Quelle: https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg
+
+=== DEEP BLUE / SHRDLU (history.php, Stand: Oktober 2026) ===
+====================================================================
+
+1. deep_blue_image
+   URL: https://commons.wikimedia.org/wiki/File:Deep_Blue.jpg
+   Lizenz: CC BY 2.0 (via Commons API extmetadata)
+   Autor: James the photographer (Flickr)
+   Lokal: deep_blue.jpg (400x601)
+   Genutzt in: history.php § "The Triumph of Symbolic AI"
+   Hinweis: Die Commons-Beschreibung sagt ausdrücklich, das Foto zeige einen
+            ähnlichen Computer, nicht die Originalmaschine des Kasparov-Matches.
+   Status: OK - CC BY 2.0
+
+2. shrdlu_image
+   URL: https://commons.wikimedia.org/wiki/File:Ailect15shrdlu1.gif
+   Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+   Autor: ai.lect (Uploader: Ksloniewski)
+   Lokal: shrdlu.gif (599x217)
+   Genutzt in: agents.php § "Classical AI: Symbolic Agents"; history.php § "The Triumph of Symbolic AI"; tenminutes/history.html § "Winters & narrow AI"
+   Status: OK - CC BY-SA 4.0

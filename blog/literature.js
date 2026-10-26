@@ -9375,6 +9375,14 @@ window.bibData = {
 		alternativetitle: "Screenshot of the SHRDLU blocks-world natural language interface (Winograd, 1972)",
 		license: "CC BY-SA 4.0",
 	},
+	"deep_blue_image": {
+		url: "https://commons.wikimedia.org/wiki/File:Deep_Blue.jpg",
+		title: "Deep Blue",
+		author: "James the photographer",
+		year: 2007,
+		alternativetitle: "A Deep Blue-class IBM chess computer at the Computer History Museum",
+		license: "CC BY 2.0",
+	},
 	"eisgalgen_mittenwald": {
 		url: "https://commons.wikimedia.org/wiki/File:Eisgalgen-Mittenwald-Dekan-Karl-Platz-2015-01-01.jpg",
 		title: "Eisgalgen in Mittenwald auf dem Dekan-Karl-Platz",

@@ -1,14 +1,14 @@
 # literature.js — Bildlizenz-Audit
 
-Stand: 2026-10-23
+Stand: 2026-10-26
 
-`literature.js` enthält 2671 Einträge. Davon verweisen **193** auf Wikimedia-Dateien (Commons/Wikipedia `File:`/`Datei:` oder `upload.wikimedia.org`). 164 Lizenzen wurden über die Commons-/Wikipedia-API ermittelt, 5 weitere (Weiterleitungen/Datei-Umbenennungen) manuell verifiziert. Für alle 169 liegt jetzt eine Lizenz vor.
+`literature.js` enthält 2672 Einträge. Davon verweisen **194** auf Wikimedia-Dateien (Commons/Wikipedia `File:`/`Datei:` oder `upload.wikimedia.org`). 164 Lizenzen wurden über die Commons-/Wikipedia-API ermittelt, 5 weitere (Weiterleitungen/Datei-Umbenennungen) manuell verifiziert. Für alle 170 liegt jetzt eine Lizenz vor.
 
 - **69** fehlende Lizenzen wurden automatisch ergänzt, dazu 5 gezielte Einträge (u. a. Inceptionism, Deconv, Loss Landscape, Perseverance, ENIAC).
 - Zusätzlich gezielt ergänzt: `mordvintsev2015inceptionism` (CC BY 4.0), `odena2016deconvolution` (CC BY 2.0), `li2018losslandscape` (MIT), `nasa2021perseverance` (Public domain/NASA) und `sam_demo_img` (Apache-2.0).
 - Korrigiert: `trinilshell_image` von `CC-BY-4.0` auf `CC BY-SA 3.0` (Commons-API).
 
-## A. Wikimedia-Bildquellen (169)
+## A. Wikimedia-Bildquellen (170)
 
 | Key | Lizenz (API) | Feld in literature.js | Quelle |
 |---|---|---|---|
@@ -46,6 +46,7 @@ Stand: 2026-10-23
 | `cuevadelasmanos_image` | CC BY-SA 2.0 | CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:Cueva_de_las_Manos_(6811931046).jpg |
 | `cuneiform` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Clay_tablet_mentioning_the_name_of_Eannatum,_prince_of_Lagash._From_Iraq,_c._2470_BCE._Iraq_Museum.jpg |
 | `dawkins_image` | CC BY 3.0 | CC BY 3.0 | https://commons.wikimedia.org/wiki/File:Richard_Dawkins_Cooper_Union_Shankbone.jpg |
+| `deep_blue_image` | CC BY 2.0 | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Deep_Blue.jpg |
 | `descartes_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Frans_Hals_-_Portret_van_Ren%C3%A9_Descartes.jpg |
 | `diffusion_architecture_img` | MIT | MIT | https://commons.wikimedia.org/wiki/File:Stable_Diffusion_architecture.png |
 | `diffusion_astronaut_img` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Astronaut_Riding_a_Horse_(SD3.5).webp |
