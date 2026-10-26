@@ -1350,10 +1350,11 @@
 			ctx.stroke();
 			var moved = Math.hypot(ex.shift[0] - bank[0], ex.shift[1] - bank[1]) > 0.15;
 			if (moved) {
-				var label = "bank";
-				ctx.font = "700 11px Barlow, system-ui, sans-serif";
+				var label = "bank (with context)";
+				ctx.font = "700 10px Barlow, system-ui, sans-serif";
 				var tw = ctx.measureText(label).width;
 				var tx = ax(ex.shift[0]), ty = ay(ex.shift[1]) - 14;
+				tx = TM.clamp(tx, pad + tw / 2 + 6, w - pad - tw / 2 - 6);
 				TM.roundRect(ctx, tx - tw / 2 - 6, ty - 12, tw + 12, 16, 4);
 				ctx.fillStyle = c.dark ? "rgba(15,23,42,.86)" : "rgba(255,253,247,.92)";
 				ctx.fill();

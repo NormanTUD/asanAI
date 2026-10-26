@@ -396,6 +396,11 @@ html[data-theme="dark"] .kicker { color: var(--tm-green); }
 	-webkit-text-fill-color: transparent;
 }
 .hero--lesson h1 { font-size: clamp(2.5rem, 5.4vw, 4.8rem); line-height: 0.98; }
+@media (min-width: 900px) {
+	.hero h1 { white-space: nowrap; }
+	body[data-page="home"] .hero h1,
+	body[data-page="advent"] .hero h1 { font-size: clamp(2.3rem, 4.4vw, 4rem); }
+}
 
 .hero-deck {
 	max-width: 58ch;
@@ -3238,6 +3243,7 @@ body[data-page="lesson"] .lesson-main > .section-block > .myth-grid {
 	scrollbar-width: auto;
 	scrollbar-color: var(--tm-green) color-mix(in srgb, var(--tm-line) 70%, transparent);
 }
+.timeline-track:focus { outline: 2px solid var(--tm-green); outline-offset: 4px; }
 .timeline-track.is-dragging {
 	cursor: grabbing;
 	scroll-behavior: auto;
