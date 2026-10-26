@@ -4202,7 +4202,7 @@ html[data-theme="dark"] .curve-points {
 .pipe-tokens { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; padding-bottom: 3px; }
 .pipe-prediction { height: 3.2em; overflow-y: auto; }
 .tl-panel { height: 240px; overflow-y: auto; }
-body[data-lesson="history"] .tl-panel { height: 480px; }
+body[data-lesson="history"] .tl-panel { height: auto; min-height: 480px; }
 .pref-card { min-height: 130px; }
 .myth[data-myth] { min-height: 210px; }
 
@@ -4210,7 +4210,7 @@ body[data-lesson="history"] .tl-panel { height: 480px; }
 	#pipe-detail { height: 260px; }
 	#ladder-detail { height: 340px; }
 	.tl-panel { height: 300px; }
-	body[data-lesson="history"] .tl-panel { height: 520px; }
+	body[data-lesson="history"] .tl-panel { height: auto; min-height: 520px; }
 	.pref-card { min-height: 150px; }
 }
 
