@@ -22,7 +22,7 @@
 						This is the December end-of-year calendar: one compact LLM topic is released
 						each day. Read along and you will gain a good intuitive understanding of how
 						LLMs work and how they came to be. Today starts with the intuition we will build
-						on: a model predicting the next token from the text so far, the loop behind
+						on: a model predicting the next word from the text so far, the loop behind
 						<strong>chat, code, translation, and reasoning</strong>.
 					</p>
 				</div>
@@ -32,12 +32,12 @@
 				<article class="lesson-main">
 					<section class="section-block" id="idea">
 						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
-						<h2 class="section-title">A first intuition: predict the next token.</h2>
+						<h2 class="section-title">A first intuition: predict the next word.</h2>
 						<div class="prose">
 							<p>
 								Here is the core idea. A language model reads a sequence of
-								tokens and returns a <strong>probability for every possible next token</strong>.
-								One token is chosen, appended to the input, and the whole thing runs again.
+								words and returns a <strong>probability for every possible next word</strong>.
+								One word is chosen, appended to the input, and the whole thing runs again.
 								That is the <strong>autoregressive loop</strong>.
 							</p>
 							<p>
@@ -49,23 +49,23 @@
 							</p>
 							<p>
 								A conversation, a poem, a Python function — all of it is this loop, writing
-								one piece at a time.
+								one word at a time.
 							</p>
 						</div>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">It outputs a distribution, not a single answer.</p>
-							<p class="aha-sub">A decoder turns that distribution into text: greedy decoding always takes the top token, while temperature and top-p add controlled randomness. Novelty is not the same as creativity — and randomness alone usually produces noise, not insight.</p>
+							<p class="aha-sub">A decoder turns that distribution into text: greedy decoding always takes the top word, while temperature and top-p add controlled randomness. Novelty is not the same as creativity — and randomness alone usually produces noise, not insight.</p>
 						</div>
 					</section>
 
 					<section class="section-block" id="loop">
 						<div class="section-kicker"><span class="sk-num">02</span> Play the loop</div>
-						<h2 class="section-title">Write a sentence, one token at a time.</h2>
+						<h2 class="section-title">Write a sentence, one word at a time.</h2>
 						<div class="prose">
 							<p>
 								Below is a deliberately tiny toy model. It knows a handful of continuations
-								for a small story. Pick a token or let it draw one; the new token becomes
+								for a small story. Pick a word or let it draw one; the new word becomes
 								part of the context, and the next distribution is computed from everything
 								so far.
 							</p>
@@ -83,7 +83,7 @@
 								<div class="prediction">
 									<div class="prediction-sentence" id="nt-sentence" aria-live="polite"></div>
 									<div class="nt-tree" id="nt-tree" aria-live="polite"></div>
-									<div class="bars" id="nt-bars" role="group" aria-label="Next token probabilities"></div>
+									<div class="bars" id="nt-bars" role="group" aria-label="Next word probabilities"></div>
 									<p class="meadow-caption" id="nt-why" style="color:var(--tm-muted)">Sampling draws from the whole distribution; temperature controls how concentrated it is.</p>
 								</div>
 								<div class="demo-controls">
@@ -111,7 +111,7 @@
 								</p>
 								<div class="demo-readout demo-readout--4">
 									<div><b>Step</b><span id="nt-step-count">0 / 6</span></div>
-									<div><b>Context length</b><span id="nt-len">7 tokens</span></div>
+									<div><b>Context length</b><span id="nt-len">7 words</span></div>
 									<div><b>Top choice</b><span id="nt-top">dragon</span></div>
 									<div><b>Decoder</b><span id="nt-mode">sample</span></div>
 								</div>
@@ -131,14 +131,14 @@
 								knows. At temperature zero — greedy decoding — the top candidate is taken every
 								time: deterministic, often repetitive, but still a freshly computed
 								distribution rather than a lookup. Above zero, sampling draws from the
-								distribution. Low temperature concentrates on likely tokens; high temperature
+								distribution. Low temperature concentrates on likely words; high temperature
 								flattens the distribution and can produce incoherence. Top-k and top-p restrict
 								the pool before drawing.
 							</p>
 							<p>
 								The decoder in the demo is a choice, not a property of the model. <strong>Greedy</strong>
-								always takes the top token; <strong>sampling</strong> draws from the whole
-								distribution; <strong>top-p</strong> first keeps the smallest set of tokens whose
+								always takes the top word; <strong>sampling</strong> draws from the whole
+								distribution; <strong>top-p</strong> first keeps the smallest set of words whose
 								probabilities reach 0.9 and then samples among them. The competence lives in the
 								learned distribution; the decoder only selects from it. Variation is not
 								creativity: useful novelty depends on structure, context, and the quality of the
@@ -148,7 +148,7 @@
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">Prediction and compression are the same goal.</p>
-							<p class="aha-sub">To predict the next token well, a model must find the shortest description of the data — and the shortest description of language keeps requiring a model of the world that produced it.</p>
+							<p class="aha-sub">To predict the next word well, a model must find the shortest description of the data — and the shortest description of language keeps requiring a model of the world that produced it.</p>
 						</div>
 					</section>
 
@@ -157,7 +157,7 @@
 						<h2 class="section-title">Six steps, one running vector.</h2>
 						<div class="prose">
 							<p>
-								The loop is the outside view. Inside, one token passes through a fixed
+								The loop is the outside view. Inside, one word passes through a fixed
 								pipeline. Each step changes the representation in a different way, and each
 								is a small idea you can play with. The steps follow the order of a real
 								transformer pass.
@@ -168,7 +168,7 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Inside the model <span>· demos 02–07</span></p>
-									<p class="demo-sub">Follow one token through six steps. Each step is a small toy, but the order and the division of labour are the real architecture.</p>
+									<p class="demo-sub">Follow one word through six steps. Each step is a small toy, but the order and the division of labour are the real architecture.</p>
 								</div>
 								<span class="demo-badge">six steps</span>
 							</div>
@@ -190,7 +190,7 @@
 										<div class="token-chips" id="itok-out" aria-live="polite"></div>
 										<div class="demo-readout demo-readout--4" id="itok-stats"></div>
 									</div>
-									<p class="step-note">A model does not read words. It reads <b>tokens</b>: common words, word fragments, punctuation, and whitespace, each with a fixed numeric id. Rare words split into pieces the vocabulary already knows.</p>
+									<p class="step-note">A model does not read words. It reads <b>tokens</b>: common words, word fragments, punctuation, and whitespace, each with a fixed numeric id. The words in the toy above are a useful stand-in; rare words split into pieces the vocabulary already knows.</p>
 								</div>
 
 								<div class="step-pane" id="step-embed">
@@ -588,7 +588,7 @@
 			if (stage >= MAX_STEPS) {
 				var done = document.createElement("p");
 				done.style.cssText = "margin:0;color:var(--tm-muted);font-family:var(--tm-prose);font-size:.9rem";
-				done.textContent = "The model would now emit an end-of-sequence token, or keep going if the context invited it.";
+				done.textContent = "The model would now emit an end-of-sequence signal, or keep going if the context invited it.";
 				barsEl.appendChild(done);
 				if (stepBtn) { stepBtn.disabled = true; stepBtn.style.opacity = ".45"; }
 				return;
@@ -676,8 +676,8 @@
 				why.textContent = "Only one continuation makes sense here: “" + opts[0].t + "”. The tree has narrowed to a single branch.";
 				return;
 			}
-			if (decodeMode === "greedy") why.textContent = "Greedy is the limit T → 0: it always takes the highest-probability token, so the temperature slider is pinned at 0.05. The text is deterministic and often repetitive.";
-			else if (decodeMode === "topp") why.textContent = "Temperature reshapes the distribution first; top-p then keeps the smallest set of tokens whose probabilities reach 90% and samples among them. The faded bars are outside the nucleus.";
+			if (decodeMode === "greedy") why.textContent = "Greedy is the limit T → 0: it always takes the highest-probability word, so the temperature slider is pinned at 0.05. The text is deterministic and often repetitive.";
+			else if (decodeMode === "topp") why.textContent = "Temperature reshapes the distribution first; top-p then keeps the smallest set of words whose probabilities reach 90% and samples among them. The faded bars are outside the nucleus.";
 			else why.textContent = "Sampling draws from the whole temperature-shaped distribution. Low T behaves almost greedily; high T flattens the distribution and trades coherence for surprise.";
 		}
 		function setTemp(value) {
@@ -714,7 +714,7 @@
 		}
 		function updateReadout() {
 			if (stepCount) stepCount.textContent = Math.min(stage, MAX_STEPS) + " / " + MAX_STEPS;
-			if (lenEl) lenEl.textContent = (base.length + generated.length) + " tokens";
+			if (lenEl) lenEl.textContent = (base.length + generated.length) + " words";
 		}
 		function reset() {
 			generated = [];
