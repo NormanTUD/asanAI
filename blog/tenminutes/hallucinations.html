@@ -55,7 +55,6 @@
 							<p>Use retrieval and tools when the answer depends on documents. Ask the model to quote the passage it is relying on, and keep the retrieved text visible. For anything that matters, separate generation from verification: let the model draft, then check the draft with a different process or a different model.</p>
 							<p>Temperature and decoding change how adventurous the model is, not whether it is right. Low temperature makes the answer more predictable; high temperature makes it more inventive and more likely to drift. Neither setting installs a fact-checker. The workflow has to do that.</p>
 						</div>
-						<p class="step-note"><b>What is simplified:</b> the model has no truth module. The full lesson has the temperature lab and the safety details.</p>
 					</section>
 
 					<div class="demo demo--paper" data-demo="sampling">
@@ -82,7 +81,7 @@
 					</div>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">The Problem: Why AI Lies to You</h2>
 						<div class="prose">
 							<p>One of the biggest dangers of modern AI (Large Language Models) is that they can sound incredibly confident while saying something completely untrue. We call this a <strong>Hallucination</strong>.</p>
@@ -91,22 +90,20 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Problems with AI</h2>
 						<div class="prose">
 							<p>#### The Training Data Cutoff and Zeitgeist Bias A primary driver of hallucinations is the static nature of an AI's knowledge. Because models are trained up to a specific point in time, they often “invent” information about events occurring after that date, attempting to force new facts into existing, outdated patterns. This is compounded by popularity bias: the AI tends to provide the statistically most likely answer even if it is incorrect. If training data contains a myth more frequently than the historical truth, the AI will reproduce it as fact because the linguistic pattern is simply stronger.</p>
 							<p>#### The Black Box of Interpretability A deep-seated challenge remains the lack of transparency in neural networks. Even at a low Temperature, it is often impossible to pinpoint exactly why a specific neuron “fired” to trigger a hallucination. The field of <strong>Mechanistic Interpretability</strong> is currently working to decode these internal decision paths. The goal is to prevent hallucinations at the source, within the model's weights, rather than simply filtering the output after the fact.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">The Mechanism: Next-Token Prediction</h2>
 						<div class="prose">
 							<p>At its core, an LLM is a giant mathematical function that calculates probabilities. It looks at the text you have written so far (the Context) and calculates a probability score for every single word in its vocabulary to see which one should come next.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: read it here.</p>
 					</section>
 
 					<section class="section-block" id="takeaway">
@@ -116,9 +113,6 @@
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">The model is not lying. It is completing a pattern.</p>
 							<p class="aha-sub">Truth is a property of your workflow, not a promise from the model.</p>
-						</div>
-						<div class="prose">
-							<p>This is the ten-minute version. The full lesson goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
 						</div>
 					</section>
 				</article>

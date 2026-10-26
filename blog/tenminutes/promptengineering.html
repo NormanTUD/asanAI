@@ -55,7 +55,6 @@
 							<p>The defence is architectural. Give the model the least privilege it needs, separate instructions from data, validate tool calls, and keep a human in the loop for dangerous actions. A prompt that says 'never do X' is not a guarantee.</p>
 							<p>Prompting is still useful. Clear roles, specific constraints, examples, and canonical input reduce ambiguity. But clarity is not the same as security, and a model is not a trusted interpreter of untrusted text.</p>
 						</div>
-						<p class="step-note"><b>What is simplified:</b> the full lesson has the entropy chart and the practical patterns.</p>
 					</section>
 
 					<div class="demo demo--paper" data-demo="entropy">
@@ -84,7 +83,7 @@
 					</div>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">The Master Principle</h2>
 						<div class="prose">
 							<p>All prompt engineering techniques reduce to one idea: <strong>control the probability distribution.</strong> Every technique -- roles, delimiters, CoT, few-shot, structured output -- is a tool for collapsing the model's output space from “anything” to “exactly what I need.”</p>
@@ -93,7 +92,7 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Specify Output Format</h2>
 						<div class="prose">
 							<p>Define a strict schema (JSON, CSV, YAML) that constrains the model's generation pathway. This reduces hallucination because every token must be syntactically valid within the structure.</p>
@@ -101,16 +100,15 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Use Delimiters</h2>
 						<div class="prose">
 							<p>Triple quotes, XML tags, and dashed lines create <strong>hard boundaries</strong> between instructions and data. This reduces prompt leakage where the model confuses your system prompt with the user content.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">The Art of Talking to a Stochastic Parrot</h2>
 						<div class="prose">
 							<p>Prompt engineering is the practical craft of communicating with Large Language Models, not by hacking their weights, but by hacking their <strong>input</strong>. Since an LLM is fundamentally a next-token predictor wrapped in a chatbot interface, the way you phrase, structure, and constrain your input is the single most powerful lever you have.</p>
@@ -119,12 +117,11 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Define the Role</h2>
 						<div class="prose">
 							<p>Assigning a persona acts as a <strong>semantic filter</strong> that primes the model to activate specific regions of its training distribution. A “senior Rust engineer” persona pulls different weights than a “Shakespearean poet,” even on the exact same question.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
@@ -134,7 +131,6 @@
 							<p>A prompt can be clear and still fail because the model lacks the knowledge, the task is ambiguous, or the context is too long. Prompting cannot fix a missing capability.</p>
 							<p>Prompt injection, contradictory instructions, and untrusted text are security and design problems. Use permissions, validation, and human review for anything that matters.</p>
 						</div>
-						<p class="step-note">The full lesson has more detail, sources, and the original lab: read it here.</p>
 					</section>
 
 					<section class="section-block" id="takeaway">
@@ -144,9 +140,6 @@
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">Every constraint reduces the space of plausible outputs.</p>
 							<p class="aha-sub">A good prompt is a clear brief, not a magic spell.</p>
-						</div>
-						<div class="prose">
-							<p>This is the ten-minute version. The full lesson goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
 						</div>
 					</section>
 				</article>

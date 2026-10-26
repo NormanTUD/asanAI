@@ -164,7 +164,7 @@
 								<span class="demo-badge">live</span>
 							</div>
 							<div class="demo-body">
-								<canvas class="demo-canvas" id="cosine-canvas" style="height:320px" aria-label="Two vectors with an angle and a magnitude"></canvas>
+								<canvas class="demo-canvas" id="cosine-canvas" style="height:320px" aria-label="Two vectors and the Euclidean gap between them"></canvas>
 								<div class="vec-readout">
 									<div><b>Cosine similarity</b><span id="cos-cos">0.71</span></div>
 									<div><b>Euclidean distance</b><span id="cos-dist">0.77</span></div>
@@ -181,7 +181,7 @@
 									<label>Angle B <input type="range" id="cos-b" min="0" max="360" step="1" value="80"><output id="cos-b-out">80°</output></label>
 									<label>Magnitude B <input type="range" id="cos-m" min="0.4" max="2.4" step="0.05" value="1"><output id="cos-m-out">1.00</output></label>
 								</div>
-								<p class="meadow-caption" id="cos-caption" style="color:var(--tm-muted)">The green arc is the angle. The dashed line is the Euclidean gap. Stretch B: the gap grows, the angle does not.</p>
+								<p class="meadow-caption" id="cos-caption" style="color:var(--tm-muted)">The dashed line is the Euclidean gap. Stretch B: the gap grows, but the directions stay the same.</p>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>Cosine asks whether two vectors point the same way. Magnitude can change without changing the angle — which is why direction is the better default.</span></div>
 							<div class="demo-foot">
@@ -503,11 +503,6 @@
 				ctx.lineWidth = 1;
 				ctx.beginPath(); ctx.moveTo(0, oy); ctx.lineTo(w, oy); ctx.stroke();
 				ctx.beginPath(); ctx.moveTo(ox, 0); ctx.lineTo(ox, h); ctx.stroke();
-				ctx.beginPath();
-				ctx.arc(ox, oy, R, -b, -a, a < b);
-				ctx.strokeStyle = c.green;
-				ctx.lineWidth = 2;
-				ctx.stroke();
 				drawArrow(ctx, ox, oy, ax, ay, c.sky, false);
 				drawArrow(ctx, ox, oy, bx, by, c.gold, false);
 				ctx.setLineDash([4, 4]);
@@ -529,7 +524,7 @@
 				if (cosCaption) {
 					if (m > 1.9) cosCaption.textContent = "B is stretched far out: Euclidean distance is large, but the angle is unchanged. Cosine says they still mean the same direction.";
 					else if (Math.abs(cos) < 0.08) cosCaption.textContent = "Nearly a right angle: the vectors are close to unrelated in this projection. Cosine is near zero.";
-					else cosCaption.textContent = "The green arc is the angle. The dashed line is the Euclidean gap. Stretch B: the gap grows, the angle does not.";
+					else cosCaption.textContent = "The dashed line is the Euclidean gap. Stretch B: the gap grows, but the directions stay the same.";
 				}
 			});
 			function redrawCos() { cosApi.redraw(); }

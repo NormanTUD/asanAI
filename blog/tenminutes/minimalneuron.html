@@ -55,7 +55,6 @@
 							<p>The gradient is the slope of that surface. It tells you which way to move a and b to make the error smaller. The learning rate decides how far you move. Too small and learning is slow; too large and you overshoot the minimum.</p>
 							<p>Real training uses batches, epochs, regularisation, and many more parameters, but the loop is the same: predict, measure the error, compute the gradient, nudge the parameters. The toy is small enough to see the loop, not a miniature of a frontier model.</p>
 						</div>
-						<p class="step-note"><b>What is simplified:</b> the real model is not a single line. The full lesson has the Python implementation and the statistics of learning.</p>
 					</section>
 
 					<div class="demo demo--paper" data-demo="linefit">
@@ -84,7 +83,7 @@
 					</div>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">The Statistical Nature of Learning</h2>
 						<div class="prose">
 							<p>We often think of Neural Networks as “learning” in the way a human student learns: by understanding concepts. However, mathematically, a Neural Network is simply a statistical machine trying to fit a curve to a distribution.</p>
@@ -92,16 +91,15 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Data is not just Numbers; it is a Distribution</h2>
 						<div class="prose">
 							<p>If our training data is a “representative sample” (meaning it follows the same statistical distribution as the real world example you're trying to model), the weights of the network will converge to the “True” relationship. If the data is biased (a bad sample), the model learns a skewed reality. This is why knowing your data's distribution is critical. You cannot fit a straight line to a circle; you must choose a model architecture that matches the geometry of your data's distribution.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Output Layer: The Mirror of the Target</h2>
 						<div class="prose">
 							<p>The final layer of a neural network is not arbitrary; it is a mathematical mirror of the data you want to predict. Its shape, the number of neurons it contains, must match the dimensionality of your “Labels” (the ground truth).</p>
@@ -109,12 +107,11 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Spatial and Complex Outputs</h2>
 						<div class="prose">
 							<p>If the output layer's dimensions do not match the target data's dimensions, the <strong>Loss Function</strong> will be unable to compare the prediction to the reality, and the “loop” of learning will break.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
@@ -124,7 +121,6 @@
 							<p>The toy has one input and one output. A real network has many inputs, many outputs, and many layers. The output layer has to match the target: a number, a class, a probability distribution, or a spatial map. If the output does not match the data, the loss cannot compare the prediction with reality.</p>
 							<p>Training uses batches, epochs, validation, regularisation, and hardware. The loop is the same, but the engineering is not. The toy is a lens on the loop, not a miniature of a frontier model.</p>
 						</div>
-						<p class="step-note">The full lesson has more detail, sources, and the original lab: read it here.</p>
 					</section>
 
 					<section class="section-block" id="takeaway">
@@ -134,9 +130,6 @@
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">Learning is adjusting numbers to make the error smaller.</p>
 							<p class="aha-sub">A transformer is this loop repeated billions of times, with a much richer representation.</p>
-						</div>
-						<div class="prose">
-							<p>This is the ten-minute version. The full lesson goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
 						</div>
 					</section>
 				</article>

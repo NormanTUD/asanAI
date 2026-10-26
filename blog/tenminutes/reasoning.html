@@ -55,7 +55,6 @@
 							<p>The o1/R1 generation trains the model to use that computation. Reinforcement learning on problems with verifiable answers teaches it when to backtrack, when to check, and when to stop. Process reward models can score the intermediate steps, not only the final answer.</p>
 							<p>More thinking is not always better. Long chains are expensive, and a model can reason confidently in the wrong direction. The useful question is whether the extra computation buys a real improvement on the task, and whether the steps can be checked.</p>
 						</div>
-						<p class="step-note"><b>What is simplified:</b> the full lesson has the methods and results.</p>
 					</section>
 
 					<div class="demo demo--paper" data-demo="cot">
@@ -84,7 +83,7 @@
 					</div>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Process Reward Models (PRMs)</h2>
 						<div class="prose">
 							<p>At inference, beam search guided by the PRM dramatically improves accuracy on math (used in o1, Qwen-QwQ, and many open-source replicas). The cost is labelling data; synthetic PRMs (auto-labelling using a stronger model) are now competitive.</p>
@@ -92,7 +91,7 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Inference-Time Scaling Laws</h2>
 						<div class="prose">
 							<p>Compare this with training: achieving 85% on AIME by training would require either a much larger base model or domain-specific data. <strong>Inference-time scaling is often cheaper and more flexible</strong>.</p>
@@ -100,12 +99,11 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Summary</h2>
 						<div class="prose">
 							<p>The era of “scale by training” is now supplemented by <strong>scale by thinking</strong>. The frontier in 2025 is figuring out how to spend inference compute <em>adaptively</em>, think hard when it matters, save tokens when it doesn't.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
@@ -115,7 +113,6 @@
 							<p>Reasoning with more tokens costs more compute and latency. It can improve hard maths and code, but it can also make a model stall, loop, or justify a wrong answer with more confidence.</p>
 							<p>The useful pattern is generate, then verify. Use a checker when the answer can be checked; use a second model or a different prompt when it cannot. More thinking is a tool, not a universal upgrade.</p>
 						</div>
-						<p class="step-note">The full lesson has more detail, sources, and the original lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
@@ -125,7 +122,6 @@
 							<p>Chain-of-thought and test-time compute improve hard maths, code, and multi-step logic, but they are not a universal upgrade. On simple tasks they can add cost and latency without improving the answer. On some tasks they can make a wrong answer look more considered.</p>
 							<p>The evaluation question is whether the model is better at the task, not whether the reasoning text sounds good. A correct answer with a flawed chain and a wrong answer with a perfect-looking chain are both possible. Verification is the difference between thinking and performance.</p>
 						</div>
-						<p class="step-note">The full lesson has the derivations, sources, and lab: read it here.</p>
 					</section>
 
 					<section class="section-block" id="takeaway">
@@ -135,9 +131,6 @@
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">Intelligence can be bought at inference time, not only at training time.</p>
 							<p class="aha-sub">Thinking longer helps when the extra steps can be checked; otherwise it just costs more.</p>
-						</div>
-						<div class="prose">
-							<p>This is the ten-minute version. The full lesson goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
 						</div>
 					</section>
 				</article>

@@ -55,7 +55,6 @@
 							<p>A Vision Transformer makes a different assumption. It cuts the image into patches, treats each patch as a token, and lets attention learn relationships between patches. It has less built-in locality, so it often needs more data, but it scales well and can connect distant regions.</p>
 							<p>Both approaches need data, augmentation, and careful evaluation. A model can be excellent at recognising a pattern and still fail on a new viewpoint, a rare object, or a misleading context. Seeing is not the same as understanding.</p>
 						</div>
-						<p class="step-note"><b>What is simplified:</b> the compact demo uses a toy grid. The full lesson has the full CNN pipeline and task stack.</p>
 					</section>
 
 					<div class="demo demo--paper" data-demo="convolution">
@@ -107,7 +106,7 @@
 					</div>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">The Power of Hierarchy: Building Complexity from Simplicity</h2>
 						<div class="prose">
 							<p>A deep learning model doesn't identify a “stop sign” in a single leap. Instead, it constructs an understanding through a <strong>layered hierarchy of abstraction</strong>, where each successive layer examines the output of the previous one to discover increasingly complex patterns. This mirrors the architecture of the human visual cortex, where neurons in area V1 respond to simple oriented edges, while neurons in higher areas respond to faces and objects.</p>
@@ -116,16 +115,15 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Beyond 2D: the world</h2>
 						<div class="prose">
 							<p>Real vision is 3D and dynamic: <strong>pose</strong> (keypoints), <strong>depth</strong>, <strong>point clouds</strong>, and <strong>NeRF</strong>-style radiance fields that render novel views. Generative models now produce 3D and video, not just stills (see Diffusion).</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">What is a Convolution?</h2>
 						<div class="prose">
 							<p>A <strong>convolution</strong> is a mathematical operation that slides a small grid of numbers (the <strong>kernel</strong> or <strong>filter</strong>) across an image, computing a weighted sum at every position. This single operation is the fundamental building block of <strong>Convolutional Neural Networks (CNNs)</strong>, the technology behind facial recognition, autonomous vehicles, medical imaging, and satellite analysis.</p>
@@ -133,12 +131,11 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Why Does This Matter for AI?</h2>
 						<div class="prose">
 							<p>In traditional computer vision, engineers <strong>manually designed</strong> kernels (like Sobel, Gaussian, or Laplacian filters) to detect edges, blur noise, or sharpen details. These hand-crafted filters work well for specific tasks but cannot generalize.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: read it here.</p>
 					</section>
 
 					<section class="section-block" id="takeaway">
@@ -148,9 +145,6 @@
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">A machine sees by building patterns on top of patterns.</p>
 							<p class="aha-sub">The cat is never in the pixels; it is in the hierarchy the network learns.</p>
-						</div>
-						<div class="prose">
-							<p>This is the ten-minute version. The full lesson goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
 						</div>
 					</section>
 				</article>

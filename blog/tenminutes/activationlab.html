@@ -55,7 +55,6 @@
 							<p>The shape of the activation changes the geometry of the representation. ReLU creates a hard fold; sigmoid and tanh bend smoothly; GELU is smooth but not monotonic. Modern models also use SiLU/Swish and gated variants such as SwiGLU, which let the network learn how much of a feature to pass through.</p>
 							<p>At the output, softmax turns scores into a probability distribution. The choice of activation is not a detail: it interacts with normalisation, depth, and the gradients that make training possible.</p>
 						</div>
-						<p class="step-note"><b>What is simplified:</b> the full lesson has the plots and the history of differentiability.</p>
 					</section>
 
 					<div class="demo demo--paper" data-demo="activation">
@@ -84,7 +83,7 @@
 					</div>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Why ReLU Works: Sparse Representations</h2>
 						<div class="prose">
 							<p>The most common explanation for ReLU's success is that its derivative is 1 for positive inputs and 0 for negative ones, which prevents the vanishing gradient problem. But there is a deeper insight: ReLU creates <strong>sparsity</strong>.</p>
@@ -93,16 +92,15 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">The Breaking Point: Vanishing Gradients</h2>
 						<div class="prose">
 							<p>The era of S-shaped curves eventually reached a limit. Because both <strong>Sigmoid</strong> and <strong>Tanh</strong> “flatten out” (saturate) at high and low input values, their derivatives become nearly zero. In deep networks, multiplying these tiny numbers together during backpropagation caused the signal to disappear before it reached the earliest layers, a phenomenon known as the <strong>vanishing gradient problem</strong>.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">The Necessity of Activation Functions</h2>
 						<div class="prose">
 							<p>Activation functions serve as the mathematical <strong>“gates”</strong> of a neural network. Without them, a network would be nothing more than a series of linear transformations, essentially collapsing into one giant linear equation.</p>
@@ -110,13 +108,12 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Why it's not a simple percentage (The “Non-Linear” Secret)</h2>
 						<div class="prose">
 							<p>If you input 0.1 and 0.9, you might expect 10% and 90%. Instead, you get roughly 31% and 69%. This is because SoftMax is <strong>not a linear scaling</strong>; it is an <strong>exponential normalization</strong>.</p>
 							<p>By exponentiating the logits, we are measuring the “total growth energy” of all classes combined and then asking: <em>“What percentage of the total energy belongs to Class A?”</em> This ensures that even if a score is negative, it still represents a physical “share” of the total probability, and that the sum of all shares always equals exactly 1.0 (100%).</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: read it here.</p>
 					</section>
 
 					<section class="section-block" id="takeaway">
@@ -126,9 +123,6 @@
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">Without a bend, a deep network is just one big linear map.</p>
 							<p class="aha-sub">The activation is the smallest ingredient that makes depth more than decoration.</p>
-						</div>
-						<div class="prose">
-							<p>This is the ten-minute version. The full lesson goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
 						</div>
 					</section>
 				</article>

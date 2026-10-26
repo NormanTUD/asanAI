@@ -22,6 +22,21 @@ file records choices that are specific to this directory.
 - Do not paste the topbar back into a subpage. If a new page needs navigation,
   solve it explicitly; the current design deliberately removes the chrome.
 
+## Full lessons are not linked
+
+The original lesson pages (`../*.php`) are **not linked from this directory**. Treat
+them as private source material:
+
+- No `href="../…php"` in any Ten Minutes page.
+- No “read the full lesson”, “original lesson”, or “full course” links.
+- Compact pages must be self-contained. The library’s non-compact cards are
+  non-clickable reference entries, not links.
+- `index.html`, `advent.html`, and `library.html` only navigate to compact
+  `.html` pages and assets.
+
+If you need more detail from a full lesson, adapt the relevant paragraph into the
+compact page; do not expose the source URL.
+
 ## Colour palette
 
 These are the only accent colours. Do not introduce new accent hues.
@@ -162,14 +177,13 @@ theme unless there is a specific reason not to.
   - `minimalneuron.php` represents the old “smallest network” and
     “watch it learn” pair. Do not re-add `traininglab.php` as a separate door
     unless the calendar gets a different structure.
-  - `people_of_ai.php` is the final “People and the Map” door; the Atlas stays
-    linked in the “After December” feature strip rather than as its own door.
+  - `people_of_ai.html` is the final “People and the Map” door. The Atlas is not
+    linked from this directory.
   - `agents.html` exists but is intentionally not in the calendar.
 - If the compact-door count changes, update the “x of 31 doors” and
   “compact lessons open” pills in `index.html`.
-- Every calendar door now has a compact `.html` page. Each compact page ends
-  with a “full lesson” link to `../<slug>.php`; keep that back-link when
-  editing a page.
+- Every calendar door has a compact `.html` page. Compact pages are
+  self-contained and must not link to `../<slug>.php`.
 - A compact page uses the shared lesson skeleton: `data-lesson="<slug>"`,
   `data-page="lesson"`, a `hero--lesson`, `section-block`s with
   `section-kicker`/`section-title`/`prose`, a `keypoints` grid, an `aha` box,

@@ -61,21 +61,20 @@
 							<p class="aha-big">Quality without quantity cannot train a frontier model. Quantity without quality teaches it noise.</p>
 							<p class="aha-sub">The useful question is not which one wins, but what mixture and what filtering the model needs for the behaviour you want.</p>
 						</div>
-					<p class="step-note"><b>What is simplified:</b> the exact recipes are proprietary. The full lesson has the pipeline details: read it here.</p>
 					</section>
 
 					<div class="demo demo--paper" data-demo="datamix">
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">The training mix <span>· demo</span></p>
-								<p class="demo-sub">A frontier corpus is a designed mixture, not a random dump. The percentages below are approximate ranges adapted from the full lesson; actual recipes vary by lab. Tap a source to see what it contributes.</p>
+								<p class="demo-sub">A frontier corpus is a designed mixture, not a random dump. The percentages below are approximate ranges adapted from the composition discussed earlier; actual recipes vary by lab. Tap a source to see what it contributes.</p>
 							</div>
 							<span class="demo-badge">approximate</span>
 						</div>
 						<div class="demo-body">
 							<div class="mix-bar" data-mix-bar></div>
 							<div class="mix-legend" data-mix-legend></div>
-							<p class="mix-note" data-mix-note>Approximate ranges adapted from the full lesson: web 50–70%, code 10–15%, books 5–10%, papers 3–5%, Wikipedia 1–2%, math 2–5%, conversation 2–5%, multimodal 5–10%. Tap a source to see what it contributes.</p>
+							<p class="mix-note" data-mix-note>Approximate ranges adapted from the composition discussed earlier: web 50–70%, code 10–15%, books 5–10%, papers 3–5%, Wikipedia 1–2%, math 2–5%, conversation 2–5%, multimodal 5–10%. Tap a source to see what it contributes.</p>
 							<div class="demo-readout">
 								<div><b>Scale</b><span>10–15T tokens</span></div>
 								<div><b>Sources</b><span>web · code · books · multimodal</span></div>
@@ -83,7 +82,7 @@
 							</div>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>Architecture and data are not separate choices. A better mixture can make a smaller model competitive, but scale still matters.</span></div>
-						<div class="demo-foot">Source: the approximate composition table in the full lesson. Labs do not publish exact recipes.</div>
+						<div class="demo-foot">Source: the approximate composition ranges discussed earlier. Labs do not publish exact recipes.</div>
 					</div>
 
 					<div class="demo demo--paper" data-demo="filter">
@@ -111,7 +110,7 @@
 
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Common Crawl: The Foundation</h2>
 						<div class="prose">
 							<p><strong>Common Crawl</strong> (commoncrawl.org) is a non-profit that has been archiving web pages since 2008. Each month, it crawls ~3 billion URLs, producing ~300 TB of raw HTML. After deduplication and WARC-packaging, this yields ~30 TB of useful text per month.</p>
@@ -119,7 +118,7 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Quality Filtering</h2>
 						<div class="prose">
 							<p>Web text is mostly junk: SEO spam, machine-translated articles, product listings with 50 keyword variations, “Lorem ipsum”, repetitive template content. A model trained on this learns to mimic junk.</p>
@@ -127,12 +126,11 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Data Mixing: The Frontier Secret</h2>
 						<div class="prose">
 							<p><strong>Dolma</strong> (AI2, 2024), <strong>RedPajama-V2</strong> (Together, 2024), and <strong>DataComp-LM</strong> (DCLM, 2024) are open efforts to systematically study data mixes. DataComp-LM showed that a 7B model trained on a carefully-filtered 5T tokens can outperform a model trained on 5× more data with weak filtering.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: read it here.</p>
 					</section>
 
 					<section class="section-block" id="takeaway">
@@ -142,9 +140,6 @@
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">A model is a compressed reflection of its data.</p>
 							<p class="aha-sub">Architecture sets the shape; data fills it with the world.</p>
-						</div>
-						<div class="prose">
-							<p>This is the ten-minute version. The full lesson goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
 						</div>
 					</section>
 				</article>

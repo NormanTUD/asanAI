@@ -55,7 +55,6 @@
 							<p>FlashAttention and other kernels make attention more efficient, but they do not change the fundamental cost. Long-context models also have to learn to use the middle of a long window; information near the start or end is often easier to retrieve.</p>
 							<p>Retrieval and long context are complementary. A bigger window lets the model see more; retrieval decides what is worth seeing. The budget is still a budget.</p>
 						</div>
-						<p class="step-note"><b>What is simplified:</b> the demo uses a fixed token budget. The full lesson covers the engineering.</p>
 					</section>
 
 					<div class="demo demo--paper" data-demo="budget">
@@ -102,7 +101,7 @@
 					</div>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">The Best of Both Worlds</h2>
 						<div class="prose">
 							<p>RAG handles the <em>discovery</em> problem (finding needles in haystacks), while long context handles the <em>reasoning</em> problem (synthesizing information across multiple retrieved passages).</p>
@@ -110,17 +109,16 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Strategy 3: Compaction (Summarize and Continue)</h2>
 						<div class="prose">
 							<p>The key insight: <strong>memory is always external</strong>. The LLM itself is stateless, it's the surrounding system that creates the illusion of continuity by carefully managing what goes into the context window at the start of each interaction. ChatGPT's memory works through a combination of detection of memory-worthy information, storing of such information, and retrieval-augmented generation. In addition to saved memories, it now references all past conversations to deliver responses that feel more relevant and tailored. Four layers working together create the illusion that ChatGPT knows you personally.</p>
 							<p>For very long-running sessions (like coding agents that run for hours), the context window eventually fills up. <strong>Compaction</strong> summarizes the conversation so far and replaces the full history with a compressed version:</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">What Is a Context Window?</h2>
 						<div class="prose">
 							<p>A context window (also called “context length”) is the <strong>maximum number of tokens</strong> the model can process in a single forward pass. It includes <em>everything</em>: the system prompt, all previous messages in the conversation, any injected documents, and the new query.</p>
@@ -128,7 +126,7 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">1. KV Cache: Remembering Without Recomputing</h2>
 						<div class="prose">
 							<p>During autoregressive generation (producing one token at a time), the model doesn't recompute attention over the entire sequence from scratch for each new token. Instead, it maintains a <strong>Key-Value (KV) Cache</strong>:</p>
@@ -136,12 +134,11 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Practical implications:</h2>
 						<div class="prose">
 							<p>This is one reason <strong>RAG remains valuable</strong> even with million-token context windows: RAG places the most relevant information at the <em>top</em> of the context, where attention is strongest.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: read it here.</p>
 					</section>
 
 					<section class="section-block" id="takeaway">
@@ -151,9 +148,6 @@
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">A context window is working memory, not a database.</p>
 							<p class="aha-sub">If it is not in the window, the model cannot use it — unless a retrieval system puts it there.</p>
-						</div>
-						<div class="prose">
-							<p>This is the ten-minute version. The full lesson goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
 						</div>
 					</section>
 				</article>

@@ -55,7 +55,6 @@
 							<p>Timing matters. Speech is not a bag of sounds; the order and duration carry meaning. Music adds long-range structure: rhythm, harmony, and repetition. A model that predicts the next audio token has to learn structure at several timescales.</p>
 							<p>Speech recognition, text-to-speech, and music generation have different objectives and different evaluations. Intelligibility, naturalness, and meaning are not the same thing. The representation has to preserve the information people actually use.</p>
 						</div>
-						<p class="step-note"><b>What is simplified:</b> the full lesson covers the model families and representations in detail.</p>
 					</section>
 
 					<div class="demo demo--paper" data-demo="waveform">
@@ -81,7 +80,7 @@
 					</div>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Speech Recognition: Whisper and Friends</h2>
 						<div class="prose">
 							<p>The model is trained with a multi-task objective: transcribe, translate to English, detect language, timestamp. Whisper-large-v3 (2023) achieves under 3% word error rate on clean English and ~10% on noisy multilingual.</p>
@@ -90,16 +89,15 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Unified Speech–Text Models (2024+)</h2>
 						<div class="prose">
 							<p>The training data for these is massive: trillions of audio-text interleaved examples. Internally, audio is encoded into the LLM's vocabulary; the model is trained as a normal next-token predictor.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">From Waveform to Tokens: Three Representations</h2>
 						<div class="prose">
 							<p>A raw audio waveform is a 1-D signal sampled at 16 kHz or 44.1 kHz, a sequence of 16,000 to 44,100 floats <strong>per second</strong>. That is too dense for any model to ingest directly. Modern systems compress audio through one of three representations:</p>
@@ -107,7 +105,7 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">1. Spectrograms (and Mel-spectrograms)</h2>
 						<div class="prose">
 							<p>A spectrogram is a 2-D representation: <strong>time on the x-axis, frequency on the y-axis, intensity as colour</strong>. It is computed by Short-Time Fourier Transform (STFT): split the waveform into 20–40 ms windows, compute the magnitude of the FFT, stack them.</p>
@@ -115,12 +113,11 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">3. Self-Supervised Representations</h2>
 						<div class="prose">
 							<p>Models like <strong>wav2vec 2.0</strong>, <strong>HuBERT</strong>, and <strong>WavLM</strong> learn speech representations by masking spans of audio and predicting the discrete latent units of a teacher model. The output is a sequence of 50 Hz contextualized vectors, perfect input for downstream ASR, speaker ID, or emotion recognition.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
@@ -130,7 +127,6 @@
 							<p>Speech models can fail on accents, background noise, overlapping speakers, and rare names. Music models can produce pleasant textures that lack long-range structure. Generated speech can sound natural and still mispronounce the important word.</p>
 							<p>Evaluation has to match the task: word error rate for transcription, intelligibility and naturalness for speech, musical structure for generation. A single score is not enough.</p>
 						</div>
-						<p class="step-note">The full lesson has more detail, sources, and the original lab: read it here.</p>
 					</section>
 
 					<section class="section-block" id="takeaway">
@@ -140,9 +136,6 @@
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">The same trick works for sound: turn it into tokens, then predict.</p>
 							<p class="aha-sub">Audio models are language models with a different front end.</p>
-						</div>
-						<div class="prose">
-							<p>This is the ten-minute version. The full lesson goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
 						</div>
 					</section>
 				</article>

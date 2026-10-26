@@ -55,7 +55,6 @@
 							<p>A hierarchy is a compression of computation. Edges become parts, parts become objects, objects become concepts. Each level can build on the level below, so the number of parameters needed to represent a complex function can be much smaller than a single wide layer would require.</p>
 							<p>Depth is not free. Gradients can vanish or explode, activations can become unstable, and training deep networks requires careful initialisation, normalisation, and residual connections. The architecture is powerful, but the optimisation is part of the story.</p>
 						</div>
-						<p class="step-note"><b>What is simplified:</b> universal approximation is an existence result, not a promise that gradient descent will find the function.</p>
 					</section>
 
 					<div class="demo demo--paper timeline-shell" data-demo="timeline">
@@ -83,7 +82,7 @@
 					</div>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Why Depth Beats Width: Reuse</h2>
 						<div class="prose">
 							<p>The mechanical reason depth is so effective is <strong>reuse</strong>. A sub-result computed by an early layer is reused by everything downstream. Depth turns "compute, throw away, recompute" into "compute once, reuse everywhere."</p>
@@ -92,17 +91,16 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
+						<div class="section-kicker">Background</div>
 						<h2 class="section-title">How the Knowledge Gets Into the Weights</h2>
 						<div class="prose">
 							<p>The clever part is that backprop <strong>reuses intermediate results</strong>, walking the error signal <em>backward</em> through the network. What would naively be exponential bookkeeping becomes <strong>linear in the number of layers</strong>.</p>
 							<p>Repeat millions of times. The <strong>trajectory of the weights through weight-space</strong> is literally what writes the knowledge into the matrices. There is no separate memory — the knowledge <em>is</em> the final numbers.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Why Deep Learning Works (And Why It Works *So* Well)</h2>
 						<div class="prose">
 							<p>Here's the honest, mechanical answer to why "a big pile of matrix multiplications" ends up being able to translate languages, recognize faces, and play chess better than any human. It comes down to four ingredients working together: <strong>depth</strong>, <strong>nonlinearity</strong>, <strong>backpropagation</strong>, and the <strong>optimizer's hidden preferences</strong>.</p>
@@ -110,12 +108,11 @@
 					</section>
 
 					<section class="section-block">
-						<div class="section-kicker">More from the full lesson</div>
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Residual Connections: How We Actually Train *Really* Deep Networks</h2>
 						<div class="prose">
 							<p>There's a practical problem with stacking many layers. When backprop sends the error signal backward through, say, 100 layers, it gets multiplied by many small numbers along the way. The signal often <strong>shrinks to nearly zero</strong> (the "vanishing gradient" problem) or occasionally explodes. Early layers stop learning because they receive no meaningful feedback.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
@@ -125,7 +122,6 @@
 							<p>Deep networks are harder to train. Gradients can vanish or explode, activations can drift, and the loss surface can be unfriendly. Residual connections, normalisation, careful initialisation, and learning-rate schedules are not decoration; they are what make depth practical.</p>
 							<p>Depth also costs compute and data. A deeper model is not automatically better; it needs enough signal to learn the hierarchy. The architecture is powerful, but the optimisation and the data are part of the result.</p>
 						</div>
-						<p class="step-note">The full lesson has the derivations, sources, and lab: read it here.</p>
 					</section>
 
 					<section class="section-block" id="takeaway">
@@ -135,9 +131,6 @@
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">Depth is not repetition. It is composition.</p>
 							<p class="aha-sub">The power comes from building features on top of features, not from adding more of the same.</p>
-						</div>
-						<div class="prose">
-							<p>This is the ten-minute version. The full lesson goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
 						</div>
 					</section>
 				</article>
