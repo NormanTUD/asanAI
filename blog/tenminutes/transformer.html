@@ -147,9 +147,11 @@
 								The layer lens below is a deliberately simple story: context pulls the word
 								toward one of two clusters. With “river” in the sentence, “bank” drifts toward
 								the river cluster; with “loan”, toward finance. It never lands exactly on the
-								cluster centre: the lexical word is still part of the sum. Drag the layer
-								slider and switch the context. Real trajectories are high-dimensional and much
-								messier; the qualitative idea — context accumulates with depth — is the point.
+								cluster centre: the lexical word is still part of the sum. Every token in the
+								sentence contributes a little, so the path is not a clean straight line; it
+								picks up a small amount of noise along the way. Drag the layer slider and switch
+								the context. Real trajectories are high-dimensional and much messier; the
+								qualitative idea — context accumulates with depth — is the point.
 							</p>
 							<p>
 								<strong>The word does not travel from layer to layer.</strong> The stream stays;
@@ -608,9 +610,11 @@
 				var t = i / 11;
 				var target = context === "river" ? clusters.river : context === "loan" ? clusters.finance : start;
 				var curve = context === "none" ? 0 : maxPull * (1 - Math.cos(t * Math.PI)) / 2;
+				var other = context === "river" ? clusters.finance : context === "loan" ? clusters.river : start;
+				var noise = context === "none" ? 0 : 0.035 * Math.sin(i * 2.4 + 0.8) * Math.sin(t * Math.PI) * curve;
 				path.push({
-					x: TM.lerp(start.x, target.x, curve),
-					y: TM.lerp(start.y, target.y, curve * (1 + 0.18 * Math.sin(t * Math.PI)))
+					x: TM.lerp(start.x, target.x, curve) + (other.x - target.x) * noise,
+					y: TM.lerp(start.y, target.y, curve * (1 + 0.18 * Math.sin(t * Math.PI))) + (other.y - target.y) * noise
 				});
 			}
 			ctx.beginPath();
@@ -646,8 +650,8 @@
 			if (layerCaption) {
 				if (layer === 0) layerCaption.textContent = "At the input, “bank” sits between the clusters. Context has not pulled it yet.";
 				else if (context === "none") layerCaption.textContent = "Without context, the word has no target to move toward. The sentence is what gives it one.";
-				else if (layer > 7) layerCaption.textContent = "Deep in the stack, the pull is strong — but “bank” still keeps its lexical sense; it approaches the " + (context === "river" ? "river" : "finance") + " cluster without becoming that prototype.";
-				else layerCaption.textContent = "Each layer reads the residual stream, computes an update, and adds it back. The meaning is being assembled, not looked up.";
+				else if (layer > 7) layerCaption.textContent = "Deep in the stack, the pull is strong — but “bank” still keeps its lexical sense; it approaches the " + (context === "river" ? "river" : "finance") + " cluster without becoming that prototype. The small wobble is the rest of the sentence contributing.";
+				else layerCaption.textContent = "Each layer reads the residual stream, computes an update, and adds it back. The path wobbles a little: every token contributes, not only the word that sets the main direction.";
 			}
 		});
 		document.querySelectorAll("[data-ctx]").forEach(function (btn) {
