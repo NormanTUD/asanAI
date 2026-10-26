@@ -49,61 +49,19 @@
 
 					<section class="section-block" id="extra">
 						<div class="section-kicker"><span class="sk-num">03</span> The mixture is a design choice</div>
-						<h2 class="section-title">Quality beats quantity.</h2>
+						<h2 class="section-title">Quality and quantity both matter.</h2>
 						<div class="prose">
 							<p>The source mix is a design choice. Web text gives scale and variety; code gives structure and procedural reasoning; books give long-form argument; papers give precise claims; reference text gives compact facts; synthetic math gives targeted practice. Changing the mix changes the model's behaviour.</p>
-							<p>Quality filtering, deduplication, and decontamination are part of the model. A smaller, cleaner corpus can outperform a larger, noisier one. Synthetic data can fill gaps, but it can also amplify the biases of the generator. Safety filtering is another layer of design.</p>
+							<p>Quality and quantity are not opposites. A small, clean corpus is not enough to train a frontier model; a huge, noisy corpus is not enough either. Curation can make a smaller corpus more useful, but it does not replace scale. A frontier model needs both a large and a well-filtered corpus.</p>
+							<p>Synthetic data can fill gaps, but it can also amplify the biases of the generator. Safety filtering is another layer of design. The useful question is not which one wins, but what mixture and what filtering the model needs for the behaviour you want.</p>
 							<p>The exact recipes are closely guarded. When a model behaves strangely, the training data is often part of the explanation. A model is a compressed reflection of what it was trained on.</p>
 						</div>
-						<p class="step-note"><b>What is simplified:</b> the exact recipes are proprietary. The full lesson has the pipeline details.</p>
-					</section>
-
-					<div class="demo demo--paper" data-demo="datamix">
-						<div class="demo-head">
-							<div>
-								<p class="demo-title">The training mix <span>· demo</span></p>
-								<p class="demo-sub">A frontier corpus is a designed mixture, not a random dump. Tap a source to see what it contributes.</p>
-							</div>
-							<span class="demo-badge">approximate</span>
+						<div class="aha">
+							<span class="aha-kicker">The balance</span>
+							<p class="aha-big">Quality without quantity cannot train a frontier model. Quantity without quality teaches it noise.</p>
+							<p class="aha-sub">The useful question is not which one wins, but what mixture and what filtering the model needs for the behaviour you want.</p>
 						</div>
-						<div class="demo-body">
-							<div class="mix-bar" data-mix-bar></div>
-							<div class="mix-legend" data-mix-legend></div>
-							<p class="mix-note" data-mix-note>Hover or tap a source to see what it contributes. The mix is approximate; labs differ.</p>
-							<div class="demo-readout">
-								<div><b>Scale</b><span>10–15T tokens</span></div>
-								<div><b>Sources</b><span>web · code · books</span></div>
-								<div><b>Key step</b><span>filtering</span></div>
-							</div>
-						</div>
-						<div class="demo-insight"><b>Takeaway</b><span>The same architecture trained on a better mixture can beat a larger model trained on a worse one. Data is part of the model.</span></div>
-						<div class="demo-foot">Percentages are illustrative and vary by lab. The original lesson has the pipeline details.</div>
-					</div>
-
-					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
-						<h2 class="section-title">Why Code Is Disproportionately Powerful</h2>
-						<div class="prose">
-							<p>Code is telegraphic: little stylistic redundancy, high signal per byte. BPE splits code's dense symbols into more tokens per byte than prose (often 1.5–2×), so the per-token loss effectively up-weights code relative to its byte share. And valid programs live on a sharply constrained manifold — syntax narrows the legal continuations at every step — so the model learns code's structural constraints cheaply, the way it learns grammar.</p>
-						</div>
-					</section>
-
-					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
-						<h2 class="section-title">Synthetic Data</h2>
-						<div class="prose">
-							<p>OpenAI's <strong>WebGPT</strong> and DeepMind's <strong>Sparrow</strong> demonstrated that synthetic preference data can substitute for expensive human labelling, at the cost of ceiling effects (you can't exceed your teacher's quality).</p>
-						</div>
-					</section>
-
-					<section class="section-block">
-						<div class="section-kicker">From the full lesson</div>
-						<h2 class="section-title">Why Data Is Half the Secret</h2>
-						<div class="prose">
-							<p>A famous result from the <strong>DataComp-LM</strong> benchmark: at fixed compute, model quality scales linearly with the <strong>quality-adjusted token count</strong>. Doubling the data quality is equivalent to doubling model size.</p>
-							<p>The implication: data work has higher ROI than architecture work for most practitioners. A 1B model on FineWeb-Edu often beats a 3B model on Common Crawl. Frontier labs spend <strong>half their training-team headcount on data</strong>, not on algorithms.</p>
-						</div>
-						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: <a href="../training_data.php">read it here</a>.</p>
+					<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: <a href="../training_data.php">read it here</a>.</p>
 					</section>
 
 					<section class="section-block">

@@ -619,13 +619,14 @@
 		var note = $("[data-mix-note]", root);
 		if (!bar || !legend) return;
 		var data = [
-			{ name: "Web", pct: 56, c: "var(--tm-sky)", note: "Common Crawl and similar: huge, noisy, heavily filtered." },
-			{ name: "Code", pct: 14, c: "var(--tm-green)", note: "GitHub and similar: crucial for programming and structured reasoning." },
-			{ name: "Books", pct: 9, c: "var(--tm-gold)", note: "Long-form text: structure, argument, and narrative." },
-			{ name: "Papers", pct: 5, c: "var(--tm-coral)", note: "Scientific writing: precise claims and references." },
-			{ name: "Reference", pct: 3, c: "var(--tm-petrol)", note: "Wikipedia and dictionaries: compact factual prose." },
+			{ name: "Web", pct: 55, c: "var(--tm-sky)", note: "Common Crawl and similar: huge, noisy, heavily filtered." },
+			{ name: "Code", pct: 13, c: "var(--tm-green)", note: "GitHub and similar: crucial for programming and structured reasoning." },
+			{ name: "Books", pct: 8, c: "var(--tm-gold)", note: "Long-form text: structure, argument, and narrative." },
+			{ name: "Papers", pct: 4, c: "var(--tm-coral)", note: "Scientific writing: precise claims and references." },
+			{ name: "Wikipedia", pct: 2, c: "var(--tm-petrol)", note: "Reference text: compact factual prose." },
 			{ name: "Math", pct: 4, c: "var(--tm-lime)", note: "Synthetic and curated problems: symbolic reasoning." },
-			{ name: "Other", pct: 9, c: "var(--tm-faint)", note: "Forums, subtitles, legal text, and other sources." }
+			{ name: "Conversation", pct: 4, c: "var(--tm-faint)", note: "Curated dialogues and instruction data." },
+			{ name: "Multimodal", pct: 10, c: "var(--tm-blue)", note: "Image captions, alt-text, and paired media." }
 		];
 		bar.innerHTML = data.map(function (d, i) {
 			return '<span class="mix-seg" data-mix-i="' + i + '" style="flex:' + d.pct + ';background:' + d.c + '" title="' + escapeHtml(d.name + " · " + d.pct + "%") + '"></span>';
