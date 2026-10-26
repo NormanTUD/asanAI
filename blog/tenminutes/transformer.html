@@ -281,6 +281,18 @@
 								odometer.
 							</p>
 						</div>
+						<div class="formula">
+							<code>P(token) = softmax(logits / T)</code>
+						</div>
+						<div class="prose">
+							<p>
+								Temperature <code>T</code> changes the shape of the distribution without
+								changing the model. At <code>T = 1</code> the softmax uses the logits as
+								they are. Lower values sharpen the distribution toward the top token; higher
+								values flatten it and give rare tokens more room. The model’s knowledge sits
+								in the logits. Temperature and top-p decide how boldly the decoder reads them.
+							</p>
+						</div>
 						<div class="myth-grid">
 							<div class="myth">
 								<b>Common misreading</b>
