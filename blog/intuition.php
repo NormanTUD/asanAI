@@ -1047,7 +1047,6 @@ The demo starts with a red core inside a blue ring, a configuration no straight 
 	border-color: var(--mn-accent);
 	background: color-mix(in srgb, var(--mn-accent) 10%, var(--mn-bg-subtle));
 }
-.ism-play { margin-left: 4px; }
 .ism-dots {
 	display: flex;
 	align-items: center;
@@ -1061,10 +1060,8 @@ The demo starts with a red core inside a blue ring, a configuration no straight 
 	border: 1px solid var(--mn-border);
 	border-radius: 50%;
 	background: transparent;
-	cursor: pointer;
 	transition: transform .15s ease, background .15s ease, border-color .15s ease;
 }
-.ism-dot:hover { border-color: var(--mn-accent); }
 .ism-dot.is-active {
 	background: var(--mn-accent);
 	border-color: var(--mn-accent);
@@ -1097,13 +1094,12 @@ The demo starts with a red core inside a blue ring, a configuration no straight 
 
 	<div class="ism-controls">
 		<button type="button" id="ism-prev" class="ism-btn" aria-label="Previous step">←</button>
-		<div id="ism-dots" class="ism-dots" role="group" aria-label="Walkthrough steps"></div>
+		<div id="ism-dots" class="ism-dots" aria-hidden="true"></div>
 		<button type="button" id="ism-next" class="ism-btn" aria-label="Next step">→</button>
-		<button type="button" id="ism-play" class="ism-btn ism-play" aria-label="Play the walkthrough">▶ Play</button>
 		<span id="ism-counter" class="ism-counter">1 / 7</span>
 	</div>
 
-	<div class="mn-demo-hint">Drag the canvas to rotate. <b>Play</b> runs through all seven steps.</div>
+	<div class="mn-demo-hint">Use <b>←</b> and <b>→</b> to step through the seven stages. Drag the canvas to rotate.</div>
 </div>
 
 <div class="md">

@@ -52,6 +52,7 @@
 	var lastSelectionEvent = 0;
 	var keyboardSelection = false;
 	var lastFocus = null;
+	var closedSelection = null;
 
 	function start() {
 		if (started) {
@@ -380,6 +381,10 @@
 		}
 	}
 
+	function selectionSignature(info) {
+		return info.key + "\u0000" + info.start + "\u0000" + info.end + "\u0000" + info.selectedText;
+	}
+
 	function checkSelection() {
 		if (busy) {
 			return;
@@ -389,10 +394,12 @@
 		}
 		var sel = window.getSelection();
 		if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+			closedSelection = null;
 			return;
 		}
 		var text = String(sel.toString() || "").replace(/\u00a0/g, " ").trim();
 		if (!text) {
+			closedSelection = null;
 			return;
 		}
 		var range;
@@ -421,6 +428,11 @@
 		if (!info) {
 			return;
 		}
+		var signature = selectionSignature(info);
+		if (closedSelection === signature) {
+			return;
+		}
+		closedSelection = null;
 		if (open && pending && isDirty()) {
 			if (pending.key === info.key) {
 				pending = info;
@@ -935,6 +947,7 @@
 		clearTimeout(closeTimer);
 		var restoreX = window.scrollX || window.pageXOffset || 0;
 		var restoreY = window.scrollY || window.pageYOffset || 0;
+		closedSelection = pending ? selectionSignature(pending) : null;
 		open = false;
 		if (layer) layer.hidden = true;
 		if (panel) {
@@ -973,6 +986,21 @@
 		});
 	}
 
+	function chromeBottom() {
+		var bottom = 0;
+		["#search-trigger", "#theme-toggle", "#topics-toggle", "#reader-toggle", "#paths-toggle"].forEach(function (selector) {
+			var el = document.querySelector(selector);
+			if (!el) return;
+			var style = window.getComputedStyle(el);
+			if (style.display === "none" || style.visibility === "hidden" || style.opacity === "0") return;
+			var rect = el.getBoundingClientRect();
+			if (rect.width > 0 && rect.height > 0) {
+				bottom = Math.max(bottom, rect.bottom);
+			}
+		});
+		return bottom;
+	}
+
 	function position() {
 		if (!open || !panel || !pending) {
 			return;
@@ -984,6 +1012,7 @@
 			panel.style.right = "";
 			panel.style.top = "";
 			panel.style.bottom = "";
+			panel.style.maxHeight = "";
 			if (window.visualViewport) {
 				var offset = Math.max(0, window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop);
 				panel.style.bottom = Math.round(12 + offset) + "px";
@@ -996,8 +1025,13 @@
 			return;
 		}
 		var blockRect = block.getBoundingClientRect();
+		var chrome = chromeBottom();
+		var minTop = Math.max(12, chrome > 0 ? chrome + 20 : 12);
+		var maxHeight = Math.max(180, window.innerHeight - minTop - 12);
+		panel.style.maxHeight = Math.round(maxHeight) + "px";
 		var panelHeight = panel.offsetHeight || 300;
-		var top = Math.max(12, Math.min(window.innerHeight - panelHeight - 12, blockRect.top));
+		var maxTop = Math.max(minTop, window.innerHeight - panelHeight - 12);
+		var top = Math.max(minTop, Math.min(maxTop, blockRect.top));
 		panel.style.top = Math.round(top) + "px";
 		var contentRect = contents.getBoundingClientRect();
 		var panelWidth = panel.offsetWidth || 300;

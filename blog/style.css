@@ -13662,44 +13662,9 @@ summary:focus-visible,
 	}
 }
 
-/* Small fallback affordance for demos whose text is rendered in SVG/canvas
-   and therefore cannot be selected reliably. */
-.mnf-demo-trigger {
-	appearance: none;
-	display: inline-flex;
-	align-items: center;
-	gap: 4px;
-	margin: 3px 0 12px;
-	padding: 3px 8px;
-	border: 1px solid transparent;
-	border-radius: 999px;
-	background: transparent;
-	color: var(--mn-text-muted);
-	font: 600 10.5px/1.4 var(--mn-font-body);
-	cursor: pointer;
-	opacity: .55;
-	transition: opacity .15s ease, color .15s ease, border-color .15s ease, background .15s ease;
-}
-
-.mnf-demo-trigger:hover,
-.mnf-demo-trigger:focus-visible {
-	opacity: 1;
-	color: var(--mn-accent);
-	border-color: color-mix(in srgb, var(--mn-accent) 35%, var(--mn-border));
-	background: color-mix(in srgb, var(--mn-accent) 7%, transparent);
-	outline: none;
-}
-
 .mnf-quote.is-container {
 	font-style: normal;
 	font-family: var(--mn-font-body);
 	color: var(--mn-text-secondary);
 }
 
-@media (max-width: 760px) {
-	.mnf-demo-trigger {
-		opacity: .75;
-		min-height: 36px;
-		font-size: 12px;
-	}
-}

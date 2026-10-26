@@ -2,7 +2,6 @@
 	"use strict";
 
 	const DUR = 1000;
-	const STEP_PAUSE = 2100;
 	const TAU = Math.PI * 2;
 
 	let wrap = null;
@@ -15,7 +14,6 @@
 	let cur = 0, prevIdx = 0, t0 = 0;
 	let viewA = 0, viewB = -Math.PI / 2;
 	let dragA = 0, dragB = 0, dragging = false, lastX = 0, lastY = 0;
-	let playing = false, playTimer = null;
 	let FIT = 1, YOFF = 0;
 
 	let rng = 42;
@@ -122,45 +120,6 @@
 		});
 	}
 
-	function updatePlayButton() {
-		const btn = copyEl("ism-play");
-		if (!btn) return;
-		btn.textContent = playing ? "❚❚ Pause" : "▶ Play";
-		btn.setAttribute("aria-label", playing ? "Pause the walkthrough" : "Play the walkthrough");
-	}
-
-	function scheduleNext() {
-		clearTimeout(playTimer);
-		if (!playing) return;
-		playTimer = setTimeout(() => {
-			if (!playing) return;
-			if (cur < SCENES.length - 1) {
-				setStep(cur + 1);
-				scheduleNext();
-			} else {
-				pause();
-			}
-		}, STEP_PAUSE);
-	}
-
-	function pause() {
-		playing = false;
-		clearTimeout(playTimer);
-		playTimer = null;
-		updatePlayButton();
-	}
-
-	function play() {
-		if (playing) {
-			pause();
-			return;
-		}
-		if (cur === SCENES.length - 1) setStep(0);
-		playing = true;
-		updatePlayButton();
-		scheduleNext();
-	}
-
 	function setStep(n) {
 		n = clamp(n, 0, SCENES.length - 1);
 		if (n === cur) return;
@@ -169,7 +128,6 @@
 		t0 = performance.now();
 		renderCopy();
 		requestDraw();
-		if (playing) scheduleNext();
 	}
 
 	function next() {
@@ -183,19 +141,11 @@
 	function buildDots() {
 		const dots = copyEl("ism-dots");
 		if (!dots) return;
-		SCENES.forEach((scene, i) => {
-			const dot = document.createElement("button");
-			dot.type = "button";
+		SCENES.forEach(scene => {
+			const dot = document.createElement("span");
 			dot.className = "ism-dot";
-			dot.dataset.step = String(i);
-			dot.setAttribute("aria-label", "Step " + (i + 1) + ": " + scene.title);
 			dot.title = scene.title;
 			dots.appendChild(dot);
-		});
-		dots.addEventListener("click", event => {
-			const dot = event.target.closest(".ism-dot");
-			if (!dot) return;
-			setStep(Number(dot.dataset.step));
 		});
 	}
 
@@ -635,7 +585,6 @@
 					cancelAnimationFrame(rafId);
 					rafId = 0;
 				}
-				if (playing) pause();
 			}
 		}, { rootMargin: "200px", threshold: 0.05 });
 		observer.observe(wrap);
@@ -650,15 +599,12 @@
 		ctx = canvas.getContext("2d");
 		buildDots();
 		renderCopy();
-		updatePlayButton();
 		bindDrag();
 
 		const nextBtn = copyEl("ism-next");
 		const prevBtn = copyEl("ism-prev");
-		const playBtn = copyEl("ism-play");
 		if (nextBtn) nextBtn.addEventListener("click", next);
 		if (prevBtn) prevBtn.addEventListener("click", prev);
-		if (playBtn) playBtn.addEventListener("click", play);
 
 		window.addEventListener("resize", requestDraw);
 		if (window.ResizeObserver) new ResizeObserver(requestDraw).observe(wrap);
@@ -668,7 +614,7 @@
 		observe();
 	}
 
-	window.IntuitionSpaceMorph = { init: init, next: next, prev: prev, play: play, reset: () => setStep(0) };
+	window.IntuitionSpaceMorph = { init: init, next: next, prev: prev, reset: () => setStep(0) };
 })();
 
 function loadIntuitionSpaceMorphModule() {

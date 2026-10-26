@@ -1312,29 +1312,29 @@
 		var ffnScenarios = {
 			fruit: {
 				keys: [
-					{ label: "Key: tech company?", on: false },
-					{ label: "Key: edible fruit?", on: true },
-					{ label: "Key: tree / orchard?", on: true }
+					{ label: "Feature: technology brand", on: false },
+					{ label: "Feature: food / edible", on: true },
+					{ label: "Feature: orchard / fruit", on: true }
 				],
 				values: [
-					{ label: "→ pie · juice · sugar", on: true },
-					{ label: "→ Mac · iPhone · Cupertino", on: false },
-					{ label: "→ orchard · green · tree", on: true }
+					{ label: "Next-token pull: pie, juice, crunch", on: true },
+					{ label: "Next-token pull: Mac, iPhone, stock", on: false },
+					{ label: "Next-token pull: tree, orchard, green", on: true }
 				],
-				desc: 'The context is <b>eating</b>, so the food and orchard keys match. The tech key stays silent. Each matching key writes a value that raises the odds of tokens such as “pie”, “juice”, and “crunchy”.'
+				desc: 'The context is <b>I ate the apple</b>. Attention has already put that context into the token vector. The food and orchard patterns match; the technology pattern stays silent. Each match writes a next-token pull into the stream.'
 			},
 			tech: {
 				keys: [
-					{ label: "Key: tech company?", on: true },
-					{ label: "Key: edible fruit?", on: false },
-					{ label: "Key: tree / orchard?", on: false }
+					{ label: "Feature: technology brand", on: true },
+					{ label: "Feature: food / edible", on: false },
+					{ label: "Feature: orchard / fruit", on: false }
 				],
 				values: [
-					{ label: "→ pie · juice · sugar", on: false },
-					{ label: "→ Mac · iPhone · stock", on: true },
-					{ label: "→ orchard · green · tree", on: false }
+					{ label: "Next-token pull: pie, juice, crunch", on: false },
+					{ label: "Next-token pull: Mac, iPhone, stock", on: true },
+					{ label: "Next-token pull: tree, orchard, green", on: false }
 				],
-				desc: 'The context is <b>buying</b>, so the tech key matches. That value raises the odds of tokens such as “Mac”, “iPhone”, and “stock”. The fruit and orchard keys stay silent.'
+				desc: 'The context is <b>I bought an Apple laptop</b>. Now the technology pattern matches and the food and orchard patterns stay silent. The value pushes the next-token distribution toward “Mac”, “iPhone”, and “stock”.'
 			}
 		};
 		function renderFFN(mode) {
@@ -1343,7 +1343,7 @@
 			var valuesEl = document.getElementById("iffn-values");
 			var out = document.getElementById("iffn-out");
 			if (keysEl) keysEl.innerHTML = data.keys.map(function (k) {
-				return '<div class="ffn-pill ' + (k.on ? "is-fire" : "is-idle") + '">' + k.label + '<small>' + (k.on ? "matches" : "gated out") + '</small></div>';
+				return '<div class="ffn-pill ' + (k.on ? "is-fire" : "is-idle") + '">' + k.label + '<small>' + (k.on ? "matches" : "silent") + '</small></div>';
 			}).join("");
 			if (valuesEl) valuesEl.innerHTML = data.values.map(function (v) {
 				return '<div class="ffn-pill ' + (v.on ? (mode === "tech" ? "is-fire-tech" : "is-fire") : "is-idle") + '">' + v.label + '</div>';
