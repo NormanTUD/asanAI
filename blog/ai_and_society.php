@@ -37,8 +37,6 @@ Then: **1997**. IBM's **Deep Blue** defeated world chess champion Garry Kasparov
 The next perception-shift came in **March 2016**, when DeepMind's **AlphaGo** defeated the South Korean Go master Lee Sedol 4–1 in Seoul. Go had been considered far harder for computers than chess — the state space is far larger, roughly $2\times10^{170}$ legal positions in Go versus $10^{47}$ in chess. The moment that broke through the public consciousness was **Move 37 in Game 2**: a stone placed in a position that AlphaGo's own policy network assigned less than 5% probability to, yet which turned out to be strategically brilliant. It looked like *creativity*. Lee Sedol, after losing, said he was "speechless." The match was watched by tens of millions worldwide. In China, it was described as a "Sputnik moment" that accelerated government AI investment (\cite[Silver et al., 2016]{silver2016alphago}).
 
 But it was **November 30, 2022** — the release of **ChatGPT** — that broke the dam. The cultural response was immediate: Italy's data-protection authority briefly **banned ChatGPT**, and 20,000 researchers signed an open letter calling for a pause in "giant AI experiments" (\cite[Garante, 2023]{garante2023chatgpt}; \cite[FLI, 2023]{fli2023pause}). The "AI winter" was over. The "AI spring" — or, depending on your vantage point, the "AI storm" — had begun.
-
-\marginfig{deep_blue_kasparov.jpg}{IBM's Deep Blue, built to play chess, defeated Garry Kasparov in 1997 — the first machine to win a full match against a reigning world champion. The cultural impact was enormous: the "can machines think?" question moved from philosophy seminars to dinner tables. [Photo: IBM/CC BY 2.0]}
 </div>
 
 <div class="md">

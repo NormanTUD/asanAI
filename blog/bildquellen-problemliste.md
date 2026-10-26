@@ -48,7 +48,6 @@ Keine offenen Fälle — alle Bilder ohne Quelle wurden ersetzt oder mit einer b
 
 | Datei | Wo genutzt | Caption-Lizenz | Quelle |
 |---|---|---|---|
-| `deep_blue_kasparov.jpg` | ai_and_society.php:41 (The Arc of Public Perception: Winters and Springs); history.php:973 (The Triumph of Symbolic AI) | Caption: CC BY 2.0 | https://www.theguardian.com/sport/2021/feb/12/deep-blue-computer-beats-kasparov-chess-1996 |
 | `dolni_vestonice_head.jpg` | untold_history.php:330 (The Development of Humans) | Caption: CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Female_face,_ivory_carving,_Doln%C3%AD_V%C4%9Bstonice,_Gravettian,_28_000_-_22_000_BP.jpg |
 | `eniac_1946.jpg` | untold_history.php:1236 (The Polar Program That Nudged the State of the Art) | Caption: public domain | https://commons.wikimedia.org/wiki/File:Two_women_operating_ENIAC_%28full_resolution%29.jpg |
 | `qubit_cryostat.jpg` | untold_history.php:1240 (The Polar Program That Nudged the State of the Art) | Caption: CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Measuring_a_qubit_leaves_no_room_for_error.jpg |
@@ -88,7 +87,6 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | Datei | Status | Key | Lizenz | Wo genutzt |
 |---|---|---|---|---|
 | `navy.png` | unbelegt | `newyorktimesperceptron` |  | history.php:676 (The Beginning of Artificial Neural Networks) |
-| `deep_blue_kasparov.jpg` | Caption | `deepblue` | Caption: CC BY 2.0 | ai_and_society.php:41 (The Arc of Public Perception: Winters and Springs); history.php:973 (The Triumph of Symbolic AI) |
 | `dolni_vestonice_head.jpg` | Caption | — | Caption: CC BY-SA 4.0 | untold_history.php:330 (The Development of Humans) |
 | `eniac_1946.jpg` | Caption | — | Caption: public domain | untold_history.php:1236 (The Polar Program That Nudged the State of the Art) |
 | `qubit_cryostat.jpg` | Caption | — | Caption: CC BY 4.0 | untold_history.php:1240 (The Polar Program That Nudged the State of the Art) |

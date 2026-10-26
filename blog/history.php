@@ -1218,11 +1218,6 @@ LSTMs were the “workhorse” of AI for two decades (approx. 1997–2017). With
 
 While Perceptrons attempted to mimic the brain's structure, a different approach focused on logic and brute-force search. This “Symbolic AI” reached its zenith in May 1997, when **Deep Blue** won the six-game rematch against Kasparov; it had lost the 1996 match (\cite{deepblue}).
 
-<figure>
-    <img style="width: 100%" src="deep_blue_kasparov.jpg" alt="Kasparov vs Deep Blue" />
-    <figcaption>\citetitle{deepblue}</figcaption>
-</figure>
-
 In a historic six-game rematch, IBM's Deep Blue defeated the reigning world chess champion, **Garry Kasparov**. Unlike the learning-based Perceptron, Deep Blue relied on massive parallel processing capable of evaluating 200 million positions per second. It proved that for well-defined logical problems, a machine could exceed human capability not through intuition, but through sheer computational calculation. The match was broadcast live, and the win struck hard enough that IBM's share price briefly touched an all-time high \cite{toosi2021history}.
 
 However, Deep Blue's victory represented the pinnacle of specific, hand-crafted logic rather than general intelligence. While effective for the rigid rules of chess, relying on human-designed strategies proved to be a bottleneck for more complex, unstructured problems. This realization leads directly to a fundamental, and somewhat painful, observation about the trajectory of AI progress.
