@@ -1115,6 +1115,25 @@ figcaption a { color: var(--tm-muted); }
 }
 .split-figure figure { margin: 0; }
 
+.aside-figure {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(150px, 220px);
+	gap: clamp(16px, 3vw, 28px);
+	align-items: start;
+	margin: 22px 0;
+}
+.aside-figure > .prose { min-width: 0; }
+.aside-figure-media { display: grid; gap: 10px; }
+.aside-figure figure { margin: 0; }
+.aside-figure img { width: 100%; height: auto; }
+.aside-figure figcaption { font-size: 0.66rem; line-height: 1.35; }
+@media (max-width: 720px) {
+	.aside-figure { grid-template-columns: 1fr; }
+	.aside-figure-media { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+	.aside-figure figure { max-width: 320px; }
+}
+
+
 /* ── demo shell ──────────────────────────────────────────── */
 
 .demo {
