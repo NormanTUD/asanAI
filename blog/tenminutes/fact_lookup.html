@@ -27,7 +27,7 @@
 						<div class="section-kicker"><span class="sk-num">01</span> A forward pass, not a lookup</div>
 						<h2 class="section-title">The computation produces the fact.</h2>
 						<div class="prose">
-							<p>The prompt becomes tokens, then vectors. Each transformer block reads from a residual stream, lets attention route information between positions, and lets the MLP write an update back into the stream. The final vector is scored against the vocabulary.</p>
+							<p>Positional encoding put tokens in order. This page asks where a fact lives in the resulting computation. The prompt becomes tokens, then vectors. Each transformer block reads from a residual stream, lets attention route information between positions, and lets the MLP write an update back into the stream. The final vector is scored against the vocabulary.</p>
 							<p>The residual stream is a shared scratchpad. Attention can move the meaning of 'France' to the final position; the MLP can act like a learned key-value memory. The fact is distributed across many weights, not stored in one place.</p>
 						</div>
 					</section>
@@ -143,7 +143,7 @@
 						<div class="section-kicker">More background</div>
 						<h2 class="section-title">The MLP as a soft key-value memory</h2>
 						<div class="prose">
-							<p>If attention is the routing layer — the part that figures out <em>which</em> information matters — then the <strong>MLP layers</strong> are where the <em>content</em> of the model's knowledge actually lives. This is the most important conceptual claim in this chapter, and it has substantial experimental support.</p>
+							<p>If attention is the routing layer — the part that figures out <em>which</em> information matters — then the <strong>MLP layers</strong> are where the <em>content</em> of the model's knowledge actually lives. This is the most important conceptual claim on this page, and it has substantial experimental support.</p>
 							<p>The mechanism is a soft key-value memory. The first matrix, <em>W</em>₁, contains rows that act like keys: each row responds to a pattern in the residual stream. The nonlinearity decides which detections pass, and the second matrix, <em>W</em>₂, writes the corresponding values back. The hidden layer is wide, so many key-value pairs can share it; that is why the memory is distributed and why a fact can be partly present. Nothing is addressed by an exact string. The model retrieves the value whose key best matches the current state.</p>
 						</div>
 					</section>
@@ -152,7 +152,8 @@
 						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Opening up one fact: ROME</h2>
 						<div class="prose">
-							<p>ROME (<a href="https://arxiv.org/abs/2202.05262" rel="noopener">Meng et al., 2022</a>) starts from the hypothesis that a fact is a key-value pair in an MLP. It finds the layer where the subject's key is written, computes a value direction that would produce the new object, and edits the second matrix so that the key writes the new value. The result: after the edit, the model says Rome when asked about the Eiffel Tower, says Rome when asked "Where is the Eiffel Tower?", says Rome when given "Eiffel Tower: ___" — and, crucially, <em>still says Paris when asked about the capital of France</em>. In this example the edit looks local, and the neighbouring fact survives. That is striking, but it is not a guarantee: follow-up work found that such edits can have side effects, and that a fact may not live in a single clean key-value slot. The honest reading is that ROME demonstrates a mechanism, not that models are databases with editable rows.</p>
+							<p>ROME (<a href="https://arxiv.org/abs/2202.05262" rel="noopener">Meng et al., 2022</a>) starts from the hypothesis that a fact is a key-value pair in an MLP. It finds the layer where the subject's key is written, computes a value direction that would produce the new object, and edits the second matrix so that the key writes the new value. The result: after the edit, the model says Rome when asked about the Eiffel Tower, says Rome when asked "Where is the Eiffel Tower?", says Rome when given "Eiffel Tower: ___" — and, crucially, <em>still says Paris when asked about the capital of France</em>.</p>
+							<p>In this example the edit looks local, and the neighbouring fact survives. That is striking, but it is not a guarantee: follow-up work found that such edits can have side effects, and that a fact may not live in a single clean key-value slot. The honest reading is that ROME demonstrates a mechanism, not that models are databases with editable rows.</p>
 						</div>
 					</section>
 

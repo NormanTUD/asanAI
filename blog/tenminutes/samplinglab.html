@@ -27,7 +27,7 @@
 						<div class="section-kicker"><span class="sk-num">01</span> Temperature and greedy</div>
 						<h2 class="section-title">Sharp or flat.</h2>
 						<div class="prose">
-							<p>The model ends with a vector of logits, one score per vocabulary token. Softmax turns those scores into probabilities. Temperature divides the logits before the softmax: below one the gaps between scores widen and the distribution sharpens; above one the gaps shrink and the distribution flattens.</p>
+							<p>The transformer ended with a distribution. This page chooses from it. The model ends with a vector of logits, one score per vocabulary token. Softmax turns those scores into probabilities (the same softmax). Temperature divides the logits before the softmax: below one the gaps between scores widen and the distribution sharpens; above one the gaps shrink and the distribution flattens.</p>
 							<p>At temperature near zero, the most likely token gets almost all of the mass, so decoding becomes greedy and deterministic. At temperature one, you sample from the model's native distribution. Above one, rare tokens become reachable and the output becomes more surprising — and more likely to be incoherent.</p>
 							<p>Greedy decoding is not 'the truth'; it is just the highest-probability continuation. It can be repetitive and can miss a better sentence that starts with a less likely token. Temperature changes the shape of the choice, not the model's knowledge.</p>
 						</div>

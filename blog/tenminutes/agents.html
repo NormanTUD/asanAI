@@ -33,6 +33,7 @@
 						<h2 class="section-title">An agent is a loop, not a ghost.</h2>
 						<div class="prose">
 							<p>
+								Reasoning let the model think longer. This page gives it tools and a loop.
 								In this course, “AI agent” is a <strong>technical term</strong> for a software
 								architecture: an LLM wrapped in an <strong>observe → reason → act</strong>
 								loop, with access to external interfaces such as a file system, the network, a
@@ -41,7 +42,7 @@
 							</p>
 							<p>
 								The LLM at the centre is still the same reactive, stateless next-token
-								predictor. What changes is the <strong>scaffolding around it</strong>: a system
+								predictor from the next-token loop. What changes is the <strong>scaffolding around it</strong>: a system
 								prompt, a tool registry, a memory, and a loop that keeps going until the task
 								is done or a budget runs out. The difference between “using an LLM” and
 								“deploying an agent” is the difference between asking someone a question and
@@ -212,7 +213,10 @@
 								<strong>Grounding</strong> means the agent’s actions correspond to the user’s
 								actual intent. It fails in ordinary ways: “clean up my inbox” becomes “delete
 								all email”, a metric gets optimized instead of the goal, a loop runs forever,
-								a tool is used outside its sandbox. And because the model reads untrusted text
+								a tool is used outside its sandbox.
+							</p>
+							<p>
+								And because the model reads untrusted text
 								— web pages, search results, issue comments, emails — a malicious page can
 								contain instructions. This is <strong>prompt injection</strong>, and it is a
 								security boundary, not a chatbot quirk. It is not the same as a

@@ -33,7 +33,8 @@
 						<h2 class="section-title">A word becomes a number.</h2>
 						<div class="prose">
 							<p>
-								Start with a single axis: temperature. Give <strong>Freezing</strong> the
+								Tokenization turned text into token IDs. An ID is still just an index; this page gives
+								it geometry. Start with a single axis: temperature. Give <strong>Freezing</strong> the
 								coordinate −30, <strong>Cold</strong> 5, <strong>Warm</strong> 35, and
 								<strong>Boiling</strong> 100. In this one-dimensional world, “Cold” is
 								mathematically close to “Freezing” and far from “Boiling”. You can even do
@@ -87,7 +88,7 @@
 								stereotype, and analogy arithmetic will reproduce it. The model is not
 								endorsing the pattern; it is reflecting a statistical regularity. Whether
 								that counts as a moral fact about the model, or only about the data, is one of
-								the questions the later chapters return to.
+								the questions later pages return to.
 							</p>
 							<p>
 								Click a word to see its nearest neighbours. Or choose an analogy and watch
@@ -242,7 +243,7 @@
 							<p>
 								The table on its own is also order-blind. It maps each token independently, so
 								“dog bites man” and “man bites dog” would have the same set of vectors. That is
-								exactly why transformers add position information before attention (Day 20):
+								exactly why transformers add position information before attention (positional encoding):
 								the geometry of meaning does not encode sequence by itself.
 							</p>
 						</div>
@@ -266,12 +267,12 @@
 						</div>
 						<div class="prose">
 							<p>
-								Two more ideas are worth carrying: <strong>polysemanticity
-								and superposition</strong> (<a href="https://arxiv.org/abs/2209.10652" rel="noopener">Elhage et al., 2022</a>) — a single neuron often responds to several
+								Two more ideas are worth carrying. The first is <strong>polysemanticity
+								and superposition</strong> (<a href="https://arxiv.org/abs/2209.10652" rel="noopener">Elhage et al., 2022</a>): a single neuron often responds to several
 								unrelated features because the model compresses more concepts than it has
-								dimensions; and the <strong>manifold hypothesis</strong> — real data lies on a
-								lower-dimensional surface inside the huge ambient space, which is why
-								high-dimensional models can generalize instead of merely memorizing.
+								dimensions. The second is the <strong>manifold hypothesis</strong>: real data
+								lies on a lower-dimensional surface inside the huge ambient space, which is
+								why high-dimensional models can generalize instead of merely memorizing.
 							</p>
 							<p>
 								The longer treatment pushes further into Voronoi cells (the territory of each

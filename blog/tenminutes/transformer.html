@@ -37,7 +37,8 @@
 						<h2 class="section-title">The problem was the queue.</h2>
 						<div class="prose">
 							<p>
-								Recurrent networks read a sequence one step at a time. Information about the
+								Attention, context, position, and fact lookup supplied the parts. This page assembles
+								them into one block. Recurrent networks read a sequence one step at a time. Information about the
 								beginning had to survive a long chain of updates before it could influence the
 								end. Convolutions could parallelize, but the path between distant tokens still
 								grew with distance.
@@ -149,7 +150,8 @@
 						<div class="prose">
 							<p>
 								At the input, “bank” is already a vector. Then each block edits it. The
-								residual stream carries the old representation forward and adds a new one on
+								residual stream — the running vector from the six-step demo — carries the
+								old representation forward and adds a new one on
 								top: <code>z = x + Attention(Norm(x))</code>, then
 								<code>y = z + FFN(Norm(z))</code>. Nothing is overwritten; everything
 								accumulates.

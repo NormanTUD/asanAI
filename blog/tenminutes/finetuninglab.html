@@ -27,7 +27,7 @@
 						<div class="section-kicker"><span class="sk-num">01</span> From raw text to instructions</div>
 						<h2 class="section-title">Teaching the format.</h2>
 						<div class="prose">
-							<p>Pretraining teaches next-token prediction on a huge corpus. The result is fluent but uncontrolled. Supervised fine-tuning then shows the model examples of instructions and good answers, teaching it the format of a conversation (<a href="https://arxiv.org/abs/2203.02155" rel="noopener">Ouyang et al., 2022</a>).</p>
+							<p>Sampling chose tokens. This page turns the predictor into an assistant. Pretraining teaches next-token prediction on a huge corpus — the next-token loop. The result is fluent but uncontrolled. Supervised fine-tuning then shows the model examples of instructions and good answers, teaching it the format of a conversation (<a href="https://arxiv.org/abs/2203.02155" rel="noopener">Ouyang et al., 2022</a>).</p>
 							<p>Fine-tuning is not only about facts. It changes behaviour: when to answer, when to refuse, how to structure a response, and which tone to use.</p>
 						</div>
 					</section>
@@ -110,7 +110,8 @@
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">LoRA and Parameter-Efficient Fine-Tuning</h2>
 						<div class="prose">
-							<p>Full fine-tuning of a 70B model requires ~1 TB of GPU memory (parameters, gradients, and optimizer state). <strong>Parameter-Efficient Fine-Tuning (PEFT)</strong> methods train only a tiny fraction of parameters. The best-known is <strong>LoRA</strong> (<a href="https://arxiv.org/abs/2106.09685" rel="noopener">Hu et al., 2021</a>): freeze the original weight matrix and learn two small matrices whose product is added to it. If the original matrix is <em>d × d</em> and the adapter rank is <em>r</em>, the adapter has <em>r</em>(<em>d</em> + <em>d</em>) parameters instead of <em>d</em>², which can be thousands of times fewer. QLoRA (<a href="https://arxiv.org/abs/2305.14314" rel="noopener">Dettmers et al., 2023</a>) combines this with a quantized base model, so a large model can be adapted on a single GPU. Prompt tuning and prefix tuning take the idea further and learn soft prompt vectors rather than weight updates at all.</p>
+							<p>Full fine-tuning of a 70B model requires ~1 TB of GPU memory (parameters, gradients, and optimizer state). <strong>Parameter-Efficient Fine-Tuning (PEFT)</strong> methods train only a tiny fraction of parameters. The best-known is <strong>LoRA</strong> (<a href="https://arxiv.org/abs/2106.09685" rel="noopener">Hu et al., 2021</a>): freeze the original weight matrix and learn two small matrices whose product is added to it. If the original matrix is <em>d × d</em> and the adapter rank is <em>r</em>, the adapter has <em>r</em>(<em>d</em> + <em>d</em>) parameters instead of <em>d</em>², which can be thousands of times fewer.</p>
+							<p>QLoRA (<a href="https://arxiv.org/abs/2305.14314" rel="noopener">Dettmers et al., 2023</a>) combines this with a quantized base model, so a large model can be adapted on a single GPU. Prompt tuning and prefix tuning take the idea further and learn soft prompt vectors rather than weight updates at all.</p>
 						</div>
 					</section>
 
@@ -126,7 +127,8 @@
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Distillation: What Transfers, and What Doesn't</h2>
 						<div class="prose">
-							<p>The analytic extreme skips the student altogether. <strong>Rationale distillation</strong> extracts a teacher's reasoning; <strong>mechanistic interpretability</strong> tries to read the algorithm out of the weights directly — induction heads, the modular-addition circuit in a grokked transformer, sparse-autoencoder feature dictionaries. Where output distillation compresses <em>behaviour</em>, circuit-level work compresses <em>mechanism</em>, and its results feed back into evaluation, model editing, and safety. Distillation is also the centre of a persistent intellectual-property fight: most closed-model terms prohibit training competitors on their outputs, and the open web is now saturated with model-generated text, making the provenance of “human” data increasingly hard to establish.</p>
+							<p>The analytic extreme skips the student altogether. <strong>Rationale distillation</strong> extracts a teacher's reasoning; <strong>mechanistic interpretability</strong> tries to read the algorithm out of the weights directly — induction heads, the modular-addition circuit in a grokked transformer, sparse-autoencoder feature dictionaries. Where output distillation compresses <em>behaviour</em>, circuit-level work compresses <em>mechanism</em>, and its results feed back into evaluation, model editing, and safety.</p>
+							<p>Distillation is also the centre of a persistent intellectual-property fight: most closed-model terms prohibit training competitors on their outputs, and the open web is now saturated with model-generated text, making the provenance of “human” data increasingly hard to establish.</p>
 						</div>
 					</section>
 
@@ -134,7 +136,7 @@
 						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Stage 0: Pretraining (recap)</h2>
 						<div class="prose">
-							<p>The base model is trained on the next-token-prediction objective (see the Intuition chapter) over ~10T tokens of web text. The result is a model that completes sentences in the style of its training data, but does not behave as an assistant.</p>
+							<p>The base model is trained on the next-token-prediction objective over ~10T tokens of web text. The result is a model that completes sentences in the style of its training data, but does not behave as an assistant.</p>
 							<p>Stage 1: <strong>Supervised Fine-Tuning (SFT)</strong> teaches it to follow instructions. Stage 2: <strong>Preference optimization</strong> aligns its outputs with human values. Stage 3: <strong>Reasoning RL</strong> (optional) teaches it to think longer on hard problems.</p>
 						</div>
 					</section>
@@ -144,7 +146,7 @@
 						<h2 class="section-title">Stage 2: Reward Modeling (for RLHF)</h2>
 						<div class="prose">
 							<p>RLHF first trains a reward model on human comparisons: it learns to give an answer a score. Then a reinforcement-learning algorithm, usually PPO, updates the language model to maximise that score, with a KL penalty that keeps it close to the supervised model so it does not drift into nonsense. DPO skips the separate reward model and learns directly from the preference pairs, which is simpler and often more stable.</p>
-							<p><strong>Reward hacking</strong> (see the Reinforcement Learning chapter) is the constant danger: a sufficiently good optimizer will find ways to maximise reward without improving quality. It may learn to be verbose, to flatter, or to imitate the annotator's style rather than to be correct. Defenses include a KL penalty, an ensemble of reward models, process supervision (rewarding the steps rather than only the final answer), and keeping humans in the loop.</p>
+							<p><strong>Reward hacking</strong> (see reinforcement learning) is the constant danger: a sufficiently good optimizer will find ways to maximise reward without improving quality. It may learn to be verbose, to flatter, or to imitate the annotator's style rather than to be correct. Defenses include a KL penalty, an ensemble of reward models, process supervision (rewarding the steps rather than only the final answer), and keeping humans in the loop.</p>
 						</div>
 					</section>
 

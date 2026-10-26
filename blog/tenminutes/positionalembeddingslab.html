@@ -27,7 +27,7 @@
 						<div class="section-kicker"><span class="sk-num">01</span> The missing coordinate</div>
 						<h2 class="section-title">Where is the token?</h2>
 						<div class="prose">
-							<p>Attention compares tokens by content. It has no built-in notion of first, second, or last. Positional encodings add a signature to each token's vector so that the model can tell where it sits in the sequence. You might ask why the model cannot simply use the token's index. An index is unbounded and says nothing about distance: position 1,000 is not “far” in any useful sense unless the model learns a scale. A crafted encoding supplies that scale.</p>
+							<p>Attention is order-blind. This page adds the missing coordinate. Attention compares tokens by content. It has no built-in notion of first, second, or last. Positional encodings add a signature to each token's vector so that the model can tell where it sits in the sequence. You might ask why the model cannot simply use the token's index. An index is unbounded and says nothing about distance: position 1,000 is not “far” in any useful sense unless the model learns a scale. A crafted encoding supplies that scale.</p>
 							<p>The original transformer used sine and cosine functions at different frequencies (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>). Modern models often use rotary position embeddings (RoPE), which rotate the query and key vectors by an amount that depends on position.</p>
 						</div>
 					</section>

@@ -27,7 +27,7 @@
 						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
 						<h2 class="section-title">A stack of functions.</h2>
 						<div class="prose">
-							<p>A deep network is not a wider network. It is a stack of functions: the output of one layer becomes the input of the next. Each layer can reuse and recombine the features it receives.</p>
+							<p>Overfitting showed why a model can fit the noise. Depth is one way to make flexibility useful rather than dangerous. A deep network is not a wider network. It is a stack of functions: the output of one layer becomes the input of the next. Each layer can reuse and recombine the features it receives.</p>
 							<p>That is why depth is powerful. A feature that took many simple operations to build can be reused by later layers instead of being relearned from scratch. The network builds a hierarchy, not a pile of independent detectors.</p>
 						</div>
 					</section>
@@ -105,7 +105,8 @@
 						<h2 class="section-title">Why Deep Learning Works (And Why It Works <em>So</em> Well)</h2>
 						<div class="prose">
 							<p>Here's the mechanical answer to why "a big pile of matrix multiplications" ends up being able to translate languages, recognize faces, and play chess better than any human. It comes down to four ingredients working together: <strong>depth</strong>, <strong>nonlinearity</strong>, <strong>backpropagation</strong>, and the <strong>optimizer's hidden preferences</strong>.</p>
-							<p><strong>Depth</strong> supplies composition: later layers reuse the features earlier layers built, so the network can represent a hierarchy without relearning each level. <strong>Nonlinearity</strong> is what keeps the composition from collapsing into one affine map. <strong>Backpropagation</strong> assigns credit efficiently: it computes how each of the millions of parameters contributed to the error, at roughly the cost of one extra forward pass. The <strong>optimizer's preferences</strong> are subtler: stochastic gradient descent does not merely find any fit; it tends to prefer solutions that are flat and simple in a way that correlates with generalisation. None of the four is sufficient alone. Depth without nonlinearity is linear; nonlinearity without credit assignment cannot learn; credit assignment without an optimizer that generalises can memorize.</p>
+							<p><strong>Depth</strong> supplies composition: later layers reuse the features earlier layers built, so the network can represent a hierarchy without relearning each level. <strong>Nonlinearity</strong> is what keeps the composition from collapsing into one affine map. <strong>Backpropagation</strong> assigns credit efficiently: it computes how each of the millions of parameters contributed to the error, at roughly the cost of one extra forward pass.</p>
+							<p>The <strong>optimizer's preferences</strong> are subtler: stochastic gradient descent does not merely find any fit; it tends to prefer solutions that are flat and simple in a way that correlates with generalisation. None of the four is sufficient alone. Depth without nonlinearity is linear; nonlinearity without credit assignment cannot learn; credit assignment without an optimizer that generalises can memorize.</p>
 						</div>
 					</section>
 

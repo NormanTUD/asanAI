@@ -27,7 +27,7 @@
 						<div class="section-kicker"><span class="sk-num">01</span> The alignment problem</div>
 						<h2 class="section-title">Pull matching pairs together.</h2>
 						<div class="prose">
-							<p>An image encoder turns a picture into a vector; a text encoder turns a caption into another vector. The two spaces are different, so you cannot compare them directly. Contrastive learning pulls matched image-caption pairs together and pushes mismatched pairs apart. In a batch of images and captions, every correct pair is a positive and every other combination is a negative; the loss rewards the model for making the diagonal of that similarity matrix stand out.</p>
+							<p>Computer vision gave images their own encoder. This page joins that visual space to the embedding space. An image encoder turns a picture into a vector; a text encoder turns a caption into another vector. The two spaces are different, so you cannot compare them directly. Contrastive learning pulls matched image-caption pairs together and pushes mismatched pairs apart. In a batch of images and captions, every correct pair is a positive and every other combination is a negative; the loss rewards the model for making the diagonal of that similarity matrix stand out.</p>
 							<p>CLIP (<a href="https://arxiv.org/abs/2103.00020" rel="noopener">Radford et al., 2021</a>), trained on roughly 400 million image-text pairs, made this practical at scale. After alignment, a picture of a dog and the word “dog” are close in a shared space, and the model can do zero-shot classification by comparing an image with candidate captions. “Zero-shot” means the model was not trained on that particular label set; it generalises because the label is just another piece of text to embed.</p>
 						</div>
 					</section>
@@ -117,7 +117,7 @@
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">How a Multimodal LLM Answers a Question</h2>
 						<div class="prose">
-							<p>The LLM treats the visual tokens as if they were a foreign language it has been taught to read. No new attention mechanism is required, the same Q/K/V machinery already described in the Attention chapter handles the cross-modal mixing, because visual and text tokens occupy the same vector space.</p>
+							<p>The LLM treats the visual tokens as if they were a foreign language it has been taught to read. No new attention mechanism is required, the same Q/K/V machinery already described in attention handles the cross-modal mixing, because visual and text tokens occupy the same vector space.</p>
 						</div>
 					</section>
 
@@ -133,7 +133,7 @@
 						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Summary</h2>
 						<div class="prose">
-							<p>The hard parts are data (curating trillions of matched image-text-audio samples, see the Training Data chapter), compute (vision towers + LLMs + alignment data = massive training runs), and evaluation (the benchmarks above are still being developed). But the architectural recipe is now standard and reproducible, which is why every frontier lab ships multimodal-by-default in 2025.</p>
+							<p>The hard parts are data (curating trillions of matched image-text-audio samples, see training data), compute (vision towers + LLMs + alignment data = massive training runs), and evaluation (the benchmarks above are still being developed). But the architectural recipe is now standard and reproducible, which is why every frontier lab ships multimodal-by-default in 2025.</p>
 						</div>
 					</section>
 

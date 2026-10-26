@@ -32,6 +32,7 @@
 						<h2 class="section-title">Six movements, one machine.</h2>
 						<div class="prose">
 							<p>
+								The previous pages were the doors. This page is the map.
 								Start with the engine: given a context, predict a distribution over the next token.
 								Everything else is a choice about how to represent that context, how to compute with
 								it, and how to turn a distribution into a sequence.
@@ -67,7 +68,7 @@
 								</div>
 								<div class="tl-panel no-figure" data-timeline-panel aria-live="polite"></div>
 							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>The chapters are not a list. They are a dependency graph with a spine: prediction needs representation, representation needs computation, computation needs training, and the result needs a society to decide what it is for.</span></div>
+							<div class="demo-insight"><b>Takeaway</b><span>The pages are not a list. They are a dependency graph with a spine: prediction needs representation, representation needs computation, computation needs training, and the result needs a society to decide what it is for.</span></div>
 						</div>
 					</section>
 
@@ -166,9 +167,10 @@
 							<p>
 								<strong>The representation stack.</strong> Text is cut into tokens. Tokens become
 								vectors. Position adds order. Attention mixes information across positions. The
-								residual stream (<a href="https://transformer-circuits.pub/2021/framework/index.html" rel="noopener">Elhage et al., 2021</a>) — a shared running vector that every layer reads and adds to —
+								residual stream (<a href="https://transformer-circuits.pub/2021/framework/index.html" rel="noopener">Elhage et al., 2021</a>) — the same running vector from the six-step demo, and the workspace every layer reads and adds to —
 								carries a running state. The MLP, the feed-forward network inside each block,
-								transforms each position on its own. A transformer block repeats attention and
+								transforms each position on its own.</p>
+							<p>A transformer block repeats attention and
 								MLP; the final vector is unembedded, multiplied against the vocabulary, into a
 								distribution. The same geometry appears in embeddings, retrieval, and the residual
 								stream. This is why the course keeps returning to vectors: the architecture is a

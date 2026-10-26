@@ -46,12 +46,12 @@
 								assign a score. “Chosen” is a separate decision, called <strong>decoding</strong>:
 								the model supplies the distribution, and the decoder picks from it. A real
 								model also reads <strong>tokens</strong>, not words — whole words, word
-								fragments, punctuation — which is the subject of Day 4.
+								fragments, punctuation — which is the subject of tokenization.
 							</p>
 							<p>
 								This picture is deliberately incomplete. A real model has many layers
 								of attention, a feed-forward network, positional information, training data,
-								and post-training; these will be discussed in later chapters. This page starts
+								and post-training; these will be discussed later in the course. This page starts
 								with the loop because almost everything else can be read as machinery that
 								makes this one prediction better. The order matters: each layer exists because
 								the previous one created a problem it has to solve.
@@ -461,12 +461,12 @@
 						<h2 class="section-title">Text in, geometry, one word out.</h2>
 						<div class="prose">
 							<p>
-								Put the pieces in order and the outline is simple — though the real model
-								is much larger, and the remaining pages fill in the details: text is cut
-								into <strong>tokens</strong>; each token becomes a <strong>vector</strong>;
-								a <strong>position</strong> signal is added; layer after layer,
+								Put the pieces in order and the outline is simple. The real model is much
+								larger, and the remaining pages fill in the details. Text is cut into
+								<strong>tokens</strong>. Each token becomes a <strong>vector</strong>. A
+								<strong>position</strong> signal is added. Layer after layer,
 								<strong>attention</strong> lets every vector look at its neighbours while a
-								<strong>residual stream</strong> carries earlier findings forward; the
+								<strong>residual stream</strong> carries earlier findings forward. The
 								final vector is scored against the vocabulary and turned into a
 								distribution; one token is drawn and appended.
 							</p>
@@ -482,7 +482,7 @@
 								and often <strong>superposed</strong> (<a href="https://arxiv.org/abs/2209.10652" rel="noopener">Elhage et al., 2022</a>): many features share the same
 								directions rather than each owning a private neuron. That is why a fact can
 								be partly present, why a model can know something without being able to say
-								it reliably, and why editing one fact can disturb another. Day 21 follows a
+								it reliably, and why editing one fact can disturb another. Fact lookup follows a
 								single fact through the forward pass.
 							</p>
 						</div>
