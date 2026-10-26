@@ -3401,6 +3401,7 @@ body[data-page="lesson"] .hero--lesson {
 	max-width: none;
 	padding-top: clamp(18px, 3vw, 34px);
 }
+body[data-page="lesson"] .hero-deck { max-width: none; }
 body[data-page="lesson"] figure img,
 body[data-page="lesson"] .tl-panel img {
 	width: auto;
