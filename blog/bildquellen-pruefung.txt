@@ -1384,3 +1384,69 @@ Die Seite nutzt ausschließlich bereits im Blog vorhandene, oben geprüfte Datei
 21. Sanzio_01_Plato_Aristotle.jpg — Raphael, Public domain — Section 04 "Aristotle and Plato"
 22. Leibnizrechenmaschine.jpg — Eremeev, CC BY-SA 4.0 — Section 05 "Leibniz's stepped reckoner"
 23. transformer_attention_heads.png — Google, CC BY-SA 4.0 — Timeline "Transformer & BERT"
+
+=== TEN MINUTES: ZUSÄTZLICHE BILDVERWENDUNGEN (Oktober 2026) ===
+Die folgenden Dateien werden zusätzlich in blog/tenminutes/ verwendet. Quellen
+und Lizenzen wie oben bzw. im Original-Caption; die Compact-Seiten nennen
+Autor, Lizenz und Quellenlink direkt in der Abbildung.
+
+1. noise_to_banana.png / inceptionism_classvis.png
+   Autor: Alexander Mordvintsev, Christopher Olah, Mike Tyka (Google Research Blog)
+   Lizenz: CC BY 4.0
+   Verwendet in: tenminutes/inceptionism.html
+   Quelle: https://research.google/blog/inceptionism-going-deeper-into-neural-networks/
+
+2. spectrogram_speech_open.png
+   Autor: Kelly Fitz
+   Lizenz: CC BY-SA 3.0
+   Verwendet in: tenminutes/speech_audio.html (image.php w=900)
+
+3. canary_coal_mine.jpg
+   Autor: U.S. Bureau of Mines (1928)
+   Lizenz: Public domain
+   Verwendet in: tenminutes/evaluation.html
+
+4. library_card_catalog.jpg
+   Autor: TBurmeister (WMF)
+   Lizenz: CC BY-SA 4.0
+   Verwendet in: tenminutes/rag.html (image.php w=900)
+
+5. theseus_minotaur_mosaic.jpg
+   Autor: ancient Roman mosaic, House of the Labyrinth, Pompeii
+   Lizenz: Public domain
+   Verwendet in: tenminutes/reasoning.html (image.php w=900)
+
+6. alphago_leesedol.jpg
+   Autor: Korea Baduk Association (2016)
+   Lizenz: CC BY-SA 4.0
+   Verwendet in: tenminutes/ai_and_society.html
+
+7. sam_demo.png
+   Autor: Alexander Kirillov et al. (Meta AI)
+   Lizenz: Apache-2.0
+   Verwendet in: tenminutes/computer_vision.html (image.php w=900, fmt=jpg)
+
+8. flammarion.jpg
+   Autor: Camille Flammarion (1888)
+   Lizenz: Public domain
+   Verwendet in: tenminutes/myths.html (image.php w=900)
+
+9. alan_turing_1951.jpg
+   Autor: Elliott & Fry (1951)
+   Lizenz: Public domain
+   Verwendet in: tenminutes/philosophy.html; tenminutes/people_of_ai.html
+
+10. ada_lovelace_portrait.jpg
+    Autor: Alfred Edward Chalon (1840)
+    Lizenz: Public domain
+    Verwendet in: tenminutes/people_of_ai.html
+
+11. frank_rosenblatt_commons.jpg
+    Autor: Anonymous / Heinz Nixdorf MuseumsForum
+    Lizenz: CC BY-SA 4.0
+    Verwendet in: tenminutes/people_of_ai.html
+
+12. geoffrey_hinton_portrait.jpg
+    Autor: Arthur Petron (2024)
+    Lizenz: CC BY-SA 4.0
+    Verwendet in: tenminutes/people_of_ai.html
