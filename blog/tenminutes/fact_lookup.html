@@ -127,6 +127,15 @@
 						<h2 class="section-title">What the model actually computes, top to bottom</h2>
 						<div class="prose">
 							<p>The forward pass that turns "The capital of France is " into a distribution over next tokens is short. In a modern decoder-only Transformer like those behind GPT, Claude, and LLaMA, it looks like this:</p>
+							<ol>
+								<li>The prompt is tokenized and each token is looked up in the embedding table.</li>
+								<li>A position signal is added, so the model knows where each token sits.</li>
+								<li>Each block normalizes its input, runs attention across positions, and adds the result back to the stream.</li>
+								<li>The same block normalizes again, runs the MLP on each position, and adds that result back to the stream.</li>
+								<li>After the last block, a final normalization produces the residual stream the model will read out.</li>
+								<li>The last position's vector is multiplied by the unembedding matrix, producing a logit for every vocabulary token; softmax and a decoder turn that into a choice.</li>
+							</ol>
+							<p>Nothing in that list is a lookup of “France → Paris”. The fact has to be reconstructed by the interaction of the weights with this particular context.</p>
 						</div>
 					</section>
 
@@ -135,6 +144,7 @@
 						<h2 class="section-title">The MLP as a soft key-value memory</h2>
 						<div class="prose">
 							<p>If attention is the routing layer — the part that figures out <em>which</em> information matters — then the <strong>MLP layers</strong> are where the <em>content</em> of the model's knowledge actually lives. This is the most important conceptual claim in this chapter, and it has substantial experimental support.</p>
+							<p>The mechanism is a soft key-value memory. The first matrix, <em>W</em>₁, contains rows that act like keys: each row responds to a pattern in the residual stream. The nonlinearity decides which detections pass, and the second matrix, <em>W</em>₂, writes the corresponding values back. The hidden layer is wide, so many key-value pairs can share it; that is why the memory is distributed and why a fact can be partly present. Nothing is addressed by an exact string. The model retrieves the value whose key best matches the current state.</p>
 						</div>
 					</section>
 
@@ -142,7 +152,7 @@
 						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Opening up one fact: ROME</h2>
 						<div class="prose">
-							<p>The result: after the edit, the model says Rome when asked about the Eiffel Tower, says Rome when asked "Where is the Eiffel Tower?", says Rome when given "Eiffel Tower: ___" — and, crucially, <em>still says Paris when asked about the capital of France</em>. The edit is local. The new fact is added without disrupting nearby facts.</p>
+							<p>ROME starts from the hypothesis that a fact is a key-value pair in an MLP. It finds the layer where the subject's key is written, computes a value direction that would produce the new object, and edits the second matrix so that the key writes the new value. The result: after the edit, the model says Rome when asked about the Eiffel Tower, says Rome when asked "Where is the Eiffel Tower?", says Rome when given "Eiffel Tower: ___" — and, crucially, <em>still says Paris when asked about the capital of France</em>. In this example the edit looks local, and the neighbouring fact survives. That is striking, but it is not a guarantee: follow-up work found that such edits can have side effects, and that a fact may not live in a single clean key-value slot. The honest reading is that ROME demonstrates a mechanism, not that models are databases with editable rows.</p>
 						</div>
 					</section>
 

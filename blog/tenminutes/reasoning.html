@@ -27,8 +27,8 @@
 						<div class="section-kicker"><span class="sk-num">01</span> Thinking in the open</div>
 						<h2 class="section-title">Use the context as a scratchpad.</h2>
 						<div class="prose">
-							<p>Chain-of-thought prompting asks the model to write intermediate steps instead of jumping to an answer. On arithmetic and logic, this often improves accuracy because the model can use the context as a scratchpad.</p>
-							<p>Self-consistency samples several reasoning paths and takes the majority answer. Tree of thoughts explores branches and evaluates them. These methods trade more computation for better answers.</p>
+							<p>Chain-of-thought prompting asks the model to write intermediate steps instead of jumping to an answer. On arithmetic and logic, this often improves accuracy because the model can use the context as a scratchpad. It is not a different model or a hidden reasoning module: the model is still predicting tokens, but the intermediate tokens give the later predictions more to condition on.</p>
+							<p>Self-consistency samples several reasoning paths and takes the majority answer. Tree of thoughts explores branches and evaluates them. These methods trade more computation for better answers. They work best when the problem has a checkable answer and the model's errors are not correlated; if every path makes the same wrong assumption, voting does not save you.</p>
 						</div>
 					</section>
 
@@ -36,8 +36,8 @@
 						<div class="section-kicker"><span class="sk-num">02</span> Learning to reason</div>
 						<h2 class="section-title">More compute, more checking.</h2>
 						<div class="prose">
-							<p>The o1/R1 generation goes further: the model is trained with reinforcement learning on problems that can be checked, so it learns when to think longer, backtrack, and verify. The reasoning process can be much longer than the final answer.</p>
-							<p>More thinking is not always better. The model can reason confidently in the wrong direction, and long chains are expensive. The useful question is whether the extra computation buys a real improvement on the task.</p>
+							<p>The o1/R1 generation goes further: the model is trained with reinforcement learning on problems that can be checked, so it learns when to think longer, backtrack, and verify. The reasoning process can be much longer than the final answer. A user-facing “summary of reasoning” may be only that — a summary. It is not a guaranteed transcript of the computation that produced the answer, and a fluent explanation can be reconstructed after the fact.</p>
+							<p>More thinking is not always better. The model can reason confidently in the wrong direction, and long chains are expensive. The useful question is whether the extra computation buys a real improvement on the task, not whether the explanation sounds thorough.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Chain-of-thought</b><span>Write intermediate steps instead of jumping to an answer.</span></div>
@@ -91,7 +91,7 @@
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Process Reward Models (PRMs)</h2>
 						<div class="prose">
-							<p>At inference, beam search guided by the PRM dramatically improves accuracy on math (used in o1, Qwen-QwQ, and many open-source replicas). The cost is labelling data; synthetic PRMs (auto-labelling using a stronger model) are now competitive.</p>
+							<p>A process reward model (PRM) scores each intermediate step, not only the final answer. That is a better training signal than a single right/wrong label: it can tell the model that a chain went wrong at step two, even if it later recovered. At inference, beam search guided by the PRM can improve accuracy on math; the cost is labelling data, and synthetic PRMs (auto-labelling with a stronger model) are now competitive.</p>
 						</div>
 					</section>
 
@@ -99,7 +99,7 @@
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Inference-Time Scaling Laws</h2>
 						<div class="prose">
-							<p>Compare this with training: achieving 85% on AIME by training would require either a much larger base model or domain-specific data. <strong>Inference-time scaling is often cheaper and more flexible</strong>.</p>
+							<p>Compare this with training: achieving 85% on AIME, the American Invitational Mathematics Examination, by training alone would require either a much larger base model or domain-specific data. <strong>Inference-time scaling is often cheaper and more flexible</strong> — but it moves the cost to every query rather than paying it once. A model that thinks for ten thousand tokens on every request is expensive to serve, which is why adaptive thinking matters.</p>
 						</div>
 					</section>
 

@@ -27,8 +27,8 @@
 						<div class="section-kicker"><span class="sk-num">01</span> Three ways to represent sound</div>
 						<h2 class="section-title">From waveform to codec.</h2>
 						<div class="prose">
-							<p>The raw waveform is a long list of numbers: tens of thousands of samples per second. A spectrogram turns it into a picture of frequency over time. A neural audio codec compresses it into discrete tokens; self-supervised models learn representations without labels.</p>
-							<p>Modern systems often use codec tokens because they behave like a vocabulary. Once sound is a sequence of tokens, the same transformer machinery that handles text can listen, transcribe, and generate.</p>
+							<p>The raw waveform is a long list of numbers: tens of thousands of samples per second. A spectrogram turns it into a picture of frequency over time. A neural audio codec compresses it into discrete tokens; self-supervised models learn representations without labels. The sample rate is already a design choice: speech is usually captured at 16 kHz because most of the information needed to understand words sits below 8 kHz, while music is captured at 44.1 kHz or 48 kHz because it uses the higher frequencies.</p>
+							<p>Modern systems often use codec tokens because they behave like a vocabulary. Once sound is a sequence of tokens, the same transformer machinery that handles text can listen, transcribe, and generate. A codec does not simply round the waveform; it learns a small set of reusable acoustic units, often with several “codebooks” stacked, and sends the indices of those units. That is what makes the output discrete enough to predict.</p>
 						</div>
 					</section>
 
@@ -88,7 +88,7 @@
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Speech Recognition: Whisper and Friends</h2>
 						<div class="prose">
-							<p>The model is trained with a multi-task objective: transcribe, translate to English, detect language, timestamp. Whisper-large-v3 (2023) achieves under 3% word error rate on clean English and ~10% on noisy multilingual.</p>
+							<p>The model is trained with a multi-task objective: transcribe, translate to English, detect language, timestamp. Whisper-large-v3 (2023) achieves under 3% word error rate on clean English and ~10% on noisy multilingual. Word error rate is the edit distance between the transcript and the reference, divided by the number of reference words: substitutions, insertions, and deletions all count. A 3% WER still means roughly one wrong word in thirty-three, which matters for names, numbers, and anything legally binding.</p>
 							<p><strong>Conformer</strong> (Gulati et al., Google, 2020) is the dominant architecture for streaming ASR. It combines convolutions (for local patterns) with self-attention (for global context) in each block. USM (Google, 2023) and SeamlessM4T (Meta, 2023) extend this to 100+ languages.</p>
 						</div>
 					</section>
@@ -119,9 +119,17 @@
 
 					<section class="section-block">
 						<div class="section-kicker">More background</div>
+						<h2 class="section-title">2. Neural Audio Codecs</h2>
+						<div class="prose">
+							<p>A neural codec learns an encoder that turns a short window of audio into a latent vector, a quantizer that snaps that vector to the nearest entry in a learned codebook, and a decoder that reconstructs the waveform. The token is the codebook index. Because the decoder is trained to preserve what listeners hear, the tokens keep the information that matters for speech and music while discarding the raw sample-by-sample detail. This is the representation that makes audio look like text to a transformer.</p>
+						</div>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">More background</div>
 						<h2 class="section-title">3. Self-Supervised Representations</h2>
 						<div class="prose">
-							<p>Models like <strong>wav2vec 2.0</strong>, <strong>HuBERT</strong>, and <strong>WavLM</strong> learn speech representations by masking spans of audio and predicting the discrete latent units of a teacher model. The output is a sequence of 50 Hz contextualized vectors, perfect input for downstream ASR, speaker ID, or emotion recognition.</p>
+							<p>Models like <strong>wav2vec 2.0</strong>, <strong>HuBERT</strong>, and <strong>WavLM</strong> learn speech representations by masking spans of audio and predicting the discrete latent units of a teacher model. The output is a sequence of 50 Hz contextualized vectors, perfect input for downstream ASR, speaker ID, or emotion recognition. The difference from a codec is the objective: a codec is trained to reconstruct the sound, a self-supervised model is trained to predict what was masked.</p>
 						</div>
 					</section>
 
@@ -129,7 +137,7 @@
 						<div class="section-kicker">Practical notes</div>
 						<h2 class="section-title">Audio is not text.</h2>
 						<div class="prose">
-							<p>Speech models can fail on accents, background noise, overlapping speakers, and rare names. Music models can produce pleasant textures that lack long-range structure. Generated speech can sound natural and still mispronounce the important word.</p>
+							<p>Speech models can fail on accents, background noise, overlapping speakers, and rare names. Music models can produce pleasant textures that lack long-range structure. Generated speech can sound natural and still mispronounce the important word. That last failure is structural: a text-to-speech model predicts acoustics, not a dictionary pronunciation, so a rare name or a heteronym can be voiced with complete confidence and the wrong phonemes. Systems often add a pronunciation lexicon or a separate grapheme-to-phoneme step for exactly this reason.</p>
 							<p>Evaluation has to match the task: word error rate for transcription, intelligibility and naturalness for speech, musical structure for generation. A single score is not enough.</p>
 						</div>
 					</section>

@@ -41,15 +41,35 @@
 								That is the <strong>autoregressive loop</strong>.
 							</p>
 							<p>
+								Two words in that description are doing quiet work. “Probability” means the
+								model ranks all candidates at once; it does not know the answer and then
+								assign a score. “Chosen” is a separate decision, called <strong>decoding</strong>:
+								the model supplies the distribution, and the decoder picks from it. A real
+								model also reads <strong>tokens</strong>, not words — whole words, word
+								fragments, punctuation — which is the subject of Day 4.
+							</p>
+							<p>
 								This picture is deliberately incomplete. A real model has many layers
 								of attention, a feed-forward network, positional information, training data,
 								and post-training; these will be discussed in later chapters. This page starts
 								with the loop because almost everything else can be read as machinery that
-								makes this one prediction better.
+								makes this one prediction better. The order matters: each layer exists because
+								the previous one created a problem it has to solve.
 							</p>
 							<p>
 								A conversation, a poem, a Python function — all of it is this loop, writing
-								one word at a time.
+								one word at a time. That sounds reductive until you notice what the context can
+								contain: the question, a worked example, the output of a tool, or the model's own
+								earlier reasoning. Each new token conditions on all of it. In this picture,
+								reasoning is text the model writes to itself so that the next step has something
+								to continue.
+							</p>
+							<p>
+								Why not predict the whole answer at once? Because the model's output is a
+								distribution over the <em>next</em> slot. Predicting a whole sequence in one step
+								would mean choosing from an astronomically large space of sentences and would
+								lose the ability to condition each word on the words already written. The loop is
+								slower, but it makes the answer a response to itself.
 							</p>
 						</div>
 						<div class="aha">
@@ -65,9 +85,11 @@
 						<div class="prose">
 							<p>
 								Below is a deliberately tiny toy model. It knows a handful of continuations
-								for a small story. Pick a word or let it draw one; the new word becomes
-								part of the context, and the next distribution is computed from everything
-								so far.
+								for a small story. It is a lookup tree, not a neural network: a real model
+								computes the distribution from learned weights. The toy isolates the loop,
+								which is the part that stays the same. Pick a word or let it draw one; the new
+								word becomes part of the context, and the next distribution is computed from
+								everything so far.
 							</p>
 						</div>
 
@@ -141,6 +163,8 @@
 								learned distribution; the decoder only selects from it. Variation is not
 								creativity: useful novelty depends on structure, context, and the quality of the
 								distribution, and raising the temperature usually trades coherence for surprise.
+								A useful rule of thumb: temperature changes the style of an answer; it does not
+								add knowledge. If the model does not know a fact, no setting makes it appear.
 							</p>
 						</div>
 						<div class="aha">
@@ -158,7 +182,9 @@
 								The loop is the outside view. Inside, one word passes through a fixed
 								pipeline. Each step changes the representation in a different way, and each
 								is a small idea you can play with. The steps follow the order of a real
-								transformer pass.
+								transformer pass: text becomes ids, ids become vectors, position adds order,
+								attention adds context, the feed-forward network computes, and the residual
+								stream carries the result forward.
 							</p>
 						</div>
 
@@ -211,7 +237,7 @@
 										<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with power and gender axes"></canvas>
 										<div class="step-out" id="iemb-out">The space has two semantic axes in this toy: <b>power</b> and <b>gender</b>. Change the expression or the highlighted words.</div>
 									</div>
-									<p class="step-note">Meaning becomes geometry. Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Use the <b>gender</b> and <b>power</b> buttons to see each direction on its own; the arrows are labelled directly. Real embeddings use thousands of dimensions; this toy uses two so you can see the idea.</p>
+									<p class="step-note">Meaning becomes geometry. Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Use the <b>gender</b> and <b>power</b> buttons to see each direction on its own; the arrows are labelled directly. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. Real embeddings use thousands of dimensions; this toy uses two so you can see the idea.</p>
 								</div>
 
 								<div class="step-pane" id="step-position">
@@ -234,7 +260,7 @@
 										</div>
 										<div class="step-out" id="ipe-out">Each row is one position. Each column is one dimension of the position signal.</div>
 									</div>
-									<p class="step-note">Attention has no built-in sense of order. A <b>positional encoding</b> adds a unique fingerprint to every position, so “dog bites man” and “man bites dog” stop looking like the same bag of vectors.</p>
+									<p class="step-note">Attention has no built-in sense of order. A <b>positional encoding</b> adds a unique fingerprint to every position, so “dog bites man” and “man bites dog” stop looking like the same bag of vectors. Why not simply number the positions? Because a raw index grows without bound and says nothing about relative distance; a pattern of waves gives every position a distinct fingerprint and makes nearby positions share some structure.</p>
 								</div>
 
 								<div class="step-pane" id="step-attention">
@@ -255,7 +281,7 @@
 										<canvas class="step-canvas" id="iatt-canvas" aria-label="Attention moving the embedding of bank toward the context"></canvas>
 										<div class="step-out" id="iatt-out">No context: bank stays in the middle, ambiguous.</div>
 									</div>
-									<p class="step-note">An <b>attention head</b> compares a token with the other tokens and moves its representation toward the evidence. The same word can end up in a different place depending on the company it keeps.</p>
+									<p class="step-note">An <b>attention head</b> compares a token with the other tokens and moves its representation toward the evidence. The same word can end up in a different place depending on the company it keeps. The query/key/value language is worth demystifying: the query is what a token is looking for, the key is what each token advertises, and the value is what it passes on when the match is good. Attention is a soft lookup, not a database.</p>
 								</div>
 
 								<div class="step-pane" id="step-ffn">
@@ -358,7 +384,7 @@
 											</div>
 										</div>
 									</div>
-									<p class="step-note">Every layer reads the same running vector, computes an update, and <b>adds</b> it back. Nothing is overwritten. The stream is a shared notebook that carries what the sentence means so far.</p>
+									<p class="step-note">Every layer reads the same running vector, computes an update, and <b>adds</b> it back. Nothing is overwritten. The stream is a shared notebook that carries what the sentence means so far. Addition rather than replacement is not a detail: the original signal survives, and gradients have a short path back through the sum, which is a large part of why very deep networks train at all.</p>
 								</div>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>Tokens become vectors, positions add order, attention mixes context, the feed-forward network computes, and the residual stream carries everything forward.</span></div>
@@ -380,6 +406,15 @@
 								word in the vocabulary owns the region of that space closest to it — like
 								pins in a meadow, each with its own territory. The thought falls into the
 								cell of the nearest word.
+							</p>
+							<p>
+								This is a visualization, not the literal algorithm. A real model produces one
+								score, called a <strong>logit</strong>, for each vocabulary item, and a
+								<strong>softmax</strong> turns those scores into probabilities. The meadow is a
+								way to see why nearby meanings compete; it is not a claim that the model stores
+								a map with pins. What is real is the consequence: the model can be deep inside
+								one region, or standing on a boundary where two continuations are almost
+								equally likely.
 							</p>
 							<p>
 								The boundaries between cells are <strong>seams</strong>: places where two
@@ -442,6 +477,14 @@
 								step the model places the next thought somewhere in that space. The meadow
 								is that last step, seen up close.
 							</p>
+							<p>
+								So where is a fact, if not in a table? Mostly in the feed-forward weights,
+								and often <strong>superposed</strong>: many features share the same
+								directions rather than each owning a private neuron. That is why a fact can
+								be partly present, why a model can know something without being able to say
+								it reliably, and why editing one fact can disturb another. Day 21 follows a
+								single fact through the forward pass.
+							</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>What it is</b><span>A next-token predictor: one distribution, one draw, one append, repeated.</span></div>
@@ -453,8 +496,10 @@
 							<p>
 								That last point matters. The compression-as-intelligence view is a productive
 								working hypothesis, not a proved identity. Solomonoff’s theorem is about
-								prediction, not understanding; it does not settle whether a particular model
-								has world knowledge. The defensible position is that the empirical evidence is
+								prediction, not understanding; roughly, it says that the best predictor is the
+								one that finds the shortest program generating the data, which is a statement
+								about compression, not about a particular model's grasp of the world. It does not
+								settle whether a particular model has world knowledge. The defensible position is that the empirical evidence is
 								still catching up to the philosophy — and that both the awe and the scepticism
 								are responses to the same remarkable fact: a loop this simple gets this far.
 							</p>
@@ -463,7 +508,9 @@
 							<p>
 								Put differently: a large language model is a finite vocabulary laid over an
 								infinite space of meaning — and a loop that keeps falling from one point in
-								that space to the next word.
+								that space to the next word. The space is finite-dimensional, not literally
+								infinite; the phrase is a way of saying that the vocabulary is a coarse grid
+								over a continuum the model can represent.
 							</p>
 						</div>
 					</section>

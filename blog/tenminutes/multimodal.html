@@ -27,8 +27,8 @@
 						<div class="section-kicker"><span class="sk-num">01</span> The alignment problem</div>
 						<h2 class="section-title">Pull matching pairs together.</h2>
 						<div class="prose">
-							<p>An image encoder turns a picture into a vector; a text encoder turns a caption into another vector. The two spaces are different, so you cannot compare them directly. Contrastive learning pulls matched image-caption pairs together and pushes mismatched pairs apart.</p>
-							<p>CLIP made this practical at scale. After alignment, a picture of a dog and the word 'dog' are close in a shared space, and the model can do zero-shot classification by comparing an image with candidate captions.</p>
+							<p>An image encoder turns a picture into a vector; a text encoder turns a caption into another vector. The two spaces are different, so you cannot compare them directly. Contrastive learning pulls matched image-caption pairs together and pushes mismatched pairs apart. In a batch of images and captions, every correct pair is a positive and every other combination is a negative; the loss rewards the model for making the diagonal of that similarity matrix stand out.</p>
+							<p>CLIP made this practical at scale. After alignment, a picture of a dog and the word “dog” are close in a shared space, and the model can do zero-shot classification by comparing an image with candidate captions. “Zero-shot” means the model was not trained on that particular label set; it generalises because the label is just another piece of text to embed.</p>
 						</div>
 					</section>
 
@@ -36,8 +36,8 @@
 						<div class="section-kicker"><span class="sk-num">02</span> From alignment to conversation</div>
 						<h2 class="section-title">Pixels become tokens.</h2>
 						<div class="prose">
-							<p>A multimodal LLM goes further. Pixels are turned into visual tokens, projected into the language model's embedding space, and then processed together with text tokens. The model can answer questions about an image, describe it, or use it as context.</p>
-							<p>The alignment is not perfect. The model can miss small details, misread text in images, or inherit biases from its training data. Multimodality adds a new input, not a guarantee of understanding.</p>
+							<p>A multimodal LLM goes further. Pixels are turned into visual tokens, projected into the language model's embedding space, and then processed together with text tokens. The model can answer questions about an image, describe it, or use it as context. Architectures differ: some concatenate visual tokens with text, others use cross-attention so the text can query the image. Either way, the trick is to make vision look like another language the model already knows how to read.</p>
+							<p>The alignment is not perfect. The model can miss small details, misread text in images, or inherit biases from its training data. Reading text in an image is a good example of why: a visual encoder often works on coarse patches, so the fine strokes of a label or a receipt may simply not survive the tokenization. Multimodality adds a new input, not a guarantee of understanding.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Two encoders</b><span>Images and text are embedded separately before they can be compared.</span></div>
@@ -109,7 +109,7 @@
 						<h2 class="section-title">Multimodal LLMs: How a Text Model Learns to See</h2>
 						<div class="prose">
 							<p>A pretrained vision encoder (e.g., CLIP-ViT) produces a sequence of visual tokens. A small <strong>projection MLP</strong> maps each visual token from the vision space into the LLM's text-token embedding space:</p>
-							<p>The projected visual tokens are concatenated with the text-token sequence and fed to the LLM as if they were ordinary words. <strong>Only the projection layer is trained initially</strong>; the LLM is frozen. The visual tokens literally become “foreign-language words” the LLM learns to read.</p>
+							<p>The projected visual tokens are concatenated with the text-token sequence and fed to the LLM as if they were ordinary words. <strong>Only the projection layer is trained initially</strong>; the LLM is frozen. The visual tokens literally become “foreign-language words” the LLM learns to read. Later stages usually unfreeze the LLM and instruction-tune the whole stack on multimodal conversations, which is how the model learns to answer questions rather than merely describe what it sees.</p>
 						</div>
 					</section>
 
@@ -125,7 +125,7 @@
 						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Visual Question Answering Benchmarks</h2>
 						<div class="prose">
-							<p>The leaderboard has shifted dramatically: in 2022, GPT-3.5 with no vision got ~0% on MMMU. By 2025, top models (GPT-4o, Claude 3.5, Gemini 1.5 Pro) exceed 70%, and on VQA v2 they exceed 85%.</p>
+							<p>The leaderboard has shifted dramatically: in 2022, GPT-3.5 with no vision got ~0% on MMMU, a benchmark of university-level questions that require interpreting diagrams, charts, and images. By 2025, top models (GPT-4o, Claude 3.5, Gemini 1.5 Pro) exceed 70%, and on VQA v2 they exceed 85%. A benchmark score is still a proxy: it says the model can handle the kinds of images and questions the benchmark contains, not that it sees the world the way you do.</p>
 						</div>
 					</section>
 

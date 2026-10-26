@@ -42,8 +42,19 @@
 							<p>
 								The coordinates are hand-assigned here. In a real model nobody writes them
 								down: the model discovers a position for every token from the company it
-								keeps in billions of sentences. One axis is already a model of similarity;
-								language needs many.
+								keeps in billions of sentences. The mechanism is ordinary training: the
+								embedding table is a matrix of weights, and gradient descent moves each row
+								so that the model gets better at predicting text. No dictionary definition is
+								involved.
+							</p>
+							<p>
+								One axis is already a model of similarity; language needs many. More dimensions
+								let the model keep many distinctions independent — tense, number, register,
+								topic, sentiment — without forcing them onto the same line. Two dimensions
+								can separate a couple of distinctions, but not dozens at once. More
+								dimensions are not free, though: the space becomes hard
+								to visualize, distances concentrate, and most directions stop having a human
+								name.
 							</p>
 						</div>
 						<div class="big-quote">
@@ -66,7 +77,17 @@
 								arrow as <strong>king</strong> to <strong>queen</strong>, and
 								<strong>uncle</strong> to <strong>aunt</strong>: gender is one direction you
 								can pick up and carry to another word. Nobody typed that rule in. It fell
-								out of the statistics of the text.
+								out of the statistics of the text: because “man” and “woman” appear in similar
+								grammatical slots, the difference between them becomes a consistent direction
+								that the model can reuse.
+							</p>
+							<p>
+								That also means the geometry inherits the corpus. If the text associates
+								doctors with men and nurses with women, the directions will carry the
+								stereotype, and analogy arithmetic will reproduce it. The model is not
+								endorsing the pattern; it is reflecting a statistical regularity. Whether
+								that counts as a moral fact about the model, or only about the data, is one of
+								the questions the later chapters return to.
 							</p>
 							<p>
 								Click a word to see its nearest neighbours. Or choose an analogy and watch
@@ -153,6 +174,13 @@
 								is blind to that artefact. It is not a perfect measure of meaning, but it
 								asks a cleaner question: do these tokens point in the same direction?
 							</p>
+							<p>
+								One caution: a cosine of 0.8 is not “80% similar”. It is the cosine of an
+								angle, not a probability. The number is useful for ranking neighbours inside
+								one model; comparing raw cosine values across different models or datasets is
+								usually meaningless, because each space has its own geometry and its own
+								baseline level of similarity.
+							</p>
 						</div>
 
 						<div class="demo" id="cosine-demo">
@@ -210,6 +238,12 @@
 								made the vector <strong>contextual</strong>: “bank” in “river bank” and “bank
 								account” gets different representations. In a transformer, the input embedding
 								is immediately rewritten by attention and the residual stream.
+							</p>
+							<p>
+								The table on its own is also order-blind. It maps each token independently, so
+								“dog bites man” and “man bites dog” would have the same set of vectors. That is
+								exactly why transformers add position information before attention (Day 20):
+								the geometry of meaning does not encode sequence by itself.
 							</p>
 						</div>
 						<div class="myth-grid">

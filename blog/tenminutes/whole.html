@@ -37,8 +37,11 @@
 								it, and how to turn a distribution into a sequence.
 							</p>
 							<p>
-								The compact course follows that dependency chain. Select a movement to see what it
-								contributes and where to enter it.
+								The compact course follows that dependency chain. The six movements are not six
+								separate subjects; they are six questions asked in order. What is the prediction?
+								How does the predictor learn? What does it learn from? What computes the
+								prediction? How is it made usable? And what is it for? Select a movement to see
+								what it contributes and where to enter it.
 							</p>
 						</div>
 						<div class="demo demo--paper timeline-shell" data-demo="timeline">
@@ -163,17 +166,23 @@
 							<p>
 								<strong>The representation stack.</strong> Text is cut into tokens. Tokens become
 								vectors. Position adds order. Attention mixes information across positions. The
-								residual stream carries a running state. The MLP transforms each position. A
-								transformer block repeats attention and MLP; the final vector is unembedded into a
+								residual stream — a shared running vector that every layer reads and adds to —
+								carries a running state. The MLP, the feed-forward network inside each block,
+								transforms each position on its own. A transformer block repeats attention and
+								MLP; the final vector is unembedded, multiplied against the vocabulary, into a
 								distribution. The same geometry appears in embeddings, retrieval, and the residual
-								stream.
+								stream. This is why the course keeps returning to vectors: the architecture is a
+								machine for moving and reshaping points in one high-dimensional space.
 							</p>
 							<p>
 								<strong>The behaviour stack.</strong> Pretraining data decides what the model has
-								seen. The objective decides what it optimises. Post-training decides how it behaves
-								as an assistant. Sampling decides how adventurous it is. Retrieval and tools decide
-								what it can use beyond its weights. None of these layers is the whole model; the
-								assistant is the pipeline.
+								seen. The objective — the loss it is trained to minimise — decides what it
+								optimises. Post-training decides how it behaves as an assistant. Sampling, the rule
+								for turning probabilities into a chosen token, decides how adventurous it is.
+								Retrieval and tools decide what it can use beyond its weights. None of these layers
+								is the whole model; the assistant is the pipeline. Ask why two systems with the same
+								base model behave differently, and the answer is usually somewhere in this stack,
+								not in the architecture diagram.
 							</p>
 							<p>
 								<strong>The human stack.</strong> Evaluation asks whether it works. Safety asks what

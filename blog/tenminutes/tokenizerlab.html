@@ -37,7 +37,9 @@
 								small pieces called tokens</strong>. We can first think of these as words, but
 								they do not have to be. A token can be a whole word, a sub-word, a number, a
 								punctuation mark, or a single byte. Humans think in words; the model thinks
-								in tokens.
+								in tokens. The token's ID is only an index into a table: token 1024 is not
+								“more” than token 64, and the ordering carries no meaning. It is a slot number,
+								not a quantity.
 							</p>
 							<p>
 								Most tokens are common words or word fragments. <code>understanding</code> can
@@ -46,6 +48,23 @@
 								assembled from pieces it knows by heart. The vocabulary never has to grow, and
 								<code>transformer</code> is just <code>trans</code> + <code>form</code> +
 								<code>er</code>.
+							</p>
+							<p>
+								Why not use whole words, or single characters? Whole words make sequences short
+								but the vocabulary open-ended: every name, typo, and compound would need an
+								entry. Characters are universal but make sequences long, and attention costs
+								grow with length. Subword tokenization is the compromise: frequent strings get
+								their own slot, rare ones are assembled. The vocabulary size is a budget — large
+								enough to keep sequences short, small enough that the embedding table and the
+								final softmax stay affordable. Modern models sit roughly between 32,000 and a
+								quarter of a million tokens, which is why the exact count is a property of the
+								model, not of language.
+							</p>
+							<p>
+								One consequence looks like a bug until you see it: many tokenizers fold the
+								leading space into the token. “word” and “ word” can be different slots. That is
+								why a prompt ending in a space can behave differently from one that does not,
+								and why formatting is not cosmetic to a model.
 							</p>
 						</div>
 						<div class="aha">
@@ -202,6 +221,17 @@
 							<div class="keypoint"><b>Portability</b><span>Token IDs are not portable. A different model family has a different vocabulary; its token counts are not a budget for another.</span></div>
 						</div>
 						<div class="prose">
+							<p>
+								The spelling failures have the same root. Ask a model how many r's are in
+								“strawberry” and it may answer two. The word is probably one token or a few
+								pieces like <code>straw</code> + <code>berry</code>; the letters are never
+								directly visible. The model can learn to spell, but it is reconstructing
+								characters from pieces, not reading them off a string. The same mismatch makes
+								column arithmetic awkward: <code>1234</code> and <code>1235</code> may not
+								split in a way that lines up with decimal places, so the model has to learn an
+								algorithm that the input format does not hand it. This is one reason serious
+								systems give the model a calculator.
+							</p>
 							<p>
 								<strong>Byte-level BPE</strong> removes the worst failure: if the alphabet is
 								all 256 bytes, every possible input has a tokenization and nothing is ever

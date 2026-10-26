@@ -53,7 +53,7 @@
 						<div class="prose">
 							<p>The KV cache stores the keys and values for every token in the context, so the model does not recompute the past at every step. The cache grows with the context length and can dominate memory during long conversations. Serving systems have to manage it carefully.</p>
 							<p>FlashAttention and other kernels make attention more efficient, but they do not change the fundamental cost. Long-context models also have to learn to use the middle of a long window; information near the start or end is often easier to retrieve.</p>
-							<p>Retrieval and long context are complementary. A bigger window lets the model see more; retrieval decides what is worth seeing. The budget is still a budget.</p>
+							<p>Retrieval and long context are complementary. A bigger window lets the model see more; retrieval decides what is worth seeing. The budget is still a budget. A larger window is a larger desk, not a better filing system: if the relevant page is buried in the pile, more desk space does not help.</p>
 						</div>
 					</section>
 
@@ -110,10 +110,10 @@
 
 					<section class="section-block">
 						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Strategy 3: Compaction (Summarize and Continue)</h2>
+						<h2 class="section-title">Compaction (Summarize and Continue)</h2>
 						<div class="prose">
-							<p>The key insight: <strong>memory is always external</strong>. The LLM itself is stateless, it's the surrounding system that creates the illusion of continuity by carefully managing what goes into the context window at the start of each interaction. ChatGPT's memory works through a combination of detection of memory-worthy information, storing of such information, and retrieval-augmented generation. In addition to saved memories, it now references all past conversations to deliver responses that feel more relevant and tailored. Four layers working together create the illusion that ChatGPT knows you personally.</p>
-							<p>For very long-running sessions (like coding agents that run for hours), the context window eventually fills up. <strong>Compaction</strong> summarizes the conversation so far and replaces the full history with a compressed version:</p>
+							<p>The key insight: <strong>memory is always external</strong>. The LLM itself is stateless; the surrounding system creates the illusion of continuity by carefully managing what goes into the context window at the start of each interaction. ChatGPT's memory works through a combination of detecting memory-worthy information, storing it, and retrieving it later. Four layers working together create the illusion that ChatGPT knows you personally: the current conversation, saved memories, past-conversation search, and the system prompt that tells the model how to use them.</p>
+							<p>For very long-running sessions (like coding agents that run for hours), the context window eventually fills up. <strong>Compaction</strong> summarizes the conversation so far and replaces the full history with a compressed version: the decisions made, the files touched, the constraints that still apply, and the open questions. The model then continues from the summary rather than the transcript. This saves space, but it is lossy. A summary that drops a constraint can cause the agent to repeat a mistake it had already been corrected for. The other common strategies are a sliding window (keep the most recent turns) and retrieval (keep a store outside the window and inject only what is relevant).</p>
 						</div>
 					</section>
 
@@ -129,7 +129,7 @@
 						<div class="section-kicker">More background</div>
 						<h2 class="section-title">1. KV Cache: Remembering Without Recomputing</h2>
 						<div class="prose">
-							<p>During autoregressive generation (producing one token at a time), the model doesn't recompute attention over the entire sequence from scratch for each new token. Instead, it maintains a <strong>Key-Value (KV) Cache</strong>:</p>
+							<p>During autoregressive generation (producing one token at a time), the model doesn't recompute attention over the entire sequence from scratch for each new token. Instead, it maintains a <strong>Key-Value (KV) Cache</strong>: for every token already processed, it stores the key and value vectors that attention will need later. When a new token arrives, the model computes only its query and attends against the cached keys and values. The cache turns the repeated work into a lookup, at the cost of memory that grows with the context.</p>
 						</div>
 					</section>
 
@@ -137,7 +137,7 @@
 						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Practical implications:</h2>
 						<div class="prose">
-							<p>This is one reason <strong>RAG remains valuable</strong> even with million-token context windows: RAG places the most relevant information at the <em>top</em> of the context, where attention is strongest.</p>
+							<p>This is one reason <strong>RAG remains valuable</strong> even with million-token context windows. Retrieval puts the most relevant passages near the start or end of the context, where models tend to use information more reliably than in the middle. That “lost in the middle” effect is empirical, not a law, but it is a good reason to curate the context rather than merely enlarge it.</p>
 						</div>
 					</section>
 

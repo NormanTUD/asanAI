@@ -77,6 +77,16 @@
 								appends it to the context, and starts again. <strong>The model never sees the
 								sentence it is about to write</strong> — only the tokens already on the page.
 							</p>
+							<p>
+								One detail confuses many readers: during training the model produces a
+								distribution at <em>every</em> position, not only the last. The causal mask
+								ensures that the prediction at position <em>i</em> sees only positions up to
+								<em>i</em>, so a single forward pass supplies a training signal for every
+								next-token pair in the sequence. At generation time only the last position
+								matters; the earlier distributions are discarded. This is why training can use
+								a whole document in parallel while generation still has to go one token at a
+								time.
+							</p>
 						</div>
 
 						<div class="demo" id="pipeline-demo">
@@ -235,7 +245,10 @@
 								decides <em>what to look at</em>; the FFN decides <em>what to do with it</em>.
 								The wide hidden layer gives the network room to combine features, and much of
 								the model’s factual recall is associated with these weights — though knowledge
-								is distributed, not stored in one place.
+								is distributed, not stored in one place. The usual expansion factor is four;
+								it is an empirical convention, not a law. Modern models often use gated
+								variants such as SwiGLU with a different ratio, but the shape is the same:
+								wide, nonlinear, then narrow again.
 							</p>
 							<p>
 								<strong>Residual connections</strong> give the gradient an identity path
@@ -250,6 +263,13 @@
 								and often replace LayerNorm with RMSNorm, which rescales by the root mean
 								square without subtracting the mean. The stream stays simple; each branch
 								arrives already scaled.
+							</p>
+							<p>
+								Where do the parameters actually live? In a typical decoder, most are in the
+								attention projections and the FFN matrices; the embedding and unembedding
+								tables can be large, and are sometimes tied. That is why a “7B” model is not a
+								container of seven billion facts. It is seven billion numbers whose joint
+								action produces the behaviour, with facts spread across many of them.
 							</p>
 						</div>
 						<div class="formula-grid">
@@ -291,11 +311,13 @@
 						<div class="prose">
 							<p>
 								The final hidden state of the last token is multiplied by an unembedding matrix,
-								producing a <strong>logit</strong> for every token in the vocabulary. Softmax
-								turns the logits into a probability distribution. A decoding rule chooses one
-								token: greedy takes the maximum, sampling draws from the distribution,
-								temperature scales the logits, top-k/top-p restrict the pool. The chosen token
-								is appended to the context and the loop runs again.
+								producing a <strong>logit</strong> for every token in the vocabulary. A logit
+								is not a probability; it is an unnormalized score. Adding the same constant to
+								every logit changes nothing after softmax, so only differences between logits
+								matter. Softmax turns them into a probability distribution. A decoding rule
+								chooses one token: greedy takes the maximum, sampling draws from the
+								distribution, temperature scales the logits, top-k/top-p restrict the pool. The
+								chosen token is appended to the context and the loop runs again.
 							</p>
 							<p>
 								How does it stop? There is no separate stop detector. The end-of-sequence token

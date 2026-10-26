@@ -27,8 +27,9 @@
 						<div class="section-kicker"><span class="sk-num">01</span> Set the environment</div>
 						<h2 class="section-title">Role, specificity, structure.</h2>
 						<div class="prose">
-							<p>A role primes the model with a style and a body of knowledge. Specific instructions reduce ambiguity. Delimiters separate instructions from data. Examples show the format you want better than a description often can.</p>
-							<p>Negations are weak: telling a model not to think of a white bear can make the bear more likely. Say what you want, not only what you do not want.</p>
+							<p>A role primes the model with a style and a body of knowledge. Specific instructions reduce ambiguity. Delimiters separate instructions from data. Examples show the format you want better than a description often can. This is why a <strong>few-shot</strong> prompt — a handful of input-output examples before the real request — often beats a longer description of the same rule.</p>
+							<p>The three message roles are not cosmetic either. The <strong>system</strong> message sets the standing instructions, the <strong>user</strong> message carries the request, and the <strong>assistant</strong> message holds the model's earlier turns. The model is trained to treat them differently, which is why a system instruction usually outranks a user instruction — and why prompt injection tries to smuggle a new system instruction into user data.</p>
+							<p>Negations are weak: telling a model not to think of a white bear can make the bear more likely. To suppress a concept, the model still has to represent it. Say what you want, not only what you do not want.</p>
 						</div>
 					</section>
 
@@ -87,7 +88,7 @@
 						<h2 class="section-title">The Master Principle</h2>
 						<div class="prose">
 							<p>All prompt engineering techniques reduce to one idea: <strong>control the probability distribution.</strong> Every technique -- roles, delimiters, CoT, few-shot, structured output -- is a tool for collapsing the model's output space from “anything” to “exactly what I need.”</p>
-							<p>The best prompt engineers do not memorize techniques, they understand which <strong>degrees of freedom</strong> the model has, and systematically lock them down until only the correct output path remains.</p>
+							<p>The best prompt engineers do not memorize techniques; they understand which <strong>degrees of freedom</strong> the model has, and systematically lock them down until only the correct output path remains. The most familiar example is <strong>chain-of-thought</strong>: asking for intermediate steps keeps the model from committing to an answer in a single token and gives it a place to check its work. It is a prompt-level version of the scratchpad idea, and it is the subject of Day 27.</p>
 						</div>
 					</section>
 
@@ -95,7 +96,7 @@
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Specify Output Format</h2>
 						<div class="prose">
-							<p>Define a strict schema (JSON, CSV, YAML) that constrains the model's generation pathway. This reduces hallucination because every token must be syntactically valid within the structure.</p>
+							<p>Define a strict schema (JSON, CSV, YAML) that constrains the model's generation pathway. This reduces format errors, not factual ones: a syntactically perfect object can still contain a wrong value. If the runtime supports constrained decoding, the schema can be enforced token by token; otherwise the model can drift, and the output needs validation.</p>
 						</div>
 					</section>
 
@@ -128,7 +129,7 @@
 						<div class="section-kicker">Practical notes</div>
 						<h2 class="section-title">When a good prompt still fails.</h2>
 						<div class="prose">
-							<p>A prompt can be clear and still fail because the model lacks the knowledge, the task is ambiguous, or the context is too long. Prompting cannot fix a missing capability.</p>
+							<p>A prompt can be clear and still fail because the model lacks the knowledge, the task is ambiguous, or the context is too long. Prompting cannot fix a missing capability. A prompt is also model-specific: the same wording can work on one model and fail on another because their instruction-following training differs. Treat a prompt as part of the system, version it, and re-test it after a model upgrade.</p>
 							<p>Prompt injection, contradictory instructions, and untrusted text are security and design problems. Use permissions, validation, and human review for anything that matters.</p>
 						</div>
 					</section>

@@ -47,6 +47,13 @@
 								“deploying an agent” is the difference between asking someone a question and
 								hiring them to finish a project.
 							</p>
+							<p>
+								It is worth separating an agent from a <strong>workflow</strong>. A workflow is a
+								fixed sequence of steps chosen by the developer; an agent chooses the sequence
+								at runtime. Most production systems are workflows with a few agentic steps,
+								because a fixed path is easier to test, audit, and bound. “Agentic” is a dial,
+								not a binary.
+							</p>
 						</div>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -208,14 +215,21 @@
 								a tool is used outside its sandbox. And because the model reads untrusted text
 								— web pages, search results, issue comments, emails — a malicious page can
 								contain instructions. This is <strong>prompt injection</strong>, and it is a
-								security boundary, not a chatbot quirk.
+								security boundary, not a chatbot quirk. It is not the same as a
+								<strong>jailbreak</strong>: a jailbreak is a user trying to bypass the model's
+								safety rules; injection is untrusted content trying to issue instructions to
+								the agent. Both exploit the same fact — instructions and data share one token
+								stream — but they call for different defences.
 							</p>
 							<p>
 								There is a fundamental tension: every confirmation and sandbox reduces
 								autonomy; every capability increases the blast radius. The field is trying to
 								move the frontier rather than trade one for the other. In practice: least
 								privilege, explicit confirmation for destructive actions, sandboxing,
-								instruction hierarchy, output validation, and a hard iteration cap.
+								instruction hierarchy, output validation, and a hard iteration cap. A sandbox
+								is not a metaphor: it is an isolated environment with limited filesystem,
+								network, and credential access, so a bad tool call can fail without taking the
+								system with it.
 							</p>
 						</div>
 

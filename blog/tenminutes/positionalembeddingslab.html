@@ -27,7 +27,7 @@
 						<div class="section-kicker"><span class="sk-num">01</span> The missing coordinate</div>
 						<h2 class="section-title">Where is the token?</h2>
 						<div class="prose">
-							<p>Attention compares tokens by content. It has no built-in notion of first, second, or last. Positional encodings add a signature to each token's vector so that the model can tell where it sits in the sequence.</p>
+							<p>Attention compares tokens by content. It has no built-in notion of first, second, or last. Positional encodings add a signature to each token's vector so that the model can tell where it sits in the sequence. You might ask why the model cannot simply use the token's index. An index is unbounded and says nothing about distance: position 1,000 is not “far” in any useful sense unless the model learns a scale. A crafted encoding supplies that scale.</p>
 							<p>The original transformer used sine and cosine functions at different frequencies. Modern models often use rotary position embeddings (RoPE), which rotate the query and key vectors by an amount that depends on position.</p>
 						</div>
 					</section>
@@ -51,8 +51,8 @@
 						<div class="section-kicker"><span class="sk-num">03</span> The geometry of position</div>
 						<h2 class="section-title">A manifold, not just labels.</h2>
 						<div class="prose">
-							<p>Sine and cosine at different frequencies create a smooth fingerprint for every position. Nearby positions share low-frequency patterns; distant positions differ in the high-frequency dimensions. The set of position vectors forms a manifold rather than a set of unrelated labels.</p>
-							<p>Modern models often use rotary position embeddings. RoPE rotates the query and key vectors by an amount that depends on position, so the dot product between them depends on relative distance. That makes relative position easier to learn.</p>
+							<p>Sine and cosine at different frequencies create a smooth fingerprint for every position. Nearby positions share low-frequency patterns; distant positions differ in the high-frequency dimensions. The set of position vectors forms a manifold rather than a set of unrelated labels. Why waves? Because a wave is bounded, smooth, and periodic, so every position gets a distinct pattern without the values growing without bound. The different frequencies encode different scales: a slow wave distinguishes the beginning from the end of a long text, while a fast wave distinguishes neighbouring positions.</p>
+							<p>Modern models often use rotary position embeddings. RoPE rotates the query and key vectors by an amount that depends on position, so the dot product between them depends on relative distance. That makes relative position easier to learn. Concretely, a query at position <em>m</em> and a key at position <em>n</em> are rotated by angles proportional to <em>m</em> and <em>n</em>; when you take the dot product, the absolute angles cancel and what remains depends on <em>m − n</em>. The model gets “how far apart” almost for free.</p>
 							<p>The details matter for long context. A model trained on one range of positions may not extrapolate gracefully to a much longer range. Position is a coordinate, and the coordinate system has to fit the data.</p>
 						</div>
 					</section>
@@ -92,7 +92,7 @@
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">The Repetition Starburst: One Word, Many Positions</h2>
 						<div class="prose">
-							<p>What happens when you repeat the same word hundreds of times in a sequence? The <strong>semantic embedding</strong> is identical every time, but the <strong>positional encoding</strong> nudges each copy to a slightly different point in space.</p>
+							<p>What happens when you repeat the same word hundreds of times in a sequence? The <strong>semantic embedding</strong> is identical every time, but the <strong>positional encoding</strong> nudges each copy to a slightly different point in space. The repeated tokens form a starburst rather than a single point. That is how the model can distinguish the first “the” from the last one, and why repeated tokens are not interchangeable to attention.</p>
 						</div>
 					</section>
 
@@ -109,6 +109,11 @@
 						<h2 class="section-title">How are Sine and Cosine calculated?</h2>
 						<div class="prose">
 							<p>Calculators and math libraries usually evaluate sine and cosine with CORDIC or minimax polynomial approximations; the <strong>Taylor series</strong> below is the simplest polynomial approximation to reason about, not necessarily the algorithm your CPU runs:</p>
+							<div class="formula">
+								<code>sin x = x − x³/3! + x⁵/5! − x⁷/7! + …<br>
+								cos x = 1 − x²/2! + x⁴/4! − x⁶/6! + …</code>
+							</div>
+							<p>For small <em>x</em>, the first term is already a good approximation. The series shows why sine and cosine are smooth and why a calculator can approximate them with polynomials; it is not a description of the hardware. What matters for position encoding is the shape: bounded waves that repeat at different rates, so every position gets a unique combination.</p>
 						</div>
 					</section>
 

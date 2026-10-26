@@ -35,9 +35,12 @@
 							<p>
 								The history of AI has no single line to the large language model. It is a
 								convergence of ideas from unrelated fields that were never intended to meet.
-								Statistical methods developed by astronomers to map
-								the stars now weigh the next word in a sequence. GPU architectures designed
-								for video games provide the parallel computation neural networks need.
+								Statistical methods developed by astronomers to map the stars — least squares
+								was a way to fit noisy celestial observations — now weigh the next word in a
+								sequence. GPU architectures designed for video games provide the parallel
+								computation neural networks need: the matrix operations that draw polygons are
+								the same ones that multiply activations. The convergence is not a plan; it is a
+								series of borrowings that turned out to fit.
 							</p>
 							<p>
 								The deeper history is a history of <strong>abstraction</strong>: human effort
@@ -45,6 +48,9 @@
 								3.3 million years ago with the first stone tools, continues through the wheel
 								and Heron of Alexandria’s programmable cart, and crosses from the physical to
 								the cognitive when thought itself becomes a formal calculus a machine can run.
+								The claim is not that AI was inevitable; it is that the same move — hand a task
+								to a mechanism, then treat the mechanism as the new primitive — recurs at every
+								scale.
 							</p>
 						</div>
 						<div class="pullquote">
@@ -104,7 +110,10 @@
 								in West Turkana, Kenya, hominins were knapping stone by about
 								<strong>3.3 million years ago</strong>, before the genus <em>Homo</em>. The
 								tools are coarse and simple, yet deliberate: someone chose a stone and
-								struck flakes from it. They are the oldest known stone assemblage.
+								struck flakes from it. They are the oldest known stone assemblage. The date
+								comes from the stratigraphy and radiometric dating of the surrounding layers;
+								the interpretation of the flakes as deliberately made, rather than naturally
+								broken, is argued from the pattern of strikes.
 							</p>
 						</div>
 						<div class="prose">
@@ -113,7 +122,8 @@
 								<a href="https://www.nature.com/articles/nature13962" rel="noopener">Trinil</a></strong>,
 								Java, is about <strong>500,000 years old</strong> — the oldest known
 								deliberate geometric incision. It is a pattern; it does not yet record a
-								count.
+								count, and whether it carried symbolic meaning is debated. What is clear is
+								that the mark was made on purpose and kept.
 							</p>
 						</div>
 						<figure>
@@ -142,8 +152,9 @@
 								in two groups of 30 and 25. The <strong>Ishango bone</strong>
 								(c. 18,000 BCE) carries grouped notches that may encode a tally, a
 								lunar calendar, or something else; its prime-number column is
-								suggestive, not settled. The same impulse — outsource counting to a
-								physical object — appears independently in Africa and Europe.
+								suggestive, not settled. The calendar readings are interpretations, not
+								decoded messages. The same impulse — outsource counting to a physical object —
+								appears independently in Africa and Europe.
 							</p>
 						</div>
 						<figure style="max-width: 420px; margin: 24px auto;">
@@ -193,8 +204,10 @@
 								<strong>zero as a number with arithmetic rules</strong> (Brahmagupta, 628 CE),
 								<strong>negative quantities</strong> (Han-dynasty Chinese linear-equation
 								texts), and <strong>decimal fractions</strong> (Stevin, 1585, building on
-								earlier Arabic work). Pingala’s Sanskrit prosody (c. 3rd–1st century BCE)
-								uses a binary-like scheme for metres; Leibniz later formalised binary
+								earlier Arabic work). Babylonian place value was base 60, which is why an
+								hour still has sixty minutes and a circle 360 degrees. Pingala’s Sanskrit
+								prosody (c. 3rd–1st century BCE) uses a binary-like scheme for metres — the
+								mapping to 0 and 1 is a later reading — and Leibniz later formalised binary
 								notation. Modern hardware inherits the positional idea, then makes its own
 								engineering choices. A binary integer has a fixed width and a finite range. A
 								floating-point number stores a sign, an exponent, and a significand, so it
@@ -241,7 +254,9 @@
 								perform all four arithmetic operations. Behind the brass was a larger
 								programme: a <em>mathesis universalis</em>, a notation in which every concept
 								has a number and every argument becomes a calculation. He also formalised
-								binary notation, reducing logic to 0 and 1.
+								binary notation, reducing logic to 0 and 1. The machine itself was not
+								reliable in practice — the carry mechanism gave trouble — but the design and
+								the programme outlived the brass.
 							</p>
 							<p>
 								His hope was that disagreement could be settled by arithmetic rather than
@@ -273,9 +288,10 @@
 						<div class="prose">
 							<p>
 								Babbage designs the <strong>Analytical Engine</strong>, with a store, a mill, and
-								punched-card input. Ada Lovelace sees further than the machine’s builder: the
-								Engine can manipulate <em>symbols</em>, not only numbers, and she writes the
-								first published algorithm intended for it.
+								punched-card input. It was never completed in his lifetime; the design, not a
+								working machine, is what survived. Ada Lovelace sees further than the machine’s
+								builder: the Engine can manipulate <em>symbols</em>, not only numbers, and she
+								writes the first published algorithm intended for it.
 							</p>
 						</div>
 						<div class="split-figure">
@@ -293,7 +309,9 @@
 								The 20th century turns the plan into hardware. Konrad Zuse’s <strong>Z3</strong>
 								(1941) is the first functional, programmable, fully automatic digital computer,
 								built from 2,000 telephone relays; he also designs <em>Plankalkül</em>, an early
-								high-level language. Howard Aiken’s <strong>Harvard Mark I</strong> (1944) is a
+								high-level language. “First” depends on the definition: the Z3 was
+								electromechanical, not electronic, and other machines were programmable in
+								weaker senses. Howard Aiken’s <strong>Harvard Mark I</strong> (1944) is a
 								50-foot decimal relay machine. Turing’s 1936 universal machine supplies the
 								theory; his ACE and Bletchley work supply the practice. Shannon’s 1937 master’s
 								thesis shows that Boolean algebra can be realised in relay circuits — the
@@ -390,7 +408,10 @@
 								constructed between 1958 and 1960 and publicly demonstrated in 1960: a 20×20
 								grid of 400 photocells formed its retina, and electric motors turned the
 								potentiometers that held the weights. Its follow-on, <em>Tobermory</em>, was
-								designed for speech recognition.
+								designed for speech recognition. The learning rule was not backpropagation:
+								the perceptron updated its weights directly from the error, one layer at a
+								time, which is why it could not learn the internal representations a deep
+								network needs.
 							</p>
 							<p>
 								The press heard “a machine that will walk, talk, see, write, reproduce itself
@@ -398,7 +419,9 @@
 								<em>Δw = η · (target − output) · input</em>, that turns error into a weight
 								change. Minsky and Papert’s <em>Perceptrons</em> (1969) then showed the limits
 								of a single-layer network — famously, XOR — and the first winter began. The
-								idea survived in the margins.
+								critique was about one layer; a multilayer network can represent XOR, and
+								backpropagation later supplied a way to train one. The idea survived in the
+								margins.
 							</p>
 						</div>
 						<div class="fieldnotes">
@@ -512,10 +535,22 @@
 							<p>
 								The Dartmouth workshop of 1956 names the field. Symbolic AI builds the Logic
 								Theorist, GPS, expert systems, planners, and microworlds such as SHRDLU. Then
-								it hits the frame problem and the limits of hand-coded rules. Funding freezes
-								in the first AI winter; connectionism returns in the 1980s; a second winter
-								follows. Deep Blue beats Garry Kasparov in 1997, a triumph of search and
-								evaluation in a narrow, hand-tuned domain.
+								it hits the frame problem and the limits of hand-coded rules. The frame problem
+								is the difficulty of representing what does <em>not</em> change when an action is
+								taken: a hand-coded system has to be told that moving a cup does not move the
+								table, the room, or the weather, and the list of things that stay the same is
+								endless. Funding freezes in the first AI winter; connectionism returns in the
+								1980s; a second winter follows. Deep Blue beats Garry Kasparov in 1997, a triumph
+								of search and evaluation in a narrow, hand-tuned domain.
+							</p>
+							<p>
+								The winters were not one event. The first was driven by the 1969 <em>Perceptrons</em>
+								critique, the failure of ambitious machine-translation projects, and the
+								Lighthill report in Britain (1973), which questioned whether the field had
+								delivered on its promises. The second followed the brittleness of expert
+								systems and the collapse of the specialised Lisp-machine market. Different
+								countries cut funding at different times; the pattern was a cycle, not a single
+								verdict.
 							</p>
 						</div>
 						<div class="prose">
@@ -538,8 +573,9 @@
 								<strong>Geoffrey Hinton</strong> kept the connectionist bet alive through
 								the winters and, with Alex Krizhevsky and Ilya Sutskever, built
 								<strong>AlexNet</strong> — the 2012 network that made deep learning hard
-								to ignore. He later shared the 2024 Nobel Prize in Physics with John
-								Hopfield.
+								to ignore. The architecture mattered, but so did the engineering: training it
+								on two consumer GPUs made a network that was previously impractical finish in
+								days. He later shared the 2024 Nobel Prize in Physics with John Hopfield.
 							</p>
 							<p>
 								<strong>Yann LeCun</strong> made convolutions work. <strong>LeNet</strong>
@@ -640,7 +676,9 @@
 								<strong>T5</strong> turned every task into text-to-text.
 								<strong>Chinchilla</strong> (Hoffmann et al., 2022) showed that, for a fixed
 								compute budget, many models were too large for the amount of data they saw; a
-								smaller model trained on more tokens can do better. <strong>LLaMA</strong>
+								smaller model trained on more tokens can do better. The rough rule of thumb
+								from that work is about twenty training tokens per parameter, though later
+								models often go further. <strong>LLaMA</strong>
 								applied that lesson and released models that could run on ordinary hardware,
 								which helped the open-weight ecosystem grow.
 							</p>

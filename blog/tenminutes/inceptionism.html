@@ -28,7 +28,8 @@
 						<h2 class="section-title">The reverse direction.</h2>
 						<div class="prose">
 							<p>A classifier is trained to map an image to a label. If you freeze its weights and run gradient ascent on a class score, the pixels change instead of the parameters. Start from noise, ask for 'banana', and the noise slowly organizes into banana-like shapes.</p>
-							<p>The result looks surreal because the network is not drawing a photograph. It is projecting its learned features back into pixel space. Low layers produce edges and strokes; higher layers assemble whole objects.</p>
+							<p>The result looks surreal because the network is not drawing a photograph. It is projecting its learned features back into pixel space. Low layers produce edges and strokes; higher layers assemble whole objects. Freezing the weights is the point: the question is not “what would a good image look like?” but “what does this fixed detector respond to?” The image is the answer, read backwards.</p>
+							<p>Starting from noise matters too. A blank or natural image already contains structure the network can latch onto; noise is neutral enough that the gradient has to supply the shape. Iterating the process — recognize, amplify, repeat — is what turns a faint preference into a full-blown hallucination.</p>
 						</div>
 					</section>
 
@@ -37,7 +38,7 @@
 						<h2 class="section-title">A window into learned features.</h2>
 						<div class="prose">
 							<p>Inceptionism is a simple interpretability tool. It shows that the network's knowledge is distributed across layers and can be visualized by optimizing the input. It also explains pareidolia: like a child seeing animals in clouds, the network finds its templates in noise.</p>
-							<p>The images are not evidence that the model is conscious or dreaming in the human sense. They are a picture of what the weights have learned to respond to.</p>
+							<p>The images are not evidence that the model is conscious or dreaming in the human sense. They are a picture of what the weights have learned to respond to. Nor is this how modern image generators work: a diffusion model is trained to reverse noise, so it learns the distribution of images. Inceptionism interrogates a classifier that was never trained to make images at all. That is exactly why its “dreams” look like the inside of a feature detector rather than a photograph.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Freeze the weights</b><span>The parameters stay fixed; the input becomes the variable.</span></div>

@@ -68,11 +68,20 @@
 								<li><strong>Value (v)</strong> — the content this token will pass on if chosen.</li>
 							</ul>
 							<p>
+								The separation is the point. If the model compared raw token vectors, it would
+								have only one notion of similarity. Query and key let it learn two roles: a
+								token can advertise something different from what it is looking for. A pronoun
+								can search for a noun without itself looking like a noun. Value is separate for
+								the same reason: what a token is matched on need not be what it hands over.
+							</p>
+							<p>
 								The score between a query and a key is their dot product, scaled by the square
 								root of the key dimension. A large score means the vectors point in a similar
 								direction: “you are relevant to my search.” Softmax turns all the scores in a
 								row into weights that sum to one. The output is the weighted sum of the value
-								vectors.
+								vectors. The row summing to one is not a technicality: it makes attention a
+								finite budget, so a head that spends more on one token has less to spend on the
+								others.
 							</p>
 						</div>
 						<div class="formula">
@@ -153,6 +162,16 @@
 								<li>Open the matrix and turn on the causal mask. Why does the upper-right triangle disappear? What would that mean during generation?</li>
 							</ol>
 						</div>
+						<div class="prose">
+							<p>
+								The causal mask is the answer to the third question. A model that writes left
+								to right must not attend to tokens that do not exist yet, or it would be
+								reading its own answer during training. Masking sets the score for every future
+								position to negative infinity before the softmax, so those weights become
+								zero and the row is renormalized over the past only. Nothing about the
+								mechanism changes; the future is simply not in the budget.
+							</p>
+						</div>
 					</section>
 
 					<section class="section-block" id="multi">
@@ -198,6 +217,12 @@
 								that first token can collapse the model; keeping a few sink tokens pinned fixes
 								it. The model is not remembering their meaning — it is using them as a resting
 								place for the attention budget.
+							</p>
+							<p>
+								The cost of all this is the score matrix: every query is compared with every
+								key, so doubling the context roughly quadruples that part of the work. That is
+								why long context is an engineering problem, not just a setting, and why a lot
+								of research goes into making attention cheaper rather than merely larger.
 							</p>
 						</div>
 					</section>

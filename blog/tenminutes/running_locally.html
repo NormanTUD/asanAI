@@ -27,8 +27,9 @@
 						<div class="section-kicker"><span class="sk-num">01</span> Compression makes it fit</div>
 						<h2 class="section-title">Fewer bits, smaller footprint.</h2>
 						<div class="prose">
-							<p>A large model is too big to fit in ordinary memory at full precision. Quantization stores the weights in fewer bits, which shrinks the model and speeds up inference at the cost of some quality.</p>
-							<p>GGUF is a common file format for quantized models. Engines such as llama.cpp run it efficiently on CPUs and consumer GPUs; Ollama and LM Studio wrap the engine in a friendlier interface.</p>
+							<p>A large model is too big to fit in ordinary memory at full precision. Quantization stores the weights in fewer bits, which shrinks the model and speeds up inference at the cost of some quality. The arithmetic is worth doing once: a 7B model at 16 bits needs about 14 GB for the weights alone; at 4 bits it needs about 3.5 GB. That is the difference between a data-centre GPU and a laptop.</p>
+							<p>“4-bit” does not mean every weight is simply rounded to one of sixteen values. Quantizers usually work in small groups, store a scale and a zero point per group, and keep sensitive layers at higher precision. The result is not identical to the original; it is a different model with a similar behaviour and a smaller memory footprint.</p>
+							<p>GGUF is a common file format for quantized models. Engines such as llama.cpp run it efficiently on CPUs and consumer GPUs; Ollama and LM Studio wrap the engine in a friendlier interface. The format matters because it packages the weights, the tokenizer, and the metadata together, so the engine does not have to guess how the model was built.</p>
 						</div>
 					</section>
 
@@ -143,7 +144,8 @@
 						<h2 class="section-title">Privacy is not the only axis.</h2>
 						<div class="prose">
 							<p>Local inference keeps data on your machine, but it does not automatically make a system private. Logs, plugins, and network calls can still leak information. The privacy case depends on the whole stack, not only on where the weights run.</p>
-							<p>The cost case is also contextual. A local model has no per-token bill, but it needs hardware, electricity, and maintenance. A cloud API is cheaper for occasional use and more expensive at scale. The right choice depends on volume and control.</p>
+							<p>Quality is the other hidden variable. A 4-bit model can be close to its 16-bit parent on many tasks and noticeably worse on others, especially long reasoning chains, code, and rare languages. The only reliable test is your own evaluation set, run on both versions. “It runs” is not the same as “it is good enough”.</p>
+							<p>The cost case is also contextual. A local model has no per-token bill, but it needs hardware, electricity, and maintenance. A cloud API is cheaper for occasional use and more expensive at scale. The right choice depends on volume and control. Fine-tuning locally is possible — especially with parameter-efficient methods such as LoRA — but it adds another layer of engineering and is usually a separate decision from inference.</p>
 						</div>
 					</section>
 

@@ -27,8 +27,8 @@
 						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
 						<h2 class="section-title">It completes patterns.</h2>
 						<div class="prose">
-							<p>The model does not look up facts in a table. It has learned, from a very large amount of text, which continuations usually follow which contexts. Ask for a medical study and it knows what a study title looks like; it can produce a convincing one that does not exist.</p>
-							<p>This is not lying in the human sense. The model has no intention to deceive and no internal fact-checker. It is doing the only thing it was trained to do: assigning probability to the next token.</p>
+							<p>The model does not look up facts in a table. It has learned, from a very large amount of text, which continuations usually follow which contexts. Ask for a medical study and it knows what a study title looks like; it can produce a convincing one that does not exist. The reason is structural: there is no separate “truth” variable in the objective. The training signal rewards a likely continuation, and a well-formed fake citation is often a very likely continuation of “a 2019 study in <em>Nature</em> found…”.</p>
+							<p>This is not lying in the human sense. The model has no intention to deceive and no internal fact-checker. It is doing the only thing it was trained to do: assigning probability to the next token. The word “hallucination” is itself a metaphor — the model is not perceiving something that is not there; it is completing a pattern. Some researchers prefer “confabulation”, which at least captures the sense of a confident story built to fit.</p>
 						</div>
 					</section>
 
@@ -36,8 +36,8 @@
 						<div class="section-kicker"><span class="sk-num">02</span> Why it sounds confident</div>
 						<h2 class="section-title">Confidence is not evidence.</h2>
 						<div class="prose">
-							<p>Confidence is a property of the text, not of the model's knowledge. A fluent answer with a plausible citation can be wrong in every detail. Temperature makes this worse: a higher temperature flattens the distribution and can push the model toward less likely, more inventive continuations.</p>
-							<p>Use the model as a draft, a tutor, or a search aid — not as an oracle. Verify names, numbers, quotes, and citations. Give it documents with retrieval, ask it to show its sources, and keep a human in the loop for anything that matters.</p>
+							<p>Confidence is a property of the text, not of the model's knowledge. A fluent answer with a plausible citation can be wrong in every detail. Temperature makes this worse: a higher temperature flattens the distribution and can push the model toward less likely, more inventive continuations. It is worth asking why the model does not simply say “I don't know”. Sometimes it does — but that is a behaviour learned in post-training, not a reading from an internal truth meter. There is no dial inside the model labelled certainty.</p>
+							<p>Use the model as a draft, a tutor, or a search aid — not as an oracle. Verify names, numbers, quotes, and citations. Give it documents with retrieval, ask it to show its sources, and keep a human in the loop for anything that matters. Retrieval helps because it changes the task: instead of recalling a fact from compressed weights, the model can copy a passage that is present in the context. It is not a guarantee — the model can still misread the passage — but it makes “where did this come from?” a question with an answer.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Pattern completion</b><span>The model predicts plausible text; it does not consult a truth database.</span></div>
@@ -54,6 +54,7 @@
 							<p>Treat the output as a draft, not an answer. Verify names, dates, numbers, quotations, and citations against a source you trust. If the model gives you a study, a law, or a URL, check that it exists. A fluent paragraph is not evidence of a real source.</p>
 							<p>Use retrieval and tools when the answer depends on documents. Ask the model to quote the passage it is relying on, and keep the retrieved text visible. For anything that matters, separate generation from verification: let the model draft, then check the draft with a different process or a different model.</p>
 							<p>Temperature and decoding change how adventurous the model is, not whether it is right. Low temperature makes the answer more predictable; high temperature makes it more inventive and more likely to drift. Neither setting installs a fact-checker. The workflow has to do that.</p>
+							<p>Hallucination is also not uniform. Models are most reliable where the pattern is dense and redundant — common syntax, well-known facts, code idioms — and least reliable where the pattern is sparse, recent, private, or contradictory. That is why the same model can write flawless Python and invent a court case. Scale reduces the error rate on many benchmarks, but it also makes the wrong answer sound better; it shifts the odds, it does not install a guarantee.</p>
 						</div>
 					</section>
 
@@ -94,8 +95,10 @@
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Problems with AI</h2>
 						<div class="prose">
-							<p>#### The Training Data Cutoff and Zeitgeist Bias A primary driver of hallucinations is the static nature of an AI's knowledge. Because models are trained up to a specific point in time, they often “invent” information about events occurring after that date, attempting to force new facts into existing, outdated patterns. This is compounded by popularity bias: the AI tends to provide the statistically most likely answer even if it is incorrect. If training data contains a myth more frequently than the historical truth, the AI will reproduce it as fact because the linguistic pattern is simply stronger.</p>
-							<p>#### The Black Box of Interpretability A deep-seated challenge remains the lack of transparency in neural networks. Even at a low Temperature, it is often impossible to pinpoint exactly why a specific neuron “fired” to trigger a hallucination. The field of <strong>Mechanistic Interpretability</strong> is currently working to decode these internal decision paths. The goal is to prevent hallucinations at the source, within the model's weights, rather than simply filtering the output after the fact.</p>
+							<h3 class="sub-title">The training-data cutoff and zeitgeist bias</h3>
+							<p>A primary driver of hallucinations is the static nature of an AI's knowledge. Because models are trained up to a specific point in time, they often “invent” information about events occurring after that date, attempting to force new facts into existing, outdated patterns. This is compounded by popularity bias: the AI tends to provide the statistically most likely answer even if it is incorrect. If training data contains a myth more frequently than the historical truth, the AI will reproduce it as fact because the linguistic pattern is simply stronger. The same mechanism explains why a model can be confidently wrong about a person who shares a name with someone more famous: the stronger pattern wins.</p>
+							<h3 class="sub-title">The black box of interpretability</h3>
+							<p>A deep-seated challenge remains the lack of transparency in neural networks. Even at a low temperature, it is often impossible to pinpoint exactly why a specific neuron “fired” to trigger a hallucination. The field of <strong>mechanistic interpretability</strong> is currently working to decode these internal decision paths. The goal is to prevent hallucinations at the source, within the model's weights, rather than simply filtering the output after the fact. That is a research programme, not a solved problem: today's practical defence is still verification, retrieval, and a workflow that separates drafting from checking.</p>
 						</div>
 					</section>
 

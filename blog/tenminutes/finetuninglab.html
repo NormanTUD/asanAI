@@ -110,7 +110,7 @@
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">LoRA and Parameter-Efficient Fine-Tuning</h2>
 						<div class="prose">
-							<p>Full fine-tuning of a 70B model requires ~1 TB of GPU memory (params + grads + optimizer). <strong>Parameter-Efficient Fine-Tuning (PEFT)</strong> methods train only a tiny fraction of parameters:</p>
+							<p>Full fine-tuning of a 70B model requires ~1 TB of GPU memory (parameters, gradients, and optimizer state). <strong>Parameter-Efficient Fine-Tuning (PEFT)</strong> methods train only a tiny fraction of parameters. The best-known is <strong>LoRA</strong>: freeze the original weight matrix and learn two small matrices whose product is added to it. If the original matrix is <em>d × d</em> and the adapter rank is <em>r</em>, the adapter has <em>r</em>(<em>d</em> + <em>d</em>) parameters instead of <em>d</em>², which can be thousands of times fewer. QLoRA combines this with a quantized base model, so a large model can be adapted on a single GPU. Prompt tuning and prefix tuning take the idea further and learn soft prompt vectors rather than weight updates at all.</p>
 						</div>
 					</section>
 
@@ -118,7 +118,7 @@
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">Safety-Critical Post-Training</h2>
 						<div class="prose">
-							<p>A frontier model in 2025 typically has <strong>multiple post-training stages</strong> with different objectives: helpful SFT, harmless SFT, helpful DPO, harmless DPO, reasoning RL, and final safety refinement.</p>
+							<p>A frontier model in 2025 typically has <strong>multiple post-training stages</strong> with different objectives: helpful SFT, harmless SFT, helpful DPO, harmless DPO, reasoning RL, and final safety refinement. The stages are not redundant. Helpfulness and harmlessness can pull in different directions, and a preference stage can partly undo a safety stage; the order, the data mix, and the final refinement are part of the design. A model that refuses too broadly is useless; one that refuses too narrowly is unsafe. The boundary is a policy choice, and it is learned from examples like everything else.</p>
 						</div>
 					</section>
 
@@ -143,7 +143,8 @@
 						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Stage 2: Reward Modeling (for RLHF)</h2>
 						<div class="prose">
-							<p><strong>Reward hacking</strong> (see the Reinforcement Learning chapter) is the constant danger: a sufficiently good optimizer will find ways to maximize reward without improving quality. Defenses: KL penalty, ensemble of RMs, process supervision.</p>
+							<p>RLHF first trains a reward model on human comparisons: it learns to give an answer a score. Then a reinforcement-learning algorithm, usually PPO, updates the language model to maximise that score, with a KL penalty that keeps it close to the supervised model so it does not drift into nonsense. DPO skips the separate reward model and learns directly from the preference pairs, which is simpler and often more stable.</p>
+							<p><strong>Reward hacking</strong> (see the Reinforcement Learning chapter) is the constant danger: a sufficiently good optimizer will find ways to maximise reward without improving quality. It may learn to be verbose, to flatter, or to imitate the annotator's style rather than to be correct. Defenses include a KL penalty, an ensemble of reward models, process supervision (rewarding the steps rather than only the final answer), and keeping humans in the loop.</p>
 						</div>
 					</section>
 
@@ -151,7 +152,7 @@
 						<div class="section-kicker">The fine print</div>
 						<h2 class="section-title">What post-training cannot fix.</h2>
 						<div class="prose">
-							<p>Post-training can shape behaviour, but it cannot add knowledge the base model never saw or guarantee that the model will always follow the rules. A model can learn the format of a refusal and still fail the substance of the request.</p>
+							<p>Post-training can shape behaviour, but it cannot add knowledge the base model never saw or guarantee that the model will always follow the rules. A model can learn the format of a refusal and still fail the substance of the request. It can also <strong>forget</strong>: narrow instruction data can degrade the general language ability the base model had, a phenomenon called catastrophic forgetting. Labs often mix some pretraining data back into post-training to keep the base capabilities alive.</p>
 							<p>Alignment is also a data problem. The preferences you collect, the annotators you hire, and the rubric you use decide what the model learns. Post-training is powerful, but it is not a substitute for a good base model, good data, and a careful evaluation.</p>
 						</div>
 					</section>

@@ -27,8 +27,8 @@
 						<div class="section-kicker"><span class="sk-num">01</span> Four families of tests</div>
 						<h2 class="section-title">Different tests, different blind spots.</h2>
 						<div class="prose">
-							<p>Multiple-choice benchmarks measure recognition. Exact-match benchmarks check a verifiable answer. LLM-as-judge benchmarks score open-ended text. Human preference tests ask people which answer they prefer.</p>
-							<p>Each family has failure modes. Multiple choice can be gamed by guessing patterns; exact match can miss a correct answer in a different form; judges inherit biases; human ratings are noisy and expensive.</p>
+							<p>Multiple-choice benchmarks measure recognition. Exact-match benchmarks check a verifiable answer. LLM-as-judge benchmarks score open-ended text by giving a strong model the rubric and asking it to grade another model's output. Human preference tests ask people which answer they prefer.</p>
+							<p>Each family has failure modes. Multiple choice can be gamed by guessing patterns: a model can exploit the position of the correct option, the length of the options, or the fact that “all of the above” is often right. Exact match can miss a correct answer in a different form; judges inherit biases; human ratings are noisy and expensive.</p>
 						</div>
 					</section>
 
@@ -52,7 +52,7 @@
 						<h2 class="section-title">When the test is in the training set.</h2>
 						<div class="prose">
 							<p>Benchmark contamination happens when test questions appear in the training data. The model may then memorize the answer instead of learning the skill. Deduplication helps, but it is hard to prove that a test set never leaked, especially when the test set is public.</p>
-							<p>Leaderboard pressure makes the problem worse. If a benchmark becomes a target, models and labs optimise for it. Goodhart's law applies: the measure stops being a good measure once it becomes the goal. LLM judges add another layer of bias.</p>
+							<p>Leaderboard pressure makes the problem worse. If a benchmark becomes a target, models and labs optimise for it. Goodhart's law applies: when a measure becomes a target, it ceases to be a good measure. The benchmark was a proxy for capability; once it is the goal, effort flows into the proxy — prompt formats, answer conventions, data cleaning aimed at the test — rather than into the capability. LLM judges add another layer of bias.</p>
 							<p>The most useful evaluation is the one built for your task: a rubric, a set of examples, a measure of agreement, and a check that the effect you see is larger than the noise. A general benchmark is a starting point, not a verdict.</p>
 						</div>
 					</section>
@@ -108,6 +108,14 @@
 						<div class="prose">
 							<p>A <strong>rubric</strong> turns "good answer" into a scored, written standard: a small set of <strong>criteria</strong> (what matters), a <strong>scale</strong> (what a 1, 3, 5 each means), and <strong>anchors</strong> (a concrete example of what each score looks like). The anchors are the load-bearing part — they are the difference between a rubric that two people can apply identically and one they cannot.</p>
 							<p>A useful pattern is <em>dimensional</em> scoring rather than a single holistic score, because a single score hides <em>what</em> went wrong. For a "write a support reply" task, you might score separately:</p>
+							<ul>
+								<li><strong>Accuracy</strong> — are the facts and the policy correct?</li>
+								<li><strong>Completeness</strong> — does it address every part of the request?</li>
+								<li><strong>Tone</strong> — does it match the voice you want?</li>
+								<li><strong>Safety</strong> — does it avoid promises, blame, and out-of-scope advice?</li>
+								<li><strong>Format</strong> — does it follow the required structure?</li>
+							</ul>
+							<p>Then write down what a 1, 3, and 5 look like for each criterion, with a real example at each level. The examples are the anchors, and they are what makes the rubric reproducible. How many examples do you need? For a smoke test, thirty to fifty well-chosen cases are enough to catch obvious regressions; for a decision you intend to defend, use a few hundred and report a confidence interval. The right number depends on the size of the effect you need to detect.</p>
 						</div>
 					</section>
 
@@ -123,7 +131,7 @@
 						<div class="section-kicker">More background</div>
 						<h2 class="section-title">Calibrating an LLM judge: trust it only where it agrees</h2>
 						<div class="prose">
-							<p>You will want to scale this past two humans — human scoring is slow and costs money. The obvious move is to use a strong LLM as the judge, and the first part of this chapter introduced it. The failure is that a judge <em>inherits its own biases</em> (it prefers its own style, longer answers, a particular phrasing), so an uncalibrated LLM judge can systematically prefer the wrong thing. <strong>Calibration</strong> is the fix, and it is the same IAA idea applied to the machine:</p>
+							<p>You will want to scale this past two humans — human scoring is slow and costs money. The obvious move is to use a strong LLM as the judge. The failure is that a judge <em>inherits its own biases</em> (it prefers its own style, longer answers, a particular phrasing, and often the first option in a pairwise comparison), so an uncalibrated judge can systematically prefer the wrong thing. <strong>Calibration</strong> is the fix, and it is the same idea as inter-annotator agreement (IAA) applied to the machine: first measure how much two humans agree on a sample, then measure how often the judge agrees with the human consensus. Trust the judge only in the categories where it agrees, randomise the order of paired answers, hide which model produced which, and re-check the calibration when the task, the prompt, or the judge model changes. A judge is a measuring instrument; an uncalibrated instrument reports numbers, not measurements.</p>
 						</div>
 					</section>
 

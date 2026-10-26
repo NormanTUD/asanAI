@@ -38,6 +38,7 @@
 						<div class="prose">
 							<p>If every layer is affine, the whole stack collapses into one affine map. The nonlinearity between layers is what prevents the collapse and allows the composition to create new, curved features.</p>
 							<p>Deep learning is not magic. It is function composition plus a lot of data, a good loss, and an optimizer that can find useful parameters. Training is the hard part.</p>
+							<p>Why start with random weights? Because perfect symmetry is a trap. If every weight in a layer began at the same value, every unit would receive the same gradient and stay identical, so the layer would learn one feature many times over. Small random values break the symmetry. The scale matters too: too large and activations explode, too small and the signal vanishes before it reaches the next layer. Initialization is the first place where the arithmetic of depth becomes visible.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Composition</b><span>Each layer feeds the next; the whole is a nested function.</span></div>
@@ -51,7 +52,7 @@
 						<div class="section-kicker"><span class="sk-num">03</span> Why depth is efficient</div>
 						<h2 class="section-title">Reuse and composition.</h2>
 						<div class="prose">
-							<p>The universal approximation theorem says a wide enough network can approximate a broad class of functions. It is an existence result, not a training guarantee. Depth offers a different kind of efficiency: a deep network can reuse a feature instead of relearning it at every level.</p>
+							<p>The universal approximation theorem says a wide enough network can approximate a broad class of functions. It is an existence result, not a training guarantee: it does not say that gradient descent will find those weights, that the network will generalise, or that the network will be small. Depth offers a different kind of efficiency: a deep network can reuse a feature instead of relearning it at every level, and for some functions depth is provably exponentially more compact than width. That is a statement about representation, not a promise that deeper is always better on your data.</p>
 							<p>A hierarchy is a compression of computation. Edges become parts, parts become objects, objects become concepts. Each level can build on the level below, so the number of parameters needed to represent a complex function can be much smaller than a single wide layer would require.</p>
 							<p>Depth is not free. Gradients can vanish or explode, activations can become unstable, and training deep networks requires careful initialisation, normalisation, and residual connections. The architecture is powerful, but the optimisation is part of the story.</p>
 						</div>
@@ -94,8 +95,8 @@
 						<div class="section-kicker">Background</div>
 						<h2 class="section-title">How the Knowledge Gets Into the Weights</h2>
 						<div class="prose">
-							<p>The clever part is that backprop <strong>reuses intermediate results</strong>, walking the error signal <em>backward</em> through the network. What would naively be exponential bookkeeping becomes <strong>linear in the number of layers</strong>.</p>
-							<p>Repeat millions of times. The <strong>trajectory of the weights through weight-space</strong> is literally what writes the knowledge into the matrices. There is no separate memory — the knowledge <em>is</em> the final numbers.</p>
+							<p>The clever part is that backprop <strong>reuses intermediate results</strong>, walking the error signal <em>backward</em> through the network. What would naively require recomputing every path separately becomes a single backward pass whose cost is roughly the same order as the forward pass. That is the algorithmic reason deep networks are trainable at all.</p>
+							<p>Repeat millions of times. The <strong>trajectory of the weights through weight-space</strong> is literally what writes the knowledge into the matrices. There is no separate memory — the knowledge <em>is</em> the final numbers. This is also why “the model knows X” is a compressed way of speaking: nothing is stored as a sentence or a fact; the behaviour is a property of the whole matrix.</p>
 						</div>
 					</section>
 
@@ -104,6 +105,7 @@
 						<h2 class="section-title">Why Deep Learning Works (And Why It Works <em>So</em> Well)</h2>
 						<div class="prose">
 							<p>Here's the mechanical answer to why "a big pile of matrix multiplications" ends up being able to translate languages, recognize faces, and play chess better than any human. It comes down to four ingredients working together: <strong>depth</strong>, <strong>nonlinearity</strong>, <strong>backpropagation</strong>, and the <strong>optimizer's hidden preferences</strong>.</p>
+							<p><strong>Depth</strong> supplies composition: later layers reuse the features earlier layers built, so the network can represent a hierarchy without relearning each level. <strong>Nonlinearity</strong> is what keeps the composition from collapsing into one affine map. <strong>Backpropagation</strong> assigns credit efficiently: it computes how each of the millions of parameters contributed to the error, at roughly the cost of one extra forward pass. The <strong>optimizer's preferences</strong> are subtler: stochastic gradient descent does not merely find any fit; it tends to prefer solutions that are flat and simple in a way that correlates with generalisation. None of the four is sufficient alone. Depth without nonlinearity is linear; nonlinearity without credit assignment cannot learn; credit assignment without an optimizer that generalises can memorize.</p>
 						</div>
 					</section>
 
@@ -112,6 +114,7 @@
 						<h2 class="section-title">Residual Connections: How We Actually Train <em>Really</em> Deep Networks</h2>
 						<div class="prose">
 							<p>There's a practical problem with stacking many layers. When backprop sends the error signal backward through, say, 100 layers, it gets multiplied by many small numbers along the way. The signal often <strong>shrinks to nearly zero</strong> (the "vanishing gradient" problem) or occasionally explodes. Early layers stop learning because they receive no meaningful feedback.</p>
+							<p>The residual connection is the fix. Instead of forcing the signal through the whole transformation, the layer computes an update and adds it to its input: <strong>x → x + f(x)</strong>. The identity path gives the gradient a direct route back, so even if <em>f</em> is badly scaled, the signal can still reach the early layers. Normalisation keeps the activations in a healthy range, and careful initialisation keeps the variance from compounding. This is why “depth” in practice means residual connections and normalisation, not just more matrix multiplications.</p>
 						</div>
 					</section>
 
