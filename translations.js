@@ -6,6 +6,8 @@ lang = get_lang_cookie();
 
 var labels_lang = "de";
 
+var _visual_explanations_lang = null;
+
 var urlParams = new URLSearchParams(window.location.search);
 
 function swap_image_src_language () {
@@ -137,48 +139,59 @@ async function update_translations(force=0) {
 	$("[data-tr-title]").each(function() {
 		var key = $(this).attr("data-tr-title");
 		if(language[lang] && language[lang][key]) {
-			$(this).attr("title", language[lang][key]);
+			var title = language[lang][key];
+			if($(this).attr("title") !== title) $(this).attr("title", title);
 		}
 	});
 
 	$("[data-tr-alt]").each(function() {
 		var key = $(this).attr("data-tr-alt");
 		if(language[lang] && language[lang][key]) {
-			$(this).attr("alt", language[lang][key]);
+			var alt = language[lang][key];
+			if($(this).attr("alt") !== alt) $(this).attr("alt", alt);
 		}
 	});
 
 	$("[data-tr-placeholder]").each(function() {
 		var key = $(this).attr("data-tr-placeholder");
 		if(language[lang] && language[lang][key]) {
-			$(this).attr("placeholder", language[lang][key]);
+			var placeholder = language[lang][key];
+			if($(this).attr("placeholder") !== placeholder) $(this).attr("placeholder", placeholder);
 		}
 	});
 
 	$("[data-tr-option]").each(function() {
 		var key = $(this).attr("data-tr-option");
 		if(language[lang] && language[lang][key]) {
-			$(this).text(language[lang][key]);
+			var option_text = language[lang][key];
+			if($(this).text() !== option_text) $(this).text(option_text);
 		}
 	});
 
 	$("[data-tr-text]").each(function() {
 		var key = $(this).attr("data-tr-text");
 		if(language[lang] && language[lang][key]) {
-			$(this).text(language[lang][key]);
+			var element_text = language[lang][key];
+			if($(this).text() !== element_text) $(this).text(element_text);
 		}
 	});
 
-	if (typeof confusion_matrix_to_page === "function") {
-		try {
-			await confusion_matrix_to_page();
-		} catch (e) {
-			dbg("[translations] confusion_matrix_to_page on language change failed: " + e);
-		}
-	}
+	var refresh_visuals = force || _visual_explanations_lang !== lang;
 
-	if (typeof show_visual_explanations === 'function') {
-		await show_visual_explanations(wd);
+	if (refresh_visuals) {
+		_visual_explanations_lang = lang;
+
+		if (typeof confusion_matrix_to_page === "function") {
+			try {
+				await confusion_matrix_to_page();
+			} catch (e) {
+				dbg("[translations] confusion_matrix_to_page on language change failed: " + e);
+			}
+		}
+
+		if (typeof show_visual_explanations === 'function') {
+			await show_visual_explanations(wd);
+		}
 	}
 }
 

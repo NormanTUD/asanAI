@@ -102,10 +102,14 @@ function _stopWebcamPredictionStream() {
 	return 1;
 }
 
+function _set_webcam_button_translation (key) {
+	$("#webcam_start_stop").html(trm(key));
+	$("#webcam_start_stop .TRANSLATEME_" + key).text(language[lang][key]).attr("data-lang", lang);
+}
+
 async function _startWebcamDataStream(video_element) {
 	l(language[lang]["starting_webcam"]);
-	$("#webcam_start_stop").html(trm("disable_webcam"));
-	await update_translations();
+	_set_webcam_button_translation("disable_webcam");
 
 	window.cam = await _startStreamAndAssignToCam(video_element);
 
@@ -115,8 +119,7 @@ async function _startWebcamDataStream(video_element) {
 	} else {
 		dbg("get_data_from_webcam: cam SHOULD have been set but was not");
 		l(language[lang]["error_starting_webcam"]);
-		$("#webcam_start_stop").html(trm("enable_webcam"));
-		await update_translations();
+		_set_webcam_button_translation("enable_webcam");
 		return;
 	}
 
@@ -126,8 +129,7 @@ async function _startWebcamDataStream(video_element) {
 
 function _stopWebcamDataStream() {
 	l(language[lang]["stopping_webcam"]);
-	$("#webcam_start_stop").html(trm("enable_webcam"));
-	update_translations(); // await not possible
+	_set_webcam_button_translation("enable_webcam");
 
 	$(".webcam_data_button").hide();
 	$("#webcam_data").hide().html("");
@@ -776,9 +778,6 @@ async function take_image_from_webcam_n_times(elem) {
         for (let idx = 0; idx < number; idx++) {
                 const msg = sprintf(language[lang]["taking_image_n_of_m"], idx + 1, number);
                 log(msg); l(msg);
-
-                dbg("Updating translations");
-                await update_translations();
 
                 dbg("Taking next image");
                 await take_image_from_webcam(elem, true, false);

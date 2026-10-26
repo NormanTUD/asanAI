@@ -2621,12 +2621,11 @@ function model_is_ok () {
 }
 
 function set_model_is_ok_icon_color (color, red, green, orange) {
-	if(color == red) {
-		$("#model_is_ok_icon").css("color", "red");
-	} else if(color == green) {
-		$("#model_is_ok_icon").css("color", "green");
-	} else if(color == orange) {
-		$("#model_is_ok_icon").css("color", "orange");
+	var icon = document.getElementById("model_is_ok_icon");
+	if (!icon) return;
+	var new_color = color == red ? "red" : color == green ? "green" : color == orange ? "orange" : null;
+	if (new_color !== null && icon.style.color !== new_color) {
+		icon.style.color = new_color;
 	}
 }
 
@@ -2653,9 +2652,9 @@ function add_waiting_symbol_to_content(_content) {
 
 	if (waiting_updated_page_uuids.length) {
 		_content += "&#9201;";
-		body.style.cursor = "wait";
+		if (body.style.cursor !== "wait") body.style.cursor = "wait";
 	} else {
-		body.style.cursor = "default";
+		if (body.style.cursor !== "default") body.style.cursor = "default";
 	}
 
 	return _content;
@@ -2670,7 +2669,11 @@ function add_started_training_symbol_to_content (_content) {
 
 function ribbon_shower_hack () {
 	// nasty hack to prevent both, ribbon icons and ribbon at the same time
-	if($("#ribbon_shower").is(":visible") && $("#ribbon").is(":visible")) {
+	if (is_mobile_view()) return;
+	var ribbon = document.getElementById("ribbon");
+	var shower = document.getElementById("ribbon_shower");
+	if (!ribbon || !shower) return;
+	if (ribbon.style.display !== "none" && shower.style.display !== "none") {
 		show_ribbon();
 	}
 }

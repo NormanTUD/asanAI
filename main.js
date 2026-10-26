@@ -672,7 +672,10 @@ function set_check_number_vales_interval() {
 
 function set_last_layer_shape_test_interval() {
 	try {
-		setInterval(last_shape_layer_warning, 1000);
+		setInterval(function () {
+			if (!model) return;
+			last_shape_layer_warning(); // cannot be async
+		}, 1000);
 	} catch (e) {
 		wrn("[document.ready] Function write_model_summary_wait not found: " + e);
 	}

@@ -769,10 +769,40 @@ function add_label_sidebar() {
 		var visibleCount = 0;
 		Array.prototype.forEach.call(labels, function(el, idx){
 			var hidden = is_hidden_or_has_hidden_parent(el);
-			table.rows[idx].style.display = hidden ? 'none' : '';
+			var display = hidden ? 'none' : '';
+			if (table.rows[idx].style.display !== display) {
+				table.rows[idx].style.display = display;
+			}
 			if (!hidden) visibleCount++;
 		});
-		bar.style.display = visibleCount ? '' : 'none';
+		var bar_display = visibleCount ? '' : 'none';
+		if (bar.style.display !== bar_display) {
+			bar.style.display = bar_display;
+		}
+	}
+
+	var sidebar_visibility_pending = false;
+	function schedule_sidebar_visibility_update () {
+		if (sidebar_visibility_pending) return;
+		sidebar_visibility_pending = true;
+		setTimeout(function () {
+			sidebar_visibility_pending = false;
+			update_sidebar_visibility();
+		}, 0);
+	}
+
+	function mutation_touches_labels (mutation) {
+		if (mutation.type === "attributes") return true;
+		var nodes = [];
+		if (mutation.addedNodes) nodes = nodes.concat(Array.prototype.slice.call(mutation.addedNodes));
+		if (mutation.removedNodes) nodes = nodes.concat(Array.prototype.slice.call(mutation.removedNodes));
+		for (var i = 0; i < nodes.length; i++) {
+			var node = nodes[i];
+			if (!node || node.nodeType !== 1) continue;
+			if (node.classList && node.classList.contains("own_image_label")) return true;
+			if (node.querySelector && node.querySelector(".own_image_label")) return true;
+		}
+		return false;
 	}
 
 	update_sidebar_visibility();
@@ -780,7 +810,14 @@ function add_label_sidebar() {
 	// Observer vorbereiten
 	if (labelSidebarObserver) labelSidebarObserver.disconnect();
 
-	labelSidebarObserver = new MutationObserver(update_sidebar_visibility);
+	labelSidebarObserver = new MutationObserver(function (mutations) {
+		for (var i = 0; i < mutations.length; i++) {
+			if (mutation_touches_labels(mutations[i])) {
+				schedule_sidebar_visibility_update();
+				return;
+			}
+		}
+	});
 	Array.prototype.forEach.call(labels, function(el){
 		labelSidebarObserver.observe(el, {attributes:true, attributeFilter:['style','class','hidden']});
 	});
