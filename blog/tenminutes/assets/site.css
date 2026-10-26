@@ -2789,6 +2789,28 @@ html[data-theme="dark"] .person-card .pc-years { color: var(--tm-green); }
 }
 .machine-card .mc-credit a { color: var(--tm-faint); }
 
+.layer-formula {
+	margin: 12px 0 0;
+	padding: 11px 14px;
+	border: 1px solid var(--tm-line);
+	border-left: 3px solid var(--tm-sky);
+	border-radius: 0 9px 9px 0;
+	background: color-mix(in srgb, var(--tm-card) 66%, transparent);
+	font-family: var(--tm-prose);
+	font-size: 1.05rem;
+	text-align: center;
+	color: var(--tm-ink);
+}
+html[data-theme="dark"] .layer-formula {
+	border-color: rgba(148, 163, 184, 0.24);
+	border-left-color: var(--tm-sky);
+	background: rgba(15, 23, 42, 0.5);
+	color: #eef7f4;
+}
+.ffn-caveat { margin-top: 10px; font-size: 0.8rem; }
+.curve-intro { margin: 0 0 12px; }
+.curve-source { margin-top: 10px; font-size: 0.74rem; }
+
 @media (max-width: 900px) {
 	.profile-spotlight { grid-template-columns: 1fr; }
 	.profile-spotlight figure { max-width: 320px; }
@@ -3457,20 +3479,8 @@ html[data-theme="light"] .res-legend { color: var(--tm-faint); }
 
 .curve-stage {
 	position: relative;
-	border: 1px solid var(--tm-line);
-	border-radius: 12px;
 	overflow: hidden;
-	background:
-		radial-gradient(720px 340px at 18% 0%, rgba(57, 169, 214, 0.12), transparent 62%),
-		radial-gradient(600px 320px at 88% 100%, rgba(113, 189, 86, 0.10), transparent 62%),
-		var(--tm-paper-2);
-}
-html[data-theme="dark"] .curve-stage {
-	border-color: rgba(238, 247, 244, 0.14);
-	background:
-		radial-gradient(720px 340px at 18% 0%, rgba(57, 169, 214, 0.16), transparent 62%),
-		radial-gradient(600px 320px at 88% 100%, rgba(113, 189, 86, 0.12), transparent 62%),
-		rgba(3, 25, 34, 0.5);
+	background: transparent;
 }
 #curve-canvas {
 	display: block;
@@ -3486,17 +3496,14 @@ html[data-theme="dark"] .curve-stage {
 	top: 16px;
 	width: min(340px, calc(100% - 36px));
 	padding: 13px 15px;
-	border: 1px solid var(--tm-line);
 	border-radius: 10px;
-	background: color-mix(in srgb, var(--tm-card) 84%, transparent);
-	box-shadow: 0 12px 30px -20px rgba(0, 0, 0, 0.45);
+	background: color-mix(in srgb, var(--tm-paper) 76%, transparent);
 	backdrop-filter: blur(9px);
 	-webkit-backdrop-filter: blur(9px);
 	pointer-events: none;
 }
 html[data-theme="dark"] .curve-caption {
-	border-color: rgba(148, 163, 184, 0.24);
-	background: rgba(15, 23, 42, 0.72);
+	background: rgba(7, 26, 34, 0.78);
 }
 .curve-caption .cc-step {
 	display: block;
@@ -3566,10 +3573,8 @@ html[data-theme="dark"] .curve-caption p { color: rgba(238, 247, 244, 0.72); }
 	left: 18px;
 	bottom: 16px;
 	padding: 8px 10px 7px;
-	border: 1px solid var(--tm-line);
 	border-radius: 9px;
-	background: color-mix(in srgb, var(--tm-card) 84%, transparent);
-	box-shadow: 0 12px 30px -22px rgba(0, 0, 0, 0.45);
+	background: color-mix(in srgb, var(--tm-paper) 76%, transparent);
 	backdrop-filter: blur(9px);
 	-webkit-backdrop-filter: blur(9px);
 	font-family: var(--tm-ui);
@@ -3579,8 +3584,7 @@ html[data-theme="dark"] .curve-caption p { color: rgba(238, 247, 244, 0.72); }
 	pointer-events: none;
 }
 html[data-theme="dark"] .curve-points {
-	border-color: rgba(148, 163, 184, 0.24);
-	background: rgba(15, 23, 42, 0.72);
+	background: rgba(7, 26, 34, 0.78);
 }
 .curve-points .cp-head {
 	margin-bottom: 4px;

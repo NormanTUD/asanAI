@@ -12,7 +12,6 @@
 	var EMAIL_KEY = "mn_feedback_email";
 	var BLOCK_SELECTOR = "h1, h2, h3, h4, h5, h6, p, li, blockquote, pre, figure, table, figcaption, .bib-entry, .mnz-q, .mnz-explain, .mnz-title, .mnz-result, .smart-quote, .rendered-quote, .cl-eq, .cl-block";
 	var CONTAINER_SELECTOR = "[data-interactive], .plot-container, .js-plotly-plot, .mnlab, .widget, .mn-quiz, #sources-section, #footnotes-section, figure, section";
-	var DEMO_SELECTOR = "[data-interactive], .plot-container, .js-plotly-plot, .mnlab, .widget";
 	var BLOCK_QUERY = BLOCK_SELECTOR.split(",").map(function (part) {
 		return "#contents " + part.trim();
 	}).join(", ");
@@ -65,18 +64,6 @@
 		started = true;
 		build();
 		bind();
-		mountDemoTriggers();
-		setTimeout(mountDemoTriggers, 900);
-		setTimeout(mountDemoTriggers, 2600);
-		if (window.MutationObserver) {
-			var demoObserver = new MutationObserver(function () {
-				clearTimeout(bind._demoTimer);
-				bind._demoTimer = setTimeout(mountDemoTriggers, 220);
-			});
-			try {
-				demoObserver.observe(contents, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "data-interactive"] });
-			} catch (e) { /* ignore */ }
-		}
 	}
 
 	function build() {
@@ -391,94 +378,6 @@
 			window.visualViewport.addEventListener("resize", schedulePosition);
 			window.visualViewport.addEventListener("scroll", schedulePosition);
 		}
-	}
-
-	function mountDemoTriggers() {
-		var nodes;
-		try {
-			nodes = Array.prototype.slice.call(contents.querySelectorAll(DEMO_SELECTOR));
-		} catch (e) {
-			return;
-		}
-		nodes.forEach(function (node) {
-			if (!node || !node.parentNode) return;
-			if (node.closest(".mn-quiz, #mn-feedback-layer")) return;
-			if (node.parentElement && node.parentElement.closest(DEMO_SELECTOR)) return;
-			if (node.nextElementSibling && node.nextElementSibling.classList && node.nextElementSibling.classList.contains("mnf-demo-trigger")) return;
-			var btn = document.createElement("button");
-			btn.type = "button";
-			btn.className = "mnf-demo-trigger";
-			btn.textContent = "💬 Feedback on this demo";
-			btn.setAttribute("aria-label", "Leave feedback on this demo");
-			btn.addEventListener("click", function (event) {
-				event.preventDefault();
-				event.stopPropagation();
-				openContainer(node);
-			});
-			node.parentNode.insertBefore(btn, node.nextSibling);
-		});
-	}
-
-	function openContainer(node) {
-		if (!node || !contents || !contents.contains(node)) return;
-		var info = infoOf(node, contents);
-		var captured = captureContainer(info, node, contents);
-		if (captured) show(captured);
-	}
-
-	function captureContainer(info, block, root) {
-		var blockText = String(block.innerText || block.textContent || "").replace(/\u00a0/g, " ").trim();
-		if (!blockText) {
-			var cap = block.querySelector ? block.querySelector("figcaption") : null;
-			blockText = cap ? String(cap.textContent || "").replace(/\s+/g, " ").trim() : "";
-		}
-		var blockRect = null;
-		try { blockRect = rectOf(block.getBoundingClientRect()); } catch (e) { blockRect = null; }
-		var container = block.closest ? (block.closest(CONTAINER_SELECTOR) || block) : block;
-		var label = "";
-		if (block.getAttribute) {
-			label = String(block.getAttribute("aria-label") || "");
-		}
-		if (!label && container && container.querySelector) {
-			var cap = container.querySelector("figcaption");
-			if (cap) label = String(cap.textContent || "").replace(/\s+/g, " ").trim();
-		}
-		if (!label && container && container.id) label = container.id;
-		if (!label) label = info.sectionTitle || "Interactive demo";
-		return {
-			key: info.key,
-			slug: info.slug,
-			lessonTitle: info.lessonTitle,
-			part: info.part,
-			partTitle: info.partTitle,
-			sectionTitle: info.sectionTitle,
-			sectionAnchor: info.sectionAnchor,
-			block: block,
-			blockIndex: info.blockIndex,
-			blockSelector: info.blockSelector,
-			blockKey: info.blockKey,
-			contextKind: "demo",
-			containerSelector: container ? cssPath(container) : info.blockSelector,
-			containerLabel: label.slice(0, 200),
-			blockText: blockText.slice(0, 12000),
-			blockHtml: String(block.innerHTML || "").slice(0, 30000),
-			selectedText: "",
-			selectedHtml: "",
-			start: 0,
-			end: 0,
-			prefix: "",
-			suffix: "",
-			blockTextLength: blockText.length,
-			rangeCount: 0,
-			direction: "",
-			ranges: [],
-			selectionRect: null,
-			blockRect: blockRect,
-			scrollY: Math.max(0, Math.round(window.scrollY || window.pageYOffset || 0)),
-			viewportW: Math.max(0, Math.round(window.innerWidth || 0)),
-			viewportH: Math.max(0, Math.round(window.innerHeight || 0)),
-			requestId: newRequestId()
-		};
 	}
 
 	function checkSelection() {

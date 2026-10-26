@@ -292,7 +292,8 @@
 											<span class="sp-kicker">The whole layer</span>
 											<h3 class="sp-title">The nonlinearity bends the space</h3>
 										</div>
-										<p class="step-note curve-intro">The FFN above works on one token. The same layer, seen geometrically, bends the whole representation space. A linear classifier can only draw a straight boundary. Some arrangements of data cannot be separated by any straight line. A layer with a nonlinearity changes that without moving the boundary: it bends the space itself.</p>
+										<p class="step-note curve-intro">The FFN above works on one token. A dense layer computes an affine projection, <b>Ax + b</b>, which moves the data into another vector space. The projection can rotate, scale, shear, or collapse dimensions, but on its own it maps straight lines to straight lines. The nonlinearity is what bends or folds the new space. A smooth activation produces the egg-shaped surface below; ReLU is the sharp version, a crease that maps every negative value to zero. The cut still happens — the layer changes the space in which the cut is made.</p>
+										<div class="layer-formula">layer(x) = act(Ax + b)</div>
 										<div class="curve-stage">
 											<canvas id="curve-canvas" aria-label="A point cloud being lifted into an egg-shaped surface, then projected onto a line"></canvas>
 											<div class="curve-caption" aria-live="polite">
@@ -315,12 +316,11 @@
 										</div>
 										<div class="demo-controls">
 											<button class="btn-demo" type="button" id="curve-prev">← Prev</button>
-											<button class="btn-demo btn-demo--green" type="button" id="curve-play">▶ Play</button>
 											<button class="btn-demo" type="button" id="curve-next">Next →</button>
 											<button class="btn-demo" type="button" id="curve-reset">Reset</button>
 											<span class="curve-dots" id="curve-dots" aria-hidden="true"></span>
 										</div>
-										<div class="step-out">A layer does not have to cut the data. It can bend the space until a simple plane fits between the classes.</div>
+										<div class="step-out">The cut still happens. The layer changes the space so that a straight cut in the new space separates the classes in the old one. ReLU is the sharp version: a fold along a crease.</div>
 										<p class="step-note curve-source">Visual idea after C. Keup &amp; M. Helias, <em>Origami in N dimensions</em> (<a href="https://arxiv.org/abs/2203.11355" rel="noopener">arXiv:2203.11355</a>). The animation is an illustration, not a proof.</p>
 									</div>
 								</div>
@@ -1406,13 +1406,11 @@
 		var curveDotsEl = document.getElementById("curve-dots");
 		var curvePrevBtn = document.getElementById("curve-prev");
 		var curveNextBtn = document.getElementById("curve-next");
-		var curvePlayBtn = document.getElementById("curve-play");
 		var curveResetBtn = document.getElementById("curve-reset");
 		var curveIdx = 0, curvePrev = 0, curveT0 = performance.now() - 2000;
 		var curveDur = 850;
 		var curveDragA = 0, curveDragB = 0;
 		var curveDragging = false, curveLastX = 0, curveLastY = 0;
-		var curvePlayTimer = null;
 		var curveApi = null;
 		var curvePointsEl = document.getElementById("curve-points");
 		var curvePointsBody = document.getElementById("curve-points-body");
@@ -1745,16 +1743,6 @@
 					curveDots.push(d);
 				});
 			}
-			function curveStopPlay() {
-				if (curvePlayTimer) {
-					clearInterval(curvePlayTimer);
-					curvePlayTimer = null;
-				}
-				if (curvePlayBtn) {
-					curvePlayBtn.textContent = "▶ Play";
-					curvePlayBtn.setAttribute("aria-pressed", "false");
-				}
-			}
 			function curveUpdateUI() {
 				var s = curveSteps[curveIdx];
 				if (curveStepEl) curveStepEl.textContent = (curveIdx + 1) + " / " + curveSteps.length;
@@ -1762,7 +1750,7 @@
 				if (curveBodyEl) curveBodyEl.textContent = s.b;
 				curveDots.forEach(function (d, i) { d.classList.toggle("is-on", i === curveIdx); });
 				if (curvePrevBtn) curvePrevBtn.disabled = curveIdx === 0;
-				if (curveNextBtn) curveNextBtn.disabled = curveIdx === curveSteps.length - 1;
+				if (curveNextBtn) curveNextBtn.textContent = curveIdx === curveSteps.length - 1 ? "Restart ↺" : "Next →";
 				curveUpdateTable();
 			}
 			function curveLoop() {
@@ -1784,22 +1772,9 @@
 					curveLoop();
 				}
 			}
-			function curvePlay() {
-				if (curvePlayTimer) { curveStopPlay(); return; }
-				if (curveIdx >= curveSteps.length - 1) curveSet(0, true);
-				if (curvePlayBtn) {
-					curvePlayBtn.textContent = "⏸ Pause";
-					curvePlayBtn.setAttribute("aria-pressed", "true");
-				}
-				curvePlayTimer = setInterval(function () {
-					if (curveIdx >= curveSteps.length - 1) { curveStopPlay(); return; }
-					curveSet(curveIdx + 1, true);
-				}, 3200);
-			}
-			if (curvePrevBtn) curvePrevBtn.addEventListener("click", function () { curveStopPlay(); curveSet(curveIdx - 1, true); });
-			if (curveNextBtn) curveNextBtn.addEventListener("click", function () { curveStopPlay(); curveSet(curveIdx + 1, true); });
-			if (curvePlayBtn) curvePlayBtn.addEventListener("click", curvePlay);
-			if (curveResetBtn) curveResetBtn.addEventListener("click", function () { curveStopPlay(); curveSet(0, true); });
+			if (curvePrevBtn) curvePrevBtn.addEventListener("click", function () { curveSet(curveIdx - 1, true); });
+			if (curveNextBtn) curveNextBtn.addEventListener("click", function () { curveSet(curveIdx >= curveSteps.length - 1 ? 0 : curveIdx + 1, true); });
+						if (curveResetBtn) curveResetBtn.addEventListener("click", function () { curveSet(0, true); });
 			curveCanvas.addEventListener("pointerdown", function (e) {
 				curveDragging = true;
 				curveLastX = e.clientX;
