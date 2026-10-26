@@ -27,8 +27,9 @@
 						<div class="section-kicker"><span class="sk-num">01</span> The pipeline</div>
 						<h2 class="section-title">Index, retrieve, generate.</h2>
 						<div class="prose">
-							<p>Documents are split into chunks and embedded into vectors. At query time, the question is embedded too, and a vector search finds the most similar chunks. Those chunks are inserted into the prompt, and the model generates an answer grounded in them.</p>
-							<p>The naive pipeline is only the beginning. Real systems mix keyword search with dense retrieval, rerank the candidates, and add context around each chunk so the model sees enough to answer.</p>
+							<p>RAG starts with a corpus. Documents are split into <strong>chunks</strong>: small, overlapping passages that can be retrieved independently. An <strong>embedding model</strong> turns each chunk into a vector. The same model turns the question into a vector in the same space — if the chunk model and the query model differ, the similarity scores are meaningless.</p>
+							<p>A similarity score, usually <strong>cosine similarity</strong>, rates every chunk against the query. The score is not a probability; it is a measure of alignment in the embedding space. The system selects the top-k chunks (or everything above a score threshold) and formats those passages into the prompt. The language model then answers from that context.</p>
+							<p>The key division of labour: the <strong>embedding model and the index do the searching</strong>; the LLM only reads the selected passages. That is why the embedding model, the chunking strategy, and the ranking rule matter as much as the generator itself.</p>
 						</div>
 					</section>
 
@@ -40,10 +41,10 @@
 							<p>RAG is not a truth machine. It is a way to make the model's answer depend on documents you can inspect. Citations and evaluation are what make that useful.</p>
 						</div>
 						<div class="keypoints">
-							<div class="keypoint"><b>Chunking</b><span>Documents are split into passages that can be retrieved.</span></div>
-							<div class="keypoint"><b>Embeddings</b><span>Chunks and queries become vectors for similarity search.</span></div>
-							<div class="keypoint"><b>Grounding</b><span>Retrieved passages are placed in the context window.</span></div>
-							<div class="keypoint"><b>Failure modes</b><span>Retrieval can miss, mislead, or be ignored.</span></div>
+							<div class="keypoint"><b>Chunking</b><span>Documents are split into passages that can be retrieved independently.</span></div>
+							<div class="keypoint"><b>Same embedding model</b><span>Chunks and query must be embedded by the same model, into the same space.</span></div>
+							<div class="keypoint"><b>Cosine score</b><span>Each chunk is rated by its similarity to the query vector.</span></div>
+							<div class="keypoint"><b>Insert into prompt</b><span>The top-k passages become the context the model is allowed to read.</span></div>
 						</div>
 					</section>
 
@@ -66,11 +67,18 @@
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">Retrieve before you generate <span>· demo</span></p>
-								<p class="demo-sub">Pick a question. The retriever ranks the chunks by keyword overlap and puts the best one in the prompt.</p>
+								<p class="demo-sub">The same embedding model turns the chunks and the question into vectors. Cosine similarity rates every chunk; the top matches are inserted into the prompt.</p>
 							</div>
 							<span class="demo-badge">live</span>
 						</div>
 						<div class="demo-body">
+							<div class="rag-steps">
+								<span>1 · Chunk</span>
+								<span>2 · Embed</span>
+								<span>3 · Score</span>
+								<span>4 · Select top-k</span>
+								<span>5 · Insert into prompt</span>
+							</div>
 							<div class="chip-row">
 								<button class="chip is-on" type="button" data-retrieval-query="Eiffel Tower height">Eiffel Tower height</button>
 								<button class="chip" type="button" data-retrieval-query="RAG pipeline">RAG pipeline</button>
@@ -81,37 +89,18 @@
 							</div>
 							<div class="retrieval-list" data-retrieval-list></div>
 							<div class="demo-readout">
-								<div><b>Top result</b><span data-retrieval-top>—</span></div>
-								<div><b>Input</b><span>question + chunks</span></div>
-								<div><b>Output</b><span>grounded prompt</span></div>
+								<div><b>Top match</b><span data-retrieval-top>—</span></div>
+								<div><b>Selected</b><span data-retrieval-count>—</span></div>
+								<div><b>Score</b><span data-retrieval-score>—</span></div>
 							</div>
+							<pre class="rag-prompt" data-retrieval-prompt>Context:
+[selected chunks appear here]
+
+Question: …
+Answer:</pre>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>RAG is only as good as its retrieval. The model still writes the answer, but the documents decide what it is allowed to see.</span></div>
-						<div class="demo-foot">A keyword-overlap toy, not a real embedding search.</div>
-					</div>
-
-					<div class="demo demo--paper" data-demo="ragspace">
-						<div class="demo-head">
-							<div>
-								<p class="demo-title">Retrieval is geometry <span>· demo</span></p>
-								<p class="demo-sub">Each point is a chunk in embedding space. The query is the diamond; the nearest chunks are the ones the retriever puts in the prompt.</p>
-							</div>
-							<span class="demo-badge">2-D toy</span>
-						</div>
-						<div class="demo-body">
-							<canvas class="demo-canvas demo-canvas--md" data-ragspace-canvas aria-label="A two-dimensional embedding space with a query and nearby chunks"></canvas>
-							<div class="chip-row" style="margin-top:12px">
-								<button class="chip is-on" type="button" data-ragquery="eiffel">Eiffel Tower height</button>
-								<button class="chip" type="button" data-ragquery="rag">RAG pipeline</button>
-								<button class="chip" type="button" data-ragquery="vectors">vector database</button>
-							</div>
-							<div class="demo-readout">
-								<div><b>Query</b><span data-ragspace-query>—</span></div>
-								<div><b>Nearest</b><span data-ragspace-top>—</span></div>
-								<div><b>Distance</b><span data-ragspace-dist>—</span></div>
-							</div>
-						</div>
-						<div class="demo-insight"><b>Takeaway</b><span>Retrieval is a nearest-neighbour search. The embedding space decides what the model is allowed to see.</span></div>
+						<div class="demo-foot">A toy embedding model with four topic dimensions, not a real neural embedding. The pipeline is the real one: chunk, embed, score, select, insert.</div>
 					</div>
 
 					<section class="section-block">
@@ -161,18 +150,6 @@
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">RAG replaces memorization with a search step.</p>
 							<p class="aha-sub">The model still writes the answer; retrieval decides what it is allowed to see.</p>
-						</div>
-					</section>
-					<section class="section-block" id="fits">
-						<div class="section-kicker">Where this fits</div>
-						<h2 class="section-title">One piece of the arc.</h2>
-						<div class="prose">
-							<p>This page is one door in the compact course. The thread continues; the whole arc shows how the pieces connect.</p>
-						</div>
-						<div class="keypoints">
-							<a class="keypoint" href="finetuninglab.html"><b>Previous · Turning a Predictor into an Assistant</b><span>Instruction tuning and feedback teach a raw next-word model to answer, refuse, and follow a format.</span></a>
-							<a class="keypoint" href="promptengineering.html"><b>Next · The Craft of Asking</b><span>Clear roles, examples, and constraints. Prompting is communication, not magic words.</span></a>
-							<a class="keypoint" href="whole.html"><b>The whole arc</b><span>Prediction, tokens, attention, training, assistants, and society in one picture.</span></a>
 						</div>
 					</section>
 

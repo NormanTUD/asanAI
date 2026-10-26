@@ -192,6 +192,28 @@ theme unless there is a specific reason not to.
   `data-compact="1"`, and links to the `.html` version. Update the library
   card when adding or removing a compact page.
 
+## Whole-arc synthesis and cross-links
+
+`whole.html` is the compact course's synthesis page: a six-movement
+timeline (Idea → Learning → Data & Senses → Transformer → Assistant → Big
+Questions), a map of every compact page, and a prose synthesis. It is linked
+from `index.html`, `advent.html`, `library.html`, and every page's
+“Where this fits” block.
+
+Every compact page ends with a `section#fits` block:
+
+- previous and next doors in the calendar order (with their calendar
+  descriptions),
+- a link to `whole.html` (“The whole arc”).
+
+Keep these blocks when reordering the calendar; update the previous/next
+targets if a door moves. The synthesis page is the place to add cross-chapter
+connections, not the calendar cards.
+
+`transformer.html` loads Temml (`../Temml-Local.min.css`, `../temml.min.js`) and
+renders the pipeline shape line with `temml.renderToString(...)`. Keep the
+fallback to plain text if Temml is unavailable.
+
 ## Validation
 
 The blog validators are built around lesson `.php` files and the main blog's

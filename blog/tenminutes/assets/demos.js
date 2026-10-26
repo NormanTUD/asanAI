@@ -65,13 +65,28 @@
 				if (cum < P) { keep[i] = true; cum += probs[i]; }
 			});
 			var kept = order.filter(function (i) { return keep[i]; });
-			var ent = -probs.reduce(function (a, p) { return a + (p > 0 ? p * Math.log(p) / Math.LN2 : 0); }, 0);
+			var mass = kept.reduce(function (a, i) { return a + probs[i]; }, 0) || 1;
+			var active = probs.map(function (p, i) { return keep[i] ? p / mass : 0; });
+			var rounded = {};
+			var total = 0;
+			kept.forEach(function (i) {
+				rounded[i] = Math.round(active[i] * 100);
+				total += rounded[i];
+			});
+			if (kept.length && total !== 100) {
+				var largest = kept.reduce(function (a, b) { return active[a] >= active[b] ? a : b; }, kept[0]);
+				rounded[largest] += 100 - total;
+			}
+			var ent = -kept.reduce(function (a, i) {
+				var q = active[i];
+				return a + (q > 0 ? q * Math.log(q) / Math.LN2 : 0);
+			}, 0);
 			bars.innerHTML = tokens.map(function (tok, i) {
-				var pct = probs[i] * 100;
-				return '<div class="dist-row' + (keep[i] ? "" : " is-cut") + '">' +
+				var isKept = keep[i];
+				return '<div class="dist-row' + (isKept ? "" : " is-cut") + '">' +
 					'<span class="dist-label">' + escapeHtml(tok.t) + '</span>' +
-					'<span class="dist-track"><span class="dist-fill" style="width:' + pct.toFixed(1) + '%;background:' + tok.c + '"></span></span>' +
-					'<span class="dist-val">' + pct.toFixed(0) + '%</span></div>';
+					'<span class="dist-track"><span class="dist-fill" style="width:' + (isKept ? rounded[i] : 0) + '%;background:' + tok.c + '"></span></span>' +
+					'<span class="dist-val">' + (isKept ? rounded[i] + '%' : 'cut') + '</span></div>';
 			}).join("");
 			if (choice) choice.textContent = tokens[kept[0]].t;
 			if (count) count.textContent = kept.length + " / " + tokens.length;
@@ -81,7 +96,6 @@
 		if (topP) topP.addEventListener("input", render);
 		render();
 	}
-
 
 	/* ── decoding studio ───────────────────────────────────── */
 
@@ -831,30 +845,55 @@
 		var run = $("[data-retrieval-run]", root);
 		var queryChips = $$("[data-retrieval-query]", root);
 		var top = $("[data-retrieval-top]", root);
+		var countEl = $("[data-retrieval-count]", root);
+		var scoreEl = $("[data-retrieval-score]", root);
+		var promptEl = $("[data-retrieval-prompt]", root);
 		var query = "Eiffel Tower height";
 		if (!list) return;
 		var chunks = [
-			{ title: "Eiffel Tower", text: "The Eiffel Tower in Paris is 330 metres tall and was completed in 1889 for the World's Fair." },
-			{ title: "Paris tourism", text: "Paris attracts millions of visitors; the tower is one of the most visited monuments in the world." },
-			{ title: "RAG pipeline", text: "Retrieval-augmented generation chunks documents, embeds them, retrieves passages, and puts them in the prompt." },
-			{ title: "Vector databases", text: "Vector databases store embeddings and support approximate nearest-neighbour search over them." },
-			{ title: "Prompt engineering", text: "A clear role, specific constraints, and examples reduce ambiguity in a language-model prompt." }
+			{ title: "Eiffel Tower", text: "The Eiffel Tower in Paris is 330 metres tall and was completed in 1889 for the World's Fair.", vec: [ 0.95, 0.05, 0.05, 0.05 ] },
+			{ title: "Paris tourism", text: "Paris attracts millions of visitors; the tower is one of the most visited monuments in the world.", vec: [ 0.8, 0.1, 0.0, 0.1 ] },
+			{ title: "RAG pipeline", text: "Retrieval-augmented generation chunks documents, embeds them, retrieves passages, and puts them in the prompt.", vec: [ 0.0, 0.95, 0.2, 0.1 ] },
+			{ title: "Vector databases", text: "Vector databases store embeddings and support approximate nearest-neighbour search over them.", vec: [ 0.0, 0.3, 0.95, 0.0 ] },
+			{ title: "Prompt engineering", text: "A clear role, specific constraints, and examples reduce ambiguity in a language-model prompt.", vec: [ 0.0, 0.1, 0.0, 0.95 ] }
 		];
-		function score(text, q) {
-			var words = q.toLowerCase().split(/[^a-z0-9]+/).filter(function (w) { return w.length > 2; });
-			var lower = text.toLowerCase();
-			return words.reduce(function (s, w) { return s + (lower.indexOf(w) !== -1 ? 1 : 0); }, 0);
+		var queries = {
+			"Eiffel Tower height": [ 0.95, 0.05, 0.0, 0.05 ],
+			"RAG pipeline": [ 0.0, 0.95, 0.2, 0.1 ],
+			"vector database": [ 0.0, 0.2, 0.95, 0.0 ]
+		};
+		var TOP_K = 2;
+		function cosine(a, b) {
+			var dot = 0, na = 0, nb = 0;
+			for (var i = 0; i < a.length; i++) {
+				dot += a[i] * b[i];
+				na += a[i] * a[i];
+				nb += b[i] * b[i];
+			}
+			return dot / (Math.sqrt(na) * Math.sqrt(nb) || 1);
 		}
 		function render() {
+			var q = queries[query] || queries["Eiffel Tower height"];
 			var ranked = chunks.map(function (c) {
-				return { c: c, s: score(c.title + " " + c.text, query) };
+				return { c: c, s: cosine(c.vec, q) };
 			}).sort(function (a, b) { return b.s - a.s; });
-			list.innerHTML = ranked.slice(0, 4).map(function (r, i) {
-				return '<div class="retrieval-item' + (i === 0 ? " is-hit" : "") + '">' +
+			var selected = ranked.slice(0, TOP_K);
+			var inPrompt = {};
+			selected.forEach(function (r, i) { inPrompt[r.c.title] = i + 1; });
+			list.innerHTML = ranked.map(function (r) {
+				var ins = inPrompt[r.c.title];
+				return '<div class="retrieval-item' + (ins ? " is-hit" : "") + '">' +
 					'<div><b>' + escapeHtml(r.c.title) + '</b><p>' + escapeHtml(r.c.text) + '</p></div>' +
-					'<span class="retrieval-score">' + r.s + ' hits</span></div>';
+					'<span class="retrieval-score">cos ' + r.s.toFixed(2) + (ins ? ' · in prompt' : '') + '</span></div>';
 			}).join("");
 			if (top) top.textContent = ranked[0].c.title;
+			if (countEl) countEl.textContent = selected.length + " of " + chunks.length;
+			if (scoreEl) scoreEl.textContent = ranked[0].s.toFixed(2);
+			if (promptEl) {
+				promptEl.textContent = "Context:\n" + selected.map(function (r, i) {
+					return "[" + (i + 1) + "] " + r.c.title + " — " + r.c.text;
+				}).join("\n\n") + "\n\nQuestion: " + query + "\nAnswer:";
+			}
 		}
 		queryChips.forEach(function (chip) {
 			chip.addEventListener("click", function () {

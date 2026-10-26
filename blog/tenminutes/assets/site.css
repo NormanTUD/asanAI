@@ -4171,3 +4171,82 @@ body[data-lesson="history"] .tl-panel { height: 480px; }
 	text-decoration: none;
 }
 .arc-links a:hover { border-color: var(--tm-green); background: var(--tm-wash); }
+
+body[data-lesson="whole"] .tl-panel { height: 290px; }
+@media (max-width: 720px) { body[data-lesson="whole"] .tl-panel { height: 340px; } }
+
+.rag-steps { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+.rag-steps span {
+	padding: 4px 8px;
+	border: 1px solid var(--tm-line);
+	border-radius: 999px;
+	background: var(--tm-paper-2);
+	font-family: var(--tm-mono);
+	font-size: 0.6rem;
+	letter-spacing: 0.02em;
+	color: var(--tm-muted);
+}
+.retrieval-list { height: 390px; overflow-y: auto; }
+.rag-prompt {
+	margin: 14px 0 0;
+	padding: 12px 14px;
+	border: 1px solid var(--tm-line);
+	border-radius: 9px;
+	background: var(--tm-paper-2);
+	font-family: var(--tm-mono);
+	font-size: 0.68rem;
+	line-height: 1.5;
+	color: var(--tm-muted);
+	white-space: pre-wrap;
+	height: 180px;
+	overflow-y: auto;
+}
+@media (max-width: 720px) {
+	.retrieval-list { height: 480px; }
+	.rag-prompt { height: 220px; }
+}
+
+.intro-arc { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 24px 0 0; }
+.ia-step {
+	position: relative;
+	padding: 16px 14px;
+	border: 1px solid var(--tm-line);
+	border-radius: 12px;
+	background: var(--tm-card);
+}
+.ia-step span {
+	font-family: var(--tm-mono);
+	font-size: 0.58rem;
+	letter-spacing: 0.1em;
+	color: var(--tm-faint);
+}
+.ia-step b { display: block; margin-top: 4px; font-family: var(--tm-display); font-size: 1.15rem; line-height: 1.05; color: var(--tm-ink); }
+.ia-step p { margin: 6px 0 0; font-size: 0.78rem; line-height: 1.45; color: var(--tm-muted); }
+.ia-step:not(:last-child)::after {
+	content: "→";
+	position: absolute;
+	right: -10px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--tm-faint);
+	font-size: 0.8rem;
+}
+.intro-arc-note {
+	margin: 10px 0 0;
+	font-family: var(--tm-mono);
+	font-size: 0.62rem;
+	letter-spacing: 0.04em;
+	text-align: center;
+	color: var(--tm-faint);
+}
+.intro-final-question {
+	margin: 26px 0 0;
+	font-family: var(--tm-display);
+	font-size: clamp(1.3rem, 2.4vw, 1.8rem);
+	line-height: 1.15;
+	color: var(--tm-ink);
+}
+@media (max-width: 720px) {
+	.intro-arc { grid-template-columns: 1fr 1fr; }
+	.ia-step::after { display: none; }
+}

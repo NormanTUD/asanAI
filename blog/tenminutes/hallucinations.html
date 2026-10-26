@@ -61,7 +61,7 @@
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">The distribution behind the sentence <span>· demo</span></p>
-								<p class="demo-sub">The model has just read “The capital of France is”. Change the temperature and the candidate filter; the bars show how the next-token probabilities move.</p>
+								<p class="demo-sub">The model has just read “The capital of France is”. Change the temperature and the candidate filter. After top-p, the surviving bars are renormalized to 100%; cut tokens are shown in grey and do not count.</p>
 							</div>
 							<span class="demo-badge">live</span>
 						</div>
@@ -78,6 +78,7 @@
 							</div>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>A confident tone is just a sharp distribution. Lower temperature makes the likely token dominate; top-p removes the long tail. Neither makes the answer true.</span></div>
+						<div class="demo-foot">Top-p changes the candidate set, not the model’s knowledge. The bright bars are the renormalized distribution; the grey rows are the tokens that were cut.</div>
 					</div>
 
 					<section class="section-block">
@@ -113,18 +114,6 @@
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">The model is not lying. It is completing a pattern.</p>
 							<p class="aha-sub">Truth is a property of your workflow, not a promise from the model.</p>
-						</div>
-					</section>
-					<section class="section-block" id="fits">
-						<div class="section-kicker">Where this fits</div>
-						<h2 class="section-title">One piece of the arc.</h2>
-						<div class="prose">
-							<p>This page is one door in the compact course. The thread continues; the whole arc shows how the pieces connect.</p>
-						</div>
-						<div class="keypoints">
-							<a class="keypoint" href="embeddinglab.html"><b>Previous · Meaning as Geometry</b><span>Tokens become points in space. Nearby points mean similar things; directions can carry relationships.</span></a>
-							<a class="keypoint" href="minimalneuron.html"><b>Next · A Tiny Example Network</b><span>One input, one output, two numbers to adjust: the smallest learner, and the loop behind every network.</span></a>
-							<a class="keypoint" href="whole.html"><b>The whole arc</b><span>Prediction, tokens, attention, training, assistants, and society in one picture.</span></a>
 						</div>
 					</section>
 
