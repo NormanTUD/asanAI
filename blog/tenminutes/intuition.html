@@ -196,7 +196,9 @@
 												<button class="chip" type="button" data-emb="King - Man + Woman">King − Man + Woman</button>
 												<button class="chip" type="button" data-emb="Man + Power">Man + Power</button>
 												<button class="chip" type="button" data-emb="Prince + Power">Prince + Power</button>
-												<button class="chip" type="button" data-emb="directions">↗ directions</button>
+												<button class="chip" type="button" data-emb="gender">male ↔ female</button>
+												<button class="chip" type="button" data-emb="power">power</button>
+												<button class="chip" type="button" data-emb="directions">all directions</button>
 											</div>
 										</div>
 										<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with power and gender axes"></canvas>
@@ -942,7 +944,7 @@
 		var embRange = { x0: -5, x1: 40, y0: -30, y1: 30 };
 		var embCanvas = document.getElementById("iemb-canvas");
 		var embOut = document.getElementById("iemb-out");
-		var embDirections = false;
+		var embDirMode = null;
 		var embResult = null;
 		var embApi = null;
 		function evalEmb(expr) {
@@ -1050,12 +1052,12 @@
 			ctx.restore();
 
 			var input = document.getElementById("iemb-input");
-			var highlighted = input ? input.value.split(/[\s,]+/).filter(Boolean) : [];
+			var highlighted = input ? input.value.split(/[\s,]+/).filter(Boolean).map(function (w) { return w.toLowerCase(); }) : [];
 			var palette = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55", "#009299"];
 			Object.keys(embSpace).forEach(function (word) {
 				var v = embSpace[word];
-				var hi = highlighted.indexOf(word) !== -1;
-				var idx = highlighted.indexOf(word);
+				var hi = highlighted.indexOf(word.toLowerCase()) !== -1;
+				var idx = highlighted.indexOf(word.toLowerCase());
 				var color = hi ? palette[idx % palette.length] : (c.dark ? "rgba(238,247,244,.35)" : "rgba(18,38,45,.32)");
 				var x = mx(v[0]), y = my(v[1]);
 				ctx.beginPath();
@@ -1073,8 +1075,8 @@
 				ctx.fillText(word, x, y - 11);
 			});
 
-			if (embDirections) {
-				function arrow(a, b, color) {
+			if (embDirMode) {
+				function arrow(a, b, color, label) {
 					ctx.beginPath();
 					ctx.moveTo(mx(a[0]), my(a[1]));
 					ctx.lineTo(mx(b[0]), my(b[1]));
@@ -1089,16 +1091,39 @@
 					ctx.closePath();
 					ctx.fillStyle = color;
 					ctx.fill();
+					if (label) {
+						var ax = mx(a[0]), ay = my(a[1]), bx = mx(b[0]), by = my(b[1]);
+						var dx = bx - ax, dy = by - ay;
+						var len = Math.hypot(dx, dy) || 1;
+						var lx = (ax + bx) / 2 - dy / len * 12;
+						var ly = (ay + by) / 2 + dx / len * 12;
+						ctx.font = "700 10px Barlow, system-ui, sans-serif";
+						var tw = ctx.measureText(label).width;
+						ctx.fillStyle = c.dark ? "rgba(4,34,46,.84)" : "rgba(255,253,247,.92)";
+						TM.roundRect(ctx, lx - tw / 2 - 5, ly - 9, tw + 10, 15, 7);
+						ctx.fill();
+						ctx.fillStyle = color;
+						ctx.textAlign = "center";
+						ctx.fillText(label, lx, ly + 2);
+					}
 				}
 				var green = c.dark ? "#869b55" : "#63a44b";
 				var gold = "#9f9700";
-				arrow(embSpace.Man, embSpace.Woman, green);
-				arrow(embSpace.King, embSpace.Queen, green);
-				arrow(embSpace.Man, embSpace.Prince, gold);
-				arrow(embSpace.Prince, embSpace.King, gold);
-				arrow(embSpace.Woman, embSpace.Princess, gold);
-				arrow(embSpace.Princess, embSpace.Queen, gold);
-				if (embOut) embOut.innerHTML = 'The <b>gender</b> arrow (green) is the same from man to woman and from king to queen. The <b>power</b> arrow (gold) is the same along man → prince → king. Meaning lives in positions and in directions.';
+				if (embDirMode === "gender" || embDirMode === "all") {
+					arrow(embSpace.Man, embSpace.Woman, green, "male → female");
+					arrow(embSpace.King, embSpace.Queen, green, "");
+				}
+				if (embDirMode === "power" || embDirMode === "all") {
+					arrow(embSpace.Man, embSpace.Prince, gold, "more power");
+					arrow(embSpace.Prince, embSpace.King, gold, "");
+					arrow(embSpace.Woman, embSpace.Princess, gold, "");
+					arrow(embSpace.Princess, embSpace.Queen, gold, "");
+				}
+				if (embOut) {
+					if (embDirMode === "gender") embOut.innerHTML = 'The <b>gender</b> direction (green) is the same from man to woman and from king to queen. It is a learned direction, not a named axis.';
+					else if (embDirMode === "power") embOut.innerHTML = 'The <b>power</b> direction (gold) is the same along man → prince → king and woman → princess → queen. The model learns it from the data.';
+					else embOut.innerHTML = 'The <b>gender</b> arrow (green) is the same from man to woman and from king to queen. The <b>power</b> arrow (gold) is the same along man → prince → king. Meaning lives in positions and in directions.';
+				}
 				return;
 			}
 
@@ -1143,14 +1168,14 @@
 				embResult = { pos: ev.v, nearest: near.word, steps: steps.steps };
 				if (embOut) embOut.innerHTML = '→ <b>(' + ev.v[0].toFixed(1) + ', ' + ev.v[1].toFixed(1) + ')</b> · nearest word: <b>' + near.word + '</b> (distance ' + near.dist.toFixed(2) + ')';
 			}
-			if (input) embDirections = false;
+			if (input) embDirMode = null;
 			if (embApi) embApi.redraw();
 		}
 		if (embCanvas) {
 			embApi = TM.initCanvas(embCanvas, drawEmb);
 			var embInput = document.getElementById("iemb-input");
 			if (embInput) embInput.addEventListener("input", function () {
-				embDirections = false;
+				embDirMode = null;
 				if (embApi) embApi.redraw();
 			});
 			document.querySelectorAll("[data-emb]").forEach(function (btn) {
@@ -1158,8 +1183,8 @@
 					var expr = btn.getAttribute("data-emb");
 					document.querySelectorAll("[data-emb]").forEach(function (b) { b.classList.remove("is-on"); });
 					btn.classList.add("is-on");
-					if (expr === "directions") {
-						embDirections = true;
+					if (expr === "directions" || expr === "gender" || expr === "power") {
+						embDirMode = expr;
 						embResult = null;
 						if (embApi) embApi.redraw();
 					} else {
