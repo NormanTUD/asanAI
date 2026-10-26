@@ -2985,7 +2985,11 @@ html[data-theme="light"] .token.is-selected { outline-color: var(--tm-green); }
 
 body[data-page="lesson"] { --tm-topbar: 0px; }
 body[data-page="lesson"] .topbar,
-body[data-page="lesson"] .rail { display: none; }
+body[data-page="lesson"] .rail,
+body[data-page="lesson"] .lesson-nav,
+body[data-page="lesson"] .lesson-footer,
+body[data-page="lesson"] .explain-back,
+body[data-page="lesson"] .footer { display: none; }
 body[data-page="lesson"] .shell {
 	width: min(1400px, calc(100% - clamp(24px, 4vw, 72px)));
 }

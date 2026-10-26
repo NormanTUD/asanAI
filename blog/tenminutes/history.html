@@ -277,24 +277,79 @@
 						<h2 class="section-title">A machine that learns from its mistakes.</h2>
 						<div class="prose">
 							<p>
-								McCulloch and Pitts (1943) model a neuron as a logical threshold unit. Hebb
-								(1949) gives learning a slogan: neurons that fire together, wire together. The
-								<strong>SNARC</strong> (1951) is the first physical neural network. Then, in
-								1958, Frank Rosenblatt introduces the <strong>perceptron</strong>: a system
-								that adjusts its weights in response to errors. The Mark I Perceptron is
+								The first artificial neuron came from an unlikely pair. <strong>Warren
+								McCulloch</strong> was a neuropsychiatrist, philosopher, and poet who ran a
+								lab under the sign “Experimental Epistemology” and asked, “What is a number,
+								that a man may know it, and a man, that he may know a number?”
+								<strong>Walter Pitts</strong> was a self-taught logician who had read
+								<em>Principia Mathematica</em> at twelve, written to Bertrand Russell, and
+								run away from home at fifteen to hear Russell lecture in Chicago. They met
+								there, found a shared hero in Leibniz, and began to model the brain as a
+								logical calculus.
+							</p>
+							<p>
+								Their 1943 paper, “A Logical Calculus of the Ideas Immanent in Nervous
+								Activity,” appeared in the <em>Bulletin of Mathematical Biophysics</em>, not
+								in a physiology journal. It made five assumptions: a neuron fires all-or-none;
+								a fixed number of excitatory synapses must be active within the period of
+								latent addition; the only significant delay is synaptic; an inhibitory synapse
+								absolutely prevents firing; and the structure of the net does not change with
+								time. The neuron fires when the excitatory input reaches its threshold and no
+								inhibition is present. The model counts synapses. The familiar
+								<code>y = σ(Σ wᵢxᵢ − θ)</code> belongs to the later perceptron; McCulloch and
+								Pitts had no learned weights.
+							</p>
+							<p>
+								The paper works in both directions. Given a network, you can read off the
+								propositions its activity realizes; given a logical expression, you can build
+								a network that realizes it. Networks without loops compute Boolean functions.
+								Networks with loops can hold a state, and McCulloch and Pitts argued that such
+								a net, with a tape and scanners, can compute what a Turing machine computes.
+								The loop was the hard part: a signal that circles back seems to make time run
+								backwards. Pitts’s way out was clock arithmetic. Inside a loop, “before” and
+								“after” lose their meaning; the signal records that an event happened, not
+								when. McCulloch called the result “an idea wrenched out of time” — a memory.
+							</p>
+							<p>
+								The paper reached the hardware of the next decade. Von Neumann’s 1945 EDVAC
+								report, the first published description of the stored-program computer, cited
+								exactly one paper — this one — and proposed building the machine from
+								McCulloch–Pitts-style logic gates, with Pitts’s loops as memory. At the 1948
+								Hixon Symposium, von Neumann gave the nets a wide audience and called their
+								theorems “probably the most significant result obtained with the axiomatic
+								method up to now.” Pitts, the runaway logician, became the hinge between
+								McCulloch’s physiology and von Neumann’s computer.
+							</p>
+							<p>
+								The collaboration was also a friendship. McCulloch invited the homeless Pitts
+								to live with his family; Pitts called the house home for the rest of his life.
+								McCulloch called him his “bootlegged collaborator.” Both wrote poetry. Pitts
+								struggled with depression, broke with Norbert Wiener, and died in 1969 at
+								forty-six; McCulloch died four months later. The 1943 neuron outlived them
+								both.
+							</p>
+							<p>
+								Hebb (1949) gave learning a slogan: neurons that fire together, wire together.
+								The <strong>SNARC</strong> (1951) was the first physical neural network. Then,
+								in 1958, Frank Rosenblatt introduced the <strong>perceptron</strong>: a system
+								that adjusted its weights in response to errors. The Mark I Perceptron was
 								constructed between 1958 and 1960 and publicly demonstrated in 1960: a 20×20
-								grid of 400 photocells forms its retina, and electric motors turn the
-								potentiometers that hold the weights. Its follow-on, <em>Tobermory</em>, is
+								grid of 400 photocells formed its retina, and electric motors turned the
+								potentiometers that held the weights. Its follow-on, <em>Tobermory</em>, was
 								designed for speech recognition.
 							</p>
 							<p>
-								The press hears “a machine that will walk, talk, see, write, reproduce itself
-								and be conscious of its existence.” The science hears something narrower and
-								more interesting: a learning rule, <em>Δw = η · (target − output) · input</em>,
-								that turns error into a weight change. Minsky and Papert’s <em>Perceptrons</em>
-								(1969) then shows the limits of a single-layer network — famously, XOR — and
-								the first winter begins. The idea survives in the margins.
+								The press heard “a machine that will walk, talk, see, write, reproduce itself
+								and be conscious of its existence.” The science heard a learning rule,
+								<em>Δw = η · (target − output) · input</em>, that turns error into a weight
+								change. Minsky and Papert’s <em>Perceptrons</em> (1969) then showed the limits
+								of a single-layer network — famously, XOR — and the first winter began. The
+								idea survived in the margins.
 							</p>
+						</div>
+						<div class="fieldnotes">
+							<h4>The bibliography was a giveaway</h4>
+							<p>The 1943 paper cites Carnap’s <em>Logical Syntax of Language</em>, Hilbert and Ackermann’s <em>Grundzüge der theoretischen Logik</em>, and Russell and Whitehead’s <em>Principia Mathematica</em>. It cites no neurophysiologist. The physiology sits in the assumptions; the argument is in the logic.</p>
 						</div>
 						<div class="profile-spotlight">
 							<figure>
@@ -313,8 +368,8 @@
 								</p>
 								<p>
 									The descendants of that machine are in every transformer today. The
-									perceptron did not fail because learning was a bad idea; it failed because
-									one layer, limited data, and limited compute could not deliver the hype.
+									perceptron ran into the limits of one layer, limited data, and limited
+									compute. Learning from data survived the disappointment.
 								</p>
 							</div>
 						</div>
@@ -361,7 +416,7 @@
 						</div>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">Learning is error correction, not programming.</p>
+							<p class="aha-big">Learning is error correction.</p>
 							<p class="aha-sub">The perceptron does not need a rule for every case. It needs an error signal and a way to change its weights. That is the seed of every trained model.</p>
 						</div>
 					</section>
@@ -375,18 +430,17 @@
 								Theorist, GPS, expert systems, planners, and microworlds such as SHRDLU. Then
 								it hits the frame problem and the limits of hand-coded rules. Funding freezes
 								in the first AI winter; connectionism returns in the 1980s; a second winter
-								follows. Deep Blue beats Garry Kasparov in 1997, but it is a narrow,
-								hand-tuned chess machine — a triumph of search and evaluation, not of general
-								intelligence.
+								follows. Deep Blue beats Garry Kasparov in 1997, a triumph of search and
+								evaluation in a narrow, hand-tuned domain.
 							</p>
 							<p>
-								The return of neural networks is not one breakthrough but a stack of them:
-								backpropagation, larger datasets, GPUs, better regularization. AlexNet wins
-								ImageNet in 2012. AlphaGo defeats Lee Sedol in 2016. In 2017, “Attention Is
-								All You Need” replaces recurrence with self-attention, making the path between
-								distant tokens one step and the computation parallel. ChatGPT (2022) turns the
-								next-token loop into a public interface. The ideas are old; the scale, the data,
-								and the engineering are new.
+								The return of neural networks came as a stack of changes: backpropagation,
+								larger datasets, GPUs, better regularization. AlexNet wins ImageNet in 2012.
+								AlphaGo defeats Lee Sedol in 2016. In 2017, “Attention Is All You Need”
+								replaces recurrence with self-attention, making the path between distant
+								tokens one step and the computation parallel. ChatGPT (2022) turns the
+								next-token loop into a public interface. The ideas are old; the scale, the
+								data, and the engineering are new.
 							</p>
 						</div>
 						<div class="split-figure">
@@ -418,20 +472,122 @@
 								Hinton, LeCun, and Bengio share the 2018 Turing Award for deep learning.
 								Their work — backpropagation, convolutional networks, neural language models
 								— is the bridge between the perceptron’s promise and the transformer’s scale.
-								The line from Rosenblatt to GPT is not a straight one, but it is continuous:
-								the same bet on learning from data, carried through the winters.
+								The line from Rosenblatt to GPT bends through two winters, and it stays
+								continuous: the same bet on learning from data, carried through both.
 							</p>
 						</div>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">The return was scale plus a better learning method.</p>
-							<p class="aha-sub">Neural networks did not become true because a single paper fixed them. Backpropagation, data, GPUs, and architectural luck compounded — and the winters were part of the story, not an interruption of it.</p>
+							<p class="aha-sub">Backpropagation, data, GPUs, and architectural luck compounded. The winters belonged to the story too.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="llms">
+						<div class="section-kicker"><span class="sk-num">08</span> The LLM line</div>
+						<h2 class="section-title">Attention, then pretraining, then scale.</h2>
+						<div class="prose">
+							<p>
+								The 2017 paper “Attention Is All You Need” was written to improve machine
+								translation. Vaswani and his coauthors replaced the step-by-step recurrence
+								of earlier sequence models with <strong>self-attention</strong>: in one
+								layer, every token can look at every other token, and the computation for all
+								positions runs in parallel. The path between two distant tokens becomes a
+								single hop. That helps long-range dependencies, and it fills a GPU far better
+								than a loop over the sequence.
+							</p>
+							<p>
+								The mechanism is a learned routing operation. Each token is projected into a
+								<strong>query</strong>, a <strong>key</strong>, and a <strong>value</strong>.
+								The query of one token is compared with the keys of the others; the scores
+								are scaled, passed through a softmax, and used as weights to mix the values.
+								A causal mask in a decoder hides future tokens, so the model cannot see the
+								answer it is supposed to predict. Several heads run in parallel, each in its
+								own subspace, and their outputs are combined.
+							</p>
+							<p>
+								Attention is one half of the block. Each sublayer is wrapped in a
+								<strong>residual connection</strong> and a <strong>normalization</strong>
+								step: the branch computes an update, and the update is added back to a shared
+								running vector. The <strong>feed-forward network</strong> then transforms
+								each position on its own, expanding the vector, applying a nonlinearity, and
+								contracting it again. Attention moves information between positions; the
+								feed-forward network computes with it.
+							</p>
+							<p>
+								Two branches grew from the same architecture. <strong>BERT</strong> (Devlin
+								et al., 2018) kept the encoder, removed the causal mask, and trained with
+								<strong>masked language modeling</strong>: hide a random selection of tokens
+								and predict them from both sides. That gives deeply bidirectional
+								representations. After pretraining on a large corpus, BERT could be fine-tuned
+								with a small labelled dataset and set new records on many language tasks. It
+								made the recipe <strong>pretrain, then fine-tune</strong> the default.
+							</p>
+							<p>
+								<strong>GPT</strong> took the other branch: a decoder-only transformer trained
+								autoregressively on the next token. GPT-2 (2019) showed that a large model
+								could perform some tasks zero-shot, from a prompt alone. GPT-3 (Brown et al.,
+								2020), with 175 billion parameters, showed that scale could produce a
+								flexible few-shot learner. The same block, two contracts with the data: BERT
+								sees both sides and fills blanks; GPT sees only the past and predicts the next
+								token.
+							</p>
+							<p>
+								The recipe then became an engineering programme. <strong>ULMFiT</strong>
+								supplied the three-step template: pretrain on general text, fine-tune on the
+								target domain, fine-tune on the task. <strong>RoBERTa</strong> showed that
+								BERT had been undertrained, and that more data with dynamic masking improved
+								it. <strong>ELECTRA</strong> changed the objective from filling blanks to
+								detecting replaced tokens, which gives a training signal at every position.
+								<strong>T5</strong> turned every task into text-to-text.
+								<strong>Chinchilla</strong> (Hoffmann et al., 2022) showed that, for a fixed
+								compute budget, many models were too large for the amount of data they saw; a
+								smaller model trained on more tokens can do better. <strong>LLaMA</strong>
+								applied that lesson and released models that could run on ordinary hardware,
+								which helped the open-weight ecosystem grow.
+							</p>
+							<p>
+								The final layer is <strong>post-training</strong>. A raw next-token predictor
+								is not yet a helpful assistant. <strong>RLHF</strong> — reinforcement learning
+								from human feedback — trains a reward model on human preferences and then
+								optimizes the language model against it. <strong>InstructGPT</strong>
+								(Ouyang et al., 2022) described the recipe, and <strong>ChatGPT</strong>
+								turned it into a public interface. The model still predicts tokens; the
+								difference is that the distribution has been shaped toward answers people find
+								useful, honest, and harmless.
+							</p>
+						</div>
+						<div class="fieldnotes">
+							<h4>Why the same block can be an encoder or a decoder</h4>
+							<p>The mask and the training objective decide the contract. BERT’s encoder reads the whole sentence and fills masked gaps. GPT’s decoder reads only the past and predicts the next token. An encoder–decoder model such as the original transformer reads the source and generates the target. The block is shared; the information flow is different.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Self-attention</b><span>Every position can gather information from every other position in one layer.</span></div>
+							<div class="keypoint"><b>Pretraining</b><span>A general model learns language from a large corpus before it is adapted to a task.</span></div>
+							<div class="keypoint"><b>BERT</b><span>Encoder plus masked tokens: bidirectional context, then fine-tuning.</span></div>
+							<div class="keypoint"><b>GPT</b><span>Decoder plus next token: autoregressive generation, then scale and post-training.</span></div>
+						</div>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">The transformer made context parallel.</p>
+							<p class="aha-sub">Recurrence forced the model to carry the past through a chain. Self-attention lets every token ask every other token what it needs — and that one change made both long-range context and large-scale training practical.</p>
+						</div>
+						<div class="prose">
+							<p>
+								There is a second, smaller alphabet underneath all of this: the
+								<strong>tokenizer</strong>. A model does not read words or letters; it reads a
+								fixed table of fragments, usually built with byte-pair encoding. Common words
+								become one token; rare words split into pieces. The table is fixed before
+								training, so it quietly decides what is cheap, what is expensive, and what
+								the model can represent at all. The <a href="tokenizerlab.html">tokenizer
+								lab</a> shows the mechanics.
+							</p>
 						</div>
 					</section>
 
 					<section class="section-block" id="lessons">
-						<div class="section-kicker"><span class="sk-num">08</span> What the history teaches</div>
-						<h2 class="section-title">No inevitability, no lone genius.</h2>
+						<div class="section-kicker"><span class="sk-num">09</span> What the history teaches</div>
+						<h2 class="section-title">A collective, uneven climb.</h2>
 						<div class="prose">
 							<p>
 								The standard story is a parade of famous names and sudden breakthroughs. The
