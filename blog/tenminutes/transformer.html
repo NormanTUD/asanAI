@@ -57,8 +57,7 @@
 						<h2 class="section-title">From text to a distribution.</h2>
 						<div class="prose">
 							<p>
-								Here is the whole machine as a route. Click a stage, or run the sequence. The
-								block in the middle repeats <em>N</em> times; everything else happens once.
+								Here is the whole machine as a route. Start with “the cat sat”, step through the block, predict the next token, then append it and run the loop again. The block in the middle repeats <em>N</em> times; everything else happens once.
 							</p>
 						</div>
 
@@ -66,7 +65,7 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The transformer pipeline <span>· demo 01</span></p>
-									<p class="demo-sub">Six stages. Click one, or take the next step in the pipeline.</p>
+									<p class="demo-sub">Start with “the cat sat”. Step through the six stages, predict the next token, append it, and run the loop again: on → the → mat → .</p>
 								</div>
 								<span class="demo-badge">click / step</span>
 							</div>
@@ -78,8 +77,10 @@
 									<p id="pipe-text"></p>
 									<p class="pipe-shape" id="pipe-shape"></p>
 								</div>
+								<div class="pipe-prediction" id="pipe-prediction">Next token: <b>—</b></div>
 								<div class="demo-controls">
 									<button class="btn-demo btn-demo--green" type="button" id="pipe-next">Next step in pipeline →</button>
+									<button class="btn-demo" type="button" id="pipe-run">Run the loop ▶</button>
 									<button class="btn-demo" type="button" id="pipe-mask-toggle">Show causal mask</button>
 									<button class="btn-demo" type="button" id="pipe-reset">Reset</button>
 									<span class="pipe-note" id="pipe-counter" style="margin:0">Stage 1 of 6</span>
@@ -316,7 +317,7 @@
 			{
 				name: "Tokenize",
 				title: "Tokenize",
-				text: "Text is cut into subword tokens and mapped to integer IDs. The vocabulary is fixed before training. In GPT-2 byte-level BPE, “The cat sat” becomes [464, 3797, 3332].",
+				text: "Text is cut into subword tokens and mapped to integer IDs. The vocabulary is fixed before training. In GPT-2 byte-level BPE, “the cat sat” becomes [262, 3797, 3332].",
 				shape: "text → [T] token IDs"
 			},
 			{
@@ -359,17 +360,46 @@
 		var nextBtn = document.getElementById("pipe-next");
 		var resetBtn = document.getElementById("pipe-reset");
 		var currentStage = 0;
-		var tokenWords = ["The", "cat", "sat"];
+		var baseTokens = [
+			{ w: "the", id: 262 },
+			{ w: "cat", id: 3797 },
+			{ w: "sat", id: 3332 }
+		];
+		var continuation = [
+			{ w: "on", id: 319 },
+			{ w: "the", id: 262 },
+			{ w: "mat", id: 2603 },
+			{ w: ".", id: 13 }
+		];
+		var tokens = baseTokens.map(function (t) { return { w: t.w, id: t.id }; });
+		var genIndex = 0;
+		var runTimer = null;
+		var prediction = document.getElementById("pipe-prediction");
+		var runBtn = document.getElementById("pipe-run");
 
 		function renderTokens(stage) {
 			if (!pipeTokens) return;
 			pipeTokens.innerHTML = "";
-			tokenWords.forEach(function (t, i) {
+			tokens.forEach(function (t, i) {
 				var span = document.createElement("span");
-				span.className = "pipe-token" + (stage === 0 ? " is-active" : "");
-				span.textContent = t + " · " + [464, 3797, 3332][i];
+				span.className = "pipe-token" +
+					(stage === 0 && i === tokens.length - 1 ? " is-active" : "") +
+					(t.isNew ? " is-new" : "");
+				span.textContent = t.w + " · " + t.id;
 				pipeTokens.appendChild(span);
 			});
+		}
+		function updatePrediction() {
+			if (!prediction) return;
+			if (currentStage === stages.length - 1) {
+				if (genIndex < continuation.length) {
+					prediction.innerHTML = 'Next token: <b>' + continuation[genIndex].w + '</b> · predict to append and loop';
+				} else {
+					prediction.innerHTML = 'Sequence complete: <b>' + tokens.map(function (t) { return t.w; }).join(" ") + '</b>';
+				}
+			} else {
+				prediction.innerHTML = 'Next token: <b>—</b> · run to Unembed to predict';
+			}
 		}
 		function selectStage(i) {
 			currentStage = TM.clamp(i, 0, stages.length - 1);
@@ -382,7 +412,33 @@
 				b.classList.toggle("is-active", parseInt(b.getAttribute("data-stage"), 10) === currentStage);
 			});
 			renderTokens(currentStage);
-			if (nextBtn) nextBtn.textContent = currentStage >= stages.length - 1 ? "Start over ↺" : "Next step in pipeline →";
+			updatePrediction();
+			if (nextBtn) {
+				if (currentStage < stages.length - 1) nextBtn.textContent = "Next step in pipeline →";
+				else if (genIndex < continuation.length) nextBtn.textContent = 'Predict "' + continuation[genIndex].w + '" & append →';
+				else nextBtn.textContent = "Start over ↺";
+			}
+		}
+		function stopRun() {
+			if (runTimer) { clearInterval(runTimer); runTimer = null; }
+			if (runBtn) runBtn.textContent = "Run the loop ▶";
+		}
+		function appendPrediction() {
+			if (genIndex >= continuation.length) { resetLoop(); return; }
+			var next = continuation[genIndex];
+			tokens.forEach(function (t) { t.isNew = false; });
+			tokens.push({ w: next.w, id: next.id, isNew: true });
+			genIndex++;
+			currentStage = 0;
+			selectStage(0);
+			if (prediction) prediction.innerHTML = 'Appended: <b>' + next.w + '</b>. Run the loop again.';
+		}
+		function resetLoop() {
+			stopRun();
+			tokens = baseTokens.map(function (t) { return { w: t.w, id: t.id }; });
+			genIndex = 0;
+			currentStage = 0;
+			selectStage(0);
 		}
 		if (flow) {
 			stages.forEach(function (stage, i) {
@@ -391,17 +447,35 @@
 				b.className = "flow-step" + (i === 0 ? " is-active" : "");
 				b.setAttribute("data-stage", i);
 				b.innerHTML = '<span class="fs-num">0' + (i + 1) + "</span><b>" + stage.name + "</b>";
-				b.addEventListener("click", function () { selectStage(i); });
+				b.addEventListener("click", function () { stopRun(); selectStage(i); });
 				flow.appendChild(b);
 			});
 			selectStage(0);
 		}
 		if (nextBtn) {
 			nextBtn.addEventListener("click", function () {
-				selectStage(currentStage >= stages.length - 1 ? 0 : currentStage + 1);
+				stopRun();
+				if (currentStage < stages.length - 1) selectStage(currentStage + 1);
+				else if (genIndex < continuation.length) appendPrediction();
+				else resetLoop();
 			});
 		}
-		if (resetBtn) resetBtn.addEventListener("click", function () { selectStage(0); });
+		if (runBtn) {
+			runBtn.addEventListener("click", function () {
+				if (runTimer) { stopRun(); return; }
+				runBtn.textContent = "Pause ⏸";
+				runTimer = setInterval(function () {
+					if (currentStage < stages.length - 1) {
+						selectStage(currentStage + 1);
+					} else if (genIndex < continuation.length) {
+						appendPrediction();
+					} else {
+						stopRun();
+					}
+				}, 700);
+			});
+		}
+		if (resetBtn) resetBtn.addEventListener("click", resetLoop);
 		var maskToggle = document.getElementById("pipe-mask-toggle");
 		var maskWrap = document.getElementById("pipe-mask");
 		var cmGrid = document.getElementById("cm-grid");

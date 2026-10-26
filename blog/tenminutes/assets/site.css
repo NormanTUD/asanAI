@@ -4086,3 +4086,17 @@ html[data-theme="dark"] .curve-points {
 	.pref-grid { grid-template-columns: 1fr; }
 	.mary-room { height: 200px; }
 }
+
+.pipe-token.is-new { background: var(--tm-gold); border-color: var(--tm-gold); color: #000000; }
+.pipe-prediction {
+	margin-top: 10px;
+	padding: 8px 12px;
+	border-left: 3px solid var(--tm-gold);
+	border-radius: 0 8px 8px 0;
+	background: rgba(159, 151, 0, 0.12);
+	font-family: var(--tm-mono);
+	font-size: 0.7rem;
+	line-height: 1.4;
+	color: rgba(238, 247, 244, 0.8);
+}
+.pipe-prediction b { color: var(--tm-lime); }
