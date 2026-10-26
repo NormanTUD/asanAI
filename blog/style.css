@@ -13662,9 +13662,3 @@ summary:focus-visible,
 	}
 }
 
-.mnf-quote.is-container {
-	font-style: normal;
-	font-family: var(--mn-font-body);
-	color: var(--mn-text-secondary);
-}
-

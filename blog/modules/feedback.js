@@ -742,8 +742,7 @@
 		}
 		pending = info;
 		formKey = info.key;
-		quoteEl.textContent = info.selectedText || info.containerLabel || "Feedback on this demo";
-		quoteEl.classList.toggle("is-container", !info.selectedText);
+		quoteEl.textContent = info.selectedText || info.containerLabel || "Selected passage";
 		open = true;
 		layer.hidden = false;
 		panel.hidden = false;
