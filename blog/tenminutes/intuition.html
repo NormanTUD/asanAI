@@ -36,17 +36,17 @@
 						<div class="prose">
 							<p>
 								Here is the core idea. A language model reads a sequence of
-								words and returns a <strong>probability for every possible next word</strong>.
-								One word is chosen, appended to the input, and the whole thing runs again.
-								That is the <strong>autoregressive loop</strong>.
+								tokens — words, in this toy — and returns a <strong>probability for every
+								possible next token</strong>. One is chosen, appended to the input, and the
+								whole thing runs again. That is the <strong>autoregressive loop</strong>.
 							</p>
 							<p>
 								Two words in that description are doing quiet work. “Probability” means the
 								model ranks all candidates at once; it does not know the answer and then
 								assign a score. “Chosen” is a separate decision, called <strong>decoding</strong>:
-								the model supplies the distribution, and the decoder picks from it. A real
-								model also reads <strong>tokens</strong>, not words — whole words, word
-								fragments, punctuation — which is the subject of tokenization.
+								the model supplies the distribution, and the decoder picks from it. The toy
+								calls its tokens words; in a real model a token can be a whole word, a word
+								fragment, or punctuation — which is the subject of tokenization.
 							</p>
 							<p>
 								This picture is deliberately incomplete. A real model has many layers
