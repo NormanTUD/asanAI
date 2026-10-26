@@ -36,10 +36,10 @@
 					<p class="kicker">Day 2 · Part 1 · History</p>
 					<h1>A <span class="very">very</span> brief<br>history of AI.</h1>
 					<p class="hero-deck">
-						Modern AI did not appear in 2022. It grew out of counting bones, geared models of
-						the sky, formal logic, cybernetic feedback, a machine that learned from its mistakes,
-						two winters, and a crowd of contributors who are usually left out of the story.
-						<strong>This is the lineage, not the legend.</strong>
+						Modern AI grew out of counting bones, geared models of the sky, formal logic,
+						cybernetic feedback, a machine that learned from its mistakes, two winters, and
+						a crowd of contributors who are usually left out of the story. The route is
+						longer and more collective than the usual parade of famous names.
 					</p>
 					<div class="hero-meta">
 						<span class="pill pill--green">10 minutes</span>
@@ -54,7 +54,7 @@
 				<article class="lesson-main">
 					<section class="section-block" id="fuse">
 						<div class="section-kicker"><span class="sk-num">01</span> The long fuse</div>
-						<h2 class="section-title">History is convergence, not a conveyor belt.</h2>
+						<h2 class="section-title">Many currents met here.</h2>
 						<div class="prose">
 							<p>
 								The history of AI is not a straight line leading inevitably to the large
@@ -83,28 +83,33 @@
 					</section>
 
 					<section class="section-block" id="timeline">
-						<div class="section-kicker"><span class="sk-num">02</span> Ten turning points</div>
+						<div class="section-kicker"><span class="sk-num">02</span> Twelve turning points</div>
 						<h2 class="section-title">Follow the fuse.</h2>
 						<div class="prose">
 							<p>
-								Click a point on the line. The selection is not “the most important moment” —
-								it is a thread worth pulling. The dates are approximate where the evidence is.
+								Pick a point on the line and pull that thread. Dates are approximate where
+								the evidence is.
 							</p>
 						</div>
 
 						<div class="demo demo--paper timeline-shell" id="timeline-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title">Ten turning points <span>· demo 01</span></p>
-									<p class="demo-sub">Scroll the line sideways if needed. Click a node for the detail.</p>
+									<p class="demo-title">Twelve turning points <span>· demo 01</span></p>
+									<p class="demo-sub">Drag the line, scroll sideways, or use the arrow buttons. Select a node to read its story.</p>
 								</div>
 								<span class="demo-badge">43,000 BCE → today</span>
 							</div>
 							<div class="demo-body">
-								<div class="timeline-track" id="timeline-track" role="group" aria-label="Timeline of turning points"></div>
+								<div class="timeline-hint" aria-hidden="true"><span><b>↔</b> drag</span><span><b>↕</b> scroll</span><span><b>← →</b> keys</span></div>
+								<div class="timeline-scroller">
+									<button class="tl-scroll-btn" type="button" id="tl-prev" aria-label="Scroll the timeline left">‹</button>
+									<div class="timeline-track" id="timeline-track" role="group" aria-label="Timeline of turning points" tabindex="0"></div>
+									<button class="tl-scroll-btn" type="button" id="tl-next" aria-label="Scroll the timeline right">›</button>
+								</div>
 								<div class="tl-panel" id="timeline-panel" aria-live="polite"></div>
 							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>There is no single cause and no inevitable line. The timeline is a thread you can pull, not the whole rope.</span></div>
+							<div class="demo-insight"><b>Takeaway</b><span>Many causes met along one line. Pull a thread and you can follow it backwards.</span></div>
 							<div class="demo-foot">
 								A compressed route through a much longer chapter. The full lesson has the
 								receipts: primary sources, contested dates, and the contributors the standard
@@ -150,8 +155,8 @@
 								The <strong>Antikythera mechanism</strong> (c. 200–60 BCE, recovered in 1901)
 								takes the next step: at least 30 meshing bronze gears model the sky, predicting
 								astronomical positions and eclipses decades in advance. For over a millennium,
-								no equally complex geared technology is known in the West. Computation has
-								roots in mechanical <em>simulation</em>, not only in arithmetic.
+								no equally complex geared technology is known in the West. Computation also
+								has roots in mechanical <em>simulation</em>.
 							</p>
 						</div>
 						<figure>
@@ -170,8 +175,8 @@
 						<h2 class="section-title">Reason and speech become calculi.</h2>
 						<div class="prose">
 							<p>
-								The digits a machine works with today are not self-evident. They are the
-								accumulation of four inventions: <strong>place value</strong> (Babylonian,
+								The digits a machine works with today are the accumulation of four
+								inventions: <strong>place value</strong> (Babylonian,
 								c. 2000 BCE), <strong>zero as a number</strong> (Brahmagupta, 628 CE),
 								<strong>negative numbers</strong> (Han-dynasty Chinese mathematics), and
 								<strong>decimal fractions</strong> (Stevin, 1585). Pingala’s Sanskrit prosody

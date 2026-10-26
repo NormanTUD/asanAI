@@ -2990,8 +2990,7 @@ body[data-page="lesson"] .shell {
 	width: min(1400px, calc(100% - clamp(24px, 4vw, 72px)));
 }
 body[data-page="lesson"] .hero--lesson {
-	max-width: 1080px;
-	margin-inline: auto;
+	max-width: none;
 }
 body[data-page="lesson"] .lesson-layout {
 	grid-template-columns: minmax(0, 1fr);
@@ -3010,19 +3009,16 @@ body[data-page="lesson"] .lesson-main > .section-block > .prose,
 body[data-page="lesson"] .lesson-main > .section-block > .trythis,
 body[data-page="lesson"] .lesson-main > .section-block > .fieldnotes,
 body[data-page="lesson"] .lesson-main > .section-block > .formula,
-body[data-page="lesson"] .lesson-main > .section-block > .keypoints {
-	max-width: 80ch;
-	margin-inline: auto;
-}
+body[data-page="lesson"] .lesson-main > .section-block > .keypoints,
 body[data-page="lesson"] .lesson-main > .section-block > .demo,
 body[data-page="lesson"] .lesson-main > .section-block > .split-figure,
 body[data-page="lesson"] .lesson-main > .section-block > .image-trio,
 body[data-page="lesson"] .lesson-main > .section-block > figure,
 body[data-page="lesson"] .lesson-main > .section-block > .profile-spotlight,
 body[data-page="lesson"] .lesson-main > .section-block > .myth-grid {
+	max-width: none;
 	width: 100%;
 }
-body[data-page="lesson"] .lesson-nav { max-width: 80ch; }
 
 /* ── timeline: make the horizontal move obvious ─────────── */
 
