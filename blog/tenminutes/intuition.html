@@ -34,7 +34,7 @@
 			<section class="hero hero--lesson">
 				<div>
 					<p class="kicker">Day 1 · Part 1 · Foundations</p>
-					<h1>One word<br><em>at a time.</em></h1>
+					<h1>One word <em>at a time.</em></h1>
 					<p class="hero-deck">
 						A large language model is a next-token predictor. <strong>Chat, code, translation,
 						reasoning</strong> — everything else is that one trick repeated in a loop, at
@@ -182,105 +182,141 @@
 							</div>
 							<div class="demo-body">
 								<div class="step-tabs" role="tablist" aria-label="Steps inside the model">
-									<button class="step-tab is-on" type="button" role="tab" aria-selected="true" aria-controls="step-tokenize" id="tab-tokenize" data-step="tokenize">1 · Tokens</button>
-									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-embed" id="tab-embed" data-step="embed">2 · Embedding</button>
-									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-position" id="tab-position" data-step="position">3 · Position</button>
-									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-attention" id="tab-attention" data-step="attention">4 · Attention</button>
-									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-ffn" id="tab-ffn" data-step="ffn">5 · Feed-forward</button>
-									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-residual" id="tab-residual" data-step="residual">6 · Residual stream</button>
+									<button class="step-tab is-on" type="button" role="tab" aria-selected="true" aria-controls="step-tokenize" id="tab-tokenize" data-step="tokenize"><span class="st-num">01</span><span class="st-name">Tokens</span><span class="st-sub">text → ids</span></button>
+									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-embed" id="tab-embed" data-step="embed"><span class="st-num">02</span><span class="st-name">Embedding</span><span class="st-sub">ids → vectors</span></button>
+									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-position" id="tab-position" data-step="position"><span class="st-num">03</span><span class="st-name">Position</span><span class="st-sub">order signal</span></button>
+									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-attention" id="tab-attention" data-step="attention"><span class="st-num">04</span><span class="st-name">Attention</span><span class="st-sub">mix context</span></button>
+									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-ffn" id="tab-ffn" data-step="ffn"><span class="st-num">05</span><span class="st-name">Feed-forward</span><span class="st-sub">compute per token</span></button>
+									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-residual" id="tab-residual" data-step="residual"><span class="st-num">06</span><span class="st-name">Residual</span><span class="st-sub">carry it forward</span></button>
 								</div>
 
 								<div class="step-pane is-on" id="step-tokenize" role="tabpanel" aria-labelledby="tab-tokenize">
-									<div class="step-toolbar">
-										<input class="step-input" type="text" id="itok-input" aria-label="Text to tokenize" value="The transformer is playing greatly">
-										<div class="step-chips">
-											<button class="chip" type="button" data-tok="understanding">understanding</button>
-											<button class="chip" type="button" data-tok="unbreakable">unbreakable</button>
-											<button class="chip" type="button" data-tok="The transformer is playing greatly">a full sentence</button>
+									<div class="step-stage">
+										<div class="step-pane-head">
+											<span class="sp-kicker">Step 1 · Tokenize</span>
+											<h3 class="sp-title">Text becomes a sequence of ids</h3>
 										</div>
+										<div class="step-toolbar">
+											<input class="step-input" type="text" id="itok-input" aria-label="Text to tokenize" value="The transformer is playing greatly">
+											<div class="step-chips">
+												<button class="chip" type="button" data-tok="understanding">understanding</button>
+												<button class="chip" type="button" data-tok="unbreakable">unbreakable</button>
+												<button class="chip" type="button" data-tok="The transformer is playing greatly">a full sentence</button>
+											</div>
+										</div>
+										<div class="token-chips" id="itok-out" aria-live="polite"></div>
+										<div class="demo-readout demo-readout--4" id="itok-stats"></div>
 									</div>
-									<div class="token-chips" id="itok-out" aria-live="polite"></div>
-									<div class="step-out" id="itok-stats"></div>
 									<p class="step-note">A model does not read words. It reads <b>tokens</b>: common words, word fragments, punctuation, and whitespace, each with a fixed numeric id. Rare words split into pieces the vocabulary already knows.</p>
 								</div>
 
 								<div class="step-pane" id="step-embed" role="tabpanel" aria-labelledby="tab-embed" hidden>
-									<div class="step-toolbar">
-										<input class="step-input" type="text" id="iemb-input" aria-label="Words to highlight" value="Man Woman Prince King">
-										<div class="step-chips">
-											<button class="chip" type="button" data-emb="King - Man + Woman">King − Man + Woman</button>
-											<button class="chip" type="button" data-emb="Man + Power">Man + Power</button>
-											<button class="chip" type="button" data-emb="Prince + Power">Prince + Power</button>
-											<button class="chip" type="button" data-emb="directions">↗ directions</button>
+									<div class="step-stage">
+										<div class="step-pane-head">
+											<span class="sp-kicker">Step 2 · Embed</span>
+											<h3 class="sp-title">Ids become points in meaning space</h3>
 										</div>
+										<div class="step-toolbar">
+											<input class="step-input" type="text" id="iemb-input" aria-label="Words to highlight" value="Man Woman Prince King">
+											<div class="step-chips">
+												<button class="chip" type="button" data-emb="King - Man + Woman">King − Man + Woman</button>
+												<button class="chip" type="button" data-emb="Man + Power">Man + Power</button>
+												<button class="chip" type="button" data-emb="Prince + Power">Prince + Power</button>
+												<button class="chip" type="button" data-emb="directions">↗ directions</button>
+											</div>
+										</div>
+										<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with power and gender axes"></canvas>
+										<div class="step-out" id="iemb-out">The space has two semantic axes in this toy: <b>power</b> and <b>gender</b>. Change the expression or the highlighted words.</div>
 									</div>
-									<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with power and gender axes"></canvas>
-									<div class="step-out" id="iemb-out">The space has two semantic axes in this toy: <b>power</b> and <b>gender</b>. Change the expression or the highlighted words.</div>
 									<p class="step-note">Meaning becomes geometry. Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Real embeddings use thousands of dimensions; this toy uses two so you can see the idea.</p>
 								</div>
 
 								<div class="step-pane" id="step-position" role="tabpanel" aria-labelledby="tab-position" hidden>
-									<div class="step-toolbar">
-										<label>Dimensions
-											<input type="range" id="ipe-dims" min="2" max="12" step="1" value="8">
-											<output id="ipe-dims-out">8</output>
-										</label>
+									<div class="step-stage">
+										<div class="step-pane-head">
+											<span class="sp-kicker">Step 3 · Position</span>
+											<h3 class="sp-title">Every slot gets its own fingerprint</h3>
+										</div>
+										<div class="step-toolbar">
+											<label>Dimensions
+												<input type="range" id="ipe-dims" min="2" max="12" step="1" value="8">
+												<output id="ipe-dims-out">8</output>
+											</label>
+										</div>
+										<canvas class="step-canvas" id="ipe-canvas" aria-label="A heatmap of positional encodings for twenty positions"></canvas>
+										<div class="step-out" id="ipe-out">Each row is one position. Each column is one dimension of the position signal.</div>
 									</div>
-									<canvas class="step-canvas" id="ipe-canvas" aria-label="A heatmap of positional encodings for twenty positions"></canvas>
-									<div class="step-out" id="ipe-out">Each row is one position. Each column is one dimension of the position signal.</div>
 									<p class="step-note">Attention has no built-in sense of order. A <b>positional encoding</b> adds a unique fingerprint to every position, so “dog bites man” and “man bites dog” stop looking like the same bag of vectors.</p>
 								</div>
 
 								<div class="step-pane" id="step-attention" role="tabpanel" aria-labelledby="tab-attention" hidden>
-									<div class="step-toolbar">
-										<div class="step-chips" id="iatt-examples">
-											<button class="chip is-on" type="button" data-att="0">no context</button>
-											<button class="chip" type="button" data-att="1">river nearby</button>
-											<button class="chip" type="button" data-att="2">money nearby</button>
-											<button class="chip" type="button" data-att="3">both nearby</button>
+									<div class="step-stage">
+										<div class="step-pane-head">
+											<span class="sp-kicker">Step 4 · Attend</span>
+											<h3 class="sp-title">Context pulls the word into place</h3>
 										</div>
+										<div class="step-toolbar">
+											<div class="step-chips" id="iatt-examples">
+												<button class="chip is-on" type="button" data-att="0">no context</button>
+												<button class="chip" type="button" data-att="1">river nearby</button>
+												<button class="chip" type="button" data-att="2">money nearby</button>
+												<button class="chip" type="button" data-att="3">both nearby</button>
+											</div>
+										</div>
+										<div class="attn-sentence" id="iatt-sentence">I walk to the <span class="aw-bank">bank</span>.</div>
+										<canvas class="step-canvas" id="iatt-canvas" aria-label="Attention moving the embedding of bank toward the context"></canvas>
+										<div class="step-out" id="iatt-out">No context: bank stays in the middle, ambiguous.</div>
 									</div>
-									<div class="attn-sentence" id="iatt-sentence">I walk to the <span class="aw-bank">bank</span>.</div>
-									<canvas class="step-canvas" id="iatt-canvas" aria-label="Attention moving the embedding of bank toward the context"></canvas>
-									<div class="step-out" id="iatt-out">No context: bank stays in the middle, ambiguous.</div>
 									<p class="step-note">An <b>attention head</b> compares a token with the other tokens and moves its representation toward the evidence. The same word can end up in a different place depending on the company it keeps.</p>
 								</div>
 
 								<div class="step-pane" id="step-ffn" role="tabpanel" aria-labelledby="tab-ffn" hidden>
-									<div class="step-toolbar">
-										<div class="step-chips" id="iffn-scenarios">
-											<button class="chip is-on" type="button" data-ffn="fruit">Context: eating an apple</button>
-											<button class="chip" type="button" data-ffn="tech">Context: buying an apple</button>
+									<div class="step-stage">
+										<div class="step-pane-head">
+											<span class="sp-kicker">Step 5 · Feed-forward</span>
+											<h3 class="sp-title">A key matches, a value gets written</h3>
 										</div>
+										<div class="step-toolbar">
+											<div class="step-chips" id="iffn-scenarios">
+												<button class="chip is-on" type="button" data-ffn="fruit">Context: eating an apple</button>
+												<button class="chip" type="button" data-ffn="tech">Context: buying an apple</button>
+											</div>
+										</div>
+										<div class="ffn-grid">
+											<div class="ffn-col">
+												<div class="ffn-col-head">Residual stream</div>
+												<div class="ffn-pill is-fire">“Apple” + context</div>
+											</div>
+											<div class="ffn-col">
+												<div class="ffn-col-head">Keys · patterns in W₁</div>
+												<div class="ffn-list" id="iffn-keys"></div>
+											</div>
+											<div class="ffn-col">
+												<div class="ffn-col-head">Values · next-token hints</div>
+												<div class="ffn-list" id="iffn-values"></div>
+											</div>
+											<div class="ffn-col">
+												<div class="ffn-col-head">Written back</div>
+												<div class="ffn-pill is-fire">richer vector</div>
+											</div>
+										</div>
+										<div class="step-out" id="iffn-out"></div>
 									</div>
-									<div class="ffn-grid">
-										<div class="ffn-col">
-											<div class="ffn-col-head">Residual stream</div>
-											<div class="ffn-pill is-fire">“Apple” + context</div>
-										</div>
-										<div class="ffn-col">
-											<div class="ffn-col-head">Keys · patterns in W₁</div>
-											<div class="ffn-list" id="iffn-keys"></div>
-										</div>
-										<div class="ffn-col">
-											<div class="ffn-col-head">Values · next-token hints</div>
-											<div class="ffn-list" id="iffn-values"></div>
-										</div>
-										<div class="ffn-col">
-											<div class="ffn-col-head">Written back</div>
-											<div class="ffn-pill is-fire">richer vector</div>
-										</div>
-									</div>
-									<div class="step-out" id="iffn-out"></div>
 									<p class="step-note">Attention moves information <b>between</b> positions. The feed-forward network works on each position <b>alone</b>: it matches patterns and writes back a distribution over likely next tokens. This is where much of the model's stored knowledge lives.</p>
 								</div>
 
 								<div class="step-pane" id="step-residual" role="tabpanel" aria-labelledby="tab-residual" hidden>
-									<div class="res-stream">
-										<div class="res-layers" id="ires-layers"></div>
-										<div class="res-panel">
-											<div class="res-bars" id="ires-bars"></div>
-											<div class="res-legend"><span><i></i> running stream</span><span id="ires-out"></span></div>
+									<div class="step-stage">
+										<div class="step-pane-head">
+											<span class="sp-kicker">Step 6 · Residual</span>
+											<h3 class="sp-title">Every layer adds to the same stream</h3>
+										</div>
+										<div class="res-stream">
+											<div class="res-layers" id="ires-layers"></div>
+											<div class="res-panel">
+												<div class="res-bars" id="ires-bars"></div>
+												<div class="res-legend"><span><i></i> running stream</span><span id="ires-out"></span></div>
+											</div>
 										</div>
 									</div>
 									<p class="step-note">Every layer reads the same running vector, computes an update, and <b>adds</b> it back. Nothing is overwritten. The stream is a shared notebook that carries what the sentence means so far.</p>
@@ -385,54 +421,16 @@
 						<div class="pullquote">
 							A large language model is a finite vocabulary laid over an infinite space of
 							meaning — and a loop that keeps falling from one point in that space to the next word.
-							<cite>From the full chapter</cite>
+							<cite>The loop, seen from close up</cite>
 						</div>
 					</section>
 
 
-					<nav class="lesson-nav" aria-label="Lesson navigation">
-						<a href="intro.html"><span class="ln-label">Previous</span><span class="ln-title">What this course is</span></a>
-						<a href="history.html"><span class="ln-label">Next</span><span class="ln-title">A <em>very</em> brief history</span></a>
-					</nav>
-
-					<div class="lesson-footer">
-						Condensed from <a href="../intuition.php">An Intuition of how Large Language Models work</a>
-						(Part 1, Lesson 1). The full chapter adds tokenization, embeddings, positional
-						encoding, attention, the truth tunnel, and the mathematics of compression.
-						All demos here are small, honest toys built for this page.
-					</div>
-				</article>
-
-				<aside class="rail" aria-label="On this page">
-					<nav class="rail-nav">
-						<a href="#idea"><i></i>The only trick</a>
-						<a href="#loop"><i></i>Play the loop</a>
-						<a href="#meadow"><i></i>The meadow</a>
-						<a href="#whole"><i></i>The whole loop</a>
-					</nav>
-					<div class="rail-source">
-						Read the original:<br>
-						<a href="../intuition.php">An Intuition of how LLMs work</a>
-					</div>
-				</aside>
+					</article>
 			</div>
 		</div>
 	</main>
 
-	<footer class="footer">
-		<div class="shell footer-grid">
-			<div>
-				<div class="footer-brand">10<sup>′</sup> Minutes</div>
-				<p>A compact companion to <a href="../index.php">From Nothing to ChatGPT</a>. Full sources and citations live in the long course.</p>
-			</div>
-			<nav aria-label="Footer">
-				<a href="index.html">Home</a>
-				<a href="advent.html">Calendar</a>
-				<a href="history.html">Next: History</a>
-				<a href="../intuition.php">Full chapter</a>
-			</nav>
-		</div>
-	</footer>
 	<script src="assets/site.js"></script>
 	<script>
 	(function () {
@@ -902,8 +900,11 @@
 				var spaces = tokens.filter(function (t) { return t.space; }).length;
 				var subs = tokens.filter(function (t) { return t.sub; }).length;
 				var words = tokens.length - spaces;
-				stats.innerHTML = '<b>' + tokens.length + '</b> tokens · <b>' + words + '</b> pieces · <b>' +
-					subs + '</b> subword splits' + (spaces ? ' · <b>' + spaces + '</b> whitespace' : '');
+				stats.innerHTML =
+					'<div><b>Tokens</b><span>' + tokens.length + '</span></div>' +
+					'<div><b>Pieces</b><span>' + words + '</span></div>' +
+					'<div><b>Subword splits</b><span>' + subs + '</span></div>' +
+					'<div><b>Whitespace</b><span>' + spaces + '</span></div>';
 			}
 		}
 		var tokInput = document.getElementById("itok-input");

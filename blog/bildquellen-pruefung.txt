@@ -1352,3 +1352,4 @@ Die Seite nutzt ausschließlich bereits im Blog vorhandene, oben geprüfte Datei
 21. deep_blue_kasparov.jpg — Stan Honda / The Guardian, CC BY 2.0 — Section 07 "Deep Blue"
 22. Sanzio_01_Plato_Aristotle.jpg — Raphael, Public domain — Section 04 "Aristotle and Plato"
 23. Leibnizrechenmaschine.jpg — Eremeev, CC BY-SA 4.0 — Section 05 "Leibniz's stepped reckoner"
+24. transformer_attention_heads.png — Google, CC BY-SA 4.0 — Timeline "Transformer & BERT"
