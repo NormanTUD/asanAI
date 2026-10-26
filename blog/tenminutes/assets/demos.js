@@ -1573,6 +1573,7 @@
 
 		function draw(ctx, w, h) {
 			var c = colors();
+			var sky = hexToRgb(c.sky);
 			ctx.clearRect(0, 0, w, h);
 			var pad = 24;
 			var maxMatrix = Math.min(h - 40, w * 0.58);
@@ -1598,7 +1599,7 @@
 					var passed = conf[i] >= threshold && conf[j] >= threshold;
 					var alpha = strength * (Math.min(conf[i], conf[j]) / 100) * (passed ? 0.9 : 0.1);
 					if (i === selected || j === selected) alpha *= 1.25;
-					ctx.fillStyle = "rgba(92,155,175," + Math.min(0.9, alpha).toFixed(3) + ")";
+					ctx.fillStyle = "rgba(" + sky[0] + "," + sky[1] + "," + sky[2] + "," + Math.min(0.9, alpha).toFixed(3) + ")";
 					ctx.fillRect(ox + j * cell, oy + i * cell, Math.max(1, cell - 1), Math.max(1, cell - 1));
 				}
 			}
@@ -1609,12 +1610,14 @@
 			ctx.font = "500 9px ui-monospace, monospace";
 			ctx.fillStyle = c.faint;
 			ctx.textAlign = "center";
-			for (var k = 0; k <= N; k += 10) {
-				ctx.fillText(String(k), ox + k * cell, oy + maxMatrix + 12);
+			var ticks = [0, 9, 19, 29, 39];
+			var tickLabels = ["1", "10", "20", "30", "40"];
+			for (var k = 0; k < ticks.length; k++) {
+				ctx.fillText(tickLabels[k], ox + (ticks[k] + 0.5) * cell, oy + maxMatrix + 12);
 			}
 			ctx.textAlign = "right";
-			for (var k2 = 0; k2 <= N; k2 += 10) {
-				ctx.fillText(String(k2), ox - 4, oy + k2 * cell + 3);
+			for (var k2 = 0; k2 < ticks.length; k2++) {
+				ctx.fillText(tickLabels[k2], ox - 4, oy + (ticks[k2] + 0.5) * cell + 3);
 			}
 
 			ctx.strokeStyle = c.green;
@@ -1657,8 +1660,8 @@
 			ctx.font = "500 9px ui-monospace, monospace";
 			ctx.fillStyle = c.faint;
 			ctx.textAlign = "center";
-			ctx.fillText("0", barsX, barsBottom + 12);
-			ctx.fillText("40", barsX + barsW, barsBottom + 12);
+			ctx.fillText("1", barsX + 0.5 * barW, barsBottom + 12);
+			ctx.fillText("40", barsX + (N - 0.5) * barW, barsBottom + 12);
 
 			var kept = conf.filter(function (v) { return v >= threshold; }).length;
 			var mean = Math.round(conf.reduce(function (a, b) { return a + b; }, 0) / N);
