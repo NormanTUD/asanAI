@@ -1332,7 +1332,7 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
    Lizenz: CC BY 2.5
    Autor: Chris Henshilwood
    Lokal: blombosochre.jpg (1670x1058)
-   Genutzt in: language.php § "The Cognitive Ignition"; tenminutes/language.html § "Cave Paintings and Symbolic Art"
+   Genutzt in: language.php § "The Cognitive Ignition"; tenminutes/language.html § "Cave Paintings and Symbolic Art"; tenminutes/history.html § "External memory"
    Status: OK - CC BY 2.5
 
 6. cuneiform_image
@@ -1386,6 +1386,8 @@ Die Seite nutzt ausschließlich bereits im Blog vorhandene, oben geprüfte Datei
 22. Leibnizrechenmaschine.jpg — Eremeev, CC BY-SA 4.0 — Section 05 "Leibniz's stepped reckoner"
 23. transformer_attention_heads.png — Google, CC BY-SA 4.0 — Timeline "Transformer & BERT"
 24. shrdlu.gif — ai.lect, CC BY-SA 4.0 — Timeline "Winters & narrow AI"
+25. trinil_shell.jpg — Naturalis Biodiversity Center, CC BY-SA 3.0 — Section 03 "External memory"
+26. blombosochre.jpg — Chris Henshilwood, CC BY 2.5 — Section 03 "External memory"
 
 === TEN MINUTES: ZUSÄTZLICHE BILDVERWENDUNGEN (Oktober 2026) ===
 Die folgenden Dateien werden zusätzlich in blog/tenminutes/ verwendet. Quellen
@@ -1479,3 +1481,15 @@ Autor, Lizenz und Quellenlink direkt in der Abbildung.
    Lokal: shrdlu.gif (599x217)
    Genutzt in: agents.php § "Classical AI: Symbolic Agents"; history.php § "The Triumph of Symbolic AI"; tenminutes/history.html § "Winters & narrow AI"
    Status: OK - CC BY-SA 4.0
+
+
+=== TRINIL SHELL (geometry_i.php + tenminutes/history.html, Stand: Oktober 2026) ===
+====================================================================
+
+1. trinilshell_image
+   URL: https://commons.wikimedia.org/wiki/File:Homo_Erectus_shell_with_geometric_incisions_circa_500,000_BP,_Naturalis_Biodiversity_Center,_Netherlands_(with_detail).jpg
+   Lizenz: CC BY-SA 3.0 (via Commons API extmetadata)
+   Autor: Naturalis Biodiversity Center, The Netherlands
+   Lokal: trinil_shell.jpg (3083x878)
+   Genutzt in: geometry_i.php § "The Trinil shell"; tenminutes/history.html § "External memory" (image.php w=900)
+   Status: OK - CC BY-SA 3.0
