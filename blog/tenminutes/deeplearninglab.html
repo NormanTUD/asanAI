@@ -98,7 +98,7 @@
 							<p>The clever part is that backprop <strong>reuses intermediate results</strong>, walking the error signal <em>backward</em> through the network. What would naively be exponential bookkeeping becomes <strong>linear in the number of layers</strong>.</p>
 							<p>Repeat millions of times. The <strong>trajectory of the weights through weight-space</strong> is literally what writes the knowledge into the matrices. There is no separate memory — the knowledge <em>is</em> the final numbers.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: <a href="../deeplearninglab.php">read it here</a>.</p>
+						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
@@ -115,7 +115,7 @@
 						<div class="prose">
 							<p>There's a practical problem with stacking many layers. When backprop sends the error signal backward through, say, 100 layers, it gets multiplied by many small numbers along the way. The signal often <strong>shrinks to nearly zero</strong> (the "vanishing gradient" problem) or occasionally explodes. Early layers stop learning because they receive no meaningful feedback.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: <a href="../deeplearninglab.php">read it here</a>.</p>
+						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
@@ -125,7 +125,7 @@
 							<p>Deep networks are harder to train. Gradients can vanish or explode, activations can drift, and the loss surface can be unfriendly. Residual connections, normalisation, careful initialisation, and learning-rate schedules are not decoration; they are what make depth practical.</p>
 							<p>Depth also costs compute and data. A deeper model is not automatically better; it needs enough signal to learn the hierarchy. The architecture is powerful, but the optimisation and the data are part of the result.</p>
 						</div>
-						<p class="step-note">The full lesson has the derivations, sources, and lab: <a href="../deeplearninglab.php">read it here</a>.</p>
+						<p class="step-note">The full lesson has the derivations, sources, and lab: read it here.</p>
 					</section>
 
 					<section class="section-block" id="takeaway">
@@ -137,7 +137,7 @@
 							<p class="aha-sub">The power comes from building features on top of features, not from adding more of the same.</p>
 						</div>
 						<div class="prose">
-							<p>This is the ten-minute version. The <a href="../deeplearninglab.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p>This is the ten-minute version. The full lesson goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
 						</div>
 					</section>
 				</article>

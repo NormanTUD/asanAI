@@ -1125,6 +1125,14 @@
 				chips.forEach(function (x) { x.classList.remove("is-on"); });
 				chip.classList.add("is-on");
 				current = chip.getAttribute("data-ragquery");
+				var q = queries[current];
+				var ranked = chunks.map(function (ch) {
+					var dx = ch.x - q.x, dy = ch.y - q.y;
+					return { ch: ch, d: Math.sqrt(dx * dx + dy * dy) };
+				}).sort(function (a, b) { return a.d - b.d; });
+				if (queryEl) queryEl.textContent = q.label;
+				if (topEl) topEl.textContent = ranked[0].ch.label;
+				if (distEl) distEl.textContent = ranked[0].d.toFixed(2);
 				api.redraw();
 			});
 		});
@@ -1214,6 +1222,8 @@
 		if (btn) btn.addEventListener("click", function () {
 			target = target > 0.5 ? 0 : 1;
 			btn.textContent = target > 0.5 ? "Separate the spaces →" : "Align the spaces →";
+			if (stateEl) stateEl.textContent = target > 0.5 ? "aligned" : "separate";
+			if (simEl) simEl.textContent = target > 0.5 ? "high" : "low";
 			if (!raf) raf = requestAnimationFrame(animate);
 		});
 		api.redraw();
@@ -1370,6 +1380,9 @@
 				chips.forEach(function (x) { x.classList.remove("is-on"); });
 				chip.classList.add("is-on");
 				current = chip.getAttribute("data-vision-layer");
+				if (label) label.textContent = current === "edges" ? "early" : (current === "parts" ? "middle" : "late");
+				if (feature) feature.textContent = current;
+				if (field) field.textContent = current === "edges" ? "small" : (current === "parts" ? "medium" : "large");
 				api.redraw();
 			});
 		});

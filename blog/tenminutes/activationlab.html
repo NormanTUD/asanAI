@@ -98,7 +98,7 @@
 						<div class="prose">
 							<p>The era of S-shaped curves eventually reached a limit. Because both <strong>Sigmoid</strong> and <strong>Tanh</strong> “flatten out” (saturate) at high and low input values, their derivatives become nearly zero. In deep networks, multiplying these tiny numbers together during backpropagation caused the signal to disappear before it reached the earliest layers, a phenomenon known as the <strong>vanishing gradient problem</strong>.</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: <a href="../activationlab.php">read it here</a>.</p>
+						<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: read it here.</p>
 					</section>
 
 					<section class="section-block">
@@ -116,7 +116,7 @@
 							<p>If you input 0.1 and 0.9, you might expect 10% and 90%. Instead, you get roughly 31% and 69%. This is because SoftMax is <strong>not a linear scaling</strong>; it is an <strong>exponential normalization</strong>.</p>
 							<p>By exponentiating the logits, we are measuring the “total growth energy” of all classes combined and then asking: <em>“What percentage of the total energy belongs to Class A?”</em> This ensures that even if a score is negative, it still represents a physical “share” of the total probability, and that the sum of all shares always equals exactly 1.0 (100%).</p>
 						</div>
-						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: <a href="../activationlab.php">read it here</a>.</p>
+						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: read it here.</p>
 					</section>
 
 					<section class="section-block" id="takeaway">
@@ -128,7 +128,7 @@
 							<p class="aha-sub">The activation is the smallest ingredient that makes depth more than decoration.</p>
 						</div>
 						<div class="prose">
-							<p>This is the ten-minute version. The <a href="../activationlab.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p>This is the ten-minute version. The full lesson goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
 						</div>
 					</section>
 				</article>
