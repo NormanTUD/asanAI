@@ -811,7 +811,7 @@
 			window.addEventListener("resize", updateArrows);
 			var timelineDemo = document.getElementById("timeline-demo");
 			if (timelineDemo) {
-				timelineDemo.addEventListener("pointerdown", function (e) {
+				timelineDemo.addEventListener("click", function (e) {
 					if (e.target.closest("button, a, input, select, textarea")) return;
 					try { track.focus({ preventScroll: true }); } catch (err) { track.focus(); }
 				});
