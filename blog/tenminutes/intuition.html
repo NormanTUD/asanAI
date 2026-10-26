@@ -74,13 +74,14 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The autoregressive loop <span>· demo 01</span></p>
-									<p class="demo-sub">Click a candidate or let the toy model choose. Change the temperature to make it predictable or surprising.</p>
+									<p class="demo-sub">Click a candidate or let the toy model choose. Each choice opens only the continuations that make sense from there, so the tree narrows as you go.</p>
 								</div>
 								<span class="demo-badge">live</span>
 							</div>
 							<div class="demo-body">
 								<div class="prediction">
 									<div class="prediction-sentence" id="nt-sentence" aria-live="polite"></div>
+									<div class="nt-tree" id="nt-tree" aria-live="polite"></div>
 									<div class="bars" id="nt-bars" role="group" aria-label="Next token probabilities"></div>
 									<p class="meadow-caption" id="nt-why" style="color:var(--tm-muted)">Sampling draws from the whole distribution; temperature controls how concentrated it is.</p>
 								</div>
@@ -204,7 +205,7 @@
 										<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with power and gender axes"></canvas>
 										<div class="step-out" id="iemb-out">The space has two semantic axes in this toy: <b>power</b> and <b>gender</b>. Change the expression or the highlighted words.</div>
 									</div>
-									<p class="step-note">Meaning becomes geometry. Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Real embeddings use thousands of dimensions; this toy uses two so you can see the idea.</p>
+									<p class="step-note">Meaning becomes geometry. Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Use the <b>gender</b> and <b>power</b> buttons to see each direction on its own; the arrows are labelled directly. Real embeddings use thousands of dimensions; this toy uses two so you can see the idea.</p>
 								</div>
 
 								<div class="step-pane" id="step-position">
@@ -475,32 +476,49 @@
 		"use strict";
 
 		/* ── demo 1: the autoregressive loop ─────────────────── */
-		var stages = [
-			[
-				{ t: "dragon", l: 3.4 }, { t: "princess", l: 1.1 }, { t: "robot", l: 0.7 }, { t: "castle", l: 0.4 }, { t: "river", l: 0.2 }
-			],
-			[
-				{ t: "that", l: 3.1 }, { t: "which", l: 1.4 }, { t: "who", l: 0.8 }, { t: "and", l: 0.3 }, { t: "but", l: 0.2 }
-			],
-			[
-				{ t: "could", l: 3.0 }, { t: "would", l: 1.3 }, { t: "loved", l: 0.9 }, { t: "tried", l: 0.6 }, { t: "had", l: 0.3 }
-			],
-			[
-				{ t: "not", l: 3.3 }, { t: "never", l: 1.2 }, { t: "only", l: 0.8 }, { t: "still", l: 0.5 }, { t: "always", l: 0.3 }
-			],
-			[
-				{ t: "fly", l: 3.5 }, { t: "sing", l: 1.0 }, { t: "sleep", l: 0.7 }, { t: "roar", l: 0.4 }, { t: "swim", l: 0.2 }
-			],
-			[
-				{ t: ".", l: 3.2 }, { t: "!", l: 1.1 }, { t: "…", l: 0.7 }, { t: "—", l: 0.4 }, { t: "?", l: 0.2 }
-			]
+		var MAX_STEPS = 6;
+		var NOUNS = [
+			{ t: "dragon", l: 3.4 }, { t: "princess", l: 1.1 }, { t: "robot", l: 0.7 }, { t: "castle", l: 0.4 }, { t: "river", l: 0.2 }
 		];
+		var ACTIONS = {
+			dragon: [{ t: "fly", l: 3.5 }, { t: "roar", l: 1.5 }, { t: "sleep", l: 0.8 }, { t: "swim", l: 0.5 }, { t: "sing", l: 0.3 }],
+			princess: [{ t: "sing", l: 3.4 }, { t: "dance", l: 1.5 }, { t: "dream", l: 0.9 }, { t: "sleep", l: 0.5 }, { t: "swim", l: 0.3 }],
+			robot: [{ t: "fly", l: 3.3 }, { t: "beep", l: 1.5 }, { t: "sing", l: 0.9 }, { t: "sleep", l: 0.5 }, { t: "swim", l: 0.3 }],
+			castle: [{ t: "stand", l: 3.2 }, { t: "glow", l: 1.5 }, { t: "sleep", l: 0.8 }, { t: "sing", l: 0.4 }],
+			river: [{ t: "flow", l: 3.5 }, { t: "sing", l: 1.2 }, { t: "roar", l: 0.8 }, { t: "freeze", l: 0.5 }, { t: "shine", l: 0.3 }]
+		};
+		function choicesFor() {
+			var n = generated.length;
+			if (n === 0) return NOUNS;
+			if (n === 1) {
+				var noun = generated[0];
+				if (noun === "princess") return [{ t: "that", l: 3.1 }, { t: "who", l: 1.4 }];
+				if (noun === "castle" || noun === "river") return [{ t: "that", l: 3.1 }, { t: "which", l: 1.4 }];
+				return [{ t: "that", l: 3.1 }, { t: "who", l: 1.4 }, { t: "which", l: 0.8 }];
+			}
+			if (n === 2) return [
+				{ t: "could", l: 3.0 }, { t: "would", l: 1.3 }, { t: "loved", l: 0.9 }, { t: "tried", l: 0.6 }, { t: "wanted", l: 0.3 }
+			];
+			if (n === 3) {
+				var verb = generated[2];
+				if (verb === "could" || verb === "would") return [
+					{ t: "not", l: 3.3 }, { t: "never", l: 1.2 }, { t: "only", l: 0.8 }, { t: "still", l: 0.5 }, { t: "always", l: 0.3 }
+				];
+				return [{ t: "to", l: 4.0 }];
+			}
+			if (n === 4) return ACTIONS[generated[0]] || ACTIONS.dragon;
+			if (n === 5) return [
+				{ t: ".", l: 3.2 }, { t: "!", l: 1.1 }, { t: "…", l: 0.7 }
+			];
+			return [];
+		}
 		var base = ["Once", "upon", "a", "time", "there", "was", "a"];
 		var generated = [];
 		var stage = 0;
 		var temp = 0.8;
 		var decodeMode = "sample";
 		var sentenceEl = document.getElementById("nt-sentence");
+		var treeEl = document.getElementById("nt-tree");
 		var barsEl = document.getElementById("nt-bars");
 		var stepBtn = document.getElementById("nt-step");
 		var resetBtn = document.getElementById("nt-reset");
@@ -516,6 +534,24 @@
 			var sum = exps.reduce(function (a, b) { return a + b; }, 0);
 			return exps.map(function (e) { return e / sum; });
 		}
+		function renderTree() {
+			if (!treeEl) return;
+			var path = ['<span class="nt-tree-base">' + escapeHtml(base.join(" ")) + '</span>'];
+			generated.forEach(function (tok) {
+				path.push('<span class="nt-tree-arrow">→</span>');
+				path.push('<span class="nt-tree-node">' + escapeHtml(tok) + '</span>');
+			});
+			var opts = choicesFor();
+			var next;
+			if (opts.length) {
+				next = '<span class="nt-tree-next">' + (opts.length === 1 ? "next (only one):" : "next:") + '</span> '
+					+ opts.map(function (o) { return '<span class="nt-tree-branch">' + escapeHtml(o.t) + '</span>'; }).join('<span class="nt-tree-sep">·</span>');
+			} else {
+				next = '<span class="nt-tree-end">end of sentence</span>';
+			}
+			treeEl.innerHTML = '<div class="nt-tree-line">' + path.join(' ') + '</div>'
+				+ '<div class="nt-tree-line nt-tree-line--next">' + next + '</div>';
+		}
 		function renderSentence() {
 			if (!sentenceEl) return;
 			var html = "";
@@ -526,12 +562,13 @@
 				if (i && !noSpace) html += " ";
 				html += '<span class="' + item.cls + '">' + escapeHtml(item.tok) + "</span>";
 			});
-			if (stage >= stages.length) {
+			if (stage >= MAX_STEPS) {
 				html += ' <span class="given" style="opacity:.55">— sequence complete</span>';
 			} else {
 				html += '<span class="cursor" aria-hidden="true"></span>';
 			}
 			sentenceEl.innerHTML = html;
+			renderTree();
 		}
 		function escapeHtml(s) {
 			return s.replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
@@ -539,16 +576,16 @@
 		function renderBars() {
 			if (!barsEl) return;
 			barsEl.innerHTML = "";
-			if (stage >= stages.length) {
+			if (stage >= MAX_STEPS) {
 				var done = document.createElement("p");
-				done.style.cssText = "margin:0;color:rgba(238,247,244,.62);font-family:var(--tm-prose);font-size:.9rem";
+				done.style.cssText = "margin:0;color:var(--tm-muted);font-family:var(--tm-prose);font-size:.9rem";
 				done.textContent = "The model would now emit an end-of-sequence token, or keep going if the context invited it.";
 				barsEl.appendChild(done);
 				if (stepBtn) { stepBtn.disabled = true; stepBtn.style.opacity = ".45"; }
 				return;
 			}
 			if (stepBtn) { stepBtn.disabled = false; stepBtn.style.opacity = "1"; }
-			var options = stages[stage];
+			var options = choicesFor();
 			var probs = softmax(options.map(function (o) { return o.l; }), temp);
 			var top = 0;
 			probs.forEach(function (p, i) { if (p > probs[top]) top = i; });
@@ -578,7 +615,7 @@
 			updateWhy();
 		}
 		function choose(token) {
-			if (stage >= stages.length) return;
+			if (stage >= MAX_STEPS) return;
 			token.split(" ").forEach(function (piece) { generated.push(piece); });
 			stage++;
 			renderSentence();
@@ -586,8 +623,8 @@
 			updateReadout();
 		}
 		function sample() {
-			if (stage >= stages.length) return;
-			var options = stages[stage];
+			if (stage >= MAX_STEPS) return;
+			var options = choicesFor();
 			var probs = softmax(options.map(function (o) { return o.l; }), temp);
 			var top = 0;
 			probs.forEach(function (p, i) { if (p > probs[top]) top = i; });
@@ -617,6 +654,11 @@
 		function updateWhy() {
 			var why = document.getElementById("nt-why");
 			if (!why) return;
+			var opts = choicesFor();
+			if (opts.length === 1) {
+				why.textContent = "Only one continuation makes sense here: “" + opts[0].t + "”. The tree has narrowed to a single branch.";
+				return;
+			}
 			if (decodeMode === "greedy") why.textContent = "Greedy always takes the highest-probability token. Temperature has no effect; the text is deterministic and often repetitive.";
 			else if (decodeMode === "topp") why.textContent = "Top-p keeps the smallest set of tokens whose probabilities reach 90%, then samples among them. The faded bars are outside the nucleus.";
 			else why.textContent = "Sampling draws from the whole distribution; temperature controls how concentrated it is. Low values behave almost greedily, high values trade coherence for surprise.";
@@ -632,7 +674,7 @@
 			renderBars();
 		}
 		function updateReadout() {
-			if (stepCount) stepCount.textContent = Math.min(stage, stages.length) + " / " + stages.length;
+			if (stepCount) stepCount.textContent = Math.min(stage, MAX_STEPS) + " / " + MAX_STEPS;
 			if (lenEl) lenEl.textContent = (base.length + generated.length) + " tokens";
 		}
 		function reset() {
@@ -1027,6 +1069,11 @@
 			});
 			return { word: best, dist: bd };
 		}
+		function embDirText(mode) {
+			if (mode === "gender") return 'The <b>gender</b> direction (green) is the same from man to woman and from king to queen. It is a learned direction, not a named axis.';
+			if (mode === "power") return 'The <b>power</b> direction (gold) is the same along man → prince → king and woman → princess → queen. The model learns it from the data.';
+			return 'The <b>gender</b> arrow (green) is the same from man to woman and from king to queen. The <b>power</b> arrow (gold) is the same along man → prince → king. Meaning lives in positions and in directions.';
+		}
 		function drawEmb(ctx, w, h) {
 			var c = TM.colors();
 			var pad = 44;
@@ -1119,11 +1166,7 @@
 					arrow(embSpace.Woman, embSpace.Princess, gold, "");
 					arrow(embSpace.Princess, embSpace.Queen, gold, "");
 				}
-				if (embOut) {
-					if (embDirMode === "gender") embOut.innerHTML = 'The <b>gender</b> direction (green) is the same from man to woman and from king to queen. It is a learned direction, not a named axis.';
-					else if (embDirMode === "power") embOut.innerHTML = 'The <b>power</b> direction (gold) is the same along man → prince → king and woman → princess → queen. The model learns it from the data.';
-					else embOut.innerHTML = 'The <b>gender</b> arrow (green) is the same from man to woman and from king to queen. The <b>power</b> arrow (gold) is the same along man → prince → king. Meaning lives in positions and in directions.';
-				}
+				if (embOut) embOut.innerHTML = embDirText(embDirMode);
 				return;
 			}
 
@@ -1184,8 +1227,9 @@
 					document.querySelectorAll("[data-emb]").forEach(function (b) { b.classList.remove("is-on"); });
 					btn.classList.add("is-on");
 					if (expr === "directions" || expr === "gender" || expr === "power") {
-						embDirMode = expr;
+						embDirMode = expr === "directions" ? "all" : expr;
 						embResult = null;
+						if (embOut) embOut.innerHTML = embDirText(embDirMode);
 						if (embApi) embApi.redraw();
 					} else {
 						updateEmb(expr);
