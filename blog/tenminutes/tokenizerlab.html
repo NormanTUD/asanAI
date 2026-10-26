@@ -33,7 +33,6 @@
 		<div class="shell">
 			<section class="hero hero--lesson">
 				<div>
-					<p class="kicker">Day 16 · Part 4 · Language</p>
 					<h1>Chopping text<br><em>into tokens.</em></h1>
 					<p class="hero-deck">
 						A model never sees words. It sees <strong>tokens</strong> — chunks of text — and
@@ -41,12 +40,6 @@
 						to count letters, why some languages cost more, and why a vocabulary entry is
 						not the same thing as a learned concept.
 					</p>
-					<div class="hero-meta">
-						<span class="pill pill--green">10 minutes</span>
-						<span class="pill">Light math</span>
-						<span class="pill pill--blue">Live tokenizer</span>
-						<span class="pill">Recap</span>
-					</div>
 				</div>
 			</section>
 
@@ -250,15 +243,6 @@
 						</div>
 					</section>
 
-
-					<div class="explain-back">
-						<b>Explain it back</b>
-						<p>Why can a model read a word it has never seen, and why is a token not a concept?</p>
-						<details>
-							<summary>Compare with a model answer</summary>
-							<p>An unknown word is split into subword pieces the vocabulary already contains, so it can still be represented. But a token is only a slot in a fixed vocabulary. Its meaning comes from training data; if the token was rare in pretraining, the slot can be almost empty — a glitch token — even though the string is tokenized correctly.</p>
-						</details>
-					</div>
 
 					</article>
 			</div>

@@ -269,7 +269,7 @@ def tokenize_js(content: str):
                 is_regex = True
             elif prev_code[-1] in "=(:,;[!&|?{}>+\n^~%*/":
                 is_regex = True
-            elif prev_code.endswith("return") or prev_code.endswith("typeof") or prev_code.endswith("void") or prev_code.endswith("delete") or prev_code.endswith("throw") or prev_code.endswith("new") or prev_code.endswith("in") or prev_code.endswith("case"):
+            elif re.search(r"\b(?:return|typeof|void|delete|throw|new|in|case)\s*$", prev_code):
                 is_regex = True
 
             if is_regex:

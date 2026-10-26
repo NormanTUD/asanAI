@@ -33,7 +33,6 @@
 		<div class="shell">
 			<section class="hero hero--lesson">
 				<div>
-					<p class="kicker">Day 1 · Part 1 · Foundations</p>
 					<h1>One word <em>at a time.</em></h1>
 					<p class="hero-deck">
 						A large language model is a next-token predictor. <strong>Chat, code, translation,
@@ -41,12 +40,6 @@
 						enormous scale. Follow a sentence through the loop and see why next-token prediction
 						can look like understanding.
 					</p>
-					<div class="hero-meta">
-						<span class="pill pill--green">10 minutes</span>
-						<span class="pill">No math</span>
-						<span class="pill pill--blue">8 interactive demos</span>
-						<span class="pill">Recap</span>
-					</div>
 				</div>
 			</section>
 
@@ -167,7 +160,7 @@
 							<p>
 								The loop is the outside view. Inside, one token passes through a fixed
 								pipeline. Each step changes the representation in a different way, and each
-								is a small idea you can play with. The tabs follow the order of a real
+								is a small idea you can play with. The steps follow the order of a real
 								transformer pass.
 							</p>
 						</div>
@@ -176,21 +169,12 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Inside the model <span>· demos 02–07</span></p>
-									<p class="demo-sub">Switch tabs to follow one token from text to a running vector. Every tab is a toy, but the shape is the real architecture.</p>
+									<p class="demo-sub">Follow one token through six steps. Each step is a small toy, but the order and the division of labour are the real architecture.</p>
 								</div>
 								<span class="demo-badge">six steps</span>
 							</div>
 							<div class="demo-body">
-								<div class="step-tabs" role="tablist" aria-label="Steps inside the model">
-									<button class="step-tab is-on" type="button" role="tab" aria-selected="true" aria-controls="step-tokenize" id="tab-tokenize" data-step="tokenize"><span class="st-num">01</span><span class="st-name">Tokens</span><span class="st-sub">text → ids</span></button>
-									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-embed" id="tab-embed" data-step="embed"><span class="st-num">02</span><span class="st-name">Embedding</span><span class="st-sub">ids → vectors</span></button>
-									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-position" id="tab-position" data-step="position"><span class="st-num">03</span><span class="st-name">Position</span><span class="st-sub">order signal</span></button>
-									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-attention" id="tab-attention" data-step="attention"><span class="st-num">04</span><span class="st-name">Attention</span><span class="st-sub">mix context</span></button>
-									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-ffn" id="tab-ffn" data-step="ffn"><span class="st-num">05</span><span class="st-name">Feed-forward</span><span class="st-sub">compute per token</span></button>
-									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-residual" id="tab-residual" data-step="residual"><span class="st-num">06</span><span class="st-name">Residual</span><span class="st-sub">carry it forward</span></button>
-								</div>
-
-								<div class="step-pane is-on" id="step-tokenize" role="tabpanel" aria-labelledby="tab-tokenize">
+								<div class="step-pane" id="step-tokenize">
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 1 · Tokenize</span>
@@ -210,7 +194,7 @@
 									<p class="step-note">A model does not read words. It reads <b>tokens</b>: common words, word fragments, punctuation, and whitespace, each with a fixed numeric id. Rare words split into pieces the vocabulary already knows.</p>
 								</div>
 
-								<div class="step-pane" id="step-embed" role="tabpanel" aria-labelledby="tab-embed" hidden>
+								<div class="step-pane" id="step-embed">
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 2 · Embed</span>
@@ -231,7 +215,7 @@
 									<p class="step-note">Meaning becomes geometry. Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Real embeddings use thousands of dimensions; this toy uses two so you can see the idea.</p>
 								</div>
 
-								<div class="step-pane" id="step-position" role="tabpanel" aria-labelledby="tab-position" hidden>
+								<div class="step-pane" id="step-position">
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 3 · Position</span>
@@ -249,7 +233,7 @@
 									<p class="step-note">Attention has no built-in sense of order. A <b>positional encoding</b> adds a unique fingerprint to every position, so “dog bites man” and “man bites dog” stop looking like the same bag of vectors.</p>
 								</div>
 
-								<div class="step-pane" id="step-attention" role="tabpanel" aria-labelledby="tab-attention" hidden>
+								<div class="step-pane" id="step-attention">
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 4 · Attend</span>
@@ -270,7 +254,7 @@
 									<p class="step-note">An <b>attention head</b> compares a token with the other tokens and moves its representation toward the evidence. The same word can end up in a different place depending on the company it keeps.</p>
 								</div>
 
-								<div class="step-pane" id="step-ffn" role="tabpanel" aria-labelledby="tab-ffn" hidden>
+								<div class="step-pane" id="step-ffn">
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 5 · Feed-forward</span>
@@ -305,7 +289,7 @@
 									<p class="step-note">Attention moves information <b>between</b> positions. The feed-forward network works on each position <b>alone</b>: it matches patterns and writes back a distribution over likely next tokens. This is where much of the model's stored knowledge lives.</p>
 								</div>
 
-								<div class="step-pane" id="step-residual" role="tabpanel" aria-labelledby="tab-residual" hidden>
+								<div class="step-pane" id="step-residual">
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 6 · Residual</span>
@@ -324,7 +308,7 @@
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>Tokens become vectors, positions add order, attention mixes context, the feed-forward network computes, and the residual stream carries everything forward.</span></div>
 							<div class="demo-foot">
-								The tabs are deliberately small models. The real pipeline uses thousands of
+								The steps are deliberately small models. The real pipeline uses thousands of
 								dimensions, many heads, and dozens of layers. The order and the division of
 								labour stay the same.
 							</div>
@@ -405,7 +389,7 @@
 						<div class="keypoints">
 							<div class="keypoint"><b>What it is</b><span>A next-token predictor: one distribution, one draw, one append, repeated.</span></div>
 							<div class="keypoint"><b>Why it scales</b><span>Prediction is compression; better compression needs more of the world’s structure.</span></div>
-							<div class="keypoint"><b>What it is not</b><span>A database, a planner, or a guaranteed truth machine. It predicts plausible text.</span></div>
+							<div class="keypoint"><b>Its limits</b><span>It predicts plausible text. It can be fluent and wrong, and it offers no guarantee of truth.</span></div>
 							<div class="keypoint"><b>The contested part</b><span>Whether fluent prediction is genuine world knowledge or “stochastic parroting” is not settled.</span></div>
 						</div>
 						<div class="prose">
@@ -793,28 +777,6 @@
 				if (api) api.redraw();
 			});
 		}
-		/* ── inside-the-model tabs ───────────────────────────── */
-		var stepTabs = document.querySelectorAll(".step-tab");
-		var stepPanes = document.querySelectorAll(".step-pane");
-		stepTabs.forEach(function (tab) {
-			tab.addEventListener("click", function () {
-				var step = tab.getAttribute("data-step");
-				stepTabs.forEach(function (t) {
-					var on = t === tab;
-					t.classList.toggle("is-on", on);
-					t.setAttribute("aria-selected", on ? "true" : "false");
-				});
-				stepPanes.forEach(function (pane) {
-					var on = pane.id === "step-" + step;
-					pane.classList.toggle("is-on", on);
-					pane.hidden = !on;
-				});
-				if (step === "embed" && embApi) embApi.redraw();
-				if (step === "position" && posApi) posApi.redraw();
-				if (step === "attention" && attApi) attApi.redraw();
-			});
-		});
-
 		/* ── tokens ──────────────────────────────────────────── */
 		var tokVocab = {
 			once: 1024, upon: 2048, a: 64, time: 3072, the: 128, there: 2560,
@@ -1236,24 +1198,24 @@
 			var c = TM.colors();
 			var pad = 36;
 			var x0 = -1, x1 = 12, y0 = -1, y1 = 11;
-			function mx(x) { return pad + (x - x0) / (x1 - x0) * (w - pad * 2); }
-			function my(y) { return h - pad - (y - y0) / (y1 - y0) * (h - pad * 2); }
+			function ax(x) { return pad + (x - x0) / (x1 - x0) * (w - pad * 2); }
+			function ay(y) { return h - pad - (y - y0) / (y1 - y0) * (h - pad * 2); }
 			ctx.clearRect(0, 0, w, h);
 			ctx.strokeStyle = c.dark ? "rgba(238,247,244,.08)" : "rgba(0,75,111,.09)";
 			ctx.lineWidth = 1;
-			for (var gx = 0; gx <= 12; gx += 2) { ctx.beginPath(); ctx.moveTo(mx(gx), my(y0)); ctx.lineTo(mx(gx), my(y1)); ctx.stroke(); }
-			for (var gy = 0; gy <= 10; gy += 2) { ctx.beginPath(); ctx.moveTo(mx(x0), my(gy)); ctx.lineTo(mx(x1), my(gy)); ctx.stroke(); }
+			for (var gx = 0; gx <= 12; gx += 2) { ctx.beginPath(); ctx.moveTo(ax(gx), ay(y0)); ctx.lineTo(ax(gx), ay(y1)); ctx.stroke(); }
+			for (var gy = 0; gy <= 10; gy += 2) { ctx.beginPath(); ctx.moveTo(ax(x0), ay(gy)); ctx.lineTo(ax(x1), ay(gy)); ctx.stroke(); }
 			var ex = attExamples[attIndex];
 			Object.keys(attPos).forEach(function (word) {
 				var p = attPos[word];
 				ctx.beginPath();
-				ctx.arc(mx(p[0]), my(p[1]), 5, 0, Math.PI * 2);
+				ctx.arc(ax(p[0]), ay(p[1]), 5, 0, Math.PI * 2);
 				ctx.fillStyle = attColors[word];
 				ctx.fill();
 				ctx.font = "600 11px Barlow, system-ui, sans-serif";
 				ctx.fillStyle = c.dark ? "rgba(238,247,244,.72)" : "rgba(18,38,45,.7)";
 				ctx.textAlign = "center";
-				ctx.fillText(word, mx(p[0]), my(p[1]) - 11);
+				ctx.fillText(word, ax(p[0]), ay(p[1]) - 11);
 			});
 			var bank = attPos.bank;
 			ex.contexts.forEach(function (word) {
@@ -1261,24 +1223,24 @@
 				if (!p) return;
 				ctx.setLineDash([3, 4]);
 				ctx.beginPath();
-				ctx.moveTo(mx(bank[0]), my(bank[1]));
-				ctx.lineTo(mx(p[0]), my(p[1]));
+				ctx.moveTo(ax(bank[0]), ay(bank[1]));
+				ctx.lineTo(ax(p[0]), ay(p[1]));
 				ctx.strokeStyle = c.dark ? "rgba(249,115,22,.55)" : "rgba(180,83,9,.5)";
 				ctx.lineWidth = 1.8;
 				ctx.stroke();
 				ctx.setLineDash([]);
 			});
 			ctx.beginPath();
-			ctx.moveTo(mx(bank[0]), my(bank[1]));
-			ctx.lineTo(mx(ex.shift[0]), my(ex.shift[1]));
+			ctx.moveTo(ax(bank[0]), ay(bank[1]));
+			ctx.lineTo(ax(ex.shift[0]), ay(ex.shift[1]));
 			ctx.strokeStyle = c.dark ? "rgba(238,247,244,.6)" : "rgba(0,75,111,.55)";
 			ctx.lineWidth = 2;
 			ctx.stroke();
 			ctx.beginPath();
-			ctx.moveTo(mx(ex.shift[0]) - 6, my(ex.shift[1]));
-			ctx.lineTo(mx(ex.shift[0]), my(ex.shift[1]) - 6);
-			ctx.lineTo(mx(ex.shift[0]) + 6, my(ex.shift[1]));
-			ctx.lineTo(mx(ex.shift[0]), my(ex.shift[1]) + 6);
+			ctx.moveTo(ax(ex.shift[0]) - 6, ay(ex.shift[1]));
+			ctx.lineTo(ax(ex.shift[0]), ay(ex.shift[1]) - 6);
+			ctx.lineTo(ax(ex.shift[0]) + 6, ay(ex.shift[1]));
+			ctx.lineTo(ax(ex.shift[0]), ay(ex.shift[1]) + 6);
 			ctx.closePath();
 			ctx.fillStyle = c.dark ? "#fca5a5" : "#b91c1c";
 			ctx.fill();
@@ -1288,7 +1250,7 @@
 			ctx.font = "700 11px Barlow, system-ui, sans-serif";
 			ctx.fillStyle = c.dark ? "#fecaca" : "#991b1b";
 			ctx.textAlign = "center";
-			ctx.fillText("bank in context", mx(ex.shift[0]), my(ex.shift[1]) - 12);
+			ctx.fillText("bank in context", ax(ex.shift[0]), ay(ex.shift[1]) - 12);
 		}
 		function renderAtt() {
 			var ex = attExamples[attIndex];

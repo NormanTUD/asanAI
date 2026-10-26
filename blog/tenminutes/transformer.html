@@ -33,7 +33,6 @@
 		<div class="shell">
 			<section class="hero hero--lesson">
 				<div>
-					<p class="kicker">Day 18 · Part 4 · Architecture</p>
 					<h1>The whole<br><em>machine.</em></h1>
 					<p class="hero-deck">
 						Six ideas snap together: <strong>tokens, positions, attention, feed-forward,
@@ -41,12 +40,6 @@
 						through the pipeline, then slide through the layers and watch a word change its
 						meaning under context.
 					</p>
-					<div class="hero-meta">
-						<span class="pill pill--green">10 minutes</span>
-						<span class="pill">Some math</span>
-						<span class="pill pill--blue">Pipeline + layer lens</span>
-						<span class="pill">Field notes</span>
-					</div>
 				</div>
 			</section>
 
@@ -323,15 +316,6 @@
 						</div>
 					</section>
 
-
-					<div class="explain-back">
-						<b>Explain it back</b>
-						<p>Walk through the six stages from text to next token, and say where the residual stream matters.</p>
-						<details>
-							<summary>Compare with a model answer</summary>
-							<p>Tokenize, embed, add position, run N blocks of attention plus feed-forward, unembed to logits, then decode one token. The residual stream is the shared workspace: every sublayer reads it, computes an update, and adds the update back. That identity path is also what lets gradients flow through a deep stack.</p>
-						</details>
-					</div>
 
 					</article>
 			</div>
