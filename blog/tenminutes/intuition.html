@@ -299,21 +299,25 @@
 										</div>
 										<p class="step-note curve-intro">The FFN above works on one token. A dense layer computes an affine projection, <b>Ax + b</b>, which moves the data into another vector space. The projection can rotate, scale, shear, or collapse dimensions, but on its own it maps straight lines to straight lines.</p>
 										<div class="layer-formula">layer(x) = activation(Ax + b)</div>
-										<div class="relu-card">
-											<svg viewBox="0 0 120 70" role="img" aria-label="ReLU plot: flat at zero for negative inputs, rising for positive inputs">
-												<line x1="10" y1="60" x2="110" y2="60" class="rl-axis"/>
-												<line x1="60" y1="8" x2="60" y2="64" class="rl-axis"/>
-												<path d="M10 60 H60 L105 15" class="rl-curve"/>
-												<text x="102" y="69" class="rl-label">z</text>
-												<text x="66" y="16" class="rl-label">ReLU(z)</text>
-											</svg>
-											<p>The term <b>activation</b> means the activation function: it is applied to each coordinate after the projection. <b>ReLU(z) = max(0, z)</b> passes positive values unchanged and sends negative values to zero. The graph is flat, then a straight rise: a hard fold at <b>z = 0</b>. Sigmoid and GELU bend smoothly instead.</p>
+										<div class="collapse-card">
+											<div class="cc-line"><span>two dense layers</span><span class="cc-math">dense₂(dense₁(x)) = W₂(W₁x + b₁) + b₂</span></div>
+											<div class="cc-line"><span>=</span><span class="cc-math">(W₂W₁)x + (W₂b₁ + b₂)</span></div>
+											<div class="cc-line"><span>=</span><span class="cc-math">one dense layer</span></div>
+											<p>Without a nonlinearity, the whole stack is one affine map. Depth adds no expressive power; the activation is what breaks the collapse.</p>
 										</div>
-										<p class="step-note curve-intro">The demo below uses a smooth bend so you can see the shape. The cut still happens — the layer changes the space in which the cut is made.</p>
+										<div class="activation-card">
+											<div class="activation-copy">
+												<p>The term <b>activation</b> means the activation function: it is applied to each coordinate after the projection. It was introduced to add the nonlinearity that a stack of dense layers otherwise lacks.</p>
+												<p><b>ReLU(z) = max(0, z)</b> passes positive values unchanged and sends the entire negative half-space to zero. The graph is flat, then a straight rise: a hard fold at <b>z = 0</b>. Because many inputs become the same output, ReLU is not injective; it can change the topology of the representation.</p>
+												<p><b>Sigmoid</b> and <b>tanh</b> are strictly increasing, so they bend smoothly without identifying points. <b>GELU</b> is smooth but not monotonic: it dips slightly below zero, so it is also many-to-one. Other choices include SiLU/Swish, ELU, and gated variants such as SwiGLU.</p>
+											</div>
+											<div class="activation-plots" id="activation-plots"></div>
+										</div>
+										<p class="step-note curve-intro">The demo below uses a smooth, injective bend so you can see the shape. ReLU would crease the same space flat on one side of z = 0. The cut still happens — the layer changes the space in which the cut is made.</p>
 										<div class="curve-stage">
 											<canvas id="curve-canvas" aria-label="A point cloud being lifted into an egg-shaped surface, then projected onto a line"></canvas>
 											<div class="curve-caption" aria-live="polite">
-												<span class="cc-step" id="curve-step">1 / 7</span>
+												<span class="cc-step" id="curve-step">1 / 6</span>
 												<h4 id="curve-title">Two classes, no straight line</h4>
 												<p id="curve-body">An inner cloud and an outer ring. No single straight line separates coral from blue.</p>
 											</div>
@@ -1504,14 +1508,9 @@
 				L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0
 			},
 			{
-				t: "A plane fits between",
-				b: "A flat plane slides between the two classes. In the new geometry, a linear cut works.",
-				L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0
-			},
-			{
-				t: "The plane becomes a line",
-				b: "We squash the plane along the viewing direction until only a line remains.",
-				L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 1, fail: 0, lab: 1, pr: 0, box: 0
+				t: "The separating plane",
+				b: "The plane appears immediately between the classes. In the new geometry, a linear cut works.",
+				L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 0, fail: 0, lab: 1, pr: 0, box: 0
 			},
 			{
 				t: "The space becomes a line",
@@ -1555,12 +1554,12 @@
 		function curveFmt(v) { return Math.abs(v) < 0.005 ? "0" : v.toFixed(2); }
 		function curveUpdateTable() {
 			var step = curveSteps[curveIdx];
-			var is1D = curveIdx === 6;
-			var showZ = curveIdx >= 2 && curveIdx < 6;
+			var is1D = curveIdx === curveSteps.length - 1;
+			var showZ = curveIdx >= 2 && curveIdx < curveSteps.length - 1;
 			if (curvePointsEl) {
 				curvePointsEl.classList.toggle("hide-y", is1D);
 				curvePointsEl.classList.toggle("hide-z", !showZ);
-				curvePointsEl.classList.toggle("is-hidden", curveIdx === 6);
+				curvePointsEl.classList.toggle("is-hidden", curveIdx === curveSteps.length - 1);
 			}
 			if (!curvePointsBody) return;
 			curveExamples.forEach(function (ex, i) {
