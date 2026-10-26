@@ -990,6 +990,67 @@ html[data-theme="dark"] .aha-kicker { color: var(--tm-green); }
 	color: var(--tm-faint);
 }
 
+.big-quote {
+	position: relative;
+	margin: 28px 0;
+	padding: 24px 30px 20px 56px;
+	border-left: 3px solid var(--tm-green);
+	border-radius: 0 12px 12px 0;
+	background:
+		linear-gradient(135deg, rgba(113, 189, 86, 0.08), transparent 60%),
+		color-mix(in srgb, var(--tm-card) 66%, transparent);
+	font-family: var(--tm-prose);
+	font-size: clamp(1.0rem, 1.4vw, 1.12rem);
+	font-style: normal;
+	line-height: 1.6;
+	color: var(--tm-ink-soft);
+}
+.big-quote::before {
+	content: "“";
+	position: absolute;
+	left: 15px;
+	top: 4px;
+	font-family: var(--tm-display);
+	font-size: 4.4rem;
+	line-height: 1;
+	color: var(--tm-green);
+	opacity: 0.9;
+}
+.big-quote::after {
+	content: "”";
+	position: absolute;
+	right: 16px;
+	bottom: -12px;
+	font-family: var(--tm-display);
+	font-size: 4.4rem;
+	line-height: 1;
+	color: var(--tm-green);
+	opacity: 0.18;
+	pointer-events: none;
+}
+.big-quote p { margin: 0; }
+.big-quote cite {
+	display: block;
+	margin-top: 10px;
+	font-family: var(--tm-ui);
+	font-size: 0.72rem;
+	font-style: normal;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	color: var(--tm-muted);
+}
+.big-quote cite em {
+	font-style: italic;
+	text-transform: none;
+	letter-spacing: 0;
+}
+html[data-theme="dark"] .big-quote {
+	background:
+		linear-gradient(135deg, rgba(143, 217, 119, 0.08), transparent 60%),
+		rgba(15, 23, 42, 0.42);
+}
+html[data-theme="dark"] .big-quote cite { color: rgba(238, 247, 244, 0.55); }
+
 .keypoints {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3698,6 +3759,9 @@ html[data-theme="dark"] .curve-points {
 	}
 	.curve-points { display: none; }
 	.relu-card { flex-direction: column; align-items: flex-start; }
+	.big-quote { padding: 20px 18px 18px 44px; }
+	.big-quote::before { left: 10px; font-size: 3.4rem; }
+	.big-quote::after { right: 10px; font-size: 3.4rem; }
 }
 @media (max-width: 620px) {
 	.timeline-scroller { gap: 4px; }
