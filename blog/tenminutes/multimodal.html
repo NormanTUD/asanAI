@@ -83,6 +83,28 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Alignment is statistical: matched pairs are pulled together, mismatched pairs pushed apart.</span></div>
 					</div>
 
+					<div class="demo demo--paper" data-demo="align">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">Two spaces, one answer <span>· demo</span></p>
+								<p class="demo-sub">Images and text start in different embedding spaces. Alignment pulls matched pairs together so the model can compare them.</p>
+							</div>
+							<span class="demo-badge">live</span>
+						</div>
+						<div class="demo-body">
+							<canvas class="demo-canvas demo-canvas--md" data-align-canvas aria-label="Image and text embeddings before and after alignment"></canvas>
+							<div class="demo-controls">
+								<button class="btn-demo btn-demo--green" type="button" data-align-toggle>Align the spaces →</button>
+							</div>
+							<div class="demo-readout">
+								<div><b>State</b><span data-align-state>separate</span></div>
+								<div><b>Matched pairs</b><span>5</span></div>
+								<div><b>Similarity</b><span data-align-sim>low</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>Alignment is a learned geometry. It makes a picture and its caption comparable without making them the same thing.</span></div>
+					</div>
+
 					<section class="section-block">
 						<div class="section-kicker">From the full lesson</div>
 						<h2 class="section-title">Multimodal LLMs: How a Text Model Learns to See</h2>

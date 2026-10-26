@@ -86,6 +86,30 @@
 						<div class="demo-foot">A keyword-overlap toy, not a real embedding search. The original lesson shows the full pipeline.</div>
 					</div>
 
+					<div class="demo demo--paper" data-demo="ragspace">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">Retrieval is geometry <span>· demo</span></p>
+								<p class="demo-sub">Each point is a chunk in embedding space. The query is the diamond; the nearest chunks are the ones the retriever puts in the prompt.</p>
+							</div>
+							<span class="demo-badge">2-D toy</span>
+						</div>
+						<div class="demo-body">
+							<canvas class="demo-canvas demo-canvas--md" data-ragspace-canvas aria-label="A two-dimensional embedding space with a query and nearby chunks"></canvas>
+							<div class="chip-row" style="margin-top:12px">
+								<button class="chip is-on" type="button" data-ragquery="eiffel">Eiffel Tower height</button>
+								<button class="chip" type="button" data-ragquery="rag">RAG pipeline</button>
+								<button class="chip" type="button" data-ragquery="vectors">vector database</button>
+							</div>
+							<div class="demo-readout">
+								<div><b>Query</b><span data-ragspace-query>—</span></div>
+								<div><b>Nearest</b><span data-ragspace-top>—</span></div>
+								<div><b>Distance</b><span data-ragspace-dist>—</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>Retrieval is a nearest-neighbour search. The embedding space decides what the model is allowed to see.</span></div>
+					</div>
+
 					<section class="section-block">
 						<div class="section-kicker">From the full lesson</div>
 						<h2 class="section-title">Making RAG work</h2>

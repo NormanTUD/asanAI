@@ -3996,3 +3996,93 @@ html[data-theme="dark"] .curve-points {
 	.step-pane-head .sp-title { text-align: left; }
 	body[data-page="lesson"] .shell { width: calc(100% - 26px); }
 }
+
+/* ── extra compact-page demos ───────────────────────────── */
+
+.pref-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.pref-card {
+	text-align: left;
+	padding: 14px;
+	border: 1px solid var(--tm-line);
+	border-radius: 12px;
+	background: var(--tm-paper-2);
+	color: var(--tm-ink);
+	cursor: pointer;
+	transition: border-color .18s ease, background .18s ease, transform .18s ease;
+}
+.pref-card:hover { border-color: var(--tm-green); transform: translateY(-1px); }
+.pref-card.is-on { border-color: var(--tm-green); box-shadow: 0 0 0 1px var(--tm-green); background: var(--tm-wash); }
+.pref-card b { display: block; font-size: 0.64rem; letter-spacing: .08em; text-transform: uppercase; color: var(--tm-faint); }
+.pref-card p { margin: 8px 0 0; font-family: var(--tm-prose); font-size: 0.82rem; line-height: 1.5; color: var(--tm-muted); }
+
+.mary-room {
+	position: relative;
+	height: 240px;
+	border-radius: 12px;
+	overflow: hidden;
+	border: 1px solid var(--tm-line);
+	background: linear-gradient(180deg, #d9d9d9, #bdbdbd);
+	filter: grayscale(1);
+	transition: filter .55s ease, background .55s ease;
+}
+.mary-room.is-color { filter: none; background: linear-gradient(180deg, #f7d9c4, #e8b59a); }
+.mary-window {
+	position: absolute;
+	top: 22px;
+	right: 26px;
+	width: 96px;
+	height: 74px;
+	border: 5px solid #f4f4f4;
+	border-radius: 4px;
+	background: linear-gradient(180deg, #cfe6f5, #9cc7e0);
+}
+.mary-window::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(90deg, transparent 48%, #f4f4f4 49%, #f4f4f4 51%, transparent 52%), linear-gradient(180deg, transparent 48%, #f4f4f4 49%, #f4f4f4 51%, transparent 52%);
+}
+.mary-apple {
+	position: absolute;
+	bottom: 36px;
+	left: 50%;
+	width: 44px;
+	height: 44px;
+	margin-left: -22px;
+	border-radius: 50%;
+	background: #bdbdbd;
+	transition: background .55s ease;
+}
+.mary-room.is-color .mary-apple { background: #c0392b; }
+.mary-caption {
+	position: absolute;
+	left: 16px;
+	bottom: 14px;
+	margin: 0;
+	font-family: var(--tm-prose);
+	font-size: 0.78rem;
+	line-height: 1.4;
+	color: #4a4a4a;
+	max-width: 60%;
+}
+.mary-room.is-color .mary-caption { color: #4a2a22; }
+
+.filter-stream { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.filter-doc {
+	padding: 6px 9px;
+	border: 1px solid var(--tm-line);
+	border-radius: 7px;
+	background: var(--tm-paper-2);
+	font-family: var(--tm-mono);
+	font-size: 0.62rem;
+	color: var(--tm-muted);
+	transition: opacity .18s ease, border-color .18s ease;
+}
+.filter-doc.is-kept { border-color: var(--tm-green); color: var(--tm-ink); }
+.filter-doc.is-dropped { opacity: 0.25; text-decoration: line-through; }
+.filter-doc b { font-weight: 700; color: var(--tm-ink); }
+
+@media (max-width: 620px) {
+	.pref-grid { grid-template-columns: 1fr; }
+	.mary-room { height: 200px; }
+}

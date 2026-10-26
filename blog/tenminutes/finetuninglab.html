@@ -82,6 +82,31 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Each stage adds a different kind of behaviour: format, preferences, then reasoning.</span></div>
 					</div>
 
+					<div class="demo demo--paper" data-demo="preference">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">A preference pair <span>· demo</span></p>
+								<p class="demo-sub">Which answer would you prefer for: <span data-pref-question>—</span></p>
+							</div>
+							<span class="demo-badge">RLHF / DPO</span>
+						</div>
+						<div class="demo-body">
+							<div class="pref-grid">
+								<button class="pref-card" type="button" data-pref="a"><b>Answer A</b><p></p></button>
+								<button class="pref-card" type="button" data-pref="b"><b>Answer B</b><p></p></button>
+							</div>
+							<div class="demo-controls">
+								<button class="btn-demo" type="button" data-pref-next>Another pair →</button>
+							</div>
+							<div class="demo-readout">
+								<div><b>Your choice</b><span data-pref-choice>—</span></div>
+								<div><b>Signal</b><span data-pref-signal>—</span></div>
+								<div><b>What changes</b><span>the policy</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>A preference pair is training data. The model learns the judgment behind the choice, not only the words of the answer.</span></div>
+					</div>
+
 					<section class="section-block">
 						<div class="section-kicker">From the full lesson</div>
 						<h2 class="section-title">LoRA and Parameter-Efficient Fine-Tuning</h2>

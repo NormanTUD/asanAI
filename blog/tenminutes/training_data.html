@@ -61,8 +61,54 @@
 							<p class="aha-big">Quality without quantity cannot train a frontier model. Quantity without quality teaches it noise.</p>
 							<p class="aha-sub">The useful question is not which one wins, but what mixture and what filtering the model needs for the behaviour you want.</p>
 						</div>
-					<p class="step-note">Adapted from the full lesson. The original has the sources, equations, and lab: <a href="../training_data.php">read it here</a>.</p>
+					<p class="step-note"><b>What is simplified:</b> the exact recipes are proprietary. The full lesson has the pipeline details: <a href="../training_data.php">read it here</a>.</p>
 					</section>
+
+					<div class="demo demo--paper" data-demo="datamix">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">The training mix <span>· demo</span></p>
+								<p class="demo-sub">A frontier corpus is a designed mixture, not a random dump. The percentages below are approximate ranges adapted from the full lesson; actual recipes vary by lab. Tap a source to see what it contributes.</p>
+							</div>
+							<span class="demo-badge">approximate</span>
+						</div>
+						<div class="demo-body">
+							<div class="mix-bar" data-mix-bar></div>
+							<div class="mix-legend" data-mix-legend></div>
+							<p class="mix-note" data-mix-note>Approximate ranges adapted from the full lesson: web 50–70%, code 10–15%, books 5–10%, papers 3–5%, Wikipedia 1–2%, math 2–5%, conversation 2–5%, multimodal 5–10%. Tap a source to see what it contributes.</p>
+							<div class="demo-readout">
+								<div><b>Scale</b><span>10–15T tokens</span></div>
+								<div><b>Sources</b><span>web · code · books · multimodal</span></div>
+								<div><b>Key step</b><span>filtering</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>Architecture and data are not separate choices. A better mixture can make a smaller model competitive, but scale still matters.</span></div>
+						<div class="demo-foot">Source: the approximate composition table in the <a href="../training_data.php">full lesson</a>. Labs do not publish exact recipes.</div>
+					</div>
+
+					<div class="demo demo--paper" data-demo="filter">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">Filter the corpus <span>· demo</span></p>
+								<p class="demo-sub">Raise the minimum quality and watch the kept set shrink. The goal is a corpus that is both large enough and clean enough.</p>
+							</div>
+							<span class="demo-badge">illustrative</span>
+						</div>
+						<div class="demo-body">
+							<div class="filter-stream" data-filter-stream></div>
+							<div class="demo-controls">
+								<label>Minimum quality <input type="range" data-filter-strength min="0" max="3" step="1" value="1"><output data-filter-strength-out>1</output></label>
+							</div>
+							<div class="demo-readout">
+								<div><b>Kept</b><span data-filter-kept>—</span></div>
+								<div><b>Dropped</b><span data-filter-dropped>—</span></div>
+								<div><b>Avg quality</b><span data-filter-quality>—</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>Quality and quantity pull in different directions. The useful recipe is the one that keeps enough scale without teaching the model noise.</span></div>
+					</div>
+
+
 
 					<section class="section-block">
 						<div class="section-kicker">More from the full lesson</div>

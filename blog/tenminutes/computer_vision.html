@@ -82,6 +82,30 @@
 						<div class="demo-insight"><b>Takeaway</b><span>A convolution shares one small filter across the whole image. Depth stacks those filters into a hierarchy: edges, parts, objects.</span></div>
 					</div>
 
+					<div class="demo demo--paper" data-demo="visionlayers">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">What each layer sees <span>· demo</span></p>
+								<p class="demo-sub">Early layers respond to edges, middle layers to parts, later layers to whole objects. The receptive field grows with depth.</p>
+							</div>
+							<span class="demo-badge">live</span>
+						</div>
+						<div class="demo-body">
+							<canvas class="demo-canvas demo-canvas--md" data-vision-canvas aria-label="A cat face at three levels of feature abstraction"></canvas>
+							<div class="chip-row" style="margin-top:12px">
+								<button class="chip is-on" type="button" data-vision-layer="edges">edges</button>
+								<button class="chip" type="button" data-vision-layer="parts">parts</button>
+								<button class="chip" type="button" data-vision-layer="object">object</button>
+							</div>
+							<div class="demo-readout">
+								<div><b>Layer</b><span data-vision-label>early</span></div>
+								<div><b>Feature</b><span data-vision-feature>edges</span></div>
+								<div><b>Receptive field</b><span data-vision-field>small</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>A vision model does not see a cat in one step. It builds the cat from edges, parts, and finally an object.</span></div>
+					</div>
+
 					<section class="section-block">
 						<div class="section-kicker">From the full lesson</div>
 						<h2 class="section-title">The Power of Hierarchy: Building Complexity from Simplicity</h2>

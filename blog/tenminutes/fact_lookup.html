@@ -83,6 +83,28 @@
 						<div class="demo-insight"><b>Takeaway</b><span>A fact is computed, not looked up.</span></div>
 					</div>
 
+					<div class="demo demo--paper" data-demo="logitlens">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">Watch the answer form <span>· demo</span></p>
+								<p class="demo-sub">The logit lens reads the residual stream at each layer. Early layers are undecided; the final layers concentrate on the answer.</p>
+							</div>
+							<span class="demo-badge">illustrative</span>
+						</div>
+						<div class="demo-body">
+							<div class="dist-bars" data-lens-bars></div>
+							<div class="demo-controls">
+								<label>Layer <input type="range" data-lens-layer min="0" max="6" step="1" value="0"><output data-lens-layer-out>0</output></label>
+							</div>
+							<div class="demo-readout">
+								<div><b>Top token</b><span data-lens-top>—</span></div>
+								<div><b>Paris probability</b><span data-lens-paris>—</span></div>
+								<div><b>Layer</b><span data-lens-layer-name>embedding</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>The answer is not present all at once. It sharpens as the residual stream passes through the layers.</span></div>
+					</div>
+
 					<section class="section-block">
 						<div class="section-kicker">From the full lesson</div>
 						<h2 class="section-title">Facts as directions: the linear representation hypothesis</h2>

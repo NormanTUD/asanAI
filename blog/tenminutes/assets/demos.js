@@ -96,8 +96,11 @@
 		var toppOut = $("[data-decoding-topp-out]", root);
 		var topk = $("[data-decoding-topk]", root);
 		var topkOut = $("[data-decoding-topk-out]", root);
+		var minp = $("[data-decoding-minp]", root);
+		var minpOut = $("[data-decoding-minp-out]", root);
 		var toppWrap = $("[data-decoding-topp-wrap]", root);
 		var topkWrap = $("[data-decoding-topk-wrap]", root);
+		var minpWrap = $("[data-decoding-minp-wrap]", root);
 		var filterName = $("[data-decoding-filter-name]", root);
 		var countEl = $("[data-decoding-count]", root);
 		var entropyEl = $("[data-decoding-entropy]", root);
@@ -154,9 +157,11 @@
 			var T = clamp(parseFloat(temp && temp.value) || 0.9, 0.05, 3);
 			var p = clamp(parseFloat(topp && topp.value) || 0.9, 0.05, 1);
 			var k = parseInt(topk && topk.value, 10) || 4;
+			var m = clamp(parseFloat(minp && minp.value) || 0.1, 0, 1);
 			if (tempOut) tempOut.textContent = T.toFixed(2);
 			if (toppOut) toppOut.textContent = p.toFixed(2);
 			if (topkOut) topkOut.textContent = k;
+			if (minpOut) minpOut.textContent = m.toFixed(2);
 			var tokens = prompts[currentPrompt].tokens;
 			var probs = softmax(tokens, T);
 			var order = probs.map(function (_, i) { return i; }).sort(function (a, b) { return probs[b] - probs[a]; });
@@ -165,6 +170,11 @@
 				order.forEach(function (i) { keep[i] = true; });
 			} else if (currentFilter === "topk") {
 				order.slice(0, k).forEach(function (i) { keep[i] = true; });
+			} else if (currentFilter === "minp") {
+				var maxP = probs[order[0]];
+				order.forEach(function (i) {
+					if (probs[i] >= m * maxP) keep[i] = true;
+				});
 			} else {
 				var cum = 0;
 				order.forEach(function (i) {
@@ -182,7 +192,7 @@
 			if (countEl) countEl.textContent = kept.length + " / " + tokens.length;
 			if (entropyEl) entropyEl.textContent = ent.toFixed(2) + " bits";
 			if (filterName) {
-				var label = currentFilter === "none" ? "no filter" : (currentFilter === "topk" ? "top-k " + k : "top-p " + p.toFixed(2));
+				var label = currentFilter === "none" ? "no filter" : (currentFilter === "topk" ? "top-k " + k : (currentFilter === "minp" ? "min-p " + m.toFixed(2) : "top-p " + p.toFixed(2)));
 				filterName.textContent = label;
 			}
 			renderBars(tokens, probs);
@@ -230,6 +240,7 @@
 			filterChips.forEach(function (c) { c.classList.toggle("is-on", c.getAttribute("data-decoding-filter-value") === value); });
 			if (toppWrap) toppWrap.hidden = value !== "topp";
 			if (topkWrap) topkWrap.hidden = value !== "topk";
+			if (minpWrap) minpWrap.hidden = value !== "minp";
 			compute();
 		}
 		promptChips.forEach(function (chip) {
@@ -250,6 +261,7 @@
 		if (temp) temp.addEventListener("input", compute);
 		if (topp) topp.addEventListener("input", compute);
 		if (topk) topk.addEventListener("input", compute);
+		if (minp) minp.addEventListener("input", compute);
 		if (sampleBtn) sampleBtn.addEventListener("click", sample);
 		if (resetBtn) resetBtn.addEventListener("click", function () {
 			history = [];
@@ -1027,6 +1039,378 @@
 		});
 	}
 
+
+	/* ── retrieval space ───────────────────────────────────── */
+
+	function initRagSpace(root) {
+		var canvas = $("[data-ragspace-canvas]", root);
+		var chips = $$("[data-ragquery]", root);
+		var queryEl = $("[data-ragspace-query]", root);
+		var topEl = $("[data-ragspace-top]", root);
+		var distEl = $("[data-ragspace-dist]", root);
+		if (!canvas) return;
+		var chunks = [
+			{ label: "Eiffel Tower", x: 0.18, y: 0.28, c: "green" },
+			{ label: "Paris tourism", x: 0.30, y: 0.38, c: "sky" },
+			{ label: "RAG pipeline", x: 0.74, y: 0.70, c: "gold" },
+			{ label: "Vector DB", x: 0.82, y: 0.62, c: "lilac" },
+			{ label: "Prompting", x: 0.52, y: 0.20, c: "grey" },
+			{ label: "Fine-tuning", x: 0.64, y: 0.44, c: "teal" }
+		];
+		var queries = {
+			eiffel: { x: 0.21, y: 0.31, label: "Eiffel Tower height" },
+			rag: { x: 0.75, y: 0.68, label: "RAG pipeline" },
+			vectors: { x: 0.80, y: 0.64, label: "vector database" }
+		};
+		var current = "eiffel";
+		function colorOf(name) {
+			var c = colors();
+			return { green: c.green, sky: c.sky, gold: c.gold, lilac: c.coral, grey: c.faint, teal: c.petrol }[name] || c.muted;
+		}
+		function draw(ctx, W, H) {
+			var c = colors();
+			var q = queries[current];
+			var pad = 34;
+			function px(x) { return pad + x * (W - pad * 2); }
+			function py(y) { return H - pad - y * (H - pad * 2); }
+			ctx.clearRect(0, 0, W, H);
+			ctx.strokeStyle = c.line;
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.moveTo(px(0), py(0)); ctx.lineTo(px(1), py(0));
+			ctx.moveTo(px(0), py(0)); ctx.lineTo(px(0), py(1));
+			ctx.stroke();
+			var ranked = chunks.map(function (ch) {
+				var dx = ch.x - q.x, dy = ch.y - q.y;
+				return { ch: ch, d: Math.sqrt(dx * dx + dy * dy) };
+			}).sort(function (a, b) { return a.d - b.d; });
+			ranked.slice(0, 2).forEach(function (r, i) {
+				ctx.strokeStyle = i === 0 ? c.green : c.sky;
+				ctx.globalAlpha = i === 0 ? 0.9 : 0.45;
+				ctx.beginPath();
+				ctx.moveTo(px(q.x), py(q.y));
+				ctx.lineTo(px(r.ch.x), py(r.ch.y));
+				ctx.stroke();
+				ctx.globalAlpha = 1;
+			});
+			chunks.forEach(function (ch) {
+				ctx.beginPath();
+				ctx.arc(px(ch.x), py(ch.y), 7, 0, Math.PI * 2);
+				ctx.fillStyle = colorOf(ch.c);
+				ctx.fill();
+				ctx.strokeStyle = c.card;
+				ctx.lineWidth = 2;
+				ctx.stroke();
+				ctx.fillStyle = c.muted;
+				ctx.font = "600 10px Barlow, system-ui, sans-serif";
+				ctx.fillText(ch.label, px(ch.x) + 10, py(ch.y) + 3);
+			});
+			var qx = px(q.x), qy = py(q.y);
+			ctx.beginPath();
+			ctx.moveTo(qx, qy - 9); ctx.lineTo(qx + 9, qy); ctx.lineTo(qx, qy + 9); ctx.lineTo(qx - 9, qy);
+			ctx.closePath();
+			ctx.fillStyle = c.ink;
+			ctx.fill();
+			ctx.strokeStyle = c.paper2;
+			ctx.lineWidth = 2;
+			ctx.stroke();
+			if (queryEl) queryEl.textContent = q.label;
+			if (topEl) topEl.textContent = ranked[0].ch.label;
+			if (distEl) distEl.textContent = ranked[0].d.toFixed(2);
+		}
+		var api = canvasDemo(canvas, draw);
+		if (!api) return;
+		chips.forEach(function (chip) {
+			chip.addEventListener("click", function () {
+				chips.forEach(function (x) { x.classList.remove("is-on"); });
+				chip.classList.add("is-on");
+				current = chip.getAttribute("data-ragquery");
+				api.redraw();
+			});
+		});
+		api.redraw();
+	}
+
+	/* ── multimodal alignment ───────────────────────────────── */
+
+	function initAlign(root) {
+		var canvas = $("[data-align-canvas]", root);
+		var btn = $("[data-align-toggle]", root);
+		var stateEl = $("[data-align-state]", root);
+		var simEl = $("[data-align-sim]", root);
+		if (!canvas) return;
+		var left = [
+			{ label: "dog", x: 0.22, y: 0.72 },
+			{ label: "cat", x: 0.34, y: 0.56 },
+			{ label: "car", x: 0.62, y: 0.30 },
+			{ label: "tree", x: 0.78, y: 0.52 },
+			{ label: "house", x: 0.66, y: 0.78 }
+		];
+		var right = [
+			{ label: "dog", x: 0.18, y: 0.30 },
+			{ label: "cat", x: 0.42, y: 0.22 },
+			{ label: "car", x: 0.72, y: 0.70 },
+			{ label: "tree", x: 0.82, y: 0.28 },
+			{ label: "house", x: 0.52, y: 0.46 }
+		];
+		var t = 0, target = 0, raf = null;
+		function draw(ctx, W, H) {
+			var c = colors();
+			var pad = 26, mid = W / 2;
+			ctx.clearRect(0, 0, W, H);
+			ctx.strokeStyle = c.lineStrong;
+			ctx.beginPath();
+			ctx.moveTo(mid, pad); ctx.lineTo(mid, H - pad);
+			ctx.stroke();
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			ctx.fillText("image embeddings", pad, pad - 8);
+			ctx.fillText("text embeddings", mid + 14, pad - 8);
+			function point(panel, p) {
+				var x = panel === 0 ? p.x * (mid - pad * 2) + pad : mid + pad + p.x * (mid - pad * 2);
+				var y = H - pad - p.y * (H - pad * 2);
+				return { x: x, y: y };
+			}
+			left.forEach(function (p, i) {
+				var a = point(0, p);
+				var q = right[i];
+				var b = point(1, { x: lerp(q.x, p.x, t), y: lerp(q.y, p.y, t) });
+				if (t > 0.35) {
+					ctx.strokeStyle = c.green;
+					ctx.globalAlpha = (t - 0.35) / 0.65;
+					ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+					ctx.globalAlpha = 1;
+				}
+				[ a, b ].forEach(function (pt, j) {
+					ctx.beginPath();
+					ctx.arc(pt.x, pt.y, 8, 0, Math.PI * 2);
+					ctx.fillStyle = j === 0 ? c.sky : c.gold;
+					ctx.fill();
+					ctx.strokeStyle = c.card;
+					ctx.lineWidth = 2;
+					ctx.stroke();
+					ctx.fillStyle = c.muted;
+					ctx.font = "600 10px Barlow, system-ui, sans-serif";
+					ctx.fillText(p.label, pt.x + 11, pt.y + 3);
+				});
+			});
+		}
+		var api = canvasDemo(canvas, draw);
+		if (!api) return;
+		function animate() {
+			raf = null;
+			var diff = target - t;
+			if (Math.abs(diff) < 0.01) {
+				t = target;
+				api.redraw();
+				if (stateEl) stateEl.textContent = t > 0.5 ? "aligned" : "separate";
+				if (simEl) simEl.textContent = t > 0.5 ? "high" : "low";
+				return;
+			}
+			t += diff * 0.18;
+			api.redraw();
+			raf = requestAnimationFrame(animate);
+		}
+		if (btn) btn.addEventListener("click", function () {
+			target = target > 0.5 ? 0 : 1;
+			btn.textContent = target > 0.5 ? "Separate the spaces →" : "Align the spaces →";
+			if (!raf) raf = requestAnimationFrame(animate);
+		});
+		api.redraw();
+	}
+
+	/* ── preference pair ────────────────────────────────────── */
+
+	function initPreference(root) {
+		var cards = $$("[data-pref]", root);
+		var choice = $("[data-pref-choice]", root);
+		var signal = $("[data-pref-signal]", root);
+		var next = $("[data-pref-next]", root);
+		var question = $("[data-pref-question]", root);
+		if (!cards.length) return;
+		var pairs = [
+			{
+				q: "Explain photosynthesis to a 10-year-old.",
+				a: "Plants use sunlight to turn water and air into food. They release oxygen, which is the air we breathe.",
+				b: "Photosynthesis is a biochemical process involving chlorophyll, photons, and the Calvin cycle."
+			},
+			{
+				q: "Why does the sky look blue?",
+				a: "Sunlight contains all colours. Air scatters the short blue wavelengths more than the long red ones, so blue reaches your eyes from every direction.",
+				b: "Rayleigh scattering."
+			}
+		];
+		var idx = 0;
+		function render() {
+			var p = pairs[idx];
+			if (question) question.textContent = p.q;
+			cards[0].querySelector("p").textContent = p.a;
+			cards[1].querySelector("p").textContent = p.b;
+			cards.forEach(function (c) { c.classList.remove("is-on"); });
+			if (choice) choice.textContent = "—";
+			if (signal) signal.textContent = "—";
+		}
+		cards.forEach(function (card) {
+			card.addEventListener("click", function () {
+				cards.forEach(function (c) { c.classList.remove("is-on"); });
+				card.classList.add("is-on");
+				var chosen = card.getAttribute("data-pref");
+				if (choice) choice.textContent = chosen === "a" ? "Answer A" : "Answer B";
+				if (signal) signal.textContent = chosen === "a" ? "A > B" : "B > A";
+			});
+		});
+		if (next) next.addEventListener("click", function () { idx = (idx + 1) % pairs.length; render(); });
+		render();
+	}
+
+	/* ── Mary's Room ────────────────────────────────────────── */
+
+	function initMary(root) {
+		var room = $("[data-mary-room]", root);
+		var btn = $("[data-mary-toggle]", root);
+		var cap = $("[data-mary-caption]", root);
+		if (!room || !btn) return;
+		var on = false;
+		btn.addEventListener("click", function () {
+			on = !on;
+			room.classList.toggle("is-color", on);
+			btn.textContent = on ? "Back to the grey room →" : "Let Mary see red →";
+			if (cap) cap.textContent = on ? "Mary sees red for the first time. Does she learn a new fact, or something else?" : "Mary knows every physical fact about red. The room is still grey.";
+		});
+	}
+
+	/* ── logit lens ─────────────────────────────────────────── */
+
+	function initLogitLens(root) {
+		var bars = $("[data-lens-bars]", root);
+		var range = $("[data-lens-layer]", root);
+		var out = $("[data-lens-layer-out]", root);
+		var top = $("[data-lens-top]", root);
+		var paris = $("[data-lens-paris]", root);
+		var name = $("[data-lens-layer-name]", root);
+		if (!bars || !range) return;
+		var tokens = [ "the", "city", "capital", "France", "Lyon", "Paris" ];
+		var layers = [
+			[ 0.28, 0.21, 0.18, 0.14, 0.11, 0.08 ],
+			[ 0.12, 0.26, 0.24, 0.18, 0.12, 0.08 ],
+			[ 0.05, 0.10, 0.30, 0.25, 0.18, 0.12 ],
+			[ 0.03, 0.04, 0.08, 0.18, 0.34, 0.33 ],
+			[ 0.01, 0.02, 0.03, 0.06, 0.22, 0.66 ],
+			[ 0.01, 0.01, 0.01, 0.02, 0.08, 0.87 ],
+			[ 0.00, 0.00, 0.00, 0.01, 0.03, 0.96 ]
+		];
+		var names = [ "embedding", "block 1", "block 2", "block 3", "block 4", "block 5", "output" ];
+		function render() {
+			var l = parseInt(range.value, 10) || 0;
+			if (out) out.textContent = l;
+			if (name) name.textContent = names[l];
+			var probs = layers[l];
+			var maxI = probs.indexOf(Math.max.apply(null, probs));
+			if (top) top.textContent = tokens[maxI];
+			if (paris) paris.textContent = Math.round(probs[5] * 100) + "%";
+			bars.innerHTML = tokens.map(function (tok, i) {
+				return '<div class="dist-row"><span class="dist-label">' + tok + '</span><span class="dist-track"><span class="dist-fill" style="width:' + (probs[i] * 100).toFixed(1) + '%;background:var(--tm-' + (i === 5 ? "green" : "sky") + ')"></span></span><span class="dist-val">' + Math.round(probs[i] * 100) + '%</span></div>';
+			}).join("");
+		}
+		range.addEventListener("input", render);
+		render();
+	}
+
+	/* ── vision layers ──────────────────────────────────────── */
+
+	function initVisionLayers(root) {
+		var canvas = $("[data-vision-canvas]", root);
+		var chips = $$("[data-vision-layer]", root);
+		var label = $("[data-vision-label]", root);
+		var feature = $("[data-vision-feature]", root);
+		var field = $("[data-vision-field]", root);
+		if (!canvas) return;
+		var current = "edges";
+		function draw(ctx, W, H) {
+			var c = colors();
+			var cx = W / 2, cy = H / 2 + 10, r = Math.min(W, H) * 0.26;
+			ctx.clearRect(0, 0, W, H);
+			ctx.strokeStyle = c.petrol;
+			ctx.fillStyle = c.card;
+			ctx.lineWidth = 3;
+			if (current === "object") {
+				ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fillStyle = c.gold; ctx.fill(); ctx.stroke();
+				ctx.beginPath(); ctx.moveTo(cx - r * 0.75, cy - r * 0.65); ctx.lineTo(cx - r * 0.4, cy - r * 1.15); ctx.lineTo(cx - r * 0.1, cy - r * 0.85); ctx.closePath(); ctx.fillStyle = c.gold; ctx.fill(); ctx.stroke();
+				ctx.beginPath(); ctx.moveTo(cx + r * 0.75, cy - r * 0.65); ctx.lineTo(cx + r * 0.4, cy - r * 1.15); ctx.lineTo(cx + r * 0.1, cy - r * 0.85); ctx.closePath(); ctx.fillStyle = c.gold; ctx.fill(); ctx.stroke();
+			} else {
+				ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+				ctx.beginPath(); ctx.moveTo(cx - r * 0.75, cy - r * 0.65); ctx.lineTo(cx - r * 0.4, cy - r * 1.15); ctx.lineTo(cx - r * 0.1, cy - r * 0.85); ctx.stroke();
+				ctx.beginPath(); ctx.moveTo(cx + r * 0.75, cy - r * 0.65); ctx.lineTo(cx + r * 0.4, cy - r * 1.15); ctx.lineTo(cx + r * 0.1, cy - r * 0.85); ctx.stroke();
+			}
+			if (current !== "edges") {
+				ctx.beginPath(); ctx.arc(cx - r * 0.35, cy - r * 0.1, r * 0.12, 0, Math.PI * 2); ctx.fillStyle = c.petrol; ctx.fill();
+				ctx.beginPath(); ctx.arc(cx + r * 0.35, cy - r * 0.1, r * 0.12, 0, Math.PI * 2); ctx.fill();
+				ctx.beginPath(); ctx.moveTo(cx, cy + r * 0.1); ctx.lineTo(cx - r * 0.1, cy + r * 0.25); ctx.lineTo(cx + r * 0.1, cy + r * 0.25); ctx.closePath(); ctx.fillStyle = c.coral; ctx.fill();
+			}
+			if (current === "object") {
+				ctx.strokeStyle = c.petrol;
+				ctx.lineWidth = 2;
+				[-1, 1].forEach(function (s) {
+					for (var i = 0; i < 3; i++) {
+						ctx.beginPath();
+						ctx.moveTo(cx + s * r * 0.3, cy + r * 0.4 + i * 4);
+						ctx.lineTo(cx + s * r * 0.9, cy + r * 0.3 + i * 8);
+						ctx.stroke();
+					}
+				});
+			}
+			if (label) label.textContent = current === "edges" ? "early" : (current === "parts" ? "middle" : "late");
+			if (feature) feature.textContent = current;
+			if (field) field.textContent = current === "edges" ? "small" : (current === "parts" ? "medium" : "large");
+		}
+		var api = canvasDemo(canvas, draw);
+		if (!api) return;
+		chips.forEach(function (chip) {
+			chip.addEventListener("click", function () {
+				chips.forEach(function (x) { x.classList.remove("is-on"); });
+				chip.classList.add("is-on");
+				current = chip.getAttribute("data-vision-layer");
+				api.redraw();
+			});
+		});
+		api.redraw();
+	}
+
+	/* ── quality filter ─────────────────────────────────────── */
+
+	function initFilter(root) {
+		var stream = $("[data-filter-stream]", root);
+		var range = $("[data-filter-strength]", root);
+		var out = $("[data-filter-strength-out]", root);
+		var keptEl = $("[data-filter-kept]", root);
+		var droppedEl = $("[data-filter-dropped]", root);
+		var qualityEl = $("[data-filter-quality]", root);
+		if (!stream || !range) return;
+		var docs = [
+			{ name: "news", q: 3 }, { name: "blog", q: 2 }, { name: "spam", q: 0 },
+			{ name: "wiki", q: 3 }, { name: "forum", q: 1 }, { name: "duplicate", q: 0 },
+			{ name: "paper", q: 3 }, { name: "listing", q: 0 }, { name: "book", q: 3 },
+			{ name: "comment", q: 1 }, { name: "tutorial", q: 2 }, { name: "lorem", q: 0 },
+			{ name: "manual", q: 2 }, { name: "newsletter", q: 2 }, { name: "code", q: 3 },
+			{ name: "seo", q: 0 }, { name: "docs", q: 3 }, { name: "chat", q: 1 }
+		];
+		function render() {
+			var s = parseInt(range.value, 10) || 0;
+			if (out) out.textContent = s;
+			var kept = 0, sum = 0;
+			stream.innerHTML = docs.map(function (d) {
+				var keep = d.q >= s;
+				if (keep) { kept++; sum += d.q; }
+				return '<span class="filter-doc ' + (keep ? "is-kept" : "is-dropped") + '"><b>' + d.name + '</b> q' + d.q + '</span>';
+			}).join("");
+			if (keptEl) keptEl.textContent = kept + " / " + docs.length;
+			if (droppedEl) droppedEl.textContent = (docs.length - kept) + "";
+			if (qualityEl) qualityEl.textContent = kept ? (sum / kept).toFixed(1) : "—";
+		}
+		range.addEventListener("input", render);
+		render();
+	}
+
 	/* ── boot ───────────────────────────────────────────────── */
 
 	function boot() {
@@ -1050,6 +1434,13 @@
 			else if (type === "position") initPosition(root);
 			else if (type === "waveform") initWaveform(root);
 			else if (type === "myths") initMyths(root);
+			else if (type === "ragspace") initRagSpace(root);
+			else if (type === "align") initAlign(root);
+			else if (type === "preference") initPreference(root);
+			else if (type === "mary") initMary(root);
+			else if (type === "logitlens") initLogitLens(root);
+			else if (type === "visionlayers") initVisionLayers(root);
+			else if (type === "filter") initFilter(root);
 		});
 	}
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
