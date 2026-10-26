@@ -594,6 +594,49 @@ async function test_maximally_activated_last_layer() {
 	return true;
 }
 
+function test_resolve_maximally_activated_iterations() {
+	var $input = $("#max_activation_iterations");
+	var old_value = $input.val();
+	var last_layer_idx = model.layers.length - 1;
+
+	try {
+		$input.val("");
+
+		if (_resolve_iterations(0) !== 30) {
+			console.error(`_resolve_iterations(0) with an empty GUI value should be 30, but is ${_resolve_iterations(0)}`);
+			return false;
+		}
+
+		if (_resolve_iterations(last_layer_idx) !== 200) {
+			console.error(`_resolve_iterations(${last_layer_idx}) with an empty GUI value should be 200, but is ${_resolve_iterations(last_layer_idx)}`);
+			return false;
+		}
+
+		$input.val("7");
+
+		if (_resolve_iterations(0) !== 7) {
+			console.error(`_resolve_iterations(0) with an explicit GUI value should be 7, but is ${_resolve_iterations(0)}`);
+			return false;
+		}
+
+		if (_resolve_iterations(last_layer_idx) !== 7) {
+			console.error(`_resolve_iterations(${last_layer_idx}) with an explicit GUI value should be 7, but is ${_resolve_iterations(last_layer_idx)}`);
+			return false;
+		}
+
+		$input.val("0");
+
+		if (_resolve_iterations(0) !== 30) {
+			console.error(`_resolve_iterations(0) with an invalid GUI value should fall back to 30, but is ${_resolve_iterations(0)}`);
+			return false;
+		}
+
+		return true;
+	} finally {
+		$input.val(old_value);
+	}
+}
+
 function removeIdAttribute(htmlString) {
 	try {
 		var regex = /(\s+id\s*=\s*['"][^'"]+['"])/g;
@@ -1101,6 +1144,8 @@ async function run_super_quick_tests (quick=0) {
 	labels = old_labels;
 
 	test_equal("test_maximally_activated_last_layer()", await test_maximally_activated_last_layer(), true);
+
+	test_equal("test_resolve_maximally_activated_iterations()", test_resolve_maximally_activated_iterations(), true);
 
 	test_equal('computeCRC32("")', computeCRC32(""), 0);
 	test_equal('computeCRC32("asasd")', computeCRC32("asasd"), 3324180253);

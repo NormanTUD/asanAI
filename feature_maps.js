@@ -424,11 +424,23 @@ function _setup_preview_canvas(layer_idx, container) {
 function _resolve_iterations(layer_idx) {
 	var isLastLayer = (layer_idx >= model.layers.length - 2);
 	var defaultIterations = isLastLayer ? 200 : 30;
-	var iterations = parse_int($("#max_activation_iterations").val()) || defaultIterations;
-	if (!iterations) {
-		log(`Iterations was set to ${iterations} in the GUI, using ${defaultIterations} instead`);
-		iterations = defaultIterations;
+	var gui_value = ("" + ($("#max_activation_iterations").val() || "")).trim();
+
+	if (gui_value === "") {
+		return defaultIterations;
 	}
+
+	if (!/^\d+$/.test(gui_value)) {
+		log(`Iterations was set to ${gui_value} in the GUI, using ${defaultIterations} instead`);
+		return defaultIterations;
+	}
+
+	var iterations = parse_int(gui_value);
+	if (iterations < 1) {
+		log(`Iterations was set to ${gui_value} in the GUI, using ${defaultIterations} instead`);
+		return defaultIterations;
+	}
+
 	return iterations;
 }
 
@@ -553,7 +565,7 @@ async function draw_single_maximally_activated_neuron(layer_idx, neurons, is_rec
 	for (var neuron_idx = neurons - 1; neuron_idx >= 0; neuron_idx--) {
 		if (stop_generating_images) {
 			info(language[lang]["stopped_generating_images_because_button_was_clicked"]);
-			continue;
+			break;
 		}
 
 		var base_msg = `${language[lang]["generating_image_for_neuron"]} ${neuron_idx + 1} ${language[lang]["of"]} ${neurons}`;
@@ -1459,8 +1471,8 @@ function _postprocess_generated_data(generated_data, full_data) {
 async function _handle_ascent_error(e, recursion, layer_idx, neuron, iterations, start_image) {
 	if (("" + e).includes("is already disposed")) {
 		await compile_model();
-		if (recursion < 20) {
-			await delay(recursion * 1000);
+		if (recursion < 5) {
+			await delay(Math.min(recursion, 2) * 500);
 			return await input_gradient_ascent(layer_idx, neuron, iterations, start_image, undefined, recursion + 1);
 		} else {
 			throw new Error("Too many retries for input_gradient_ascent");
@@ -1633,9 +1645,12 @@ async function _apply_gradient_update(data, scaledGrads, learningRate, iteration
 // Updated _run_single_iteration — threads Adam state through
 // ============================================================================
 async function _run_single_iteration(data, iteration_idx, iterations, config, grad_function, layer_idx, neuron, max_neurons, previewCanvas, previewInterval, adamState) {
-    log(`Layer ${layer_idx}, neuron ${neuron + 1}/${max_neurons}, iteration ${iteration_idx + 1}/${iterations}`);
+    if (stop_generating_images) return { data: data, worked: false, adamState: adamState, stopped: true };
 
-    if (stop_generating_images) return { data: data, worked: false, adamState: adamState };
+    var progressInterval = Math.max(5, Math.floor(iterations / 20));
+    if (iteration_idx === 0 || iteration_idx === iterations - 1 || (iteration_idx + 1) % progressInterval === 0) {
+        log(`Layer ${layer_idx}, neuron ${neuron + 1}/${max_neurons}, iteration ${iteration_idx + 1}/${iterations}`);
+    }
 
     // Steps 1–2: Apply forward jitter
     var jitterState = await _apply_forward_jitter(data, config);
@@ -1645,7 +1660,7 @@ async function _run_single_iteration(data, iteration_idx, iterations, config, gr
     var scaledGrads = await _compute_gradients_for_iteration(data, config, grad_function, iteration_idx);
 
     if (!scaledGrads) {
-        return { data: data, worked: false, adamState: adamState };
+        return { data: data, worked: false, adamState: adamState, stopped: true };
     }
 
     // Steps 5–7: Adam gradient step, L2 decay, TV regularization
@@ -1667,11 +1682,16 @@ async function _run_single_iteration(data, iteration_idx, iterations, config, gr
 // ============================================================================
 async function _run_ascent_loop(data, iterations, config, grad_function, layer_idx, neuron, max_neurons, previewCanvas, previewInterval, adamState) {
     var worked = 0;
+    var stopped = false;
 
     for (var iteration_idx = 0; iteration_idx < iterations; iteration_idx++) {
         var result = await _run_single_iteration(data, iteration_idx, iterations, config, grad_function, layer_idx, neuron, max_neurons, previewCanvas, previewInterval, adamState);
         data = result.data;
         adamState = result.adamState;
+        if (result.stopped) {
+            stopped = true;
+            break;
+        }
         if (result.worked) worked = 1;
     }
 
@@ -1679,7 +1699,7 @@ async function _run_ascent_loop(data, iterations, config, grad_function, layer_i
     await dispose(adamState.m);
     await dispose(adamState.v);
 
-    return { data: data, worked: worked };
+    return { data: data, worked: stopped ? 0 : worked, stopped: stopped };
 }
 
 // ============================================================================
@@ -1697,7 +1717,8 @@ async function _execute_ascent_loop(prepared, iterations, layer_idx, neuron, max
 
     return {
         generated_data: loopResult.data,
-        worked: loopResult.worked
+        worked: loopResult.worked,
+        stopped: loopResult.stopped
     };
 }
 

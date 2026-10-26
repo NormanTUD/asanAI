@@ -679,7 +679,7 @@
 					<div class="mobile-panel-row">
 						<span class="mobile-panel-label"><span class="TRANSLATEME_iterations"></span></span>
 						<div class="mobile-panel-control">
-							<input type="number" id="mobile_max_activation_iterations" value="200" min="1" onchange="$('#max_activation_iterations').val(this.value).trigger('change');">
+							<input type="number" id="mobile_max_activation_iterations" value="" placeholder="auto" min="1" onchange="$('#max_activation_iterations').val(this.value).trigger('change');">
 						</div>
 					</div>
 					<div class="mobile-panel-row">
