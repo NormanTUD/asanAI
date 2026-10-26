@@ -721,9 +721,12 @@ function add_label_sidebar() {
 		if (!existingStyle) {
 			var css = '\
 			#labelSidebar{position:fixed;top:50%;right:0;transform:translateY(-50%);\
-				max-height:90%;overflow:auto;background:rgba(0,0,0,0.3);\
+				max-height:90%;display:flex;flex-direction:column;background:rgba(0,0,0,0.3);\
 				padding:6px 8px;z-index:9999;border:1px solid rgba(255,255,255,0.2);\
 				box-shadow:-2px 0 6px rgba(0,0,0,0.4)}\
+			#labelSidebar .labelSidebar_scroll{overflow:auto;min-height:0}\
+			#labelSidebar #webcam_data{position:static;right:auto;bottom:auto;z-index:auto;\
+				flex:0 0 auto;margin-top:6px;background:#000}\
 			#labelSidebar table{border-collapse:collapse;width:100%}\
 			#labelSidebar td{padding:3px 6px;border:none;cursor:pointer;\
 				color:white;text-shadow:0 0 2px black, 1px 1px 2px black;\
@@ -739,13 +742,22 @@ function add_label_sidebar() {
 
 		bar = document.createElement('div');
 		bar.id = 'labelSidebar';
+		var scroll = document.createElement('div');
+		scroll.className = 'labelSidebar_scroll';
 		table = document.createElement('table');
-		bar.appendChild(LABEL_SIDEBAR_BTN_HTML);
-		bar.appendChild(table);
+		scroll.appendChild(LABEL_SIDEBAR_BTN_HTML);
+		scroll.appendChild(table);
+		bar.appendChild(scroll);
 		document.body.appendChild(bar);
 	} else {
 		table = bar.querySelector('table');
 		table.innerHTML = '';
+	}
+
+	// Kamerabild in die Sidebar holen, damit es beim Scrollen immer sichtbar bleibt.
+	var webcam_data = document.getElementById('webcam_data');
+	if (webcam_data && webcam_data.parentNode !== bar) {
+		bar.appendChild(webcam_data);
 	}
 
 	// Einträge einfügen
