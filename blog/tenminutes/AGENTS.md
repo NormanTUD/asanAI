@@ -126,23 +126,43 @@ Notes:
 Shared demo code lives in `assets/demos.js`; pages with a demo include it
 after `assets/site.js`. The markup is keyed by `data-demo`:
 
-- `sampling` — temperature / top-p probability bars
-- `linefit` — weight/bias line fitting
+- `sampling` — temperature / top-p probability bars and a live draw
+- `decoding` — greedy / top-k / top-p / min-p decoding studio
+- `predict` — autoregressive next-token loop with branching context
+- `linefit` — weight/bias line fitting with real gradient steps
+- `perceptron` — trainable 2-D decision boundary
+- `gradient` — gradient descent on a loss landscape + loss curve
 - `dream` — stylized Inceptionism noise reveal
-- `polyfit` — polynomial degree and overfitting
+- `polyfit` — polynomial degree, true curve, train/test gap
 - `activation` — ReLU / tanh / sigmoid / GELU plots
 - `datamix` — training-corpus composition
+- `filter` — quality filtering of a document stream
 - `convolution` — kernel / feature-map grid
+- `visionlayers` — edges → parts → objects
+- `receptive` — receptive-field growth with depth and kernel size
 - `vram` — model-size / precision / device calculator
 - `budget` — context-window budget
 - `retrieval` — keyword-overlap RAG ranking
+- `ragspace` — 2-D retrieval geometry (query → nearest chunks)
 - `entropy` — prompt constraints shrinking the output space
-- `cot` — answer-only vs step-by-step reasoning
+- `prompt` — prompt builder with candidate answers and sampling
+- `cot` — answer-only vs step-by-step reasoning (legacy)
+- `reasoning` — answer vs steps, token cost, self-consistency votes
 - `timeline` — generic clickable timeline / stepper (`.tl-node` + `.tl-panel`)
 - `contamination` — benchmark score vs true skill
+- `science` — pLDDT confidence + protein contact map
 - `position` — positional-encoding heatmap
-- `waveform` — audio waveform and token blocks
-- `myths` — click-to-reveal myth cards
+- `waveform` — waveform + spectrogram + codec tokens
+- `align` — image/text embedding alignment toggle
+- `preference` — preference-pair choice for post-training
+- `logitlens` — next-token distribution across layers
+- `residual` — residual-stream updates across blocks
+- `mary` — Mary's Room colour reveal
+- `chinese` — Chinese Room inside/whole-room toggle
+- `ambiguity` — one sentence, two readings
+- `verify` — synthetic-media evidence-strength calculator
+- `citecheck` — real vs fabricated citation spotter
+- `myths` — click-to-reveal myth cards (legacy; not used in a current page)
 
 Use the existing `.demo demo--paper` shell: `demo-head`, `demo-body`,
 `demo-controls`, `demo-readout`, `demo-insight`, `demo-foot`. Canvas demos use

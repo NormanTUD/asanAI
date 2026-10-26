@@ -2304,7 +2304,7 @@
 				'<circle class="gd-dot" cx="100" cy="' + (95 - losses[losses.length - 1] / max * 85).toFixed(2) + '" r="2.4"></circle>';
 		}
 		function step() {
-			var rate = clamp(parseFloat(lr && lr.value) || 0.08, 0.005, 0.4);
+			var rate = clamp(parseFloat(lr && lr.value) || 0.12, 0.005, 1.2);
 			if (lrOut) lrOut.textContent = rate.toFixed(2);
 			var g = grad(pos.x, pos.y);
 			pos.x = clamp(pos.x - rate * g[0], -3, 3);
@@ -2318,7 +2318,7 @@
 		}
 		var api = canvasDemo(canvas, draw);
 		if (!api) return;
-		if (lr) lr.addEventListener("input", function () { if (lrOut) lrOut.textContent = (parseFloat(lr.value) || 0.08).toFixed(2); });
+		if (lr) lr.addEventListener("input", function () { if (lrOut) lrOut.textContent = (parseFloat(lr.value) || 0.12).toFixed(2); });
 		if (stepBtn) stepBtn.addEventListener("click", step);
 		if (runBtn) runBtn.addEventListener("click", function () {
 			if (timer) { clearInterval(timer); timer = null; runBtn.textContent = "Run / pause"; return; }
