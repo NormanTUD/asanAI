@@ -52,7 +52,7 @@
 						<div class="section-kicker"><span class="sk-num">03</span> Prompting is not security</div>
 						<h2 class="section-title">Untrusted text is an attack surface.</h2>
 						<div class="prose">
-							<p>Prompt injection happens when text the model is supposed to read contains instructions. A web page, a document, or an email can tell the model to ignore its system prompt. Delimiters and clear roles help, but they are not a security boundary.</p>
+							<p>Prompt injection happens when text the model is supposed to read contains instructions (<a href="https://arxiv.org/abs/2302.12173" rel="noopener">Greshake et al., 2023</a>). A web page, a document, or an email can tell the model to ignore its system prompt. Delimiters and clear roles help, but they are not a security boundary.</p>
 							<p>The defence is architectural. Give the model the least privilege it needs, separate instructions from data, validate tool calls, and keep a human in the loop for dangerous actions. A prompt that says 'never do X' is not a guarantee.</p>
 							<p>Prompting is still useful. Clear roles, specific constraints, examples, and canonical input reduce ambiguity. But clarity is not the same as security, and a model is not a trusted interpreter of untrusted text.</p>
 						</div>
