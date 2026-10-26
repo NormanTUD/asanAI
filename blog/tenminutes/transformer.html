@@ -18,10 +18,13 @@
 				<div>
 					<h1>The whole <em>machine.</em></h1>
 					<p class="hero-deck">
-						Six ideas snap together: <strong>tokens, positions, attention, feed-forward,
-						residuals, logits</strong>. Stack the block and you have the transformer. Step
-						through the pipeline, then slide through the layers and watch a word change its
-						meaning under context.
+						Six ideas snap together: <strong>tokens</strong> become vectors,
+						<strong>positions</strong> give them order, <strong>attention</strong> lets them
+						exchange information, <strong>feed-forward</strong> transforms them,
+						<strong>residuals</strong> carry the past forward, and <strong>logits</strong>
+						turn the result into a bet on the next token. Stack the block and you have the
+						transformer. Step through the pipeline, then slide through the layers and watch
+						a word change its meaning under context.
 					</p>
 				</div>
 			</section>
@@ -39,16 +42,22 @@
 								grew with distance.
 							</p>
 							<p>
-								The transformer made the path length <strong>one</strong>: every token attends
-								to every other token in a single layer. That is not only a modelling choice;
-								it is a hardware choice. A computation that fills a GPU instead of serializing
-								along the sequence is what made scale practical.
+								The transformer made that path short: in one attention step, every token can
+								read every other token — or every earlier token, in a decoder. The price is
+								<strong>quadratic work</strong> — each token compares with each other token —
+								but the comparison is a matrix multiplication, and matrix multiplications fill
+								a GPU. That trade is what made scale practical.
 							</p>
 						</div>
 						<div class="pullquote">
 							Attention is not a metaphor for looking. It is a learned, differentiable routing
 							operation: a query asks, keys answer, values travel.
 							<cite>The core of the architecture</cite>
+						</div>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">The transformer did not merely make language models deeper. It made them parallel.</p>
+							<p class="aha-sub">Every token can look at every other token in the same step. That one change turned a sequential bottleneck into a matrix multiplication — and made scale practical.</p>
 						</div>
 					</section>
 
@@ -57,7 +66,15 @@
 						<h2 class="section-title">From text to a distribution.</h2>
 						<div class="prose">
 							<p>
-								Here is the whole machine as a route. Start with “the cat sat”, step through the block, predict the next token, then append it and run the loop again. The block in the middle repeats <em>N</em> times; everything else happens once.
+								Here is the whole machine as a route. Start with “the cat sat”, step through
+								the block, predict the next token, then append it and run the loop again. The
+								block in the middle repeats <em>N</em> times; everything else happens once.
+							</p>
+							<p>
+								Training and generation share this route. In training, the model is shown the
+								next token and must make it more likely. In generation, it chooses one token,
+								appends it to the context, and starts again. <strong>The model never sees the
+								sentence it is about to write</strong> — only the tokens already on the page.
 							</p>
 						</div>
 
@@ -98,6 +115,12 @@
 							</div>
 						</div>
 
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">Coherence is what a sequence of local bets looks like from the outside.</p>
+							<p class="aha-sub">The model does not plan the paragraph. It predicts one token, appends it, and predicts again. Each choice becomes part of the next question — so small errors can compound, and so can a good line of thought.</p>
+						</div>
+
 						<div class="trythis">
 							<b>Try this</b>
 							<ol>
@@ -113,18 +136,24 @@
 						<h2 class="section-title">A word changes its meaning with depth.</h2>
 						<div class="prose">
 							<p>
-								At the input, “bank” is already a vector. Then each block rewrites it. The
+								At the input, “bank” is already a vector. Then each block edits it. The
 								residual stream carries the old representation forward and adds a new one on
-								top: <code>x → x + Attention(Norm(x))</code>, then
-								<code>y → x + FFN(Norm(x))</code>. Nothing overwrites the past; everything
+								top: <code>z = x + Attention(Norm(x))</code>, then
+								<code>y = z + FFN(Norm(z))</code>. Nothing is overwritten; everything
 								accumulates.
 							</p>
 							<p>
 								The layer lens below is a deliberately simple story: context pulls the word
 								toward one of two clusters. With “river” in the sentence, “bank” drifts toward
-								the river cluster; with “loan”, toward finance. Drag the layer slider and
-								switch the context. Real trajectories are high-dimensional and much messier;
-								the qualitative idea — context accumulates with depth — is the point.
+								the river cluster; with “loan”, toward finance. It never lands exactly on the
+								cluster centre: the lexical word is still part of the sum. Drag the layer
+								slider and switch the context. Real trajectories are high-dimensional and much
+								messier; the qualitative idea — context accumulates with depth — is the point.
+							</p>
+							<p>
+								<strong>The word does not travel from layer to layer.</strong> The stream stays;
+								each block writes an update into it. That is why a late layer can still recover
+								the original lexical sense: nothing was replaced.
 							</p>
 						</div>
 
@@ -160,6 +189,15 @@
 								it back.
 							</div>
 						</div>
+
+						<div class="trythis">
+							<b>Try this</b>
+							<ol>
+								<li>Set the layer to 11 for “the bank loan”. Why does “bank” stop short of the finance cluster?</li>
+								<li>Switch to “the river bank” without moving the slider. What changes, and what stays the same?</li>
+								<li>Choose “no context”. Why is there no target at all?</li>
+							</ol>
+						</div>
 					</section>
 
 					<section class="section-block" id="block">
@@ -170,17 +208,20 @@
 								<strong>Attention</strong> mixes information across positions. Each token is
 								projected into a <strong>query</strong>, a <strong>key</strong>, and a
 								<strong>value</strong>. The query asks “what am I looking for?”, the key says
-								“what do I contain?”, and the value carries the content that gets moved. The
-								dot product of a query and a key is a similarity score. Softmax turns the
-								scores into weights that sum to one, and the output is a weighted average of
-								the values.
+								“what do I contain?”, and the value carries the content that gets moved.
 							</p>
 							<p>
-								That is why attention works as a routing operation. It follows no fixed tree
-								and no hand-written grammar; it learns which positions should exchange
-								information. The scaling factor <code>1/√d_k</code> keeps the scores from
-								growing too large as the head dimension grows, which would make the softmax
-								saturate and the gradients tiny. Several heads run in parallel in
+								The dot product of a query and a key is a similarity score. Softmax turns the
+								scores into weights that sum to one, and the output is a weighted average of
+								the values. The scaling factor <code>1/√d_k</code> keeps those scores from
+								growing too large as the head dimension grows; without it, softmax saturates
+								and the gradients shrink.
+							</p>
+							<p>
+								<strong>Attention has no fixed grammar.</strong> It follows no hand-written tree;
+								it learns which positions should exchange information. The link between “it” and
+								a noun is computed, not looked up — which is why the same head can resolve it
+								differently in different sentences. Several heads run in parallel in
 								lower-dimensional subspaces, so one head can track a pronoun while another
 								tracks a verb or a nearby adjective.
 							</p>
@@ -188,20 +229,23 @@
 								<strong>Feed-forward</strong> transforms each position independently: expand
 								to a wider hidden dimension, apply a nonlinearity, contract back. Attention
 								decides <em>what to look at</em>; the FFN decides <em>what to do with it</em>.
-								The wide hidden layer gives the network room to combine features, and the FFN
-								is a major locus of memorized associations and factual patterns. Knowledge is
-								distributed across the network, yet this block holds a large share of the
-								parameters.
+								The wide hidden layer gives the network room to combine features, and much of
+								the model’s factual recall is associated with these weights — though knowledge
+								is distributed, not stored in one place.
 							</p>
 							<p>
 								<strong>Residual connections</strong> give the gradient an identity path
 								around each sublayer, so a deep stack can still learn. They also make the
 								block additive: the branch computes an update, and the update is added to the
-								running stream. Nothing is overwritten. <strong>Layer normalization</strong>
-								keeps activations in a healthy range. The 2017 block normalized after the
-								residual addition; modern stacks usually normalize <em>inside</em> the branch
-								(pre-norm), leaving the stream unbroken, and often replace LayerNorm with
-								RMSNorm, which rescales by the root mean square without subtracting the mean.
+								running stream. Nothing is overwritten.
+							</p>
+							<p>
+								<strong>Layer normalization</strong> keeps activations in a healthy range. The
+								2017 block normalized after the residual addition; modern stacks usually
+								normalize <em>inside</em> the branch (pre-norm), leaving the stream unbroken,
+								and often replace LayerNorm with RMSNorm, which rescales by the root mean
+								square without subtracting the mean. The stream stays simple; each branch
+								arrives already scaled.
 							</p>
 						</div>
 						<div class="formula-grid">
@@ -252,11 +296,15 @@
 							<p>
 								How does it stop? There is no separate stop detector. The end-of-sequence token
 								is an ordinary vocabulary entry; “stopping” means the distribution puts enough
-								mass on EOS at a natural boundary. Instruction-tuned models also seem to carry
-								a rough plan of the answer’s length, readable from the prompt’s final hidden
-								state before the first output token — but that is a learned estimate, not an
-								odometer.
+								mass on EOS at a natural boundary. Instruction-tuned models may also carry a
+								rough sense of how long an answer should be, but that is a learned estimate,
+								not an odometer.
 							</p>
+						</div>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">There is no stop button.</p>
+							<p class="aha-sub">EOS is just another token. The model stops when the next-token distribution has learned that a natural boundary is the most likely next move.</p>
 						</div>
 						<div class="formula">
 							<code>P(token) = softmax(logits / T)</code>
@@ -266,8 +314,10 @@
 								Temperature <code>T</code> changes the shape of the distribution without
 								changing the model. At <code>T = 1</code> the softmax uses the logits as
 								they are. Lower values sharpen the distribution toward the top token; higher
-								values flatten it and give rare tokens more room. The model’s knowledge sits
-								in the logits. Temperature and top-p decide how boldly the decoder reads them.
+								values flatten it and give rare tokens more room.
+								<strong>Temperature is a dial on courage, not on knowledge.</strong> The
+								knowledge sits in the logits; temperature and top-p decide how boldly the
+								decoder reads them.
 							</p>
 						</div>
 						<div class="myth-grid">
@@ -290,13 +340,22 @@
 						</div>
 						<div class="prose">
 							<p>
-								One last surprise from recent research: a trained transformer does not merely
-								predict from its context — a linear attention layer can implement a step of
-								gradient descent on the examples in the prompt. That reframes in-context
-								learning as an optimizer the model learned to run inside its forward pass. The
-								result is suggestive, not a complete explanation; it is one of the most
-								interesting open threads in the field.
+								One last surprise from recent research: in a simplified setting, a linear
+								attention layer can implement a step of gradient descent on the examples in the
+								prompt. That reframes in-context learning as an optimizer the model learned to
+								run inside its forward pass. The result is suggestive, not a complete
+								explanation; it is one of the most interesting open threads in the field.
 							</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">06</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">A transformer is a stack of small, reusable edits to one shared vector.</p>
+							<p class="aha-sub">Attention routes information between tokens; the FFN transforms each token; the residual stream keeps everything that came before. Scale that block and you get a language model.</p>
 						</div>
 					</section>
 
@@ -329,7 +388,7 @@
 			{
 				name: "Position",
 				title: "Add position",
-				text: "A position signal is added to each embedding (sinusoidal in the original, often rotary/RoPE in modern models). Without it, “dog bites man” and “man bites dog” would be an unordered bag of the same vectors.",
+				text: "A position signal is added to each embedding (sinusoidal in the original; modern models often use rotary/RoPE, which rotates queries and keys instead). Without it, “dog bites man” and “man bites dog” would be an unordered bag of the same vectors.",
 				shape: "[T, d_model] + [T, d_model] → [T, d_model]"
 			},
 			{
