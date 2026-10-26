@@ -1569,7 +1569,7 @@
 			if (i + 2 < N) setC(i, i + 2, 0.2);
 		}
 		var threshold = 70;
-		var selected = 16;
+		var selected = 15;
 
 		function draw(ctx, w, h) {
 			var c = colors();
