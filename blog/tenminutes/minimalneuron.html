@@ -88,13 +88,17 @@
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">The perceptron draws a border <span>· demo</span></p>
-								<p class="demo-sub">Two classes, one straight line. Train the weights and watch the border move until the mistakes disappear — if the data lets it.</p>
+								<p class="demo-sub">Two classes, one straight line. Train the weights and watch the border move. Then switch to XOR and watch the line get stuck — the failure that makes hidden layers necessary.</p>
 							</div>
 							<span class="demo-badge">interactive</span>
 						</div>
 						<div class="demo-body">
 							<div class="pc-wrap">
 								<div>
+									<div class="seg" style="margin-bottom:10px" data-perceptron-mode>
+										<button class="is-on" type="button" data-perceptron-dataset="separable">Separable</button>
+										<button type="button" data-perceptron-dataset="xor">XOR</button>
+									</div>
 									<canvas class="demo-canvas demo-canvas--md" data-perceptron-canvas aria-label="Two classes of points and a learned decision boundary"></canvas>
 									<div class="demo-controls">
 										<button class="btn-demo btn-demo--green" type="button" data-perceptron-train>Train one update →</button>

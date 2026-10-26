@@ -67,6 +67,14 @@
 						</div>
 						<div class="demo-body">
 							<canvas class="demo-canvas demo-canvas--md" data-polyfit-canvas aria-label="Polynomial fits to training and test points"></canvas>
+							<div class="gd-loss" style="margin-top:12px">
+								<svg data-polyfit-chart viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="Training and test error as a function of polynomial degree"></svg>
+								<div class="legend-dots">
+									<span><i style="background:var(--tm-green)"></i>training error</span>
+									<span><i style="background:var(--tm-coral)"></i>test error</span>
+									<span>degree →</span>
+								</div>
+							</div>
 							<div class="demo-controls">
 								<label>Degree <input type="range" data-polyfit-degree min="1" max="11" step="1" value="2"><output data-polyfit-degree-out>2</output></label>
 							</div>

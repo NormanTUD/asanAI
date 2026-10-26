@@ -67,12 +67,18 @@
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">A filter that slides <span>· demo</span></p>
-								<p class="demo-sub">The kernel is a tiny learned pattern. Pick one and watch it turn the input into a feature map.</p>
+								<p class="demo-sub">The kernel is a tiny learned pattern. Pick one, paint your own input, or scan the 3×3 window across the image.</p>
 							</div>
 							<span class="demo-badge">live</span>
 						</div>
 						<div class="demo-body">
 							<canvas class="demo-canvas demo-canvas--md" data-conv-canvas aria-label="A convolution applied to a small grid"></canvas>
+							<div class="demo-controls">
+								<button class="btn-demo btn-demo--green" type="button" data-conv-scan>Scan the kernel ▶</button>
+								<button class="btn-demo" type="button" data-conv-paint>Blank grid</button>
+								<button class="btn-demo" type="button" data-conv-image>Restore image</button>
+							</div>
+							<p class="demo-hint" data-conv-hint>Click any input cell to paint it. The output is recomputed by the same 3×3 kernel.</p>
 							<div class="chip-row" style="margin-top:12px">
 								<button class="chip is-on" type="button" data-kernel="edge">edge</button>
 								<button class="chip" type="button" data-kernel="blur">blur</button>

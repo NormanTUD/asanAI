@@ -166,7 +166,7 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Descend a loss surface <span>· demo</span></p>
-									<p class="demo-sub">The colour is the loss. The ball follows the negative gradient. Turn the learning rate up and see it overshoot.</p>
+									<p class="demo-sub">The colour is the loss. Your green ball follows the negative gradient. Three ghost balls show a slow rate, a good rate, and a rate that overshoots.</p>
 								</div>
 								<span class="demo-badge">live</span>
 							</div>
@@ -193,6 +193,12 @@
 										<p class="demo-hint" data-gradient-note></p>
 									</div>
 								</div>
+							</div>
+							<div class="legend-dots">
+								<span><i style="background:var(--tm-green)"></i>your learning rate</span>
+								<span><i style="background:var(--tm-sky)"></i>slow · 0.02</span>
+								<span><i style="background:var(--tm-gold)"></i>good · 0.12</span>
+								<span><i style="background:var(--tm-coral)"></i>too high · 1.0</span>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>The gradient is local. A good learning rate turns local information into global progress; a bad one turns it into oscillation or divergence.</span></div>
 						</div>

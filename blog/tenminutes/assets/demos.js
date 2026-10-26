@@ -588,6 +588,7 @@
 		var trainOut = $("[data-polyfit-train]", root);
 		var testOut = $("[data-polyfit-test]", root);
 		var note = $("[data-polyfit-note]", root);
+		var chart = $("[data-polyfit-chart]", root);
 		if (!canvas) return;
 		var train = [], test = [];
 		for (var i = 0; i < 12; i++) {
@@ -597,6 +598,32 @@
 		for (var j = 0; j < 40; j++) {
 			var xt = -1 + 2 * j / 39;
 			test.push({ x: xt, y: Math.sin(2.2 * xt) + 0.15 * xt + Math.sin(j * 7.3 + 2) * 0.05 });
+		}
+		var xsTrain = train.map(function (p) { return p.x; });
+		var ysTrain = train.map(function (p) { return p.y; });
+		var curveData = [];
+		for (var cd = 1; cd <= 11; cd++) {
+			var cc = polyFit(xsTrain, ysTrain, cd);
+			var trc = train.reduce(function (a, p) { var e = evalPoly(cc, p.x) - p.y; return a + e * e; }, 0) / train.length;
+			var tec = test.reduce(function (a, p) { var e = evalPoly(cc, p.x) - p.y; return a + e * e; }, 0) / test.length;
+			curveData.push({ d: cd, tr: trc, te: tec });
+		}
+		function renderChart(d) {
+			if (!chart) return;
+			var max = 1e-6;
+			curveData.forEach(function (c) { max = Math.max(max, Math.sqrt(c.tr), Math.sqrt(c.te)); });
+			function polyline(key) {
+				return curveData.map(function (c, i) {
+					return (i / (curveData.length - 1) * 100).toFixed(2) + "," + (95 - Math.sqrt(c[key]) / max * 78).toFixed(2);
+				}).join(" ");
+			}
+			var cd2 = curveData[clamp(d, 1, 11) - 1];
+			var mx = ((cd2.d - 1) / 10 * 100).toFixed(2);
+			var my = (95 - Math.sqrt(cd2.te) / max * 78).toFixed(2);
+			chart.innerHTML = '<line class="gd-axis" x1="0" y1="95" x2="100" y2="95"></line>' +
+				'<polyline class="gd-curve" points="' + polyline("tr") + '" style="stroke:var(--tm-green)"></polyline>' +
+				'<polyline class="gd-curve" points="' + polyline("te") + '" style="stroke:var(--tm-coral)"></polyline>' +
+				'<circle class="gd-dot" cx="' + mx + '" cy="' + my + '" r="2.6" style="fill:var(--tm-coral)"></circle>';
 		}
 		function draw(ctx, W, H) {
 			var c = colors();
@@ -656,8 +683,9 @@
 			if (testOut) testOut.textContent = te.toFixed(3);
 			if (note) {
 				var lvl = d <= 2 ? "Underfit" : d <= 5 ? "Balanced" : "Overfit risk";
-				note.innerHTML = "<b>" + lvl + ".</b> The dashed line is the true pattern. Green dots are training data; faint dots are held-out points. A high-degree curve can memorize the noise and lose the shape.";
+				note.innerHTML = "<b>" + lvl + ".</b> The dashed line is the true pattern. Green dots are training data; faint dots are held-out points. The small chart plots train error (green) and test error (lilac) against degree: the test curve turns back up when the curve starts memorizing.";
 			}
+			renderChart(d);
 		}
 		var api = canvasDemo(canvas, draw);
 		if (!api) return;
@@ -774,6 +802,10 @@
 		var chips = $$("[data-kernel]", root);
 		var inputSizeEl = $("[data-conv-input-size]", root);
 		var outputSizeEl = $("[data-conv-output-size]", root);
+		var scanBtn = $("[data-conv-scan]", root);
+		var paintBtn = $("[data-conv-paint]", root);
+		var imageBtn = $("[data-conv-image]", root);
+		var hintEl = $("[data-conv-hint]", root);
 		if (!canvas) return;
 		var size = 14;
 		var input = [];
@@ -794,6 +826,10 @@
 		};
 		var current = "edge";
 		var imageLoaded = false;
+		var scanCell = -1;
+		var scanTimer = null;
+		var lastGeom = null;
+		var imageGrid = null;
 		function conv(kernel) {
 			var out = [];
 			for (var y = 1; y < size - 1; y++) {
@@ -816,8 +852,9 @@
 			var ox = pad, oy = pad + 18;
 			ctx.clearRect(0, 0, W, H);
 			ctx.font = "600 11px Barlow, system-ui, sans-serif";
+			lastGeom = { pad: pad, gap: gap, cell: cell, ox: ox, oy: oy, ox2: ox + size * cell + gap };
 			ctx.fillStyle = c.muted;
-			ctx.fillText(imageLoaded ? "input · stop sign" : "input", ox, pad + 4);
+			ctx.fillText(imageLoaded ? "input · stop sign" : "input · painted", ox, pad + 4);
 			ctx.fillText("feature map · " + current, ox + size * cell + gap, pad + 4);
 			for (var y = 0; y < size; y++) {
 				for (var x = 0; x < size; x++) {
@@ -837,6 +874,19 @@
 					ctx.fillStyle = rgb(mix(hexToRgb(c.paper2), hexToRgb(c.green), t));
 					ctx.fillRect(ox2 + xx * cell, oy + yy * cell, cell - 1, cell - 1);
 				}
+			}
+			if (scanCell >= 0) {
+				var ow = size - 2;
+				var sy = Math.floor(scanCell / ow), sx = scanCell % ow;
+				ctx.strokeStyle = c.gold;
+				ctx.lineWidth = 2.6;
+				ctx.strokeRect(ox + sx * cell - 1, oy + sy * cell - 1, cell * 3 + 2, cell * 3 + 2);
+				ctx.strokeStyle = c.coral;
+				ctx.lineWidth = 2.2;
+				ctx.strokeRect(ox2 + sx * cell - 1, oy + sy * cell - 1, cell + 2, cell + 2);
+				ctx.fillStyle = c.gold;
+				ctx.font = "600 10px Barlow, system-ui, sans-serif";
+				ctx.fillText("3×3 window", ox + sx * cell, oy + sy * cell - 5);
 			}
 			if (inputSizeEl) inputSizeEl.textContent = size + " × " + size;
 			if (outputSizeEl) outputSizeEl.textContent = (size - 2) + " × " + (size - 2);
@@ -860,6 +910,7 @@
 					grid[y].push((data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114) / 255);
 				}
 			}
+			imageGrid = grid;
 			input = grid;
 			size = n;
 			imageLoaded = true;
@@ -873,6 +924,57 @@
 				current = chip.getAttribute("data-kernel");
 				api.redraw();
 			});
+		});
+		canvas.addEventListener("click", function (ev) {
+			if (!lastGeom) return;
+			var rect = canvas.getBoundingClientRect();
+			var x = ev.clientX - rect.left;
+			var y = ev.clientY - rect.top;
+			var g = lastGeom;
+			var ix = Math.floor((x - g.ox) / g.cell);
+			var iy = Math.floor((y - g.oy) / g.cell);
+			if (ix < 0 || iy < 0 || ix >= size || iy >= size) return;
+			input[iy][ix] = input[iy][ix] > 0.5 ? 0 : 1;
+			imageLoaded = false;
+			api.redraw();
+			if (hintEl) hintEl.textContent = "You painted cell " + (iy * size + ix + 1) + ". Watch the feature map change.";
+		});
+		if (scanBtn) scanBtn.addEventListener("click", function () {
+			if (scanTimer) {
+				clearInterval(scanTimer); scanTimer = null; scanCell = -1;
+				scanBtn.textContent = "Scan the kernel ▶";
+				api.redraw();
+				return;
+			}
+			scanCell = 0;
+			scanBtn.textContent = "Stop scan ■";
+			scanTimer = setInterval(function () {
+				scanCell = (scanCell + 1) % ((size - 2) * (size - 2));
+				api.redraw();
+			}, 42);
+			api.redraw();
+		});
+		if (paintBtn) paintBtn.addEventListener("click", function () {
+			if (scanTimer) { clearInterval(scanTimer); scanTimer = null; scanBtn.textContent = "Scan the kernel ▶"; }
+			scanCell = -1;
+			size = 14;
+			input = [];
+			for (var py = 0; py < size; py++) {
+				input.push([]);
+				for (var px = 0; px < size; px++) input[py].push(0);
+			}
+			imageLoaded = false;
+			api.redraw();
+			if (hintEl) hintEl.textContent = "Blank grid. Click cells to draw a shape, then pick a kernel or scan it.";
+		});
+		if (imageBtn) imageBtn.addEventListener("click", function () {
+			if (!imageGrid) return;
+			if (scanTimer) { clearInterval(scanTimer); scanTimer = null; scanBtn.textContent = "Scan the kernel ▶"; }
+			scanCell = -1;
+			input = imageGrid;
+			size = imageGrid.length;
+			imageLoaded = true;
+			api.redraw();
 		});
 		api.redraw();
 	}
@@ -1872,8 +1974,11 @@
 		var noteEl = $("[data-predict-note]", root);
 		var stepBtn = $("[data-predict-step-btn]", root);
 		var resetBtn = $("[data-predict-reset]", root);
+		var runBtn = $("[data-predict-run]", root);
 		var modeChips = $$("[data-predict-mode-value]", root);
 		if (!contextEl || !candsEl) return;
+		var running = false;
+		var runTimer = null;
 
 		var states = {
 			start: [
@@ -1983,7 +2088,8 @@
 			if (stepOut) stepOut.textContent = steps + (terminal ? " · end" : "");
 			if (entropyOut) entropyOut.textContent = terminal ? "—" : ent.toFixed(2) + " bits";
 			if (topOut) topOut.textContent = terminal ? "—" : (maxI >= 0 ? cands[maxI].t : "—");
-			contextEl.innerHTML = escapeHtml(joinWords(words)) + ' <span class="nt-pred' + (steps ? " is-fresh" : "") + '">' + (terminal ? "∎" : "___") + "</span>";
+			var pendingClass = running && !terminal ? " is-pending" : "";
+			contextEl.innerHTML = escapeHtml(joinWords(words)) + ' <span class="nt-pred' + (steps && !running ? " is-fresh" : "") + pendingClass + '">' + (terminal ? "∎" : "___") + "</span>";
 			if (traceEl) {
 				traceEl.innerHTML = words.slice(5).map(function (w) { return "<span>" + escapeHtml(w) + "</span>"; }).join("");
 			}
@@ -2046,8 +2152,29 @@
 			});
 		});
 		if (temp) temp.addEventListener("input", render);
+		function startRun() {
+			running = true;
+			if (runBtn) runBtn.textContent = "Stop";
+			render();
+			runTimer = setInterval(function () {
+				if (terminal) { stopRun("Sentence complete · reset to try another"); return; }
+				sample();
+				if (terminal) stopRun("Sentence complete · reset to try another");
+			}, 520);
+		}
+		function stopRun(note) {
+			running = false;
+			if (runTimer) { clearInterval(runTimer); runTimer = null; }
+			if (runBtn) runBtn.textContent = "Run the loop ▶";
+			if (note && noteEl) noteEl.textContent = note;
+			render();
+		}
+		if (runBtn) runBtn.addEventListener("click", function () {
+			if (running) stopRun();
+			else startRun();
+		});
+		if (resetBtn) resetBtn.addEventListener("click", function () { stopRun(); reset(); });
 		if (stepBtn) stepBtn.addEventListener("click", sample);
-		if (resetBtn) resetBtn.addEventListener("click", reset);
 		render();
 	}
 
@@ -2064,20 +2191,34 @@
 		var wEl = $("[data-perceptron-w]", root);
 		var bEl = $("[data-perceptron-b]", root);
 		var noteEl = $("[data-perceptron-note]", root);
+		var modeChips = $$("[data-perceptron-dataset]", root);
 		if (!canvas) return;
 
 		var pts = [];
 		var seed = 0;
+		var mode = "separable";
 		function rnd() { seed += 1; var x = Math.sin(seed * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); }
 		function randn() { return (rnd() + rnd() + rnd() + rnd() - 2) * 0.9; }
-		function build() {
+		function build(kind) {
 			pts = [];
-			seed = 7;
-			for (var i = 0; i < 26; i++) {
-				pts.push({ x: -0.42 + randn() * 0.22, y: -0.32 + randn() * 0.22, yTrue: 1 });
-			}
-			for (var j = 0; j < 26; j++) {
-				pts.push({ x: 0.46 + randn() * 0.22, y: 0.36 + randn() * 0.22, yTrue: -1 });
+			seed = kind === "xor" ? 31 : 7;
+			if (kind === "xor") {
+				for (var q = 0; q < 32; q++) {
+					var qx = (q % 2 === 0) ? 1 : -1;
+					var qy = (Math.floor(q / 2) % 2 === 0) ? 1 : -1;
+					pts.push({
+						x: qx * (0.34 + rnd() * 0.56),
+						y: qy * (0.34 + rnd() * 0.56),
+						yTrue: qx * qy > 0 ? 1 : -1
+					});
+				}
+			} else {
+				for (var i = 0; i < 26; i++) {
+					pts.push({ x: -0.42 + randn() * 0.22, y: -0.32 + randn() * 0.22, yTrue: 1 });
+				}
+				for (var j = 0; j < 26; j++) {
+					pts.push({ x: 0.46 + randn() * 0.22, y: 0.36 + randn() * 0.22, yTrue: -1 });
+				}
 			}
 		}
 		var w = [0.25, 0.32];
@@ -2149,9 +2290,21 @@
 			if (accB) accB.textContent = Math.round(a.b * 100) + "%";
 			if (wEl) wEl.textContent = w[0].toFixed(2) + " / " + w[1].toFixed(2);
 			if (bEl) bEl.textContent = b.toFixed(2);
+			if (mode === "xor" && steps > 12) {
+				ctx.fillStyle = c.coral;
+				ctx.font = "700 11px Barlow, system-ui, sans-serif";
+				ctx.textAlign = "center";
+				ctx.fillText("a straight line cannot separate XOR", W / 2, 14);
+				ctx.textAlign = "left";
+			}
 			if (noteEl) {
-				if (a.all === 1) noteEl.innerHTML = "Separated. A single straight line is enough — because this toy is linearly separable. A real problem often is not.";
-				else noteEl.innerHTML = "<b>" + steps + " updates.</b> Each mistake pushes the line: w ← w + η·y·x, b ← b + η·y.";
+				if (mode === "xor" && steps > 12) {
+					noteEl.innerHTML = "<b>The line is stuck.</b> No straight boundary separates XOR. This is the limit that hidden layers and nonlinearity exist to break.";
+				} else if (a.all === 1) {
+					noteEl.innerHTML = "Separated. A single straight line is enough — because this toy is linearly separable. Try <b>XOR</b> to see the failure.";
+				} else {
+					noteEl.innerHTML = "<b>" + steps + " updates.</b> Each mistake pushes the line: w ← w + η·y·x, b ← b + η·y.";
+				}
 			}
 		}
 		function update() {
@@ -2178,15 +2331,24 @@
 			for (var i = 0; i < 20; i++) update();
 			api.redraw();
 		});
-		if (resetBtn) resetBtn.addEventListener("click", function () {
-			build();
+		function reset() {
+			build(mode);
 			w = [0.25, 0.32];
 			b = -0.08;
 			cursor = 0;
 			steps = 0;
 			api.redraw();
+		}
+		if (resetBtn) resetBtn.addEventListener("click", reset);
+		modeChips.forEach(function (chip) {
+			chip.addEventListener("click", function () {
+				modeChips.forEach(function (x) { x.classList.remove("is-on"); });
+				chip.classList.add("is-on");
+				mode = chip.getAttribute("data-perceptron-dataset") || "separable";
+				reset();
+			});
 		});
-		build();
+		build(mode);
 		api.redraw();
 	}
 
@@ -2221,6 +2383,26 @@
 		var losses = [f(pos.x, pos.y)];
 		var steps = 0;
 		var timer = null;
+		var ghostSpecs = [
+			{ lr: 0.02, label: "slow", color: "sky" },
+			{ lr: 0.12, label: "good", color: "gold" },
+			{ lr: 1.0, label: "too high", color: "coral" }
+		];
+		function newGhost(spec) {
+			return { lr: spec.lr, label: spec.label, color: spec.color, pos: { x: start.x, y: start.y }, path: [{ x: start.x, y: start.y }] };
+		}
+		var ghosts = ghostSpecs.map(newGhost);
+		function colorFor(name) {
+			var c = colors();
+			return { sky: c.sky, gold: c.gold, coral: c.coral, green: c.green, petrol: c.petrol }[name] || c.muted;
+		}
+		function advanceGhost(g) {
+			var gr = grad(g.pos.x, g.pos.y);
+			g.pos.x = clamp(g.pos.x - g.lr * gr[0], -3, 3);
+			g.pos.y = clamp(g.pos.y - g.lr * gr[1], -3, 3);
+			g.path.push({ x: g.pos.x, y: g.pos.y });
+			if (g.path.length > 220) g.path.shift();
+		}
 
 		function draw(ctx, W, H) {
 			var c = colors();
@@ -2258,7 +2440,26 @@
 			ctx.moveTo(px(-3), py(0)); ctx.lineTo(px(3), py(0));
 			ctx.moveTo(px(0), py(-3)); ctx.lineTo(px(0), py(3));
 			ctx.stroke();
-			ctx.strokeStyle = c.gold;
+			ghosts.forEach(function (g) {
+				ctx.strokeStyle = colorFor(g.color);
+				ctx.globalAlpha = 0.75;
+				ctx.lineWidth = 1.5;
+				ctx.beginPath();
+				g.path.forEach(function (p, i) { if (i) ctx.lineTo(px(p.x), py(p.y)); else ctx.moveTo(px(p.x), py(p.y)); });
+				ctx.stroke();
+				ctx.globalAlpha = 1;
+				ctx.beginPath();
+				ctx.arc(px(g.pos.x), py(g.pos.y), 4.2, 0, Math.PI * 2);
+				ctx.fillStyle = colorFor(g.color);
+				ctx.fill();
+				ctx.strokeStyle = c.card;
+				ctx.lineWidth = 1.4;
+				ctx.stroke();
+				ctx.fillStyle = colorFor(g.color);
+				ctx.font = "600 9px Barlow, system-ui, sans-serif";
+				ctx.fillText(g.label, px(g.pos.x) + 7, py(g.pos.y) - 6);
+			});
+			ctx.strokeStyle = c.petrol;
 			ctx.lineWidth = 2;
 			ctx.beginPath();
 			history.forEach(function (p, i) { if (i) ctx.lineTo(px(p.x), py(p.y)); else ctx.moveTo(px(p.x), py(p.y)); });
@@ -2311,6 +2512,7 @@
 			pos.y = clamp(pos.y - rate * g[1], -3, 3);
 			history.push({ x: pos.x, y: pos.y });
 			if (history.length > 220) history.shift();
+			ghosts.forEach(advanceGhost);
 			losses.push(f(pos.x, pos.y));
 			if (losses.length > 90) losses.shift();
 			steps++;
@@ -2336,6 +2538,7 @@
 			if (timer) { clearInterval(timer); timer = null; }
 			pos = { x: start.x, y: start.y };
 			history = [{ x: pos.x, y: pos.y }];
+			ghosts = ghostSpecs.map(newGhost);
 			losses = [f(pos.x, pos.y)];
 			steps = 0;
 			api.redraw();
@@ -2712,8 +2915,8 @@
 			var correctCount = mode === "steps" ? 4 : 1;
 			var votes = [];
 			for (var i = 0; i < 5; i++) votes.push(i < correctCount ? p.correct : p.quick);
-			votesEl.innerHTML = "Five sampled paths → " + votes.map(function (v) {
-				return '<span style="display:inline-block;margin-right:5px;padding:2px 7px;border:1px solid var(--tm-line);border-radius:999px;font-family:var(--tm-mono);font-size:.62rem;color:' + (v === p.correct ? "var(--tm-green-deep)" : "var(--tm-coral)") + '">' + escapeHtml(v) + "</span>";
+			votesEl.innerHTML = "Five sampled paths → " + votes.map(function (v, i) {
+				return '<span style="display:inline-block;margin-right:5px;padding:2px 7px;border:1px solid var(--tm-line);border-radius:999px;font-family:var(--tm-mono);font-size:.62rem;color:' + (v === p.correct ? "var(--tm-green-deep)" : "var(--tm-coral)") + ';animation:pop .3s ease both;animation-delay:' + (i * 80) + 'ms">' + escapeHtml(v) + "</span>";
 			}).join("") + "<br><b>" + correctCount + " / 5</b> agree on " + escapeHtml(p.correct) + ". Majority voting helps only when the errors are not all the same.";
 		}
 		modeBtns.forEach(function (b) {
@@ -2784,7 +2987,7 @@
 			}
 			candsEl.innerHTML = order.map(function (i) {
 				var c = candidates[i];
-				return '<div class="retrieval-item' + (i === order[0] ? " is-hit" : "") + '">' +
+				return '<div class="retrieval-item' + (i === order[0] ? " is-hit" : "") + '" style="animation-delay:' + (order.indexOf(i) * 28) + 'ms">' +
 					'<div><b>' + escapeHtml(c.name) + '</b><p>' + escapeHtml(c.text).replace(/\n/g, "<br>") + '</p></div>' +
 					'<span class="retrieval-score">' + Math.round(probs[i] * 100) + '%</span></div>';
 			}).join("");

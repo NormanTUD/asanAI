@@ -5149,3 +5149,12 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 .nt-cand, .amb-tok, .rf-cell { -webkit-tap-highlight-color: transparent; }
 .rf-cell { cursor: pointer; }
 .amb-tok:focus-visible, .rf-cell:focus-visible { outline: 2px solid var(--tm-green); outline-offset: 2px; }
+
+.nt-pred.is-pending { animation: ntCaret 0.62s steps(2, start) infinite; }
+@keyframes ntCaret { 50% { opacity: 0.1; } }
+@media (prefers-reduced-motion: reduce) { .nt-pred.is-pending { animation: none; } }
+
+[data-prompt-cands] .retrieval-item { animation: promptIn 0.28s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+@keyframes promptIn { from { opacity: 0; transform: translateY(4px) scale(0.99); } to { opacity: 1; transform: none; } }
+.cc-card, .vf-card { animation: promptIn 0.28s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+@media (prefers-reduced-motion: reduce) { [data-prompt-cands] .retrieval-item, .cc-card, .vf-card { animation: none; } }
