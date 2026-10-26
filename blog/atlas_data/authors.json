@@ -518,6 +518,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering",
@@ -586,9 +587,10 @@
   "city": "Menlo Park, United States",
   "year": 2019.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "pytorch"
+   "pytorch",
+   "jax2018"
   ],
   "cited_in": [
    "autodiff",
@@ -615,6 +617,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "math_iii",
    "mechanistic_interpretability"
   ]
  },
@@ -639,6 +642,8 @@
    "evaluation",
    "history",
    "people_of_ai",
+   "positionalembeddingslab",
+   "recurrent_networks",
    "training_data",
    "unexpected_capabilities",
    "untold_history_iii"
@@ -818,6 +823,7 @@
    "fact_lookup",
    "frontier",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering",
@@ -979,6 +985,7 @@
    "geometry_ii",
    "geometry_iii",
    "losslab",
+   "minimalneuron",
    "statistics",
    "statistics_i"
   ]
@@ -1035,7 +1042,8 @@
   "cited_in": [
    "beyond_llms",
    "foam_of_meaning",
-   "geometry_iii"
+   "geometry_iii",
+   "topology"
   ]
  },
  {
@@ -1086,7 +1094,8 @@
    "rhindpapyrus"
   ],
   "cited_in": [
-   "geometry_i"
+   "geometry_i",
+   "math_i"
   ]
  },
  {
@@ -1120,7 +1129,8 @@
    "shrdlu_image"
   ],
   "cited_in": [
-   "agents"
+   "agents",
+   "history"
   ]
  },
  {
@@ -1175,10 +1185,13 @@
    "vaswani2017attention"
   ],
   "cited_in": [
+   "activationlab",
+   "attentionlab",
    "autodiff",
    "contextwindows",
    "embeddinglab",
    "fact_lookup",
+   "geometry_ii",
    "history",
    "intuition",
    "math_iv",
@@ -1187,6 +1200,7 @@
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
+   "recurrent_networks",
    "transformer"
   ]
  },
@@ -1224,6 +1238,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "people_of_ai",
    "untold_history_iii"
@@ -1381,7 +1396,8 @@
    "colmerauer1973prolog"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "symbolic_ai"
   ]
  },
  {
@@ -1516,7 +1532,8 @@
    "turing1936"
   ],
   "cited_in": [
-   "people_of_ai"
+   "people_of_ai",
+   "symbolic_ai"
   ]
  },
  {
@@ -1539,7 +1556,8 @@
    "history",
    "myths",
    "people_of_ai",
-   "philosophy"
+   "philosophy",
+   "symbolic_ai"
   ]
  },
  {
@@ -1774,6 +1792,7 @@
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
+   "recurrent_networks",
    "tokenizerlab",
    "trainingdynamics",
    "transformer"
@@ -1968,19 +1987,22 @@
   "city": "London, United Kingdom",
   "year": 2014.0,
   "conf": 1,
-  "works": 4,
+  "works": 6,
   "keys": [
    "ctc2006",
    "neuralturingmachines",
    "mnih2015dqn",
-   "oord2016wavenet"
+   "oord2016wavenet",
+   "graves2014ntm",
+   "bytnet2016"
   ],
   "cited_in": [
    "attentionlab",
    "beyond_llms",
    "history",
    "music_video_generation",
-   "people_of_ai"
+   "people_of_ai",
+   "transformer"
   ]
  },
  {
@@ -2034,6 +2056,7 @@
    "krizhevsky2009cifar"
   ],
   "cited_in": [
+   "activationlab",
    "beyond_llms",
    "computer_vision",
    "history",
@@ -2134,6 +2157,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering",
@@ -2524,6 +2548,7 @@
    "wei2024jailbroken"
   ],
   "cited_in": [
+   "reliability",
    "security_inference"
   ]
  },
@@ -2749,6 +2774,8 @@
    "beyond_llms",
    "coherent_difference",
    "history",
+   "math_iii",
+   "symbolic_ai",
    "untold_history_iii"
   ]
  },
@@ -2891,14 +2918,16 @@
   "city": "Pittsburgh, United States",
   "year": 1956.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "newell1956logictheorist",
    "newell1957gps",
    "newell1976empirical",
-   "newell1956logic"
+   "newell1956logic",
+   "laird1987soar"
   ],
   "cited_in": [
+   "agents",
    "history",
    "people_of_ai",
    "symbolic_ai"
@@ -3004,6 +3033,7 @@
    "church1936"
   ],
   "cited_in": [
+   "math_iii",
    "people_of_ai",
    "untold_history_iii"
   ]
@@ -3039,7 +3069,6 @@
    "steadystates"
   ],
   "cited_in": [
-   "activationlab",
    "history"
   ]
  },
@@ -3405,7 +3434,9 @@
   "keys": [
    "rao1995bdi"
   ],
-  "cited_in": []
+  "cited_in": [
+   "agents"
+  ]
  },
  {
   "name": "Ananthram Swami",
@@ -3660,6 +3691,7 @@
    "blattmann2023svid"
   ],
   "cited_in": [
+   "activationlab",
    "ai_and_society",
    "diffusion",
    "music_video_generation",
@@ -3908,11 +3940,13 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "chung2022flan"
+   "chung2022flan",
+   "zhou2022expertchoice"
   ],
   "cited_in": [
+   "mixture_of_experts",
    "unexpected_capabilities"
   ]
  },
@@ -4427,6 +4461,7 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "reliability",
@@ -4470,6 +4505,7 @@
    "frontier",
    "mechanistic_interpretability",
    "people_of_ai",
+   "reliability",
    "security_inference"
   ]
  },
@@ -4561,6 +4597,7 @@
    "ai_existential_risk",
    "hallucinations",
    "intuition",
+   "losslab",
    "philosophy"
   ]
  },
@@ -4665,7 +4702,8 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "geometry_i"
+   "geometry_i",
+   "rag"
   ]
  },
  {
@@ -4940,7 +4978,8 @@
   ],
   "cited_in": [
    "geometry_i",
-   "history"
+   "history",
+   "math_i"
   ]
  },
  {
@@ -5111,6 +5150,7 @@
    "anthropic2024mcp"
   ],
   "cited_in": [
+   "agents",
    "ai_economics",
    "ai_existential_risk",
    "vibe_coding",
@@ -5144,18 +5184,20 @@
   "city": "Paris, France",
   "year": 2013.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "weston2015babi",
    "glorot2011deep",
    "bordes2013transE",
-   "bordes2013transe"
+   "bordes2013transe",
+   "weston2015memnn"
   ],
   "cited_in": [
    "activationlab",
    "beyond_llms",
    "philosophy",
-   "symbolic_ai"
+   "symbolic_ai",
+   "transformer"
   ]
  },
  {
@@ -5224,8 +5266,8 @@
    "du2023multiagent"
   ],
   "cited_in": [
+   "agents",
    "frontier",
-   "law_regulation",
    "reinforcement_learning"
   ]
  },
@@ -5456,7 +5498,7 @@
   "city": "Athens, Greece",
   "year": -350.0,
   "conf": 1,
-  "works": 9,
+  "works": 10,
   "keys": [
    "aristotlephysics",
    "deanima",
@@ -5466,7 +5508,8 @@
    "aristotle_metaphysics",
    "aristotlemetaphysics",
    "aristotle1685history",
-   "aristotle1685meteorologica"
+   "aristotle1685meteorologica",
+   "aristotleposterior"
   ],
   "cited_in": [
    "coherent_difference",
@@ -5474,6 +5517,7 @@
    "history",
    "human_mind",
    "language",
+   "math_i",
    "philosophy",
    "untold_history_i"
   ]
@@ -5766,6 +5810,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "people_of_ai",
    "untold_history_iii"
@@ -5817,10 +5862,11 @@
   "city": "Paris, France",
   "year": 2022.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "hoffmann2022chinchilla",
-   "jiang2023mistral"
+   "jiang2023mistral",
+   "borgeaud2022retro"
   ],
   "cited_in": [
    "ai_economics",
@@ -5829,6 +5875,7 @@
    "losslab",
    "overandunderfittinglab",
    "people_of_ai",
+   "rag",
    "training_data",
    "trainingdynamics"
   ]
@@ -6075,10 +6122,13 @@
    "vaswani2017attention"
   ],
   "cited_in": [
+   "activationlab",
+   "attentionlab",
    "autodiff",
    "contextwindows",
    "embeddinglab",
    "fact_lookup",
+   "geometry_ii",
    "history",
    "intuition",
    "math_iv",
@@ -6087,6 +6137,7 @@
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
+   "recurrent_networks",
    "transformer"
   ]
  },
@@ -6190,9 +6241,10 @@
   "city": "Leipzig, Germany",
   "year": 1858.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "mobiusband"
+   "mobiusband",
+   "mobius1827barycentric"
   ],
   "cited_in": [
    "geometry_i",
@@ -6227,14 +6279,18 @@
   "city": "Paris, France",
   "year": 1847.0,
   "conf": 1,
-  "works": 1,
+  "works": 3,
   "keys": [
-   "cauchy1847"
+   "cauchy1847",
+   "cauchy1825memoire",
+   "cauchy1823resume"
   ],
   "cited_in": [
    "autodiff",
+   "derivativelab",
    "differentiation",
    "geometry_ii",
+   "math_iii",
    "optimizerlab"
   ]
  },
@@ -6784,7 +6840,8 @@
    "riek2019neural"
   ],
   "cited_in": [
-   "geometry_iii"
+   "geometry_iii",
+   "topology"
   ]
  },
  {
@@ -7014,7 +7071,8 @@
    "ai_economics",
    "hyperparameters",
    "people_of_ai",
-   "trainingdynamics"
+   "trainingdynamics",
+   "transformer"
   ]
  },
  {
@@ -7048,6 +7106,7 @@
    "estlin2009aegis"
   ],
   "cited_in": [
+   "history",
    "untold_history_iii"
   ]
  },
@@ -7122,6 +7181,7 @@
    "people_of_ai",
    "philosophy",
    "trainingdynamics",
+   "transformer",
    "unexpected_capabilities"
   ]
  },
@@ -7134,18 +7194,15 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 4,
+  "works": 3,
   "keys": [
    "diffusion_ddim_img",
-   "cuevadelasmanos_image",
    "img_bessemer_converter",
    "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
    "diffusion",
-   "human_mind",
-   "intro",
    "untold_history_ii"
   ]
  },
@@ -7271,6 +7328,7 @@
   ],
   "cited_in": [
    "history",
+   "minimalneuron",
    "people_of_ai"
   ]
  },
@@ -7358,6 +7416,7 @@
    "lecun1989backpropagation"
   ],
   "cited_in": [
+   "activationlab",
    "computer_vision",
    "history",
    "mirror_in_machine",
@@ -7427,13 +7486,15 @@
   "city": "Göttingen, Germany",
   "year": 1854.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "riemann1857genus",
-   "riemann1854raum"
+   "riemann1854raum",
+   "riemann1854trig"
   ],
   "cited_in": [
    "geometry_i",
+   "math_iii",
    "math_iv"
   ]
  },
@@ -7482,17 +7543,20 @@
   "city": "Cambridge, United Kingdom",
   "year": 1910.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "russell1910principia",
    "russell1903principia",
    "russell1910pm",
-   "russell1927whyiamnotachristian"
+   "russell1927whyiamnotachristian",
+   "russell1903principles"
   ],
   "cited_in": [
    "beyond_llms",
    "history",
+   "math_iii",
    "philosophy",
+   "symbolic_ai",
    "untold_history_iii"
   ]
  },
@@ -7528,7 +7592,9 @@
   "keys": [
    "rein2024gpqa"
   ],
-  "cited_in": []
+  "cited_in": [
+   "evaluation"
+  ]
  },
  {
   "name": "Bharath Hariharan",
@@ -7659,11 +7725,14 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "yang2014rotate"
+   "yang2014rotate",
+   "yang2015distmult"
   ],
-  "cited_in": []
+  "cited_in": [
+   "symbolic_ai"
+  ]
  },
  {
   "name": "Björn Ommer",
@@ -7674,11 +7743,13 @@
   "city": "Tübingen, Germany",
   "year": 2022.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "rombach2022ldm"
+   "rombach2022ldm",
+   "esser2021taming"
   ],
   "cited_in": [
+   "activationlab",
    "ai_and_society",
    "diffusion",
    "music_video_generation",
@@ -7735,7 +7806,9 @@
   "keys": [
    "rein2024gpqa"
   ],
-  "cited_in": []
+  "cited_in": [
+   "evaluation"
+  ]
  },
  {
   "name": "Bo Li",
@@ -7751,6 +7824,7 @@
    "mazeika2024harmbench"
   ],
   "cited_in": [
+   "reliability",
    "security_inference"
   ]
  },
@@ -8010,7 +8084,8 @@
    "peng2023yarn"
   ],
   "cited_in": [
-   "frontier"
+   "frontier",
+   "positionalembeddingslab"
   ]
  },
  {
@@ -8181,6 +8256,7 @@
    "brown2023union"
   ],
   "cited_in": [
+   "math_iii",
    "origami"
   ]
  },
@@ -8221,6 +8297,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering",
@@ -8416,7 +8493,8 @@
    "feigenbaum1965dendral"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "symbolic_ai"
   ]
  },
  {
@@ -8593,6 +8671,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "math_iii",
    "mechanistic_interpretability"
   ]
  },
@@ -8750,6 +8829,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "math_iii",
    "mechanistic_interpretability",
    "transformer"
   ]
@@ -8863,6 +8943,7 @@
    "geometry_i",
    "geometry_ii",
    "losslab",
+   "minimalneuron",
    "statistics",
    "statistics_i"
   ]
@@ -8876,9 +8957,10 @@
   "city": "Königsberg, Germany",
   "year": 1842.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "jacobi1842"
+   "jacobi1842",
+   "jacobi1846"
   ],
   "cited_in": [
    "geometry_ii"
@@ -9024,6 +9106,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -9044,6 +9127,7 @@
    "estlin2009aegis"
   ],
   "cited_in": [
+   "history",
    "untold_history_iii"
   ]
  },
@@ -9198,6 +9282,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -9567,7 +9652,8 @@
    "fefferman2016testing"
   ],
   "cited_in": [
-   "origami"
+   "origami",
+   "topology"
   ]
  },
  {
@@ -10118,6 +10204,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "people_of_ai",
    "untold_history_iii"
@@ -10171,6 +10258,7 @@
    "intuition",
    "losslab",
    "math_ii",
+   "math_iii",
    "mechanistic_interpretability",
    "origami",
    "people_of_ai",
@@ -10332,12 +10420,14 @@
   "city": "Menlo Park, United States",
   "year": 2022.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "hao2025coconut"
+   "hao2025coconut",
+   "sukhbaatar2015memnn"
   ],
   "cited_in": [
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "transformer"
   ]
  },
  {
@@ -10531,6 +10621,7 @@
    "cancedda2024sinks"
   ],
   "cited_in": [
+   "agents",
    "attentionlab",
    "frontier",
    "symbolic_ai",
@@ -14323,7 +14414,8 @@
   ],
   "cited_in": [
    "ai_and_society",
-   "people_of_ai"
+   "people_of_ai",
+   "recurrent_networks"
   ]
  },
  {
@@ -15248,9 +15340,10 @@
   "city": "Mountain View, USA",
   "year": 2019.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "loshchilov2019adamw"
+   "loshchilov2019adamw",
+   "loshchilov2016sgdr"
   ],
   "cited_in": [
    "optimizerlab"
@@ -15265,9 +15358,10 @@
   "city": "Mainz, Germany",
   "year": 2019.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "loshchilov2019adamw"
+   "loshchilov2019adamw",
+   "loshchilov2016sgdr"
   ],
   "cited_in": [
    "optimizerlab"
@@ -16043,11 +16137,15 @@
   "city": "",
   "year": null,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "goyal2017largebatch"
+   "goyal2017largebatch",
+   "lin2017focal"
   ],
   "cited_in": [
+   "hyperparameters",
+   "losslab",
+   "optimizerlab",
    "trainingdynamics"
   ]
  },
@@ -17510,6 +17608,7 @@
    "contextualretrieval2024"
   ],
   "cited_in": [
+   "agents",
    "ai_economics",
    "ai_existential_risk",
    "rag",
@@ -18936,17 +19035,14 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 4,
+  "works": 3,
   "keys": [
    "cerespath",
-   "cuevadelasmanos_image",
    "img_bessemer_converter",
    "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
-   "human_mind",
-   "intro",
    "statistics",
    "statistics_i",
    "untold_history_ii"
@@ -19184,6 +19280,7 @@
    "chollet2024arcagi"
   ],
   "cited_in": [
+   "evaluation",
    "people_of_ai",
    "training_data"
   ]
@@ -19202,6 +19299,7 @@
    "chollet2024arcagi"
   ],
   "cited_in": [
+   "evaluation",
    "people_of_ai",
    "training_data"
   ]
@@ -19220,6 +19318,7 @@
    "chollet2024arcagi"
   ],
   "cited_in": [
+   "evaluation",
    "people_of_ai",
    "training_data"
   ]
@@ -19393,7 +19492,9 @@
    "img_eliezer_yudkowsky"
   ],
   "cited_in": [
-   "people_of_ai"
+   "history",
+   "people_of_ai",
+   "untold_history_iii"
   ]
  },
  {
@@ -19549,6 +19650,7 @@
    "brooks1986layered"
   ],
   "cited_in": [
+   "agents",
    "philosophy",
    "symbolic_ai"
   ]
@@ -20316,6 +20418,7 @@
    "menabrea_lovelace1843"
   ],
   "cited_in": [
+   "algorithms",
    "people_of_ai",
    "untold_history_iii"
   ]
@@ -20449,7 +20552,9 @@
   "keys": [
    "knuth1972babylonian"
   ],
-  "cited_in": []
+  "cited_in": [
+   "algorithms"
+  ]
  },
  {
   "name": "Adele Goldberg",
@@ -20596,17 +20701,14 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 4,
+  "works": 3,
   "keys": [
    "visicalc_image",
-   "cuevadelasmanos_image",
    "img_bessemer_converter",
    "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
-   "human_mind",
-   "intro",
    "untold_history_ii",
    "untold_history_iii"
   ]
@@ -20620,18 +20722,15 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 4,
+  "works": 3,
   "keys": [
    "pythagoras_portrait",
-   "cuevadelasmanos_image",
    "img_bessemer_converter",
    "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
    "geometry_i",
-   "human_mind",
-   "intro",
    "untold_history_ii"
   ]
  },
@@ -20780,18 +20879,15 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 4,
+  "works": 3,
   "keys": [
    "alkhwarizmi_portrait",
-   "cuevadelasmanos_image",
    "img_bessemer_converter",
    "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
    "geometry_i",
-   "human_mind",
-   "intro",
    "untold_history_ii"
   ]
  },
@@ -20857,18 +20953,15 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 4,
+  "works": 3,
   "keys": [
    "platonic_solids_image",
-   "cuevadelasmanos_image",
    "img_bessemer_converter",
    "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
    "geometry_i",
-   "human_mind",
-   "intro",
    "untold_history_ii"
   ]
  },
@@ -20917,18 +21010,15 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 4,
+  "works": 3,
   "keys": [
    "laws_of_form_diagram",
-   "cuevadelasmanos_image",
    "img_bessemer_converter",
    "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
    "coherent_difference",
-   "human_mind",
-   "intro",
    "untold_history_ii"
   ]
  },
@@ -20941,18 +21031,15 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 4,
+  "works": 3,
   "keys": [
    "theseus_maze_image",
-   "cuevadelasmanos_image",
    "img_bessemer_converter",
    "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
    "history",
-   "human_mind",
-   "intro",
    "untold_history_ii"
   ]
  },
@@ -21341,11 +21428,13 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "clark2020electra"
+   "clark2020electra",
+   "clark2019bertattention"
   ],
   "cited_in": [
+   "attentionlab",
    "history"
   ]
  },
@@ -21358,11 +21447,13 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "clark2020electra"
+   "clark2020electra",
+   "luong2015attention"
   ],
   "cited_in": [
+   "attentionlab",
    "history"
   ]
  },
@@ -21445,9 +21536,10 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "ramesh2021dalle"
+   "ramesh2021dalle",
+   "ramesh2022dalle2"
   ],
   "cited_in": [
    "diffusion",
@@ -22005,11 +22097,13 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "min2022rethinking"
+   "min2022rethinking",
+   "asai2023selfrag"
   ],
   "cited_in": [
+   "rag",
    "unexpected_capabilities"
   ]
  },
@@ -22329,12 +22423,14 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "wang2022selfinstruct"
+   "wang2022selfinstruct",
+   "asai2023selfrag"
   ],
   "cited_in": [
-   "finetuninglab"
+   "finetuninglab",
+   "rag"
   ]
  },
  {
@@ -22516,18 +22612,15 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 5,
+  "works": 4,
   "keys": [
    "img_claude_shannon",
    "wienerajedrecista",
    "perceptronimagecables",
-   "perceptronimagedetection",
    "aikenphoto"
   ],
   "cited_in": [
-   "atlas",
    "history",
-   "intro",
    "people_of_ai"
   ]
  },
@@ -22579,7 +22672,9 @@
    "img_marvin_minsky"
   ],
   "cited_in": [
-   "people_of_ai"
+   "history",
+   "people_of_ai",
+   "untold_history_iii"
   ]
  },
  {
@@ -22890,7 +22985,8 @@
    "mccarthy1955dartmouth"
   ],
   "cited_in": [
-   "people_of_ai"
+   "people_of_ai",
+   "symbolic_ai"
   ]
  },
  {
@@ -22941,7 +23037,8 @@
    "werbos1990bptt"
   ],
   "cited_in": [
-   "people_of_ai"
+   "people_of_ai",
+   "recurrent_networks"
   ]
  },
  {
@@ -23095,6 +23192,7 @@
    "lepikhin2021gshard"
   ],
   "cited_in": [
+   "mixture_of_experts",
    "people_of_ai"
   ]
  },
@@ -23112,6 +23210,7 @@
    "lepikhin2021gshard"
   ],
   "cited_in": [
+   "mixture_of_experts",
    "people_of_ai"
   ]
  },
@@ -23129,6 +23228,7 @@
    "lepikhin2021gshard"
   ],
   "cited_in": [
+   "mixture_of_experts",
    "people_of_ai"
   ]
  },
@@ -23999,6 +24099,7 @@
    "wang2018glue"
   ],
   "cited_in": [
+   "evaluation",
    "untold_history_iii"
   ]
  },
@@ -24016,6 +24117,7 @@
    "wang2018glue"
   ],
   "cited_in": [
+   "evaluation",
    "untold_history_iii"
   ]
  },
@@ -24033,6 +24135,7 @@
    "wang2018glue"
   ],
   "cited_in": [
+   "evaluation",
    "untold_history_iii"
   ]
  },
@@ -24050,6 +24153,7 @@
    "wang2018glue"
   ],
   "cited_in": [
+   "evaluation",
    "untold_history_iii"
   ]
  },
@@ -24067,6 +24171,7 @@
    "rajpurkar2016squad"
   ],
   "cited_in": [
+   "rag",
    "untold_history_iii"
   ]
  },
@@ -24084,6 +24189,7 @@
    "rajpurkar2016squad"
   ],
   "cited_in": [
+   "rag",
    "untold_history_iii"
   ]
  },
@@ -24101,6 +24207,7 @@
    "rajpurkar2016squad"
   ],
   "cited_in": [
+   "rag",
    "untold_history_iii"
   ]
  },
@@ -24271,6 +24378,7 @@
    "dantzig1963linear"
   ],
   "cited_in": [
+   "algorithms",
    "untold_history_iii"
   ]
  },
@@ -24586,7 +24694,8 @@
    "human_mind",
    "metaphysics_of_ai",
    "myths",
-   "philosophy"
+   "philosophy",
+   "symbolic_ai"
   ]
  },
  {
@@ -27004,6 +27113,7 @@
    "keup2022origami"
   ],
   "cited_in": [
+   "intuition",
    "math_iv",
    "origami",
    "topology"
@@ -27160,6 +27270,7 @@
    "elmo"
   ],
   "cited_in": [
+   "embeddinglab",
    "history"
   ]
  },
@@ -27172,15 +27283,18 @@
   "city": "Stanford, USA",
   "year": 2011.0,
   "conf": 1,
-  "works": 5,
+  "works": 7,
   "keys": [
    "socher2011",
    "hewitt2019structural",
    "tian2023calibration",
    "clark2020electra",
-   "pennington2014glove"
+   "pennington2014glove",
+   "luong2015attention",
+   "clark2019bertattention"
   ],
   "cited_in": [
+   "attentionlab",
    "embeddinglab",
    "history",
    "mechanistic_interpretability",
@@ -27400,6 +27514,7 @@
    "fact_lookup",
    "inceptionism",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -27543,7 +27658,8 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "geometry_i"
+   "geometry_i",
+   "rag"
   ]
  },
  {
@@ -27650,6 +27766,8 @@
   "cited_in": [
    "history",
    "language",
+   "losslab",
+   "math_ii",
    "people_of_ai",
    "statistics",
    "statistics_ii",
@@ -27875,7 +27993,8 @@
   ],
   "cited_in": [
    "geometry_i",
-   "geometry_iii"
+   "geometry_iii",
+   "topology"
   ]
  },
  {
@@ -27898,6 +28017,8 @@
    "evaluation",
    "history",
    "people_of_ai",
+   "positionalembeddingslab",
+   "recurrent_networks",
    "training_data",
    "unexpected_capabilities",
    "untold_history_iii"
@@ -28083,7 +28204,8 @@
    "cortes1995svm"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "losslab"
   ]
  },
  {
@@ -28137,6 +28259,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "math_iii",
    "mechanistic_interpretability"
   ]
  },
@@ -28479,12 +28602,15 @@
   "city": "Beijing, China",
   "year": 2022.0,
   "conf": 1,
-  "works": 1,
+  "works": 3,
   "keys": [
-   "dai2022knowledgeneurons"
+   "dai2022knowledgeneurons",
+   "wang2024auxfree",
+   "deepseekmoe2024"
   ],
   "cited_in": [
-   "fact_lookup"
+   "fact_lookup",
+   "mixture_of_experts"
   ]
  },
  {
@@ -28611,6 +28737,7 @@
    "origami",
    "philosophy",
    "reasoning",
+   "reliability",
    "security_inference",
    "training_data",
    "untold_history_iii"
@@ -28891,6 +29018,7 @@
    "verma2023autonomy"
   ],
   "cited_in": [
+   "history",
    "untold_history_iii"
   ]
  },
@@ -29085,11 +29213,13 @@
   "city": "Princeton, USA",
   "year": 2024.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "meng2024simpo"
+   "meng2024simpo",
+   "karpukhin2020dpr"
   ],
   "cited_in": [
+   "rag",
    "reinforcement_learning"
   ]
  },
@@ -29166,6 +29296,7 @@
    "history",
    "hyperparameters",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -29669,6 +29800,7 @@
    "differentiation",
    "history",
    "loss_landscape",
+   "minimalneuron",
    "optimizerlab",
    "people_of_ai"
   ]
@@ -29721,6 +29853,7 @@
    "mazeika2024harmbench"
   ],
   "cited_in": [
+   "reliability",
    "security_inference"
   ]
  },
@@ -29738,7 +29871,8 @@
    "gehring2017convs2s"
   ],
   "cited_in": [
-   "positionalembeddingslab"
+   "positionalembeddingslab",
+   "transformer"
   ]
  },
  {
@@ -29756,7 +29890,8 @@
    "boltzmannlearning"
   ],
   "cited_in": [
-   "people_of_ai"
+   "people_of_ai",
+   "samplinglab"
   ]
  },
  {
@@ -29812,7 +29947,8 @@
    "algorithms",
    "embeddinglab",
    "geometry_i",
-   "history"
+   "history",
+   "symbolic_ai"
   ]
  },
  {
@@ -30076,7 +30212,8 @@
   "cited_in": [
    "beyond_llms",
    "foam_of_meaning",
-   "geometry_iii"
+   "geometry_iii",
+   "topology"
   ]
  },
  {
@@ -30259,6 +30396,7 @@
    "cox1958logistic"
   ],
   "cited_in": [
+   "activationlab",
    "beyond_llms"
   ]
  },
@@ -30296,6 +30434,7 @@
   ],
   "cited_in": [
    "ai_and_society",
+   "evaluation",
    "vibe_coding"
   ]
  },
@@ -30354,6 +30493,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "people_of_ai",
    "reinforcement_learning",
@@ -30391,6 +30531,7 @@
    "analyzingmultiheads"
   ],
   "cited_in": [
+   "attentionlab",
    "transformer"
   ]
  },
@@ -30488,6 +30629,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -30740,6 +30882,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "people_of_ai",
    "untold_history_iii"
@@ -30776,7 +30919,8 @@
    "gehring2017convs2s"
   ],
   "cited_in": [
-   "positionalembeddingslab"
+   "positionalembeddingslab",
+   "transformer"
   ]
  },
  {
@@ -30991,7 +31135,8 @@
    "riek2019neural"
   ],
   "cited_in": [
-   "geometry_iii"
+   "geometry_iii",
+   "topology"
   ]
  },
  {
@@ -31098,13 +31243,15 @@
   "city": "Mountain View, USA",
   "year": 2015.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "adam",
-   "kingma2014vae"
+   "kingma2014vae",
+   "song2021sde"
   ],
   "cited_in": [
    "beyond_llms",
+   "diffusion",
    "music_video_generation",
    "optimizerlab",
    "overandunderfittinglab"
@@ -31343,6 +31490,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "people_of_ai",
    "untold_history_iii"
@@ -31362,6 +31510,7 @@
    "rombach2022ldm"
   ],
   "cited_in": [
+   "activationlab",
    "ai_and_society",
    "diffusion",
    "music_video_generation",
@@ -31488,6 +31637,7 @@
    "taocp3"
   ],
   "cited_in": [
+   "algorithms",
    "untold_history_ii"
   ]
  },
@@ -31506,7 +31656,8 @@
    "geman1984gibbs"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "samplinglab"
   ]
  },
  {
@@ -31575,6 +31726,7 @@
   ],
   "cited_in": [
    "history",
+   "minimalneuron",
    "mirror_in_machine",
    "people_of_ai",
    "untold_history_ii"
@@ -31643,6 +31795,7 @@
    "lecun1989backpropagation"
   ],
   "cited_in": [
+   "activationlab",
    "computer_vision",
    "history",
    "mirror_in_machine",
@@ -31745,11 +31898,13 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "duvenaud2015convfp"
+   "duvenaud2015convfp",
+   "jax2018"
   ],
   "cited_in": [
+   "autodiff",
    "beyond_llms"
   ]
  },
@@ -31924,9 +32079,11 @@
    "bahdanau2014"
   ],
   "cited_in": [
+   "attentionlab",
    "history",
    "positionalembeddingslab",
-   "recurrent_networks"
+   "recurrent_networks",
+   "transformer"
   ]
  },
  {
@@ -32262,6 +32419,7 @@
    "dijkstra1968goto"
   ],
   "cited_in": [
+   "algorithms",
    "software",
    "untold_history_iii"
   ]
@@ -32282,7 +32440,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "promptengineering"
+   "promptengineering",
+   "symbolic_ai"
   ]
  },
  {
@@ -32316,7 +32475,8 @@
    "shortliffe1976mycin"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "symbolic_ai"
   ]
  },
  {
@@ -32338,6 +32498,7 @@
    "diffusion",
    "finetuninglab",
    "geometry_ii",
+   "hyperparameters",
    "running_locally",
    "trainingdynamics"
   ]
@@ -32377,6 +32538,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "math_iii",
    "mechanistic_interpretability"
   ]
  },
@@ -32586,6 +32748,7 @@
    "analyzingmultiheads"
   ],
   "cited_in": [
+   "attentionlab",
    "transformer"
   ]
  },
@@ -32603,6 +32766,7 @@
    "mazeika2024harmbench"
   ],
   "cited_in": [
+   "reliability",
    "security_inference"
   ]
  },
@@ -32788,6 +32952,7 @@
    "ai_existential_risk",
    "hallucinations",
    "intuition",
+   "losslab",
    "philosophy"
   ]
  },
@@ -32828,6 +32993,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "math_iii",
    "mechanistic_interpretability"
   ]
  },
@@ -32845,7 +33011,8 @@
    "peng2023yarn"
   ],
   "cited_in": [
-   "frontier"
+   "frontier",
+   "positionalembeddingslab"
   ]
  },
  {
@@ -33464,6 +33631,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "math_iii",
    "mechanistic_interpretability"
   ]
  },
@@ -33653,7 +33821,8 @@
   ],
   "cited_in": [
    "algorithms",
-   "geometry_i"
+   "geometry_i",
+   "math_i"
   ]
  },
  {
@@ -33692,7 +33861,9 @@
   ],
   "cited_in": [
    "ai_and_society",
+   "alignment",
    "global_ai_ecosystem",
+   "law_regulation",
    "untold_history_iii"
   ]
  },
@@ -34146,6 +34317,7 @@
    "analyzingmultiheads"
   ],
   "cited_in": [
+   "attentionlab",
    "transformer"
   ]
  },
@@ -34252,7 +34424,8 @@
    "lstm_vanilla"
   ],
   "cited_in": [
-   "history"
+   "history",
+   "recurrent_networks"
   ]
  },
  {
@@ -34297,11 +34470,13 @@
   "city": "Göttingen, Germany",
   "year": 1900.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "klein1948geometry"
+   "klein1948geometry",
+   "klein1872erlangen"
   ],
   "cited_in": [
+   "geometry_ii",
    "math_iv"
   ]
  },
@@ -34631,6 +34806,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "math_iii",
    "mechanistic_interpretability"
   ]
  },
@@ -34990,6 +35166,7 @@
    "fchollet_site"
   ],
   "cited_in": [
+   "evaluation",
    "people_of_ai",
    "training_data"
   ]
@@ -35065,7 +35242,8 @@
    "lstm_vanilla"
   ],
   "cited_in": [
-   "history"
+   "history",
+   "recurrent_networks"
   ]
  },
  {
@@ -35370,6 +35548,7 @@
    "brown2023union"
   ],
   "cited_in": [
+   "math_iii",
    "origami"
   ]
  },
@@ -35689,13 +35868,15 @@
   "city": "Paris, France",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "touvron2023llama"
+   "touvron2023llama",
+   "izacard2022atlas"
   ],
   "cited_in": [
    "history",
    "normalizationlab",
+   "rag",
    "transformer"
   ]
  },
@@ -35893,8 +36074,11 @@
    "history",
    "loss_landscape",
    "mechanistic_interpretability",
+   "minimalneuron",
+   "mixture_of_experts",
    "optimizerlab",
    "people_of_ai",
+   "samplinglab",
    "transformer"
   ]
  },
@@ -35916,13 +36100,15 @@
    "krizhevsky2012imagenet"
   ],
   "cited_in": [
+   "activationlab",
    "autodiff",
    "computer_vision",
    "history",
    "normalizationlab",
    "overandunderfittinglab",
    "people_of_ai",
-   "tokenizerlab"
+   "tokenizerlab",
+   "transformer"
   ]
  },
  {
@@ -36233,6 +36419,7 @@
    "foam_of_meaning",
    "language",
    "optimizerlab",
+   "statistics_i",
    "tokenizerlab"
   ]
  },
@@ -36375,6 +36562,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "people_of_ai",
    "untold_history_iii"
@@ -36530,13 +36718,15 @@
   "city": "Ithaca, USA",
   "year": 1975.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "salton1975vectorspace"
+   "salton1975vectorspace",
+   "salton1988termweighting"
   ],
   "cited_in": [
    "embeddinglab",
-   "geometry_i"
+   "geometry_i",
+   "rag"
   ]
  },
  {
@@ -36910,7 +37100,9 @@
    "leibniz1666combinatoria"
   ],
   "cited_in": [
+   "autodiff",
    "coherent_difference",
+   "derivativelab",
    "differentiation",
    "history",
    "philosophy",
@@ -36954,7 +37146,9 @@
   "cited_in": [
    "beyond_llms",
    "history",
-   "people_of_ai"
+   "math_iii",
+   "people_of_ai",
+   "symbolic_ai"
   ]
  },
  {
@@ -37062,7 +37256,8 @@
   "cited_in": [
    "ai_and_society",
    "beyond_llms",
-   "people_of_ai"
+   "people_of_ai",
+   "recurrent_networks"
   ]
  },
  {
@@ -37074,10 +37269,11 @@
   "city": "Mountain View, USA",
   "year": 2013.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "mikolov2013word2vec",
-   "dean2012large"
+   "dean2012large",
+   "mikolov2013negativesampling"
   ],
   "cited_in": [
    "attentionlab",
@@ -37131,14 +37327,16 @@
   "city": "London, United Kingdom",
   "year": 2014.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "neuralturingmachines",
-   "openai2021dota"
+   "openai2021dota",
+   "graves2014ntm"
   ],
   "cited_in": [
    "attentionlab",
-   "beyond_llms"
+   "beyond_llms",
+   "transformer"
   ]
  },
  {
@@ -37156,6 +37354,7 @@
    "yang_hu_feature_learning"
   ],
   "cited_in": [
+   "hyperparameters",
    "trainingdynamics"
   ]
  },
@@ -37518,7 +37717,8 @@
    "beyond_llms",
    "foam_of_meaning",
    "geometry_iii",
-   "origami"
+   "origami",
+   "topology"
   ]
  },
  {
@@ -38428,7 +38628,8 @@
    "fefferman2016testing"
   ],
   "cited_in": [
-   "origami"
+   "origami",
+   "topology"
   ]
  },
  {
@@ -38536,9 +38737,7 @@
   "keys": [
    "nyquist1924certain"
   ],
-  "cited_in": [
-   "statistics_ii"
-  ]
+  "cited_in": []
  },
  {
   "name": "Harsh Kohli",
@@ -38589,7 +38788,8 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "geometry_i"
+   "geometry_i",
+   "math_iii"
   ]
  },
  {
@@ -38885,14 +39085,16 @@
   "city": "Paris, France",
   "year": 1895.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "poincareanalysissitus"
+   "poincareanalysissitus",
+   "poincareconjecture1904"
   ],
   "cited_in": [
    "geometry_i",
    "geometry_iii",
-   "math_iv"
+   "math_iv",
+   "topology"
   ]
  },
  {
@@ -39021,7 +39223,8 @@
   ],
   "cited_in": [
    "geometry_i",
-   "language"
+   "language",
+   "math_i"
   ]
  },
  {
@@ -39042,7 +39245,8 @@
   "cited_in": [
    "beyond_llms",
    "foam_of_meaning",
-   "geometry_iii"
+   "geometry_iii",
+   "topology"
   ]
  },
  {
@@ -39193,13 +39397,16 @@
   "city": "Göttingen, Germany",
   "year": 1913.0,
   "conf": 1,
-  "works": 2,
+  "works": 4,
   "keys": [
    "weylriemann",
-   "weyl1949philosophy"
+   "weyl1949philosophy",
+   "weyl1912singular",
+   "weyl1939classicalgroups"
   ],
   "cited_in": [
-   "embeddinglab"
+   "embeddinglab",
+   "geometry_ii"
   ]
  },
  {
@@ -39228,13 +39435,15 @@
   "city": "Menlo Park, United States",
   "year": 2017.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
+   "jegou2011pq",
    "johnson2017faiss",
    "conneau2018word"
   ],
   "cited_in": [
    "embeddinglab",
+   "rag",
    "vectorsearch"
   ]
  },
@@ -39364,6 +39573,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability"
   ]
  },
@@ -39468,7 +39678,8 @@
    "peng2023yarn"
   ],
   "cited_in": [
-   "frontier"
+   "frontier",
+   "positionalembeddingslab"
   ]
  },
  {
@@ -39739,17 +39950,14 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 4,
+  "works": 3,
   "keys": [
    "eisgalgen_mittenwald",
-   "cuevadelasmanos_image",
    "img_bessemer_converter",
    "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
-   "human_mind",
-   "intro",
    "untold_history_ii"
   ]
  },
@@ -39875,6 +40083,7 @@
    "robertson2009bm25"
   ],
   "cited_in": [
+   "rag",
    "vectorsearch",
    "websearch"
   ]
@@ -40034,6 +40243,7 @@
   ],
   "cited_in": [
    "ai_existential_risk",
+   "alignment",
    "untold_history_iii"
   ]
  },
@@ -40336,6 +40546,7 @@
   "cited_in": [
    "algorithms",
    "deeplearninglab",
+   "hyperparameters",
    "loss_landscape",
    "mechanistic_interpretability",
    "trainingdynamics",
@@ -40357,9 +40568,9 @@
    "openai2021dota"
   ],
   "cited_in": [
+   "agents",
    "beyond_llms",
    "frontier",
-   "law_regulation",
    "reinforcement_learning"
   ]
  },
@@ -40445,10 +40656,13 @@
    "vaswani2017attention"
   ],
   "cited_in": [
+   "activationlab",
+   "attentionlab",
    "autodiff",
    "contextwindows",
    "embeddinglab",
    "fact_lookup",
+   "geometry_ii",
    "history",
    "intuition",
    "math_iv",
@@ -40457,6 +40671,7 @@
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
+   "recurrent_networks",
    "transformer"
   ]
  },
@@ -40486,7 +40701,7 @@
   "city": "San Francisco, United States",
   "year": 2014.0,
   "conf": 1,
-  "works": 14,
+  "works": 15,
   "keys": [
    "gpt2",
    "firstgpt",
@@ -40501,11 +40716,14 @@
    "silver2016alphago",
    "whisper2022",
    "radford2022whisper",
-   "sutskever2013thesis"
+   "sutskever2013thesis",
+   "mikolov2013negativesampling"
   ],
   "cited_in": [
+   "activationlab",
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "computer_vision",
    "embeddinglab",
@@ -40515,6 +40733,7 @@
    "philosophy",
    "positionalembeddingslab",
    "recurrent_networks",
+   "samplinglab",
    "tokenizerlab",
    "transformer",
    "untold_history_iii"
@@ -40664,6 +40883,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "people_of_ai",
    "untold_history_iii"
@@ -40718,7 +40938,8 @@
    "asimov1942runaround"
   ],
   "cited_in": [
-   "ai_existential_risk"
+   "ai_existential_risk",
+   "alignment"
   ]
  },
  {
@@ -40908,6 +41129,7 @@
    "schlichtkrull2018rgcn"
   ],
   "cited_in": [
+   "attentionlab",
    "beyond_llms",
    "symbolic_ai",
    "transformer"
@@ -40956,12 +41178,14 @@
   "city": "London, United Kingdom",
   "year": 2014.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "neuralturingmachines"
+   "neuralturingmachines",
+   "graves2014ntm"
   ],
   "cited_in": [
-   "attentionlab"
+   "attentionlab",
+   "transformer"
   ]
  },
  {
@@ -41032,7 +41256,8 @@
    "robinson1965resolution"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "symbolic_ai"
   ]
  },
  {
@@ -41518,7 +41743,8 @@
    "newell1957gps"
   ],
   "cited_in": [
-   "history"
+   "history",
+   "symbolic_ai"
   ]
  },
  {
@@ -41656,6 +41882,7 @@
    "fact_lookup",
    "frontier",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering"
@@ -41825,6 +42052,7 @@
    "history",
    "people_of_ai",
    "positionalembeddingslab",
+   "transformer",
    "unexpected_capabilities"
   ]
  },
@@ -41913,6 +42141,7 @@
    "frontier",
    "mechanistic_interpretability",
    "people_of_ai",
+   "reliability",
    "security_inference",
    "transformer",
    "unexpected_capabilities"
@@ -41927,9 +42156,10 @@
   "city": "Paris, France",
   "year": 1900.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "hadamardproduct"
+   "hadamardproduct",
+   "hadamard1899series"
   ],
   "cited_in": [
    "math_ii"
@@ -42072,10 +42302,13 @@
    "vaswani2017attention"
   ],
   "cited_in": [
+   "activationlab",
+   "attentionlab",
    "autodiff",
    "contextwindows",
    "embeddinglab",
    "fact_lookup",
+   "geometry_ii",
    "history",
    "intuition",
    "math_iv",
@@ -42084,6 +42317,7 @@
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
+   "recurrent_networks",
    "transformer"
   ]
  },
@@ -42165,10 +42399,11 @@
   "city": "Montreal, Canada",
   "year": 2013.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "bergstra2010random",
    "bergstra2013science",
+   "bergstra2011algorithms",
    "hyperopt"
   ],
   "cited_in": [
@@ -42184,10 +42419,11 @@
   "city": "Mountain View, United States",
   "year": 2019.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "pope2023efficiently",
-   "pytorch"
+   "pytorch",
+   "jax2018"
   ],
   "cited_in": [
    "autodiff",
@@ -42316,7 +42552,8 @@
    "berners2001sw"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "symbolic_ai"
   ]
  },
  {
@@ -42406,6 +42643,7 @@
   "cited_in": [
    "history",
    "loss_landscape",
+   "minimalneuron",
    "people_of_ai"
   ]
  },
@@ -42461,6 +42699,7 @@
    "estlin2009aegis"
   ],
   "cited_in": [
+   "history",
    "untold_history_iii"
   ]
  },
@@ -42596,6 +42835,7 @@
    "cooley1965fft"
   ],
   "cited_in": [
+   "algorithms",
    "geometry_ii",
    "untold_history_ii"
   ]
@@ -42632,7 +42872,8 @@
   ],
   "cited_in": [
    "autodiff",
-   "normalizationlab"
+   "normalizationlab",
+   "transformer"
   ]
  },
  {
@@ -42746,6 +42987,7 @@
    "mialon2023augmented"
   ],
   "cited_in": [
+   "agents",
    "frontier",
    "symbolic_ai",
    "unexpected_capabilities",
@@ -42818,6 +43060,7 @@
    "fact_lookup",
    "hyperparameters",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -42855,11 +43098,12 @@
   "city": "San Jose, United States",
   "year": 2017.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "dinh2016realnvp",
    "sohl2015deep",
-   "dinh2017realnvp"
+   "dinh2017realnvp",
+   "song2021sde"
   ],
   "cited_in": [
    "beyond_llms",
@@ -42933,6 +43177,7 @@
    "htu2019dependencies"
   ],
   "cited_in": [
+   "attentionlab",
    "transformer"
   ]
  },
@@ -42986,18 +43231,21 @@
   "city": "Menlo Park, United States",
   "year": 2015.0,
   "conf": 1,
-  "works": 4,
+  "works": 6,
   "keys": [
    "weston2015babi",
    "hao2025coconut",
    "bordes2013transE",
-   "bordes2013transe"
+   "bordes2013transe",
+   "weston2015memnn",
+   "sukhbaatar2015memnn"
   ],
   "cited_in": [
    "beyond_llms",
    "mechanistic_interpretability",
    "philosophy",
-   "symbolic_ai"
+   "symbolic_ai",
+   "transformer"
   ]
  },
  {
@@ -43132,7 +43380,8 @@
   "cited_in": [
    "geometry_i",
    "history",
-   "language"
+   "language",
+   "math_i"
   ]
  },
  {
@@ -43579,11 +43828,12 @@
   "city": "Mountain View, United States",
   "year": 2013.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "tensorflow2016",
    "mikolov2013word2vec",
-   "dean2012large"
+   "dean2012large",
+   "mikolov2013negativesampling"
   ],
   "cited_in": [
    "attentionlab",
@@ -43609,7 +43859,8 @@
    "elman1990finding"
   ],
   "cited_in": [
-   "positionalembeddingslab"
+   "positionalembeddingslab",
+   "recurrent_networks"
   ]
  },
  {
@@ -43626,7 +43877,8 @@
    "peng2023yarn"
   ],
   "cited_in": [
-   "frontier"
+   "frontier",
+   "positionalembeddingslab"
   ]
  },
  {
@@ -44101,11 +44353,14 @@
   "city": "Redmond, United States",
   "year": 2014.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "yang2014rotate"
+   "yang2014rotate",
+   "yang2015distmult"
   ],
-  "cited_in": []
+  "cited_in": [
+   "symbolic_ai"
+  ]
  },
  {
   "name": "Jianlin Su",
@@ -44280,7 +44535,8 @@
   ],
   "cited_in": [
    "autodiff",
-   "normalizationlab"
+   "normalizationlab",
+   "transformer"
   ]
  },
  {
@@ -44704,13 +44960,15 @@
   "city": "Prague, Czech Republic",
   "year": 1619.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "keplerastronomianova",
-   "kepler1619harmonices"
+   "kepler1619harmonices",
+   "kepler1624chilias"
   ],
   "cited_in": [
    "geometry_i",
+   "math_i",
    "untold_history_i"
   ]
  },
@@ -45138,7 +45396,8 @@
   "cited_in": [
    "fact_lookup",
    "loss_landscape",
-   "people_of_ai"
+   "people_of_ai",
+   "recurrent_networks"
   ]
  },
  {
@@ -45220,6 +45479,7 @@
    "ai_and_society",
    "history",
    "people_of_ai",
+   "symbolic_ai",
    "untold_history_iii"
   ]
  },
@@ -45308,6 +45568,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "people_of_ai",
    "untold_history_iii"
@@ -45346,6 +45607,7 @@
    "eniac1946"
   ],
   "cited_in": [
+   "history",
    "untold_history_ii",
    "untold_history_iii"
   ]
@@ -45432,12 +45694,14 @@
   "city": "Cambridge, United Kingdom",
   "year": 1989.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "bridle1989probabilistic"
+   "bridle1989probabilistic",
+   "bridle1990softmax"
   ],
   "cited_in": [
-   "activationlab"
+   "activationlab",
+   "math_ii"
   ]
  },
  {
@@ -45454,6 +45718,7 @@
    "lecun1989backpropagation"
   ],
   "cited_in": [
+   "activationlab",
    "computer_vision",
    "history",
    "mirror_in_machine",
@@ -45631,6 +45896,7 @@
    "eniac1946"
   ],
   "cited_in": [
+   "history",
    "untold_history_ii",
    "untold_history_iii"
   ]
@@ -45667,6 +45933,7 @@
    "cooley1965fft"
   ],
   "cited_in": [
+   "algorithms",
    "geometry_ii",
    "untold_history_ii"
   ]
@@ -45843,7 +46110,8 @@
   ],
   "cited_in": [
    "positionalembeddingslab",
-   "training_data"
+   "training_data",
+   "transformer"
   ]
  },
  {
@@ -45877,7 +46145,8 @@
    "mockus1978bo"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "hyperparameters"
   ]
  },
  {
@@ -45993,6 +46262,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "math_iii",
    "mechanistic_interpretability"
   ]
  },
@@ -46100,7 +46370,8 @@
    "computer_vision",
    "multimodal",
    "music_video_generation",
-   "people_of_ai"
+   "people_of_ai",
+   "recurrent_networks"
   ]
  },
  {
@@ -46112,17 +46383,14 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 4,
+  "works": 3,
   "keys": [
    "metropolis_hastings_image",
-   "cuevadelasmanos_image",
    "img_bessemer_converter",
    "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
-   "human_mind",
-   "intro",
    "untold_history_ii",
    "untold_history_iii"
   ]
@@ -46151,9 +46419,10 @@
   "city": "London, United Kingdom",
   "year": 2022.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "hoffmann2022chinchilla"
+   "hoffmann2022chinchilla",
+   "borgeaud2022retro"
   ],
   "cited_in": [
    "ai_economics",
@@ -46162,6 +46431,7 @@
    "losslab",
    "overandunderfittinglab",
    "people_of_ai",
+   "rag",
    "training_data",
    "trainingdynamics"
   ]
@@ -46212,6 +46482,7 @@
    "hochreiter1991vanishing"
   ],
   "cited_in": [
+   "activationlab",
    "autodiff",
    "history",
    "loss_landscape",
@@ -46251,6 +46522,7 @@
    "berkson1944logistic"
   ],
   "cited_in": [
+   "activationlab",
    "beyond_llms",
    "transformer"
   ]
@@ -46565,9 +46837,9 @@
    "goodman2008pp"
   ],
   "cited_in": [
+   "agents",
    "beyond_llms",
    "frontier",
-   "law_regulation",
    "origami",
    "reinforcement_learning"
   ]
@@ -46593,6 +46865,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering",
@@ -46630,7 +46903,8 @@
    "feigenbaum1965dendral"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "symbolic_ai"
   ]
  },
  {
@@ -46862,6 +47136,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "people_of_ai",
    "untold_history_iii"
@@ -47165,9 +47440,10 @@
   "city": "Marosvásárhely, Romania",
   "year": 1832.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "bolyaiappendix"
+   "bolyaiappendix",
+   "bolyai1832appendix"
   ],
   "cited_in": [
    "geometry_i"
@@ -47322,11 +47598,12 @@
   "city": "Mountain View, United States",
   "year": 2013.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "mikolov2013word2vec",
    "dean2012large",
-   "le2012cat"
+   "le2012cat",
+   "mikolov2013negativesampling"
   ],
   "cited_in": [
    "attentionlab",
@@ -47501,7 +47778,7 @@
   "city": "Cambridge, USA",
   "year": 2021.0,
   "conf": 1,
-  "works": 7,
+  "works": 8,
   "keys": [
    "he2015resnet",
    "wu2018groupnorm",
@@ -47509,13 +47786,15 @@
    "he2017maskrcnn",
    "he2021mae",
    "he2016identity",
-   "he2016resnet"
+   "he2016resnet",
+   "lin2017focal"
   ],
   "cited_in": [
    "autodiff",
    "computer_vision",
    "deeplearninglab",
    "loss_landscape",
+   "losslab",
    "normalizationlab",
    "origami",
    "people_of_ai",
@@ -47888,7 +48167,8 @@
    "riek2019neural"
   ],
   "cited_in": [
-   "geometry_iii"
+   "geometry_iii",
+   "topology"
   ]
  },
  {
@@ -48303,18 +48583,21 @@
   "city": "Mountain View, USA",
   "year": 2019.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "bert",
    "elmo",
-   "devlin2019bert"
+   "devlin2019bert",
+   "guu2020realm"
   ],
   "cited_in": [
    "beyond_llms",
    "embeddinglab",
    "history",
    "people_of_ai",
-   "positionalembeddingslab"
+   "positionalembeddingslab",
+   "rag",
+   "transformer"
   ]
  },
  {
@@ -48693,22 +48976,25 @@
   "city": "London, UK",
   "year": 2016.0,
   "conf": 1,
-  "works": 6,
+  "works": 7,
   "keys": [
    "vq_vae",
    "mnih2013dqn",
    "mnih2015dqn",
    "silver2016go",
    "oord2016wavenet",
-   "silver2016alphago"
+   "silver2016alphago",
+   "bytnet2016"
   ],
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "music_video_generation",
    "people_of_ai",
    "reinforcement_learning",
+   "transformer",
    "untold_history_iii"
   ]
  },
@@ -48748,7 +49034,8 @@
    "embeddinglab",
    "history",
    "people_of_ai",
-   "positionalembeddingslab"
+   "positionalembeddingslab",
+   "transformer"
   ]
  },
  {
@@ -48892,7 +49179,8 @@
    "godel1931incompleteness"
   ],
   "cited_in": [
-   "algorithms"
+   "algorithms",
+   "symbolic_ai"
   ]
  },
  {
@@ -49020,11 +49308,13 @@
    "dauphin2014identifying"
   ],
   "cited_in": [
+   "attentionlab",
    "deeplearninglab",
    "history",
    "loss_landscape",
    "positionalembeddingslab",
-   "recurrent_networks"
+   "recurrent_networks",
+   "transformer"
   ]
  },
  {
@@ -49093,7 +49383,8 @@
   ],
   "cited_in": [
    "geometry_i",
-   "geometry_iii"
+   "geometry_iii",
+   "topology"
   ]
  },
  {
@@ -49343,6 +49634,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "people_of_ai",
    "untold_history_iii"
@@ -49399,6 +49691,7 @@
    "lecun1989backpropagation"
   ],
   "cited_in": [
+   "activationlab",
    "computer_vision",
    "history",
    "mirror_in_machine",
@@ -49438,6 +49731,7 @@
    "page1999pagerank"
   ],
   "cited_in": [
+   "algorithms",
    "beyond_llms"
   ]
  },
@@ -49819,20 +50113,23 @@
   "city": "St. Petersburg, Russia",
   "year": 1755.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "euler1748introductio",
    "eulerbridges",
    "eulersolids",
    "novaactaacdemiaeiscientiarumporopolitanae",
-   "euler1755"
+   "euler1755",
+   "euler1768integralis"
   ],
   "cited_in": [
    "differentiation",
    "geometry_i",
    "geometry_iii",
    "math_i",
-   "math_iv"
+   "math_iii",
+   "math_iv",
+   "topology"
   ]
  },
  {
@@ -49964,11 +50261,14 @@
   "city": "Pittsburgh, USA",
   "year": 2014.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "yang2014rotate"
+   "yang2014rotate",
+   "yang2015distmult"
   ],
-  "cited_in": []
+  "cited_in": [
+   "symbolic_ai"
+  ]
  },
  {
   "name": "Li Dong",
@@ -50362,10 +50662,13 @@
    "vaswani2017attention"
   ],
   "cited_in": [
+   "activationlab",
+   "attentionlab",
    "autodiff",
    "contextwindows",
    "embeddinglab",
    "fact_lookup",
+   "geometry_ii",
    "history",
    "intuition",
    "math_iv",
@@ -50374,6 +50677,7 @@
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
+   "recurrent_networks",
    "transformer"
   ]
  },
@@ -50472,6 +50776,7 @@
   ],
   "cited_in": [
    "mechanistic_interpretability",
+   "reliability",
    "security_inference"
   ]
  },
@@ -51025,6 +51330,8 @@
    "min2022rethinking"
   ],
   "cited_in": [
+   "agents",
+   "embeddinglab",
    "finetuninglab",
    "frontier",
    "history",
@@ -51226,6 +51533,7 @@
    "toupet2025enav"
   ],
   "cited_in": [
+   "history",
    "untold_history_iii"
   ]
  },
@@ -51243,6 +51551,7 @@
    "toupet2025enav"
   ],
   "cited_in": [
+   "history",
    "untold_history_iii"
   ]
  },
@@ -51277,6 +51586,7 @@
    "toupet2025enav"
   ],
   "cited_in": [
+   "history",
    "untold_history_iii"
   ]
  },
@@ -51444,6 +51754,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "people_of_ai",
    "untold_history_iii"
@@ -51617,6 +51928,7 @@
   ],
   "cited_in": [
    "mechanistic_interpretability",
+   "reliability",
    "security_inference"
   ]
  },
@@ -51690,6 +52002,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "people_of_ai",
    "untold_history_iii"
@@ -51749,6 +52062,7 @@
   ],
   "cited_in": [
    "history",
+   "minimalneuron",
    "people_of_ai"
   ]
  },
@@ -51847,9 +52161,10 @@
   "city": "Sydney, Australia",
   "year": 2006.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "hutter2006universal"
+   "hutter2006universal",
+   "hutterprize"
   ],
   "cited_in": [
    "losslab"
@@ -51906,6 +52221,7 @@
    "ai_existential_risk",
    "hallucinations",
    "intuition",
+   "losslab",
    "philosophy"
   ]
  },
@@ -51918,13 +52234,16 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 2,
+  "works": 3,
   "keys": [
    "schick2023toolformer",
-   "mialon2023augmented"
+   "mialon2023augmented",
+   "izacard2022atlas"
   ],
   "cited_in": [
+   "agents",
    "frontier",
+   "rag",
    "symbolic_ai",
    "unexpected_capabilities",
    "websearch"
@@ -52213,12 +52532,14 @@
   "city": "San Francisco, USA",
   "year": 2021.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "chen2021humaneval",
-   "chen2021codex"
+   "chen2021codex",
+   "ramesh2022dalle2"
   ],
   "cited_in": [
+   "diffusion",
    "evaluation",
    "training_data",
    "unexpected_capabilities"
@@ -52306,6 +52627,7 @@
    "elmo"
   ],
   "cited_in": [
+   "embeddinglab",
    "history"
   ]
  },
@@ -52496,7 +52818,8 @@
    "morse1929foundations"
   ],
   "cited_in": [
-   "geometry_i"
+   "geometry_i",
+   "topology"
   ]
  },
  {
@@ -52726,7 +53049,8 @@
    "riek2019neural"
   ],
   "cited_in": [
-   "geometry_iii"
+   "geometry_iii",
+   "topology"
   ]
  },
  {
@@ -52749,6 +53073,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -52824,7 +53149,8 @@
   ],
   "cited_in": [
    "history",
-   "people_of_ai"
+   "people_of_ai",
+   "symbolic_ai"
   ]
  },
  {
@@ -52847,6 +53173,7 @@
    "ai_and_society",
    "history",
    "human_mind",
+   "minimalneuron",
    "people_of_ai"
   ]
  },
@@ -52966,7 +53293,8 @@
   ],
   "cited_in": [
    "inference_optimization",
-   "production_serving"
+   "production_serving",
+   "samplinglab"
   ]
  },
  {
@@ -53040,6 +53368,7 @@
    "elmo"
   ],
   "cited_in": [
+   "embeddinglab",
    "history"
   ]
  },
@@ -53074,7 +53403,8 @@
    "riek2019neural"
   ],
   "cited_in": [
-   "geometry_iii"
+   "geometry_iii",
+   "topology"
   ]
  },
  {
@@ -53112,6 +53442,7 @@
    "beltagy2020longformer"
   ],
   "cited_in": [
+   "embeddinglab",
    "history",
    "inference_optimization"
   ]
@@ -53504,6 +53835,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "diffusion",
    "music_video_generation",
    "symbolic_ai"
   ]
@@ -53712,6 +54044,7 @@
    "people_of_ai",
    "philosophy",
    "trainingdynamics",
+   "transformer",
    "unexpected_capabilities"
   ]
  },
@@ -53901,7 +54234,8 @@
    "baevski2020wav2vec"
   ],
   "cited_in": [
-   "positionalembeddingslab"
+   "positionalembeddingslab",
+   "transformer"
   ]
  },
  {
@@ -54067,15 +54401,19 @@
   "city": "Berkeley, USA",
   "year": 1999.0,
   "conf": 1,
-  "works": 3,
+  "works": 5,
   "keys": [
    "jacobs1991moe",
    "blei2003lda",
-   "jordan1999vi"
+   "jordan1999vi",
+   "jordan1986",
+   "jordan1993hme"
   ],
   "cited_in": [
    "beyond_llms",
+   "mixture_of_experts",
    "people_of_ai",
+   "recurrent_networks",
    "transformer"
   ]
  },
@@ -54272,7 +54610,9 @@
   "keys": [
    "rao1995bdi"
   ],
-  "cited_in": []
+  "cited_in": [
+   "agents"
+  ]
  },
  {
   "name": "Michael Pazzani",
@@ -54618,6 +54958,7 @@
    "estlin2009aegis"
   ],
   "cited_in": [
+   "history",
    "untold_history_iii"
   ]
  },
@@ -55028,17 +55369,20 @@
   "city": "Mountain View, USA",
   "year": 2019.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "bert",
-   "devlin2019bert"
+   "devlin2019bert",
+   "guu2020realm"
   ],
   "cited_in": [
    "beyond_llms",
    "embeddinglab",
    "history",
    "people_of_ai",
-   "positionalembeddingslab"
+   "positionalembeddingslab",
+   "rag",
+   "transformer"
   ]
  },
  {
@@ -55364,6 +55708,7 @@
    "elmo"
   ],
   "cited_in": [
+   "embeddinglab",
    "history"
   ]
  },
@@ -55420,6 +55765,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai"
   ]
@@ -55602,6 +55948,7 @@
    "alkhwarizmi820algebra"
   ],
   "cited_in": [
+   "algorithms",
    "untold_history_i"
   ]
  },
@@ -55816,18 +56163,21 @@
   "city": "London, UK",
   "year": 2016.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "silver2016go",
    "oord2016wavenet",
-   "silver2016alphago"
+   "silver2016alphago",
+   "bytnet2016"
   ],
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "music_video_generation",
    "people_of_ai",
+   "transformer",
    "untold_history_iii"
   ]
  },
@@ -55867,12 +56217,14 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "yao2023react"
+   "yao2023react",
+   "zhou2022expertchoice"
   ],
   "cited_in": [
    "agents",
+   "mixture_of_experts",
    "promptengineering",
    "reasoning",
    "symbolic_ai",
@@ -56179,6 +56531,7 @@
   ],
   "cited_in": [
    "mechanistic_interpretability",
+   "reliability",
    "security_inference"
   ]
  },
@@ -56200,7 +56553,8 @@
   "cited_in": [
    "ai_and_society",
    "history",
-   "people_of_ai"
+   "people_of_ai",
+   "symbolic_ai"
   ]
  },
  {
@@ -56416,6 +56770,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -56595,6 +56950,7 @@
   ],
   "cited_in": [
    "fact_lookup",
+   "math_iii",
    "mechanistic_interpretability"
   ]
  },
@@ -56706,6 +57062,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -56827,6 +57184,7 @@
    "people_of_ai",
    "philosophy",
    "trainingdynamics",
+   "transformer",
    "unexpected_capabilities"
   ]
  },
@@ -57036,6 +57394,7 @@
    "wei2024jailbroken"
   ],
   "cited_in": [
+   "reliability",
    "security_inference"
   ]
  },
@@ -57089,10 +57448,13 @@
    "vaswani2017attention"
   ],
   "cited_in": [
+   "activationlab",
+   "attentionlab",
    "autodiff",
    "contextwindows",
    "embeddinglab",
    "fact_lookup",
+   "geometry_ii",
    "history",
    "intuition",
    "math_iv",
@@ -57101,6 +57463,7 @@
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
+   "recurrent_networks",
    "transformer"
   ]
  },
@@ -57557,12 +57920,15 @@
    "raffel2020c4"
   ],
   "cited_in": [
+   "activationlab",
+   "attentionlab",
    "autodiff",
    "beyond_llms",
    "contextwindows",
    "embeddinglab",
    "fact_lookup",
    "frontier",
+   "geometry_ii",
    "history",
    "inference_optimization",
    "intuition",
@@ -57669,6 +58035,7 @@
    "mazeika2024harmbench"
   ],
   "cited_in": [
+   "reliability",
    "security_inference"
   ]
  },
@@ -57836,6 +58203,7 @@
    "toupet2025enav"
   ],
   "cited_in": [
+   "history",
    "untold_history_iii"
   ]
  },
@@ -57848,15 +58216,17 @@
   "city": "Tel Aviv, Israel",
   "year": 2022.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "alibi2022",
    "press2022alibi",
-   "press2022compositionality"
+   "press2022compositionality",
+   "press2017tying"
   ],
   "cited_in": [
    "frontier",
    "positionalembeddingslab",
+   "transformer",
    "unexpected_capabilities"
   ]
  },
@@ -57894,6 +58264,7 @@
   ],
   "cited_in": [
    "computer_vision",
+   "diffusion",
    "people_of_ai"
   ]
  },
@@ -57990,15 +58361,18 @@
   "city": "Tel Aviv, Israel",
   "year": 2019.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "bart",
    "keyvalmem",
    "talmor2018commonsenseqa",
    "geva2021kv",
-   "wang2018glue"
+   "wang2018glue",
+   "clark2019bertattention"
   ],
   "cited_in": [
+   "attentionlab",
+   "evaluation",
    "fact_lookup",
    "intuition",
    "origami",
@@ -58083,7 +58457,8 @@
    "berners2001sw"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "symbolic_ai"
   ]
  },
  {
@@ -58129,21 +58504,26 @@
   "city": "Mountain View, USA",
   "year": 2016.0,
   "conf": 1,
-  "works": 5,
+  "works": 7,
   "keys": [
    "hinton2015distilling",
    "sutskever2014seq2seq",
    "vq_vae",
    "oord2016wavenet",
-   "bengio2015scheduled"
+   "bengio2015scheduled",
+   "zhang2017rethinking",
+   "bytnet2016"
   ],
   "cited_in": [
    "beyond_llms",
    "finetuninglab",
+   "math_iii",
    "music_video_generation",
    "people_of_ai",
    "production_serving",
-   "recurrent_networks"
+   "recurrent_networks",
+   "samplinglab",
+   "transformer"
   ]
  },
  {
@@ -58455,6 +58835,7 @@
    "bengio1994learning"
   ],
   "cited_in": [
+   "activationlab",
    "autodiff",
    "recurrent_networks",
    "resnetlab"
@@ -58599,6 +58980,7 @@
    "bengio1994learning"
   ],
   "cited_in": [
+   "activationlab",
    "autodiff",
    "recurrent_networks",
    "resnetlab"
@@ -58613,11 +58995,13 @@
   "city": "",
   "year": 2022.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "rombach2022ldm"
+   "rombach2022ldm",
+   "esser2021taming"
   ],
   "cited_in": [
+   "activationlab",
    "ai_and_society",
    "diffusion",
    "music_video_generation",
@@ -58673,7 +59057,8 @@
    "mccarthy1969some"
   ],
   "cited_in": [
-   "agents"
+   "agents",
+   "symbolic_ai"
   ]
  },
  {
@@ -58685,9 +59070,11 @@
   "city": "Cambridge, UK",
   "year": 2020.0,
   "conf": 1,
-  "works": 1,
+  "works": 3,
   "keys": [
-   "lewis2020rag"
+   "lewis2020rag",
+   "karpukhin2020dpr",
+   "izacard2022atlas"
   ],
   "cited_in": [
    "rag",
@@ -58877,6 +59264,7 @@
   ],
   "cited_in": [
    "autodiff",
+   "minimalneuron",
    "optimizerlab",
    "people_of_ai"
   ]
@@ -59131,11 +59519,13 @@
   "city": "Gothenburg, Sweden",
   "year": 1972.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "martinloeftypetheory"
+   "martinloeftypetheory",
+   "martinlof1984intuitionistic"
   ],
   "cited_in": [
+   "math_iii",
    "untold_history_iii"
   ]
  },
@@ -59699,6 +60089,7 @@
   ],
   "cited_in": [
    "computer_vision",
+   "diffusion",
    "people_of_ai"
   ]
  },
@@ -59769,7 +60160,8 @@
    "colmerauer1973prolog"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "symbolic_ai"
   ]
  },
  {
@@ -59861,6 +60253,7 @@
    "htu2019dependencies"
   ],
   "cited_in": [
+   "attentionlab",
    "transformer"
   ]
  },
@@ -60021,6 +60414,7 @@
    "laplace1814essai"
   ],
   "cited_in": [
+   "losslab",
    "statistics",
    "statistics_i",
    "untold_history_i"
@@ -60134,14 +60528,18 @@
   "city": "San Diego, USA",
   "year": 2021.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "goyal2017largebatch",
    "he2017maskrcnn",
-   "he2021mae"
+   "he2021mae",
+   "lin2017focal"
   ],
   "cited_in": [
    "computer_vision",
+   "hyperparameters",
+   "losslab",
+   "optimizerlab",
    "trainingdynamics"
   ]
  },
@@ -60226,13 +60624,17 @@
   "city": "San Francisco, USA",
   "year": 2020.0,
   "conf": 1,
-  "works": 2,
+  "works": 5,
   "keys": [
    "gresser2023jukebox",
-   "schulman2017ppo"
+   "schulman2017ppo",
+   "nichol2021improved",
+   "dhariwal2021diffusion",
+   "ramesh2022dalle2"
   ],
   "cited_in": [
    "beyond_llms",
+   "diffusion",
    "people_of_ai",
    "reinforcement_learning"
   ]
@@ -60657,12 +61059,13 @@
   "city": "Mountain View, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "wei2022chainofthought",
    "shazeer2017moe",
    "wei2022cot",
-   "trinh2024alphageometry"
+   "trinh2024alphageometry",
+   "zhou2022expertchoice"
   ],
   "cited_in": [
    "beyond_llms",
@@ -60710,6 +61113,7 @@
    "people_of_ai",
    "philosophy",
    "recurrent_networks",
+   "samplinglab",
    "unexpected_capabilities"
   ]
  },
@@ -61107,12 +61511,14 @@
   "city": "Santa Barbara, USA",
   "year": 1996.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "zhang1996birch"
+   "zhang1996birch",
+   "beyer1999nearest"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "math_iii"
   ]
  },
  {
@@ -61535,6 +61941,7 @@
    "estlin2009aegis"
   ],
   "cited_in": [
+   "history",
    "untold_history_iii"
   ]
  },
@@ -61913,14 +62320,18 @@
   "city": "Santa Monica, USA",
   "year": 1957.0,
   "conf": 1,
-  "works": 2,
+  "works": 4,
   "keys": [
    "bellman1957dynamic",
-   "bellman1957dp"
+   "bellman1957dp",
+   "bellman1957book",
+   "bellman1961adaptive"
   ],
   "cited_in": [
+   "algorithms",
    "beyond_llms",
-   "geometry_i"
+   "geometry_i",
+   "math_iii"
   ]
  },
  {
@@ -61971,6 +62382,7 @@
    "lecun1989backpropagation"
   ],
   "cited_in": [
+   "activationlab",
    "computer_vision",
    "history",
    "mirror_in_machine",
@@ -62135,6 +62547,7 @@
    "sennrich2016bpe"
   ],
   "cited_in": [
+   "attentionlab",
    "embeddinglab",
    "history",
    "normalizationlab",
@@ -62293,12 +62706,14 @@
   "city": "",
   "year": 1991.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "jacobs1991moe"
+   "jacobs1991moe",
+   "jordan1993hme"
   ],
   "cited_in": [
    "beyond_llms",
+   "mixture_of_experts",
    "transformer"
   ]
  },
@@ -62585,7 +63000,8 @@
    "kowalski1974prolog"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "symbolic_ai"
   ]
  },
  {
@@ -62643,6 +63059,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -62816,6 +63233,7 @@
    "mialon2023augmented"
   ],
   "cited_in": [
+   "agents",
    "frontier",
    "symbolic_ai",
    "unexpected_capabilities",
@@ -62837,6 +63255,7 @@
    "mialon2023augmented"
   ],
   "cited_in": [
+   "agents",
    "frontier",
    "symbolic_ai",
    "unexpected_capabilities",
@@ -62920,11 +63339,13 @@
   "city": "Tübingen, Germany",
   "year": 2022.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "rombach2022ldm"
+   "rombach2022ldm",
+   "esser2021taming"
   ],
   "cited_in": [
+   "activationlab",
    "ai_and_society",
    "diffusion",
    "music_video_generation",
@@ -63121,6 +63542,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -63384,11 +63806,12 @@
   "city": "Toronto, Canada",
   "year": 1992.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "rumelhart1986",
    "williams1992reinforce",
-   "rumelhart1986learning"
+   "rumelhart1986learning",
+   "williams1989"
   ],
   "cited_in": [
    "autodiff",
@@ -63397,8 +63820,10 @@
    "differentiation",
    "history",
    "loss_landscape",
+   "minimalneuron",
    "optimizerlab",
    "people_of_ai",
+   "recurrent_networks",
    "reinforcement_learning"
   ]
  },
@@ -63546,17 +63971,21 @@
   "city": "Palo Alto, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 6,
+  "works": 7,
   "keys": [
    "goyal2017largebatch",
    "girshick2014rcnn",
    "ren2015faster",
    "redmon2016yolo",
    "he2017maskrcnn",
-   "he2021mae"
+   "he2021mae",
+   "lin2017focal"
   ],
   "cited_in": [
    "computer_vision",
+   "hyperparameters",
+   "losslab",
+   "optimizerlab",
    "trainingdynamics"
   ]
  },
@@ -63831,13 +64260,15 @@
   "city": "Pittsburgh, USA",
   "year": 2014.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "zaheer2017deepsets",
    "breakingsoftmaxbottleneck",
-   "srivastava2014dropout"
+   "srivastava2014dropout",
+   "tsai2019kernel"
   ],
   "cited_in": [
+   "attentionlab",
    "geometry_ii",
    "overandunderfittinglab",
    "philosophy"
@@ -64372,6 +64803,7 @@
    "fact_lookup",
    "hyperparameters",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -64493,11 +64925,12 @@
   "city": "Chicago, USA",
   "year": 1945.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "eilenbergmaclane1942",
    "eilenbergsteenrod1952",
-   "eilenberglane1945"
+   "eilenberglane1945",
+   "eilenbergmaclane1945spaces"
   ],
   "cited_in": [
    "coherent_difference",
@@ -64595,6 +65028,8 @@
    "wang2018glue"
   ],
   "cited_in": [
+   "attentionlab",
+   "evaluation",
    "fact_lookup",
    "mechanistic_interpretability",
    "transformer",
@@ -64631,18 +65066,20 @@
   "city": "Montréal, Canada",
   "year": 2002.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "dinh2016realnvp",
    "collobert2002",
    "dinh2017realnvp",
    "dinh2017sharpness",
-   "bengio2015scheduled"
+   "bengio2015scheduled",
+   "zhang2017rethinking"
   ],
   "cited_in": [
    "beyond_llms",
    "history",
    "loss_landscape",
+   "math_iii",
    "origami",
    "recurrent_networks"
   ]
@@ -64699,6 +65136,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "music_video_generation",
    "people_of_ai",
@@ -64819,7 +65257,8 @@
    "fefferman2016testing"
   ],
   "cited_in": [
-   "origami"
+   "origami",
+   "topology"
   ]
  },
  {
@@ -65094,12 +65533,13 @@
   "city": "Chicago, USA",
   "year": 1945.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "eilenbergmaclane1942",
    "maclane1998categories",
    "eilenberglane1945",
-   "maclanemoerdijk1992"
+   "maclanemoerdijk1992",
+   "eilenbergmaclane1945spaces"
   ],
   "cited_in": [
    "coherent_difference",
@@ -65181,7 +65621,8 @@
    "ai_economics",
    "hyperparameters",
    "people_of_ai",
-   "trainingdynamics"
+   "trainingdynamics",
+   "transformer"
   ]
  },
  {
@@ -65342,10 +65783,11 @@
   "city": "London, UK",
   "year": 2022.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "hoffmann2022chinchilla",
-   "rae2021gopher"
+   "rae2021gopher",
+   "borgeaud2022retro"
   ],
   "cited_in": [
    "ai_economics",
@@ -65354,6 +65796,7 @@
    "losslab",
    "overandunderfittinglab",
    "people_of_ai",
+   "rag",
    "training_data",
    "trainingdynamics"
   ]
@@ -65501,9 +65944,10 @@
   "city": "Helsinki, Finland",
   "year": 1970.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "linnainmaa1970"
+   "linnainmaa1970",
+   "linnainmaa1976"
   ],
   "cited_in": [
    "autodiff",
@@ -65542,6 +65986,7 @@
    "page1999pagerank"
   ],
   "cited_in": [
+   "algorithms",
    "beyond_llms"
   ]
  },
@@ -65608,12 +66053,14 @@
   "city": "Princeton, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "press2022compositionality",
-   "min2022rethinking"
+   "min2022rethinking",
+   "karpukhin2020dpr"
   ],
   "cited_in": [
+   "rag",
    "unexpected_capabilities"
   ]
  },
@@ -65650,6 +66097,7 @@
   ],
   "cited_in": [
    "history",
+   "minimalneuron",
    "people_of_ai"
   ]
  },
@@ -65728,6 +66176,7 @@
    "computer_vision",
    "embeddinglab",
    "fact_lookup",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "unexpected_capabilities",
@@ -65753,7 +66202,6 @@
    "alignment",
    "beyond_llms",
    "history",
-   "losslab",
    "people_of_ai"
   ]
  },
@@ -65815,11 +66263,13 @@
   "city": "Montréal, Canada",
   "year": 2018.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "bai2018tcn"
+   "bai2018tcn",
+   "tsai2019kernel"
   ],
   "cited_in": [
+   "attentionlab",
    "beyond_llms"
   ]
  },
@@ -66063,6 +66513,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -66295,6 +66746,7 @@
    "htu2019dependencies"
   ],
   "cited_in": [
+   "attentionlab",
    "transformer"
   ]
  },
@@ -66448,8 +66900,8 @@
    "du2023multiagent"
   ],
   "cited_in": [
+   "agents",
    "frontier",
-   "law_regulation",
    "reinforcement_learning"
   ]
  },
@@ -66900,13 +67352,15 @@
   "city": "London, UK",
   "year": 2006.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "hinton2006"
+   "hinton2006",
+   "jaderberg2017pbt"
   ],
   "cited_in": [
    "deeplearninglab",
    "geometry_i",
+   "hyperparameters",
    "people_of_ai"
   ]
  },
@@ -67709,10 +68163,12 @@
   "city": "Palo Alto, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 2,
+  "works": 4,
   "keys": [
    "song2019score",
-   "dao2022flashattention"
+   "dao2022flashattention",
+   "song2020ddim",
+   "song2021sde"
   ],
   "cited_in": [
    "beyond_llms",
@@ -67898,6 +68354,7 @@
    "robertson2009bm25"
   ],
   "cited_in": [
+   "rag",
    "vectorsearch",
    "websearch"
   ]
@@ -68040,6 +68497,7 @@
   "cited_in": [
    "evaluation",
    "mechanistic_interpretability",
+   "reliability",
    "security_inference",
    "untold_history_iii"
   ]
@@ -68076,6 +68534,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "mixture_of_experts",
    "transformer"
   ]
  },
@@ -68180,7 +68639,8 @@
    "geman1984gibbs"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "samplinglab"
   ]
  },
  {
@@ -68299,14 +68759,16 @@
   "city": "",
   "year": 2015.0,
   "conf": 0,
-  "works": 3,
+  "works": 4,
   "keys": [
    "lecun2007ebm",
    "lecun2006",
-   "weston2015babi"
+   "weston2015babi",
+   "weston2015memnn"
   ],
   "cited_in": [
-   "philosophy"
+   "philosophy",
+   "transformer"
   ]
  },
  {
@@ -68539,6 +69001,7 @@
    "toupet2025enav"
   ],
   "cited_in": [
+   "history",
    "untold_history_iii"
   ]
  },
@@ -68785,7 +69248,8 @@
   ],
   "cited_in": [
    "ai_and_society",
-   "people_of_ai"
+   "people_of_ai",
+   "recurrent_networks"
   ]
  },
  {
@@ -68803,6 +69267,7 @@
    "verma2023autonomy"
   ],
   "cited_in": [
+   "history",
    "untold_history_iii"
   ]
  },
@@ -68989,7 +69454,8 @@
    "boltzmannlearning"
   ],
   "cited_in": [
-   "people_of_ai"
+   "people_of_ai",
+   "samplinglab"
   ]
  },
  {
@@ -69008,8 +69474,11 @@
    "page1999pagerank"
   ],
   "cited_in": [
+   "agents",
    "beyond_llms",
-   "philosophy"
+   "history",
+   "philosophy",
+   "symbolic_ai"
   ]
  },
  {
@@ -69180,6 +69649,7 @@
   "cited_in": [
    "ai_and_society",
    "history",
+   "minimalneuron",
    "untold_history_iii"
   ]
  },
@@ -69339,6 +69809,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "math_iii",
    "mechanistic_interpretability"
   ]
  },
@@ -69482,6 +69953,7 @@
   ],
   "cited_in": [
    "computer_vision",
+   "diffusion",
    "people_of_ai"
   ]
  },
@@ -69599,7 +70071,8 @@
    "riek2019neural"
   ],
   "cited_in": [
-   "geometry_iii"
+   "geometry_iii",
+   "topology"
   ]
  },
  {
@@ -69812,6 +70285,7 @@
    "mialon2023augmented"
   ],
   "cited_in": [
+   "agents",
    "frontier",
    "symbolic_ai",
    "unexpected_capabilities",
@@ -69869,6 +70343,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "people_of_ai",
    "untold_history_iii"
@@ -70065,6 +70540,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "symbolic_ai",
    "untold_history_iii"
   ]
  },
@@ -70207,6 +70683,7 @@
    "ai_existential_risk",
    "hallucinations",
    "intuition",
+   "losslab",
    "philosophy",
    "statistics",
    "statistics_i"
@@ -70227,6 +70704,7 @@
    "mialon2023augmented"
   ],
   "cited_in": [
+   "agents",
    "frontier",
    "symbolic_ai",
    "unexpected_capabilities",
@@ -70270,6 +70748,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "frontier",
    "people_of_ai",
@@ -70338,17 +70817,14 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 4,
+  "works": 3,
   "keys": [
    "monte_carlo_animation_image",
-   "cuevadelasmanos_image",
    "img_bessemer_converter",
    "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
-   "human_mind",
-   "intro",
    "untold_history_ii",
    "untold_history_iii"
   ]
@@ -70452,6 +70928,7 @@
    "philosophy",
    "promptengineering",
    "trainingdynamics",
+   "transformer",
    "unexpected_capabilities"
   ]
  },
@@ -70511,6 +70988,7 @@
    "fact_lookup",
    "frontier",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering",
@@ -70596,6 +71074,7 @@
    "fact_lookup",
    "hyperparameters",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -70685,11 +71164,12 @@
   "city": "Mountain View, USA",
   "year": 2015.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "weston2015babi",
    "mikolov2013exploiting",
-   "bojanowski2017fasttext"
+   "bojanowski2017fasttext",
+   "mikolov2013negativesampling"
   ],
   "cited_in": [
    "embeddinglab",
@@ -70952,6 +71432,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "promptengineering",
@@ -71094,6 +71575,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -71142,14 +71624,9 @@
   "city": "Grenoble, France",
   "year": 2011.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "jegou2011pq"
-  ],
-  "cited_in": [
-   "rag",
-   "vectorsearch"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "U.S. Army",
@@ -71352,17 +71829,14 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 4,
+  "works": 3,
   "keys": [
    "wienerajedrecista",
    "perceptronimagecables",
-   "perceptronimagedetection",
    "aikenphoto"
   ],
   "cited_in": [
-   "atlas",
-   "history",
-   "intro"
+   "history"
   ]
  },
  {
@@ -71601,6 +72075,7 @@
   "cited_in": [
    "ai_and_society",
    "ai_for_science",
+   "algorithms",
    "beyond_llms",
    "people_of_ai",
    "untold_history_iii"
@@ -72028,11 +72503,13 @@
   "city": "Mountain View, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "chung2022flan"
+   "chung2022flan",
+   "zhou2022expertchoice"
   ],
   "cited_in": [
+   "mixture_of_experts",
    "unexpected_capabilities"
   ]
  },
@@ -72151,9 +72628,10 @@
   "city": "Menlo Park, USA",
   "year": 2020.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "lewis2020rag"
+   "lewis2020rag",
+   "karpukhin2020dpr"
   ],
   "cited_in": [
    "rag",
@@ -72196,7 +72674,8 @@
    "ishango12"
   ],
   "cited_in": [
-   "history"
+   "history",
+   "math_i"
   ]
  },
  {
@@ -72215,6 +72694,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "losslab",
    "statistics",
    "statistics_i"
   ]
@@ -72283,18 +72763,15 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 4,
+  "works": 3,
   "keys": [
    "diffusion_astronaut_img",
-   "cuevadelasmanos_image",
    "img_bessemer_converter",
    "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
    "diffusion",
-   "human_mind",
-   "intro",
    "music_video_generation",
    "untold_history_ii"
   ]
@@ -72530,6 +73007,7 @@
   ],
   "cited_in": [
    "history",
+   "minimalneuron",
    "mirror_in_machine",
    "people_of_ai",
    "philosophy",
@@ -72569,6 +73047,7 @@
    "lecun1989backpropagation"
   ],
   "cited_in": [
+   "activationlab",
    "computer_vision",
    "history",
    "mirror_in_machine",
@@ -72682,9 +73161,7 @@
   "keys": [
    "ning2016distmult"
   ],
-  "cited_in": [
-   "symbolic_ai"
-  ]
+  "cited_in": []
  },
  {
   "name": "Wei Zhang",
@@ -72829,13 +73306,16 @@
   "city": "Mountain View, USA",
   "year": 2020.0,
   "conf": 1,
-  "works": 2,
+  "works": 4,
   "keys": [
    "lewis2020rag",
-   "yang2014rotate"
+   "yang2014rotate",
+   "yang2015distmult",
+   "karpukhin2020dpr"
   ],
   "cited_in": [
    "rag",
+   "symbolic_ai",
    "websearch"
   ]
  },
@@ -73022,16 +73502,13 @@
   "variants": [
    "CC BY 4.0"
   ],
-  "works": 3,
+  "works": 2,
   "keys": [
-   "cuevadelasmanos_image",
    "img_bessemer_converter",
    "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
-   "human_mind",
-   "intro",
    "untold_history_ii"
   ]
  },
@@ -73101,7 +73578,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 337,
+  "works": 364,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -73439,30 +73916,65 @@
    "enshittification_wiki",
    "firefly_wiki",
    "apple_v_microsoft_wiki",
-   "photoshop_wiki"
+   "photoshop_wiki",
+   "hadamard_product_wiki",
+   "liuhui_pi_wiki",
+   "turning_number_wiki",
+   "fft_history_wiki",
+   "hadamard1908",
+   "georgetown_ibm_1954",
+   "secondordercybernetics_wiki",
+   "aluqlidisi952",
+   "gemini_guidance_computer",
+   "plimpton322_wiki",
+   "gaussbonnet_wiki",
+   "degree_wiki",
+   "reidemeistertorsion_wiki",
+   "abel_ruffini_wiki",
+   "cardano_wiki",
+   "scurvy_wiki",
+   "zipf_law_wiki",
+   "design_of_experiments_wiki",
+   "knot_theory_wiki",
+   "poisson_wiki",
+   "kullback_wiki",
+   "em_algorithm_wiki",
+   "riemann_wiki",
+   "karl_pearson_wiki",
+   "cooklevin_wiki",
+   "binarysearch_wiki",
+   "cyc_wiki"
   ],
   "cited_in": [
+   "activationlab",
    "ai_and_society",
    "algorithms",
    "autodiff",
    "coherent_difference",
+   "derivativelab",
    "evaluation",
    "foam_of_meaning",
    "geometry_i",
+   "geometry_ii",
+   "geometry_iii",
    "history",
    "human_mind",
    "information_market",
    "language",
+   "math_ii",
+   "math_iii",
    "math_iv",
    "mirror_in_machine",
    "music_video_generation",
    "myths",
+   "optimizerlab",
    "origami",
    "philosophy",
    "promptengineering",
    "rag",
    "statistics_i",
-   "topology",
+   "statistics_ii",
+   "symbolic_ai",
    "untold_history_i",
    "untold_history_ii",
    "untold_history_iii",
@@ -73522,7 +74034,8 @@
   ],
   "cited_in": [
    "algorithms",
-   "history"
+   "history",
+   "symbolic_ai"
   ]
  },
  {
@@ -73934,11 +74447,16 @@
   "city": "Dublin, Ireland",
   "year": 1846.0,
   "conf": 1,
-  "works": 1,
+  "works": 5,
   "keys": [
-   "hamiltonextensionsquaternions"
+   "hamiltonextensionsquaternions",
+   "hamilton1844quaternions",
+   "hamilton1846quaternions",
+   "hamilton1865letter",
+   "hamilton1853lectures"
   ],
   "cited_in": [
+   "geometry_ii",
    "math_ii"
   ]
  },
@@ -74387,9 +74905,7 @@
   "keys": [
    "ning2016distmult"
   ],
-  "cited_in": [
-   "symbolic_ai"
-  ]
+  "cited_in": []
  },
  {
   "name": "Xiang Wang",
@@ -74523,11 +75039,14 @@
   "city": "Beijing, China",
   "year": 2014.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "yang2014rotate"
+   "yang2014rotate",
+   "yang2015distmult"
   ],
-  "cited_in": []
+  "cited_in": [
+   "symbolic_ai"
+  ]
  },
  {
   "name": "Xiaohua Zhai",
@@ -74958,6 +75477,7 @@
   ],
   "cited_in": [
    "mechanistic_interpretability",
+   "reliability",
    "security_inference"
   ]
  },
@@ -75206,9 +75726,10 @@
   "city": "Mountain View, USA",
   "year": 2019.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "song2019score"
+   "song2019score",
+   "song2021sde"
   ],
   "cited_in": [
    "beyond_llms",
@@ -75266,7 +75787,8 @@
   ],
   "cited_in": [
    "inference_optimization",
-   "production_serving"
+   "production_serving",
+   "samplinglab"
   ]
  },
  {
@@ -75339,7 +75861,8 @@
    "pascanu2014saddle"
   ],
   "cited_in": [
-   "positionalembeddingslab"
+   "positionalembeddingslab",
+   "transformer"
   ]
  },
  {
@@ -75351,14 +75874,16 @@
   "city": "Mountain View, USA",
   "year": 2018.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "huang2018gpipe",
    "chung2022flan",
-   "real2019amoeba"
+   "real2019amoeba",
+   "zhou2022expertchoice"
   ],
   "cited_in": [
    "beyond_llms",
+   "mixture_of_experts",
    "training_infrastructure",
    "unexpected_capabilities"
   ]
@@ -75372,11 +75897,14 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "tfive"
+   "tfive",
+   "zhou2022expertchoice"
   ],
-  "cited_in": []
+  "cited_in": [
+   "mixture_of_experts"
+  ]
  },
  {
   "name": "Yanyan Lan",
@@ -75408,9 +75936,7 @@
   "keys": [
    "ning2016distmult"
   ],
-  "cited_in": [
-   "symbolic_ai"
-  ]
+  "cited_in": []
  },
  {
   "name": "Yaohui Cai",
@@ -75875,8 +76401,8 @@
    "du2023multiagent"
   ],
   "cited_in": [
+   "agents",
    "frontier",
-   "law_regulation",
    "reinforcement_learning"
   ]
  },
@@ -76413,7 +76939,7 @@
   "city": "Montreal, Canada",
   "year": 2011.0,
   "conf": 1,
-  "works": 21,
+  "works": 23,
   "keys": [
    "cho2014gru",
    "bahdanau2014",
@@ -76435,10 +76961,13 @@
    "pascanu2014saddle",
    "dinh2017sharpness",
    "bergstra2010random",
-   "bengio2023managing"
+   "bengio2023managing",
+   "bergstra2011algorithms",
+   "bengio2012practical"
   ],
   "cited_in": [
    "activationlab",
+   "attentionlab",
    "autodiff",
    "beyond_llms",
    "deeplearninglab",
@@ -76451,7 +76980,8 @@
    "people_of_ai",
    "positionalembeddingslab",
    "recurrent_networks",
-   "resnetlab"
+   "resnetlab",
+   "transformer"
   ]
  },
  {
@@ -76470,7 +77000,8 @@
   ],
   "cited_in": [
    "inference_optimization",
-   "production_serving"
+   "production_serving",
+   "samplinglab"
   ]
  },
  {
@@ -76643,15 +77174,17 @@
   "city": "Menlo Park, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "hao2025coconut",
-   "xiao2023streaming"
+   "xiao2023streaming",
+   "chen2023position"
   ],
   "cited_in": [
    "attentionlab",
    "inference_optimization",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "positionalembeddingslab"
   ]
  },
  {
@@ -77403,6 +77936,7 @@
    "embeddinglab",
    "fact_lookup",
    "intuition",
+   "math_iii",
    "mechanistic_interpretability",
    "people_of_ai",
    "philosophy",
@@ -77494,6 +78028,8 @@
    "zelligharris"
   ],
   "cited_in": [
+   "attentionlab",
+   "embeddinglab",
    "statistics",
    "statistics_ii"
   ]
@@ -77863,13 +78399,15 @@
   "city": "Mountain View, USA",
   "year": 2016.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "tensorflow2016"
+   "tensorflow2016",
+   "zhou2022expertchoice"
   ],
   "cited_in": [
    "autodiff",
-   "history"
+   "history",
+   "mixture_of_experts"
   ]
  },
  {
@@ -78131,6 +78669,7 @@
   ],
   "cited_in": [
    "mechanistic_interpretability",
+   "reliability",
    "security_inference"
   ]
  },
@@ -78300,10 +78839,13 @@
    "vaswani2017attention"
   ],
   "cited_in": [
+   "activationlab",
+   "attentionlab",
    "autodiff",
    "contextwindows",
    "embeddinglab",
    "fact_lookup",
+   "geometry_ii",
    "history",
    "intuition",
    "math_iv",
@@ -78312,6 +78854,7 @@
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
+   "recurrent_networks",
    "transformer"
   ]
  },
@@ -78364,6 +78907,7 @@
    "madhava"
   ],
   "cited_in": [
+   "derivativelab",
    "geometry_i",
    "math_i"
   ]
@@ -78800,11 +79344,13 @@
   "city": "Stanford, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "raghu2017expressive"
+   "raghu2017expressive",
+   "song2021sde"
   ],
   "cited_in": [
+   "diffusion",
    "origami"
   ]
  },
@@ -79500,6 +80046,7 @@
    "loaizaganem2024manifoldsurvey"
   ],
   "cited_in": [
+   "math_iii",
    "origami"
   ]
  },
