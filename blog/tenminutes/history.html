@@ -805,25 +805,32 @@
 					else if (e.key === "End") { e.preventDefault(); track.scrollTo({ left: track.scrollWidth, behavior: "smooth" }); }
 				});
 			}
-			var down = false, startX = 0, startScroll = 0, moved = false;
+			var down = false, startX = 0, startScroll = 0, moved = false, suppressClick = false;
 			track.addEventListener("pointerdown", function (e) {
+				if (e.target.closest(".tl-node")) return;
 				down = true;
 				moved = false;
 				startX = e.clientX;
 				startScroll = track.scrollLeft;
 				track.classList.add("is-dragging");
-				if (track.setPointerCapture) track.setPointerCapture(e.pointerId);
 			});
 			track.addEventListener("pointermove", function (e) {
 				if (!down) return;
 				var dx = e.clientX - startX;
-				if (Math.abs(dx) > 3) moved = true;
+				if (Math.abs(dx) > 3) {
+					moved = true;
+					if (track.setPointerCapture) track.setPointerCapture(e.pointerId);
+				}
 				if (moved) track.scrollLeft = startScroll - dx;
 			});
 			function endDrag(e) {
 				if (!down) return;
 				down = false;
 				track.classList.remove("is-dragging");
+				if (moved) {
+					suppressClick = true;
+					setTimeout(function () { suppressClick = false; }, 80);
+				}
 				if (track.releasePointerCapture && e && e.pointerId != null) {
 					try { track.releasePointerCapture(e.pointerId); } catch (err) {}
 				}
@@ -832,7 +839,7 @@
 			track.addEventListener("pointercancel", endDrag);
 			track.addEventListener("pointerleave", endDrag);
 			track.addEventListener("click", function (e) {
-				if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; }
+				if (suppressClick) { e.preventDefault(); e.stopPropagation(); suppressClick = false; }
 			}, true);
 			select(0);
 			updateArrows();

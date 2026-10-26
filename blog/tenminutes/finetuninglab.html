@@ -82,7 +82,7 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Each stage adds a different kind of behaviour: format, preferences, then reasoning.</span></div>
 					</div>
 
-										<section class="section-block">
+					<section class="section-block">
 						<div class="section-kicker">From the full lesson</div>
 						<h2 class="section-title">LoRA and Parameter-Efficient Fine-Tuning</h2>
 						<div class="prose">
@@ -123,6 +123,16 @@
 							<p><strong>Reward hacking</strong> (see the Reinforcement Learning chapter) is the constant danger: a sufficiently good optimizer will find ways to maximize reward without improving quality. Defenses: KL penalty, ensemble of RMs, process supervision.</p>
 						</div>
 						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: <a href="../finetuninglab.php">read it here</a>.</p>
+					</section>
+
+										<section class="section-block">
+						<div class="section-kicker">The fine print</div>
+						<h2 class="section-title">What post-training cannot fix.</h2>
+						<div class="prose">
+							<p>Post-training can shape behaviour, but it cannot add knowledge the base model never saw or guarantee that the model will always follow the rules. A model can learn the format of a refusal and still fail the substance of the request.</p>
+							<p>Alignment is also a data problem. The preferences you collect, the annotators you hire, and the rubric you use decide what the model learns. Post-training is powerful, but it is not a substitute for a good base model, good data, and a careful evaluation.</p>
+						</div>
+						<p class="step-note">The full lesson has the derivations, sources, and lab: <a href="../finetuninglab.php">read it here</a>.</p>
 					</section>
 
 <section class="section-block" id="takeaway">

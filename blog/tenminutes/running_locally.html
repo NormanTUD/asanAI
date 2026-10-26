@@ -106,7 +106,7 @@
 						<div class="demo-insight"><b>Takeaway</b><span>The estimate is a starting point; context and KV cache add more.</span></div>
 					</div>
 
-										<section class="section-block">
+					<section class="section-block">
 						<div class="section-kicker">From the full lesson</div>
 						<h2 class="section-title">Local vs Cloud: The Decision Matrix</h2>
 						<div class="prose">
@@ -130,6 +130,26 @@
 							<p>The <strong>unified memory</strong> on Apple Silicon is the killer feature: you can use 64–128 GB for both model weights and OS, making local 70B inference practical on a laptop. A Mac Studio M3 Ultra with 192 GB runs a 405B model in Q2_K at usable speeds.</p>
 						</div>
 						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: <a href="../running_locally.php">read it here</a>.</p>
+					</section>
+
+					<section class="section-block">
+						<div class="section-kicker">Practical notes</div>
+						<h2 class="section-title">The decision matrix.</h2>
+						<div class="prose">
+							<p>Choose local when privacy, offline use, or cost per token matters more than the last few percent of capability. Choose cloud when you need the strongest model, elastic scale, or features that are hard to run locally.</p>
+							<p>A hybrid is common: local for drafts, search, and private data; cloud for the hard final answer. The boundary is a policy decision, not only a technical one.</p>
+						</div>
+						<p class="step-note">The full lesson has more detail, sources, and the original lab: <a href="../running_locally.php">read it here</a>.</p>
+					</section>
+
+										<section class="section-block">
+						<div class="section-kicker">The fine print</div>
+						<h2 class="section-title">Privacy is not the only axis.</h2>
+						<div class="prose">
+							<p>Local inference keeps data on your machine, but it does not automatically make a system private. Logs, plugins, and network calls can still leak information. The privacy case depends on the whole stack, not only on where the weights run.</p>
+							<p>The cost case is also contextual. A local model has no per-token bill, but it needs hardware, electricity, and maintenance. A cloud API is cheaper for occasional use and more expensive at scale. The right choice depends on volume and control.</p>
+						</div>
+						<p class="step-note">The full lesson has the derivations, sources, and lab: <a href="../running_locally.php">read it here</a>.</p>
 					</section>
 
 <section class="section-block" id="takeaway">

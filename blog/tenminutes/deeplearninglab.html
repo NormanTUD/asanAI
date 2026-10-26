@@ -82,7 +82,7 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Each layer reuses the features of the layer below.</span></div>
 					</div>
 
-										<section class="section-block">
+					<section class="section-block">
 						<div class="section-kicker">From the full lesson</div>
 						<h2 class="section-title">Why Depth Beats Width: Reuse</h2>
 						<div class="prose">
@@ -116,6 +116,16 @@
 							<p>There's a practical problem with stacking many layers. When backprop sends the error signal backward through, say, 100 layers, it gets multiplied by many small numbers along the way. The signal often <strong>shrinks to nearly zero</strong> (the "vanishing gradient" problem) or occasionally explodes. Early layers stop learning because they receive no meaningful feedback.</p>
 						</div>
 						<p class="step-note">Adapted from the full lesson. More detail, sources, and the original lab: <a href="../deeplearninglab.php">read it here</a>.</p>
+					</section>
+
+										<section class="section-block">
+						<div class="section-kicker">The fine print</div>
+						<h2 class="section-title">What depth costs.</h2>
+						<div class="prose">
+							<p>Deep networks are harder to train. Gradients can vanish or explode, activations can drift, and the loss surface can be unfriendly. Residual connections, normalisation, careful initialisation, and learning-rate schedules are not decoration; they are what make depth practical.</p>
+							<p>Depth also costs compute and data. A deeper model is not automatically better; it needs enough signal to learn the hierarchy. The architecture is powerful, but the optimisation and the data are part of the result.</p>
+						</div>
+						<p class="step-note">The full lesson has the derivations, sources, and lab: <a href="../deeplearninglab.php">read it here</a>.</p>
 					</section>
 
 <section class="section-block" id="takeaway">
