@@ -1,19 +1,21 @@
 // ============================================================
-// LossDemo, "Loss: Was kostet der Fehler?" (Folie 12)
+// LossDemo, "Loss: Wie falsch liegt das Netz?" (Folie 12)
 //
 // Vier Schritte, gleiche Leserichtung (links → rechts):
-// 0 · Die Idee: drei Antworten auf einer linearen Loss-Achse.
+// 0 · Die Idee mit CCE: drei Antworten auf einer linearen Loss-Achse.
 //     Sicher richtig (Katze 95 % → 0,05), am Anfang (50:50 → 0,69),
 //     komplett falsch (Hund 95 % statt Katze → 3,00, rund 60× höher).
 //     Der blaue Trainingspfeil zeigt 0,69 → 0,05.
 // 1 · MSE: eine Tabelle. Links Ziel/Antwort auf der Zahlengerade,
-//     rechts die Strafe = Fehler². 0 · 1 · 9 · 25 zeigen sichtbar,
-//     dass ein großer Fehler überproportional teuer wird.
+//     rechts MSE = Fehler². 0 · 1 · 9 · 25 zeigen sichtbar, dass
+//     ein großer Fehler überproportional stark wächst.
 // 2 · CCE: eine Tabelle. Links die Wahrscheinlichkeit für die
 //     richtige Klasse (Katze), rechts der Loss. 95 % → 0,05,
 //     60 % → 0,51, 5 % → 3,00: falsche Sicherheit wird riesig.
-// 3 · Die Wahl: drei gleich große Karten — Zahl/MSE, Klasse/CCE,
-//     Ja-Nein/BCE — mit derselben Innenstruktur.
+// 3 · Die Wahl: zwei Karten — Kategorien/CCE, Zahlen/MSE —
+//     und der Hinweis, dass es noch viele weitere gibt.
+//
+// CCE und MSE sind also zwei von vielen Loss-Funktionen.
 //
 // Die Szene zeichnet in einem festen 1100×420-Raster und wird auf
 // die Canvas-Größe skaliert; so bleibt das Layout auf jedem Beamer
@@ -179,6 +181,13 @@ const LossDemo = (() => {
 		const axisX = 80, axisW = 940, axisY = 300, maxLoss = 3.2;
 		const lx = loss => axisX + (loss / maxLoss) * axisW;
 
+		// Das erste Beispiel ist Categorical Cross Entropy (CCE)
+		// für Klassen.
+		pill(ctx, 'CCE', 40, 22,
+			{ fill: C.blueSoft, color: C.blue, stroke: C.blueLine, size: 12, padX: 14, h: 24 });
+		label(ctx, 'Categorical Cross Entropy · für Klassen',
+			106, 22, { size: 11, color: C.muted, weight: 700 });
+
 		cards.forEach(card => {
 			panel(ctx, card.x, card.y, card.w, card.h, 16);
 			label(ctx, card.head, card.x + 20, card.y + 20,
@@ -187,7 +196,7 @@ const LossDemo = (() => {
 				{ size: 11, color: C.greenDark, weight: 700 });
 			label(ctx, card.answer, card.x + 20, card.y + 76,
 				{ size: 22, color: card.ansCol, weight: 800 });
-			label(ctx, 'LOSS', card.x + 20, card.y + 104,
+			label(ctx, 'CCE', card.x + 20, card.y + 104,
 				{ size: 10, color: C.muted, weight: 800 });
 			label(ctx, card.loss, card.x + 20, card.y + 128,
 				{ size: 26, color: card.lossCol, weight: 800 });
@@ -260,9 +269,16 @@ const LossDemo = (() => {
 			  col: C.roseDark, barCol: C.rose }
 		];
 
+		// MSE ist die zweite Loss-Funktion im Deck — auch nur eine
+		// von vielen, hier für Zahlen.
+		pill(ctx, 'MSE', 40, 22,
+			{ fill: C.blueSoft, color: C.blue, stroke: C.blueLine, size: 12, padX: 14, h: 24 });
+		label(ctx, 'Mean Squared Error · für Zahlen',
+			106, 22, { size: 11, color: C.muted, weight: 700 });
+
 		groupPanel(ctx, 580, 62, 480, 330);
 		columnHeader(ctx, 'ABSTAND ZUM ZIEL (10)', x0, 42);
-		columnHeader(ctx, 'STRAFE = FEHLER²', barX, 42);
+		columnHeader(ctx, 'MSE = FEHLER²', barX, 42);
 		[65, 145, 225, 305, 385].forEach(y =>
 			line(ctx, 40, y, 1060, y, C.rule, 1));
 
@@ -303,7 +319,7 @@ const LossDemo = (() => {
 			label(ctx, row.tag, x1, y + 24,
 				{ size: 12, color: row.col, weight: 800, align: 'right' });
 
-			// Strafe
+			// Loss-Balken
 			bar(ctx, barX, y - 14, barMaxW, 28, 14, C.track);
 			const bw = row.bar / maxBar * barMaxW;
 			if (row.bar > 0) {
@@ -314,7 +330,7 @@ const LossDemo = (() => {
 				KatzeKit.roundRect(ctx, barX + .5, y - 13.5, barMaxW - 1, 27, 13.5);
 				ctx.stroke();
 			}
-			label(ctx, 'Strafe ' + row.bar, barX + barMaxW, y - 28,
+			label(ctx, 'MSE ' + row.bar, barX + barMaxW, y - 28,
 				{ size: 13, color: row.col, weight: 800, align: 'right' });
 
 			ctx.restore();
@@ -340,11 +356,18 @@ const LossDemo = (() => {
 			  fill: C.roseSoft, stroke: C.roseLine }
 		];
 
+		// CCE noch einmal als Tabelle: dieselbe Loss-Funktion,
+		// jetzt mit der mittleren 60-%-Zeile.
+		pill(ctx, 'CCE', 40, 22,
+			{ fill: C.blueSoft, color: C.blue, stroke: C.blueLine, size: 12, padX: 14, h: 24 });
+		label(ctx, 'Categorical Cross Entropy · für Klassen',
+			106, 22, { size: 11, color: C.muted, weight: 700 });
+
 		groupPanel(ctx, 580, 62, 480, 330);
-		columnHeader(ctx, 'WAS DAS NETZ SAGT', x0, 38);
-		columnHeader(ctx, 'LOSS', barX, 38);
-		legendItem(ctx, x0, 64, C.blue, 'Katze (richtig)');
-		legendItem(ctx, x0 + 170, 64, '#cfd8e3', 'Hund');
+		columnHeader(ctx, 'WAS DAS NETZ SAGT', x0, 44);
+		columnHeader(ctx, 'CCE', barX, 44);
+		legendItem(ctx, x0, 68, C.blue, 'Katze (richtig)');
+		legendItem(ctx, x0 + 170, 68, '#cfd8e3', 'Hund');
 		[171, 271, 371].forEach(y =>
 			line(ctx, 40, y, 1060, y, C.rule, 1));
 
@@ -377,80 +400,48 @@ const LossDemo = (() => {
 	}
 
 	// ── Schritt 3: Aufgabe → Loss ───────────────────────────────
-	function drawMiniMSE(ctx, x, y, a) {
+	function drawMiniMSE(ctx, x, y, a, w) {
 		ctx.save();
 		ctx.globalAlpha = a;
-		const x1 = x + 250;
-		line(ctx, x, y, x1, y, C.line, 2.5);
-		const tx = x + 210, px = x + 150;
+		const width = w || 250;
+		line(ctx, x, y, x + width, y, C.line, 2.5);
+		const tx = x + width * .84, px = x + width * .58;
 		line(ctx, tx, y - 17, tx, y + 17, C.green, 3);
 		ctx.fillStyle = C.green;
 		ctx.beginPath(); ctx.arc(tx, y, 5, 0, Math.PI * 2); ctx.fill();
 		line(ctx, px, y, tx, y, C.rose, 4);
 		ctx.fillStyle = C.blue;
 		ctx.beginPath(); ctx.arc(px, y, 5, 0, Math.PI * 2); ctx.fill();
-		bar(ctx, x, y + 30, 250, 12, 6, C.track);
-		bar(ctx, x, y + 30, 250 * (9 / 25), 12, 6, C.rose);
+		bar(ctx, x, y + 30, width, 12, 6, C.track);
+		bar(ctx, x, y + 30, width * (9 / 25), 12, 6, C.rose);
 		label(ctx, '10', tx, y + 48, { size: 11, color: C.greenDark, weight: 800, align: 'center' });
 		label(ctx, '7', px, y + 48, { size: 11, color: C.blue, weight: 800, align: 'center' });
 		ctx.restore();
 	}
 
-	function drawMiniCCE(ctx, x, y, a) {
+	function drawMiniCCE(ctx, x, y, a, w) {
 		ctx.save();
 		ctx.globalAlpha = a;
-		const w = 250;
+		const width = w || 250;
 		ctx.save();
-		KatzeKit.roundRect(ctx, x, y - 12, w, 24, 12);
+		KatzeKit.roundRect(ctx, x, y - 12, width, 24, 12);
 		ctx.clip();
 		ctx.fillStyle = '#e9eef5';
-		ctx.fillRect(x, y - 12, w, 24);
+		ctx.fillRect(x, y - 12, width, 24);
 		ctx.fillStyle = C.blue;
-		ctx.fillRect(x, y - 12, w * .6, 24);
+		ctx.fillRect(x, y - 12, width * .6, 24);
 		ctx.restore();
 		ctx.strokeStyle = '#cfd8e3';
 		ctx.lineWidth = 1;
-		KatzeKit.roundRect(ctx, x + .5, y - 11.5, w - 1, 23, 11.5);
+		KatzeKit.roundRect(ctx, x + .5, y - 11.5, width - 1, 23, 11.5);
 		ctx.stroke();
-		label(ctx, 'Katze 60 %', x + w * .3, y,
+		label(ctx, 'Katze 60 %', x + width * .3, y,
 			{ size: 11, color: '#fff', weight: 800, align: 'center' });
-		label(ctx, 'Hund 40 %', x + w * .8, y,
+		label(ctx, 'Hund 40 %', x + width * .8, y,
 			{ size: 11, color: C.body, weight: 800, align: 'center' });
-		bar(ctx, x, y + 30, w, 12, 6, C.track);
-		bar(ctx, x, y + 30, w * (.51 / 3.2), 12, 6, C.amber);
-		label(ctx, '0,51', x + w * (.51 / 3.2) + 7, y + 36,
-			{ size: 11, color: C.amberDark, weight: 800 });
-		ctx.restore();
-	}
-
-	function drawMiniBCE(ctx, x, y, a) {
-		ctx.save();
-		ctx.globalAlpha = a;
-		const w = 250, h = 30, p = .65;
-		ctx.save();
-		KatzeKit.roundRect(ctx, x, y - h / 2, w, h, h / 2);
-		ctx.clip();
-		ctx.fillStyle = '#e9eef5';
-		ctx.fillRect(x, y - h / 2, w, h);
-		ctx.fillStyle = C.blue;
-		ctx.fillRect(x, y - h / 2, w * p, h);
-		ctx.restore();
-		ctx.strokeStyle = '#cfd8e3';
-		ctx.lineWidth = 1;
-		KatzeKit.roundRect(ctx, x + .5, y - h / 2 + .5, w - 1, h - 1, h / 2);
-		ctx.stroke();
-		ctx.fillStyle = '#fff';
-		ctx.beginPath();
-		ctx.arc(x + w * p, y, 11, 0, Math.PI * 2);
-		ctx.fill();
-		ctx.strokeStyle = C.blue;
-		ctx.lineWidth = 2;
-		ctx.stroke();
-		label(ctx, 'JA', x + w * .32, y, { size: 11, color: '#fff', weight: 800, align: 'center' });
-		label(ctx, 'NEIN', x + w * .86, y, { size: 11, color: C.body, weight: 800, align: 'center' });
-		bar(ctx, x, y + 30, w, 12, 6, C.track);
-		bar(ctx, x, y + 30, w * p, 12, 6, C.amber);
-		label(ctx, '0,43', x + w * p + 7, y + 36,
+		bar(ctx, x, y + 30, width, 12, 6, C.track);
+		bar(ctx, x, y + 30, width * (.51 / 3.2), 12, 6, C.amber);
+		label(ctx, '0,51', x + width * (.51 / 3.2) + 7, y + 36,
 			{ size: 11, color: C.amberDark, weight: 800 });
 		ctx.restore();
 	}
@@ -458,38 +449,37 @@ const LossDemo = (() => {
 	function drawStepChoice(ctx) {
 		const cards = [
 			{
-				x: 40, accent: C.blue, title: 'Zahl vorhersagen', loss: 'MSE',
-				rule: 'bestraft den Abstand', examples: 'Preis · Temperatur · Alter',
-				mini: drawMiniMSE
-			},
-			{
-				x: 390, accent: C.green, title: 'Klasse wählen', loss: 'CCE',
-				rule: 'bestraft falsche Sicherheit', examples: 'Katze/Hund · Auto/Flugzeug',
+				x: 40, w: 490, accent: C.green, kicker: 'AUFGABE',
+				title: 'Kategorien', loss: 'CCE',
+				rule: 'bewertet falsche Sicherheit stark',
+				examples: 'z. B. Katze/Hund · Auto/Flugzeug',
 				mini: drawMiniCCE
 			},
 			{
-				x: 740, accent: C.amber, title: 'Ja / Nein entscheiden', loss: 'BCE',
-				rule: 'bestraft falsche Sicherheit', examples: 'Spam? · krank?',
-				mini: drawMiniBCE
+				x: 570, w: 490, accent: C.blue, kicker: 'AUFGABE',
+				title: 'Zahlen', loss: 'MSE',
+				rule: 'bewertet den Abstand',
+				examples: 'z. B. Preis · Temperatur · Alter',
+				mini: drawMiniMSE
 			}
 		];
 
 		cards.forEach((card, i) => {
-			const a = easeOut(clamp01((reveal - i * .12) / .62));
+			const a = easeOut(clamp01((reveal - i * .14) / .62));
 			if (a < .01) return;
 			ctx.save();
 			ctx.globalAlpha = a;
 			ctx.translate(0, (1 - a) * 14);
 
-			const y = 52, w = 320, h = 320;
-			panel(ctx, card.x, y, w, h, 18);
+			const y = 52, h = 320;
+			panel(ctx, card.x, y, card.w, h, 18);
 			bar(ctx, card.x + 24, y + 18, 48, 6, 3, card.accent);
 
-			columnHeader(ctx, 'AUFGABE', card.x + 24, y + 42);
+			columnHeader(ctx, card.kicker, card.x + 24, y + 42);
 			label(ctx, card.title, card.x + 24, y + 68,
 				{ size: 20, color: C.ink, weight: 800 });
 
-			card.mini(ctx, card.x + 24, y + 120, a);
+			card.mini(ctx, card.x + 24, y + 120, a, card.w - 48);
 
 			line(ctx, card.x + 24, y + 190, card.x + 24, y + 205, C.line, 2);
 			pill(ctx, card.loss, card.x + 24, y + 222,
@@ -501,6 +491,9 @@ const LossDemo = (() => {
 
 			ctx.restore();
 		});
+
+		label(ctx, '… für anderes gibt es viele weitere Loss-Funktionen.',
+			550, 400, { size: 11, color: C.muted, weight: 600, align: 'center' });
 	}
 
 	return KatzeKit.create({
@@ -508,29 +501,29 @@ const LossDemo = (() => {
 		prefix: 'loss',
 		steps: [
 			{
-				k: 'Schritt 1 · Die Idee',
-				t: 'Loss ist die <em>Strafe</em><br>für eine falsche Antwort.',
-				p: 'Richtig <b>0,05</b> · Anfang <b>0,69</b> · Hund statt Katze <b>3,00</b>',
+				k: 'Schritt 1 · Die Idee · CCE',
+				t: 'Loss ist ein Wert dafür,<br>wie falsch das <em>Netz</em> liegt.',
+				p: 'CCE · Richtig <b>0,05</b> · Anfang <b>0,69</b> · Hund statt Katze <b>3,00</b>',
 				c: '<span class="kz-chip">richtig 0,05</span><span class="kz-arrow">·</span><span class="kz-chip r">falsch 3,00</span>'
 			},
 			{
 				k: 'Schritt 2 · MSE',
-				t: 'Bei Zahlen wird der Abstand<br><em>quadriert</em>.',
-				p: 'Klein daneben: <b>1</b> · weit daneben: <b>25</b>',
+				t: 'MSE: Bei Zahlen wird<br>der Abstand <em>quadriert</em>.',
+				p: 'MSE · klein daneben <b>1</b> · weit daneben <b>25</b>',
 				c: '<span class="kz-chip">MSE</span>'
 			},
 			{
 				k: 'Schritt 3 · CCE',
-				t: 'Bei Klassen wird <em>falsche<br>Sicherheit</em> bestraft.',
-				p: 'Richtig 95 %: <b>0,05</b> · falsch 5 %: <b>3,00</b>',
+				t: 'CCE: Bei Klassen wird <em>falsche<br>Sicherheit</em> stark gewichtet.',
+				p: 'CCE · richtig 95 %: <b>0,05</b> · falsch 5 %: <b>3,00</b>',
 				c: '<span class="kz-chip">CCE</span>'
 			},
 			{
 				k: 'Schritt 4 · Die Wahl',
-				t: 'Die Aufgabe entscheidet,<br>welcher Loss <em>passt</em>.',
-				p: 'Zahl → MSE · Klasse → CCE · Ja/Nein → BCE',
+				t: 'Du entscheidest,<br>welcher Loss <em>passt</em>.',
+				p: 'Kategorien → CCE · Zahlen → MSE',
 				c: '<span class="kz-chip g">Aufgabe → Loss</span>',
-				i: 'Der Loss passt zur Aufgabe: Zahlen brauchen einen Abstand, Klassen eine Strafe für falsche Sicherheit.'
+				i: 'Du entscheidest nach dem Ziel: Kategorien → CCE, Zahlen → MSE. Für anderes gibt es viele weitere Loss-Funktionen.'
 			}
 		],
 

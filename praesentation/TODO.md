@@ -3,15 +3,17 @@
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
 > Letzte Aktualisierung: **13. Runde (Agent) — T62.**
-> **T62** `[x]` Neue Folie **„Loss: Was kostet der Fehler?"** nach „Der gesamte
-> Prozess" (Folie 12, `loss.js`, 4 Schritte): Loss als Strafe auf
-> einer Achse — sicher richtig (0,05), am Anfang (0,69) und komplett
-> falsch (3,00, rund 60× höher), mit Trainingspfeil 0,69 → 0,05.
-> Dann **MSE** als Tabelle (0 · 1 · 9 · 25 bei 0 · 1 · 3 · 5 daneben)
-> und **CCE** als Tabelle (95 % → 0,05 · 60 % → 0,51 · 5 % → 3,00),
-> am Ende **Aufgabe → Loss** als drei gleich große Karten
-> (Zahl/MSE · Klasse/CCE · Ja-Nein/BCE). Keine Formel-Details, nur
-> die sichtbar unterschiedliche Bestrafung. Deck jetzt **14 Folien**.
+> **T62** `[x]` Neue Folie **„Loss: Wie falsch liegt das Netz?"** nach
+> „Der gesamte Prozess" (Folie 12, `loss.js`, 4 Schritte). Loss ist
+> ein Wert für die Falschheit, keine Strafe. Zuerst **CCE
+> (Categorical Cross Entropy)** für Klassen: Loss-Achse mit sicher
+> richtig (0,05), am Anfang (0,69) und komplett falsch (3,00, rund
+> 60× höher), Trainingspfeil 0,69 → 0,05. Dann **MSE (Mean Squared
+> Error)** als Tabelle (0 · 1 · 9 · 25 bei 0 · 1 · 3 · 5 daneben)
+> und **CCE** als Tabelle (95 % → 0,05 · 60 % → 0,51 · 5 % → 3,00).
+> Am Ende **Aufgabe → Loss** als zwei Karten (Kategorien/CCE ·
+> Zahlen/MSE) plus Hinweis, dass es für anderes viele weitere
+> Loss-Funktionen gibt. Keine Formel-Details. Deck jetzt **14 Folien**.
 > **T61** `[x]` „Der gesamte Prozess": Ergebnis-Schritt zeigt zwei gestrichelte
 > Vergleichskurven (andere Startwerte, andere Endzahlen, gleicher Verlauf) samt
 > Legende und Endpunkten — das visualisiert, dass der Kurvenverlauf zählt,
@@ -98,7 +100,7 @@
 8. **Ein Filter ist ein Muster** (FilterDemo, 4 Schritte, T9) · 9. Flatten ·
 10. **Was sind Dense Layer?** (gemerged: NeuronIntro = Szene A + SpaceMorph =
 Szene B, T20; Egg-Szene endet mit dem Bild-Verweis, T40) ·
-11. **Der gesamte Prozess** (Pipeline, T41) · 12. **Loss: Was kostet der Fehler?**
+11. **Der gesamte Prozess** (Pipeline, T41) · 12. **Loss: Wie falsch liegt das Netz?**
 (LossDemo, T62) · 13. Alles idealisiert (T27, vor asanAI)
 · 14. asanAI (Schluss/Live-Demo).
 **Raus (T39):** „Vom Bild zu Punkten“ (DenseRaum) — 1024D-Raum kann man nicht

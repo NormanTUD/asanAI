@@ -454,38 +454,37 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 12: Loss — was kostet ein Fehler?
+     Folie 12: Loss — wie falsch liegt das Netz?
      ------------------------------------------------------------
-     LossDemo (loss.js), 4 Schritte:
-       1. Die Idee: drei Antworten auf derselben Loss-Achse.
-          Sicher richtig (95 % → 0,05), am Anfang (50:50 → 0,69)
-          und komplett falsch (Hund 95 % statt Katze → 3,00).
-          Der Trainingspfeil zeigt 0,69 → 0,05; der falsche Fall
-          liegt rund 60× höher.
-       2. MSE für Zahlen als Tabelle: Abstand wird quadriert →
-          kleines Daneben ist billig, großes Daneben riesig
-          teuer (0 · 1 · 9 · 25).
-       3. CCE für Klassen als Tabelle: die Wahrscheinlichkeit
-          der richtigen Klasse zählt → 95 % = 0,05,
-          60 % = 0,51, 5 % = 3,00. Falsche Sicherheit wird
-          brutal bestraft.
-       4. Die Wahl: drei Karten — Zahl/MSE · Klasse/CCE ·
-          Ja-Nein/BCE. Gleiche Innenstruktur, direkter Vergleich.
-     Zeigt absichtlich keine Formel-Details, sondern die
-     unterschiedliche Strafe.
+     LossDemo (loss.js), 4 Schritte. Wichtig: Loss ist kein
+     „Strafmaß", sondern ein Wert dafür, wie falsch das Netz liegt.
+       1. CCE (Categorical Cross Entropy) für Klassen: drei
+          Antworten auf einer Loss-Achse. Sicher richtig
+          (95 % → 0,05), am Anfang (50:50 → 0,69) und komplett
+          falsch (Hund 95 % statt Katze → 3,00, rund 60× höher).
+          Trainingspfeil 0,69 → 0,05.
+       2. MSE (Mean Squared Error) für Zahlen: Tabelle mit
+          MSE = Fehler², sichtbar 0 · 1 · 9 · 25.
+       3. CCE noch einmal als Tabelle mit der mittleren 60-%-Zeile:
+          95 % = 0,05, 60 % = 0,51, 5 % = 3,00.
+       4. Die Wahl: Kategorien/CCE · Zahlen/MSE — und der Hinweis,
+          dass es für anderes noch viele weitere Loss-Funktionen gibt.
+     CCE und MSE sind also zwei von vielen Loss-Funktionen; die
+     Folie zeigt keine Formel-Details, sondern die unterschiedliche
+     Bewertung des Fehlers.
      ============================================================ -->
 <div class="slide" id="slide-loss" data-title="Loss">
     <div class="slide-content">
         <div class="kz">
-            <div class="kz-head"><h2 class="kz-const">Loss: Was kostet der Fehler?</h2><div class="kz-tswap" id="loss-tswap">
-                <div class="kz-kicker" id="loss-kicker">Schritt 1 · Die Idee</div>
-                <div class="kz-title" id="loss-title">Loss ist die <em>Strafe</em><br>für eine falsche Antwort.</div>
+            <div class="kz-head"><h2 class="kz-const">Loss: Wie falsch liegt das Netz?</h2><div class="kz-tswap" id="loss-tswap">
+                <div class="kz-kicker" id="loss-kicker">Schritt 1 · Die Idee · CCE</div>
+                <div class="kz-title" id="loss-title">Loss ist ein Wert dafür,<br>wie falsch das <em>Netz</em> liegt.</div>
             </div></div>
 
             <div class="kz-stage"><canvas id="loss-cv"></canvas></div>
 
             <div class="kz-foot"><div class="kz-fswap" id="loss-fswap">
-                <div class="kz-pill" id="loss-pill">Richtig <b>0,05</b> · Anfang <b>0,69</b> · Hund statt Katze <b>3,00</b></div>
+                <div class="kz-pill" id="loss-pill">CCE · Richtig <b>0,05</b> · Anfang <b>0,69</b> · Hund statt Katze <b>3,00</b></div>
                 <div class="kz-chips" id="loss-chips"><span class="kz-chip">richtig 0,05</span><span class="kz-arrow">·</span><span class="kz-chip r">falsch 3,00</span></div>
             </div></div>
 
