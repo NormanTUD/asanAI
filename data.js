@@ -192,13 +192,12 @@ async function _get_set_percentage_text(percentage, url_idx, urls_length, percen
 				eta = parse_int(parse_int(remaining_items * Math.floor(time_per_image)) / 1000) + 10;
 				old_percentage = percentage;
 
-				percentage_text += " ca. " + human_readable_time(eta) + " " + trm("left");
+				percentage_text += " ca. " + human_readable_time(eta) + " " + language[lang]["left"];
 			}
 		}
 	}
 
 	percentage_div.html(percentage_text);
-	await update_translations();
 
 	return old_percentage;
 }
@@ -1364,6 +1363,10 @@ function get_maps_from_image_element (x, y, maps, image_element, label_nr) {
 }
 
 async function load_and_augment_images_and_y(this_data, x, y) {
+	if (!is_auto_augment()) {
+		return await load_images_and_y_without_augmentation(this_data, y);
+	}
+
 	x = await get_x_ones_from_image_input_shape();
 
 	for (var image_idx = 0; image_idx < this_data.length; image_idx++) {
@@ -1381,6 +1384,50 @@ async function load_and_augment_images_and_y(this_data, x, y) {
 	}
 
 	return [x, y];
+}
+
+async function load_images_and_y_without_augmentation(this_data, y) {
+	var images = [];
+
+	for (var image_idx = 0; image_idx < this_data.length; image_idx++) {
+		const this_img = this_data[image_idx];
+		const unresized_image = this_img["item"];
+
+		if (unresized_image === null) {
+			err(`unresized image is null!`);
+			continue;
+		}
+
+		var resized_image = unresized_image;
+		var must_dispose_resized_image = false;
+		var shape = resized_image && resized_image.shape;
+		var is_already_resized = shape && shape.length === 4 && shape[0] === 1 && shape[1] === height && shape[2] === width && shape[3] === 3;
+
+		if (!is_already_resized) {
+			resized_image = resize_image(unresized_image, [height, width]);
+			must_dispose_resized_image = true;
+		}
+
+		if (resized_image === null) {
+			err(`resized_image is null!`);
+			return [null, null, null];
+		}
+
+		y.push(this_img["category_counter"]);
+
+		var image_array = array_sync(resized_image);
+		images.push(Array.isArray(image_array) && image_array.length === 1 ? image_array[0] : image_array);
+
+		if (must_dispose_resized_image) {
+			await dispose(resized_image);
+		}
+	}
+
+	if (!images.length) {
+		return [await get_x_ones_from_image_input_shape(), y];
+	}
+
+	return [tensor(images), y];
 }
 
 async function get_x_ones_from_image_input_shape() {
