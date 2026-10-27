@@ -1350,6 +1350,12 @@ async function run_super_quick_tests (quick=0) {
 	await test_photo_gallery_canvas_scales_linearly();
 	await test_photo_gallery_repeated_reset_is_stable();
 	await test_photo_gallery_hover_events_are_stable();
+	await test_photo_gallery_pixel_rendering_and_resize();
+	await test_photo_gallery_hit_testing_across_rows();
+	await test_photo_gallery_prediction_cache_reuse_and_invalidation();
+	await test_photo_gallery_prediction_guards();
+	await test_photo_gallery_correct_category_visibility();
+	await test_photo_gallery_resize_cycles_under_load();
 	await test_max_activation_iterations_auto_not_red();
 }
 
@@ -1511,7 +1517,10 @@ async function test_photo_gallery_hover_prediction () {
 	const rect = canvas.getBoundingClientRect();
 	const client_x = rect.left + 6;
 	const client_y = rect.top + 6;
+	const first_pixel = _photo_gallery_test_pixel(0);
 	const move_event = new MouseEvent("mousemove", {bubbles: true, cancelable: true, clientX: client_x, clientY: client_y});
+
+	test_equal("Gallery canvas contains a rendered real image", !!first_pixel && first_pixel[3] > 0, true);
 
 	canvas.dispatchEvent(move_event);
 	const shown = await _photo_gallery_wait_for_tooltip(3000);
@@ -1632,6 +1641,7 @@ async function test_photo_gallery_click_prediction () {
 	const rect = canvas.getBoundingClientRect();
 	const client_x = rect.left + 6;
 	const client_y = rect.top + 6;
+	const input_shape_before = model && model.input ? model.input.shape.slice() : null;
 
 	canvas.dispatchEvent(new MouseEvent("mousemove", {bubbles: true, cancelable: true, clientX: client_x, clientY: client_y}));
 	await _photo_gallery_wait_for_tooltip(2000);
@@ -1643,6 +1653,11 @@ async function test_photo_gallery_click_prediction () {
 
 	test_equal("Click shows the prediction panel", panel_displayed, true);
 	test_equal("Click renders the prediction HTML", prediction_html, true);
+	test_equal("Click does not add visible per-image DOM nodes", $("#photos > img").length, 0);
+
+	if (input_shape_before) {
+		test_equal("Click keeps the model input batch dimension", JSON.stringify(model.input.shape), JSON.stringify(input_shape_before));
+	}
 
 	remove_predict_data_img();
 	await new Promise(function (resolve) { setTimeout(resolve, 100); });
@@ -1814,6 +1829,57 @@ async function _photo_gallery_load_test_image () {
 	return img;
 }
 
+async function _photo_gallery_load_colored_test_image (color) {
+	if (!window._photo_gallery_colored_test_images) {
+		window._photo_gallery_colored_test_images = {};
+	}
+
+	const cached = window._photo_gallery_colored_test_images[color];
+
+	if (cached && cached.img.complete) {
+		return cached;
+	}
+
+	const canvas = document.createElement("canvas");
+	canvas.width = 8;
+	canvas.height = 8;
+	const ctx = canvas.getContext("2d");
+	ctx.fillStyle = color;
+	ctx.fillRect(0, 0, 8, 8);
+	const url = canvas.toDataURL("image/png");
+	const img = new Image();
+
+	await new Promise(function (resolve, reject) {
+		img.onload = resolve;
+		img.onerror = reject;
+		img.src = url;
+	});
+
+	window._photo_gallery_colored_test_images[color] = {img: img, url: url};
+
+	return window._photo_gallery_colored_test_images[color];
+}
+
+function _photo_gallery_test_pixel (index) {
+	const canvas = _photo_gallery.canvas;
+	const layout = _photo_gallery.layout;
+
+	if (!canvas || !layout) {
+		return null;
+	}
+
+	const col = index % layout.cols;
+	const row = Math.floor(index / layout.cols);
+	const x = (col * layout.cell_width + layout.margin + layout.thumb_width / 2) * layout.dpr;
+	const y = (row * layout.cell_height + layout.margin + layout.thumb_height / 2) * layout.dpr;
+
+	return Array.from(canvas.getContext("2d").getImageData(Math.floor(x), Math.floor(y), 1, 1).data);
+}
+
+function _photo_gallery_pixel_is (pixel, rgb) {
+	return !!pixel && pixel[3] > 0 && Math.abs(pixel[0] - rgb[0]) <= 20 && Math.abs(pixel[1] - rgb[1]) <= 20 && Math.abs(pixel[2] - rgb[2]) <= 20;
+}
+
 async function test_photo_gallery_canvas_dom_is_constant () {
 	const saved = _photo_gallery_save_test_state();
 
@@ -1948,6 +2014,291 @@ async function test_photo_gallery_hover_events_are_stable () {
 	} finally {
 		_photo_gallery_restore_test_state(saved);
 		_photo_gallery_hide_tooltip();
+	}
+
+	return true;
+}
+
+async function test_photo_gallery_pixel_rendering_and_resize () {
+	const saved = _photo_gallery_save_test_state();
+	const red = await _photo_gallery_load_colored_test_image("#ff0000");
+	const blue = await _photo_gallery_load_colored_test_image("#0000ff");
+	const container = document.getElementById("photos");
+	const client_width_descriptor = Object.getOwnPropertyDescriptor(container, "clientWidth");
+	var forced_width = 200;
+
+	Object.defineProperty(container, "clientWidth", {
+		configurable: true,
+		get: function () { return forced_width; }
+	});
+
+	try {
+		_photo_gallery_prepare(2);
+		_photo_gallery_add_image(red.img, red.url);
+		_photo_gallery_add_image(blue.img, blue.url);
+		await new Promise(function (resolve) { setTimeout(resolve, 50); });
+
+		test_equal("First canvas cell renders the first image", _photo_gallery_pixel_is(_photo_gallery_test_pixel(0), [255, 0, 0]), true);
+		test_equal("Second canvas cell renders the second image", _photo_gallery_pixel_is(_photo_gallery_test_pixel(1), [0, 0, 255]), true);
+
+		forced_width = 50;
+		window.dispatchEvent(new Event("resize"));
+		await new Promise(function (resolve) { setTimeout(resolve, 150); });
+
+		test_equal("Narrow resize recomputes one column", _photo_gallery.layout.cols, 1);
+		test_equal("First image survives a narrow resize", _photo_gallery_pixel_is(_photo_gallery_test_pixel(0), [255, 0, 0]), true);
+		test_equal("Second image survives a narrow resize", _photo_gallery_pixel_is(_photo_gallery_test_pixel(1), [0, 0, 255]), true);
+
+		forced_width = 400;
+		window.dispatchEvent(new Event("resize"));
+		await new Promise(function (resolve) { setTimeout(resolve, 150); });
+
+		test_equal("Wide resize recomputes multiple columns", _photo_gallery.layout.cols > 1, true);
+		test_equal("First image survives a wide resize", _photo_gallery_pixel_is(_photo_gallery_test_pixel(0), [255, 0, 0]), true);
+		test_equal("Second image survives a wide resize", _photo_gallery_pixel_is(_photo_gallery_test_pixel(1), [0, 0, 255]), true);
+	} finally {
+		if (client_width_descriptor) {
+			Object.defineProperty(container, "clientWidth", client_width_descriptor);
+		} else {
+			delete container.clientWidth;
+		}
+		window.dispatchEvent(new Event("resize"));
+		_photo_gallery_restore_test_state(saved);
+	}
+
+	return true;
+}
+
+async function test_photo_gallery_hit_testing_across_rows () {
+	const saved = _photo_gallery_save_test_state();
+	const img = await _photo_gallery_load_test_image();
+	const container = document.getElementById("photos");
+	const client_width_descriptor = Object.getOwnPropertyDescriptor(container, "clientWidth");
+	var forced_width = 420;
+
+	Object.defineProperty(container, "clientWidth", {
+		configurable: true,
+		get: function () { return forced_width; }
+	});
+
+	try {
+		_photo_gallery_prepare(100);
+
+		for (let index = 0; index < 100; index++) {
+			_photo_gallery_add_image(img, "gallery-hit-test://" + index);
+		}
+
+		const canvas = _photo_gallery.canvas;
+		const layout = _photo_gallery.layout;
+		const original_get_bounding_client_rect = canvas.getBoundingClientRect.bind(canvas);
+		const fake_rect = {
+			left: 100,
+			top: -150,
+			width: layout.css_width,
+			height: layout.css_height,
+			right: 100 + layout.css_width,
+			bottom: -150 + layout.css_height
+		};
+
+		canvas.getBoundingClientRect = function () { return fake_rect; };
+
+		try {
+			function point_for (index) {
+				const col = index % layout.cols;
+				const row = Math.floor(index / layout.cols);
+
+				return {
+					clientX: fake_rect.left + col * layout.cell_width + layout.margin + layout.thumb_width / 2,
+					clientY: fake_rect.top + row * layout.cell_height + layout.margin + layout.thumb_height / 2
+				};
+			}
+
+			const point_0 = point_for(0);
+			const point_37 = point_for(37);
+			const point_99 = point_for(99);
+
+			test_equal("Hit testing maps the first cell", _photo_gallery_index_at(point_0.clientX, point_0.clientY), 0);
+			test_equal("Hit testing maps an interior cell with scroll offset", _photo_gallery_index_at(point_37.clientX, point_37.clientY), 37);
+			test_equal("Hit testing maps the last cell with scroll offset", _photo_gallery_index_at(point_99.clientX, point_99.clientY), 99);
+
+			const beyond_entries = point_for(100);
+			test_equal("Hit testing ignores cells beyond the image count", _photo_gallery_index_at(beyond_entries.clientX, beyond_entries.clientY), -1);
+			test_equal("Hit testing ignores clicks outside the canvas", _photo_gallery_index_at(fake_rect.left - 20, fake_rect.top + 10), -1);
+		} finally {
+			canvas.getBoundingClientRect = original_get_bounding_client_rect;
+		}
+	} finally {
+		if (client_width_descriptor) {
+			Object.defineProperty(container, "clientWidth", client_width_descriptor);
+		} else {
+			delete container.clientWidth;
+		}
+		_photo_gallery_restore_test_state(saved);
+	}
+
+	return true;
+}
+
+async function test_photo_gallery_prediction_cache_reuse_and_invalidation () {
+	const saved = _photo_gallery_save_test_state();
+	const entry = _photo_gallery.entries[0];
+	const old_cache = _photo_gallery_prediction_cache;
+	const old_generation = weights_generation;
+
+	if (!entry) {
+		test_equal("Gallery entry available for cache test", false, true);
+		return false;
+	}
+
+	_photo_gallery_prediction_cache = {};
+
+	try {
+		const values = await _photo_gallery_predict_image(entry.img);
+
+		test_equal("Prediction returns one value per label", Array.isArray(values) && values.length === labels.length, true);
+
+		if (typeof get_last_layer_activation_function === "function" && get_last_layer_activation_function() === "softmax") {
+			const sum = values.reduce(function (a, b) { return a + b; }, 0);
+			test_equal("Softmax prediction sums to about one", Math.abs(sum - 1) < 0.02, true);
+		}
+
+		_photo_gallery_prediction_cache[entry.url] = {model: model, generation: weights_generation, values: values};
+
+		test_equal("Cache returns a prediction for the same model and generation", _photo_gallery_prediction_is_cached(entry) === values, true);
+
+		weights_generation++;
+		test_equal("Cache invalidates when weights generation changes", _photo_gallery_prediction_is_cached(entry), null);
+		weights_generation = old_generation;
+
+		const cache_size = Object.keys(_photo_gallery_prediction_cache).length;
+		const canvas = document.getElementById("photo_gallery_canvas");
+		const rect = canvas.getBoundingClientRect();
+
+		for (let index = 0; index < 5; index++) {
+			canvas.dispatchEvent(new MouseEvent("mousemove", {
+				bubbles: true,
+				cancelable: true,
+				clientX: rect.left + 6,
+				clientY: rect.top + 6
+			}));
+			await new Promise(function (resolve) { setTimeout(resolve, 20); });
+		}
+
+		test_equal("Repeated hover reuses the cache", Object.keys(_photo_gallery_prediction_cache).length, cache_size);
+	} finally {
+		weights_generation = old_generation;
+		_photo_gallery_prediction_cache = old_cache;
+		_photo_gallery_hide_tooltip();
+		_photo_gallery_restore_test_state(saved);
+	}
+
+	return true;
+}
+
+async function test_photo_gallery_prediction_guards () {
+	const saved = _photo_gallery_save_test_state();
+	const entry = _photo_gallery.entries[0];
+	const old_started_training = started_training;
+	const old_predict_running = _predict_full_running;
+
+	if (!entry) {
+		test_equal("Gallery entry available for prediction guard test", false, true);
+		return false;
+	}
+
+	try {
+		started_training = true;
+		test_equal("Prediction is skipped while training", await _photo_gallery_predict_image(entry.img), null);
+		started_training = old_started_training;
+
+		_predict_full_running = true;
+		test_equal("Prediction is skipped while another full prediction runs", await _photo_gallery_predict_image(entry.img), null);
+	} finally {
+		started_training = old_started_training;
+		_predict_full_running = old_predict_running;
+		_photo_gallery_restore_test_state(saved);
+	}
+
+	return true;
+}
+
+async function test_photo_gallery_correct_category_visibility () {
+	const saved = _photo_gallery_save_test_state();
+	const entry = _photo_gallery.entries[0];
+	const correct_category = entry && typeof extractCategoryFromURL === "function" ? extractCategoryFromURL(entry.url, entry.img) : null;
+	const correct_index = correct_category !== null && correct_category !== undefined ? labels.indexOf(String(correct_category)) : -1;
+
+	if (!entry || correct_index < 0 || labels.length < 2) {
+		test_equal("Gallery has a labeled entry for correct-category test", false, true);
+		return false;
+	}
+
+	const wrong_index = (correct_index + 1) % labels.length;
+
+	function values_for (index) {
+		return labels.map(function (_, label_index) {
+			return label_index === index ? 0.9 : 0.02;
+		});
+	}
+
+	try {
+		_photo_gallery_update_tooltip(0, values_for(wrong_index));
+		test_equal("Wrong prediction adds a correct-category row", $("#photo_gallery_tooltip .gti_row").length, labels.length + 1);
+		test_equal("Wrong prediction shows the actual category", $("#photo_gallery_tooltip .gti_bad").text().trim(), String(correct_category));
+
+		_photo_gallery_update_tooltip(0, values_for(correct_index));
+		test_equal("Correct prediction has no extra correct-category row", $("#photo_gallery_tooltip .gti_row").length, labels.length);
+		test_equal("Correct prediction shows no red correct-category label", $("#photo_gallery_tooltip .gti_bad").length, 0);
+	} finally {
+		_photo_gallery_hide_tooltip();
+		_photo_gallery_restore_test_state(saved);
+	}
+
+	return true;
+}
+
+async function test_photo_gallery_resize_cycles_under_load () {
+	const saved = _photo_gallery_save_test_state();
+	const img = await _photo_gallery_load_test_image();
+	const container = document.getElementById("photos");
+	const client_width_descriptor = Object.getOwnPropertyDescriptor(container, "clientWidth");
+	var forced_width = 600;
+
+	Object.defineProperty(container, "clientWidth", {
+		configurable: true,
+		get: function () { return forced_width; }
+	});
+
+	try {
+		_photo_gallery_prepare(500);
+
+		for (let index = 0; index < 500; index++) {
+			_photo_gallery_add_image(img, "gallery-resize-load://" + index);
+		}
+
+		const start = performance.now();
+
+		for (let cycle = 0; cycle < 15; cycle++) {
+			forced_width = 300 + (cycle % 5) * 200;
+			window.dispatchEvent(new Event("resize"));
+			await new Promise(function (resolve) { setTimeout(resolve, 20); });
+		}
+
+		const total_ms = performance.now() - start;
+
+		test_equal("Repeated resize under load stays reasonably fast", total_ms < 5000, true);
+		test_equal("Repeated resize keeps all images", _photo_gallery.entries.length, 500);
+		test_equal("Repeated resize keeps a single canvas", $("#photo_gallery_canvas").length, 1);
+		test_equal("Repeated resize keeps a single source container", $("#photo_gallery_sources").length, 1);
+		test_equal("Repeated resize leaves the expected layout width", Math.abs(_photo_gallery.layout.css_width - forced_width) <= 2, true);
+	} finally {
+		if (client_width_descriptor) {
+			Object.defineProperty(container, "clientWidth", client_width_descriptor);
+		} else {
+			delete container.clientWidth;
+		}
+		window.dispatchEvent(new Event("resize"));
+		_photo_gallery_restore_test_state(saved);
 	}
 
 	return true;
