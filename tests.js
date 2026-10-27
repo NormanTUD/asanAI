@@ -1346,6 +1346,7 @@ async function run_super_quick_tests (quick=0) {
 	await test_photo_gallery_click_prediction();
 	await test_photo_gallery_dark_light_mode();
 	await test_photo_gallery_language();
+	await test_max_activation_iterations_auto_not_red();
 }
 
 async function test_clicking_on_example_images_for_prediction() {
@@ -1747,6 +1748,49 @@ async function test_photo_gallery_language () {
 	lang = original_lang;
 	set_lang_cookie(original_lang, 99999);
 	await update_translations();
+
+	return true;
+}
+
+async function test_max_activation_iterations_auto_not_red () {
+	const ids = ["max_activation_iterations", "mobile_max_activation_iterations"];
+	const originals = {};
+
+	ids.forEach(function (id) {
+		const element = document.getElementById(id);
+
+		if (!element) {
+			return;
+		}
+
+		originals[id] = {value: element.value, background: element.style.backgroundColor};
+		element.value = "";
+	});
+
+	check_number_values();
+
+	ids.forEach(function (id) {
+		const element = document.getElementById(id);
+
+		if (!element) {
+			return;
+		}
+
+		test_equal(id + " is not marked red when empty (auto)", element.style.backgroundColor !== "red", true);
+	});
+
+	ids.forEach(function (id) {
+		const element = document.getElementById(id);
+
+		if (!element || !originals[id]) {
+			return;
+		}
+
+		element.value = originals[id].value;
+		element.style.backgroundColor = originals[id].background;
+	});
+
+	check_number_values();
 
 	return true;
 }
