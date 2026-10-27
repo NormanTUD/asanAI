@@ -895,7 +895,7 @@
 		if (!api) return;
 		var img = new Image();
 		img.onload = function () {
-			var n = 32;
+			var n = 16;
 			var off = document.createElement("canvas");
 			off.width = n; off.height = n;
 			var octx = off.getContext("2d");
@@ -910,7 +910,7 @@
 					grid[y].push((data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114) / 255);
 				}
 			}
-			imageGrid = grid;
+			imageGrid = grid.map(function (row) { return row.slice(); });
 			input = grid;
 			size = n;
 			imageLoaded = true;
@@ -951,7 +951,7 @@
 			scanTimer = setInterval(function () {
 				scanCell = (scanCell + 1) % ((size - 2) * (size - 2));
 				api.redraw();
-			}, 42);
+			}, 30);
 			api.redraw();
 		});
 		if (paintBtn) paintBtn.addEventListener("click", function () {
@@ -971,7 +971,7 @@
 			if (!imageGrid) return;
 			if (scanTimer) { clearInterval(scanTimer); scanTimer = null; scanBtn.textContent = "Scan the kernel ▶"; }
 			scanCell = -1;
-			input = imageGrid;
+			input = imageGrid.map(function (row) { return row.slice(); });
 			size = imageGrid.length;
 			imageLoaded = true;
 			api.redraw();
@@ -1045,6 +1045,7 @@
 		var scoreEl = $("[data-retrieval-score]", root);
 		var promptEl = $("[data-retrieval-prompt]", root);
 		var query = "Eiffel Tower height";
+		var noteEl = $("[data-retrieval-note]", root);
 		if (!list) return;
 		var chunks = [
 			{ title: "Eiffel Tower", text: "The Eiffel Tower in Paris is 330 metres tall and was completed in 1889 for the World's Fair.", vec: [ 0.95, 0.05, 0.05, 0.05 ] },
@@ -1055,6 +1056,7 @@
 		];
 		var queries = {
 			"Eiffel Tower height": [ 0.95, 0.05, 0.0, 0.05 ],
+			"Eiffel opening hours": [ 0.92, 0.08, 0.02, 0.03 ],
 			"RAG pipeline": [ 0.0, 0.95, 0.2, 0.1 ],
 			"vector database": [ 0.0, 0.2, 0.95, 0.0 ]
 		};
@@ -1089,6 +1091,11 @@
 				promptEl.textContent = "Context:\n" + selected.map(function (r, i) {
 					return "[" + (i + 1) + "] " + r.c.title + " — " + r.c.text;
 				}).join("\n\n") + "\n\nQuestion: " + query + "\nAnswer:";
+			}
+			if (noteEl) {
+				noteEl.innerHTML = query === "Eiffel opening hours"
+					? "<b>Retrieval found the right topic, not the right fact.</b> The top passage is about height; it contains no opening hours. Nearest ≠ answer."
+					: "The score measures alignment in the embedding space, not whether the passage answers the question.";
 			}
 		}
 		queryChips.forEach(function (chip) {
