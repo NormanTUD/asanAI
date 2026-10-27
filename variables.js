@@ -1176,8 +1176,6 @@ var stop_downloading_data = false;
 
 var no_update_math = false;
 
-var example_plotly_data = [[1,1], [1,1.5], [1.9,2.1], [3.95, 1.01], [6, 20]];
-
 var math_items_hashes = {};
 
 var force_download = 0;
@@ -1979,7 +1977,6 @@ var _write_latex_defer_pending = false;
 var _layout_stall_suspend_until = 0;
 
 var restart_fcnn_timeout = null;
-var restart_fcnn_pending_visible = false;
 
 var _highlight_debounce = {};
 var _highlight_observer = null;

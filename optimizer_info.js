@@ -501,18 +501,6 @@
     return path;
   }
 
-  // ─── READ PARAMS FROM PAGE (optimizer.php generated inputs) ───────────────
-  function readPageParams(optimizerName) {
-    var info = optimizerInfo[optimizerName];
-    if (!info) return {};
-    var params = {};
-    for (var key in info.params) {
-      if (!info.params.hasOwnProperty(key)) continue;
-      params[key] = info.params[key].default;
-    }
-    return params;
-  }
-
   // ─── VALIDATION ───────────────────────────────────────────────────────────
   function validateParam(name, value, meta) {
     var t = i18n[L()];

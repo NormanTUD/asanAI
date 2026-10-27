@@ -5265,26 +5265,6 @@ var OrigamiLive = (function (global) {
 		_state.animId = requestAnimationFrame(loop);
 	}
 
-	function _updateUniforms(t) {
-		var groups = [
-			_state.sheetGroup, _state.foldGroup, _state.boundGroup,
-			_state.stackGroup, _state.dataGroup
-		];
-		var camPos = _state.camera ? _state.camera.position : null;
-
-		for (var g = 0; g < groups.length; g++) {
-			var grp = groups[g];
-			if (!grp) continue;
-			for (var i = 0; i < grp.children.length; i++) {
-				var o = grp.children[i];
-				if (!o.material || !o.material.uniforms) continue;
-				var u = o.material.uniforms;
-				if (u.uTime)   u.uTime.value = t;
-				if (u.uCamPos && camPos) u.uCamPos.value.copy(camPos);
-			}
-		}
-	}
-
 	function _updateCamUniforms() {
 		var camPos = _state.camera ? _state.camera.position : null;
 		if (!camPos) return;

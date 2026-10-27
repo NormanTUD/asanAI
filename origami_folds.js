@@ -242,11 +242,6 @@ var OrigamiFolds = (function (global) {
 		} catch (e) { /* ignore */ }
 	}
 
-	function _safeDisposeAll(arr) {
-		if (!Array.isArray(arr)) return;
-		for (var i = 0; i < arr.length; i++) _safeDispose(arr[i]);
-	}
-
 	function _isDisposedTensor(t) {
 		try {
 			if (!t) return true;
@@ -447,12 +442,6 @@ var OrigamiFolds = (function (global) {
 		var ramp = dark ? DIST_RAMP_DARK : DIST_RAMP_LIGHT;
 		var c = _rampLookup(ramp, _distortionT(v, lo, hi));
 		return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")";
-	}
-
-	function _distortionColorA(v, lo, hi, dark, alpha) {
-		var ramp = dark ? DIST_RAMP_DARK : DIST_RAMP_LIGHT;
-		var c = _rampLookup(ramp, _distortionT(v, lo, hi));
-		return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + alpha + ")";
 	}
 
 	function _distortionScale(dark) {
@@ -2923,23 +2912,6 @@ var OrigamiFolds = (function (global) {
 			return { eye: { x: 1.35, y: -1.55, z: 1.05 }, up: { x: 0, y: 0, z: 1 } };
 		}
 		return { eye: { x: 1.5, y: 1.4, z: 1.2 }, up: { x: 0, y: 0, z: 1 } };
-	}
-
-	function _layerOpLabel(p) {
-		var parts = [];
-		parts.push(p.className || "Layer");
-		parts.push(p.dimIn + "\u2192" + p.dimOut);
-		if (p.activation && p.activation !== "linear") {
-			parts.push(p.activation);
-			if (_isReluLike(p.activation)) {
-				parts.push("\u2702");
-			} else if (_isSoftFold(p.activation)) {
-				parts.push("\u223C");
-			}
-		} else {
-			parts.push(_tr("origami_affine", "affin"));
-		}
-		return parts.join(" \u00B7 ");
 	}
 
 	function _buildLayout(results, theme) {

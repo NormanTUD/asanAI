@@ -1420,10 +1420,6 @@ function remove_layer_warning(layer_idx, msg) {
 	}
 }
 
-function hide_warning_container () {
-	$(".warning_container").hide();
-}
-
 async function create_model (old_model = model, fake_model_structure = undefined, force = 0) {
 	if(has_missing_values) {
 		l(`${language[lang]["not_creating_model_because_some_values_are_missing"]} (create model)`);

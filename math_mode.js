@@ -2176,17 +2176,6 @@ function get_input_layer(input_shape) {
 	return input_layer;
 }
 
-function _format_input_array(first) {
-	if (Array.isArray(first) && first.length > 0 && !Array.isArray(first[0])) {
-		return [first.slice(0, Math.min(first.length, 8))];
-	} else if (Array.isArray(first)) {
-		return first.slice(0, Math.min(first.length, 8)).map(function(r) {
-			return Array.isArray(r) ? r.slice(0, Math.min(r.length, 8)) : r;
-		});
-	}
-	return [["x"]];
-}
-
 function get_y_output_shapes (output_shape) {
 	var y_layer = [];
 
@@ -3082,40 +3071,6 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
 	if (_rm) { layer_str += " = " + _rm; }
 
 	return layer_str;
-}
-
-/**
- * Builds a layer equation as SEPARATE temml_me divs so a parse failure in one
- * part can never leak raw LaTeX into the next part.
- * Returns HTML string with three divs: symbol, computation, optional result.
- */
-function _build_layer_equation_split(layer_idx, layer_data, colors, y_layer, input_layer, layer_has_bias, gui_layer_idx) {
-	var this_layer_type = (typeof layer_data !== "undefined" && layer_data[layer_idx]) ? (layer_data[layer_idx].layer_type || "dense") : "dense";
-
-	var sym = _get_h_symbol(layer_idx);
-	var comp = single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias, gui_layer_idx);
-	// comp currently starts with _get_h_symbol = ...; strip that prefix to avoid duplicate "h = h ="
-	if (comp.indexOf(sym) === 0) {
-		comp = comp.substring(sym.length);
-		while (comp.length > 0 && (comp[0] === " " || comp[0] === "=")) { comp = comp.substring(1); }
-	}
-	// single_layer_to_latex appends " = result" to layer_str — strip it so the
-	// separate result div below is the only place that segment appears.
-	var _rm = _get_result_matrix(layer_idx);
-	if (_rm) {
-		var rm_marker = " = " + _rm;
-		if (comp.length >= rm_marker.length && comp.lastIndexOf(rm_marker) === comp.length - rm_marker.length) {
-			comp = comp.substring(0, comp.length - rm_marker.length);
-		}
-	}
-
-	var html = "";
-	html += "<div class='temml_me' data-eq-part='symbol'>" + sym + "</div>";
-	html += "<div class='temml_me' data-eq-part='computation'>" + sym + " = " + comp + "</div>";
-	if (_rm) {
-		html += "<div class='temml_me' data-eq-part='result'> = " + _rm + "</div>";
-	}
-	return html;
 }
 
 /**
