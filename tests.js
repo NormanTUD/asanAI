@@ -1338,10 +1338,21 @@ async function run_super_quick_tests (quick=0) {
 	}
 
 	await test_clicking_on_example_images_for_prediction();
+
+	await test_photo_gallery_resize();
+	await test_photo_gallery_hit_testing();
+	await test_photo_gallery_hover_prediction();
+	await test_photo_gallery_tooltip_alignment();
+	await test_photo_gallery_click_prediction();
+	await test_photo_gallery_dark_light_mode();
+	await test_photo_gallery_language();
 }
 
 async function test_clicking_on_example_images_for_prediction() {
 	await delay(3000);
+
+	test_equal("Photo gallery canvas exists", $("#photo_gallery_canvas").length, 1);
+	test_equal("Photo gallery hidden sources exist", $("#photo_gallery_sources img").length > 0, true);
 
 	$(".TRANSLATEME_remove_data_img_predictions").click();
 
@@ -1372,6 +1383,372 @@ async function test_clicking_on_example_images_for_prediction() {
 	await delay(3000);
 
 	test_no_new_errors_or_warnings();
+}
+
+async function test_photo_gallery_resize () {
+	const canvas = document.getElementById("photo_gallery_canvas");
+
+	if (!canvas) {
+		test_equal("Photo gallery canvas exists for resize test", false, true);
+		return false;
+	}
+
+	const container = document.getElementById("photos");
+	const original_width = container.style.width;
+	const original_layout_css_width = _photo_gallery.layout.css_width;
+
+	container.style.width = "420px";
+	await new Promise(function (resolve) { setTimeout(resolve, 150); });
+
+	const narrow_layout = _photo_gallery.layout;
+
+	test_equal("Layout css_width shrinks when container shrinks", Math.abs(narrow_layout.css_width - 420) <= 2, true);
+	test_equal("Canvas internal width tracks layout css_width", canvas.width === Math.max(1, Math.round(narrow_layout.css_width * narrow_layout.dpr)), true);
+	test_equal("Columns match layout math", narrow_layout.cols, Math.max(1, Math.floor(narrow_layout.css_width / narrow_layout.cell_width)));
+
+	container.style.width = "980px";
+	await new Promise(function (resolve) { setTimeout(resolve, 150); });
+
+	const wide_layout = _photo_gallery.layout;
+
+	test_equal("Layout css_width grows when container grows", Math.abs(wide_layout.css_width - 980) <= 2, true);
+	test_equal("Canvas internal width tracks layout css_width after grow", canvas.width === Math.max(1, Math.round(wide_layout.css_width * wide_layout.dpr)), true);
+	test_equal("Columns recompute on wide container", wide_layout.cols >= narrow_layout.cols, true);
+
+	container.style.width = "760px";
+	window.dispatchEvent(new Event("resize"));
+	await new Promise(function (resolve) { setTimeout(resolve, 150); });
+
+	test_equal("Window resize event relayouts the canvas", Math.abs(_photo_gallery.layout.css_width - 760) <= 2, true);
+
+	container.style.width = original_width;
+	window.dispatchEvent(new Event("resize"));
+	await new Promise(function (resolve) { setTimeout(resolve, 150); });
+
+	test_equal("Layout css_width restores", Math.abs(_photo_gallery.layout.css_width - original_layout_css_width) <= 4, true);
+
+	return true;
+}
+
+async function test_photo_gallery_hit_testing () {
+	const canvas = document.getElementById("photo_gallery_canvas");
+
+	if (!canvas) {
+		test_equal("Canvas missing for hit testing", false, true);
+		return false;
+	}
+
+	const rect = canvas.getBoundingClientRect();
+	const first_index = _photo_gallery_index_at(rect.left + 4, rect.top + 4);
+
+	test_equal("Hit testing returns first index inside first cell", first_index, 0);
+
+	const outside_index = _photo_gallery_index_at(rect.left - 10, rect.top + 4);
+
+	test_equal("Hit testing returns -1 outside canvas", outside_index, -1);
+
+	return true;
+}
+
+async function _photo_gallery_wait_for_tooltip (timeout_ms) {
+	const start = Date.now();
+
+	while (Date.now() - start < (timeout_ms || 2000)) {
+		if (document.getElementById("photo_gallery_tooltip") && $("#photo_gallery_tooltip").css("display") !== "none") {
+			return true;
+		}
+		await new Promise(function (resolve) { setTimeout(resolve, 50); });
+	}
+
+	return false;
+}
+
+async function _photo_gallery_wait_for_prediction (cache_key, timeout_ms) {
+	const start = Date.now();
+
+	while (Date.now() - start < (timeout_ms || 2000)) {
+		const cached = _photo_gallery_prediction_cache[cache_key];
+
+		if (cached && cached.model === model && cached.generation === weights_generation) {
+			return cached.values;
+		}
+		await new Promise(function (resolve) { setTimeout(resolve, 50); });
+	}
+
+	return null;
+}
+
+async function test_photo_gallery_hover_prediction () {
+	const canvas = document.getElementById("photo_gallery_canvas");
+
+	if (!canvas) {
+		test_equal("Canvas missing for hover test", false, true);
+		return false;
+	}
+
+	const rect = canvas.getBoundingClientRect();
+	const client_x = rect.left + 6;
+	const client_y = rect.top + 6;
+	const move_event = new MouseEvent("mousemove", {bubbles: true, cancelable: true, clientX: client_x, clientY: client_y});
+
+	canvas.dispatchEvent(move_event);
+	const shown = await _photo_gallery_wait_for_tooltip(3000);
+
+	test_equal("Hover shows the tooltip", shown, true);
+	test_equal("Hover targets the first gallery cell", _photo_gallery.hover_index, 0);
+
+	const entry = _photo_gallery.entries[0];
+
+	if (!entry) {
+		test_equal("Gallery entry missing", false, true);
+		return false;
+	}
+
+	const values = await _photo_gallery_wait_for_prediction(entry.url, 10000);
+
+	if (!values) {
+		test_equal("Hover produced prediction values", false, true);
+		return false;
+	}
+
+	const summary = _photo_gallery_prediction_summary(values);
+	const predicted_label = (labels && labels[summary.index] !== undefined) ? labels[summary.index] : summary.index;
+	const correct_category = (typeof extractCategoryFromURL === "function") ? extractCategoryFromURL(entry.url, entry.img) : null;
+	const prediction_is_wrong = correct_category !== null && correct_category !== undefined && correct_category !== "" && String(correct_category) !== String(predicted_label);
+	const expected_rows = labels.length + (prediction_is_wrong ? 1 : 0);
+
+	test_equal("Hover produces one probability per label", $("#photo_gallery_tooltip .gti_row").length, expected_rows);
+
+	if (prediction_is_wrong) {
+		test_equal("Tooltip names the correct category when prediction is wrong", $("#photo_gallery_tooltip").text().indexOf(String(correct_category)) !== -1, true);
+	}
+
+	const bars = $("#photo_gallery_tooltip .gti_row .bar").length;
+
+	if (show_bars_instead_of_numbers()) {
+		test_equal("Bars are rendered when enabled", bars, labels.length);
+	} else {
+		test_equal("Numeric probabilities are rendered when bars disabled", bars, 0);
+
+		if (typeof get_last_layer_activation_function === "function" && get_last_layer_activation_function() === "softmax") {
+			test_equal("Tooltip contains percentage text", /%/.test($("#photo_gallery_tooltip").text()), true);
+		}
+	}
+
+	canvas.dispatchEvent(new MouseEvent("mouseleave", {bubbles: true, cancelable: true}));
+	await new Promise(function (resolve) { setTimeout(resolve, 50); });
+
+	test_equal("Tooltip hides on mouseleave", $("#photo_gallery_tooltip").css("display"), "none");
+
+	return true;
+}
+
+async function test_photo_gallery_tooltip_alignment () {
+	const canvas = document.getElementById("photo_gallery_canvas");
+	const entries = _photo_gallery.entries;
+
+	if (!canvas || !entries.length) {
+		test_equal("Gallery available for tooltip alignment test", false, true);
+		return false;
+	}
+
+	const cached = _photo_gallery_prediction_cache[entries[0].url];
+
+	if (!cached) {
+		test_equal("Cached prediction available for tooltip alignment test", false, true);
+		return false;
+	}
+
+	const values = cached.values;
+	const rows = $("#photo_gallery_tooltip .gti_row");
+	const label_lefts = rows.map(function () {
+		const label = this.querySelector(".gti_label");
+		return label ? Math.round(label.getBoundingClientRect().left) : null;
+	}).get().filter(function (v) { return v !== null; });
+
+	test_equal("All category labels share the same left edge", label_lefts.length > 1 && label_lefts.every(function (v) { return Math.abs(v - label_lefts[0]) <= 1; }), true);
+
+	const bars_checkbox = $("#show_bars_instead_of_numbers");
+	const original_bars = bars_checkbox.is(":checked");
+	const supports_bars = typeof get_last_layer_activation_function === "function" && get_last_layer_activation_function() === "softmax";
+
+	if (supports_bars) {
+		bars_checkbox.prop("checked", true);
+		_photo_gallery_update_tooltip(0, values);
+		await new Promise(function (resolve) { setTimeout(resolve, 50); });
+
+		const bars = $("#photo_gallery_tooltip .gti_row .bar");
+		const bar_rights = bars.map(function () { return Math.round(this.getBoundingClientRect().right); }).get();
+
+		test_equal("Every category gets a bar", bars.length, labels.length);
+		test_equal("All bars share the same right edge", bar_rights.length > 1 && bar_rights.every(function (v) { return Math.abs(v - bar_rights[0]) <= 1; }), true);
+	}
+
+	bars_checkbox.prop("checked", false);
+	_photo_gallery_update_tooltip(0, values);
+	await new Promise(function (resolve) { setTimeout(resolve, 50); });
+
+	const numeric_values = $("#photo_gallery_tooltip .gti_row .gti_value");
+	const value_rights = numeric_values.map(function () { return Math.round(this.getBoundingClientRect().right); }).get();
+
+	test_equal("Bars are hidden when bars are disabled", $("#photo_gallery_tooltip .gti_row .bar").length, 0);
+	test_equal("All numeric probabilities share the same right edge", value_rights.length > 1 && value_rights.every(function (v) { return Math.abs(v - value_rights[0]) <= 1; }), true);
+
+	bars_checkbox.prop("checked", original_bars);
+
+	return true;
+}
+
+async function test_photo_gallery_click_prediction () {
+	const canvas = document.getElementById("photo_gallery_canvas");
+
+	if (!canvas) {
+		test_equal("Canvas missing for click test", false, true);
+		return false;
+	}
+
+	const rect = canvas.getBoundingClientRect();
+	const client_x = rect.left + 6;
+	const client_y = rect.top + 6;
+
+	canvas.dispatchEvent(new MouseEvent("mousemove", {bubbles: true, cancelable: true, clientX: client_x, clientY: client_y}));
+	await _photo_gallery_wait_for_tooltip(2000);
+	canvas.dispatchEvent(new MouseEvent("click", {bubbles: true, cancelable: true, clientX: client_x, clientY: client_y}));
+	await new Promise(function (resolve) { setTimeout(resolve, 1500); });
+
+	const panel_displayed = $("#photo_gallery_prediction").css("display") !== "none";
+	const prediction_html = $("#photo_gallery_prediction .predict_data_img").length > 0;
+
+	test_equal("Click shows the prediction panel", panel_displayed, true);
+	test_equal("Click renders the prediction HTML", prediction_html, true);
+
+	remove_predict_data_img();
+	await new Promise(function (resolve) { setTimeout(resolve, 100); });
+
+	test_equal("remove_predict_data_img hides the panel", $("#photo_gallery_prediction").css("display"), "none");
+
+	return true;
+}
+
+async function test_photo_gallery_dark_light_mode () {
+	const canvas = document.getElementById("photo_gallery_canvas");
+
+	if (!canvas) {
+		test_equal("Canvas missing for theme test", false, true);
+		return false;
+	}
+
+	const original_darkmode = document.body.classList.contains("darkmode");
+	const tooltip = _photo_gallery_ensure_tooltip();
+	const panel = _photo_gallery_ensure_panel();
+
+	panel.style.display = "block";
+
+	const rect = canvas.getBoundingClientRect();
+	canvas.dispatchEvent(new MouseEvent("mousemove", {bubbles: true, cancelable: true, clientX: rect.left + 6, clientY: rect.top + 6}));
+	await _photo_gallery_wait_for_tooltip(2000);
+
+	const entries = _photo_gallery.entries;
+	const values = entries.length ? await _photo_gallery_wait_for_prediction(entries[0].url, 10000) : null;
+
+	if (values) {
+		_photo_gallery_update_tooltip(0, values);
+	}
+
+	document.body.classList.add("darkmode");
+	await new Promise(function (resolve) { setTimeout(resolve, 500); });
+
+	const tooltip_dark = window.getComputedStyle(tooltip).backgroundColor;
+	const panel_dark = window.getComputedStyle(panel).backgroundColor;
+
+	test_equal("Tooltip uses dark background in darkmode", /30,\s*30,\s*30/.test(tooltip_dark), true);
+	test_equal("Panel uses dark background in darkmode", /30,\s*30,\s*30/.test(panel_dark), true);
+
+	document.body.classList.remove("darkmode");
+	await new Promise(function (resolve) { setTimeout(resolve, 500); });
+
+	const tooltip_light = window.getComputedStyle(tooltip).backgroundColor;
+	const panel_light = window.getComputedStyle(panel).backgroundColor;
+
+	test_equal("Tooltip uses light background in light mode", /255,\s*255,\s*255/.test(tooltip_light), true);
+	test_equal("Panel uses light background in light mode", /255,\s*255,\s*255/.test(panel_light), true);
+
+	if (original_darkmode) {
+		document.body.classList.add("darkmode");
+	}
+
+	panel.style.display = "none";
+	canvas.dispatchEvent(new MouseEvent("mouseleave", {bubbles: true, cancelable: true}));
+
+	return true;
+}
+
+async function test_photo_gallery_language () {
+	const original_lang = lang;
+	const tooltip = document.getElementById("photo_gallery_tooltip");
+	const canvas = document.getElementById("photo_gallery_canvas");
+
+	if (!canvas) {
+		test_equal("Canvas missing for language test", false, true);
+		return false;
+	}
+
+	const entries = _photo_gallery.entries;
+
+	if (!entries.length) {
+		test_equal("Gallery has entries for language test", false, true);
+		return false;
+	}
+
+	const values = _photo_gallery_prediction_cache[entries[0].url] && _photo_gallery_prediction_cache[entries[0].url].values;
+
+	if (!values) {
+		const rect = canvas.getBoundingClientRect();
+		canvas.dispatchEvent(new MouseEvent("mousemove", {bubbles: true, cancelable: true, clientX: rect.left + 6, clientY: rect.top + 6}));
+		const got = await _photo_gallery_wait_for_prediction(entries[0].url, 3000);
+
+		if (!got) {
+			test_equal("Hover prediction unavailable for language test", false, true);
+			return false;
+		}
+	}
+
+	const en_correct = language.en && language.en["correct_category"];
+	const de_correct = language.de && language.de["correct_category"];
+
+	test_equal("English and German translations exist for correct_category", typeof en_correct === "string" && typeof de_correct === "string" && en_correct !== de_correct, true);
+
+	const cached_values = _photo_gallery_prediction_cache[entries[0].url].values;
+	const correct_text = (typeof extractCategoryFromURL === "function") ? extractCategoryFromURL(entries[0].url, entries[0].img) : null;
+	const predicted_label = (typeof labels !== "undefined" && labels && labels[_photo_gallery_prediction_summary(cached_values).index] !== undefined) ? labels[_photo_gallery_prediction_summary(cached_values).index] : _photo_gallery_prediction_summary(cached_values).index;
+
+	await update_lang("de");
+	await new Promise(function (resolve) { setTimeout(resolve, 100); });
+
+	_photo_gallery_update_tooltip(0, cached_values);
+	const tooltip_html_de = tooltip.innerHTML;
+
+	if (correct_text && String(correct_text) !== String(predicted_label)) {
+		test_equal("Tooltip shows German correct_category label when wrong", tooltip_html_de.indexOf(de_correct) !== -1, true);
+	} else {
+		test_equal("Tooltip renders in German", tooltip_html_de.indexOf(de_correct) === -1 || tooltip_html_de.indexOf(en_correct) === -1, true);
+	}
+
+	await update_lang("en");
+	await new Promise(function (resolve) { setTimeout(resolve, 100); });
+
+	_photo_gallery_update_tooltip(0, cached_values);
+	const tooltip_html_en = tooltip.innerHTML;
+
+	if (correct_text && String(correct_text) !== String(predicted_label)) {
+		test_equal("Tooltip shows English correct_category label when wrong", tooltip_html_en.indexOf(en_correct) !== -1, true);
+	}
+
+	lang = original_lang;
+	set_lang_cookie(original_lang, 99999);
+	await update_translations();
+
+	return true;
 }
 
 function enable_or_disable_show_layer_data(_status) {

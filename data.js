@@ -260,6 +260,677 @@ function showPhotosContainer() {
 	}
 }
 
+var _photo_gallery = {
+	entries: [],
+	expected: 0,
+	canvas: null,
+	sources: null,
+	layout: null,
+	hover_index: -1,
+	hover_timer: null,
+	hover_token: 0,
+	hover_predicting: false,
+	tooltip: null,
+	panel: null,
+	resize_observer: null,
+	resize_frame: null
+};
+
+var _photo_gallery_prediction_cache = {};
+
+function _photo_gallery_container () {
+	return document.getElementById("photos");
+}
+
+function _photo_gallery_thumb_size () {
+	var thumb_width = parse_int(width);
+	var thumb_height = parse_int(height);
+
+	if (!(thumb_width > 0)) {
+		thumb_width = 40;
+	}
+	if (!(thumb_height > 0)) {
+		thumb_height = 40;
+	}
+
+	return [thumb_width, thumb_height];
+}
+
+function _photo_gallery_ensure_dom () {
+	const container = _photo_gallery_container();
+
+	if (!container) {
+		return null;
+	}
+
+	var canvas = document.getElementById("photo_gallery_canvas");
+
+	if (!canvas) {
+		canvas = document.createElement("canvas");
+		canvas.id = "photo_gallery_canvas";
+		container.appendChild(canvas);
+		canvas.addEventListener("mousemove", _photo_gallery_on_mousemove);
+		canvas.addEventListener("mouseleave", _photo_gallery_hide_tooltip);
+		canvas.addEventListener("click", _photo_gallery_on_click);
+	}
+
+	_photo_gallery.canvas = canvas;
+
+	var sources = document.getElementById("photo_gallery_sources");
+
+	if (!sources) {
+		sources = document.createElement("div");
+		sources.id = "photo_gallery_sources";
+		container.appendChild(sources);
+	}
+
+	_photo_gallery.sources = sources;
+	_photo_gallery_observe_resize(container);
+	_photo_gallery_bind_window_resize();
+
+	return canvas;
+}
+
+function _photo_gallery_observe_resize (container) {
+	if (_photo_gallery.resize_observer || typeof ResizeObserver === "undefined") {
+		return;
+	}
+
+	_photo_gallery.resize_observer = new ResizeObserver(function () {
+		_photo_gallery_schedule_relayout();
+	});
+
+	_photo_gallery.resize_observer.observe(container);
+}
+
+function _photo_gallery_schedule_relayout () {
+	if (_photo_gallery.resize_frame) {
+		return;
+	}
+
+	_photo_gallery.resize_frame = requestAnimationFrame(function () {
+		_photo_gallery.resize_frame = null;
+		_photo_gallery_relayout();
+	});
+}
+
+function _photo_gallery_compute_layout (count) {
+	const container = _photo_gallery_container();
+	var css_width = container ? container.clientWidth : 0;
+
+	if (!(css_width > 0)) {
+		css_width = Math.max(240, Math.min((window.innerWidth || 1200) - 80, 1200));
+	}
+
+	const thumb_size = _photo_gallery_thumb_size();
+	const margin = 1;
+	const cell_width = thumb_size[0] + margin * 2;
+	const cell_height = thumb_size[1] + margin * 2;
+	const cols = Math.max(1, Math.floor(css_width / cell_width));
+	const rows = Math.max(1, Math.ceil(Math.max(count, 1) / cols));
+	const css_height = rows * cell_height;
+	var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+	if (css_height * dpr > 16000) {
+		dpr = 1;
+	}
+
+	return {
+		css_width: css_width,
+		css_height: css_height,
+		cols: cols,
+		rows: rows,
+		cell_width: cell_width,
+		cell_height: cell_height,
+		thumb_width: thumb_size[0],
+		thumb_height: thumb_size[1],
+		margin: margin,
+		dpr: dpr
+	};
+}
+
+function _photo_gallery_apply_layout (count) {
+	const canvas = _photo_gallery_ensure_dom();
+
+	if (!canvas) {
+		return;
+	}
+
+	const layout = _photo_gallery_compute_layout(count);
+	_photo_gallery.layout = layout;
+
+	canvas.style.width = "100%";
+	canvas.style.height = layout.css_height + "px";
+	canvas.width = Math.max(1, Math.round(layout.css_width * layout.dpr));
+	canvas.height = Math.max(1, Math.round(layout.css_height * layout.dpr));
+
+	const ctx = canvas.getContext("2d");
+
+	if (ctx) {
+		ctx.setTransform(layout.dpr, 0, 0, layout.dpr, 0, 0);
+	}
+}
+
+function _photo_gallery_clear_canvas () {
+	const canvas = _photo_gallery.canvas;
+	const layout = _photo_gallery.layout;
+
+	if (!canvas || !layout) {
+		return;
+	}
+
+	const ctx = canvas.getContext("2d");
+
+	if (ctx) {
+		ctx.clearRect(0, 0, layout.css_width, layout.css_height);
+	}
+}
+
+function _photo_gallery_draw_index (index) {
+	const canvas = _photo_gallery.canvas;
+	const layout = _photo_gallery.layout;
+	const entry = _photo_gallery.entries[index];
+
+	if (!canvas || !layout || !entry || !entry.img) {
+		return;
+	}
+
+	if (!entry.img.complete || !entry.img.naturalWidth) {
+		return;
+	}
+
+	const ctx = canvas.getContext("2d");
+
+	if (!ctx) {
+		return;
+	}
+
+	const col = index % layout.cols;
+	const row = Math.floor(index / layout.cols);
+	const x = col * layout.cell_width + layout.margin;
+	const y = row * layout.cell_height + layout.margin;
+
+	try {
+		ctx.drawImage(entry.img, x, y, layout.thumb_width, layout.thumb_height);
+	} catch (e) {
+		dbg("[photo_gallery] drawImage failed: " + e);
+	}
+}
+
+function _photo_gallery_redraw () {
+	_photo_gallery_clear_canvas();
+
+	for (var index = 0; index < _photo_gallery.entries.length; index++) {
+		_photo_gallery_draw_index(index);
+	}
+}
+
+function _photo_gallery_relayout () {
+	if (!_photo_gallery.entries.length && !_photo_gallery.expected) {
+		return;
+	}
+
+	const count = Math.max(_photo_gallery.expected, _photo_gallery.entries.length);
+	const layout = _photo_gallery_compute_layout(count);
+	const previous_layout = _photo_gallery.layout;
+
+	if (previous_layout && previous_layout.css_width === layout.css_width && previous_layout.cols === layout.cols && previous_layout.css_height === layout.css_height && previous_layout.dpr === layout.dpr) {
+		return;
+	}
+
+	_photo_gallery_apply_layout(count);
+	_photo_gallery_redraw();
+}
+
+function _photo_gallery_bind_window_resize () {
+	if (_photo_gallery.window_resize_bound || typeof window === "undefined") {
+		return;
+	}
+
+	_photo_gallery.window_resize_bound = true;
+	window.addEventListener("resize", _photo_gallery_schedule_relayout);
+}
+
+function _photo_gallery_reset () {
+	_photo_gallery.entries = [];
+	_photo_gallery.expected = 0;
+	_photo_gallery.layout = null;
+	_photo_gallery.hover_index = -1;
+	_photo_gallery.hover_token++;
+
+	if (_photo_gallery.hover_timer) {
+		clearTimeout(_photo_gallery.hover_timer);
+		_photo_gallery.hover_timer = null;
+	}
+
+	_photo_gallery_hide_tooltip();
+
+	const container = _photo_gallery_container();
+
+	if (container) {
+		container.innerHTML = "";
+	}
+
+	_photo_gallery.canvas = null;
+	_photo_gallery.sources = null;
+}
+
+function _photo_gallery_prepare (count) {
+	_photo_gallery_reset();
+	_photo_gallery.expected = Math.max(0, parse_int(count) || 0);
+	_photo_gallery_apply_layout(_photo_gallery.expected);
+}
+
+function _photo_gallery_add_image (img, url) {
+	const canvas = _photo_gallery_ensure_dom();
+
+	if (!canvas) {
+		return;
+	}
+
+	const index = _photo_gallery.entries.length;
+	_photo_gallery.entries.push({img: img, url: url});
+
+	if (!_photo_gallery.layout) {
+		_photo_gallery.expected = Math.max(_photo_gallery.expected, index + 1);
+		_photo_gallery_apply_layout(_photo_gallery.expected);
+	} else if (index >= _photo_gallery.expected) {
+		_photo_gallery.expected = Math.max(index + 1, Math.ceil((index + 1) * 1.25), 16);
+		_photo_gallery_apply_layout(_photo_gallery.expected);
+		_photo_gallery_redraw();
+	}
+
+	_photo_gallery_draw_index(index);
+
+	if (!img.complete || !img.naturalWidth) {
+		img.addEventListener("load", function () {
+			_photo_gallery_draw_index(index);
+		}, {once: true});
+	}
+}
+
+function _photo_gallery_finalize () {
+	if (!_photo_gallery.entries.length) {
+		_photo_gallery.expected = 0;
+		_photo_gallery_apply_layout(0);
+		_photo_gallery_clear_canvas();
+		return;
+	}
+
+	if (_photo_gallery.expected !== _photo_gallery.entries.length) {
+		_photo_gallery.expected = _photo_gallery.entries.length;
+		_photo_gallery_apply_layout(_photo_gallery.expected);
+		_photo_gallery_redraw();
+	}
+}
+
+function get_photo_gallery_images () {
+	return _photo_gallery.entries.map(function (entry) {
+		return entry.img;
+	});
+}
+
+function get_photos_and_own_images_for_visualization () {
+	const gallery_images = get_photo_gallery_images();
+	const extra_photos = $("#photos").find("img,canvas").toArray().filter(function (element) {
+		return element.id !== "photo_gallery_canvas" && !$(element).closest("#photo_gallery_sources").length;
+	});
+
+	return [
+		...gallery_images,
+		...extra_photos,
+		...$(".own_images").find("img,canvas").toArray()
+	];
+}
+
+function _photo_gallery_hide_tooltip () {
+	_photo_gallery.hover_index = -1;
+	_photo_gallery.hover_token++;
+
+	if (_photo_gallery.hover_timer) {
+		clearTimeout(_photo_gallery.hover_timer);
+		_photo_gallery.hover_timer = null;
+	}
+
+	if (_photo_gallery.tooltip) {
+		_photo_gallery.tooltip.style.display = "none";
+	}
+}
+
+function _photo_gallery_ensure_tooltip () {
+	if (_photo_gallery.tooltip && document.body.contains(_photo_gallery.tooltip)) {
+		return _photo_gallery.tooltip;
+	}
+
+	const tooltip = document.createElement("div");
+	tooltip.id = "photo_gallery_tooltip";
+	tooltip.className = "grid_image_tooltip";
+	tooltip.style.display = "none";
+	document.body.appendChild(tooltip);
+	_photo_gallery.tooltip = tooltip;
+
+	return tooltip;
+}
+
+function _photo_gallery_escape (value) {
+	return $("<div>").text(value === undefined || value === null ? "" : value).html();
+}
+
+function _photo_gallery_position_tooltip (client_x, client_y) {
+	const tooltip = _photo_gallery_ensure_tooltip();
+	const padding = 14;
+	var left = client_x + padding;
+	var top = client_y + padding;
+
+	if (left + tooltip.offsetWidth > window.innerWidth - 8) {
+		left = client_x - tooltip.offsetWidth - padding;
+	}
+	if (top + tooltip.offsetHeight > window.innerHeight - 8) {
+		top = client_y - tooltip.offsetHeight - padding;
+	}
+
+	tooltip.style.left = Math.max(8, left) + "px";
+	tooltip.style.top = Math.max(8, top) + "px";
+}
+
+function _photo_gallery_prediction_summary (values) {
+	if (!Array.isArray(values) || !values.length) {
+		return null;
+	}
+
+	if (values.length === 1) {
+		return {
+			label: (typeof values[0] === "number") ? values[0].toFixed(3) : String(values[0]),
+			probability: null,
+			index: 0
+		};
+	}
+
+	var max_index = 0;
+
+	for (var index = 1; index < values.length; index++) {
+		if (values[index] > values[max_index]) {
+			max_index = index;
+		}
+	}
+
+	const label = (typeof labels !== "undefined" && labels && labels[max_index] !== undefined) ? labels[max_index] : max_index;
+
+	return {
+		label: label,
+		probability: values[max_index],
+		index: max_index
+	};
+}
+
+function _photo_gallery_probability_content (prediction_idx, probability, max_index) {
+	if (typeof show_bars_instead_of_numbers === "function" && show_bars_instead_of_numbers() && typeof _create_bar_html === "function") {
+		const bar_width = Math.max(0, Math.floor(probability * 50));
+		const is_highest = prediction_idx === max_index && (typeof get_show_green !== "function" || get_show_green());
+
+		return _create_bar_html(bar_width, is_highest, probability);
+	}
+
+	var content;
+
+	if (typeof get_last_layer_activation_function === "function" && get_last_layer_activation_function() === "softmax") {
+		content = (probability * 100).toFixed(1) + "%";
+	} else {
+		content = (typeof probability === "number") ? probability.toFixed(4) : String(probability);
+	}
+
+	if (prediction_idx === max_index) {
+		content = "<b class='best_result'>" + content + "</b>";
+	}
+
+	return content;
+}
+
+function _photo_gallery_update_tooltip (index, values) {
+	const entry = _photo_gallery.entries[index];
+
+	if (!entry) {
+		return;
+	}
+
+	const tooltip = _photo_gallery_ensure_tooltip();
+	const summary = _photo_gallery_prediction_summary(values);
+	var html = "";
+
+	if (!summary) {
+		html = "<div class='gti_row'><span class='gti_label'>" + _photo_gallery_escape(language[lang]["predicted_category"]) + ":</span> <span class='gti_value'>…</span></div>";
+	} else {
+		const max_index = summary.index;
+
+		for (var prediction_idx = 0; prediction_idx < values.length; prediction_idx++) {
+			const label = (typeof labels !== "undefined" && labels && labels[prediction_idx] !== undefined) ? labels[prediction_idx] : prediction_idx;
+			const content = _photo_gallery_probability_content(prediction_idx, values[prediction_idx], max_index);
+
+			html += "<div class='gti_row'><span class='gti_label'>" + _photo_gallery_escape(label) + "</span> <span class='gti_value'>" + content + "</span></div>";
+		}
+
+		if (typeof extractCategoryFromURL === "function") {
+			const correct = extractCategoryFromURL(entry.url, entry.img);
+
+			if (correct !== undefined && correct !== null && correct !== "" && String(correct) !== String(summary.label)) {
+				html += "<div class='gti_sep'></div><div class='gti_row'><span class='gti_label'>" + _photo_gallery_escape(language[lang]["correct_category"]) + ":</span> " +
+					"<span class='gti_bad'>" + _photo_gallery_escape(correct) + "</span></div>";
+			}
+		}
+	}
+
+	tooltip.innerHTML = html;
+	tooltip.style.display = "block";
+}
+
+function _photo_gallery_prediction_is_cached (entry) {
+	const cached = _photo_gallery_prediction_cache[entry.url];
+
+	return cached && cached.model === model && cached.generation === weights_generation ? cached.values : null;
+}
+
+async function _photo_gallery_predict_image (img) {
+	if (!model || !model.layers || !model.layers.length) {
+		return null;
+	}
+	if (typeof started_training !== "undefined" && started_training) {
+		return null;
+	}
+	if (model.isTraining) {
+		return null;
+	}
+	if (typeof _predict_full_running !== "undefined" && _predict_full_running) {
+		return null;
+	}
+
+	try {
+		const input = tidy(() => {
+			var tensor = fromPixels(img);
+			tensor = resize_image(tensor, [parse_int(height), parse_int(width)]);
+			tensor = tf_to_float(tensor);
+			tensor = divNoNan(tensor, parse_float($("#divide_by").val()));
+			return expand_dims(tensor);
+		});
+
+		const output = model.predict(input);
+		const values = array_sync(output);
+
+		await dispose(input);
+		await dispose(output);
+
+		return values && values.length ? values[0] : null;
+	} catch (e) {
+		dbg("[photo_gallery] prediction failed: " + e);
+		return null;
+	}
+}
+
+async function _photo_gallery_predict_index (index, token) {
+	if (token !== _photo_gallery.hover_token || index !== _photo_gallery.hover_index) {
+		return;
+	}
+
+	const entry = _photo_gallery.entries[index];
+
+	if (!entry) {
+		return;
+	}
+
+	const cached = _photo_gallery_prediction_is_cached(entry);
+
+	if (cached) {
+		_photo_gallery_update_tooltip(index, cached);
+		return;
+	}
+
+	if (_photo_gallery.hover_predicting) {
+		_photo_gallery.hover_timer = setTimeout(function () {
+			_photo_gallery.hover_timer = null;
+			_photo_gallery_schedule_prediction(index);
+		}, 80);
+		return;
+	}
+
+	_photo_gallery.hover_predicting = true;
+
+	try {
+		const values = await _photo_gallery_predict_image(entry.img);
+
+		if (token !== _photo_gallery.hover_token || index !== _photo_gallery.hover_index) {
+			return;
+		}
+
+		if (values) {
+			_photo_gallery_prediction_cache[entry.url] = {
+				model: model,
+				generation: weights_generation,
+				values: values
+			};
+		}
+
+		_photo_gallery_update_tooltip(index, values);
+	} finally {
+		_photo_gallery.hover_predicting = false;
+	}
+}
+
+function _photo_gallery_schedule_prediction (index) {
+	const token = ++_photo_gallery.hover_token;
+
+	if (_photo_gallery.hover_timer) {
+		clearTimeout(_photo_gallery.hover_timer);
+	}
+
+	const entry = _photo_gallery.entries[index];
+
+	if (entry) {
+		const cached = _photo_gallery_prediction_is_cached(entry);
+
+		if (cached) {
+			_photo_gallery_update_tooltip(index, cached);
+			return;
+		}
+	}
+
+	_photo_gallery_update_tooltip(index, null);
+	_photo_gallery.hover_timer = setTimeout(function () {
+		_photo_gallery.hover_timer = null;
+		_photo_gallery_predict_index(index, token); // await not possible here
+	}, 60);
+}
+
+function _photo_gallery_index_at (client_x, client_y) {
+	const canvas = _photo_gallery.canvas;
+	const layout = _photo_gallery.layout;
+
+	if (!canvas || !layout) {
+		return -1;
+	}
+
+	const rect = canvas.getBoundingClientRect();
+
+	if (!rect.width || !rect.height) {
+		return -1;
+	}
+
+	const scale_x = rect.width / layout.css_width;
+	const scale_y = rect.height / layout.css_height;
+	const x = (client_x - rect.left) / scale_x;
+	const y = (client_y - rect.top) / scale_y;
+
+	if (x < 0 || y < 0 || x >= layout.css_width || y >= layout.css_height) {
+		return -1;
+	}
+
+	const col = Math.floor(x / layout.cell_width);
+	const row = Math.floor(y / layout.cell_height);
+	const index = row * layout.cols + col;
+
+	return index >= 0 && index < _photo_gallery.entries.length ? index : -1;
+}
+
+function _photo_gallery_on_mousemove (event) {
+	const index = _photo_gallery_index_at(event.clientX, event.clientY);
+
+	if (index < 0) {
+		_photo_gallery_hide_tooltip();
+		return;
+	}
+
+	if (index !== _photo_gallery.hover_index) {
+		_photo_gallery.hover_index = index;
+		_photo_gallery_schedule_prediction(index);
+	}
+
+	_photo_gallery_position_tooltip(event.clientX, event.clientY);
+}
+
+function _photo_gallery_ensure_panel () {
+	if (_photo_gallery.panel && document.body.contains(_photo_gallery.panel)) {
+		return _photo_gallery.panel;
+	}
+
+	const panel = document.createElement("div");
+	panel.id = "photo_gallery_prediction";
+	panel.style.display = "none";
+	panel.innerHTML = "<button type='button' class='photo_gallery_prediction_close'>×</button><div class='photo_gallery_prediction_body'></div>";
+	panel.querySelector(".photo_gallery_prediction_close").addEventListener("click", function () {
+		panel.style.display = "none";
+		panel.querySelector(".photo_gallery_prediction_body").innerHTML = "";
+	});
+	document.body.appendChild(panel);
+	_photo_gallery.panel = panel;
+
+	return panel;
+}
+
+async function _photo_gallery_on_click (event) {
+	const index = _photo_gallery_index_at(event.clientX, event.clientY);
+
+	if (index < 0 || index >= _photo_gallery.entries.length) {
+		return;
+	}
+	if (typeof started_training !== "undefined" && started_training) {
+		return;
+	}
+
+	const entry = _photo_gallery.entries[index];
+	const panel = _photo_gallery_ensure_panel();
+	const body = panel.querySelector(".photo_gallery_prediction_body");
+
+	panel.style.display = "block";
+	body.innerHTML = "<span class='predict-spinner'>⏳</span>";
+
+	const result = await predict(entry.img);
+
+	if (result) {
+		body.innerHTML = "<div class='predict_data_img'>" + result + "</div>";
+		$("#remove_predict_data_img_predictions").show();
+	} else {
+		body.innerHTML = "";
+	}
+}
+
 function queue_image_dom_append(img) {
 	return new Promise((resolve) => {
 		window._perf_helpers.dom_pending.push({ img, resolve });
@@ -285,12 +956,21 @@ function _flush_dom_batch() {
 	clearTimeout(window._perf_helpers.dom_timer);
 	window._perf_helpers.dom_timer = null;
 
-	const photos = $("#photos")[0];
+	_photo_gallery_ensure_dom();
+
+	if (!_photo_gallery.sources) {
+		pending.forEach(p => {
+			try { p.resolve(false); } catch (e) { /* ignore */ }
+		});
+		return;
+	}
+
 	const frag = document.createDocumentFragment();
 	pending.forEach(p => frag.appendChild(p.img));
-	photos.appendChild(frag);
+	_photo_gallery.sources.appendChild(frag);
 
 	pending.forEach(p => {
+		_photo_gallery_add_image(p.img, p.img.src);
 		try { p.resolve(true); } catch (e) { /* ignore */ }
 	});
 }
@@ -298,7 +978,20 @@ function _flush_dom_batch() {
 function addPhotoToGallery(url, height, width) {
 	assertType(url, "string", "add_photo_to_gallery expects a string");
 	showPhotosContainer();
-	const img = createImageElement(url, height, width);
+
+	const cached_img = window.imgCache ? window.imgCache[url] : null;
+	const img = cached_img || createImageElement(url, height, width);
+
+	if (height) {
+		img.height = height;
+	}
+	if (width) {
+		img.width = width;
+	}
+
+	img.className = "class_download_img";
+	img.onclick = () => predict_data_img(img, "image"); // await not possible here
+
 	return queue_image_dom_append(img);
 }
 
@@ -422,9 +1115,11 @@ async function download_image_data(skip_real_image_download = 0, dont_show_swal 
 
 	const divide_by = parse_float($("#divide_by").val());
 
-	if ((started_training || force_download) && !force_no_download) {
+	const reset_gallery = (started_training || force_download) && !force_no_download;
+
+	if (reset_gallery) {
 		dbg("Resetting photos element");
-		$("#photos").html("");
+		_photo_gallery_reset();
 		window._perf_helpers.dom_pending = [];
 	}
 
@@ -447,6 +1142,10 @@ async function download_image_data(skip_real_image_download = 0, dont_show_swal 
 
 	urls = shuffle(urls);
 
+	if (reset_gallery && !skip_real_image_download) {
+		_photo_gallery_prepare(urls.length);
+	}
+
 	window._perf_helpers.tf_task_queue = window._perf_helpers.tf_task_queue || [];
 	window._perf_helpers.tf_active = window._perf_helpers.tf_active || 0;
 
@@ -460,6 +1159,7 @@ async function download_image_data(skip_real_image_download = 0, dont_show_swal 
 	}
 
 	_flush_dom_batch();
+	_photo_gallery_finalize();
 
 	shown_skipping_real_msg = false;
 	$("#data_progressbar").css("display", "none");
@@ -1010,6 +1710,7 @@ function show_xy_data_plot (x, y) {
 
 function show_data_after_loading(xy_data, x, divide_by) {
 	if(xy_data.x.shape.length == 4 && xy_data.x.shape[3] == 3) {
+		_photo_gallery_reset();
 		$("#photos").show();
 		const photos = document.getElementById("photos");
 		const frag = document.createDocumentFragment();
@@ -1069,7 +1770,7 @@ async function get_images_force_download () {
 }
 
 function reset_photos() {
-	$("#photos").html("");
+	_photo_gallery_reset();
 }
 
 async function get_images_and_this_data_and_category_counter_and_x_from_images (images) {
@@ -2085,20 +2786,7 @@ function x_y_warning(x_and_y) {
 }
 
 function add_photo_to_gallery(url) {
-	const photoscontainer = $("#photoscontainer");
-	if (photoscontainer.css("display") == "none") {
-		photoscontainer.show();
-	}
-
-	const photos = $("#photos")[0];
-	const img = document.createElement("img");
-	img.src = url;
-	img.height = height;
-	img.width = width;
-	img.className = "class_download_img";
-	img.onclick = () => predict_data_img(img, "image"); // await not possible here
-
-	photos.appendChild(img);
+	addPhotoToGallery(url, height, width); // await not possible here
 }
 
 async function url_to_tf (url, dont_load_into_tf=0) {

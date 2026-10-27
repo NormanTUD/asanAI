@@ -3085,6 +3085,120 @@ body:not(.darkmode) .bar-tooltip-raw {
 	overflow-anchor: none;
 }
 
+#photo_gallery_canvas {
+	display: block;
+	cursor: crosshair;
+}
+
+#photo_gallery_sources {
+	display: none;
+}
+
+#photo_gallery_tooltip {
+	max-height: 60vh;
+	overflow-y: auto;
+}
+
+#photo_gallery_tooltip .gti_row {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 64px;
+	align-items: center;
+	column-gap: 10px;
+	white-space: nowrap;
+}
+
+#photo_gallery_tooltip .gti_row > .gti_label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+#photo_gallery_tooltip .gti_row > .gti_value {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	text-align: right;
+}
+
+#photo_gallery_prediction {
+	position: fixed;
+	right: 20px;
+	bottom: 20px;
+	width: min(460px, 92vw);
+	max-height: 60vh;
+	overflow: auto;
+	z-index: 1000000;
+	background: rgba(30, 30, 30, 0.96);
+	color: #eee;
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	border-radius: 10px;
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+	padding: 12px;
+}
+
+#photo_gallery_prediction .photo_gallery_prediction_close {
+	position: absolute;
+	right: 8px;
+	top: 6px;
+	background: none;
+	border: none;
+	color: #eee;
+	font-size: 20px;
+	line-height: 1;
+	cursor: pointer;
+	padding: 2px 6px;
+}
+
+#photo_gallery_prediction .photo_gallery_prediction_body {
+	margin-top: 18px;
+}
+
+body:not(.darkmode) #photo_gallery_prediction {
+	background: var(--color-bg-primary);
+	color: var(--color-label-primary);
+	border: 1px solid var(--color-separator);
+	box-shadow: var(--shadow-md);
+}
+
+body:not(.darkmode) #photo_gallery_prediction .photo_gallery_prediction_close {
+	color: var(--color-label-primary);
+}
+
+body:not(.darkmode) #photo_gallery_tooltip {
+	background: rgba(255, 255, 255, 0.97);
+	color: #1d1d1f;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+body:not(.darkmode) #photo_gallery_tooltip .gti_label {
+	color: rgba(60, 60, 80, 0.7);
+}
+
+body:not(.darkmode) #photo_gallery_tooltip .gti_value {
+	color: #1d1d1f;
+}
+
+body:not(.darkmode) #photo_gallery_tooltip .gti_good {
+	color: #00b755;
+}
+
+body:not(.darkmode) #photo_gallery_tooltip .gti_bad {
+	color: #d70015;
+}
+
+body:not(.darkmode) #photo_gallery_tooltip .gti_sep {
+	border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+body:not(.darkmode) #photo_gallery_tooltip .grid_image_tooltip_img {
+	background: #eee;
+	border-color: rgba(0, 0, 0, 0.1);
+}
+
+body:not(.darkmode) #photo_gallery_tooltip .gti_how {
+	color: #555;
+}
+
 .grid_image_tooltip {
 	position: fixed;
 	background: rgba(30, 30, 30, 0.96);

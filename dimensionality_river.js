@@ -1492,6 +1492,10 @@ var DimensionalityRiver = (function () {
 	function _getImageElements() {
 		var imgs = [];
 		try {
+			if (typeof get_photos_and_own_images_for_visualization === "function") {
+				return get_photos_and_own_images_for_visualization();
+			}
+
 			imgs = [
 				...$("#photos").find("img,canvas").toArray(),
 				...$(".own_images").find("img,canvas").toArray()

@@ -603,7 +603,12 @@ function get_element_xpath(element) {
 
 function reset_photo_gallery() {
 	$("#photoscontainer").hide();
-	document.getElementById("photos").innerHTML = "";
+
+	if (typeof _photo_gallery_reset === "function") {
+		_photo_gallery_reset();
+	} else {
+		document.getElementById("photos").innerHTML = "";
+	}
 }
 
 function remove_confusion_matrix () {

@@ -1110,6 +1110,7 @@ async function _predict_validate_and_get_data(item, pred_tab) {
 		hide_predict_spinner("#" + pred_tab);
 		return {aborted: true};
 	}
+	mi = mi.slice();
 	mi[0] = 1;
 
 	return {aborted: false, predict_data: predict_data, mi: mi, is_image_prediction: is_image_prediction};
@@ -2772,6 +2773,7 @@ async function predict_data_img (item, force_category) {
 
 function remove_predict_data_img () {
 	$(".predict_data_img").remove();
+	$("#photo_gallery_prediction").hide().find(".photo_gallery_prediction_body").empty();
 
 	$("#remove_predict_data_img_predictions").hide();
 }

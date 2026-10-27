@@ -208,6 +208,9 @@ function reset_x_and_y_file () {
 }
 
 async function init_dataset() {
+	if (typeof _photo_gallery_reset === "function") {
+		_photo_gallery_reset();
+	}
 	$("#photos").html("").hide();
 	$("#maximally_activated_content").html("");
 	hide_tab_label("maximally_activated_label");
@@ -234,6 +237,9 @@ async function init_dataset() {
 }
 
 async function init_dataset_category() {
+	if (typeof _photo_gallery_reset === "function") {
+		_photo_gallery_reset();
+	}
 	$("#photos").html("").hide();
 	$("#maximally_activated_content").html("");
 	hide_tab_label("maximally_activated_label");

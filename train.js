@@ -3276,6 +3276,10 @@ function cached_load_resized_image (image_element) {
 }
 
 function get_imgs_for_grid_vis() {
+    if (typeof get_photos_and_own_images_for_visualization === "function") {
+        return get_photos_and_own_images_for_visualization();
+    }
+
     return [
         ...$("#photos").find("img,canvas").toArray(),
         ...$(".own_images").find("img,canvas").toArray()
