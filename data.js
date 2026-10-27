@@ -848,15 +848,18 @@ function _photo_gallery_index_at (client_x, client_y) {
 	}
 
 	const rect = canvas.getBoundingClientRect();
+	var x;
+	var y;
 
 	if (!rect.width || !rect.height) {
-		return -1;
+		x = client_x;
+		y = client_y;
+	} else {
+		const scale_x = rect.width / layout.css_width;
+		const scale_y = rect.height / layout.css_height;
+		x = (client_x - rect.left) / scale_x;
+		y = (client_y - rect.top) / scale_y;
 	}
-
-	const scale_x = rect.width / layout.css_width;
-	const scale_y = rect.height / layout.css_height;
-	const x = (client_x - rect.left) / scale_x;
-	const y = (client_y - rect.top) / scale_y;
 
 	if (x < 0 || y < 0 || x >= layout.css_width || y >= layout.css_height) {
 		return -1;

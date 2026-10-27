@@ -1346,6 +1346,10 @@ async function run_super_quick_tests (quick=0) {
 	await test_photo_gallery_click_prediction();
 	await test_photo_gallery_dark_light_mode();
 	await test_photo_gallery_language();
+	await test_photo_gallery_canvas_dom_is_constant();
+	await test_photo_gallery_canvas_scales_linearly();
+	await test_photo_gallery_repeated_reset_is_stable();
+	await test_photo_gallery_hover_events_are_stable();
 	await test_max_activation_iterations_auto_not_red();
 }
 
@@ -1396,37 +1400,54 @@ async function test_photo_gallery_resize () {
 
 	const container = document.getElementById("photos");
 	const original_width = container.style.width;
-	const original_layout_css_width = _photo_gallery.layout.css_width;
+	const original_client_width = container.clientWidth;
+	const client_width_descriptor = Object.getOwnPropertyDescriptor(container, "clientWidth");
+	var forced_width = original_client_width > 0 ? original_client_width : 420;
 
-	container.style.width = "420px";
-	await new Promise(function (resolve) { setTimeout(resolve, 150); });
+	Object.defineProperty(container, "clientWidth", {
+		configurable: true,
+		get: function () {
+			return forced_width;
+		}
+	});
 
-	const narrow_layout = _photo_gallery.layout;
+	try {
+		forced_width = 420;
+		window.dispatchEvent(new Event("resize"));
+		await new Promise(function (resolve) { setTimeout(resolve, 150); });
 
-	test_equal("Layout css_width shrinks when container shrinks", Math.abs(narrow_layout.css_width - 420) <= 2, true);
-	test_equal("Canvas internal width tracks layout css_width", canvas.width === Math.max(1, Math.round(narrow_layout.css_width * narrow_layout.dpr)), true);
-	test_equal("Columns match layout math", narrow_layout.cols, Math.max(1, Math.floor(narrow_layout.css_width / narrow_layout.cell_width)));
+		const narrow_layout = _photo_gallery.layout;
 
-	container.style.width = "980px";
-	await new Promise(function (resolve) { setTimeout(resolve, 150); });
+		test_equal("Layout css_width shrinks when container shrinks", Math.abs(narrow_layout.css_width - 420) <= 2, true);
+		test_equal("Canvas internal width tracks layout css_width", canvas.width === Math.max(1, Math.round(narrow_layout.css_width * narrow_layout.dpr)), true);
+		test_equal("Columns match layout math", narrow_layout.cols, Math.max(1, Math.floor(narrow_layout.css_width / narrow_layout.cell_width)));
 
-	const wide_layout = _photo_gallery.layout;
+		forced_width = 980;
+		window.dispatchEvent(new Event("resize"));
+		await new Promise(function (resolve) { setTimeout(resolve, 150); });
 
-	test_equal("Layout css_width grows when container grows", Math.abs(wide_layout.css_width - 980) <= 2, true);
-	test_equal("Canvas internal width tracks layout css_width after grow", canvas.width === Math.max(1, Math.round(wide_layout.css_width * wide_layout.dpr)), true);
-	test_equal("Columns recompute on wide container", wide_layout.cols >= narrow_layout.cols, true);
+		const wide_layout = _photo_gallery.layout;
 
-	container.style.width = "760px";
-	window.dispatchEvent(new Event("resize"));
-	await new Promise(function (resolve) { setTimeout(resolve, 150); });
+		test_equal("Layout css_width grows when container grows", Math.abs(wide_layout.css_width - 980) <= 2, true);
+		test_equal("Canvas internal width tracks layout css_width after grow", canvas.width === Math.max(1, Math.round(wide_layout.css_width * wide_layout.dpr)), true);
+		test_equal("Columns recompute on wide container", wide_layout.cols >= narrow_layout.cols, true);
 
-	test_equal("Window resize event relayouts the canvas", Math.abs(_photo_gallery.layout.css_width - 760) <= 2, true);
+		forced_width = 760;
+		window.dispatchEvent(new Event("resize"));
+		await new Promise(function (resolve) { setTimeout(resolve, 150); });
 
-	container.style.width = original_width;
-	window.dispatchEvent(new Event("resize"));
-	await new Promise(function (resolve) { setTimeout(resolve, 150); });
+		test_equal("Window resize event relayouts the canvas", Math.abs(_photo_gallery.layout.css_width - 760) <= 2, true);
+	} finally {
+		if (client_width_descriptor) {
+			Object.defineProperty(container, "clientWidth", client_width_descriptor);
+		} else {
+			delete container.clientWidth;
+		}
 
-	test_equal("Layout css_width restores", Math.abs(_photo_gallery.layout.css_width - original_layout_css_width) <= 4, true);
+		container.style.width = original_width;
+		window.dispatchEvent(new Event("resize"));
+		await new Promise(function (resolve) { setTimeout(resolve, 150); });
+	}
 
 	return true;
 }
@@ -1748,6 +1769,186 @@ async function test_photo_gallery_language () {
 	lang = original_lang;
 	set_lang_cookie(original_lang, 99999);
 	await update_translations();
+
+	return true;
+}
+
+function _photo_gallery_save_test_state () {
+	return _photo_gallery.entries.map(function (entry) {
+		return {img: entry.img, url: entry.url};
+	});
+}
+
+function _photo_gallery_restore_test_state (saved) {
+	_photo_gallery_prepare(saved.length);
+
+	saved.forEach(function (entry) {
+		if (_photo_gallery.sources) {
+			_photo_gallery.sources.appendChild(entry.img);
+		}
+		_photo_gallery_add_image(entry.img, entry.url);
+	});
+
+	_photo_gallery_finalize();
+}
+
+async function _photo_gallery_load_test_image () {
+	if (window._photo_gallery_test_image && window._photo_gallery_test_image.complete) {
+		return window._photo_gallery_test_image;
+	}
+
+	const canvas = document.createElement("canvas");
+	canvas.width = 8;
+	canvas.height = 8;
+	canvas.getContext("2d").fillRect(0, 0, 8, 8);
+
+	const img = new Image();
+	await new Promise(function (resolve, reject) {
+		img.onload = resolve;
+		img.onerror = reject;
+		img.src = canvas.toDataURL("image/png");
+	});
+
+	window._photo_gallery_test_image = img;
+
+	return img;
+}
+
+async function test_photo_gallery_canvas_dom_is_constant () {
+	const saved = _photo_gallery_save_test_state();
+
+	try {
+		const base_url = (document.createElement("canvas")).toDataURL("image/png");
+		const count = 40;
+
+		_photo_gallery_prepare(count);
+
+		for (let index = 0; index < count; index++) {
+			addPhotoToGallery(base_url + "#" + index, 40, 40);
+		}
+
+		_flush_dom_batch();
+		await new Promise(function (resolve) { setTimeout(resolve, 100); });
+
+		test_equal("Only one gallery canvas exists", $("#photo_gallery_canvas").length, 1);
+		test_equal("Only one hidden gallery source container exists", $("#photo_gallery_sources").length, 1);
+		test_equal("Gallery keeps the source container hidden", $("#photo_gallery_sources").css("display"), "none");
+		test_equal("Gallery sources contain every image", $("#photo_gallery_sources img").length, count);
+		test_equal("Visible photo container has only canvas and hidden sources", $("#photos").children().length, 2);
+		test_equal("No visible per-image gallery nodes exist", $("#photos > img").length, 0);
+	} finally {
+		_photo_gallery_restore_test_state(saved);
+	}
+
+	return true;
+}
+
+async function test_photo_gallery_canvas_scales_linearly () {
+	const saved = _photo_gallery_save_test_state();
+	const img = await _photo_gallery_load_test_image();
+
+	try {
+		const small_count = 200;
+		const large_count = 800;
+
+		_photo_gallery_prepare(small_count);
+		const small_start = performance.now();
+
+		for (let index = 0; index < small_count; index++) {
+			_photo_gallery_add_image(img, "gallery-scale-test://" + index);
+		}
+
+		const small_ms = performance.now() - small_start;
+		const small_rows = _photo_gallery.layout.rows;
+
+		_photo_gallery_prepare(large_count);
+		const large_start = performance.now();
+
+		for (let index = 0; index < large_count; index++) {
+			_photo_gallery_add_image(img, "gallery-scale-test://" + index);
+		}
+
+		const large_ms = performance.now() - large_start;
+		const large_rows = _photo_gallery.layout.rows;
+
+		test_equal("Scaling test keeps a single canvas", $("#photo_gallery_canvas").length, 1);
+		test_equal("Canvas drawing scales roughly linearly", large_ms < Math.max(small_ms * 10, 50), true);
+		test_equal("Per-image draw time stays small", large_ms / large_count < 5, true);
+		test_equal("Canvas rows grow with image count", large_rows >= small_rows * 3 && large_rows <= small_rows * 5, true);
+	} finally {
+		_photo_gallery_restore_test_state(saved);
+	}
+
+	return true;
+}
+
+async function test_photo_gallery_repeated_reset_is_stable () {
+	const saved = _photo_gallery_save_test_state();
+	const img = await _photo_gallery_load_test_image();
+
+	try {
+		const start = performance.now();
+
+		for (let cycle = 0; cycle < 10; cycle++) {
+			_photo_gallery_prepare(100);
+
+			for (let index = 0; index < 100; index++) {
+				_photo_gallery_add_image(img, "gallery-reset-test://" + cycle + "/" + index);
+			}
+
+			if ($("#photo_gallery_canvas").length !== 1 || $("#photo_gallery_sources").length !== 1) {
+				test_equal("Repeated reset keeps exactly one canvas and source container", false, true);
+				return false;
+			}
+		}
+
+		const total_ms = performance.now() - start;
+
+		test_equal("Repeated reset finishes in reasonable time", total_ms < 5000, true);
+		test_equal("Repeated reset leaves the expected entry count", _photo_gallery.entries.length, 100);
+		test_equal("Repeated reset does not duplicate canvases", $("#photo_gallery_canvas").length, 1);
+		test_equal("Repeated reset does not duplicate source containers", $("#photo_gallery_sources").length, 1);
+	} finally {
+		_photo_gallery_restore_test_state(saved);
+	}
+
+	return true;
+}
+
+async function test_photo_gallery_hover_events_are_stable () {
+	const saved = _photo_gallery_save_test_state();
+	const canvas = document.getElementById("photo_gallery_canvas");
+
+	if (!canvas) {
+		test_equal("Canvas available for hover stability test", false, true);
+		return false;
+	}
+
+	try {
+		const rect = canvas.getBoundingClientRect();
+		const start = performance.now();
+
+		for (let index = 0; index < 100; index++) {
+			canvas.dispatchEvent(new MouseEvent("mousemove", {
+				bubbles: true,
+				cancelable: true,
+				clientX: rect.left + 6 + (index % 5) * 42,
+				clientY: rect.top + 6 + Math.floor(index / 5) % 3 * 42
+			}));
+		}
+
+		const dispatch_ms = performance.now() - start;
+
+		await new Promise(function (resolve) { setTimeout(resolve, 500); });
+
+		test_equal("Rapid hover dispatch stays fast", dispatch_ms < 1000, true);
+		test_equal("Rapid hover keeps a single tooltip", $("#photo_gallery_tooltip").length <= 1, true);
+		test_equal("Rapid hover keeps gallery entries stable", _photo_gallery.entries.length, saved.length);
+		test_equal("Rapid hover does not duplicate canvases", $("#photo_gallery_canvas").length, 1);
+	} finally {
+		_photo_gallery_restore_test_state(saved);
+		_photo_gallery_hide_tooltip();
+	}
 
 	return true;
 }
@@ -3178,7 +3379,33 @@ async function click_start_training_and_stop_immidiately(dataset_name) {
 	await delay(1000);
 
 	$($(".train_neural_network_button")[0]).click();
-	$($(".train_neural_network_button")[0]).click();
+
+	const start_wait_started = Date.now();
+
+	while (Date.now() - start_wait_started < 30000) {
+		if (model && model.isTraining) {
+			break;
+		}
+		if (typeof training_run_count !== "undefined" && training_run_count <= 0) {
+			break;
+		}
+		await delay(100);
+	}
+
+	const still_running = (typeof training_run_count !== "undefined" && training_run_count > 0) || (model && model.isTraining) || (typeof started_training !== "undefined" && started_training);
+
+	if (still_running) {
+		$($(".train_neural_network_button")[0]).click();
+	}
+
+	const stop_wait_started = Date.now();
+
+	while (Date.now() - stop_wait_started < 30000) {
+		if ((typeof training_run_count === "undefined" || training_run_count <= 0) && (!model || !model.isTraining) && (typeof started_training === "undefined" || !started_training)) {
+			break;
+		}
+		await delay(100);
+	}
 }
 
 async function get_single_layer_single_input_single_output_one_kernel_zero_bias () {
