@@ -1306,6 +1306,17 @@ const PipelineKit = (() => {
 		CURVE.push({ t, l: lossOf(trainPct(t)) });
 		CURVE_GOAL.push({ t, l: lossOf(trainPct(t, P_GOAL)) });
 	}
+	// (T61) Vergleichsläufe mit anderen Startwerten: gleicher Verlauf,
+	// andere Endzahl. Zeigen im Ergebnis-Schritt, dass nicht der exakte
+	// Loss-Wert zählt, sondern die Form der Kurve.
+	const CURVE_ALT = [88, 98].map(p1 => {
+		const arr = [];
+		for (let i = 0; i <= 60; i++) {
+			const t = i / 60;
+			arr.push({ t, l: lossOf(trainPct(t, p1)) });
+		}
+		return arr;
+	});
 
 	function arrow(ctx, x1, y1, x2, y2, a) {
 		if (a < 0.02) return;
@@ -1397,7 +1408,7 @@ const PipelineKit = (() => {
 	function drawLossPanel(ctx, geo, step, aLoss, trainP) {
 		if (aLoss < 0.01) return;
 		const { px, py, pw, ph } = geo;
-		const goal = step === 4;
+		const goal = step === 4, isResult = step === 7;
 		const t = (step === 4 || step === 7) ? 1 : (step === 5 ? 0 : (step === 6 ? trainP : 0));
 		const L = goal ? lossOf(P_GOAL) : lossOf(trainPct(t));
 		const col = lossColor(L);
@@ -1417,14 +1428,44 @@ const PipelineKit = (() => {
 		ctx.textAlign = 'right';
 		ctx.fillText(fmtLoss(L), px + pw - 14, py + 24);
 
+		// (T61) Im Ergebnis: zwei gestrichelte Vergleichsläufe mit anderen
+		// Startwerten. Sie fallen fast gleich, enden aber bei anderen
+		// Loss-Zahlen — sichtbarer Beweis, dass der Verlauf zählt.
+		if (isResult) {
+			const ly = py + 37;
+			ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
+			ctx.setLineDash([3, 3]);
+			ctx.beginPath(); ctx.moveTo(px + 16, ly); ctx.lineTo(px + 34, ly); ctx.stroke();
+			ctx.setLineDash([]);
+			ctx.fillStyle = '#94a3b8';
+			ctx.font = '600 10px Inter, system-ui, sans-serif';
+			ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+			ctx.fillText('andere Startwerte', px + 38, ly + 3);
+		}
+
 		// Mini-Plot: Loss über den Trainingsfortschritt.
-		const gx = px + 16, gy = py + 38, gw = pw - 32, gh = ph - 78;
+		const gx = px + 16, gy = py + (isResult ? 48 : 38), gw = pw - 32, gh = ph - 78;
 		ctx.strokeStyle = '#eef0f4'; ctx.lineWidth = 1;
 		ctx.beginPath();
 		ctx.moveTo(gx, gy); ctx.lineTo(gx, gy + gh); ctx.lineTo(gx + gw, gy + gh);
 		ctx.stroke();
 		const X = tt => gx + tt * gw;
 		const Y = ll => gy + gh - (ll / 0.75) * gh;
+		if (isResult) {
+			ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.2;
+			ctx.setLineDash([3, 3]);
+			for (const alt of CURVE_ALT) {
+				ctx.beginPath();
+				alt.forEach((c, i) => i ? ctx.lineTo(X(c.t), Y(c.l)) : ctx.moveTo(X(c.t), Y(c.l)));
+				ctx.stroke();
+			}
+			ctx.setLineDash([]);
+			ctx.fillStyle = '#94a3b8';
+			for (const alt of CURVE_ALT) {
+				const c = alt[alt.length - 1];
+				ctx.beginPath(); ctx.arc(X(c.t), Y(c.l), 2.2, 0, Math.PI * 2); ctx.fill();
+			}
+		}
 		if (t > 0.004) {
 			ctx.strokeStyle = col; ctx.lineWidth = 2;
 			ctx.beginPath();
@@ -1718,8 +1759,9 @@ const PipelineKit = (() => {
 		drawNeuron(ctx, g.nCx, H * .32, g.rN, 'Katze', o.outP.pCat + ' %', o.outP.hotCat, o.aOut);
 		drawNeuron(ctx, g.nCx, H * .74, g.rN, 'Hund', o.outP.pDog + ' %', o.outP.hotDog || false, o.aOut);
 
-		// Loss-Panel rechts neben den Neuronen
-		const pwP = 175, phP = 130;
+		// Loss-Panel rechts neben den Neuronen; im Ergebnis etwas höher,
+		// damit die Vergleichsläufe samt Legende Platz haben.
+		const pwP = 175, phP = o.step === 7 ? 150 : 130;
 		drawLossPanel(ctx, { px: Math.min(g.nCx + g.rN + 34, W - pwP - 8), py: (H - phP) / 2, pw: pwP, ph: phP },
 		              o.step, o.aLoss, o.trainP);
 
@@ -1820,7 +1862,7 @@ const PipelineDemo = (() => {
 			{ k: 'Schritt 8', t: 'Ergebnis:<br><b>Katze ≈ 95 %</b>.',
 			  p: 'Katze: <b>95 %</b> · Loss <b>0,051</b>',
 			  c: '<span class="kz-chip g">Katze 95 %</span>',
-			  i: 'Nach dem Training ist das Netz fast so sicher wie das Ziel: Es erkennt die <b>Katze</b>. Das <b>Label</b> lautete „Katze", die Antwort stimmt damit <b>überein</b>. Der konkrete Wert 0,051 ist nicht der Punkt — andere Startwerte ergeben andere Zahlen. Entscheidend ist der <b>Verlauf</b>: Die Kurve fällt schnell und flacht ab.' }
+			  i: 'Nach dem Training ist das Netz fast so sicher wie das Ziel: Es erkennt die <b>Katze</b>. Das <b>Label</b> lautete „Katze", die Antwort stimmt damit <b>überein</b>. Der konkrete Wert 0,051 ist nicht der Punkt — die <b>gestrichelten Kurven</b> sind andere Startwerte mit anderen Endzahlen. Entscheidend ist der <b>Verlauf</b>: Alle fallen schnell und flachen ab.' }
 		],
 
 		layoutFor(step, S) {

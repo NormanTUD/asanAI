@@ -2,7 +2,11 @@
 
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
-> Letzte Aktualisierung: **12. Runde (Agent) — T58–T60.**
+> Letzte Aktualisierung: **12. Runde (Agent) — T58–T61.**
+> **T61** `[x]` „Der gesamte Prozess": Ergebnis-Schritt zeigt zwei gestrichelte
+> Vergleichskurven (andere Startwerte, andere Endzahlen, gleicher Verlauf) samt
+> Legende und Endpunkten — das visualisiert, dass der Kurvenverlauf zählt,
+> nicht der exakte Loss-Wert.
 > **T60** `[x]` „Der gesamte Prozess": Loss-Panel bleibt von 50:50 über das
 > Training bis zum Ergebnis sichtbar; Insight-Texte und „Verlauf zählt"-Label
 > betonen die Kurve statt des konkreten Loss-Werts.
