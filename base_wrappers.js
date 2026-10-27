@@ -453,8 +453,10 @@ async function dispose (...tensors) { // start_tensors
 			return null;
 		}
 
-		// Yield every 10 tensors to keep the UI responsive
-		if(di % 10 === 0) {
+		// Yield every 10 tensors to keep the UI responsive. Only do this for
+		// bulk calls: a single-tensor call (common in dispose_images and other
+		// loops) would otherwise yield a whole frame per tensor.
+		if(tensors.length > 10 && di % 10 === 0) {
 			await nextFrame();
 		}
 	}
