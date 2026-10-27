@@ -2,7 +2,16 @@
 
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
-> Letzte Aktualisierung: **12. Runde (Agent) — T58–T61.**
+> Letzte Aktualisierung: **13. Runde (Agent) — T62.**
+> **T62** `[x]` Neue Folie **„Loss: Was kostet der Fehler?"** nach „Der gesamte
+> Prozess" (Folie 12, `loss.js`, 4 Schritte): Loss als Strafe auf
+> einer Achse — sicher richtig (0,05), am Anfang (0,69) und komplett
+> falsch (3,00, rund 60× höher), mit Trainingspfeil 0,69 → 0,05.
+> Dann **MSE** als Tabelle (0 · 1 · 9 · 25 bei 0 · 1 · 3 · 5 daneben)
+> und **CCE** als Tabelle (95 % → 0,05 · 60 % → 0,51 · 5 % → 3,00),
+> am Ende **Aufgabe → Loss** als drei gleich große Karten
+> (Zahl/MSE · Klasse/CCE · Ja-Nein/BCE). Keine Formel-Details, nur
+> die sichtbar unterschiedliche Bestrafung. Deck jetzt **14 Folien**.
 > **T61** `[x]` „Der gesamte Prozess": Ergebnis-Schritt zeigt zwei gestrichelte
 > Vergleichskurven (andere Startwerte, andere Endzahlen, gleicher Verlauf) samt
 > Legende und Endpunkten — das visualisiert, dass der Kurvenverlauf zählt,
@@ -63,12 +72,13 @@
 > **Reihenfolge: T30 → T31 → T32 → T33 → T34 → T35.**
 
 ## Dateien die ich analysiert habe
-- `index.html` — 13 Folien, Reihenfolge unten.
+- `index.html` — 14 Folien, Reihenfolge unten.
 - `katze.js` — KatzeKit-Framework (Steps: k/t/p/c/i/f) + ConvDemo (Folie 5, 6 Schritte,
   T8: RGB-Matrix als Schritt 5, blauer Pixel-Zoom raus),
   **FilterDemo (Folie 8, 4 Schritte, T9: aus ConvDemo herausgelöst)**,
   FlattenDemo (Folie 9, 2 Schritte), PipelineDemo (Folie 11, 8 Schritte),
   PipelineGoalDemo (Folie 4).
+- `loss.js` — LossDemo (Folie 12, 4 Schritte: Idee · MSE · CCE · Aufgabe → Loss).
 - `dense_raum.js` — DenseRaum (Folie 11, „Vom Bild zu Punkten", 5 Schritte).
 - `space_morph.js` — SpaceMorph (Szene B von Folie 10 „Was sind Dense Layer?", Ei/Schale).
 - `hierarchy.js` — HierarchyDemo (eigene Datei `hierarchy.html`, T24, aus dem Deck).
@@ -81,15 +91,16 @@
 - **Kein Bild-Input**: Ich kann keine PNG/JPG ansehen und lade keine externen Bilder.
   → Echte Fotos/Screenshots muss Norman liefern ODER ich baue Canvas-/ASCII-Nachbildungen.
 
-## Folien-Reihenfolge (aktuell, index.html — 13 Folien)
+## Folien-Reihenfolge (aktuell, index.html — 14 Folien)
 1. Titel · 2. Geschichte · 3. Klassisch vs. KI · **4. Was wir wollen** (Ziel, T29)
 · **5. Das Bild als Zahlen** (ConvDemo, 6 Schritte; Matrix → T30, Blaustapel → T38) ·
 **6. Man arbeitet in Schichten** · **7. Drei Bausteine dafür** (T29) ·
 8. **Ein Filter ist ein Muster** (FilterDemo, 4 Schritte, T9) · 9. Flatten ·
 10. **Was sind Dense Layer?** (gemerged: NeuronIntro = Szene A + SpaceMorph =
 Szene B, T20; Egg-Szene endet mit dem Bild-Verweis, T40) ·
-11. **Der gesamte Prozess** (Pipeline, T41) · 12. Alles idealisiert (T27, vor asanAI)
-· 13. asanAI (Schluss/Live-Demo).
+11. **Der gesamte Prozess** (Pipeline, T41) · 12. **Loss: Was kostet der Fehler?**
+(LossDemo, T62) · 13. Alles idealisiert (T27, vor asanAI)
+· 14. asanAI (Schluss/Live-Demo).
 **Raus (T39):** „Vom Bild zu Punkten“ (DenseRaum) — 1024D-Raum kann man nicht
 zeigen; der Verweis lebt jetzt am Ende der Egg-Szene (T40). `dense_raum.js` bleibt
 als Datei, wird nicht mehr geladen.

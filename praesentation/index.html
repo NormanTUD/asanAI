@@ -454,13 +454,53 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 12 (aus dem Deck entfernt, T24): "Convolutions:
+     Folie 12: Loss — was kostet ein Fehler?
+     ------------------------------------------------------------
+     LossDemo (loss.js), 4 Schritte:
+       1. Die Idee: drei Antworten auf derselben Loss-Achse.
+          Sicher richtig (95 % → 0,05), am Anfang (50:50 → 0,69)
+          und komplett falsch (Hund 95 % statt Katze → 3,00).
+          Der Trainingspfeil zeigt 0,69 → 0,05; der falsche Fall
+          liegt rund 60× höher.
+       2. MSE für Zahlen als Tabelle: Abstand wird quadriert →
+          kleines Daneben ist billig, großes Daneben riesig
+          teuer (0 · 1 · 9 · 25).
+       3. CCE für Klassen als Tabelle: die Wahrscheinlichkeit
+          der richtigen Klasse zählt → 95 % = 0,05,
+          60 % = 0,51, 5 % = 3,00. Falsche Sicherheit wird
+          brutal bestraft.
+       4. Die Wahl: drei Karten — Zahl/MSE · Klasse/CCE ·
+          Ja-Nein/BCE. Gleiche Innenstruktur, direkter Vergleich.
+     Zeigt absichtlich keine Formel-Details, sondern die
+     unterschiedliche Strafe.
+     ============================================================ -->
+<div class="slide" id="slide-loss" data-title="Loss">
+    <div class="slide-content">
+        <div class="kz">
+            <div class="kz-head"><h2 class="kz-const">Loss: Was kostet der Fehler?</h2><div class="kz-tswap" id="loss-tswap">
+                <div class="kz-kicker" id="loss-kicker">Schritt 1 · Die Idee</div>
+                <div class="kz-title" id="loss-title">Loss ist die <em>Strafe</em><br>für eine falsche Antwort.</div>
+            </div></div>
+
+            <div class="kz-stage"><canvas id="loss-cv"></canvas></div>
+
+            <div class="kz-foot"><div class="kz-fswap" id="loss-fswap">
+                <div class="kz-pill" id="loss-pill">Richtig <b>0,05</b> · Anfang <b>0,69</b> · Hund statt Katze <b>3,00</b></div>
+                <div class="kz-chips" id="loss-chips"><span class="kz-chip">richtig 0,05</span><span class="kz-arrow">·</span><span class="kz-chip r">falsch 3,00</span></div>
+            </div></div>
+
+            <div class="kz-insight-slot"><div class="key-insight kz-insight" id="loss-insight"></div></div>
+        </div>
+    </div>
+</div>
+<!-- ============================================================
+     Ehemalige Folie (aus dem Deck entfernt, T24): "Convolutions:
      Strukturen in Bildern finden" (echte Faltung auf
      img/stop_sign.jpg, hierarchy.js). Jetzt eigene Datei:
      hierarchy.html — separat aufrufbar.
      ============================================================ -->
 <!-- ============================================================
-     Folie 12: Ein ehrlicher Hinweis — alles ist idealisiert
+     Folie 13: Ein ehrlicher Hinweis — alles ist idealisiert
      (T27: vor asanAI geschoben, eine Position früher)
      ------------------------------------------------------------
      Was wir gezeigt haben, ist die INTUITION, mit der wir
@@ -508,7 +548,7 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 13: asanAI, Überleitung zur Live-Demo (Schluss)
+     Folie 14: asanAI, Überleitung zur Live-Demo (Schluss)
      ============================================================ -->
 <div class="slide" id="slide-asanai" data-title="asanAI">
     <div class="slide-content asan-slide">
@@ -555,7 +595,7 @@
 <div id="nav-bar">
     <button id="btn-prev" onclick="InputHandler.navigate('prev')">← Zurück</button>
     <div class="nav-center">
-        <span id="slide-counter">1 / 13</span>
+        <span id="slide-counter">1 / 14</span>
         <button onclick="Presentation.toggleOverview()" style="background:transparent; border:none; color:#94a3b8; cursor:pointer;" title="Übersicht (O)">▦</button>
         <button onclick="Presentation.toggleFullscreen()" style="background:transparent; border:none; color:#94a3b8; cursor:pointer;" title="Vollbild (F)">⛶</button>
     </div>
@@ -566,6 +606,7 @@
 <script src="space_morph.js"></script>
 <script src="nn_demos.js"></script>
 <script src="katze.js"></script>
+<script src="loss.js"></script>
 <script src="dense_merge.js"></script>
 <script src="presentation.js"></script>
 

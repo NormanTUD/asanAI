@@ -76,6 +76,15 @@ const DemoRegistry = (() => {
                         onEnter: d => { if (d.clear) d.clear(); setTimeout(() => d.init(), 80); },
                         onLeave: d => d.reset() },
 
+                // "Loss: Was kostet der Fehler?" (loss.js), direkt nach
+                // der Pipeline: Loss-Achse (0,05 richtig · 0,69 Anfang ·
+                // 3,00 komplett falsch, Trainingspfeil nach unten), dann
+                // MSE und CCE als Tabellen und Aufgabe → Loss als Karten.
+                { id: 'loss', ref: () => typeof LossDemo !== 'undefined' ? LossDemo : null,
+                        slideTest: s => s.id === 'slide-loss',
+                        onEnter: d => { if (d.clear) d.clear(); setTimeout(() => d.init(), 80); },
+                        onLeave: d => d.reset() },
+
                 // "Was wir wollen" (katze.js), statisches ZIEL der
                 // Pipeline (Folie 4): Katze = 100 % — live
                 // gerendert (kein Screenshot), wiederverwendet aus
