@@ -1441,6 +1441,8 @@ const PipelineKit = (() => {
 
 		ctx.fillStyle = '#94a3b8';
 		ctx.font = '600 10px Inter, system-ui, sans-serif';
+		ctx.textAlign = 'left';
+		ctx.fillText('Verlauf zählt', gx, py + ph - 10);
 		ctx.textAlign = 'right';
 		ctx.fillText('Training →', gx + gw, py + ph - 10);
 		ctx.globalAlpha = 1;
@@ -1743,10 +1745,10 @@ const PipelineKit = (() => {
 // (50:50, Loss 0,693, es RÄT blind); im Training sinkt der
 // Loss (Ziel: niedriger, nicht 0) und das Katzen-Neuron wird
 // am aktivsten (95 %).
-// 7 Schritte: Bild ("Und jetzt alles zusammen") · Layer 1
+// 8 Schritte: Bild ("Und jetzt alles zusammen") · Layer 1
 // (Verläufe) · Layer 2 (Augen/Nase/Mund, Layer 1 bleibt) ·
-// Dense · 50:50 (Loss) · Training (Loss sinkt) · Antwort
-// (95 %).
+// Flatten · Ziel (100 %) · 50:50 (Loss) · Training (Kurve
+// fällt) · Antwort (95 %).
 // ============================================================
 const PipelineDemo = (() => {
 	'use strict';
@@ -1814,11 +1816,11 @@ const PipelineDemo = (() => {
 			{ k: 'Schritt 7', t: 'Lernen: die Daten<br>immer wieder <em>angucken</em>.',
 			  p: 'Training … · Katze <b>50 %</b> · Loss <b>0,693</b>',
 			  c: '<span class="kz-chip g">Loss ↓</span>',
-			  i: 'Das Netz lernt, indem es die <b>Trainingsdaten immer und immer wieder anschaut</b>. Bei jedem Durchgang (einer „Epoche") justiert es die Gewichte ein Stück nach dem anderen, so wird die Antwort immer besser.' },
+			  i: 'Das Netz lernt, indem es die <b>Trainingsdaten immer und immer wieder anschaut</b>. Bei jedem Durchgang (einer „Epoche") justiert es die Gewichte ein Stück nach dem anderen. Entscheidend ist nicht die exakte Zahl, sondern der <b>Verlauf der Kurve</b>: Sie muss fallen und flacher werden.' },
 			{ k: 'Schritt 8', t: 'Ergebnis:<br><b>Katze ≈ 95 %</b>.',
 			  p: 'Katze: <b>95 %</b> · Loss <b>0,051</b>',
 			  c: '<span class="kz-chip g">Katze 95 %</span>',
-			  i: 'Nach dem Training ist das Netz fast so sicher wie das Ziel: Es erkennt die <b>Katze</b>. Das <b>Label</b> lautete „Katze", die Antwort des Netzes stimmt damit <b>überein</b>, deshalb ist der Loss so <b>niedrig</b>.' }
+			  i: 'Nach dem Training ist das Netz fast so sicher wie das Ziel: Es erkennt die <b>Katze</b>. Das <b>Label</b> lautete „Katze", die Antwort stimmt damit <b>überein</b>. Der konkrete Wert 0,051 ist nicht der Punkt — andere Startwerte ergeben andere Zahlen. Entscheidend ist der <b>Verlauf</b>: Die Kurve fällt schnell und flacht ab.' }
 		],
 
 		layoutFor(step, S) {
@@ -1854,9 +1856,10 @@ const PipelineDemo = (() => {
 		tFlatA = step >= 3 ? 1 : 0;
 		tDenseA = step >= 3 ? 1 : 0;
 			tOutA = step >= 4 ? 1 : 0;
-			// Loss-Panel (Wert + Mini-Lernkurve) nur beim Training;
-			// die Loss-Werte stehen ohnehin in den Schritt-Texten.
-			tLossA = step === 6 ? 1 : 0;
+			// Loss-Panel (Wert + Mini-Lernkurve) ab dem Anfangs-Loss:
+			// 50:50 → Training → Ergebnis. So bleibt der Verlauf der
+			// Kurve bis zum Schluss sichtbar.
+			tLossA = step >= 5 ? 1 : 0;
 			tLabelA = step >= 7 ? 1 : 0;
 		},
 

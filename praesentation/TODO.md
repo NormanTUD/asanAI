@@ -2,7 +2,10 @@
 
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
-> Letzte Aktualisierung: **12. Runde (Agent) — T58–T59.**
+> Letzte Aktualisierung: **12. Runde (Agent) — T58–T60.**
+> **T60** `[x]` „Der gesamte Prozess": Loss-Panel bleibt von 50:50 über das
+> Training bis zum Ergebnis sichtbar; Insight-Texte und „Verlauf zählt"-Label
+> betonen die Kurve statt des konkreten Loss-Werts.
 > **T59** `[x]` „Die ersten künstlichen neuronalen Netze" vor „Klassisch vs. KI"
 > gezogen (Titel → Geschichte → Klassisch vs. KI → Ziel); Nummern in Kommentaren
 > und Doku angepasst.
