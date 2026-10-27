@@ -68,8 +68,8 @@
 
 ## Folien-Reihenfolge (aktuell, index.html — 13 Folien)
 1. Titel · 2. Klassisch vs. KI · 3. Geschichte · **4. Was wir wollen** (Ziel, T29)
-· **5. Man arbeitet in Schichten** · **6. Drei Bausteine dafür** (T29) ·
-7. **Das Bild als Zahlen** (ConvDemo, 6 Schritte; Matrix → T30, Blaustapel → T38) ·
+· **5. Das Bild als Zahlen** (ConvDemo, 6 Schritte; Matrix → T30, Blaustapel → T38) ·
+**6. Man arbeitet in Schichten** · **7. Drei Bausteine dafür** (T29) ·
 8. **Ein Filter ist ein Muster** (FilterDemo, 4 Schritte, T9) · 9. Flatten ·
 10. **Was sind Dense Layer?** (gemerged: NeuronIntro = Szene A + SpaceMorph =
 Szene B, T20; Egg-Szene endet mit dem Bild-Verweis, T40) ·

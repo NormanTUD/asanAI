@@ -160,7 +160,44 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 5: Man arbeitet in Schichten
+     Folie 5: Das Bild als Zahlen (T9: Filter ausgegliedert)
+     ------------------------------------------------------------
+     Katze-Framework (katze.js, ConvDemo): 32×32 ASCII-Katze:
+     Farbbild → drei Kanäle (R/G/B) → ein Kanal (Grau) →
+     Pixel = Zahl (0–255). Gestuft (6 Schritte). Der Filter-Teil
+     (6×5-Filter, blockweiser Sweep, 8×8-Map) ist auf Folie 8
+     ("Ein Filter ist ein Muster", FilterDemo).
+     ============================================================ -->
+<div class="slide" id="slide-convolution" data-title="Das Bild als Zahlen">
+    <div class="slide-content">
+        <div class="kz">
+            <div class="kz-head"><h2 class="kz-const">Das Bild als Zahlen</h2><div class="kz-tswap" id="conv-tswap">
+                <div class="kz-title" id="conv-title">Nehmen wir ein<br><em>Farbbild</em> einer Katze.</div>
+            </div></div>
+
+            <div class="kz-stage">
+                <canvas id="conv-cv"></canvas>
+                <div class="conv-matrix" id="conv-matrix">
+                    <div class="math-display">$$\begin{pmatrix} \begin{pmatrix} 181 \\ 176 \\ 43 \end{pmatrix} &amp; \begin{pmatrix} 181 \\ 176 \\ 43 \end{pmatrix} &amp; \begin{pmatrix} 20 \\ 20 \\ 20 \end{pmatrix} &amp; \cdots \\ \begin{pmatrix} 181 \\ 176 \\ 43 \end{pmatrix} &amp; \begin{pmatrix} 20 \\ 20 \\ 20 \end{pmatrix} &amp; \begin{pmatrix} 74 \\ 51 \\ 42 \end{pmatrix} &amp; \cdots \\ \begin{pmatrix} 20 \\ 20 \\ 20 \end{pmatrix} &amp; \begin{pmatrix} 74 \\ 51 \\ 42 \end{pmatrix} &amp; \begin{pmatrix} 122 \\ 82 \\ 56 \end{pmatrix} &amp; \cdots \\ \vdots &amp; \vdots &amp; \vdots &amp; \ddots \end{pmatrix}$$</div>
+                    <div class="conv-matrix-cap">(32, 32, 3) · je Pixel ein RGB-Triplett</div>
+                </div>
+                <div id="conv-f-annot">
+                    <span class="f-paren">f(</span>
+                    <span class="f-paren">)</span>
+                </div>
+            </div>
+
+            <div class="kz-foot"><div class="kz-fswap" id="conv-fswap">
+                <div class="kz-pill" id="conv-pill">Jedes Pixel besteht aus Werten für Rot, Grün und Blau</div>
+                <div class="kz-chips" id="conv-chips"><span class="kz-chip">(32, 32, 3)</span></div>
+            </div></div>
+
+            <div class="kz-insight-slot"><div class="key-insight kz-insight" id="conv-insight"></div></div>
+        </div>
+    </div>
+</div>
+<!-- ============================================================
+     Folie 6: Man arbeitet in Schichten
      ------------------------------------------------------------
      Jede Schicht ist eine Funktion, die auf die Daten
      angewendet wird — die verschachtelt man ineinander.
@@ -199,7 +236,7 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 6: Drei Bausteine dafür (Roadmap)
+     Folie 7: Drei Bausteine dafür (Roadmap)
      ------------------------------------------------------------
      (Zielzustand + #goal-cv jetzt auf Folie 4 „Was wir wollen".)
      Die drei Bausteine Convolution → Flatten → Dense Layer und
@@ -221,43 +258,6 @@
 
         <div class="fragment formula-box">
             <div class="math-display">$$\text{Netz}(\text{Bild}) = \text{dense}\bigl(\text{flatten}(\text{conv2d}(\text{Bild}))\bigr)$$</div>
-        </div>
-    </div>
-</div>
-<!-- ============================================================
-     Folie 7: Das Bild als Zahlen (T9: Filter ausgegliedert)
-     ------------------------------------------------------------
-     Katze-Framework (katze.js, ConvDemo): 32×32 ASCII-Katze:
-     Farbbild → drei Kanäle (R/G/B) → ein Kanal (Grau) →
-     Pixel = Zahl (0–255). Gestuft (6 Schritte). Der Filter-Teil
-     (6×5-Filter, blockweiser Sweep, 8×8-Map) ist auf Folie 8
-     ("Ein Filter ist ein Muster", FilterDemo).
-     ============================================================ -->
-<div class="slide" id="slide-convolution" data-title="Das Bild als Zahlen">
-    <div class="slide-content">
-        <div class="kz">
-            <div class="kz-head"><h2 class="kz-const">Das Bild als Zahlen</h2><div class="kz-tswap" id="conv-tswap">
-                <div class="kz-title" id="conv-title">Nehmen wir ein<br><em>Farbbild</em> einer Katze.</div>
-            </div></div>
-
-            <div class="kz-stage">
-                <canvas id="conv-cv"></canvas>
-                <div class="conv-matrix" id="conv-matrix">
-                    <div class="math-display">$$\begin{pmatrix} \begin{pmatrix} 181 \\ 176 \\ 43 \end{pmatrix} &amp; \begin{pmatrix} 181 \\ 176 \\ 43 \end{pmatrix} &amp; \begin{pmatrix} 20 \\ 20 \\ 20 \end{pmatrix} &amp; \cdots \\ \begin{pmatrix} 181 \\ 176 \\ 43 \end{pmatrix} &amp; \begin{pmatrix} 20 \\ 20 \\ 20 \end{pmatrix} &amp; \begin{pmatrix} 74 \\ 51 \\ 42 \end{pmatrix} &amp; \cdots \\ \begin{pmatrix} 20 \\ 20 \\ 20 \end{pmatrix} &amp; \begin{pmatrix} 74 \\ 51 \\ 42 \end{pmatrix} &amp; \begin{pmatrix} 122 \\ 82 \\ 56 \end{pmatrix} &amp; \cdots \\ \vdots &amp; \vdots &amp; \vdots &amp; \ddots \end{pmatrix}$$</div>
-                    <div class="conv-matrix-cap">(32, 32, 3) · je Pixel ein RGB-Triplett</div>
-                </div>
-                <div id="conv-f-annot">
-                    <span class="f-paren">f(</span>
-                    <span class="f-paren">)</span>
-                </div>
-            </div>
-
-            <div class="kz-foot"><div class="kz-fswap" id="conv-fswap">
-                <div class="kz-pill" id="conv-pill">Jedes Pixel besteht aus Werten für Rot, Grün und Blau</div>
-                <div class="kz-chips" id="conv-chips"><span class="kz-chip">(32, 32, 3)</span></div>
-            </div></div>
-
-            <div class="kz-insight-slot"><div class="key-insight kz-insight" id="conv-insight"></div></div>
         </div>
     </div>
 </div>
