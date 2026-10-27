@@ -8,6 +8,46 @@ var labels_lang = "de";
 
 var _visual_explanations_lang = null;
 
+var _translations_version = 0;
+var _translations_done_lang = null;
+var _translations_done_version = -1;
+var _translations_observer = null;
+var _translatable_selector = "[class^=\"TRANSLATEME_\"], [data-tr-title], [data-tr-alt], [data-tr-placeholder], [data-tr-option], [data-tr-text]";
+
+function _translations_has_marker (node) {
+	if (!node || node.nodeType !== 1) {
+		return false;
+	}
+
+	if (node.matches && node.matches(_translatable_selector)) {
+		return true;
+	}
+
+	return !!(node.querySelector && node.querySelector(_translatable_selector));
+}
+
+function _translations_process_mutations (mutations) {
+	for (var mutation_idx = 0; mutation_idx < mutations.length; mutation_idx++) {
+		const added_nodes = mutations[mutation_idx].addedNodes || [];
+
+		for (var node_idx = 0; node_idx < added_nodes.length; node_idx++) {
+			if (_translations_has_marker(added_nodes[node_idx])) {
+				_translations_version++;
+				return;
+			}
+		}
+	}
+}
+
+function _translations_observe () {
+	if (_translations_observer || typeof MutationObserver === "undefined") {
+		return;
+	}
+
+	_translations_observer = new MutationObserver(_translations_process_mutations);
+	_translations_observer.observe(document.documentElement || document, {childList: true, subtree: true});
+}
+
 var urlParams = new URLSearchParams(window.location.search);
 
 function swap_image_src_language () {
@@ -105,6 +145,18 @@ function set_lang_cookie(value, days=999) {
 
 // Function to update the translation of elements
 async function update_translations(force=0) {
+	_translations_observe();
+
+	if (_translations_observer) {
+		_translations_process_mutations(_translations_observer.takeRecords());
+	}
+
+	const translations_version = _translations_version;
+
+	if (!force && _translations_done_lang === lang && _translations_done_version === translations_version) {
+		return;
+	}
+
 	var newly_translated = 0;
 
 	var elements = document.querySelectorAll("[class^=\"TRANSLATEME_\"]");
@@ -193,6 +245,9 @@ async function update_translations(force=0) {
 			await show_visual_explanations(wd);
 		}
 	}
+
+	_translations_done_lang = lang;
+	_translations_done_version = translations_version;
 }
 
 // Update translations when language selector links are clicked

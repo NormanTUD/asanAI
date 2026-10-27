@@ -3729,6 +3729,20 @@ async function new_tiny_tests() {
 	return true;
 }
 
+async function test_translation_cache () {
+	const element = document.createElement("span");
+	element.className = "TRANSLATEME_start_training";
+	document.body.appendChild(element);
+
+	await update_translations();
+
+	const translated = element.textContent === language[lang]["start_training"] && element.getAttribute("data-lang") === lang;
+
+	element.remove();
+
+	return translated;
+}
+
 async function run_python_code_tests() {
 	async function load_python_code_tab() {
 		$("#code_tab_label").click();
@@ -5049,6 +5063,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 	}
 
 	test_equal("new_tiny_tests", await new_tiny_tests(), true);
+	test_equal("test_translation_cache()", await test_translation_cache(), true);
 
 	tf.engine().startScope();
 
