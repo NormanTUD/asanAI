@@ -77,7 +77,7 @@ const DemoRegistry = (() => {
                         onLeave: d => d.reset() },
 
                 // "Was wir wollen" (katze.js), statisches ZIEL der
-                // Pipeline (Folie 4): Katze = 100 %, Loss 0,000 — live
+                // Pipeline (Folie 4): Katze = 100 % — live
                 // gerendert (kein Screenshot), wiederverwendet aus
                 // PipelineKit (gleiche Szene wie animierte Folie 11).
                 { id: 'pipeline-goal', ref: () => typeof PipelineGoalDemo !== 'undefined' ? PipelineGoalDemo : null,

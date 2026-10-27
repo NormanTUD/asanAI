@@ -2,7 +2,15 @@
 
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
-> Letzte Aktualisierung: **11. Runde (Agent) — T51–T57.**
+> Letzte Aktualisierung: **12. Runde (Agent) — T58–T59.**
+> **T59** `[x]` „Die ersten künstlichen neuronalen Netze" vor „Klassisch vs. KI"
+> gezogen (Titel → Geschichte → Klassisch vs. KI → Ziel); Nummern in Kommentaren
+> und Doku angepasst.
+> **T58** `[x]` „Das Bild als Zahlen" vor „Man arbeitet in Schichten" gezogen
+> (Ziel → Bild als Zahlen → Schichten → Bausteine → Filter). Brücke auf
+> „Schichten" (Funktion zuerst, `x₀` = Bild), Graustufen-Begründung im
+> Conv-Demo, Übergangssatz auf „Was wir wollen", „Baustein 1"-Chip auf der
+> Filter-Folie; veraltete Foliennummern in Kommentaren/Doku bereinigt.
 > 1. **T42** `[x]` „Klassisch vs. KI": `prev` nach Morph geht jetzt zurück zu
 >    x² (Reverse-Morph via `unswitching`-State). 2. **T43** `[x]` Folie 6:
 >    „Für dich jetzt im Abstrakten…" entfernt. 3. **T44** `[x]` „Das Bild als
@@ -48,11 +56,11 @@
 > **Reihenfolge: T30 → T31 → T32 → T33 → T34 → T35.**
 
 ## Dateien die ich analysiert habe
-- `index.html` — 14 Folien, Reihenfolge unten.
-- `katze.js` — KatzeKit-Framework (Steps: k/t/p/c/i/f) + ConvDemo (Folie 7, 6 Schritte,
+- `index.html` — 13 Folien, Reihenfolge unten.
+- `katze.js` — KatzeKit-Framework (Steps: k/t/p/c/i/f) + ConvDemo (Folie 5, 6 Schritte,
   T8: RGB-Matrix als Schritt 5, blauer Pixel-Zoom raus),
   **FilterDemo (Folie 8, 4 Schritte, T9: aus ConvDemo herausgelöst)**,
-  FlattenDemo (Folie 9, 2 Schritte), PipelineDemo (Folie 12, 8 Schritte),
+  FlattenDemo (Folie 9, 2 Schritte), PipelineDemo (Folie 11, 8 Schritte),
   PipelineGoalDemo (Folie 4).
 - `dense_raum.js` — DenseRaum (Folie 11, „Vom Bild zu Punkten", 5 Schritte).
 - `space_morph.js` — SpaceMorph (Szene B von Folie 10 „Was sind Dense Layer?", Ei/Schale).
@@ -67,7 +75,7 @@
   → Echte Fotos/Screenshots muss Norman liefern ODER ich baue Canvas-/ASCII-Nachbildungen.
 
 ## Folien-Reihenfolge (aktuell, index.html — 13 Folien)
-1. Titel · 2. Klassisch vs. KI · 3. Geschichte · **4. Was wir wollen** (Ziel, T29)
+1. Titel · 2. Geschichte · 3. Klassisch vs. KI · **4. Was wir wollen** (Ziel, T29)
 · **5. Das Bild als Zahlen** (ConvDemo, 6 Schritte; Matrix → T30, Blaustapel → T38) ·
 **6. Man arbeitet in Schichten** · **7. Drei Bausteine dafür** (T29) ·
 8. **Ein Filter ist ein Muster** (FilterDemo, 4 Schritte, T9) · 9. Flatten ·

@@ -10,7 +10,7 @@
 	<script src="temml.min.js"></script>
 	<link rel="stylesheet" href="index.css">
 	<style>
-		/* "Klassisch vs. KI" (Folie 2) — (T37) persistentes Skelett
+		/* "Klassisch vs. KI" (Folie 3) — (T37) persistentes Skelett
 		   f( [x] ) = [o] in EINE Schrift: die Glyphen f( / ) / = sind in
 		   beiden Modi dieselben DOM-Knoten und bleiben damit exakt gleich,
 		   ausgetauscht werden nur die Slot-Inhalte. Modus 1 (Formel): die
@@ -61,15 +61,47 @@
 <div id="presentation">
 
 <!-- ==================== Folie 1: Titel ==================== -->
-<!-- Löschen erlaubt: ?start=4 springt dann direkt auf die Katze-Folie. -->
+<!-- Löschen erlaubt: ?start=5 springt dann direkt auf die Katze-Folie. -->
 <div class="slide active" data-title="Titel" id="slide-titel">
     <div class="slide-content title-slide">
         <img class="title-logo" src="img/logo.png" alt="asanAI Logo" />
         <h1>Wie funktioniert Machine Learning<br>mit neuronalen Netzen?</h1>
     </div>
 </div>
-<!-- ==================== Folie 2: Klassisch vs. KI ==================== -->
-<!-- (vorher am Ende; jetzt direkt nach der Intro, weil die Katze erst
+<!-- ==================== Folie 2: Geschichte ==================== -->
+<div class="slide" id="slide-neuronales-netz-geschichte" data-title="Neuronales Netz Geschichte">
+    <div class="slide-content">
+        <h2>Die ersten künstlichen neuronalen Netze</h2>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items:start;">
+            <div>
+                <div style="display:flex; gap:10px; justify-content:center; align-items:center;">
+                    <img style="width:110px; height:110px; border-radius:50%; object-fit:cover;" src="img/mcculloch.png" alt="Warren McCulloch" />
+                    <img style="width:110px; height:110px; border-radius:50%; object-fit:cover;" src="img/pitts.jpg" alt="Walter Pitts" />
+                </div>
+                <p style="text-align:center; margin-top:8px;"><b>McCulloch &amp; Pitts (1943)</b>: vereinfachtes Neuron → logische Operationen.</p>
+
+<div style="text-align:center">
+                <img style="max-width:100%; max-height:22vh; border-radius:8px;" src="img/snarc.jpg" alt="SNARC" />
+                </div>
+                <p style="text-align:center; margin-top:8px;"><b>SNARC (1951)</b>, Minsky &amp; Edmonds: 1. physisches Netz · 40 Röhren-Neuronen · simulierte eine Ratte im Labyrinth.</p>
+            </div>
+
+            <div class="fragment" data-nofast>
+                <div class="key-insight" style="font-size:0.95em;">
+                    <b>Perceptron (1958)</b>, Rosenblatt: baut auf McCulloch &amp; Pitts auf · klassifiziert Buchstaben.
+                </div>
+
+                <div style="display:flex; gap:16px; justify-content:center; align-items:center; margin-top:12px;">
+                    <img style="max-height:36vh; width:auto; max-width:100%; border-radius:8px;" src="img/FrankRosenblattWiringPerceptron.jpg" alt="Rosenblatt verdrahtet das Perceptron" />
+                    <img style="max-height:36vh; width:auto; max-width:100%; border-radius:8px;" src="img/perceptron2.jpg" alt="Das Perceptron" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ==================== Folie 3: Klassisch vs. KI ==================== -->
+<!-- (vorher am Ende; jetzt nach der Geschichte, weil die Katze erst
      erklärt, WAS man lernt, hier steht schon, WOFÜR man lernt.) -->
 <div class="slide" data-title="Klassisch vs. KI" id="slide-klassisch-vs-ki">
     <div class="slide-content">
@@ -107,38 +139,6 @@
         </div>
     </div>
 </div>
-<!-- ==================== Folie 3: Geschichte ==================== -->
-<div class="slide" id="slide-neuronales-netz-geschichte" data-title="Neuronales Netz Geschichte">
-    <div class="slide-content">
-        <h2>Die ersten künstlichen neuronalen Netze</h2>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items:start;">
-            <div>
-                <div style="display:flex; gap:10px; justify-content:center; align-items:center;">
-                    <img style="width:110px; height:110px; border-radius:50%; object-fit:cover;" src="img/mcculloch.png" alt="Warren McCulloch" />
-                    <img style="width:110px; height:110px; border-radius:50%; object-fit:cover;" src="img/pitts.jpg" alt="Walter Pitts" />
-                </div>
-                <p style="text-align:center; margin-top:8px;"><b>McCulloch &amp; Pitts (1943)</b>: vereinfachtes Neuron → logische Operationen.</p>
-
-<div style="text-align:center">
-                <img style="max-width:100%; max-height:22vh; border-radius:8px;" src="img/snarc.jpg" alt="SNARC" />
-                </div>
-                <p style="text-align:center; margin-top:8px;"><b>SNARC (1951)</b>, Minsky &amp; Edmonds: 1. physisches Netz · 40 Röhren-Neuronen · simulierte eine Ratte im Labyrinth.</p>
-            </div>
-
-            <div class="fragment" data-nofast>
-                <div class="key-insight" style="font-size:0.95em;">
-                    <b>Perceptron (1958)</b>, Rosenblatt: baut auf McCulloch &amp; Pitts auf · klassifiziert Buchstaben.
-                </div>
-
-                <div style="display:flex; gap:16px; justify-content:center; align-items:center; margin-top:12px;">
-                    <img style="max-height:36vh; width:auto; max-width:100%; border-radius:8px;" src="img/FrankRosenblattWiringPerceptron.jpg" alt="Rosenblatt verdrahtet das Perceptron" />
-                    <img style="max-height:36vh; width:auto; max-width:100%; border-radius:8px;" src="img/perceptron2.jpg" alt="Das Perceptron" />
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <!-- ============================================================
      Folie 4: Was wir wollen (Ziel)
      ------------------------------------------------------------
@@ -154,6 +154,10 @@
         <div class="key-insight" style="text-align:center;">
             <b>Zielzustand:</b> das Netz bekommt ein Bild und sagt bei der Katze <b>Katze = 100 %</b>,
             beim Hund <b>Hund = 100 %</b>.
+        </div>
+
+        <div class="fragment" style="text-align:center; margin-top:6px;">
+            Dafür muss der Computer das Bild zuerst als <b>Zahlen</b> sehen.
         </div>
 
         <div class="kz-stage" id="goal-stage" style="height:min(44vh,400px); margin-top:10px;"><canvas id="goal-cv"></canvas></div>
@@ -208,18 +212,21 @@
         <h2>Man arbeitet in Schichten</h2>
 
         <div class="key-insight">
-            Viele Neuronen nebeneinander &amp; hintereinander · jede Schicht voll verdrahtet mit der vorherigen &amp; nächsten.
+            Jede Schicht = eine <b>Funktion</b> auf den Daten.
         </div>
 
         <div class="fragment">
             <div style="text-align:center;">
-                Jede Schicht = eine <b>Funktion</b> auf den Daten. Verschachtelt:
+                Viele Neuronen nebeneinander &amp; hintereinander · voll verdrahtet. Die Funktionen werden verschachtelt:
             </div>
         </div>
 
         <div class="fragment formula-box" style="margin:12px 0; padding:16px 32px;">
 <div class="math-display">
 	$$\text{Ergebnis} = \underbrace{\text{Schicht}_3}_{\substack{\text{Zusammen-}\\\text{gesetzte Muster}\\\text{in den vorherigen}\\\text{Mustern}}}\Bigl(\underbrace{\text{Schicht}_2}_{\substack{\text{Zusammen-}\\\text{gesetzte Muster}}}\bigl(\underbrace{\text{Schicht}_1}_{\substack{\text{Muster im}\\\text{Input}}}(\underbrace{\mathbf{x}_0}_{\text{Input}})\bigr)\Bigr)$$
+</div>
+<div style="text-align:center; margin-top:8px; font-size:0.95em; color:#475569;">
+	<i>x</i><sub>0</sub> = das Bild als Zahlen (32 × 32 × 3)
 </div>
         </div>
 
@@ -272,7 +279,7 @@
 <div class="slide" id="slide-filter" data-title="Ein Filter ist ein Muster">
     <div class="slide-content">
         <div class="kz">
-            <div class="kz-head"><h2 class="kz-const">Convolution</h2><div class="kz-tswap" id="filt-tswap">
+            <div class="kz-head"><h2 class="kz-const">Convolution</h2><div class="kz-chip" style="position:absolute; right:0; top:16px; font-family:Inter,system-ui,sans-serif;">Baustein 1 · Convolution</div><div class="kz-tswap" id="filt-tswap">
                 <div class="kz-title" id="filt-title">Ein <em>Filter</em> ist ein Muster für<br>einen <em>Bestandteil</em>.</div>
             </div></div>
 

@@ -1,6 +1,6 @@
 // ============================================================
-// DenseMerge (T20): Folie 8 (NeuronIntro) + Folie 9 (SpaceMorph)
-// zu EINER Folie gemerged. Szene A = NeuronIntro (Formeln/Fragmente),
+// DenseMerge (T20): NeuronIntro + SpaceMorph zu EINER Folie gemerged
+// (Folie 10). Szene A = NeuronIntro (Formeln/Fragmente),
 // Szene B = SpaceMorph (3D-Canvas). Der Wechsel A→B ist ein weicher
 // INHALT-SWAP (kein Folienwechsel) — "wie die anderen Übergänge".
 //

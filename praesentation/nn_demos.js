@@ -53,7 +53,7 @@ const TypewriterViz = (() => {
     return { isTypewriting, setActive, isOnClassicSlide, activate, stop, nop() {} };
 })();
 /* ================================================================
-    FlipClockViz – "Klassisch vs. KI" (Folie 2)
+    FlipClockViz – "Klassisch vs. KI" (Folie 3)
     (T37) Persistentes Skelett f( [x] ) = [o] in EINE Schrift: die
     Glyphen f( / ) / = sind in beiden Modi dieselben DOM-Knoten und
     bleiben damit exakt gleich — ausgetauscht werden nur die

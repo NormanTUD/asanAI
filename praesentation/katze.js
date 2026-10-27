@@ -638,7 +638,8 @@ const ConvDemo = (() => {
 			  i: '(32, 32, 3) = 3 × (32, 32): drei getrennte Raster, eines pro Farbe — pro Pixel steht in jedem Raster eine andere Zahl.' },
 			{ k: 'Schritt 3', t: 'Ein Kanal ist nur<br><em class="gray">Grau</em>.',
 			  p: 'Wie hell der Pixel ist, sagt, wie stark die jeweilige Farbe aktiviert ist',
-			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">·</span><span class="kz-chip g">0 – 255</span>' },
+			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">·</span><span class="kz-chip g">0 – 255</span>',
+			  i: 'Warum kurz Schwarzweiß? Ein Filter arbeitet später in <b>einem</b> Kanal. Hier sehen wir, was in einem einzigen Raster steckt — in Schritt 5 kommt die Farbe zurück.' },
 			{ k: 'Schritt 4', t: 'Jeder Pixel ist<br>nur eine <em>Zahl</em>.',
 			  p: 'Graustufen · 0 = Schwarz, 255 = Weiß',
 			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">→</span><span class="kz-chip g">0–255</span>' },
@@ -1259,7 +1260,7 @@ const FlattenDemo = (() => {
 // Die reine Zeichen-Logik (Karten, Dense, Neuronen, Loss-Panel,
 // Geometrie, Lernkurve) lebt hier, damit sie von ZWEI Konsumenten
 // wiederverwendet wird: PipelineDemo (animiert, Folie 11) und
-// PipelineGoalDemo (statisches Ziel "Katze = 100 %", Folie 5).
+// PipelineGoalDemo (statisches Ziel "Katze = 100 %", Folie 4).
 // ============================================================
 const PipelineKit = (() => {
 	'use strict';
@@ -1752,7 +1753,7 @@ const PipelineDemo = (() => {
 
 	// Die Zeichen-Bausteine (Karten, Dense, Neuronen, Loss-Panel,
 	// Geometrie, Lernkurve) leben jetzt in PipelineKit, damit auch
-	// PipelineGoalDemo (Folie 5) sie wiederverwenden kann.
+	// PipelineGoalDemo (Folie 4) sie wiederverwenden kann.
 
 	let aCat = 0, tCatA = 0;
 	let aConv = 0, tConvA = 0;
@@ -1948,7 +1949,7 @@ const PipelineDemo = (() => {
 })();
 
 // ============================================================
-// PipelineGoalDemo, "Drei Bausteine" (Folie 5)
+// PipelineGoalDemo, "Was wir wollen" (Folie 4)
 //
 // Das ZIEL, live gerendert (kein Screenshot): das Netz zeigt bei
 // JEDEM Bild das Richtige — bei einem Katze-Bild "Katze 100 %",
