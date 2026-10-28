@@ -1671,6 +1671,12 @@ function apply_train_val_split(x_and_y, validation_split) {
 	return { train_x, train_y, val_x, val_y, split_info };
 }
 
+function is_transient_backend_invalidation_error (error) {
+	const message = "" + error;
+
+	return message.includes("backend") && message.includes("undefined");
+}
+
 async function fit_model(x_and_y) {
 	try {
 		const fit_data = await _get_fit_data(x_and_y);
@@ -1743,8 +1749,14 @@ async function fit_model(x_and_y) {
 			// The previous code only re-tensor'd disposed inputs; that left
 			// the (apparently-valid but actually-broken) tensor in place and
 			// the retry failed with the same error. Always recreate.
-			if (("" + fitErr).includes("backend") && ("" + fitErr).includes("undefined")) {
-				wrn("[fit_model] Backend became invalid during fit, retrying once after reinitializing:", fitErr.message);
+			if (is_transient_backend_invalidation_error(fitErr)) {
+				// This recovery is expected on some browsers (most often Windows
+				// WebKit/Opera) after the backend briefly becomes invalid. It is
+				// usually harmless because the retry below succeeds, so this is
+				// info rather than a warning. Keep the tag and the original error
+				// searchable: if later failures follow a backend retry, they may
+				// be related to this event.
+				info("[fit_model][backend-retry] Transient backend invalidation during fit (most common on Windows, usually harmless); retrying once after reinitializing. If later problems follow, they may be related to this retry. Original error:", fitErr.message);
 				await tf.ready();
 				await compile_model();
 				if (!model || !model.optimizer) {

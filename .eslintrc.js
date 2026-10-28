@@ -666,6 +666,7 @@ module.exports = {
 		"is_hidden_or_has_hidden_parent": "readonly",
 		"set_metric": "readonly",
 		"is_tensor": "readonly",
+		"is_transient_backend_invalidation_error": "readonly",
 		"set_last_layer_activation_function": "readonly",
 		"__predict": "readonly",
 		"original_title": "writable",

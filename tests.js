@@ -113,8 +113,8 @@ function escape_html_for_test(name) {
 // in this browser. DEFAULT_EXPECTED_TEST_COUNT is the fallback for a fresh
 // browser/CI run; update it when the suite grows or shrinks. ?expected_tests=N
 // overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1399;
-var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 493;
+var DEFAULT_EXPECTED_TEST_COUNT = 1402;
+var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 496;
 
 function _test_expected_count (storage_key, fallback) {
 	try {
@@ -1664,6 +1664,10 @@ async function run_super_quick_tests (quick=0) {
 	test_transform_array_whd_dwh();
 
 	test_get_shape_from_array();
+
+	test_equal("is_transient_backend_invalidation_error Chromium/Opera", is_transient_backend_invalidation_error(new Error("Cannot read properties of undefined (reading 'backend')")), true);
+	test_equal("is_transient_backend_invalidation_error WebKit", is_transient_backend_invalidation_error(new Error("undefined is not an object (evaluating 'n.backend')")), true);
+	test_equal("is_transient_backend_invalidation_error unrelated", is_transient_backend_invalidation_error(new Error("Cannot read properties of undefined (reading 'shape')")), false);
 
 	log_test("Tensor functions");
 
