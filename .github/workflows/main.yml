@@ -18,6 +18,12 @@ on:
       - 'praesentation/**'
   workflow_dispatch:
 
+# Free/Pro/Team plans allow at most 5 concurrent macOS jobs. Cancel superseded
+# runs so repeated pushes don't queue several 6-job macOS matrices at once.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   smoke-tests:
     runs-on: ubuntu-latest
@@ -66,8 +72,9 @@ jobs:
 
   # Windows/macOS cannot run the Linux Docker container used above. Serve the
   # app directly with PHP and drive it with Playwright instead. Every browser
-  # runs the full suite. All jobs are blocking so the watchdog can cancel on
-  # any failure.
+  # runs the full suite. macOS keeps Chromium, Firefox and WebKit only: plans
+  # cap concurrent macOS jobs at 5, so adding Chrome/Edge/Opera there starves
+  # the queue. All jobs are blocking so the watchdog can cancel on any failure.
   playwright-cross-platform:
     name: ${{ matrix.browser }} / ${{ matrix.os }} / ${{ matrix.quick && 'quick' || 'full' }}
     needs: smoke-tests
@@ -96,16 +103,9 @@ jobs:
           - os: windows-latest
             browser: chrome
             quick: false
-          - os: macos-latest
-            browser: chrome
-            quick: false
           - os: windows-latest
             browser: msedge
             quick: false
-          - os: macos-latest
-            browser: msedge
-            quick: false
-          # WebKit is Playwright's Safari engine.
           - os: windows-latest
             browser: webkit
             install: webkit
@@ -117,9 +117,6 @@ jobs:
           # Playwright has no official Opera support; this launches the
           # installed Opera binary through its Chromium engine best-effort.
           - os: windows-latest
-            browser: opera
-            quick: false
-          - os: macos-latest
             browser: opera
             quick: false
     steps:
