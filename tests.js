@@ -766,6 +766,46 @@ async function test_gradient_flow_empty_state_on_activation () {
 	return true;
 }
 
+async function test_health_status_records_after_opening_tab () {
+	const active_tab_label = $("#navbar1 .navi_list > li[aria-expanded='true'] > a").prop("id");
+	const old_enabled = layerIOStats.enabled;
+	const old_records = layerIOStats.records.slice();
+
+	try {
+		layerIOStats.enabled = false;
+		layerIOStats.records = [];
+
+		show_tab_label("health_status_tab_label", 1);
+		await delay(300);
+
+		test_equal("Health tab enables recording automatically", layerIOStats.enabled, true);
+
+		const entry = _photo_gallery.entries && _photo_gallery.entries[0];
+
+		if (entry && typeof _photo_gallery_predict_image === "function") {
+			await _photo_gallery_predict_image(entry.img);
+		}
+
+		renderLayerIOStats("health_status");
+		await delay(200);
+
+		test_equal("Health tab records a prediction", layerIOStats.records.length > 0, true);
+		test_equal("Health tab shows layer cards after a prediction", $("#health_status .lio_card").length > 0, true);
+		test_equal("Health tab shows both the toggle and the health cards", $("#health_status .lio_toggle_btn").length > 0 && $("#health_status .lio_card").length > 0, true);
+	} finally {
+		layerIOStats.enabled = old_enabled;
+		layerIOStats.records = old_records;
+
+		if (active_tab_label && active_tab_label !== "health_status_tab_label") {
+			show_tab_label(active_tab_label, 1);
+		}
+
+		await delay(200);
+	}
+
+	return true;
+}
+
 function test_explainability_axis_label_fallback () {
 	if (typeof ExplainabilityLib === "undefined" || typeof Plotly === "undefined") {
 		test_equal("ExplainabilityLib and Plotly are available", false, true);
@@ -1392,6 +1432,8 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("test_feature_map_intro_is_short()", test_feature_map_intro_is_short(), true);
 
 	test_equal("test_gradient_flow_empty_state_on_activation()", await test_gradient_flow_empty_state_on_activation(), true);
+
+	test_equal("test_health_status_records_after_opening_tab()", await test_health_status_records_after_opening_tab(), true);
 
 	test_equal("test_explainability_axis_label_fallback()", test_explainability_axis_label_fallback(), true);
 

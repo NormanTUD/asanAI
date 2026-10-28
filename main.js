@@ -178,6 +178,16 @@ function init_tabs () {
 				gradientFlowToSummary();
 			}
 
+			if (ui.newPanel.attr("id") == "health_status") {
+				if (typeof enableAutoRecord === "function" && typeof layerIOStats !== "undefined" && !layerIOStats.enabled) {
+					layerIOStats.enabled = true;
+					enableAutoRecord();
+				}
+				if (typeof renderLayerIOStats === "function") {
+					renderLayerIOStats("health_status");
+				}
+			}
+
 			if (ui.newPanel.attr("id") == "weight_analysis" && typeof WeightAnalysis !== "undefined") {
 				WeightAnalysis.startAutoRefresh("weight_analysis", 5000);
 			}
