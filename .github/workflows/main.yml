@@ -267,6 +267,9 @@ jobs:
       actions: write
       contents: read
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
       - name: Cancel remaining jobs after the first failure
         uses: actions/github-script@v7
         with:
@@ -290,6 +293,8 @@ jobs:
 
               if (failure) {
                 core.notice(`Job "${failure.name}" failed; cancelling the rest of the run.`);
+                const summarize = require(process.env.GITHUB_WORKSPACE + "/tests/job_timing_summary.js");
+                await summarize.write_run_summary({ github, context, core });
                 try {
                   await github.rest.actions.cancelWorkflowRun({ owner, repo, run_id });
                 } catch (error) {
@@ -305,11 +310,33 @@ jobs:
               await sleep(30000);
             }
 
+  run-summary:
+    needs:
+      - smoke-tests
+      - playwright
+      - playwright-cross-platform
+    runs-on: ubuntu-latest
+    if: ${{ success() }}
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Write job timing summary
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const summarize = require(process.env.GITHUB_WORKSPACE + "/tests/job_timing_summary.js");
+            await summarize.write_run_summary({ github, context, core });
+
   tag-version:
     needs:
       - smoke-tests
       - playwright
       - playwright-cross-platform
+      - run-summary
     runs-on: ubuntu-latest
     if: ${{ success() }}
     permissions:

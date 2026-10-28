@@ -800,7 +800,9 @@ matrix on `windows-latest` + `macos-latest` (all browsers full). Matrices use
 `fail-fast: true`; a watchdog job
 cancels the whole run when any job fails, and the version tag is only pushed
 after all jobs succeed. Browser failures are summarized on the job's GitHub
-summary page (failed test, result counts, debug output, collapsible raw log).
+summary page (failed test, result counts, concrete error trace, collapsible raw
+log), and `run-summary` writes a per-OS/browser job-duration table to the run
+summary.
 The two workflows are complementary: `main.yml` **ignores** `blog/**`
 (toolkit only); `blog_php_validator.yml` runs **only** on `blog/**` (plus a
 weekly Monday cron for link rot). A new lesson gets static CI coverage for
