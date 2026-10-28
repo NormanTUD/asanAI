@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // in this browser. DEFAULT_EXPECTED_TEST_COUNT is the fallback for a fresh
 // browser/CI run; update it when the suite grows or shrinks. ?expected_tests=N
 // overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1402;
+var DEFAULT_EXPECTED_TEST_COUNT = 1405;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 496;
 
 function _test_expected_count (storage_key, fallback) {
@@ -4345,6 +4345,90 @@ async function wait_for_webcam_images(category_id, timeout_ms, required) {
 	});
 }
 
+async function test_status_bar_tooltip_update_is_deferred() {
+	const original_update = window.update_status_bar_log_tooltip;
+	const original_last_l = last_l;
+	let calls = 0;
+
+	try {
+		await delay(100);
+		_status_bar_log_tooltip_scheduled = false;
+
+		window.update_status_bar_log_tooltip = function () { calls++; };
+		last_l = null;
+		l("__status_bar_tooltip_defer_test__");
+
+		const calls_synchronously = calls;
+
+		for (let attempt = 0; attempt < 50 && calls === 0; attempt++) {
+			await delay(20);
+		}
+
+		return calls_synchronously === 0 && calls >= 1;
+	} finally {
+		window.update_status_bar_log_tooltip = original_update;
+		last_l = original_last_l;
+	}
+}
+
+async function test_webcam_constraints_use_device_id_without_probe_stream() {
+	const original_get_user_media = navigator.mediaDevices.getUserMedia;
+	const original_ids = available_webcams_ids;
+	const original_names = available_webcams;
+	const original_cached = hasBothFrontAndBackCached;
+	const original_selected = $("#which_webcam").val();
+	let probe_calls = 0;
+
+	try {
+		navigator.mediaDevices.getUserMedia = async function () {
+			probe_calls++;
+			throw new Error("getUserMedia must not be called when a device id is available");
+		};
+
+		available_webcams = ["Test camera"];
+		available_webcams_ids = ["test-device-id"];
+		hasBothFrontAndBackCached = undefined;
+		$("#which_webcam").val("0");
+
+		const constraints = await _getCameraConstraints();
+
+		return probe_calls === 0 &&
+			constraints &&
+			constraints.video &&
+			constraints.video.deviceId &&
+			constraints.video.deviceId.exact === "test-device-id";
+	} catch (e) {
+		return false;
+	} finally {
+		navigator.mediaDevices.getUserMedia = original_get_user_media;
+		available_webcams = original_names;
+		available_webcams_ids = original_ids;
+		hasBothFrontAndBackCached = original_cached;
+		$("#which_webcam").val(original_selected);
+	}
+}
+
+function test_webcam_start_guard_keeps_early_stream_alive() {
+	const original_stop = window.stop_webcam_if_cam;
+	let stop_calls = 0;
+
+	try {
+		window.stop_webcam_if_cam = function () { stop_calls++; };
+
+		_webcam_start_in_progress = true;
+		_stop_webcam_if_active();
+		const stop_calls_during_start = stop_calls;
+
+		_webcam_start_in_progress = false;
+		_stop_webcam_if_active();
+
+		return stop_calls_during_start === 0 && stop_calls === 1;
+	} finally {
+		_webcam_start_in_progress = false;
+		window.stop_webcam_if_cam = original_stop;
+	}
+}
+
 async function _webcam_is_available () {
 	if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== "function") {
 		return false;
@@ -7028,6 +7112,9 @@ async function run_tests (quick=0, disable_webcam=0) {
 	test_equal("new_tiny_tests", await new_tiny_tests(), true);
 	test_equal("test_translation_cache()", await test_translation_cache(), true);
 	test_equal("test_test_progress_display()", test_test_progress_display(), true);
+	test_equal("test_status_bar_tooltip_update_is_deferred()", await test_status_bar_tooltip_update_is_deferred(), true);
+	test_equal("test_webcam_constraints_use_device_id_without_probe_stream()", await test_webcam_constraints_use_device_id_without_probe_stream(), true);
+	test_equal("test_webcam_start_guard_keeps_early_stream_alive()", test_webcam_start_guard_keeps_early_stream_alive(), true);
 
 	tf.engine().startScope();
 

@@ -2013,6 +2013,27 @@ function update_status_bar_log_tooltip() {
 	}
 }
 
+var _status_bar_log_tooltip_scheduled = false;
+
+function schedule_status_bar_log_tooltip_update() {
+	if (_status_bar_log_tooltip_scheduled) {
+		return;
+	}
+
+	_status_bar_log_tooltip_scheduled = true;
+
+	var run = function () {
+		_status_bar_log_tooltip_scheduled = false;
+		update_status_bar_log_tooltip();
+	};
+
+	if (typeof requestAnimationFrame === "function") {
+		requestAnimationFrame(run);
+	} else {
+		setTimeout(run, 0);
+	}
+}
+
 $(document).ready(function () {
 	$(document).on("mouseenter", "#status_bar_log", update_status_bar_log_tooltip);
 	window.addEventListener("resize", update_status_bar_log_tooltip);
@@ -2044,7 +2065,7 @@ function l(msg) {
 				msg = "<span style='color: red'>" + msg + "</span>";
 			}
 			$("#status_bar_log").html(msg);
-			update_status_bar_log_tooltip();
+			schedule_status_bar_log_tooltip_update();
 		}
 	} catch (e) {
 		err("Some thing went wrong with the `l` function: " + e);

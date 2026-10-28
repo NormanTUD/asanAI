@@ -1,5 +1,7 @@
 "use strict";
 
+var _webcam_start_in_progress = false;
+
 function _updateWebcamButtonToStopped() {
 	$("#show_webcam_button").html(`
 		<span class="large_button" style="display:inline-block; position:relative; width:64px; height:64px;">
@@ -18,7 +20,6 @@ function _prepareVideoElement(webcam_container, element_name = "created_video_el
 async function _getCameraConstraints() {
 	let constraints = { video: true };
 
-	const hasBoth = await hasBothFrontAndBack();
 	const webcam_val = $("#which_webcam").val();
 	let selected_webcam_id = 0;
 
@@ -33,7 +34,7 @@ async function _getCameraConstraints() {
 
 	if (chosen_webcam_device_id) {
 		constraints.video = { deviceId: { exact: chosen_webcam_device_id } };
-	} else if (hasBoth) {
+	} else if (await hasBothFrontAndBack()) {
 		constraints.video = { facingMode: webcam_modes[webcam_id] };
 		l(language[lang]["using_camera"] + " " + webcam_modes[webcam_id]);
 	} else {
@@ -41,6 +42,37 @@ async function _getCameraConstraints() {
 	}
 
 	return constraints;
+}
+
+function _has_usable_webcam_ids() {
+	if (!available_webcams_ids.length) {
+		return false;
+	}
+
+	return available_webcams_ids.every(function (device_id) {
+		return !!device_id;
+	});
+}
+
+async function _refresh_camera_list_after_permission() {
+	if (_has_usable_webcam_ids()) {
+		return;
+	}
+
+	try {
+		const available_webcam_data = await get_available_cams();
+
+		if (!available_webcam_data[1].some(function (device_id) { return !!device_id; })) {
+			return;
+		}
+
+		available_webcams = available_webcam_data[0];
+		available_webcams_ids = available_webcam_data[1];
+
+		await _configureWebcamUI(available_webcams);
+	} catch (e) {
+		dbg("[_refresh_camera_list_after_permission] " + e);
+	}
 }
 
 async function _startStreamAndAssignToCam(video_element) {
@@ -69,6 +101,7 @@ async function _startStreamAndAssignToCam(video_element) {
 		video_element.play();
 
 		await waitForMetadataOrTimeout(video_element, 2000);
+		await _refresh_camera_list_after_permission();
 
 		window.cam = camWrapper;
 		return window.cam;
@@ -115,14 +148,17 @@ async function _startWebcamDataStream(video_element) {
 
 	if (window.cam) {
 		dbg("get_data_from_webcam: cam was set");
-		$("#webcam_data").show();
+		_show_webcam_data_stream_ui();
 	} else {
 		dbg("get_data_from_webcam: cam SHOULD have been set but was not");
 		l(language[lang]["error_starting_webcam"]);
 		_set_webcam_button_translation("enable_webcam");
 		return;
 	}
+}
 
+function _show_webcam_data_stream_ui() {
+	$("#webcam_data").show();
 	$(".webcam_data_button").show();
 	webcam_custom_data_started = true;
 }
@@ -141,6 +177,23 @@ function _stopWebcamDataStream() {
 	return 1;
 }
 
+function _has_front_and_back_camera_labels(webcam_names) {
+	let has_front = false;
+	let has_back = false;
+
+	for (let webcam_idx = 0; webcam_idx < webcam_names.length; webcam_idx++) {
+		const label = (webcam_names[webcam_idx] || "").toLowerCase();
+
+		if (label.includes("front")) {
+			has_front = true;
+		} else if (label.includes("back") || label.includes("rück")) {
+			has_back = true;
+		}
+	}
+
+	return has_front && has_back;
+}
+
 async function _configureWebcamUI(available_webcams_list) {
 	dbg("[init_webcams] Number of available cams: " + available_webcams_list.length);
 
@@ -149,7 +202,7 @@ async function _configureWebcamUI(available_webcams_list) {
 		dbg("[init_webcams] List of found webcams: " + available_webcams_list.join(", "));
 		$(".only_when_webcam").show();
 
-		if (await hasBothFrontAndBack()) {
+		if (_has_front_and_back_camera_labels(available_webcams_list)) {
 			$(".only_when_front_and_back_camera").show();
 		} else {
 			$(".only_when_front_and_back_camera").hide();
@@ -647,7 +700,7 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 	try {
 		typeassert(elem, object, "elem");
 		if (!inited_webcams) await get_data_from_webcam();
-		if (!cam) { await set_custom_webcam_training_data(); await show_webcam(1); }
+		if (!cam) { await set_custom_webcam_training_data(); }
 
 		await _captureAndProcessWebcamImage(elem, nol, _enable_train_and_last_layer_shape_warning);
 
@@ -870,22 +923,44 @@ async function set_custom_webcam_training_data() {
 	dbg("Init webcams");
 	await init_webcams();
 
-	if($("#data_origin").val() != "image") {
-		$.when($("#data_origin").val("image").trigger("change")).done(get_data_from_webcam_if_possible);
-	} else {
-		if(!cam) {
-			await get_data_from_webcam();
-		}
+	const switched_to_image = $("#data_origin").val() != "image";
+	let early_stream_promise = null;
 
-		if(!cam) {
-			await show_webcam();
-		}
-
-		show_tab_label("own_images_tab_label", 1);
+	if(!cam) {
+		l(language[lang]["starting_webcam"]);
+		_set_webcam_button_translation("disable_webcam");
+		const video_element = _prepareVideoElement($("#webcam_data"));
+		$("#webcam_data").hide();
+		early_stream_promise = _startStreamAndAssignToCam(video_element); // cannot be async
 	}
-	dbg("Done setting web for custom training data");
 
-	await rename_labels();
+	if(switched_to_image) {
+		$("#data_origin").val("image");
+		_webcam_start_in_progress = true;
+		try {
+			await change_data_origin();
+		} finally {
+			_webcam_start_in_progress = false;
+		}
+	}
+
+	if(early_stream_promise) {
+		await early_stream_promise;
+	}
+
+	if(cam) {
+		_show_webcam_data_stream_ui();
+	} else {
+		await get_data_from_webcam_if_possible();
+	}
+
+	show_tab_label("own_images_tab_label", 1);
+
+	if(!switched_to_image) {
+		await rename_labels();
+	}
+
+	dbg("Done setting web for custom training data");
 }
 
 function stop_webcam_if_cam() {
@@ -895,6 +970,10 @@ function stop_webcam_if_cam() {
 }
 
 function _stop_webcam_if_active() {
+	if (_webcam_start_in_progress) {
+		return;
+	}
+
 	stop_webcam_if_cam();
 }
 
