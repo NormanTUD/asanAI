@@ -37,10 +37,19 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Playwright test runner with console capture.")
     parser.add_argument("--firefox", action="store_true", help="Run Firefox (if omitted and --chromium not given, both are run).")
     parser.add_argument("--chromium", action="store_true", help="Run Chromium (if omitted and --firefox not given, both are run).")
+    parser.add_argument(
+        "--browser",
+        action="append",
+        default=[],
+        choices=["chromium", "firefox", "webkit", "chrome", "msedge", "opera"],
+        help="Run a specific browser. Repeatable. chromium/firefox/webkit are bundled; chrome/msedge use the installed branded channel; opera is launched best-effort.",
+    )
     parser.add_argument("--chromium-executable", default=DEFAULT_CHROMIUM_PATH, help="Path to Chromium executable (default: %(default)s)")
     parser.add_argument("--firefox-executable", default=None, help="Path to Firefox executable (optional; Playwright's installed Firefox used if omitted)")
+    parser.add_argument("--opera-executable", default=None, help="Path to Opera executable (optional; auto-detected on Windows/macOS if omitted)")
     parser.add_argument("--url", default="http://localhost:1122", help="URL to open (default: %(default)s)")
     parser.add_argument("--wait", type=int, default=10_000, help="Wait time in milliseconds before running tests (default: %(default)s)")
+    parser.add_argument("--quick", action="store_true", help="Run the quick test subset (run_tests(1)) instead of the full suite.")
     parser.add_argument("--no-smoke-tests", action="store_true", help="Disable smoke tests")
     parser.add_argument("--no-docker", action="store_true", help="Disable docker")
     parser.add_argument("--no-run-tests", action="store_true", help="Disable python script")
@@ -55,6 +64,36 @@ def parse_args():
     parser.add_argument("--only-test-count", type=int, default=0, help="Stop after this many test_equal calls (after the resume point). 0 means run all from --from-test onwards.")
 
     return parser.parse_args()
+
+
+def find_opera_executable(args):
+    if args.opera_executable:
+        return args.opera_executable
+
+    candidates = [
+        shutil.which("opera"),
+        "/Applications/Opera.app/Contents/MacOS/Opera",
+        os.path.expandvars(r"%PROGRAMFILES%\Opera\launcher.exe"),
+        os.path.expandvars(r"%PROGRAMFILES%\Opera\opera.exe"),
+        os.path.expandvars(r"%PROGRAMFILES(X86)%\Opera\launcher.exe"),
+        os.path.expandvars(r"%LOCALAPPDATA%\Programs\Opera\launcher.exe"),
+        os.path.expandvars(r"%LOCALAPPDATA%\Programs\Opera\opera.exe"),
+    ]
+
+    for candidate in candidates:
+        if candidate and os.path.isfile(candidate):
+            return candidate
+
+    return None
+
+
+def resolve_chromium_executable(args):
+    # Keep the historical Linux default, but let Playwright use its bundled
+    # Chromium on Windows/macOS where /usr/bin/chromium does not exist.
+    path = args.chromium_executable
+    if path and os.path.isfile(path):
+        return path
+    return None
 
 
 def capture_console(page, browser_name: str):
@@ -72,8 +111,9 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
     Runs one browser session. For Firefox we use launch_persistent_context(...) so we can supply firefox_user_prefs.
     Returns the value returned by page.evaluate("run_tests()") or a non-zero int on error.
     """
+    chromium_based = browser_name in ("chromium", "chrome", "msedge", "opera")
     launch_args = []
-    if browser_name == "chromium":
+    if chromium_based:
         launch_args.append("--enable-unsafe-swiftshader")
         if args.enable_fake_media:
             launch_args.extend([
@@ -81,7 +121,7 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
                 "--use-fake-device-for-media-stream",
             ])
             if args.fake_video:
-                launch_args.append(f"--use-file-for-fake-video-capture={args.fake_video}")
+                launch_args.append("--use-file-for-fake-video-capture=" + os.path.abspath(args.fake_video))
 
     firefox_prefs = {
         "media.navigator.streams.fake": True,
@@ -110,12 +150,27 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
                 args=launch_args if launch_args else None,
             )
         else:
-            browser_type = getattr(playwright, browser_name)
-            browser = await browser_type.launch(
-                executable_path=executable_path if executable_path is not None else None,
-                headless=not args.no_headless,
-                args=launch_args if launch_args else None,
-            )
+            launch_kwargs = {
+                "headless": not args.no_headless,
+                "args": launch_args if launch_args else None,
+            }
+
+            if browser_name == "webkit":
+                browser_type = playwright.webkit
+            else:
+                browser_type = playwright.chromium
+                if browser_name in ("chrome", "msedge"):
+                    launch_kwargs["channel"] = browser_name
+                elif browser_name == "opera":
+                    executable_path = executable_path or find_opera_executable(args)
+                    if not executable_path:
+                        logging.error("[opera] Opera executable not found. Install Opera or pass --opera-executable.")
+                        return 1
+                    launch_kwargs["executable_path"] = executable_path
+                elif executable_path:
+                    launch_kwargs["executable_path"] = executable_path
+
+            browser = await browser_type.launch(**launch_kwargs)
             context = await browser.new_context(permissions=["camera", "microphone"])
 
         page = await context.new_page()
@@ -127,10 +182,11 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
         logging.info(f"[{browser_name}] Waiting {wait_time/1000:.1f}s before running tests...")
         await page.wait_for_timeout(wait_time)
 
-        logging.info(f"[{browser_name}] Evaluating run_tests() ...")
+        test_expression = "run_tests(1)" if args.quick else "run_tests()"
+        logging.info(f"[{browser_name}] Evaluating {test_expression} ...")
         try:
-            result = await page.evaluate("run_tests()")
-            logging.info(f"[{browser_name}] run_tests() returned: {result}")
+            result = await page.evaluate(test_expression)
+            logging.info(f"[{browser_name}] {test_expression} returned: {result}")
             return result
         except Error as e:
             logging.error(f"[{browser_name}] Playwright evaluation error: {e}")
@@ -186,42 +242,48 @@ async def main():
     else:
         url_with_from_test = args.url
 
-    run_firefox = args.firefox or (not args.firefox and not args.chromium)
-    run_chromium = args.chromium or (not args.firefox and not args.chromium)
+    if args.browser:
+        selected = []
+        for browser in args.browser:
+            if browser not in selected:
+                selected.append(browser)
+    else:
+        run_firefox = args.firefox or (not args.firefox and not args.chromium)
+        run_chromium = args.chromium or (not args.firefox and not args.chromium)
+        selected = []
+        if run_firefox:
+            selected.append("firefox")
+        if run_chromium:
+            selected.append("chromium")
 
     executed = []
     failures = []
 
-    if run_firefox:
-        try:
-            r = await run("firefox", args.firefox_executable, url_with_from_test, args.wait, args)
-            rc = to_int_exit(r)
-            executed.append(("firefox", rc))
-            if rc != 0:
-                failures.append(("firefox", rc))
-        except Exception:
-            logging.exception("[firefox] Unhandled exception during run")
-            executed.append(("firefox", 1))
-            failures.append(("firefox", 1))
-
-    if run_chromium:
-        skip_chrome = False
-        if run_firefox and any(name == "firefox" and rc != 0 for name, rc in executed) and not args.run_chrome_on_firefox_failure:
+    for browser_name in selected:
+        # Keep the historical default behaviour: if Firefox fails, skip the
+        # implicit Chromium follow-up unless explicitly requested.
+        if browser_name == "chromium" and not args.browser and "firefox" in [name for name, _ in executed] and any(name == "firefox" and rc != 0 for name, rc in executed) and not args.run_chrome_on_firefox_failure:
             logging.info("[main] Firefox failed and --run-chrome-on-firefox-failure not set; skipping Chromium run.")
-            skip_chrome = True
             executed.append(("chromium", 1))
             failures.append(("chromium", 1))
-        if not skip_chrome:
-            try:
-                r = await run("chromium", args.chromium_executable, url_with_from_test, args.wait, args)
-                rc = to_int_exit(r)
-                executed.append(("chromium", rc))
-                if rc != 0:
-                    failures.append(("chromium", rc))
-            except Exception:
-                logging.exception("[chromium] Unhandled exception during run")
-                executed.append(("chromium", 1))
-                failures.append(("chromium", 1))
+            continue
+
+        executable_path = None
+        if browser_name == "chromium":
+            executable_path = resolve_chromium_executable(args)
+        elif browser_name == "firefox":
+            executable_path = args.firefox_executable
+
+        try:
+            r = await run(browser_name, executable_path, url_with_from_test, args.wait, args)
+            rc = to_int_exit(r)
+            executed.append((browser_name, rc))
+            if rc != 0:
+                failures.append((browser_name, rc))
+        except Exception:
+            logging.exception(f"[{browser_name}] Unhandled exception during run")
+            executed.append((browser_name, 1))
+            failures.append((browser_name, 1))
 
     if not executed:
         logging.error("[main] No browsers were selected to run; nothing done.")
