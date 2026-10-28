@@ -4550,7 +4550,41 @@ function test_math_mode_color_generator_kernel_and_bias_changed () {
         return true;
 }
 
+function _test_recent_debug_entries (type, count) {
+	if (!Array.isArray(_full_debug_log) || count <= 0) return [];
+
+	const entries = _full_debug_log.filter(function (entry) {
+		return entry.type === type;
+	});
+
+	return entries.slice(-count);
+}
+
+function _test_format_debug_entry (entry) {
+	var message = "";
+
+	try {
+		message = entry.log.map(function (value) {
+			return typeof value === "string" ? value : JSON.stringify(value);
+		}).join(" ");
+	} catch (e) {
+		message = String(entry.log);
+	}
+
+	return message + "\nStack-Trace: " + entry.stacktrace;
+}
+
 function test_no_new_errors_or_warnings () {
+	const new_errors = num_errs - original_num_errs;
+	const new_warnings = num_wrns - original_num_wrns;
+
+	_test_recent_debug_entries("err", new_errors).forEach(function (entry) {
+		console.error("[test_no_new_errors] " + _test_format_debug_entry(entry));
+	});
+	_test_recent_debug_entries("warn", new_warnings).forEach(function (entry) {
+		console.error("[test_no_new_warnings] " + _test_format_debug_entry(entry));
+	});
+
 	test_equal("no new errors", num_errs, original_num_errs);
 	test_equal("no new warnings", num_wrns, original_num_wrns);
 }

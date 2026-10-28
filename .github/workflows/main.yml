@@ -227,10 +227,16 @@ jobs:
 
           {
             echo
+            echo "### Concrete errors / warnings"
+            echo
+            echo '```text'
+            grep -E '\[test_no_new_errors\]|\[test_no_new_warnings\]|Stack-Trace:' browser-tests.log | tail -n 60 || true
+            echo '```'
+            echo
             echo "<details><summary>Failure output</summary>"
             echo
             echo '```text'
-            grep -E 'Test-name:|\[test_equal\]|ERROR\. Is:|Should be:|feature-map-tooltip-theme|tests, ok:|Test suite took|Playwright evaluation error' browser-tests.log | tail -n 120 || true
+            grep -E 'Test-name:|\[test_equal\]|ERROR\. Is:|Should be:|feature-map-tooltip-theme|test_no_new_errors|test_no_new_warnings|Stack-Trace:|tests, ok:|Test suite took|Playwright evaluation error' browser-tests.log | tail -n 160 || true
             echo '```'
             echo
             echo "</details>"
