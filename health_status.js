@@ -164,6 +164,12 @@ function enableAutoRecord() {
 		return;
 	}
 
+	// Hover predictions are cached per image. Clear that cache when recording
+	// starts so the next hover actually runs model.predict and is recorded.
+	if (typeof _photo_gallery_clear_prediction_cache === "function") {
+		_photo_gallery_clear_prediction_cache();
+	}
+
 	// FIX: Wenn das Modell sich geändert hat, neu patchen
 	if (layerIOStats._lastPatchedModel === model && model._io_auto_record_patched) {
 		return; // Bereits gepatcht, gleiches Modell
@@ -930,6 +936,13 @@ function renderLayerIOStats(divTarget) {
 			"<span class='TRANSLATEME_" + toggleLabelKey + "'></span>" +
 			"</button>" +
 			"<p style='opacity:0.6;'><span class='TRANSLATEME_layer_io_no_data'></span></p>";
+
+		try {
+			if (typeof update_translations === "function") {
+				update_translations();
+			}
+		} catch (e) { }
+
 		return container;
 	}
 

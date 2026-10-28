@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // in this browser. DEFAULT_EXPECTED_TEST_COUNT is the fallback for a fresh
 // browser/CI run; update it when the suite grows or shrinks. ?expected_tests=N
 // overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1378;
+var DEFAULT_EXPECTED_TEST_COUNT = 1380;
 var __test_expected_total = (function () {
 	try {
 		var m = /[?&]expected_tests=(\d+)/.exec(window.location.search);
@@ -883,17 +883,29 @@ async function test_health_status_records_after_opening_tab () {
 	const active_tab_label = $("#navbar1 .navi_list > li[aria-expanded='true'] > a").prop("id");
 	const old_enabled = layerIOStats.enabled;
 	const old_records = layerIOStats.records.slice();
+	const old_cache = _photo_gallery_prediction_cache;
+	const entry = _photo_gallery.entries && _photo_gallery.entries[0];
 
 	try {
 		layerIOStats.enabled = false;
 		layerIOStats.records = [];
+
+		if (entry) {
+			_photo_gallery_prediction_cache = {};
+			_photo_gallery_prediction_cache[entry.url] = {model: model, generation: weights_generation, values: [1]};
+		}
 
 		show_tab_label("health_status_tab_label", 1);
 		await delay(300);
 
 		test_equal("Health tab enables recording automatically", layerIOStats.enabled, true);
 
-		const entry = _photo_gallery.entries && _photo_gallery.entries[0];
+		if (entry) {
+			test_equal("Health tab clears cached gallery predictions when recording starts", _photo_gallery_prediction_is_cached(entry), null);
+		}
+
+		test_equal("Health empty state translates the no-data message", $("#health_status .TRANSLATEME_layer_io_no_data").text(), language[lang]["layer_io_no_data"]);
+		test_equal("Health empty state translates the toggle label", $("#health_status .lio_toggle_btn").text().indexOf(language[lang]["layer_io_recording_active"]) !== -1, true);
 
 		if (entry && typeof _photo_gallery_predict_image === "function") {
 			await _photo_gallery_predict_image(entry.img);
@@ -908,6 +920,7 @@ async function test_health_status_records_after_opening_tab () {
 	} finally {
 		layerIOStats.enabled = old_enabled;
 		layerIOStats.records = old_records;
+		_photo_gallery_prediction_cache = old_cache;
 
 		if (active_tab_label && active_tab_label !== "health_status_tab_label") {
 			show_tab_label(active_tab_label, 1);
@@ -959,23 +972,24 @@ function test_explainability_axis_label_fallback () {
 	return true;
 }
 
-function test_fcnn_neuron_colors_use_global_range_when_constant () {
+function test_fcnn_neuron_colors_span_each_layer () {
 	const canvas = document.createElement("canvas");
 	canvas.width = 40;
 	canvas.height = 20;
 	const ctx = canvas.getContext("2d");
 
-	function center_value (values, neuron_idx, global_min, global_max) {
+	function center_value (values, neuron_idx) {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		draw_neuron_with_normalized_color(ctx, values, 20, 10, 8, neuron_idx, global_min, global_max);
+		draw_neuron_with_normalized_color(ctx, values, 20, 10, 8, neuron_idx);
 		return ctx.getImageData(20, 10, 1, 1).data[0];
 	}
 
-	test_equal("Constant positive activation uses the global scale (white)", center_value([1], 0, 0, 1), 255);
-	test_equal("Constant zero activation uses the global scale (black)", center_value([0], 0, 0, 1), 0);
-	test_equal("Global minimum maps to black when the layer varies", center_value([0, 0.5, 1], 0, 0, 1), 0);
-	test_equal("Global maximum maps to white when the layer varies", center_value([0, 0.5, 1], 2, 0, 1), 255);
-	test_equal("Neuron colors use the global range across layers", center_value([5, 10], 1, 0, 100), 25);
+	test_equal("Constant positive activation is white", center_value([1], 0), 255);
+	test_equal("Constant zero activation is black", center_value([0], 0), 0);
+	test_equal("Layer minimum maps to black", center_value([0, 0.5, 1], 0), 0);
+	test_equal("Layer maximum maps to white", center_value([0, 0.5, 1], 2), 255);
+	test_equal("A second layer also spans up to white", center_value([5, 10], 1), 255);
+	test_equal("A second layer also spans down to black", center_value([5, 10], 0), 0);
 
 	const kernel_image = _build_kernel_image_data(ctx, [[0, 3], [1, 2]], 2, 2, 0, 3);
 	test_equal("Kernel image maps the smallest value to black", kernel_image.data[0], 0);
@@ -990,18 +1004,6 @@ function test_fcnn_neuron_colors_use_global_range_when_constant () {
 
 	test_equal("Flatten rectangle maps the smallest value to black", flatten_ctx.getImageData(0, 0, 1, 1).data[0], 0);
 	test_equal("Flatten rectangle maps the largest value to white", flatten_ctx.getImageData(0, 1, 1, 1).data[0], 255);
-
-	const old_layer_states_saved = layer_states_saved;
-
-	try {
-		layer_states_saved = {"0": {output: [[0, 2]]}, "1": {output: [[1]]}};
-		test_equal("Global activation range spans all dense layers", JSON.stringify(_compute_global_activation_range()), JSON.stringify([0, 2]));
-
-		layer_states_saved = {"0": {output: [[0, 2]]}, "1": {output: [[[[99]]]]}};
-		test_equal("Global activation range ignores 4-D conv outputs", JSON.stringify(_compute_global_activation_range()), JSON.stringify([0, 2]));
-	} finally {
-		layer_states_saved = old_layer_states_saved;
-	}
 
 	return true;
 }
@@ -1569,7 +1571,7 @@ async function run_super_quick_tests (quick=0) {
 
 	test_equal("test_explainability_axis_label_fallback()", test_explainability_axis_label_fallback(), true);
 
-	test_equal("test_fcnn_neuron_colors_use_global_range_when_constant()", test_fcnn_neuron_colors_use_global_range_when_constant(), true);
+	test_equal("test_fcnn_neuron_colors_span_each_layer()", test_fcnn_neuron_colors_span_each_layer(), true);
 
 	test_equal('computeCRC32("")', computeCRC32(""), 0);
 	test_equal('computeCRC32("asasd")', computeCRC32("asasd"), 3324180253);

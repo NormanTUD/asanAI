@@ -749,6 +749,10 @@ function _photo_gallery_prediction_is_cached (entry) {
 	return cached && cached.model === model && cached.generation === weights_generation ? cached.values : null;
 }
 
+function _photo_gallery_clear_prediction_cache () {
+	_photo_gallery_prediction_cache = {};
+}
+
 async function _photo_gallery_predict_image (img) {
 	if (!model || !model.layers || !model.layers.length) {
 		return null;
