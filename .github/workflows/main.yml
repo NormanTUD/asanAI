@@ -216,6 +216,14 @@ jobs:
         shell: bash
         run: cat php-server.log || true
 
+      - name: Surface tooltip theme debug
+        if: failure()
+        shell: bash
+        run: |
+          if [ -f browser-tests.log ]; then
+            grep '\[feature-map-tooltip-theme\]' browser-tests.log | tail -n 1 | sed 's/^/::error::/' || true
+          fi
+
       - name: Upload browser test log
         if: failure()
         uses: actions/upload-artifact@v4
