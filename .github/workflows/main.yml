@@ -203,14 +203,25 @@ jobs:
             QUICK="--quick"
           fi
 
+          set -o pipefail
           python _run_tests.py \
             --url http://127.0.0.1:1122/index.php \
             --browser "${{ matrix.browser }}" \
             --enable-fake-media \
             --fake-video tests/fake.y4m \
-            $QUICK
+            $QUICK 2>&1 | tee browser-tests.log
 
       - name: Show PHP server log
         if: failure()
         shell: bash
         run: cat php-server.log || true
+
+      - name: Upload browser test log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-tests-${{ matrix.os }}-${{ matrix.browser }}-quick-${{ matrix.quick }}
+          path: |
+            browser-tests.log
+            php-server.log
+          if-no-files-found: ignore

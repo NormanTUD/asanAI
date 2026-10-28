@@ -767,13 +767,27 @@ async function test_maximally_activated_last_layer() {
 
 	document.body.classList.add("darkmode");
 	await delay(500);
-	const tooltip_dark = getComputedStyle(_feature_map_ensure_tooltip()).backgroundColor;
+	const dark_tooltip = document.getElementById("feature_map_tooltip") || _feature_map_ensure_tooltip();
+	const tooltip_dark = getComputedStyle(dark_tooltip).backgroundColor;
 	document.body.classList.remove("darkmode");
 	await delay(500);
-	const tooltip_light = getComputedStyle(_feature_map_ensure_tooltip()).backgroundColor;
+	const light_tooltip = document.getElementById("feature_map_tooltip") || _feature_map_ensure_tooltip();
+	const tooltip_light = getComputedStyle(light_tooltip).backgroundColor;
 
 	const dark_rgb = parse_css_rgb(tooltip_dark);
 	const light_rgb = parse_css_rgb(tooltip_light);
+
+	if (!dark_rgb || !light_rgb || dark_rgb[0] >= 100 || light_rgb[0] <= 200) {
+		console.log("[feature-map-tooltip-theme] " + JSON.stringify({
+			dark: tooltip_dark,
+			light: tooltip_light,
+			body: document.body.className,
+			dark_connected: dark_tooltip.isConnected,
+			light_connected: light_tooltip.isConnected,
+			dark_id: dark_tooltip.id,
+			light_id: light_tooltip.id
+		}));
+	}
 
 	test_equal("Feature map tooltip uses a dark background in dark mode", !!dark_rgb && dark_rgb[0] < 100 && dark_rgb[0] === dark_rgb[1] && dark_rgb[1] === dark_rgb[2], true);
 	test_equal("Feature map tooltip uses a light background in light mode", !!light_rgb && light_rgb[0] > 200 && light_rgb[0] === light_rgb[1] && light_rgb[1] === light_rgb[2], true);
