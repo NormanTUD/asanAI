@@ -616,6 +616,19 @@ function _photo_gallery_escape (value) {
 	return $("<div>").text(value === undefined || value === null ? "" : value).html();
 }
 
+function _photo_gallery_preview_node (entry) {
+	if (!entry || !entry.img || entry.img.tagName !== "IMG" || !entry.img.src) {
+		return null;
+	}
+
+	const preview = entry.img.cloneNode(false);
+	preview.removeAttribute("width");
+	preview.removeAttribute("height");
+	preview.className = "grid_image_tooltip_img";
+
+	return preview;
+}
+
 function _photo_gallery_position_tooltip (client_x, client_y) {
 	const tooltip = _photo_gallery_ensure_tooltip();
 	const padding = 14;
@@ -720,6 +733,13 @@ function _photo_gallery_update_tooltip (index, values) {
 	}
 
 	tooltip.innerHTML = html;
+
+	const preview = _photo_gallery_preview_node(entry);
+
+	if (preview) {
+		tooltip.insertBefore(preview, tooltip.firstChild);
+	}
+
 	tooltip.style.display = "block";
 }
 
@@ -1821,6 +1841,22 @@ async function set_global_x_y_and_dispose_images(x, y, images) {
 
 function reset_xy_display_data () {
 	$("#xy_display_data").html("").hide();
+
+	_xy_data_plot_data = null;
+
+	var $plot = $("#xy_2d_plot");
+
+	if ($plot.length) {
+		if (typeof Plotly !== "undefined") {
+			try {
+				Plotly.purge($plot[0]);
+			} catch (e) {
+				dbg("[reset_xy_display_data] plot purge failed: " + e);
+			}
+		}
+
+		$plot.empty().hide();
+	}
 }
 
 function check_xy_for_x_and_y(xy_data) {

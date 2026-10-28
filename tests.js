@@ -1354,8 +1354,10 @@ async function run_super_quick_tests (quick=0) {
 	await test_photo_gallery_hit_testing_across_rows();
 	await test_photo_gallery_prediction_cache_reuse_and_invalidation();
 	await test_photo_gallery_prediction_guards();
+	await test_photo_gallery_tooltip_shows_image_while_training();
 	await test_photo_gallery_correct_category_visibility();
 	await test_photo_gallery_resize_cycles_under_load();
+	await test_image_dataset_switch_hides_xy_plot();
 	await test_max_activation_iterations_auto_not_red();
 }
 
@@ -1514,6 +1516,11 @@ async function test_photo_gallery_hover_prediction () {
 		return false;
 	}
 
+	if (!canvas.getBoundingClientRect().width || !canvas.getBoundingClientRect().height) {
+		show_tab_label("training_data_tab_label", 1);
+		await new Promise(function (resolve) { setTimeout(resolve, 150); });
+	}
+
 	const rect = canvas.getBoundingClientRect();
 	const client_x = rect.left + 6;
 	const client_y = rect.top + 6;
@@ -1535,6 +1542,13 @@ async function test_photo_gallery_hover_prediction () {
 		return false;
 	}
 
+	const preview = $("#photo_gallery_tooltip > .grid_image_tooltip_img");
+
+	test_equal("Hover shows exactly one image preview", preview.length, 1);
+	test_equal("Hover preview shows the hovered image", preview.length === 1 && preview[0].src === entry.img.src, true);
+	test_equal("Hover preview is the first tooltip element", $("#photo_gallery_tooltip").children().first().hasClass("grid_image_tooltip_img"), true);
+	test_equal("Hover preview is followed by the prediction rows", preview.next().hasClass("gti_row"), true);
+
 	const values = await _photo_gallery_wait_for_prediction(entry.url, 10000);
 
 	if (!values) {
@@ -1549,6 +1563,7 @@ async function test_photo_gallery_hover_prediction () {
 	const expected_rows = labels.length + (prediction_is_wrong ? 1 : 0);
 
 	test_equal("Hover produces one probability per label", $("#photo_gallery_tooltip .gti_row").length, expected_rows);
+	test_equal("Prediction update keeps the image preview", $("#photo_gallery_tooltip > .grid_image_tooltip_img").length, 1);
 
 	if (prediction_is_wrong) {
 		test_equal("Tooltip names the correct category when prediction is wrong", $("#photo_gallery_tooltip").text().indexOf(String(correct_category)) !== -1, true);
@@ -1563,6 +1578,37 @@ async function test_photo_gallery_hover_prediction () {
 
 		if (typeof get_last_layer_activation_function === "function" && get_last_layer_activation_function() === "softmax") {
 			test_equal("Tooltip contains percentage text", /%/.test($("#photo_gallery_tooltip").text()), true);
+		}
+	}
+
+	if (_photo_gallery.entries.length > 1) {
+		const target_index = 1;
+		const scan_step = 8;
+		const scan_rect = canvas.getBoundingClientRect();
+		var target_x = null;
+		var target_y = null;
+
+		for (var scan_y = scan_rect.top + 1; scan_y < scan_rect.bottom && target_x === null; scan_y += scan_step) {
+			for (var scan_x = scan_rect.left + 1; scan_x < scan_rect.right; scan_x += scan_step) {
+				if (_photo_gallery_index_at(scan_x, scan_y) === target_index) {
+					target_x = scan_x;
+					target_y = scan_y;
+					break;
+				}
+			}
+		}
+
+
+		test_equal("Second gallery cell is reachable through hit testing", target_x !== null, true);
+
+		if (target_x !== null) {
+			canvas.dispatchEvent(new MouseEvent("mousemove", {bubbles: true, cancelable: true, clientX: target_x, clientY: target_y}));
+			await new Promise(function (resolve) { setTimeout(resolve, 50); });
+
+			const second_preview = $("#photo_gallery_tooltip > .grid_image_tooltip_img");
+
+			test_equal("Moving to the next image updates the hovered cell", _photo_gallery.hover_index, target_index);
+			test_equal("Moving to the next image updates the preview", second_preview.length === 1 && second_preview[0].src === _photo_gallery.entries[target_index].img.src, true);
 		}
 	}
 
@@ -2218,6 +2264,111 @@ async function test_photo_gallery_prediction_guards () {
 		_predict_full_running = old_predict_running;
 		_photo_gallery_restore_test_state(saved);
 	}
+
+	return true;
+}
+
+async function test_photo_gallery_tooltip_shows_image_while_training () {
+	const saved = _photo_gallery_save_test_state();
+	const old_cache = _photo_gallery_prediction_cache;
+	const old_started_training = started_training;
+	const canvas = document.getElementById("photo_gallery_canvas");
+	const entry = _photo_gallery.entries[0];
+
+	if (!canvas || !entry) {
+		test_equal("Gallery entry available for training tooltip test", false, true);
+		return false;
+	}
+
+	try {
+		started_training = true;
+		_photo_gallery_prediction_cache = {};
+		_photo_gallery_hide_tooltip();
+
+		const rect = canvas.getBoundingClientRect();
+		canvas.dispatchEvent(new MouseEvent("mousemove", {bubbles: true, cancelable: true, clientX: rect.left + 6, clientY: rect.top + 6}));
+
+		const shown = await _photo_gallery_wait_for_tooltip(3000);
+		const preview = $("#photo_gallery_tooltip > .grid_image_tooltip_img");
+
+		test_equal("Tooltip appears while training", shown, true);
+		test_equal("Tooltip shows the image while training", preview.length, 1);
+		test_equal("Tooltip image belongs to the hovered example", preview.length === 1 && preview[0].src === entry.img.src, true);
+		test_equal("Tooltip image stays above the placeholder row", preview.next().hasClass("gti_row"), true);
+		test_equal("Tooltip still shows the pending prediction placeholder", $("#photo_gallery_tooltip .gti_value").text().trim(), "…");
+	} finally {
+		started_training = old_started_training;
+		_photo_gallery_prediction_cache = old_cache;
+		_photo_gallery_hide_tooltip();
+		_photo_gallery_restore_test_state(saved);
+	}
+
+	return true;
+}
+
+async function test_image_dataset_switch_hides_xy_plot () {
+	const $plot = $("#xy_2d_plot");
+	const $xy_display = $("#xy_display_data");
+
+	if (!$plot.length) {
+		test_equal("2-D data plot exists for dataset switch test", false, true);
+		return false;
+	}
+
+	const original_input_shape_is_image = input_shape_is_image;
+	const original_plot_display = $plot.css("display");
+	const original_xy_display = $xy_display.css("display");
+	const original_plot_data = _xy_data_plot_data;
+	var results = {};
+
+	try {
+		input_shape_is_image = function () { return false; };
+		show_or_hide_photos_depending_on_if_index();
+		results.non_image_shows_xy_view = $xy_display.css("display") !== "none";
+
+		$plot.show().html("<div class='xy_plot_stale'>stale plot</div>");
+		_xy_data_plot_data = {pts: [{coords: [0, 1], color: "#000", y_val: 1, label: ""}], ndim: 2};
+
+		input_shape_is_image = function () { return true; };
+		show_or_hide_photos_depending_on_if_index();
+
+		results.hidden = $plot.css("display") === "none";
+		results.cache_cleared = _xy_data_plot_data === null;
+		results.stale_dom_removed = $plot.find(".xy_plot_stale").length === 0;
+
+		input_shape_is_image = function () { return false; };
+		show_or_hide_photos_depending_on_if_index();
+		$plot.show();
+		_xy_data_plot_data = {pts: [], ndim: 2};
+
+		input_shape_is_image = function () { return true; };
+		show_or_hide_photos_depending_on_if_index();
+
+		results.hidden_after_round_trip = $plot.css("display") === "none";
+		results.cache_cleared_after_round_trip = _xy_data_plot_data === null;
+	} finally {
+		input_shape_is_image = original_input_shape_is_image;
+		_xy_data_plot_data = original_plot_data;
+
+		if (original_plot_display === "none") {
+			$plot.hide();
+		} else {
+			$plot.show();
+		}
+
+		if (original_xy_display === "none") {
+			$xy_display.hide();
+		} else {
+			$xy_display.show();
+		}
+	}
+
+	test_equal("Non-image dataset switch exposes the xy data view", results.non_image_shows_xy_view, true);
+	test_equal("Switching back to an image dataset hides the 2-D data plot", results.hidden, true);
+	test_equal("Switching back to an image dataset clears the cached plot data", results.cache_cleared, true);
+	test_equal("Switching back to an image dataset removes stale plot DOM", results.stale_dom_removed, true);
+	test_equal("A second FF-NN to CNN switch hides the plot again", results.hidden_after_round_trip, true);
+	test_equal("A second FF-NN to CNN switch clears the plot cache again", results.cache_cleared_after_round_trip, true);
 
 	return true;
 }

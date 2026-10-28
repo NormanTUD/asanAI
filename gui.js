@@ -624,6 +624,8 @@ async function dispose_if_exists(element) {
 
 function show_or_hide_photos_depending_on_if_index(index) {
 	if(!index) {
+		reset_xy_display_data();
+
 		if(input_shape_is_image()) {
 			$("#photos").show();
 			$("#xy_display_data").hide();
