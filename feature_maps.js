@@ -491,17 +491,352 @@ async function _render_image_result(full_data, layer_idx, neuron, previewCanvas,
 	};
 	scaleNestedArray(data);
 
+	var canvas;
+
 	if (previewCanvas) {
-		draw_grid(previewCanvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
-		return previewCanvas;
+		canvas = previewCanvas;
+		draw_grid(canvas, 1, data, 1, 0, null, null, data_hash, "layer_image");
 	} else {
 		var fragment = document.createDocumentFragment();
-		var canvas = get_canvas_in_class(layer_idx, "maximally_activated_class", 0, 1);
-		draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
+		canvas = get_canvas_in_class(layer_idx, "maximally_activated_class", 0, 1);
+		draw_grid(canvas, 1, data, 1, 0, null, null, data_hash, "layer_image");
 		fragment.appendChild(canvas);
 		if (container) container.appendChild(fragment);
-		return canvas;
 	}
+
+	canvas.__featureMapCacheKey = JSON.stringify(data_hash) + "|" + (typeof weights_generation !== "undefined" ? weights_generation : 0);
+	_decorate_feature_map_canvas(canvas);
+
+	return canvas;
+}
+
+// ============================================================================
+// Feature-map hover predictions + per-map zoom controls
+// ============================================================================
+
+var _feature_map_hover_state = {
+	tooltip: null,
+	body: null,
+	timer: null,
+	token: 0,
+	running: false,
+	queued: null,
+	canvas: null,
+	cache: {}
+};
+
+function _feature_map_ensure_tooltip () {
+	if (_feature_map_hover_state.tooltip && document.body.contains(_feature_map_hover_state.tooltip)) {
+		return _feature_map_hover_state.tooltip;
+	}
+
+	const tooltip = document.createElement("div");
+	tooltip.id = "feature_map_tooltip";
+	tooltip.className = "grid_image_tooltip feature-map-tooltip";
+	tooltip.style.display = "none";
+
+	const body = document.createElement("div");
+	body.className = "feature-map-tooltip-body";
+	tooltip.appendChild(body);
+
+	document.body.appendChild(tooltip);
+
+	_feature_map_hover_state.tooltip = tooltip;
+	_feature_map_hover_state.body = body;
+
+	return tooltip;
+}
+
+function _feature_map_preview_node (canvas) {
+	if (!canvas || !canvas.width || !canvas.height) {
+		return null;
+	}
+
+	const preview = document.createElement("canvas");
+	const max_size = 96;
+	const ratio = Math.min(1, max_size / Math.max(canvas.width, canvas.height, 1));
+
+	preview.width = Math.max(1, Math.round(canvas.width * ratio));
+	preview.height = Math.max(1, Math.round(canvas.height * ratio));
+	preview.className = "feature-map-tooltip-preview";
+
+	try {
+		preview.getContext("2d").drawImage(canvas, 0, 0, preview.width, preview.height);
+	} catch (e) {
+		dbg("[feature_maps] preview canvas failed: " + e);
+		return null;
+	}
+
+	return preview;
+}
+
+function _feature_map_position_tooltip (client_x, client_y) {
+	const tooltip = _feature_map_ensure_tooltip();
+	const padding = 14;
+	var left = client_x + padding;
+	var top = client_y + padding;
+
+	if (left + tooltip.offsetWidth > window.innerWidth - 8) {
+		left = client_x - tooltip.offsetWidth - padding;
+	}
+	if (top + tooltip.offsetHeight > window.innerHeight - 8) {
+		top = client_y - tooltip.offsetHeight - padding;
+	}
+
+	tooltip.style.left = Math.max(8, left) + "px";
+	tooltip.style.top = Math.max(8, top) + "px";
+}
+
+function _feature_map_set_body (html) {
+	const tooltip = _feature_map_ensure_tooltip();
+
+	if (!_feature_map_hover_state.canvas) {
+		return;
+	}
+
+	const preview = _feature_map_preview_node(_feature_map_hover_state.canvas);
+	const body = document.createElement("div");
+
+	body.className = "feature-map-tooltip-body";
+	body.innerHTML = html;
+
+	tooltip.innerHTML = "";
+
+	if (preview) {
+		tooltip.appendChild(preview);
+	}
+
+	tooltip.appendChild(body);
+	_feature_map_hover_state.body = body;
+	tooltip.style.display = "block";
+}
+
+function _feature_map_prediction_status_html (text) {
+	return "<div class='gti_row'><span class='gti_label'>" + _photo_gallery_escape(text) + "</span></div>";
+}
+
+function _feature_map_prediction_html (values) {
+	const summary = _photo_gallery_prediction_summary(values);
+
+	if (!summary) {
+		return _feature_map_prediction_status_html(language[lang]["predicting"]);
+	}
+
+	var html = "";
+
+	for (var prediction_idx = 0; prediction_idx < values.length; prediction_idx++) {
+		const label = (typeof labels !== "undefined" && labels && labels[prediction_idx] !== undefined) ? labels[prediction_idx] : prediction_idx;
+		const content = _photo_gallery_probability_content(prediction_idx, values[prediction_idx], summary.index);
+
+		html += "<div class='gti_row'><span class='gti_label'>" + _photo_gallery_escape(label) + "</span> <span class='gti_value'>" + content + "</span></div>";
+	}
+
+	return html;
+}
+
+function _feature_map_cached_values (canvas) {
+	const key = canvas ? canvas.__featureMapCacheKey : null;
+
+	if (!key) {
+		return null;
+	}
+
+	const entry = _feature_map_hover_state.cache[key];
+
+	if (!entry) {
+		return null;
+	}
+
+	if (entry.model !== model || entry.generation !== (typeof weights_generation !== "undefined" ? weights_generation : 0)) {
+		delete _feature_map_hover_state.cache[key];
+		return null;
+	}
+
+	return entry.values;
+}
+
+function _feature_map_store_values (canvas, values) {
+	const key = canvas ? canvas.__featureMapCacheKey : null;
+
+	if (!key || !values) {
+		return;
+	}
+
+	_feature_map_hover_state.cache[key] = {
+		model: model,
+		generation: (typeof weights_generation !== "undefined" ? weights_generation : 0),
+		values: values
+	};
+}
+
+async function _feature_map_predict_canvas (canvas) {
+	if (typeof _photo_gallery_predict_image !== "function") {
+		return null;
+	}
+
+	if (typeof currently_generating_images !== "undefined" && currently_generating_images) {
+		return null;
+	}
+
+	return await _photo_gallery_predict_image(canvas);
+}
+
+async function _feature_map_run_prediction (canvas, token) {
+	if (_feature_map_hover_state.running) {
+		_feature_map_hover_state.queued = {canvas: canvas, token: token};
+		return;
+	}
+
+	_feature_map_hover_state.running = true;
+
+	try {
+		const values = await _feature_map_predict_canvas(canvas);
+
+		if (token !== _feature_map_hover_state.token || canvas !== _feature_map_hover_state.canvas) {
+			return;
+		}
+
+		if (values) {
+			_feature_map_store_values(canvas, values);
+			_feature_map_set_body(_feature_map_prediction_html(values));
+		} else if (typeof started_training !== "undefined" && started_training) {
+			_feature_map_set_body(_feature_map_prediction_status_html(language[lang]["training"]));
+		} else {
+			_feature_map_set_body("");
+		}
+	} finally {
+		_feature_map_hover_state.running = false;
+
+		const queued = _feature_map_hover_state.queued;
+
+		_feature_map_hover_state.queued = null;
+
+		if (queued && queued.token === _feature_map_hover_state.token) {
+			_feature_map_run_prediction(queued.canvas, queued.token); // await not possible here
+		}
+	}
+}
+
+function _feature_map_schedule_prediction (canvas) {
+	const token = ++_feature_map_hover_state.token;
+
+	_feature_map_hover_state.canvas = canvas;
+
+	if (_feature_map_hover_state.timer) {
+		clearTimeout(_feature_map_hover_state.timer);
+		_feature_map_hover_state.timer = null;
+	}
+
+	const cached = _feature_map_cached_values(canvas);
+
+	if (cached) {
+		_feature_map_set_body(_feature_map_prediction_html(cached));
+		return;
+	}
+
+	_feature_map_set_body(_feature_map_prediction_status_html(language[lang]["predicting"]));
+
+	_feature_map_hover_state.timer = setTimeout(function () {
+		_feature_map_hover_state.timer = null;
+		_feature_map_run_prediction(canvas, token); // await not possible here
+	}, 100);
+}
+
+function _feature_map_hide_tooltip () {
+	_feature_map_hover_state.token++;
+	_feature_map_hover_state.canvas = null;
+
+	if (_feature_map_hover_state.timer) {
+		clearTimeout(_feature_map_hover_state.timer);
+		_feature_map_hover_state.timer = null;
+	}
+
+	if (_feature_map_hover_state.tooltip) {
+		_feature_map_hover_state.tooltip.style.display = "none";
+	}
+}
+
+function _feature_map_bind_hover (canvas) {
+	if (canvas.__featureMapHoverBound) {
+		return;
+	}
+
+	canvas.__featureMapHoverBound = true;
+	canvas.style.cursor = "crosshair";
+
+	canvas.addEventListener("mouseenter", function (event) {
+		_feature_map_schedule_prediction(canvas);
+		_feature_map_position_tooltip(event.clientX, event.clientY);
+	});
+
+	canvas.addEventListener("mousemove", function (event) {
+		_feature_map_position_tooltip(event.clientX, event.clientY);
+	});
+
+	canvas.addEventListener("mouseleave", _feature_map_hide_tooltip);
+}
+
+function _feature_map_decorate_controls (canvas) {
+	if (canvas.__featureMapControls || !canvas.parentNode) {
+		return;
+	}
+
+	const wrapper = document.createElement("span");
+	wrapper.className = "feature-map-item";
+
+	canvas.parentNode.insertBefore(wrapper, canvas);
+	wrapper.appendChild(canvas);
+
+	const neuron_idx = $(canvas).data("neuron");
+	const caption = document.createElement("span");
+	caption.className = "feature-map-caption";
+
+	if (neuron_idx !== undefined && neuron_idx !== null && neuron_idx !== "") {
+		caption.textContent = "#" + (Number(neuron_idx) + 1);
+	}
+
+	wrapper.appendChild(caption);
+
+	const controls = document.createElement("span");
+	controls.className = "feature-map-controls";
+	controls.innerHTML =
+		"<button type='button' class='feature-map-control' data-feature-map-action='smaller' data-tr-title='smaller' aria-label='Smaller'>−</button>" +
+		"<button type='button' class='feature-map-control' data-feature-map-action='reset' data-tr-title='reset' aria-label='Reset'>1:1</button>" +
+		"<button type='button' class='feature-map-control' data-feature-map-action='larger' data-tr-title='larger' aria-label='Larger'>+</button>";
+
+	controls.addEventListener("click", function (event) {
+		const action = event.target.closest("[data-feature-map-action]");
+
+		if (!action) {
+			return;
+		}
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		const name = action.getAttribute("data-feature-map-action");
+
+		if (name === "smaller") {
+			smaller_maximally_activated_neurons();
+		} else if (name === "larger") {
+			larger_maximally_activated_neurons();
+		} else if (name === "reset") {
+			reset_maximally_activated_neurons();
+		}
+	});
+
+	wrapper.appendChild(controls);
+	canvas.__featureMapControls = controls;
+	update_translations(); // await not possible here
+}
+
+function _decorate_feature_map_canvas (canvas) {
+	if (!canvas) {
+		return;
+	}
+
+	_feature_map_bind_hover(canvas);
+	_feature_map_decorate_controls(canvas);
 }
 
 /**
@@ -527,7 +862,7 @@ async function draw_maximally_activated_neuron(layer_idx, neuron, max_neurons) {
 	var original_disable_layer_debuggers = disable_layer_debuggers;
 	disable_layer_debuggers = 1;
 
-	var container = document.getElementById("maximally_activated_content");
+	var container = _feature_map_current_layer_maps_container() || document.getElementById("maximally_activated_content");
 	var previewCanvas = _setup_preview_canvas(layer_idx, container);
 
 	try {
@@ -844,8 +1179,29 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 	return canvasses;
 }
 
+function _feature_map_current_layer_maps_container() {
+	var container = document.getElementById("maximally_activated_content");
+
+	if (!container) {
+		return null;
+	}
+
+	var groups = container.querySelectorAll(".feature-map-layer");
+
+	if (!groups.length) {
+		return container;
+	}
+
+	return groups[groups.length - 1].querySelector(".feature-map-layer-maps") || container;
+}
+
 function add_header_to_maximally_activated_content(layer_idx) {
-	var fragment = document.createDocumentFragment();
+	var group = document.createElement("div");
+	group.className = "feature-map-layer";
+
+	var header = document.createElement("div");
+	header.className = "feature-map-layer-header";
+
 	var h2 = document.createElement("h2");
 	h2.className = 'h2_maximally_activated_layer_contents';
 
@@ -855,10 +1211,24 @@ function add_header_to_maximally_activated_content(layer_idx) {
 	input.value = `Layer ${layer_idx + get_types_in_order(layer_idx)}`;
 
 	h2.appendChild(input);
-	fragment.appendChild(h2);
+	header.appendChild(h2);
+
+	var status_key = (typeof model_is_trained !== "undefined" && model_is_trained) ? "feature_map_status_trained" : "feature_map_status_untrained";
+	var status = document.createElement("span");
+	status.className = "feature-map-layer-status";
+	status.setAttribute("data-tr-text", status_key);
+	status.textContent = (language[lang] && language[lang][status_key]) ? language[lang][status_key] : "";
+
+	header.appendChild(status);
+
+	var maps = document.createElement("div");
+	maps.className = "feature-map-layer-maps";
+
+	group.appendChild(header);
+	group.appendChild(maps);
 
 	var container = document.getElementById("maximally_activated_content");
-	if (container) container.appendChild(fragment);
+	if (container) container.appendChild(group);
 }
 
 function hide_stuff_after_generating_maximally_activated_neurons() {

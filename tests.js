@@ -573,22 +573,262 @@ async function test_maximally_activated_last_layer() {
 		return false;
 	}
 
-	dbg("Clicking first maximally activated element to predict it");
+	test_equal("Feature maps are grouped by layer", $(".feature-map-layer").length >= 1, true);
 
-	const previously_max_activated_predictions = $(".maximally_activated_predictions").length;
+	const last_group = $(".feature-map-layer").last();
+	const group_captions = last_group.find(".feature-map-caption").map(function () { return $(this).text(); }).get();
+	const expected_status = (typeof model_is_trained !== "undefined" && model_is_trained) ? language[lang]["feature_map_status_trained"] : language[lang]["feature_map_status_untrained"];
+	const row_status = last_group.find(".feature-map-layer-status");
 
-	$($("#maximally_activated_content").find("canvas"))[0].click();
+	test_equal("Feature map captions enumerate the neurons in order", group_captions.length > 0 && group_captions.every(function (value, index) { return value === "#" + (index + 1); }), true);
+	test_equal("Each feature map row shows its generation-time training state", row_status.length, 1);
+	test_equal("Feature map row status matches the state at generation time", row_status.text().indexOf(expected_status) !== -1, true);
 
-	await delay(2000);
+	dbg("Hovering first maximally activated element to predict it");
 
-	dbg("Count number of predictions");
-	const now_max_activated_predictions = $(".maximally_activated_predictions").length;
+	const canvas = $($("#maximally_activated_content").find("canvas"))[0];
+	const rect = canvas.getBoundingClientRect();
+	const canvas_controls = $(canvas).closest(".feature-map-item").find(".feature-map-controls");
 
-	dbg("Clicked first maximally activated element to predict it");
+	delete_maximally_activated_predictions();
+	reset_maximally_activated_neurons();
 
-	if(Math.abs(now_max_activated_predictions - previously_max_activated_predictions) != 1) {
-		err(`test_maximally_activated_last_layer: Previously, ${previously_max_activated_predictions} max activated canvasses were predicted. Now, it should be, ${previously_max_activated_predictions + 1}, but is ${now_max_activated_predictions}`);
+	canvas.dispatchEvent(new MouseEvent("mouseenter", {bubbles: false, cancelable: true, clientX: rect.left + 6, clientY: rect.top + 6}));
+	canvas.dispatchEvent(new MouseEvent("mousemove", {bubbles: true, cancelable: true, clientX: rect.left + 6, clientY: rect.top + 6}));
+
+	const hover_deadline = Date.now() + 10000;
+
+	while (Date.now() < hover_deadline && !$("#feature_map_tooltip .gti_row .gti_value").length) {
+		await delay(50);
+	}
+
+	test_equal("Feature map hover shows the tooltip", $("#feature_map_tooltip").css("display") !== "none", true);
+	test_equal("Feature map hover renders prediction rows", $("#feature_map_tooltip .gti_row").length > 0, true);
+	test_equal("Feature map hover shows the map as preview", $("#feature_map_tooltip .feature-map-tooltip-preview").length, 1);
+	test_equal("Feature map hover prediction is cached", !!canvas.__featureMapCacheKey && !!_feature_map_hover_state.cache[canvas.__featureMapCacheKey], true);
+	test_equal("Feature maps have zoom controls attached to the image", canvas_controls.length, 1);
+
+	const controls_before = canvas_controls[0].getBoundingClientRect();
+	const scale_before = get_scale();
+
+	canvas_controls.find("[data-feature-map-action='larger']").click();
+
+	const controls_after = canvas_controls[0].getBoundingClientRect();
+
+	test_equal("Larger control scales the feature maps", get_scale() > scale_before, true);
+	test_equal("Zoom controls stay in place while the map scales", Math.abs(controls_after.left - controls_before.left) <= 1 && Math.abs(controls_after.top - controls_before.top) <= 1, true);
+
+	canvas_controls.find("[data-feature-map-action='smaller']").click();
+	test_equal("Smaller control scales the feature maps back", Math.abs(get_scale() - scale_before) < 1e-9, true);
+	canvas_controls.find("[data-feature-map-action='reset']").click();
+	test_equal("Reset control restores the default scale", get_scale(), 1);
+
+	const tooltip = document.getElementById("feature_map_tooltip");
+	const original_darkmode = document.body.classList.contains("darkmode");
+
+	document.body.classList.add("darkmode");
+	await delay(500);
+	const tooltip_dark = getComputedStyle(tooltip).backgroundColor;
+	document.body.classList.remove("darkmode");
+	await delay(500);
+	const tooltip_light = getComputedStyle(tooltip).backgroundColor;
+
+	const dark_rgb = /rgba?\((\d+), (\d+), (\d+)/.exec(tooltip_dark);
+	const light_rgb = /rgba?\((\d+), (\d+), (\d+)/.exec(tooltip_light);
+
+	test_equal("Feature map tooltip uses a dark background in dark mode", !!dark_rgb && Number(dark_rgb[1]) < 100 && dark_rgb[1] === dark_rgb[2] && dark_rgb[2] === dark_rgb[3], true);
+	test_equal("Feature map tooltip uses a light background in light mode", !!light_rgb && Number(light_rgb[1]) > 200 && light_rgb[1] === light_rgb[2] && light_rgb[2] === light_rgb[3], true);
+
+	if (original_darkmode) {
+		document.body.classList.add("darkmode");
+	}
+
+	const original_lang = lang;
+
+	try {
+		await update_lang("de");
+		await delay(100);
+		test_equal("Feature map tooltip uses German status text", _feature_map_prediction_html(null).indexOf(language.de["predicting"]) !== -1, true);
+
+		await update_lang("en");
+		await delay(100);
+		test_equal("Feature map tooltip uses English status text", _feature_map_prediction_html(null).indexOf(language.en["predicting"]) !== -1, true);
+	} finally {
+		await update_lang(original_lang);
+		await delay(100);
+	}
+
+	const rapid_canvases = $("#maximally_activated_content canvas").toArray().slice(0, 5);
+
+	for (var rapid_idx = 0; rapid_idx < rapid_canvases.length; rapid_idx++) {
+		const rapid_rect = rapid_canvases[rapid_idx].getBoundingClientRect();
+		rapid_canvases[rapid_idx].dispatchEvent(new MouseEvent("mouseenter", {bubbles: false, cancelable: true, clientX: rapid_rect.left + 5, clientY: rapid_rect.top + 5}));
+	}
+
+	await delay(3000);
+
+	test_equal("Rapid feature map hovering settles into one prediction", _feature_map_hover_state.running, false);
+	test_equal("Rapid feature map hovering never inserts prediction blocks", $(".maximally_activated_predictions").length, 0);
+
+	_feature_map_hide_tooltip();
+	await delay(100);
+	test_equal("Feature map tooltip hides on mouseleave", $("#feature_map_tooltip").css("display"), "none");
+
+	delete_maximally_activated_predictions();
+	canvas.click();
+	await delay(500);
+	test_equal("Clicking a feature map no longer inserts a prediction block", $(".maximally_activated_predictions").length, 0);
+	return true;
+}
+
+function test_feature_map_intro_is_short () {
+	const en = language.en && language.en["maximally_activated_explanation_short"];
+	const de = language.de && language.de["maximally_activated_explanation_short"];
+
+	test_equal("Feature map intro exists in English", typeof en === "string" && en.length > 0, true);
+	test_equal("Feature map intro exists in German", typeof de === "string" && de.length > 0, true);
+	test_equal("Feature map intro stays readable in English", typeof en === "string" && en.length < 520, true);
+	test_equal("Feature map intro stays readable in German", typeof de === "string" && de.length < 520, true);
+	test_equal("Feature map details are collapsed by default", $(".feature-map-details").prop("open") !== true, true);
+
+	return true;
+}
+
+async function test_feature_map_row_status_is_per_generation_and_translated () {
+	const container = document.getElementById("maximally_activated_content");
+
+	if (!container) {
+		test_equal("Feature map content exists for row status test", false, true);
 		return false;
+	}
+
+	const previous_groups = container.querySelectorAll(":scope > .feature-map-layer").length;
+	const old_model_is_trained = model_is_trained;
+	const old_lang = lang;
+	var new_groups = [];
+
+	try {
+		model_is_trained = false;
+		add_header_to_maximally_activated_content(0);
+
+		model_is_trained = true;
+		add_header_to_maximally_activated_content(0);
+
+		new_groups = Array.from(container.querySelectorAll(":scope > .feature-map-layer")).slice(previous_groups);
+
+		test_equal("Each feature map row gets its own status badge", new_groups.length, 2);
+
+		const untrained_key = new_groups[0].querySelector(".feature-map-layer-status").getAttribute("data-tr-text");
+		const trained_key = new_groups[1].querySelector(".feature-map-layer-status").getAttribute("data-tr-text");
+
+		test_equal("Old rows keep the state they were generated with", untrained_key, "feature_map_status_untrained");
+		test_equal("New rows record the trained state", trained_key, "feature_map_status_trained");
+
+		await update_lang("de");
+		await delay(100);
+		test_equal("Row status badges follow language changes", new_groups[0].querySelector(".feature-map-layer-status").textContent, language.de["feature_map_status_untrained"]);
+
+		await update_lang("en");
+		await delay(100);
+		test_equal("Row status badges switch back with the language", new_groups[1].querySelector(".feature-map-layer-status").textContent, language.en["feature_map_status_trained"]);
+	} finally {
+		new_groups.forEach(function (group) { group.remove(); });
+		model_is_trained = old_model_is_trained;
+		await update_lang(old_lang);
+		await delay(100);
+	}
+
+	return true;
+}
+
+async function test_gradient_flow_empty_state_on_activation () {
+	const active_tab_label = $("#navbar1 .navi_list > li[aria-expanded='true'] > a").prop("id");
+
+	GradientFlowHeatmap.reset();
+	window.__gradient_flow_visible = false;
+
+	try {
+		show_tab_label("gradient_flow_tab_label", 1);
+		await delay(500);
+
+		const $tab = $("#gradient_flow");
+
+		test_equal("Gradient flow renders a container when its tab opens", $tab.find(".gflow_container").length, 1);
+		test_equal("Gradient flow shows an empty state before training", $tab.find(".gflow_empty").css("display") !== "none", true);
+		test_equal("Gradient flow empty state asks the reader to train", $tab.find(".gflow_empty").text().indexOf(language[lang]["gflow_waiting"]) !== -1, true);
+	} finally {
+		if (active_tab_label && active_tab_label !== "gradient_flow_tab_label") {
+			show_tab_label(active_tab_label, 1);
+		}
+		await delay(200);
+	}
+
+	return true;
+}
+
+function test_explainability_axis_label_fallback () {
+	if (typeof ExplainabilityLib === "undefined" || typeof Plotly === "undefined") {
+		test_equal("ExplainabilityLib and Plotly are available", false, true);
+		return false;
+	}
+
+	const div = document.createElement("div");
+	div.id = "axis_fallback_test";
+	div._fullLayout = {annotations: []};
+	document.body.appendChild(div);
+
+	const old_add_annotations = Plotly.addAnnotations;
+	const old_relayout = Plotly.relayout;
+	const old_wrns = num_wrns;
+	var captured = null;
+
+	try {
+		Plotly.addAnnotations = undefined;
+		Plotly.relayout = function (target, update) {
+			captured = update;
+			target._fullLayout.annotations = update.annotations || [];
+		};
+
+		const ok = ExplainabilityLib.forceAxisLabels("axis_fallback_test", "Test X", "Test Y");
+
+		test_equal("Axis label fallback returns true", ok, true);
+		test_equal("Axis label fallback uses relayout when addAnnotations is missing", !!captured && Array.isArray(captured.annotations) && captured.annotations.length === 2, true);
+		test_equal("Axis label fallback does not add warnings", num_wrns, old_wrns);
+
+		ExplainabilityLib.forceAxisLabels("axis_fallback_test", "Test X", "Test Y");
+		test_equal("Axis label fallback does not duplicate annotations", captured.annotations.length, 2);
+	} finally {
+		Plotly.addAnnotations = old_add_annotations;
+		Plotly.relayout = old_relayout;
+		div.remove();
+	}
+
+	return true;
+}
+
+function test_fcnn_neuron_colors_use_global_range_when_constant () {
+	const canvas = document.createElement("canvas");
+	canvas.width = 40;
+	canvas.height = 20;
+	const ctx = canvas.getContext("2d");
+
+	function center_value (values, neuron_idx, global_min, global_max) {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		draw_neuron_with_normalized_color(ctx, values, 20, 10, 8, neuron_idx, global_min, global_max);
+		return ctx.getImageData(20, 10, 1, 1).data[0];
+	}
+
+	test_equal("Constant positive activation uses the global scale (white)", center_value([1], 0, 0, 1), 255);
+	test_equal("Constant zero activation uses the global scale (black)", center_value([0], 0, 0, 1), 0);
+	test_equal("Varied activation still uses the per-layer scale (black)", center_value([0, 0.5, 1], 0, 0, 1), 0);
+
+	const old_layer_states_saved = layer_states_saved;
+
+	try {
+		layer_states_saved = {"0": {output: [[0, 2]]}, "1": {output: [[1]]}};
+		test_equal("Global activation range spans all layers", JSON.stringify(_compute_global_activation_range()), JSON.stringify([0, 2]));
+	} finally {
+		layer_states_saved = old_layer_states_saved;
 	}
 
 	return true;
@@ -1145,7 +1385,17 @@ async function run_super_quick_tests (quick=0) {
 
 	test_equal("test_maximally_activated_last_layer()", await test_maximally_activated_last_layer(), true);
 
+	test_equal("test_feature_map_row_status_is_per_generation_and_translated()", await test_feature_map_row_status_is_per_generation_and_translated(), true);
+
 	test_equal("test_resolve_maximally_activated_iterations()", test_resolve_maximally_activated_iterations(), true);
+
+	test_equal("test_feature_map_intro_is_short()", test_feature_map_intro_is_short(), true);
+
+	test_equal("test_gradient_flow_empty_state_on_activation()", await test_gradient_flow_empty_state_on_activation(), true);
+
+	test_equal("test_explainability_axis_label_fallback()", test_explainability_axis_label_fallback(), true);
+
+	test_equal("test_fcnn_neuron_colors_use_global_range_when_constant()", test_fcnn_neuron_colors_use_global_range_when_constant(), true);
 
 	test_equal('computeCRC32("")', computeCRC32(""), 0);
 	test_equal('computeCRC32("asasd")', computeCRC32("asasd"), 3324180253);
@@ -1516,11 +1766,6 @@ async function test_photo_gallery_hover_prediction () {
 		return false;
 	}
 
-	if (!canvas.getBoundingClientRect().width || !canvas.getBoundingClientRect().height) {
-		show_tab_label("training_data_tab_label", 1);
-		await new Promise(function (resolve) { setTimeout(resolve, 150); });
-	}
-
 	const rect = canvas.getBoundingClientRect();
 	const client_x = rect.left + 6;
 	const client_y = rect.top + 6;
@@ -1583,35 +1828,48 @@ async function test_photo_gallery_hover_prediction () {
 
 	if (_photo_gallery.entries.length > 1) {
 		const target_index = 1;
-		const scan_step = 8;
-		const scan_rect = canvas.getBoundingClientRect();
-		var target_x = null;
-		var target_y = null;
+		const active_tab_label = $("#navbar1 .navi_list > li[aria-expanded='true'] > a").prop("id");
+		const needs_tab_switch = !canvas.getBoundingClientRect().width || !canvas.getBoundingClientRect().height;
 
-		for (var scan_y = scan_rect.top + 1; scan_y < scan_rect.bottom && target_x === null; scan_y += scan_step) {
-			for (var scan_x = scan_rect.left + 1; scan_x < scan_rect.right; scan_x += scan_step) {
-				if (_photo_gallery_index_at(scan_x, scan_y) === target_index) {
-					target_x = scan_x;
-					target_y = scan_y;
-					break;
+		if (needs_tab_switch) {
+			show_tab_label("training_data_tab_label", 1);
+			await new Promise(function (resolve) { setTimeout(resolve, 150); });
+		}
+
+		try {
+			const scan_step = 8;
+			const scan_rect = canvas.getBoundingClientRect();
+			var target_x = null;
+			var target_y = null;
+
+			for (var scan_y = scan_rect.top + 1; scan_y < scan_rect.bottom && target_x === null; scan_y += scan_step) {
+				for (var scan_x = scan_rect.left + 1; scan_x < scan_rect.right; scan_x += scan_step) {
+					if (_photo_gallery_index_at(scan_x, scan_y) === target_index) {
+						target_x = scan_x;
+						target_y = scan_y;
+						break;
+					}
 				}
 			}
-		}
 
+			test_equal("Second gallery cell is reachable through hit testing", target_x !== null, true);
 
-		test_equal("Second gallery cell is reachable through hit testing", target_x !== null, true);
+			if (target_x !== null) {
+				canvas.dispatchEvent(new MouseEvent("mousemove", {bubbles: true, cancelable: true, clientX: target_x, clientY: target_y}));
+				await new Promise(function (resolve) { setTimeout(resolve, 50); });
 
-		if (target_x !== null) {
-			canvas.dispatchEvent(new MouseEvent("mousemove", {bubbles: true, cancelable: true, clientX: target_x, clientY: target_y}));
-			await new Promise(function (resolve) { setTimeout(resolve, 50); });
+				const second_preview = $("#photo_gallery_tooltip > .grid_image_tooltip_img");
 
-			const second_preview = $("#photo_gallery_tooltip > .grid_image_tooltip_img");
-
-			test_equal("Moving to the next image updates the hovered cell", _photo_gallery.hover_index, target_index);
-			test_equal("Moving to the next image updates the preview", second_preview.length === 1 && second_preview[0].src === _photo_gallery.entries[target_index].img.src, true);
+				test_equal("Moving to the next image updates the hovered cell", _photo_gallery.hover_index, target_index);
+				test_equal("Moving to the next image updates the preview", second_preview.length === 1 && second_preview[0].src === _photo_gallery.entries[target_index].img.src, true);
+			}
+		} finally {
+			if (needs_tab_switch && active_tab_label && active_tab_label !== "training_data_tab_label") {
+				show_tab_label(active_tab_label, 1);
+				await new Promise(function (resolve) { setTimeout(resolve, 150); });
+			}
 		}
 	}
-
 	canvas.dispatchEvent(new MouseEvent("mouseleave", {bubbles: true, cancelable: true}));
 	await new Promise(function (resolve) { setTimeout(resolve, 50); });
 
@@ -1637,6 +1895,10 @@ async function test_photo_gallery_tooltip_alignment () {
 	}
 
 	const values = cached.values;
+
+	_photo_gallery_update_tooltip(0, values);
+	await new Promise(function (resolve) { setTimeout(resolve, 50); });
+
 	const rows = $("#photo_gallery_tooltip .gti_row");
 	const label_lefts = rows.map(function () {
 		const label = this.querySelector(".gti_label");

@@ -62,20 +62,21 @@
 	</div>
 
 	<div id="maximally_activated" class="tab maximally_activated_class">
-		<div>
-			<span class="temml_me">x = </span> <span class="TRANSLATEME_input_image"></span><br>
-			<span class="temml_me">x* = </span> <span class="TRANSLATEME_generated_image"></span><br>
-			<span class="temml_me">W = </span> <span class="TRANSLATEME_weights"></span><br>
-			<span class="temml_me">b = </span> <span class="TRANSLATEME_bias"></span><br>
-			<span class="temml_me">f(\textbf{x}; \textbf{W}, b) = </span> <span class="TRANSLATEME_activation_function_of_neuron"><br>
-			<span class="temml_me">\textbf{x}* = \mathrm{argmax}_xf(\textbf{x}; \textbf{W}, b)</span> <br>
+		<div class="feature-map-intro">
+			<p class="feature-map-lede TRANSLATEME_maximally_activated_explanation_short"></p>
+			<div class="feature-map-equation temml_me">\textbf{x}* = \mathrm{argmax}_x f(\textbf{x}; \textbf{W}, b)</div>
+			<details class="feature-map-details">
+				<summary class="TRANSLATEME_feature_map_how_it_works"></summary>
+				<div class="TRANSLATEME_maximally_activated_explanation"></div>
+				<div style="margin-top: 8px">
+					<span class="temml_me">x = </span> <span class="TRANSLATEME_input_image"></span><br>
+					<span class="temml_me">x* = </span> <span class="TRANSLATEME_generated_image"></span><br>
+					<span class="temml_me">W = </span> <span class="TRANSLATEME_weights"></span><br>
+					<span class="temml_me">b = </span> <span class="TRANSLATEME_bias"></span><br>
+					<span class="temml_me">f(\textbf{x}; \textbf{W}, b) = </span> <span class="TRANSLATEME_activation_function_of_neuron"></span>
+				</div>
+			</details>
 		</div>
-		<span class="TRANSLATEME_maximally_activated_explanation"></span>
-		<br>
-		<button onclick="smaller_maximally_activated_neurons()"><span class="TRANSLATEME_smaller"></span></button>
-		<button onclick="larger_maximally_activated_neurons()"><span class="TRANSLATEME_larger"></span></button>
-		<button onclick="reset_maximally_activated_neurons()"><span class="TRANSLATEME_reset"></span></button>
-		<button onclick="delete_maximally_activated_predictions()"><span class="TRANSLATEME_delete_predictions"></span></button>
 		<div id="maximally_activated_content"></div>
 	</div>
 

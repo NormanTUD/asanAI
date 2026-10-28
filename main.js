@@ -175,6 +175,7 @@ function init_tabs () {
 
 			if (ui.newPanel.attr("id") == "gradient_flow") {
 				window.__gradient_flow_visible = true;
+				gradientFlowToSummary();
 			}
 
 			if (ui.newPanel.attr("id") == "weight_analysis" && typeof WeightAnalysis !== "undefined") {

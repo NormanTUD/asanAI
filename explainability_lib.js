@@ -735,7 +735,20 @@ var ExplainabilityLib = (function () {
 			}
 
 			if (anns.length) {
-				Plotly.addAnnotations(div, anns);
+				var existing = (div._fullLayout && Array.isArray(div._fullLayout.annotations)) ? div._fullLayout.annotations : [];
+				anns = anns.filter(function (annotation) {
+					return !existing.some(function (entry) {
+						return entry.text === annotation.text && entry.x === annotation.x && entry.y === annotation.y;
+					});
+				});
+
+				if (anns.length) {
+					if (typeof Plotly.addAnnotations === "function") {
+						Plotly.addAnnotations(div, anns);
+					} else {
+						Plotly.relayout(div, { annotations: existing.concat(anns) });
+					}
+				}
 			}
 		} catch (e) {
 			wrn("[ExplainabilityLib] axis label verify failed: " + e);
