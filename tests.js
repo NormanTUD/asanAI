@@ -1635,6 +1635,53 @@ async function run_quick_start_stop_training_test() {
 	test_no_new_errors_or_warnings();
 }
 
+async function test_load_image_retries_transient_failures() {
+	const original_load_image = window.load_image;
+	var calls = 0;
+
+	window.load_image = async function () {
+		calls++;
+		if (calls < 3) {
+			throw new Error("transient image load failure");
+		}
+		return "loaded";
+	};
+
+	try {
+		const result = await load_image_with_retry("retry-test.jpg", 3);
+		return result === "loaded" && calls === 3;
+	} finally {
+		window.load_image = original_load_image;
+	}
+}
+
+async function test_failed_image_is_not_added_as_null() {
+	const original_handler = window.handleImageDownload;
+	const original_force_download = force_download;
+	const original_started_training = started_training;
+	const original_stop_downloading_data = stop_downloading_data;
+	const url = "missing-training-image.jpg";
+	const keys = {[url]: "category"};
+	const data = {"category": []};
+
+	window.handleImageDownload = async function () {
+		return null;
+	};
+	force_download = true;
+	started_training = true;
+	stop_downloading_data = false;
+
+	try {
+		await downloadSingleUrl(url, 0, [url], null, undefined, [], 0, 1, keys, data);
+		return data["category"].length === 0;
+	} finally {
+		window.handleImageDownload = original_handler;
+		force_download = original_force_download;
+		started_training = original_started_training;
+		stop_downloading_data = original_stop_downloading_data;
+	}
+}
+
 async function run_super_quick_tests (quick=0) {
 	test_equal("test ok", 1, 1);
 	test_not_equal("test not equal", 1, 2);
@@ -1727,6 +1774,9 @@ async function run_super_quick_tests (quick=0) {
 
 	test_equal("heuristic_layer_possibility_check(0, \"flatten\")", heuristic_layer_possibility_check(0, "flatten"), true);
 	test_equal("heuristic_layer_possibility_check(0, \"dense\")", heuristic_layer_possibility_check(0, "dense"), true);
+
+	test_equal("load_image_with_retry retries transient failures", await test_load_image_retries_transient_failures(), true);
+	test_equal("failed image is not added as a null sample", await test_failed_image_is_not_added_as_null(), true);
 
 	var fit_data = await get_fit_data();
 

@@ -12,6 +12,14 @@ from typing import Optional
 from playwright.async_api import async_playwright, Error
 
 DEFAULT_CHROMIUM_PATH = "/usr/bin/chromium"
+APP_READY_TIMEOUT_MS = 180_000
+APP_READY_EXPRESSION = (
+    "() => window.finished_loading === true "
+    "&& typeof model !== 'undefined' "
+    "&& !!model "
+    "&& Array.isArray(model.layers) "
+    "&& model.layers.length > 0"
+)
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -233,6 +241,15 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
 
         logging.info(f"[{browser_name}] Waiting {wait_time/1000:.1f}s before running tests...")
         await page.wait_for_timeout(wait_time)
+
+        logging.info(f"[{browser_name}] Waiting for the app to finish loading...")
+        try:
+            await page.wait_for_function(APP_READY_EXPRESSION, timeout=APP_READY_TIMEOUT_MS, polling=100)
+            logging.info(f"[{browser_name}] App reported ready")
+        except Error:
+            logging.warning(
+                f"[{browser_name}] App did not report ready within {APP_READY_TIMEOUT_MS/1000:.0f}s; starting tests anyway"
+            )
 
         test_expression = "run_tests(1)" if args.quick else "run_tests()"
         logging.info(f"[{browser_name}] Evaluating {test_expression} ...")

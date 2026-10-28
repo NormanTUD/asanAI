@@ -126,6 +126,23 @@ function load_image(url) {
 	return res;
 }
 
+async function load_image_with_retry (url, attempts = 3) {
+	var last_error = null;
+
+	for (var attempt = 1; attempt <= attempts; attempt++) {
+		try {
+			return await load_image(url);
+		} catch (e) {
+			last_error = e;
+			if (attempt < attempts) {
+				await delay(100 * attempt);
+			}
+		}
+	}
+
+	throw last_error;
+}
+
 async function force_download_image_preview_data () {
 	if(input_shape_is_image()) {
 		var old_img_cat = get_imgcat();
@@ -1061,7 +1078,7 @@ async function _process_image_for_tf_worker(url, dont_load_into_tf) {
 
 	if (!window.imgCache) window.imgCache = {};
 	if (!window.imgCache[url]) {
-		window.imgCache[url] = await load_image(url);
+		window.imgCache[url] = await load_image_with_retry(url);
 	}
 
 	const debug_keep = !!window.DEBUG_TF_TENSORS;
@@ -1098,14 +1115,14 @@ async function handleImageDownload(url, url_idx, urls, percentage, percentage_di
 
 		if (!window.imgCache) window.imgCache = {};
 		if (!window.imgCache[url]) {
-			window.imgCache[url] = await load_image(url);
+			window.imgCache[url] = await load_image_with_retry(url);
 		}
 
 		await addPhotoToGallery(url, height, width);
 
 		return await enqueue_tf_task(url, dont_load_into_tf);
 	} catch (e) {
-		err(e);
+		err("Failed to load training image " + url + ": " + (e && e.message ? e.message : e));
 		return null;
 	}
 }
@@ -1124,14 +1141,15 @@ async function downloadSingleUrl(url, url_idx, urls, percentage_div, old_percent
 
 	const tf_data = await handleImageDownload(url, url_idx, urls, percentage, percentage_div, undefined, times, skip_real_image_download, dont_load_into_tf);
 
-	if (tf_data !== null || !skip_real_image_download) {
-		data[keys[url]].push(tf_data);
-	} else if (tf_data === null && !skip_real_image_download) {
-		log_once_internal("tf_null", "tf_data is null");
-	} else if (skip_real_image_download) {
+	if (skip_real_image_download) {
 		log_once_internal("skip_set", "skip_real_image_download is set, not downloading");
+	} else if (tf_data === null) {
+		// Do not push a null placeholder: it is not a usable sample and would
+		// later surface as "unresized image is null" in the augment/resize
+		// step. The image was already reported by handleImageDownload.
+		log_once_internal("tf_null", "tf_data is null, skipping image " + url);
 	} else {
-		log_once_internal("unknown", `tf_data was empty or !skip_real_image_download (${skip_real_image_download}), but no appropriate error found`);
+		data[keys[url]].push(tf_data);
 	}
 
 	times.push(Date.now() - start_time);
