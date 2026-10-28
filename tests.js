@@ -4341,6 +4341,25 @@ async function wait_for_webcam_images(category_id, timeout_ms, required) {
 	});
 }
 
+async function _webcam_is_available () {
+	if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== "function") {
+		return false;
+	}
+
+	var stream = null;
+
+	try {
+		stream = await navigator.mediaDevices.getUserMedia({ video: true });
+		return true;
+	} catch (e) {
+		return false;
+	} finally {
+		if (stream) {
+			stream.getTracks().forEach(function (track) { track.stop(); });
+		}
+	}
+}
+
 async function test_webcam(disable_webcam) {
 	if(disable_webcam) {
 		return true;
@@ -4350,6 +4369,11 @@ async function test_webcam(disable_webcam) {
 
 	if(disable_webcam_test) {
 		log_test("Testing webcam ended prematurely");
+		return true;
+	}
+
+	if (!await _webcam_is_available()) {
+		log_test("Testing webcam skipped: no camera available");
 		return true;
 	}
 
