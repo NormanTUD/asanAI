@@ -43,6 +43,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 90
     strategy:
+      fail-fast: true
       matrix:
         os: [ubuntu-22.04, ubuntu-24.04]
     steps:
@@ -76,12 +77,13 @@ jobs:
   # Firefox, Chrome and Edge get the full suite; WebKit and Opera get the quick
   # suite while their engine-specific quirks are worked through.
   playwright-cross-platform:
+    name: ${{ matrix.experimental && 'experimental' || 'required' }} / ${{ matrix.browser }} / ${{ matrix.os }} / ${{ matrix.quick && 'quick' || 'full' }}
     needs: smoke-tests
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     continue-on-error: ${{ matrix.experimental }}
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         include:
           - os: windows-latest
@@ -233,3 +235,53 @@ jobs:
             browser-tests.log
             php-server.log
           if-no-files-found: ignore
+
+  # GitHub's fail-fast only covers one matrix. This watchdog cancels the whole
+  # run as soon as any required job fails. Experimental (WebKit/Opera) jobs are
+  # non-blocking by design, so they are ignored.
+  cancel-on-failure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Cancel remaining jobs after the first failure
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const run_id = context.runId;
+            const failed = new Set(["failure", "timed_out", "cancelled", "action_required", "stale"]);
+            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+            for (let attempt = 0; attempt < 720; attempt++) {
+              const { data } = await github.rest.actions.listJobsForWorkflowRun({
+                owner,
+                repo,
+                run_id,
+                per_page: 100,
+              });
+
+              const jobs = data.jobs.filter((job) =>
+                job.name !== "cancel-on-failure" && !job.name.startsWith("experimental")
+              );
+              const failure = jobs.find((job) => failed.has(job.conclusion));
+
+              if (failure) {
+                core.notice(`Job "${failure.name}" failed; cancelling the rest of the run.`);
+                try {
+                  await github.rest.actions.cancelWorkflowRun({ owner, repo, run_id });
+                } catch (error) {
+                  core.warning(String(error));
+                }
+                return;
+              }
+
+              if (jobs.length > 0 && jobs.every((job) => job.status === "completed")) {
+                return;
+              }
+
+              await sleep(30000);
+            }
