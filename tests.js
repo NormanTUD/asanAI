@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // in this browser. DEFAULT_EXPECTED_TEST_COUNT is the fallback for a fresh
 // browser/CI run; update it when the suite grows or shrinks. ?expected_tests=N
 // overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1386;
+var DEFAULT_EXPECTED_TEST_COUNT = 1394;
 var __test_expected_total = (function () {
 	try {
 		var m = /[?&]expected_tests=(\d+)/.exec(window.location.search);
@@ -1067,6 +1067,54 @@ async function test_faster_canvas_fill_order () {
 	return true;
 }
 
+function test_grid_tooltip_custom_images () {
+	const old_labels = labels;
+	const containers = [];
+	const tooltip = document.createElement("div");
+
+	try {
+		labels = ["Hund", "Katze"];
+
+		const img_with_attr = document.createElement("img");
+		img_with_attr.setAttribute("data-category", "1");
+		const img_without_attr = document.createElement("img");
+		const canvas_with_label = document.createElement("canvas");
+		canvas_with_label.setAttribute("data-category", "Katze");
+
+		const c0 = document.createElement("div");
+		c0.className = "own_images";
+		c0.appendChild(img_with_attr);
+		const c1 = document.createElement("div");
+		c1.className = "own_images";
+		c1.appendChild(img_without_attr);
+		c1.appendChild(canvas_with_label);
+		document.body.appendChild(c0);
+		document.body.appendChild(c1);
+		containers.push(c0, c1);
+
+		test_equal("Custom image category from data-category index", extractCategoryFromURL("data:image/png;base64,", img_with_attr), "Katze");
+		const expected_fallback = labels[$(".own_images").index(c1) % labels.length];
+		test_equal("Custom image category falls back to its container", extractCategoryFromURL(undefined, img_without_attr), expected_fallback);
+		test_equal("Custom canvas category can be a label", extractCategoryFromURL(undefined, canvas_with_label), "Katze");
+		test_equal("Dataset image category still comes from the URL", extractCategoryFromURL("https://example.test/photos/Hund/1.jpg", img_with_attr), "Hund");
+
+		_render_grid_tooltip(tooltip, {
+			category: 1,
+			probability: 0.9,
+			correct_category: "Katze",
+			src: "https://example.test/photos/Katze/langes_bild.png"
+		});
+		test_equal("Grid tooltip omits the filename", tooltip.textContent.indexOf("langes_bild.png"), -1);
+		test_equal("Grid tooltip shows the correct custom category", tooltip.textContent.indexOf("Katze") !== -1, true);
+		test_equal("Grid tooltip marks a correct custom prediction", tooltip.querySelectorAll(".gti_good").length, 1);
+	} finally {
+		labels = old_labels;
+		containers.forEach(function(container) { container.remove(); });
+	}
+
+	return true;
+}
+
 function test_resolve_maximally_activated_iterations() {
 	var $input = $("#max_activation_iterations");
 	var old_value = $input.val();
@@ -1633,6 +1681,8 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("test_fcnn_neuron_colors_span_each_layer()", test_fcnn_neuron_colors_span_each_layer(), true);
 
 	test_equal("test_faster_canvas_fill_order()", await test_faster_canvas_fill_order(), true);
+
+	test_equal("test_grid_tooltip_custom_images()", test_grid_tooltip_custom_images(), true);
 
 	test_equal('computeCRC32("")', computeCRC32(""), 0);
 	test_equal('computeCRC32("asasd")', computeCRC32("asasd"), 3324180253);

@@ -202,7 +202,7 @@ function handle_file_select(e) {
 		}
 		var reader = new FileReader();
 		reader.onload = function (e) {
-			var html = "<span class=\"own_image_span\"><img height=\"90\" id=\"" + uuidv4() + "_image\" src=\"" + e.target.result + "\"><span onclick=\"delete_own_image(this)\">&#10060;&nbsp;&nbsp;&nbsp;</span></span>";
+			var html = "<span class=\"own_image_span\"><img data-category=\"" + upload_nr + "\" height=\"90\" id=\"" + uuidv4() + "_image\" src=\"" + e.target.result + "\"><span onclick=\"delete_own_image(this)\">&#10060;&nbsp;&nbsp;&nbsp;</span></span>";
 			imgDiv.append(html);
 		};
 		reader.readAsDataURL(f);
@@ -413,7 +413,7 @@ async function _load_images_into_ui(category_labels, categories, import_update_s
 
 			var img_id = img_data.filename.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, "_") || uuidv4();
 
-			var html = '<span class="own_image_span"><img height="90" id="' + img_id + '_image" src="' + dataUrl + '"><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>';
+			var html = '<span class="own_image_span"><img data-category="' + c + '" height="90" id="' + img_id + '_image" src="' + dataUrl + '"><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>';
 			$(image_containers[c]).append(html);
 		}
 	}

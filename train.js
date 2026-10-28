@@ -2757,7 +2757,6 @@ function _draw_grid_images_on_ctx(ctx, images, categories, probabilities, counte
 				image: image,
 				category: category,
 				probability: probability,
-				src: src,
 				correct_category: correct_category
 			});
 		} catch (e) {
@@ -3102,17 +3101,6 @@ function _position_grid_tooltip(tooltip, clientX, clientY) {
 function _render_grid_tooltip(tooltip, region) {
 	tooltip.innerHTML = "";
 
-	var src = region.src || "";
-	var filename = "";
-	if (src && src.indexOf("data:") !== 0) {
-		try {
-			var parts = src.split("/");
-			filename = decodeURIComponent(parts[parts.length - 1]);
-		} catch (e) {
-			filename = "";
-		}
-	}
-
 	var predicted_label = language[lang]["unknown"];
 	if (region.category !== undefined && region.category !== null && labels[region.category] !== undefined) {
 		predicted_label = labels[region.category];
@@ -3146,9 +3134,6 @@ function _render_grid_tooltip(tooltip, region) {
 		.replace("{probability}", probability_percent.toFixed(1));
 
 	var html = "";
-	if (filename) {
-		html += "<div class='gti_row'><span class='gti_label'>" + _grid_escape_html(language[lang]["image_file"]) + ":</span> <span class='gti_value'>" + _grid_escape_html(filename) + "</span></div>";
-	}
 	html += "<div class='gti_row'><span class='gti_label'>" + _grid_escape_html(language[lang]["correct_category"]) + ":</span> <span class='gti_value'>" + _grid_escape_html(correct_label) + "</span></div>";
 	html += "<div class='gti_row'><span class='gti_label'>" + _grid_escape_html(language[lang]["predicted_category"]) + ":</span> <span class='gti_value'>" + _grid_escape_html(predicted_label) + "</span></div>";
 	html += "<div class='gti_row'><span class='gti_label'>" + _grid_escape_html(language[lang]["certainty"]) + ":</span> <span class='gti_value'>" + _grid_escape_html(probability_display) + "</span></div>";
@@ -3189,37 +3174,48 @@ function _render_grid_tooltip(tooltip, region) {
 }
 
 function extractCategoryFromURL(_url, image_element) {
-	if(!_url) {
-		return null;
-	}
 	try {
-		const categoryMatch = _url.match(/\/([^/]+)\/[^/]+?$/);
-
-		if (categoryMatch && !_url.startsWith("data:image/png;base64")) {
-			const category = categoryMatch[1];
-			return category;
-		} else {
-			var $image_element = $(image_element);
-
-			if($image_element.length == 0) {
-				return null;
+		if (_url && _url.indexOf("data:") !== 0) {
+			const categoryMatch = _url.match(/\/([^/]+)\/[^/]+?$/);
+			if (categoryMatch) {
+				return categoryMatch[1];
 			}
+		}
 
-			var category_number = $image_element.data("category");
-			if (category_number !== null && category_number !== undefined && category_number !== "") {
-				if(!labels.length) {
-					wrn("labels is empty");
-					return null;
-				}
-				return labels[category_number % labels.length];
-			}
-
-			if(!_url.startsWith("data:image/png")) {
-				wrn(`Category could not be found for the url ${_url} and the image element ${image_element}`);
-			}
-
+		var $image_element = $(image_element);
+		if ($image_element.length == 0) {
 			return null;
 		}
+
+		var category_attr = $image_element.attr("data-category");
+		if (category_attr !== undefined && category_attr !== null && category_attr !== "") {
+			if (!labels.length) {
+				wrn("labels is empty");
+				return null;
+			}
+			if (/^\d+$/.test(category_attr)) {
+				return labels[Number(category_attr) % labels.length];
+			}
+			if (labels.includes(category_attr)) {
+				return category_attr;
+			}
+		}
+
+		// Uploaded custom images may lack data-category; the surrounding
+		// .own_images block index is the category/label index.
+		var $own_images = $image_element.closest(".own_images");
+		if ($own_images.length && labels.length) {
+			var own_images_idx = $(".own_images").index($own_images);
+			if (own_images_idx >= 0) {
+				return labels[own_images_idx % labels.length];
+			}
+		}
+
+		if (_url && _url.indexOf("data:image/png") !== 0) {
+			wrn(`Category could not be found for the url ${_url} and the image element ${image_element}`);
+		}
+
+		return null;
 	} catch (error) {
 		err("Error while extracting category:", error);
 		return null;
