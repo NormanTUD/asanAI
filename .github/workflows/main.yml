@@ -18,11 +18,8 @@ on:
       - 'praesentation/**'
   workflow_dispatch:
 
-# Free/Pro/Team plans allow at most 5 concurrent macOS jobs. Cancel superseded
-# runs so repeated pushes don't queue several 6-job macOS matrices at once.
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+# Deliberately no workflow concurrency: a new push must not cancel running
+# jobs. Runs queue instead.
 
 jobs:
   smoke-tests:
@@ -268,70 +265,13 @@ jobs:
           path: browser-timings.json
           if-no-files-found: ignore
 
-  # This watchdog cancels the whole run as soon as a job that actually started
-  # fails. Runner-acquisition and other infrastructure failures (no steps ran)
-  # must not kill the other jobs.
-  cancel-on-failure:
-    runs-on: ubuntu-latest
-    timeout-minutes: 360
-    permissions:
-      actions: write
-      contents: read
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v5
-
-      - name: Cancel remaining jobs after the first failure
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const run_id = context.runId;
-            const failed = new Set(["failure", "timed_out", "action_required", "stale"]);
-            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-            for (let attempt = 0; attempt < 720; attempt++) {
-              const { data } = await github.rest.actions.listJobsForWorkflowRun({
-                owner,
-                repo,
-                run_id,
-                per_page: 100,
-              });
-
-              const jobs = data.jobs.filter((job) => job.name !== "cancel-on-failure");
-              const failure = jobs.find((job) => {
-                if (!failed.has(job.conclusion)) return false;
-                if (!Array.isArray(job.steps) || job.steps.length === 0) return false;
-                return job.steps.some((step) => step.conclusion === "failure" || step.conclusion === "timed_out");
-              });
-
-              if (failure) {
-                core.notice(`Job "${failure.name}" failed; cancelling the rest of the run.`);
-                const summarize = require(process.env.GITHUB_WORKSPACE + "/tests/job_timing_summary.js");
-                await summarize.write_run_summary({ github, context, core });
-                try {
-                  await github.rest.actions.cancelWorkflowRun({ owner, repo, run_id });
-                } catch (error) {
-                  core.warning(String(error));
-                }
-                return;
-              }
-
-              if (jobs.length > 0 && jobs.every((job) => job.status === "completed")) {
-                return;
-              }
-
-              await sleep(30000);
-            }
-
   run-summary:
     needs:
       - smoke-tests
       - playwright
       - playwright-cross-platform
     runs-on: ubuntu-latest
-    if: ${{ success() }}
+    if: ${{ always() }}
     permissions:
       actions: read
       contents: read

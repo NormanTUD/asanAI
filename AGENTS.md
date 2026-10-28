@@ -798,12 +798,13 @@ dependency in a header won't resolve for a few days).
 `main.yml` runs the full Docker suite on Ubuntu and a direct-PHP/Playwright
 matrix with one job per OS and all browsers inside it (`--parallel 3` on
 Windows, `--parallel 1` on macOS so the 3-core runner and the plan's
-five-macOS-job limit are respected). Matrices use `fail-fast: false`; a watchdog job
-cancels the whole run when a job that actually started fails, and the version
-tag is only pushed after all jobs succeed. Jobs that never acquired a runner
-(infrastructure failures, no steps) do not cancel the other jobs. Browser failures are summarized on the job's GitHub
-summary page (failed test, result counts, concrete error trace, collapsible raw
-log), and `run-summary` writes a per-OS/browser job-duration table to the run
+five-macOS-job limit are respected). Matrices use `fail-fast: false`. New pushes do **not** cancel older runs (no
+workflow `concurrency`), and there is no cross-job cancellation: every OS job
+finishes so the other OS results and timings survive a failure in one of them.
+The version tag is only pushed after all jobs succeed. Browser failures are
+summarized on the job's GitHub summary page (failed test, result counts,
+concrete error trace, collapsible raw log), and `run-summary` runs
+`if: always()` and writes a per-OS/browser job-duration table to the run
 summary.
 The two workflows are complementary: `main.yml` **ignores** `blog/**`
 (toolkit only); `blog_php_validator.yml` runs **only** on `blog/**` (plus a
