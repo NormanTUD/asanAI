@@ -55,6 +55,8 @@ def parse_args():
     parser.add_argument("--parallel", type=int, default=1, help="Run up to N selected browsers concurrently (default: 1).")
     parser.add_argument("--timings-json", default=None, help="Write per-browser exit codes and durations to this JSON file.")
     parser.add_argument("--timings-os", default=os.environ.get("RUNNER_OS", "").lower(), help="OS label stored in each timing entry.")
+    parser.add_argument("--stop-on-failure", action="store_true", help="Do not start further browsers after one fails.")
+    parser.add_argument("--artifacts-dir", default="test-artifacts", help="Directory for failure screenshots and Playwright traces.")
     parser.add_argument("--no-smoke-tests", action="store_true", help="Disable smoke tests")
     parser.add_argument("--no-docker", action="store_true", help="Disable docker")
     parser.add_argument("--no-run-tests", action="store_true", help="Disable python script")
@@ -111,6 +113,42 @@ def capture_console(page, browser_name: str):
     page.on("crash", lambda: logging.error(f"[{browser_name}] [crash] Page crashed"))
     page.on("close", lambda: logging.debug(f"[{browser_name}] [close] Page closed"))
 
+async def _save_failure_artifacts(page, context, browser_name, args):
+	artifacts_dir = os.path.abspath(args.artifacts_dir)
+
+	try:
+		os.makedirs(artifacts_dir, exist_ok=True)
+	except Exception:
+		logging.exception(f"[{browser_name}] Could not create artifacts dir {artifacts_dir}")
+		return False
+
+	stamp = time.strftime("%Y%m%d-%H%M%S")
+	saved = False
+
+	if page is not None:
+		try:
+			await page.screenshot(path=os.path.join(artifacts_dir, f"failure-{browser_name}-{stamp}.png"), full_page=False, timeout=5000)
+			saved = True
+		except Exception:
+			logging.exception(f"[{browser_name}] Could not save failure screenshot")
+
+		try:
+			with open(os.path.join(artifacts_dir, f"failure-{browser_name}-{stamp}.html"), "w", encoding="utf-8") as handle:
+				handle.write(await page.content())
+			saved = True
+		except Exception:
+			logging.exception(f"[{browser_name}] Could not save failure page HTML")
+
+	if context is not None:
+		try:
+			await context.tracing.stop(path=os.path.join(artifacts_dir, f"trace-{browser_name}-{stamp}.zip"))
+			saved = True
+		except Exception:
+			logging.exception(f"[{browser_name}] Could not save Playwright trace")
+
+	return saved
+
+
 async def run(browser_name: str, executable_path: Optional[str], url: str, wait_time: int, args):
     """
     Runs one browser session. For Firefox we use launch_persistent_context(...) so we can supply firefox_user_prefs.
@@ -138,7 +176,10 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
 
     tmp_user_dir = None
     context = None
+    page = None
     playwright = None
+    tracing_started = False
+    tracing_saved = False
 
     try:
         playwright = await async_playwright().start()
@@ -181,6 +222,12 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
         page = await context.new_page()
         capture_console(page, browser_name)
 
+        try:
+            await context.tracing.start(screenshots=False, snapshots=True, sources=True)
+            tracing_started = True
+        except Exception:
+            logging.warning(f"[{browser_name}] Could not start Playwright tracing")
+
         logging.info(f"[{browser_name}] Navigating to {url} ...")
         await page.goto(url, timeout=15000)
 
@@ -192,17 +239,32 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
         try:
             result = await page.evaluate(test_expression)
             logging.info(f"[{browser_name}] {test_expression} returned: {result}")
+            if to_int_exit(result) != 0:
+                await _save_failure_artifacts(page, context, browser_name, args)
+                tracing_saved = tracing_started
             return result
         except Error as e:
             logging.error(f"[{browser_name}] Playwright evaluation error: {e}")
+            await _save_failure_artifacts(page, context, browser_name, args)
+            tracing_saved = tracing_started
             return 1
 
     except Exception:
         logging.exception(f"[{browser_name}] Unhandled exception during run")
+        try:
+            await _save_failure_artifacts(page, context, browser_name, args)
+            tracing_saved = tracing_started
+        except Exception:
+            logging.exception(f"[{browser_name}] Could not save failure artifacts")
         return 1
 
     finally:
         if context:
+            if tracing_started and not tracing_saved:
+                try:
+                    await context.tracing.stop()
+                except Exception:
+                    pass
             try:
                 await context.close()
                 logging.debug(f"[{browser_name}] Context closed successfully.")
@@ -263,9 +325,13 @@ async def main():
 
     parallel = max(1, args.parallel)
     semaphore = asyncio.Semaphore(parallel)
+    failure_event = asyncio.Event()
 
     async def _run_one (browser_name):
         async with semaphore:
+            if args.stop_on_failure and failure_event.is_set():
+                return (browser_name, 1, 0.0, True)
+
             executable_path = None
             if browser_name == "chromium":
                 executable_path = resolve_chromium_executable(args)
@@ -281,7 +347,9 @@ async def main():
                 rc = 1
 
             duration = time.monotonic() - started
-            return (browser_name, rc, duration)
+            if rc != 0 and args.stop_on_failure:
+                failure_event.set()
+            return (browser_name, rc, duration, False)
 
     executed = []
     failures = []
@@ -292,23 +360,24 @@ async def main():
         # Preserve the historical sequential default: skip Chromium when the
         # implicit Firefox run failed.
         for browser_name in selected:
-            if browser_name == "chromium" and any(name == "firefox" and rc != 0 for name, rc, _ in results) and not args.run_chrome_on_firefox_failure:
+            if browser_name == "chromium" and any(name == "firefox" and rc != 0 for name, rc, _, _ in results) and not args.run_chrome_on_firefox_failure:
                 logging.info("[main] Firefox failed and --run-chrome-on-firefox-failure not set; skipping Chromium run.")
-                results.append((browser_name, 1, 0.0))
+                results.append((browser_name, 1, 0.0, True))
                 continue
             results.append(await _run_one(browser_name))
     else:
         results = await asyncio.gather(*[_run_one(browser_name) for browser_name in selected])
 
-    for browser_name, rc, duration in results:
+    for browser_name, rc, duration, skipped in results:
         executed.append((browser_name, rc))
         timings.append({
             "os": args.timings_os,
             "browser": browser_name,
             "exit_code": rc,
-            "duration_seconds": round(duration, 1)
+            "duration_seconds": round(duration, 1),
+            "skipped": skipped
         })
-        if rc != 0:
+        if rc != 0 and not skipped:
             failures.append((browser_name, rc))
 
     if args.timings_json:

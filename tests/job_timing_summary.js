@@ -74,8 +74,9 @@ function build_browser_summary (os, timings) {
 		.slice()
 		.sort(function (a, b) { return a.browser.localeCompare(b.browser); })
 		.forEach(function (timing) {
-			const status = timing.exit_code === 0 ? "Success" : "Failure";
-			lines.push("| " + timing.browser + " | " + status + " | " + format_seconds(timing.duration_seconds) + " |");
+			const status = timing.skipped ? "Skipped" : (timing.exit_code === 0 ? "Success" : "Failure");
+			const duration = timing.skipped ? "—" : format_seconds(timing.duration_seconds);
+			lines.push("| " + timing.browser + " | " + status + " | " + duration + " |");
 		});
 
 	return lines.join("\n") + "\n";
@@ -135,8 +136,8 @@ function build_summary (jobs, run, browser_timings) {
 			os: timing.os || "—",
 			browser: timing.browser,
 			mode: "full",
-			status: timing.exit_code === 0 ? "Success" : "Failure",
-			duration: format_seconds(timing.duration_seconds),
+			status: timing.skipped ? "Skipped" : (timing.exit_code === 0 ? "Success" : "Failure"),
+			duration: timing.skipped ? "—" : format_seconds(timing.duration_seconds),
 			url: run && run.html_url ? run.html_url : null
 		});
 	});

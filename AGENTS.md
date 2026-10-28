@@ -793,19 +793,22 @@ dependency in a header won't resolve for a few days).
 | `python3 blog/atlas_data/atlas_check.py` | Atlas audit (see above) | any check | manual |
 | `bash tests/smoke_tests` | Toolkit static analysis: `tests/find_*` (deep nesting, long functions, missing translations, unawaited async, uncalled functions, unused variables) — **skips** `find_unwrapped_base_functions` (network + `ack`) and `find_double_defined_functions` | any finding | Toolkit CI |
 | `bash run_tests` (needs Docker) | Full Toolkit: docker build (port 1122), in-browser Playwright suite (the real tests are `run_tests()` inside `tests.js`, run in Firefox then Chromium; the in-page result **is** the exit code), optional `--screenshot-test` pixel diff | failed tests | Toolkit CI |
-| `python _run_tests.py --browser <name> [--quick] --url <url>` | Cross-platform Playwright runner (no Docker): `chromium`/`firefox`/`webkit` use Playwright's bundled builds, `chrome`/`msedge` the installed branded channels, `opera` a best-effort Chromium launch; `--quick` runs `run_tests(1)`; `--parallel N` runs up to N browsers at once; `--timings-json FILE` records per-browser durations | failed tests | Windows/macOS Toolkit CI |
+| `python _run_tests.py --browser <name> [--quick] --url <url>` | Cross-platform Playwright runner (no Docker): `chromium`/`firefox`/`webkit` use Playwright's bundled builds, `chrome`/`msedge` the installed branded channels, `opera` a best-effort Chromium launch; `--quick` runs `run_tests(1)`; `--parallel N` runs up to N browsers at once; `--stop-on-failure` skips remaining browsers after a failure; `--artifacts-dir` stores screenshots/HTML/traces; `--timings-json FILE` records per-browser durations | failed tests | Windows/macOS Toolkit CI |
 
 `main.yml` runs the full Docker suite on Ubuntu and a direct-PHP/Playwright
 matrix with one job per OS and all browsers inside it (`--parallel 3` on
 Windows, `--parallel 1` on macOS so the 3-core runner and the plan's
-five-macOS-job limit are respected). Matrices use `fail-fast: false`. New pushes do **not** cancel older runs (no
-workflow `concurrency`), and there is no cross-job cancellation: every OS job
+five-macOS-job limit are respected). Matrices use `fail-fast: false`. New
+pushes do **not** cancel older runs (no workflow `concurrency`), and there is
+no cross-job cancellation: every OS job
 finishes so the other OS results and timings survive a failure in one of them.
 The version tag is only pushed after all jobs succeed. Browser failures are
 summarized on the job's GitHub summary page (failed test, result counts,
 concrete error trace, collapsible raw log), and `run-summary` runs
 `if: always()` and writes a per-OS/browser job-duration table to the run
-summary.
+summary. CI caches pip + Playwright browsers from
+`tests/ci-requirements.txt`, uses `--stop-on-failure`, and uploads failure
+screenshots/traces with 7-day retention.
 The two workflows are complementary: `main.yml` **ignores** `blog/**`
 (toolkit only); `blog_php_validator.yml` runs **only** on `blog/**` (plus a
 weekly Monday cron for link rot). A new lesson gets static CI coverage for

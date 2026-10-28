@@ -98,6 +98,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: 'tests/ci-requirements.txt'
 
       - name: Install Opera (Windows)
         if: runner.os == 'Windows'
@@ -109,11 +111,20 @@ jobs:
         shell: bash
         run: HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask opera
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+            ~/Library/Caches/ms-playwright
+            ~\AppData\Local\ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('tests/ci-requirements.txt') }}
+
       - name: Install Playwright
         shell: bash
         run: |
           python -m pip install --upgrade pip
-          python -m pip install playwright Pillow
+          python -m pip install -r tests/ci-requirements.txt
           python -m playwright install chromium firefox webkit
 
       - name: Run browser tests
@@ -147,8 +158,10 @@ jobs:
             --url http://127.0.0.1:1122/index.php \
             "${BROWSER_ARGS[@]}" \
             --parallel "${{ matrix.parallel }}" \
+            --stop-on-failure \
             --timings-json browser-timings.json \
             --timings-os "${{ matrix.os }}" \
+            --artifacts-dir test-artifacts \
             --enable-fake-media \
             --fake-video tests/fake.y4m 2>&1 | tee browser-tests.log
 
@@ -256,6 +269,16 @@ jobs:
             browser-tests.log
             php-server.log
           if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-artifacts-${{ matrix.os }}
+          path: test-artifacts/
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Upload browser timings
         if: always()
@@ -264,6 +287,7 @@ jobs:
           name: browser-timings-${{ matrix.os }}
           path: browser-timings.json
           if-no-files-found: ignore
+          retention-days: 7
 
   run-summary:
     needs:
