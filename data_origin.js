@@ -309,7 +309,11 @@ async function init_dataset_category() {
 }
 
 async function chose_dataset(no_set_config) {
-	$("#data_origin").val("default").trigger("change");
+	// Apply the new dataset's layer architecture before changing the data
+	// origin. Otherwise change_data_origin() rebuilds with the previous
+	// dataset's layers (e.g. conv2d) against the new input shape (e.g. [null, 2])
+	// and fails on slower engines such as WebKit.
+	$("#data_origin").val("default");
 
 	$("#maximally_activated_content").html("");
 	hide_tab_label("maximally_activated_label");
@@ -330,6 +334,8 @@ async function chose_dataset(no_set_config) {
 		await set_config();
 	}
 	is_setting_config = false;
+
+	$("#data_origin").trigger("change");
 
 	reset_predict_error();
 	$("#prediction").html("");

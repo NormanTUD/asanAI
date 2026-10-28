@@ -233,6 +233,12 @@ jobs:
             echo "::error::$encoded_concrete"
           fi
 
+          model_debug=$(grep -E '\[_add_layers_to_model\]|\[test_activation_atlas\]' browser-tests.log | tail -n 20 || true)
+          if [ -n "$model_debug" ]; then
+            encoded_model=$(printf '%s' "$model_debug" | sed -e 's/%/%25/g' -e 's/\r/%0D/g' -e ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error::$encoded_model"
+          fi
+
           {
             echo
             echo "### Concrete errors / warnings"
@@ -245,10 +251,18 @@ jobs:
             fi
             echo '```'
             echo
+            if [ -n "$model_debug" ]; then
+              echo "### Model / atlas debug"
+              echo
+              echo '```text'
+              printf '%s\n' "$model_debug"
+              echo '```'
+              echo
+            fi
             echo "<details><summary>Failure output</summary>"
             echo
             echo '```text'
-            grep -E 'Test-name:|\[test_equal\]|ERROR\. Is:|Should be:|feature-map-tooltip-theme|test_no_new_errors|test_no_new_warnings|Stack-Trace:|tests, ok:|Test suite took|Playwright evaluation error' browser-tests.log | tail -n 160 || true
+            grep -E 'Test-name:|\[test_equal\]|ERROR\. Is:|Should be:|feature-map-tooltip-theme|test_no_new_errors|test_no_new_warnings|_add_layers_to_model|test_activation_atlas|Stack-Trace:|tests, ok:|Test suite took|Playwright evaluation error' browser-tests.log | tail -n 180 || true
             echo '```'
             echo
             echo "</details>"

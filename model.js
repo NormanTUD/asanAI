@@ -1286,6 +1286,23 @@ async function _add_layer_to_model (type, data, fake_model_structure, model_stru
 
 		return layerOutput;
 	} catch (e) {
+		if (!fake_model_structure) {
+			var original_error = e && e.message ? e.message : ("" + e);
+			var layer_data_json = "";
+			var input_shape_json = "";
+
+			try { layer_data_json = JSON.stringify(data); } catch (json_error) { layer_data_json = String(data); }
+			try { input_shape_json = JSON.stringify(currentOutput && currentOutput.shape); } catch (json_error) { input_shape_json = String(currentOutput && currentOutput.shape); }
+
+			console.error(`[_add_layers_to_model] layer ${model_structure_idx} (${type}) failed: ${original_error}`);
+			console.error(`[_add_layers_to_model] layer data: ${layer_data_json}`);
+			console.error(`[_add_layers_to_model] input shape: ${input_shape_json}`);
+
+			if (e && e.stack) {
+				console.error(e.stack);
+			}
+		}
+
 		await handle_add_to_layer_model_catch(fake_model_structure, e, model_structure_idx, type, data, currentOutput, model_uuid);
 
 		return false;
