@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // in this browser. DEFAULT_EXPECTED_TEST_COUNT is the fallback for a fresh
 // browser/CI run; update it when the suite grows or shrinks. ?expected_tests=N
 // overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1380;
+var DEFAULT_EXPECTED_TEST_COUNT = 1381;
 var __test_expected_total = (function () {
 	try {
 		var m = /[?&]expected_tests=(\d+)/.exec(window.location.search);
@@ -138,16 +138,18 @@ function _test_eta_text(done, total, slow_durations, elapsed_ms) {
 		var slow_average = slow_sum / slow_durations.length;
 		var slow_ratio = slow_durations.length / done;
 		var remaining_slow = Math.max(0, total - done) * slow_ratio;
+		var slow_seconds = Math.max(1, Math.ceil((slow_average * remaining_slow) / 1000));
 
-		return human_readable_time((slow_average * remaining_slow) / 1000);
+		return human_readable_time(slow_seconds);
 	}
 
 	// Fallback for suites that never accumulate five 30-second tests: after five
 	// minutes the overall average is stable enough to show a useful ETA.
 	if (done >= 25 && elapsed_ms >= 5 * 60 * 1000) {
 		var average = elapsed_ms / done;
+		var fallback_seconds = Math.max(1, Math.ceil((average * Math.max(0, total - done)) / 1000));
 
-		return human_readable_time((average * Math.max(0, total - done)) / 1000);
+		return human_readable_time(fallback_seconds);
 	}
 
 	return "calculating…";
@@ -358,6 +360,7 @@ function test_test_progress_display () {
 	test_equal("Progress display waits for five slow samples", _test_format_progress(50, 100, false, slow.slice(0, 4), 0).indexOf("estimated time left: calculating…") !== -1, true);
 	test_equal("Progress display shows an ETA after five slow samples", _test_format_progress(50, 100, false, slow, 0).indexOf(", estimated time left: ") !== -1, true);
 	test_equal("Progress display falls back to the overall average after five minutes", _test_format_progress(50, 100, false, [], 5 * 60 * 1000).indexOf("estimated time left: calculating…") === -1, true);
+	test_equal("Progress display never shows an empty ETA", _test_format_progress(999, 1000, false, slow, 0).split("estimated time left: ")[1].length > 0, true);
 	test_equal("Progress display caps the bar at 100 percent", _test_format_progress(120, 100, false, slow, 0).indexOf("100% of tests done (120/100)") !== -1, true);
 	test_equal("Progress display omits the ETA for filtered runs", _test_format_progress(5, 100, true, slow, 0).indexOf("n/a (filtered run)") !== -1, true);
 
