@@ -43,7 +43,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 90
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         os: [ubuntu-22.04, ubuntu-24.04]
     steps:
@@ -74,7 +74,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         include:
           - os: windows-latest
@@ -278,8 +278,9 @@ jobs:
             php-server.log
           if-no-files-found: ignore
 
-  # GitHub's fail-fast only covers one matrix. This watchdog cancels the whole
-  # run as soon as any job fails.
+  # This watchdog cancels the whole run as soon as a job that actually started
+  # fails. Runner-acquisition and other infrastructure failures (no steps ran)
+  # must not kill the other jobs.
   cancel-on-failure:
     runs-on: ubuntu-latest
     timeout-minutes: 360
@@ -297,7 +298,7 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const run_id = context.runId;
-            const failed = new Set(["failure", "timed_out", "cancelled", "action_required", "stale"]);
+            const failed = new Set(["failure", "timed_out", "action_required", "stale"]);
             const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
             for (let attempt = 0; attempt < 720; attempt++) {
@@ -309,7 +310,11 @@ jobs:
               });
 
               const jobs = data.jobs.filter((job) => job.name !== "cancel-on-failure");
-              const failure = jobs.find((job) => failed.has(job.conclusion));
+              const failure = jobs.find((job) => {
+                if (!failed.has(job.conclusion)) return false;
+                if (!Array.isArray(job.steps) || job.steps.length === 0) return false;
+                return job.steps.some((step) => step.conclusion === "failure" || step.conclusion === "timed_out");
+              });
 
               if (failure) {
                 core.notice(`Job "${failure.name}" failed; cancelling the rest of the run.`);

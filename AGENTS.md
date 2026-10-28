@@ -797,9 +797,10 @@ dependency in a header won't resolve for a few days).
 
 `main.yml` runs the full Docker suite on Ubuntu and a direct-PHP/Playwright
 matrix on `windows-latest` + `macos-latest` (all browsers full). Matrices use
-`fail-fast: true`; a watchdog job
-cancels the whole run when any job fails, and the version tag is only pushed
-after all jobs succeed. Browser failures are summarized on the job's GitHub
+`fail-fast: false`; a watchdog job
+cancels the whole run when a job that actually started fails, and the version
+tag is only pushed after all jobs succeed. Jobs that never acquired a runner
+(infrastructure failures, no steps) do not cancel the other jobs. Browser failures are summarized on the job's GitHub
 summary page (failed test, result counts, concrete error trace, collapsible raw
 log), and `run-summary` writes a per-OS/browser job-duration table to the run
 summary.
