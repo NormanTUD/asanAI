@@ -525,31 +525,44 @@ def main() -> int:
 				"//details[contains(@class,'item')][contains(.,'The worked example made backprop click.')]",
 			)
 			browser.execute_script("arguments[0].open = true;", item)
+			page_before_accept = browser.find_element(By.CSS_SELECTOR, ".page")
+			browser.execute_script(
+				"""
+				var originalFetch = window.fetch;
+				window.fetch = function () {
+					var args = arguments;
+					return new Promise(function (resolve, reject) {
+						setTimeout(function () {
+							originalFetch.apply(window, args).then(resolve, reject);
+						}, 250);
+					});
+				};
+				"""
+			)
 			accept = item.find_element(By.XPATH, ".//button[contains(., 'Accept')]")
 			accept.click()
-			WebDriverWait(browser, 20).until(
-				EC.presence_of_element_located(
-					(By.XPATH, "//details[contains(@class,'item')][contains(.,'reader@example.test')]")
-				)
-			)
-			prompt_item = browser.find_element(
-				By.XPATH,
-				"//details[contains(@class,'item')][contains(.,'reader@example.test')]",
-			)
-			browser.execute_script("arguments[0].open = true;", prompt_item)
-			prompt_value = WebDriverWait(browser, 20).until(
-				lambda d: d.execute_script(
-					"var e=arguments[0].querySelector('textarea[name=admin_prompt]'); return e ? e.value : '';",
-					prompt_item,
-				) or False
-			)
-			check("history" in prompt_value and "backprop" in prompt_value, "accept prepares an editable prompt")
-			check("blog/history.php" in prompt_value, "prompt names the source file")
+			WebDriverWait(browser, 20).until(EC.staleness_of(page_before_accept))
+
+			def read_prompt(d: webdriver.Chrome) -> str:
+				try:
+					row = d.find_element(
+						By.XPATH,
+						"//details[contains(@class,'item')][contains(.,'reader@example.test')]",
+					)
+					field = row.find_element(By.CSS_SELECTOR, "textarea[name=admin_prompt]")
+					return field.get_attribute("value") or ""
+				except StaleElementReferenceException:
+					return ""
+
+			prompt = WebDriverWait(browser, 20).until(lambda d: read_prompt(d) or False)
+			check("history" in prompt and "backprop" in prompt, "accept prepares an editable prompt")
+			check("blog/history.php" in prompt, "prompt names the source file")
 
 			item = browser.find_element(
 				By.XPATH,
 				"//details[contains(@class,'item')][contains(.,'The worked example made backprop click.')]",
 			)
+			browser.execute_script("arguments[0].open = true;", item)
 			Select(item.find_element(By.CSS_SELECTOR, "select[name=reaction]")).select_by_value("insight")
 			comment = item.find_element(By.CSS_SELECTOR, "textarea[name=comment]")
 			comment.clear()
