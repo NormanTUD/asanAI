@@ -15849,6 +15849,13 @@ window.bibData = {
 		url: "https://openai.com/superintelligence-is-closer-than-you-think/",
 		alternativetitle: "OpenAI, superintelligence timeline (2023)"
 	},
+	"metz2023godfather": {
+		title: "'The Godfather of A.I.' Leaves Google and Warns of Danger Ahead",
+		author: "Cade Metz, The New York Times",
+		year: 2023,
+		url: "https://www.nytimes.com/2023/05/01/technology/ai-google-chatbot-engineer-quits-hinton.html",
+		alternativetitle: "Metz, NYT — Hinton leaves Google (2023)"
+	},
 	"hinton2023caution": {
 		title: "Geoffrey Hinton: AI Could Be the End of Humanity",
 		author: "BBC News (interview)",
