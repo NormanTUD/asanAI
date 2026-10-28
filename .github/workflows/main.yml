@@ -225,6 +225,12 @@ jobs:
             echo "::error::$debug"
           fi
 
+          concrete=$(grep -A6 -E '\[test_no_new_errors\]|\[test_no_new_warnings\]' browser-tests.log | tail -n 12 || true)
+          if [ -n "$concrete" ]; then
+            encoded_concrete=$(printf '%s' "$concrete" | sed -e 's/%/%25/g' -e 's/\r/%0D/g' -e ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error::$encoded_concrete"
+          fi
+
           {
             echo
             echo "### Concrete errors / warnings"
