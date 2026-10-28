@@ -2388,7 +2388,10 @@ math annotation {
 }
 
 .feature-map-control:hover {
-	background: var(--color-fill-tertiary, rgba(0, 0, 0, 0.06));
+	background: var(--color-bg-primary, #ffffff);
+	border-color: var(--color-accent, #007AFF);
+	color: var(--color-accent, #007AFF);
+	box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.18));
 }
 
 .feature-map-tooltip {

@@ -24,13 +24,17 @@ run_smoke_tests=true
 run_docker=true
 run_screenshot_test=false
 run_python_tests=true
+extra_args=()
 
+# Recognised flags configure this wrapper. Everything else is forwarded to
+# _run_tests.py, e.g. --chromium, --from-test "name", --only-test "name".
 while [[ $# -gt 0 ]]; do
 	case "$1" in
 		--no-smoke-tests) run_smoke_tests=false ;;
 		--no-docker) run_docker=false ;;
 		--screenshot-test) run_screenshot_test=true ;;
 		--no-run-tests) run_python_tests=false ;;
+		*) extra_args+=("$1") ;;
 	esac
 	shift
 done
@@ -102,7 +106,7 @@ if $run_python_tests; then
 	python -m playwright install --with-deps chromium
 
 	echo "====== Run tests ======"
-	python3 _run_tests.py --enable-fake-media --fake-video tests/fake.y4m $*
+	python3 _run_tests.py --enable-fake-media --fake-video tests/fake.y4m "${extra_args[@]}"
 	exit_code=$?
 	echo "====== Ran tests ======"
 else

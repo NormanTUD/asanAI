@@ -817,11 +817,11 @@ function _feature_map_decorate_controls (canvas) {
 		const name = action.getAttribute("data-feature-map-action");
 
 		if (name === "smaller") {
-			smaller_maximally_activated_neurons();
+			smaller_maximally_activated_neurons(wrapper);
 		} else if (name === "larger") {
-			larger_maximally_activated_neurons();
+			larger_maximally_activated_neurons(wrapper);
 		} else if (name === "reset") {
-			reset_maximally_activated_neurons();
+			reset_maximally_activated_neurons(wrapper);
 		}
 	});
 
@@ -2349,16 +2349,63 @@ function set_scale(s) {
 	document.documentElement.style.setProperty('--img-scale', String(s));
 }
 
-function larger_maximally_activated_neurons() {
-	set_scale(get_scale() + 0.25);
+function _feature_map_scale_item(target) {
+	if (!target) {
+		return null;
+	}
+
+	if (target.classList && target.classList.contains("feature-map-item")) {
+		return target;
+	}
+
+	return target.closest ? target.closest(".feature-map-item") : null;
 }
 
-function smaller_maximally_activated_neurons() {
-	let s = get_scale() - 0.25;
-	set_scale(Math.max(0.1, s));
+function get_feature_map_scale(target) {
+	const item = _feature_map_scale_item(target);
+	const value = item ? parseFloat(getComputedStyle(item).getPropertyValue("--img-scale")) : get_scale();
+
+	return Number.isFinite(value) ? value : 1;
 }
 
-function reset_maximally_activated_neurons() {
+function set_feature_map_scale(target, s) {
+	const item = _feature_map_scale_item(target);
+
+	if (item) {
+		item.style.setProperty("--img-scale", String(s));
+	} else {
+		set_scale(s);
+	}
+}
+
+function larger_maximally_activated_neurons(target) {
+	if (!target) {
+		set_scale(get_scale() + 0.25);
+		return;
+	}
+
+	set_feature_map_scale(target, get_feature_map_scale(target) + 0.25);
+}
+
+function smaller_maximally_activated_neurons(target) {
+	if (!target) {
+		set_scale(Math.max(0.1, get_scale() - 0.25));
+		return;
+	}
+
+	const s = get_feature_map_scale(target) - 0.25;
+	set_feature_map_scale(target, Math.max(0.1, s));
+}
+
+function reset_maximally_activated_neurons(target) {
+	if (target) {
+		set_feature_map_scale(target, 1);
+		return;
+	}
+
+	document.querySelectorAll(".feature-map-item").forEach(function (item) {
+		item.style.removeProperty("--img-scale");
+	});
 	set_scale(1);
 }
 

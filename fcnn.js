@@ -381,7 +381,7 @@ function _build_kernel_image_data(ctx, this_layer_output, n, m, minVal, maxVal) 
 			if (typeof rawVal !== "number" || !isFinite(rawVal)) continue;
 			var value = Math.floor((rawVal - minVal) * scale);
 			var index = (x * m + y) * 4;
-			var gray = Math.abs(255 - value);
+			var gray = Math.max(0, Math.min(255, value));
 			imageData.data[index] = gray;
 			imageData.data[index + 1] = gray;
 			imageData.data[index + 2] = gray;
@@ -717,19 +717,19 @@ function _create_scaled_canvas(rows, cols, maxDisplaySize) {
 	return { canvas: c, pixelScale: pixelScale };
 }
 
-function _render_inverted_grayscale_pixels(cx, data2d, rows, cols, pixelScale, mn, scale) {
+function _render_grayscale_pixels(cx, data2d, rows, cols, pixelScale, mn, scale) {
 	for (var r = 0; r < rows; r++) {
 		for (var col = 0; col < cols; col++) {
 			var v = data2d[r][col];
 			var value = Math.floor((v - mn) * scale);
-			var gray = Math.max(0, Math.min(255, Math.abs(255 - value)));
+			var gray = Math.max(0, Math.min(255, value));
 			cx.fillStyle = `rgb(${gray},${gray},${gray})`;
 			cx.fillRect(col * pixelScale, r * pixelScale, pixelScale, pixelScale);
 		}
 	}
 }
 
-function _make_mini_canvas_data_url_inverted(data2d, width, height, maxDisplaySize, globalMin, globalMax) {
+function _make_mini_canvas_data_url_grayscale(data2d, width, height, maxDisplaySize, globalMin, globalMax) {
 	try {
 		if (!data2d || !data2d.length) return null;
 		var rows = data2d.length;
@@ -752,7 +752,7 @@ function _make_mini_canvas_data_url_inverted(data2d, width, height, maxDisplaySi
 		var { canvas: c, pixelScale } = _create_scaled_canvas(rows, cols, maxDisplaySize);
 		var cx = c.getContext("2d");
 
-		_render_inverted_grayscale_pixels(cx, data2d, rows, cols, pixelScale, mn, scale);
+		_render_grayscale_pixels(cx, data2d, rows, cols, pixelScale, mn, scale);
 
 		return c.toDataURL("image/png");
 	} catch (e) {
@@ -1713,7 +1713,7 @@ function _render_flatten_rect(ctx, this_layer_output, _x, _y, _width, _height) {
 
 		for (var val_idx = 0; val_idx < numValues; val_idx++) {
 			ctx.beginPath();
-			var colorValue = Math.abs(255 - Math.round(normalizedValues[val_idx]));
+			var colorValue = Math.max(0, Math.min(255, Math.round(normalizedValues[val_idx])));
 			ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
 			ctx.fillRect(_x, _y + val_idx * lineHeight, _width, lineHeight);
 		}
@@ -2009,7 +2009,7 @@ function _compute_conv2d_channel_tooltip_data(channelOutput, minVal, maxVal) {
 		try {
 			var flat_channel = flatten(channelOutput);
 			channel_stats = _compute_stats(flat_channel);
-			channel_image_url = _make_mini_canvas_data_url_inverted(channelOutput, channelOutput[0].length, channelOutput.length, 80, minVal, maxVal);
+			channel_image_url = _make_mini_canvas_data_url_grayscale(channelOutput, channelOutput[0].length, channelOutput.length, 80, minVal, maxVal);
 		} catch (e) {}
 	}
 	return { channel_stats, channel_image_url };

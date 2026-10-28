@@ -108,16 +108,86 @@ function escape_html_for_test(name) {
 	);
 }
 
+// Progress display needs an expected total. The suite is dynamic (loops add
+// test_equal calls), so the exact total is learned from the last completed run
+// in this browser. DEFAULT_EXPECTED_TEST_COUNT is the fallback for a fresh
+// browser/CI run; update it when the suite grows or shrinks. ?expected_tests=N
+// overrides both.
+var DEFAULT_EXPECTED_TEST_COUNT = 1374;
+var __test_expected_total = (function () {
+	try {
+		var m = /[?&]expected_tests=(\d+)/.exec(window.location.search);
+		if (m) return parseInt(m[1], 10);
+	} catch (e) {}
+
+	try {
+		var stored = parseInt(localStorage.getItem("asanai_test_expected_count"), 10);
+		if (stored > 0) return stored;
+	} catch (e) {}
+
+	return DEFAULT_EXPECTED_TEST_COUNT;
+})();
+
+function _test_eta_text(done, total, slow_durations) {
+	if (total > 0 && done >= total) {
+		return human_readable_time(0);
+	}
+
+	if (done < 5 || slow_durations.length < 5) {
+		return "calculating…";
+	}
+
+	var slow_sum = slow_durations.reduce(function (sum, duration) { return sum + duration; }, 0);
+	var slow_average = slow_sum / slow_durations.length;
+	var slow_ratio = slow_durations.length / done;
+	var remaining_slow = Math.max(0, total - done) * slow_ratio;
+
+	return human_readable_time((slow_average * remaining_slow) / 1000);
+}
+
+function _test_format_progress(done, total, filtered, slow_durations) {
+	var pct = total > 0 ? Math.min(100, Math.round(done / total * 100)) : 0;
+	var width = 30;
+	var filled = Math.round(width * pct / 100);
+	var bar = "[" + "=".repeat(filled) + " ".repeat(width - filled) + "]";
+	var eta = filtered ? "n/a (filtered run)" : _test_eta_text(done, total, slow_durations);
+
+	return bar + " " + pct + "% of tests done (" + done + "/" + total + "), estimated time left: " + eta;
+}
+
+function _test_record_progress_duration() {
+	var now = get_current_timestamp();
+
+	if (__test_progress_last_at > 0) {
+		var duration = now - __test_progress_last_at;
+
+		if (duration >= 30000) {
+			__test_progress_slow_durations.push(duration);
+		}
+	}
+
+	__test_progress_last_at = now;
+}
+
+var __test_progress_last_at = 0;
+var __test_progress_slow_durations = [];
+
+function _test_progress_text() {
+	return _test_format_progress(num_tests, __test_expected_total, __test_resume_active, __test_progress_slow_durations);
+}
+
 function show_num_tests_overlay(name) {
+	_test_record_progress_duration();
+
 	name = "Test-name: " + name;
-	console.log(`%c-> ${name}`, "background:#004d40; color:#1de9b6");
+	console.log(`%c${_test_progress_text()}%c -> ${name}`, "color:#94a3b8", "background:#004d40; color:#1de9b6");
 
 	remove_num_tests_overlay();
 
 	let div = document.createElement("div");
 	div.id = "num-tests-overlay";
-	div.innerHTML = `Test ${num_tests}<br>${escape_html_for_test(name)}`;
-	log(`Test ${num_tests}\n${name}`);
+	div.innerHTML = `${_test_progress_text()}<br>Test ${num_tests}<br>${escape_html_for_test(name)}`;
+	log(`${_test_progress_text()}\nTest ${num_tests}\n${name}`);
 
 	Object.assign(div.style, {
 		position: "fixed",
@@ -269,6 +339,18 @@ function is_equal (a, b) {
 	}
 
 	return false;
+}
+
+function test_test_progress_display () {
+	const slow = [31000, 32000, 33000, 34000, 35000];
+
+	test_equal("Progress display shows a filled 30-character bar", _test_format_progress(50, 100, false, slow).indexOf("[===============               ] 50% of tests done (50/100)") === 0, true);
+	test_equal("Progress display waits for five slow samples", _test_format_progress(50, 100, false, slow.slice(0, 4)).indexOf("estimated time left: calculating…") !== -1, true);
+	test_equal("Progress display shows an ETA after five slow samples", _test_format_progress(50, 100, false, slow).indexOf(", estimated time left: ") !== -1, true);
+	test_equal("Progress display caps the bar at 100 percent", _test_format_progress(120, 100, false, slow).indexOf("100% of tests done (120/100)") !== -1, true);
+	test_equal("Progress display omits the ETA for filtered runs", _test_format_progress(5, 100, true, slow).indexOf("n/a (filtered run)") !== -1, true);
+
+	return true;
 }
 
 
@@ -609,19 +691,39 @@ async function test_maximally_activated_last_layer() {
 	test_equal("Feature maps have zoom controls attached to the image", canvas_controls.length, 1);
 
 	const controls_before = canvas_controls[0].getBoundingClientRect();
-	const scale_before = get_scale();
+	const scale_before = get_feature_map_scale(canvas);
 
 	canvas_controls.find("[data-feature-map-action='larger']").click();
 
 	const controls_after = canvas_controls[0].getBoundingClientRect();
 
-	test_equal("Larger control scales the feature maps", get_scale() > scale_before, true);
+	test_equal("Larger control scales its own feature map", get_feature_map_scale(canvas) > scale_before, true);
 	test_equal("Zoom controls stay in place while the map scales", Math.abs(controls_after.left - controls_before.left) <= 1 && Math.abs(controls_after.top - controls_before.top) <= 1, true);
+	test_equal("Per-map zoom leaves the global scale untouched", get_scale(), 1);
 
 	canvas_controls.find("[data-feature-map-action='smaller']").click();
-	test_equal("Smaller control scales the feature maps back", Math.abs(get_scale() - scale_before) < 1e-9, true);
+	test_equal("Smaller control scales the feature map back", Math.abs(get_feature_map_scale(canvas) - scale_before) < 1e-9, true);
 	canvas_controls.find("[data-feature-map-action='reset']").click();
-	test_equal("Reset control restores the default scale", get_scale(), 1);
+	test_equal("Reset control restores the map's default scale", get_feature_map_scale(canvas), 1);
+
+	const feature_map_items = last_group.find(".feature-map-item");
+
+	if (feature_map_items.length >= 2) {
+		const first_map = feature_map_items[0];
+		const second_map = feature_map_items[1];
+		const first_scale_before = get_feature_map_scale(first_map);
+		const second_controls = $(second_map).find(".feature-map-controls")[0];
+		const second_controls_before = second_controls.getBoundingClientRect();
+
+		$(second_map).find("[data-feature-map-action='larger']").click();
+
+		const second_controls_after = second_controls.getBoundingClientRect();
+
+		test_equal("Growing a map leaves the other maps in its row unchanged", get_feature_map_scale(first_map), first_scale_before);
+		test_equal("Growing a map keeps its controls under the cursor", Math.abs(second_controls_after.left - second_controls_before.left) <= 1 && Math.abs(second_controls_after.top - second_controls_before.top) <= 1, true);
+
+		$(second_map).find("[data-feature-map-action='reset']").click();
+	}
 
 	const tooltip = document.getElementById("feature_map_tooltip");
 	const original_darkmode = document.body.classList.contains("darkmode");
@@ -861,6 +963,20 @@ function test_fcnn_neuron_colors_use_global_range_when_constant () {
 	test_equal("Constant positive activation uses the global scale (white)", center_value([1], 0, 0, 1), 255);
 	test_equal("Constant zero activation uses the global scale (black)", center_value([0], 0, 0, 1), 0);
 	test_equal("Varied activation still uses the per-layer scale (black)", center_value([0, 0.5, 1], 0, 0, 1), 0);
+
+	const kernel_image = _build_kernel_image_data(ctx, [[0, 3], [1, 2]], 2, 2, 0, 3);
+	test_equal("Kernel image maps the smallest value to black", kernel_image.data[0], 0);
+	test_equal("Kernel image maps the largest value to white", kernel_image.data[4], 255);
+
+	const flatten_canvas = document.createElement("canvas");
+	flatten_canvas.width = 1;
+	flatten_canvas.height = 2;
+	const flatten_ctx = flatten_canvas.getContext("2d");
+
+	_render_flatten_rect(flatten_ctx, [0, 1], 0, 0, 1, 2);
+
+	test_equal("Flatten rectangle maps the smallest value to black", flatten_ctx.getImageData(0, 0, 1, 1).data[0], 0);
+	test_equal("Flatten rectangle maps the largest value to white", flatten_ctx.getImageData(0, 1, 1, 1).data[0], 255);
 
 	const old_layer_states_saved = layer_states_saved;
 
@@ -6502,6 +6618,8 @@ async function run_tests (quick=0, disable_webcam=0) {
 	mem_history = [];
 	log_test("Tests started");
 	num_tests = num_tests_failed = 0;
+	__test_progress_last_at = 0;
+	__test_progress_slow_durations = [];
 
 	await run_super_quick_tests(quick);
 
@@ -6518,6 +6636,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 
 	test_equal("new_tiny_tests", await new_tiny_tests(), true);
 	test_equal("test_translation_cache()", await test_translation_cache(), true);
+	test_equal("test_test_progress_display()", test_test_progress_display(), true);
 
 	tf.engine().startScope();
 
@@ -6601,6 +6720,16 @@ async function run_tests (quick=0, disable_webcam=0) {
 	}
 
 	test_summary();
+
+	if (num_tests !== __test_expected_total) {
+		var count_message = `[test-progress] suite ran ${num_tests} tests, expected ${__test_expected_total}; next run uses the observed count`;
+		console.warn(count_message);
+		log(count_message);
+	}
+
+	try {
+		localStorage.setItem("asanai_test_expected_count", String(num_tests));
+	} catch (e) {}
 
 	is_running_test = false;
 

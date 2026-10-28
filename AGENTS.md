@@ -54,6 +54,24 @@ again before reporting done.
   them before sending, cut filler, fix ambiguity and rhythm, and verify every
   claim; a text is not done on the first draft.
 
+**WORKING DISCIPLINE**
+- Test everything, automatically. — Every behavior change needs automated
+  coverage: the happy path, boundaries, malformed input, and failure modes.
+  A bug fix comes with a regression test that fails without the fix. Do not
+  rely on manual clicking as proof.
+- Run the real suite, not a guess. — Execute the relevant validators and the
+  in-browser suite; include the raw output in the final report. A green run
+  you did not observe is not evidence.
+- Write clean, modular code. — Small functions with one job, clear names,
+  explicit inputs, no duplicated logic, no dead code, and no hidden global
+  state. Extend existing patterns instead of copying them.
+- Work carefully and in passes. — Read the surrounding code first, state
+  assumptions, make the smallest correct diff, then re-read the diff two or
+  three times for correctness, consistency, readability, and test coverage.
+- Iterate with focused slices, finish with the full gate. — Use filtered test
+  runs while developing (see "Focused Toolkit test runs"), but run the full
+  suite before declaring the task done.
+
 ## What this repository is
 
 `asanAI` is one project in two parts that share a philosophy — *make machine
@@ -785,6 +803,42 @@ your lesson**. `tuck_layout_test.js` and the `.sh` layout guards
 (`hover_layout_guard.sh`, `width_layout_guard.sh`, `typography_fix.sh`) are
 local-only; the `.sh` guards silently SKIP (exit 0) without a served site at
 `http://localhost/asanai/blog/tests/…` + Chromium.
+
+### Focused Toolkit test runs
+
+The full suite (`bash run_tests`) is the release gate. While iterating, do not
+pay for a complete run every time — resume late, or run only matching tests:
+
+```bash
+# one-time server + browser environment
+bash docker.sh --local-port 1122
+source ~/.asanai_test_env/bin/activate
+
+# run only matching tests in Chromium against the already-running server
+python3 _run_tests.py --chromium --url http://localhost:1122 \
+  --from-test "test_maximally_activated_last_layer" \
+  --only-test "Feature map" --only-test "Growing a map" \
+  --only-test-count 25
+
+# the wrapper forwards unknown flags to _run_tests.py
+bash run_tests --no-smoke-tests --no-docker --chromium \
+  --from-test "test_maximally_activated_last_layer" --only-test "Feature map"
+```
+
+- `--from-test NAME` skips every `test_equal` before the first matching name.
+  Non-`test_equal` setup still runs so global state stays valid — the suite
+  therefore still spends time on training/setup, but skips the assertions.
+- `--only-test NAME` (repeatable) runs only `test_equal` names containing that
+  substring; `--only-test-count N` stops after N executed assertions.
+- Both options are forwarded as `?from_test=…` / `?only_test=…`; you can also
+  use them directly in the browser URL.
+- The suite prints `[====      ] 42% of tests done (N/TOTAL), estimated time
+  left: …` for every test. The bar always shows progress; the ETA only starts
+  after at least five tests that each took ≥30 s, so the fast opening tests do
+  not produce a misleading estimate. `TOTAL` comes from the last completed run
+  in this browser; `DEFAULT_EXPECTED_TEST_COUNT` in `tests.js` is the
+  fresh-browser fallback and `?expected_tests=N` overrides it. Update the
+  fallback when the suite count changes for real.
 
 ## Guardrails
 
