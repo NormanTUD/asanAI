@@ -23,26 +23,16 @@
 		};
 	}
 
-	function flush_fill_groups(real_ctx, fill_groups) {
-		for (const [key, group] of fill_groups) {
-			const props = group.__style;
+	function flush_ops(real_ctx, ops) {
+		// Keep the original draw order: a later shape with an already-seen
+		// style must still be painted after the shapes that came in between.
+		for (const op of ops) {
 			real_ctx.save();
-			Object.assign(real_ctx, props);
-			try { real_ctx.fill(group.path); } catch(e){}
+			Object.assign(real_ctx, op.__style);
+			try { op.isFill ? real_ctx.fill(op.path) : real_ctx.stroke(op.path); } catch(e){}
 			real_ctx.restore();
 		}
-		fill_groups.clear();
-	}
-
-	function flush_stroke_groups(real_ctx, stroke_groups) {
-		for (const [key, group] of stroke_groups) {
-			const props = group.__style;
-			real_ctx.save();
-			Object.assign(real_ctx, props);
-			try { real_ctx.stroke(group.path); } catch(e){}
-			real_ctx.restore();
-		}
-		stroke_groups.clear();
+		ops.length = 0;
 	}
 
 	function schedule_flush(st) {
@@ -50,23 +40,28 @@
 		st.flush_scheduled = true;
 		requestAnimationFrame(() => {
 			st.flush_scheduled = false;
-			if (st.fill_groups.size) flush_fill_groups(st.real_ctx, st.fill_groups);
-			if (st.stroke_groups.size) flush_stroke_groups(st.real_ctx, st.stroke_groups);
+			if (st.ops.length) flush_ops(st.real_ctx, st.ops);
 		});
 	}
 
 	function push_group(st, ctx, isFill) {
-		const key = make_style_key(ctx, isFill);
-		const groups = isFill ? st.fill_groups : st.stroke_groups;
+		const key = (isFill ? "fill|" : "stroke|") + make_style_key(ctx, isFill);
+		const ops = st.ops;
+		const last = ops.length ? ops[ops.length - 1] : null;
 
-		const existing = groups.get(key);
-		if (existing) {
-			existing.path.addPath(st.current_path);
+		// Only merge with the immediately preceding op. Reusing an older group
+		// would move this shape back in time and let shapes drawn in between
+		// cover it (e.g. a dense neuron's black/white fill disappearing under
+		// an earlier gray base circle).
+		if (last && last.key === key) {
+			last.path.addPath(st.current_path);
 		} else {
 			const p = new Path2D();
 			p.addPath(st.current_path);
-			groups.set(key, {
+			ops.push({
+				key: key,
 				path: p,
+				isFill: isFill,
 				__style: isFill ? capture_fill_style(ctx) : capture_stroke_style(ctx)
 			});
 		}
@@ -76,6 +71,16 @@
 	}
 
 	const PATH_METHODS = ["moveTo","lineTo","rect","arc","ellipse","bezierCurveTo","quadraticCurveTo","arcTo"];
+
+	// Drawing calls that are not batched must see (and come after) every
+	// pending fill/stroke; reads must see them too. State/transform changes are
+	// included because a Path2D is transformed at fill/stroke time.
+	const IMMEDIATE_METHODS = [
+		"drawImage", "putImageData", "getImageData", "clearRect",
+		"fillText", "strokeText", "clip",
+		"save", "restore", "scale", "translate", "rotate", "transform",
+		"setTransform", "resetTransform"
+	];
 
 	function proxy_rect(st, target, x, y, w, h, isFill) {
 		try {
@@ -133,6 +138,13 @@
 					};
 				}
 
+				if (IMMEDIATE_METHODS.includes(prop)) {
+					return function(...args){
+						if (st.ops.length) flush_ops(st.real_ctx, st.ops);
+						return target[prop](...args);
+					};
+				}
+
 				const val = target[prop];
 				if (typeof val === "function") return val.bind(target);
 				return val;
@@ -152,8 +164,7 @@
 
 		const st = {
 			current_path: new Path2D(),
-			stroke_groups: new Map(),
-			fill_groups: new Map(),
+			ops: [],
 			flush_scheduled: false,
 			real_ctx: real_ctx
 		};

@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // in this browser. DEFAULT_EXPECTED_TEST_COUNT is the fallback for a fresh
 // browser/CI run; update it when the suite grows or shrinks. ?expected_tests=N
 // overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1381;
+var DEFAULT_EXPECTED_TEST_COUNT = 1386;
 var __test_expected_total = (function () {
 	try {
 		var m = /[?&]expected_tests=(\d+)/.exec(window.location.search);
@@ -1011,6 +1011,62 @@ function test_fcnn_neuron_colors_span_each_layer () {
 	return true;
 }
 
+async function test_faster_canvas_fill_order () {
+	const real_canvas = document.getElementById("fcnn_canvas");
+	const test_canvas = document.createElement("canvas");
+	test_canvas.width = 60;
+	test_canvas.height = 60;
+
+	if (real_canvas) real_canvas.id = "fcnn_canvas_original";
+	test_canvas.id = "fcnn_canvas";
+	document.body.appendChild(test_canvas);
+
+	try {
+		const ctx = test_canvas.getContext("2d");
+
+		// A later fill with a style already seen earlier must stay on top.
+		ctx.fillStyle = "#000000";
+		ctx.fillRect(0, 0, 10, 10);
+		ctx.fillStyle = "#888888";
+		ctx.fillRect(0, 0, 10, 10);
+		ctx.fillStyle = "#000000";
+		ctx.fillRect(5, 5, 10, 10);
+		test_equal("Faster canvas keeps later same-style fills on top", ctx.getImageData(7, 7, 1, 1).data[0], 0);
+
+		// A fill after a stroke must cover it.
+		ctx.clearRect(0, 0, 60, 60);
+		ctx.strokeStyle = "#ff0000";
+		ctx.lineWidth = 6;
+		ctx.beginPath();
+		ctx.moveTo(0, 30);
+		ctx.lineTo(60, 30);
+		ctx.stroke();
+		ctx.fillStyle = "#000000";
+		ctx.fillRect(20, 20, 20, 20);
+		test_equal("Faster canvas keeps fills after strokes", ctx.getImageData(30, 30, 1, 1).data[0], 0);
+
+		// getImageData must flush pending draws first.
+		ctx.clearRect(0, 0, 60, 60);
+		ctx.fillStyle = "#123456";
+		ctx.fillRect(0, 0, 60, 60);
+		test_equal("Faster canvas flushes before getImageData", ctx.getImageData(1, 1, 1, 1).data[0], 0x12);
+
+		// The animation-frame flush must paint without a read triggering it.
+		ctx.clearRect(0, 0, 60, 60);
+		ctx.fillStyle = "#abcdef";
+		ctx.fillRect(0, 0, 60, 60);
+		test_canvas.id = "fcnn_canvas_native_read";
+		const native_ctx = test_canvas.getContext("2d");
+		await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+		test_equal("Faster canvas flushes deferred draws", native_ctx.getImageData(1, 1, 1, 1).data[0], 0xab);
+	} finally {
+		test_canvas.remove();
+		if (real_canvas) real_canvas.id = "fcnn_canvas";
+	}
+
+	return true;
+}
+
 function test_resolve_maximally_activated_iterations() {
 	var $input = $("#max_activation_iterations");
 	var old_value = $input.val();
@@ -1575,6 +1631,8 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("test_explainability_axis_label_fallback()", test_explainability_axis_label_fallback(), true);
 
 	test_equal("test_fcnn_neuron_colors_span_each_layer()", test_fcnn_neuron_colors_span_each_layer(), true);
+
+	test_equal("test_faster_canvas_fill_order()", await test_faster_canvas_fill_order(), true);
 
 	test_equal('computeCRC32("")', computeCRC32(""), 0);
 	test_equal('computeCRC32("asasd")', computeCRC32("asasd"), 3324180253);
