@@ -536,17 +536,14 @@ function _compute_global_activation_range() {
 		}
 
 		try {
-			var output = state.output[0];
-			var shape = get_shape_from_array(output);
-
 			// Conv outputs are 4-D; they are drawn as rectangles, not circles.
 			// Dense neurons should span the dense activation range, so their
 			// global black/white endpoints are not stolen by a conv layer.
-			if (shape.length === 4) {
+			if (get_shape_from_array(state.output).length === 4) {
 				return;
 			}
 
-			var flat = flatten(output);
+			var flat = flatten(state.output[0]);
 
 			for (var i = 0; i < flat.length; i++) {
 				var value = flat[i];
