@@ -114,19 +114,24 @@ function escape_html_for_test(name) {
 // browser/CI run; update it when the suite grows or shrinks. ?expected_tests=N
 // overrides both.
 var DEFAULT_EXPECTED_TEST_COUNT = 1399;
-var __test_expected_total = (function () {
+var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 493;
+
+function _test_expected_count (storage_key, fallback) {
 	try {
 		var m = /[?&]expected_tests=(\d+)/.exec(window.location.search);
 		if (m) return parseInt(m[1], 10);
 	} catch (e) {}
 
 	try {
-		var stored = parseInt(localStorage.getItem("asanai_test_expected_count"), 10);
+		var stored = parseInt(localStorage.getItem(storage_key), 10);
 		if (stored > 0) return stored;
 	} catch (e) {}
 
-	return DEFAULT_EXPECTED_TEST_COUNT;
-})();
+	return fallback;
+}
+
+var __test_expected_total = _test_expected_count("asanai_test_expected_count", DEFAULT_EXPECTED_TEST_COUNT);
+var __test_expected_quick_total = _test_expected_count("asanai_test_expected_quick_count", DEFAULT_EXPECTED_QUICK_TEST_COUNT);
 
 function _test_eta_text(done, total, slow_durations, elapsed_ms) {
 	if (total > 0 && done >= total) {
@@ -739,21 +744,39 @@ async function test_maximally_activated_last_layer() {
 		$(second_map).find("[data-feature-map-action='reset']").click();
 	}
 
-	const tooltip = document.getElementById("feature_map_tooltip");
+	function parse_css_rgb (color) {
+		if (!color) return null;
+
+		var match = /rgba?\(([^)]+)\)/i.exec(color);
+		var parts = null;
+
+		if (match) {
+			parts = match[1].split(/[\s,\/]+/).filter(Boolean).map(Number);
+		} else {
+			match = /color\(srgb\s+([^)]+)\)/i.exec(color);
+			if (match) {
+				parts = match[1].split(/[\s\/]+/).filter(Boolean).map(Number).map(function (value) { return value * 255; });
+			}
+		}
+
+		if (!parts || parts.length < 3 || parts.some(function (value) { return !isFinite(value); })) return null;
+		return parts.slice(0, 3).map(function (value) { return Math.round(value); });
+	}
+
 	const original_darkmode = document.body.classList.contains("darkmode");
 
 	document.body.classList.add("darkmode");
 	await delay(500);
-	const tooltip_dark = getComputedStyle(tooltip).backgroundColor;
+	const tooltip_dark = getComputedStyle(_feature_map_ensure_tooltip()).backgroundColor;
 	document.body.classList.remove("darkmode");
 	await delay(500);
-	const tooltip_light = getComputedStyle(tooltip).backgroundColor;
+	const tooltip_light = getComputedStyle(_feature_map_ensure_tooltip()).backgroundColor;
 
-	const dark_rgb = /rgba?\((\d+), (\d+), (\d+)/.exec(tooltip_dark);
-	const light_rgb = /rgba?\((\d+), (\d+), (\d+)/.exec(tooltip_light);
+	const dark_rgb = parse_css_rgb(tooltip_dark);
+	const light_rgb = parse_css_rgb(tooltip_light);
 
-	test_equal("Feature map tooltip uses a dark background in dark mode", !!dark_rgb && Number(dark_rgb[1]) < 100 && dark_rgb[1] === dark_rgb[2] && dark_rgb[2] === dark_rgb[3], true);
-	test_equal("Feature map tooltip uses a light background in light mode", !!light_rgb && Number(light_rgb[1]) > 200 && light_rgb[1] === light_rgb[2] && light_rgb[2] === light_rgb[3], true);
+	test_equal("Feature map tooltip uses a dark background in dark mode", !!dark_rgb && dark_rgb[0] < 100 && dark_rgb[0] === dark_rgb[1] && dark_rgb[1] === dark_rgb[2], true);
+	test_equal("Feature map tooltip uses a light background in light mode", !!light_rgb && light_rgb[0] > 200 && light_rgb[0] === light_rgb[1] && light_rgb[1] === light_rgb[2], true);
 
 	if (original_darkmode) {
 		document.body.classList.add("darkmode");
@@ -1969,6 +1992,19 @@ async function test_clicking_on_example_images_for_prediction() {
 	test_no_new_errors_or_warnings();
 }
 
+async function _photo_gallery_wait_for_width (expected_width, timeout_ms) {
+	const deadline = Date.now() + (timeout_ms || 2000);
+
+	while (Date.now() < deadline) {
+		if (_photo_gallery.layout && Math.abs(_photo_gallery.layout.css_width - expected_width) <= 2) {
+			return true;
+		}
+		await new Promise(function (resolve) { requestAnimationFrame(resolve); });
+	}
+
+	return false;
+}
+
 async function test_photo_gallery_resize () {
 	const canvas = document.getElementById("photo_gallery_canvas");
 
@@ -1993,7 +2029,7 @@ async function test_photo_gallery_resize () {
 	try {
 		forced_width = 420;
 		window.dispatchEvent(new Event("resize"));
-		await new Promise(function (resolve) { setTimeout(resolve, 150); });
+		await _photo_gallery_wait_for_width(forced_width);
 
 		const narrow_layout = _photo_gallery.layout;
 
@@ -2003,7 +2039,7 @@ async function test_photo_gallery_resize () {
 
 		forced_width = 980;
 		window.dispatchEvent(new Event("resize"));
-		await new Promise(function (resolve) { setTimeout(resolve, 150); });
+		await _photo_gallery_wait_for_width(forced_width);
 
 		const wide_layout = _photo_gallery.layout;
 
@@ -2013,7 +2049,7 @@ async function test_photo_gallery_resize () {
 
 		forced_width = 760;
 		window.dispatchEvent(new Event("resize"));
-		await new Promise(function (resolve) { setTimeout(resolve, 150); });
+		await _photo_gallery_wait_for_width(forced_width);
 
 		test_equal("Window resize event relayouts the canvas", Math.abs(_photo_gallery.layout.css_width - 760) <= 2, true);
 	} finally {
@@ -2672,7 +2708,7 @@ async function test_photo_gallery_pixel_rendering_and_resize () {
 
 		forced_width = 50;
 		window.dispatchEvent(new Event("resize"));
-		await new Promise(function (resolve) { setTimeout(resolve, 150); });
+		await _photo_gallery_wait_for_width(forced_width);
 
 		test_equal("Narrow resize recomputes one column", _photo_gallery.layout.cols, 1);
 		test_equal("First image survives a narrow resize", _photo_gallery_pixel_is(_photo_gallery_test_pixel(0), [255, 0, 0]), true);
@@ -2680,7 +2716,7 @@ async function test_photo_gallery_pixel_rendering_and_resize () {
 
 		forced_width = 400;
 		window.dispatchEvent(new Event("resize"));
-		await new Promise(function (resolve) { setTimeout(resolve, 150); });
+		await _photo_gallery_wait_for_width(forced_width);
 
 		test_equal("Wide resize recomputes multiple columns", _photo_gallery.layout.cols > 1, true);
 		test_equal("First image survives a wide resize", _photo_gallery_pixel_is(_photo_gallery_test_pixel(0), [255, 0, 0]), true);
@@ -3019,6 +3055,10 @@ async function test_photo_gallery_resize_cycles_under_load () {
 		}
 
 		const total_ms = performance.now() - start;
+
+		// The relayout runs in requestAnimationFrame; on loaded macOS runners
+		// the last frame can land after the fixed 20 ms waits above.
+		await _photo_gallery_wait_for_width(forced_width);
 
 		test_equal("Repeated resize under load stays reasonably fast", total_ms < 5000, true);
 		test_equal("Repeated resize keeps all images", _photo_gallery.entries.length, 500);
@@ -6765,6 +6805,10 @@ async function test_representation_analysis() {
 }
 
 async function run_tests (quick=0, disable_webcam=0) {
+	if (quick) {
+		__test_expected_total = __test_expected_quick_total;
+	}
+
 	original_num_errs = num_errs;
 	original_num_wrns = num_wrns;
 
@@ -6891,7 +6935,8 @@ async function run_tests (quick=0, disable_webcam=0) {
 	}
 
 	try {
-		localStorage.setItem("asanai_test_expected_count", String(num_tests));
+		var expected_key = quick ? "asanai_test_expected_quick_count" : "asanai_test_expected_count";
+		localStorage.setItem(expected_key, String(num_tests));
 	} catch (e) {}
 
 	is_running_test = false;

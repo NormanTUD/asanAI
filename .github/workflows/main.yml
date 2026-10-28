@@ -72,8 +72,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # Windows/macOS cannot run the Linux Docker container used above. Serve the
-  # app directly with PHP and drive it with Playwright instead. The bundled
-  # Chromium gets the full suite; other engines get the quick suite.
+  # app directly with PHP and drive it with Playwright instead. Chromium,
+  # Firefox, Chrome and Edge get the full suite; WebKit and Opera get the quick
+  # suite while their engine-specific quirks are worked through.
   playwright-cross-platform:
     needs: smoke-tests
     runs-on: ${{ matrix.os }}
@@ -96,28 +97,28 @@ jobs:
           - os: windows-latest
             browser: firefox
             install: firefox
-            quick: true
+            quick: false
             experimental: false
           - os: macos-latest
             browser: firefox
             install: firefox
-            quick: true
+            quick: false
             experimental: false
           - os: windows-latest
             browser: chrome
-            quick: true
+            quick: false
             experimental: false
           - os: macos-latest
             browser: chrome
-            quick: true
+            quick: false
             experimental: false
           - os: windows-latest
             browser: msedge
-            quick: true
+            quick: false
             experimental: false
           - os: macos-latest
             browser: msedge
-            quick: true
+            quick: false
             experimental: false
           # WebKit is Playwright's Safari engine. Its quick suite currently
           # trips a tooltip-color assertion, so keep it non-blocking until
