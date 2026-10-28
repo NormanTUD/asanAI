@@ -798,7 +798,8 @@ dependency in a header won't resolve for a few days).
 `main.yml` runs the full Docker suite on Ubuntu and a direct-PHP/Playwright
 matrix on `windows-latest` + `macos-latest` (Chromium, Firefox, Chrome, Edge
 full; WebKit/Opera quick and non-blocking until engine-specific quirks are
-fixed).
+fixed). Matrices use `fail-fast: true`; a watchdog job cancels the whole run
+when any required job fails (experimental WebKit/Opera failures do not cancel).
 The two workflows are complementary: `main.yml` **ignores** `blog/**`
 (toolkit only); `blog_php_validator.yml` runs **only** on `blog/**` (plus a
 weekly Monday cron for link rot). A new lesson gets static CI coverage for
