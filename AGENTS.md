@@ -796,9 +796,9 @@ dependency in a header won't resolve for a few days).
 | `python _run_tests.py --browser <name> [--quick] --url <url>` | Cross-platform Playwright runner (no Docker): `chromium`/`firefox`/`webkit` use Playwright's bundled builds, `chrome`/`msedge` the installed branded channels, `opera` a best-effort Chromium launch; `--quick` runs `run_tests(1)` | failed tests | Windows/macOS Toolkit CI |
 
 `main.yml` runs the full Docker suite on Ubuntu and a direct-PHP/Playwright
-matrix on `windows-latest` + `macos-latest` (all browsers full; macOS keeps
-Chromium/Firefox/WebKit because plans cap concurrent macOS jobs at 5). Matrices use
-`fail-fast: false`; a watchdog job
+matrix on `windows-latest` + `macos-latest` (all browsers full; macOS jobs share
+a concurrency group so browsers run sequentially, respecting the plan's
+five-macOS-job limit). Matrices use `fail-fast: false`; a watchdog job
 cancels the whole run when a job that actually started fails, and the version
 tag is only pushed after all jobs succeed. Jobs that never acquired a runner
 (infrastructure failures, no steps) do not cancel the other jobs. Browser failures are summarized on the job's GitHub

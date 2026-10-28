@@ -72,14 +72,17 @@ jobs:
 
   # Windows/macOS cannot run the Linux Docker container used above. Serve the
   # app directly with PHP and drive it with Playwright instead. Every browser
-  # runs the full suite. macOS keeps Chromium, Firefox and WebKit only: plans
-  # cap concurrent macOS jobs at 5, so adding Chrome/Edge/Opera there starves
-  # the queue. All jobs are blocking so the watchdog can cancel on any failure.
+  # runs the full suite. On macOS the jobs share one concurrency group, so the
+  # browsers run one after another instead of competing for the plan's five
+  # concurrent macOS runner slots. Windows jobs stay parallel.
   playwright-cross-platform:
     name: ${{ matrix.browser }} / ${{ matrix.os }} / ${{ matrix.quick && 'quick' || 'full' }}
     needs: smoke-tests
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
+    concurrency:
+      group: ${{ matrix.os == 'macos-latest' && format('macos-browsers-{0}', github.run_id) || format('other-browsers-{0}-{1}', github.run_id, matrix.browser) }}
+      cancel-in-progress: false
     strategy:
       fail-fast: false
       matrix:
@@ -103,7 +106,13 @@ jobs:
           - os: windows-latest
             browser: chrome
             quick: false
+          - os: macos-latest
+            browser: chrome
+            quick: false
           - os: windows-latest
+            browser: msedge
+            quick: false
+          - os: macos-latest
             browser: msedge
             quick: false
           - os: windows-latest
@@ -117,6 +126,9 @@ jobs:
           # Playwright has no official Opera support; this launches the
           # installed Opera binary through its Chromium engine best-effort.
           - os: windows-latest
+            browser: opera
+            quick: false
+          - os: macos-latest
             browser: opera
             quick: false
     steps:
