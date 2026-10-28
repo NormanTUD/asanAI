@@ -5740,6 +5740,16 @@ async function test_activation_atlas() {
 			document.body.appendChild(container);
 		}
 
+		// The atlas drives generation through tf.nextFrame(). A hidden tab
+		// throttles requestAnimationFrame (Opera can stop it entirely), which
+		// looks like a hang. Make the tab visible before starting.
+		if (typeof show_tab_label === "function") {
+			show_tab_label("visualization_tab_label", 1);
+			await delay(200);
+			show_tab_label("activation_atlas_tab_label", 1);
+			await delay(200);
+		}
+
 		ActivationAtlas(container);
 
 		// Override state to minimal config BEFORE clicking start:
@@ -5780,13 +5790,61 @@ async function test_activation_atlas() {
 
 		// Wait for generation to complete (poll for _state.isComputing via UI cues)
 		// The toggle button changes from "Stop" to "Generate" when done
-		var maxWaitMs = 120000; // 2 minutes max
+		// Opera needs noticeably longer for the WebGL gradient-ascent cells
+		// (observed ~135 s for 6x6 cells locally). Keep enough headroom for
+		// slower CI machines; the debug log below shows whether it is stuck.
+		var maxWaitMs = 300000; // 5 minutes max
 		var elapsed = 0;
 		var pollInterval = 500;
+
+		function atlas_debug_state () {
+			var toggle = container.querySelector(".atlas_toggle_btn");
+			var progress = container.querySelector(".atlas_progress_inner");
+			var label = container.querySelector(".atlas_progress_label");
+			var estimate = container.querySelector(".atlas_time_estimate");
+			var error = container.querySelector(".atlas_error");
+			var canvas = container.querySelector(".atlas_canvas");
+
+			return {
+				elapsed_ms: elapsed,
+				hidden: typeof is_hidden_or_has_hidden_parent === "function" ? is_hidden_or_has_hidden_parent(container) : null,
+				offset_parent: container.offsetParent ? container.offsetParent.id : null,
+				visibility_state: document.visibilityState,
+				toggle_class: toggle ? toggle.className : null,
+				toggle_text: toggle ? toggle.textContent : null,
+				progress_width: progress ? progress.style.width : null,
+				progress_label: label ? label.textContent : null,
+				time_estimate: estimate ? estimate.textContent : null,
+				error: error ? error.textContent : null,
+				canvas: canvas ? { width: canvas.width, height: canvas.height } : null,
+				model_layers: model && model.layers ? model.layers.length : null,
+				backend: typeof tf !== "undefined" ? tf.getBackend() : null,
+				num_errs: num_errs,
+				num_wrns: num_wrns
+			};
+		}
+
+		function log_atlas_debug_entries () {
+			var new_errors = num_errs - old_errs;
+			var new_warnings = num_wrns - old_wrns;
+
+			if (typeof _test_recent_debug_entries === "function") {
+				_test_recent_debug_entries("err", new_errors).forEach(function (entry) {
+					console.error("[test_activation_atlas] concrete error: " + _test_format_debug_entry(entry));
+				});
+				_test_recent_debug_entries("warn", new_warnings).forEach(function (entry) {
+					console.error("[test_activation_atlas] concrete warning: " + _test_format_debug_entry(entry));
+				});
+			}
+		}
 
 		while (elapsed < maxWaitMs) {
 			await new Promise(function (r) { setTimeout(r, pollInterval); });
 			elapsed += pollInterval;
+
+			if (elapsed % 10000 === 0) {
+				console.log("[test_activation_atlas] progress " + JSON.stringify(atlas_debug_state()));
+			}
 
 			var toggleBtn = container.querySelector(".atlas_toggle_btn");
 			if (!toggleBtn) {
@@ -5807,7 +5865,8 @@ async function test_activation_atlas() {
 		}
 
 		if (!finished && !hadError) {
-			console.error("[test_activation_atlas] Timed out after " + maxWaitMs + "ms");
+			console.error("[test_activation_atlas] Timed out after " + maxWaitMs + "ms " + JSON.stringify(atlas_debug_state()));
+			log_atlas_debug_entries();
 			// Stop it gracefully
 			var stopBtn = container.querySelector(".atlas_toggle_stop");
 			if (stopBtn) stopBtn.click();
@@ -5822,7 +5881,8 @@ async function test_activation_atlas() {
 		// Verify results: canvas should have generated cell images
 		var canvas = container.querySelector(".atlas_canvas");
 		if (!canvas) {
-			console.error("[test_activation_atlas] Canvas not found after generation");
+			console.error("[test_activation_atlas] Canvas not found after generation " + JSON.stringify(atlas_debug_state()));
+			log_atlas_debug_entries();
 			return false;
 		}
 
@@ -5839,24 +5899,27 @@ async function test_activation_atlas() {
 		}
 
 		if (!hasNonBlackPixel) {
-			console.error("[test_activation_atlas] Canvas appears blank after generation");
+			console.error("[test_activation_atlas] Canvas appears blank after generation " + JSON.stringify(atlas_debug_state()));
+			log_atlas_debug_entries();
 			return false;
 		}
 
 		// Verify no new errors or warnings
 		if (num_errs !== old_errs) {
-			console.error("[test_activation_atlas] New errors detected during generation");
+			console.error("[test_activation_atlas] New errors detected during generation " + JSON.stringify(atlas_debug_state()));
+			log_atlas_debug_entries();
 			return false;
 		}
 
 		if (num_wrns !== old_wrns) {
-			console.error("[test_activation_atlas] New warnings detected during generation");
+			console.error("[test_activation_atlas] New warnings detected during generation " + JSON.stringify(atlas_debug_state()));
+			log_atlas_debug_entries();
 			return false;
 		}
 
 		return true;
 	} catch (e) {
-		console.error("[test_activation_atlas] Exception:", e.message || e);
+		console.error("[test_activation_atlas] Exception: " + (e && e.stack ? e.stack : (e.message || e)));
 		return false;
 	}
 }
