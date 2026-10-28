@@ -65,9 +65,9 @@ jobs:
 
 
   # Windows/macOS cannot run the Linux Docker container used above. Serve the
-  # app directly with PHP and drive it with Playwright instead. Chromium,
-  # Firefox, Chrome and Edge get the full suite; WebKit and Opera get the quick
-  # suite. All jobs are blocking so the watchdog can cancel on any failure.
+  # app directly with PHP and drive it with Playwright instead. Every browser
+  # runs the full suite. All jobs are blocking so the watchdog can cancel on
+  # any failure.
   playwright-cross-platform:
     name: ${{ matrix.browser }} / ${{ matrix.os }} / ${{ matrix.quick && 'quick' || 'full' }}
     needs: smoke-tests
@@ -109,19 +109,19 @@ jobs:
           - os: windows-latest
             browser: webkit
             install: webkit
-            quick: true
+            quick: false
           - os: macos-latest
             browser: webkit
             install: webkit
-            quick: true
+            quick: false
           # Playwright has no official Opera support; this launches the
           # installed Opera binary through its Chromium engine best-effort.
           - os: windows-latest
             browser: opera
-            quick: true
+            quick: false
           - os: macos-latest
             browser: opera
-            quick: true
+            quick: false
     steps:
       - name: Checkout Code
         uses: actions/checkout@v5
