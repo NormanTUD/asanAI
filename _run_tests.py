@@ -5,6 +5,8 @@ import argparse
 import tempfile
 import shutil
 import os
+import json
+import time
 import urllib.parse
 from typing import Optional
 from playwright.async_api import async_playwright, Error
@@ -50,6 +52,9 @@ def parse_args():
     parser.add_argument("--url", default="http://localhost:1122", help="URL to open (default: %(default)s)")
     parser.add_argument("--wait", type=int, default=10_000, help="Wait time in milliseconds before running tests (default: %(default)s)")
     parser.add_argument("--quick", action="store_true", help="Run the quick test subset (run_tests(1)) instead of the full suite.")
+    parser.add_argument("--parallel", type=int, default=1, help="Run up to N selected browsers concurrently (default: 1).")
+    parser.add_argument("--timings-json", default=None, help="Write per-browser exit codes and durations to this JSON file.")
+    parser.add_argument("--timings-os", default=os.environ.get("RUNNER_OS", "").lower(), help="OS label stored in each timing entry.")
     parser.add_argument("--no-smoke-tests", action="store_true", help="Disable smoke tests")
     parser.add_argument("--no-docker", action="store_true", help="Disable docker")
     parser.add_argument("--no-run-tests", action="store_true", help="Disable python script")
@@ -256,34 +261,63 @@ async def main():
         if run_chromium:
             selected.append("chromium")
 
+    parallel = max(1, args.parallel)
+    semaphore = asyncio.Semaphore(parallel)
+
+    async def _run_one (browser_name):
+        async with semaphore:
+            executable_path = None
+            if browser_name == "chromium":
+                executable_path = resolve_chromium_executable(args)
+            elif browser_name == "firefox":
+                executable_path = args.firefox_executable
+
+            started = time.monotonic()
+            try:
+                r = await run(browser_name, executable_path, url_with_from_test, args.wait, args)
+                rc = to_int_exit(r)
+            except Exception:
+                logging.exception(f"[{browser_name}] Unhandled exception during run")
+                rc = 1
+
+            duration = time.monotonic() - started
+            return (browser_name, rc, duration)
+
     executed = []
     failures = []
+    timings = []
+    results = []
 
-    for browser_name in selected:
-        # Keep the historical default behaviour: if Firefox fails, skip the
-        # implicit Chromium follow-up unless explicitly requested.
-        if browser_name == "chromium" and not args.browser and "firefox" in [name for name, _ in executed] and any(name == "firefox" and rc != 0 for name, rc in executed) and not args.run_chrome_on_firefox_failure:
-            logging.info("[main] Firefox failed and --run-chrome-on-firefox-failure not set; skipping Chromium run.")
-            executed.append(("chromium", 1))
-            failures.append(("chromium", 1))
-            continue
+    if not args.browser and parallel == 1:
+        # Preserve the historical sequential default: skip Chromium when the
+        # implicit Firefox run failed.
+        for browser_name in selected:
+            if browser_name == "chromium" and any(name == "firefox" and rc != 0 for name, rc, _ in results) and not args.run_chrome_on_firefox_failure:
+                logging.info("[main] Firefox failed and --run-chrome-on-firefox-failure not set; skipping Chromium run.")
+                results.append((browser_name, 1, 0.0))
+                continue
+            results.append(await _run_one(browser_name))
+    else:
+        results = await asyncio.gather(*[_run_one(browser_name) for browser_name in selected])
 
-        executable_path = None
-        if browser_name == "chromium":
-            executable_path = resolve_chromium_executable(args)
-        elif browser_name == "firefox":
-            executable_path = args.firefox_executable
+    for browser_name, rc, duration in results:
+        executed.append((browser_name, rc))
+        timings.append({
+            "os": args.timings_os,
+            "browser": browser_name,
+            "exit_code": rc,
+            "duration_seconds": round(duration, 1)
+        })
+        if rc != 0:
+            failures.append((browser_name, rc))
 
+    if args.timings_json:
         try:
-            r = await run(browser_name, executable_path, url_with_from_test, args.wait, args)
-            rc = to_int_exit(r)
-            executed.append((browser_name, rc))
-            if rc != 0:
-                failures.append((browser_name, rc))
+            with open(args.timings_json, "w", encoding="utf-8") as handle:
+                json.dump(timings, handle, indent=2)
+                handle.write("\n")
         except Exception:
-            logging.exception(f"[{browser_name}] Unhandled exception during run")
-            executed.append((browser_name, 1))
-            failures.append((browser_name, 1))
+            logging.exception("[main] Could not write timings JSON")
 
     if not executed:
         logging.error("[main] No browsers were selected to run; nothing done.")

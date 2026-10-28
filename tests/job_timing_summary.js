@@ -1,5 +1,8 @@
 "use strict";
 
+const fs = require("fs");
+const path = require("path");
+
 function parse_job_name (name) {
 	if (name === "smoke-tests") {
 		return { os: "ubuntu-latest", browser: "static checks", mode: "—" };
@@ -37,6 +40,21 @@ function format_duration (started_at, completed_at) {
 	return minutes + ":" + String(rest).padStart(2, "0");
 }
 
+function format_seconds (seconds) {
+	if (!isFinite(seconds)) return "—";
+
+	const total = Math.max(0, Math.round(seconds));
+	const hours = Math.floor(total / 3600);
+	const minutes = Math.floor((total % 3600) / 60);
+	const rest = total % 60;
+
+	if (hours > 0) {
+		return hours + ":" + String(minutes).padStart(2, "0") + ":" + String(rest).padStart(2, "0");
+	}
+
+	return minutes + ":" + String(rest).padStart(2, "0");
+}
+
 function format_status (status) {
 	const text = String(status || "unknown").replace(/_/g, " ");
 	return text.charAt(0).toUpperCase() + text.slice(1);
@@ -49,7 +67,48 @@ function os_rank (os) {
 	return 3;
 }
 
-function build_summary (jobs, run) {
+function build_browser_summary (os, timings) {
+	const lines = ["## Browser timings: " + os, "", "| Browser | Status | Duration |", "| --- | --- | ---: |"];
+
+	timings
+		.slice()
+		.sort(function (a, b) { return a.browser.localeCompare(b.browser); })
+		.forEach(function (timing) {
+			const status = timing.exit_code === 0 ? "Success" : "Failure";
+			lines.push("| " + timing.browser + " | " + status + " | " + format_seconds(timing.duration_seconds) + " |");
+		});
+
+	return lines.join("\n") + "\n";
+}
+
+function read_browser_timings (root) {
+	const result = [];
+
+	if (!fs.existsSync(root)) return result;
+
+	function visit (dir) {
+		fs.readdirSync(dir, { withFileTypes: true }).forEach(function (entry) {
+			const full_path = path.join(dir, entry.name);
+
+			if (entry.isDirectory()) {
+				visit(full_path);
+				return;
+			}
+
+			if (!entry.name.endsWith(".json")) return;
+
+			try {
+				const data = JSON.parse(fs.readFileSync(full_path, "utf8"));
+				if (Array.isArray(data)) result.push.apply(result, data);
+			} catch (e) {}
+		});
+	}
+
+	visit(root);
+	return result;
+}
+
+function build_summary (jobs, run, browser_timings) {
 	const rows = jobs
 		.filter(function (job) {
 			return job.name !== "cancel-on-failure" && job.name !== "run-summary" && job.name !== "tag-version";
@@ -69,6 +128,17 @@ function build_summary (jobs, run) {
 
 	rows.sort(function (a, b) {
 		return os_rank(a.os) - os_rank(b.os) || a.os.localeCompare(b.os) || a.browser.localeCompare(b.browser);
+	});
+
+	(browser_timings || []).forEach(function (timing) {
+		rows.push({
+			os: timing.os || "—",
+			browser: timing.browser,
+			mode: "full",
+			status: timing.exit_code === 0 ? "Success" : "Failure",
+			duration: format_seconds(timing.duration_seconds),
+			url: run && run.html_url ? run.html_url : null
+		});
 	});
 
 	const lines = ["## Job timings", ""];
@@ -114,7 +184,10 @@ async function write_run_summary ({ github, context, core }) {
 		html_url: (process.env.GITHUB_SERVER_URL || context.serverUrl || "https://github.com") + "/" + context.repo.owner + "/" + context.repo.repo + "/actions/runs/" + context.runId
 	};
 
-	await core.summary.addRaw(build_summary(data.jobs, run)).write();
+	const timings_root = process.env.GITHUB_WORKSPACE ? path.join(process.env.GITHUB_WORKSPACE, "browser-timings") : "";
+	const browser_timings = timings_root ? read_browser_timings(timings_root) : [];
+
+	await core.summary.addRaw(build_summary(data.jobs, run, browser_timings)).write();
 }
 
-module.exports = { parse_job_name, format_duration, format_status, build_summary, write_run_summary };
+module.exports = { parse_job_name, format_duration, format_seconds, format_status, build_browser_summary, read_browser_timings, build_summary, write_run_summary };

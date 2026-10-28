@@ -793,12 +793,12 @@ dependency in a header won't resolve for a few days).
 | `python3 blog/atlas_data/atlas_check.py` | Atlas audit (see above) | any check | manual |
 | `bash tests/smoke_tests` | Toolkit static analysis: `tests/find_*` (deep nesting, long functions, missing translations, unawaited async, uncalled functions, unused variables) — **skips** `find_unwrapped_base_functions` (network + `ack`) and `find_double_defined_functions` | any finding | Toolkit CI |
 | `bash run_tests` (needs Docker) | Full Toolkit: docker build (port 1122), in-browser Playwright suite (the real tests are `run_tests()` inside `tests.js`, run in Firefox then Chromium; the in-page result **is** the exit code), optional `--screenshot-test` pixel diff | failed tests | Toolkit CI |
-| `python _run_tests.py --browser <name> [--quick] --url <url>` | Cross-platform Playwright runner (no Docker): `chromium`/`firefox`/`webkit` use Playwright's bundled builds, `chrome`/`msedge` the installed branded channels, `opera` a best-effort Chromium launch; `--quick` runs `run_tests(1)` | failed tests | Windows/macOS Toolkit CI |
+| `python _run_tests.py --browser <name> [--quick] --url <url>` | Cross-platform Playwright runner (no Docker): `chromium`/`firefox`/`webkit` use Playwright's bundled builds, `chrome`/`msedge` the installed branded channels, `opera` a best-effort Chromium launch; `--quick` runs `run_tests(1)`; `--parallel N` runs up to N browsers at once; `--timings-json FILE` records per-browser durations | failed tests | Windows/macOS Toolkit CI |
 
 `main.yml` runs the full Docker suite on Ubuntu and a direct-PHP/Playwright
-matrix on `windows-latest` + `macos-latest` (all browsers full; macOS jobs share
-a concurrency group so browsers run sequentially, respecting the plan's
-five-macOS-job limit). Matrices use `fail-fast: false`; a watchdog job
+matrix with one job per OS and all browsers inside it (`--parallel 3` on
+Windows, `--parallel 1` on macOS so the 3-core runner and the plan's
+five-macOS-job limit are respected). Matrices use `fail-fast: false`; a watchdog job
 cancels the whole run when a job that actually started fails, and the version
 tag is only pushed after all jobs succeed. Jobs that never acquired a runner
 (infrastructure failures, no steps) do not cancel the other jobs. Browser failures are summarized on the job's GitHub

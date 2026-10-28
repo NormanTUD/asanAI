@@ -70,67 +70,23 @@ jobs:
           bash run_tests --no-smoke-tests
 
 
-  # Windows/macOS cannot run the Linux Docker container used above. Serve the
-  # app directly with PHP and drive it with Playwright instead. Every browser
-  # runs the full suite. On macOS the jobs share one concurrency group, so the
-  # browsers run one after another instead of competing for the plan's five
-  # concurrent macOS runner slots. Windows jobs stay parallel.
+  # One job per OS. Every browser runs in that job; --parallel controls how many
+  # run at once. Windows runs three at a time; macOS runs one at a time because
+  # the standard runner has only 3 cores / 7 GB and must also respect the
+  # plan-wide concurrent-macOS limit.
   playwright-cross-platform:
-    name: ${{ matrix.browser }} / ${{ matrix.os }} / ${{ matrix.quick && 'quick' || 'full' }}
+    name: all browsers / ${{ matrix.os }} / full (parallel ${{ matrix.parallel }})
     needs: smoke-tests
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 180
-    concurrency:
-      group: ${{ matrix.os == 'macos-latest' && format('macos-browsers-{0}', github.run_id) || format('other-browsers-{0}-{1}', github.run_id, matrix.browser) }}
-      cancel-in-progress: false
+    timeout-minutes: 360
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: windows-latest
-            browser: chromium
-            install: chromium
-            quick: false
+            parallel: 3
           - os: macos-latest
-            browser: chromium
-            install: chromium
-            quick: false
-          - os: windows-latest
-            browser: firefox
-            install: firefox
-            quick: false
-          - os: macos-latest
-            browser: firefox
-            install: firefox
-            quick: false
-          - os: windows-latest
-            browser: chrome
-            quick: false
-          - os: macos-latest
-            browser: chrome
-            quick: false
-          - os: windows-latest
-            browser: msedge
-            quick: false
-          - os: macos-latest
-            browser: msedge
-            quick: false
-          - os: windows-latest
-            browser: webkit
-            install: webkit
-            quick: false
-          - os: macos-latest
-            browser: webkit
-            install: webkit
-            quick: false
-          # Playwright has no official Opera support; this launches the
-          # installed Opera binary through its Chromium engine best-effort.
-          - os: windows-latest
-            browser: opera
-            quick: false
-          - os: macos-latest
-            browser: opera
-            quick: false
+            parallel: 1
     steps:
       - name: Checkout Code
         uses: actions/checkout@v5
@@ -147,12 +103,12 @@ jobs:
           python-version: '3.12'
 
       - name: Install Opera (Windows)
-        if: matrix.browser == 'opera' && runner.os == 'Windows'
+        if: runner.os == 'Windows'
         shell: pwsh
         run: choco install opera -y --no-progress
 
       - name: Install Opera (macOS)
-        if: matrix.browser == 'opera' && runner.os == 'macOS'
+        if: runner.os == 'macOS'
         shell: bash
         run: HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask opera
 
@@ -161,9 +117,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install playwright Pillow
-          if [ -n "${{ matrix.install }}" ]; then
-            python -m playwright install "${{ matrix.install }}"
-          fi
+          python -m playwright install chromium firefox webkit
 
       - name: Run browser tests
         shell: bash
@@ -186,18 +140,20 @@ jobs:
             exit 1
           fi
 
-          QUICK=""
-          if [ "${{ matrix.quick }}" = "true" ]; then
-            QUICK="--quick"
-          fi
+          BROWSER_ARGS=()
+          for browser in chromium firefox chrome msedge webkit opera; do
+            BROWSER_ARGS+=(--browser "$browser")
+          done
 
           set -o pipefail
           python _run_tests.py \
             --url http://127.0.0.1:1122/index.php \
-            --browser "${{ matrix.browser }}" \
+            "${BROWSER_ARGS[@]}" \
+            --parallel "${{ matrix.parallel }}" \
+            --timings-json browser-timings.json \
+            --timings-os "${{ matrix.os }}" \
             --enable-fake-media \
-            --fake-video tests/fake.y4m \
-            $QUICK 2>&1 | tee browser-tests.log
+            --fake-video tests/fake.y4m 2>&1 | tee browser-tests.log
 
       - name: Show PHP server log
         if: failure()
@@ -209,7 +165,7 @@ jobs:
         shell: bash
         run: |
           summary="$GITHUB_STEP_SUMMARY"
-          echo "## Browser tests failed: ${{ matrix.browser }} on ${{ matrix.os }}" >> "$summary"
+          echo "## Browser tests failed on ${{ matrix.os }}" >> "$summary"
           echo >> "$summary"
 
           if [ ! -f browser-tests.log ]; then
@@ -277,14 +233,39 @@ jobs:
             echo "</details>"
           } >> "$summary"
 
+      - name: Write browser timing summary
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = process.env.GITHUB_WORKSPACE + '/browser-timings.json';
+
+            if (!fs.existsSync(path)) {
+              core.info('No browser-timings.json produced');
+              return;
+            }
+
+            const timings = JSON.parse(fs.readFileSync(path, 'utf8'));
+            const summarize = require(process.env.GITHUB_WORKSPACE + '/tests/job_timing_summary.js');
+            await core.summary.addRaw(summarize.build_browser_summary('${{ matrix.os }}', timings)).write();
+
       - name: Upload browser test log
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: browser-tests-${{ matrix.os }}-${{ matrix.browser }}-quick-${{ matrix.quick }}
+          name: browser-tests-${{ matrix.os }}
           path: |
             browser-tests.log
             php-server.log
+          if-no-files-found: ignore
+
+      - name: Upload browser timings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-timings-${{ matrix.os }}
+          path: browser-timings.json
           if-no-files-found: ignore
 
   # This watchdog cancels the whole run as soon as a job that actually started
@@ -357,6 +338,13 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v5
+
+      - name: Download browser timings
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: browser-timings-*
+          path: browser-timings
 
       - name: Write job timing summary
         uses: actions/github-script@v7
