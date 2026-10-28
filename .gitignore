@@ -36,3 +36,4 @@ matomo/misc/DBIP-City.mmdb
 todo.txt
 tests/__pycache__/
 feedback_data/
+__pycache__/
