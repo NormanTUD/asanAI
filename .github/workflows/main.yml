@@ -63,25 +63,16 @@ jobs:
           export DISPLAY=:99
           bash run_tests --no-smoke-tests
 
-      - name: Create a new version
-        if: ${{ success() }}
-        run: |
-          echo "Creating new version"
-          git tag ${{ github.run_number }} || true
-          git push origin --tags || true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # Windows/macOS cannot run the Linux Docker container used above. Serve the
   # app directly with PHP and drive it with Playwright instead. Chromium,
   # Firefox, Chrome and Edge get the full suite; WebKit and Opera get the quick
-  # suite while their engine-specific quirks are worked through.
+  # suite. All jobs are blocking so the watchdog can cancel on any failure.
   playwright-cross-platform:
-    name: ${{ matrix.experimental && 'experimental' || 'required' }} / ${{ matrix.browser }} / ${{ matrix.os }} / ${{ matrix.quick && 'quick' || 'full' }}
+    name: ${{ matrix.browser }} / ${{ matrix.os }} / ${{ matrix.quick && 'quick' || 'full' }}
     needs: smoke-tests
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
-    continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: true
       matrix:
@@ -90,61 +81,47 @@ jobs:
             browser: chromium
             install: chromium
             quick: false
-            experimental: false
           - os: macos-latest
             browser: chromium
             install: chromium
             quick: false
-            experimental: false
           - os: windows-latest
             browser: firefox
             install: firefox
             quick: false
-            experimental: false
           - os: macos-latest
             browser: firefox
             install: firefox
             quick: false
-            experimental: false
           - os: windows-latest
             browser: chrome
             quick: false
-            experimental: false
           - os: macos-latest
             browser: chrome
             quick: false
-            experimental: false
           - os: windows-latest
             browser: msedge
             quick: false
-            experimental: false
           - os: macos-latest
             browser: msedge
             quick: false
-            experimental: false
-          # WebKit is Playwright's Safari engine. Its quick suite currently
-          # trips a tooltip-color assertion, so keep it non-blocking until
-          # that engine-specific difference is fixed.
+          # WebKit is Playwright's Safari engine.
           - os: windows-latest
             browser: webkit
             install: webkit
             quick: true
-            experimental: true
           - os: macos-latest
             browser: webkit
             install: webkit
             quick: true
-            experimental: true
           # Playwright has no official Opera support; this launches the
           # installed Opera binary through its Chromium engine best-effort.
           - os: windows-latest
             browser: opera
             quick: true
-            experimental: true
           - os: macos-latest
             browser: opera
             quick: true
-            experimental: true
     steps:
       - name: Checkout Code
         uses: actions/checkout@v5
@@ -218,13 +195,46 @@ jobs:
         shell: bash
         run: cat php-server.log || true
 
-      - name: Surface tooltip theme debug
+      - name: Write failure summary
         if: failure()
         shell: bash
         run: |
-          if [ -f browser-tests.log ]; then
-            grep '\[feature-map-tooltip-theme\]' browser-tests.log | tail -n 1 | sed 's/^/::error::/' || true
+          summary="$GITHUB_STEP_SUMMARY"
+          echo "## Browser tests failed: ${{ matrix.browser }} on ${{ matrix.os }}" >> "$summary"
+          echo >> "$summary"
+
+          if [ ! -f browser-tests.log ]; then
+            echo "No browser-tests.log was produced." >> "$summary"
+            exit 0
           fi
+
+          failed_test=$(grep -o 'Test >[^<]*< failed' browser-tests.log | head -n1 | sed -e 's/^Test >//' -e 's/< failed$//' || true)
+          if [ -n "$failed_test" ]; then
+            echo "**Failing test:** \`$failed_test\`" >> "$summary"
+            echo "::error::Browser test failed: $failed_test"
+          fi
+
+          counts=$(grep -oE '[0-9]+ tests, ok: [0-9]+, failed: [0-9]+' browser-tests.log | tail -n1 || true)
+          if [ -n "$counts" ]; then
+            echo "**Result:** $counts" >> "$summary"
+          fi
+
+          debug=$(grep '\[feature-map-tooltip-theme\]' browser-tests.log | tail -n1 || true)
+          if [ -n "$debug" ]; then
+            echo "**Tooltip debug:** \`$debug\`" >> "$summary"
+            echo "::error::$debug"
+          fi
+
+          {
+            echo
+            echo "<details><summary>Failure output</summary>"
+            echo
+            echo '```text'
+            grep -E 'Test-name:|\[test_equal\]|ERROR\. Is:|Should be:|feature-map-tooltip-theme|tests, ok:|Test suite took|Playwright evaluation error' browser-tests.log | tail -n 120 || true
+            echo '```'
+            echo
+            echo "</details>"
+          } >> "$summary"
 
       - name: Upload browser test log
         if: failure()
@@ -237,8 +247,7 @@ jobs:
           if-no-files-found: ignore
 
   # GitHub's fail-fast only covers one matrix. This watchdog cancels the whole
-  # run as soon as any required job fails. Experimental (WebKit/Opera) jobs are
-  # non-blocking by design, so they are ignored.
+  # run as soon as any job fails.
   cancel-on-failure:
     runs-on: ubuntu-latest
     timeout-minutes: 360
@@ -264,9 +273,7 @@ jobs:
                 per_page: 100,
               });
 
-              const jobs = data.jobs.filter((job) =>
-                job.name !== "cancel-on-failure" && !job.name.startsWith("experimental")
-              );
+              const jobs = data.jobs.filter((job) => job.name !== "cancel-on-failure");
               const failure = jobs.find((job) => failed.has(job.conclusion));
 
               if (failure) {
@@ -285,3 +292,24 @@ jobs:
 
               await sleep(30000);
             }
+
+  tag-version:
+    needs:
+      - smoke-tests
+      - playwright
+      - playwright-cross-platform
+    runs-on: ubuntu-latest
+    if: ${{ success() }}
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Create a new version
+        run: |
+          echo "Creating new version"
+          git tag ${{ github.run_number }} || true
+          git push origin --tags || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

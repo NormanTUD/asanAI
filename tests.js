@@ -614,6 +614,29 @@ function log_test (name) {
 	test_no_new_errors_or_warnings();
 }
 
+function _test_read_uncached_background (element) {
+	if (!element) return null;
+
+	const parent = element.parentNode || document.body;
+	const tag = element.tagName;
+	const id = element.id;
+	const cls = element.className;
+
+	if (id) element.id = id + "_theme_probe_live";
+
+	const probe = document.createElement(tag);
+	if (id) probe.id = id;
+	probe.className = cls;
+	parent.appendChild(probe);
+
+	const color = getComputedStyle(probe).backgroundColor;
+	probe.remove();
+
+	if (id) element.id = id;
+
+	return color;
+}
+
 async function test_maximally_activated_last_layer() {
 	var num_cat = await get_number_of_categories();
 
@@ -782,7 +805,20 @@ async function test_maximally_activated_last_layer() {
 			await new Promise(function (resolve) { requestAnimationFrame(resolve); });
 		}
 
-		return { ok: false, color: color, rgb: rgb };
+		// Some Chromium forks (Opera) cache computed styles for an existing
+		// element and do not invalidate them when an ancestor class changes.
+		// A freshly created probe reads the current CSS rules reliably.
+		const live_tooltip = document.getElementById("feature_map_tooltip") || _feature_map_ensure_tooltip();
+		const fresh_color = _test_read_uncached_background(live_tooltip);
+		const fresh_rgb = parse_css_rgb(fresh_color);
+
+		if (fresh_rgb && fresh_rgb[0] === fresh_rgb[1] && fresh_rgb[1] === fresh_rgb[2]) {
+			if (want_dark ? fresh_rgb[0] < 100 : fresh_rgb[0] > 200) {
+				return { ok: true, color: fresh_color, rgb: fresh_rgb, fresh: true };
+			}
+		}
+
+		return { ok: false, color: color, rgb: rgb, fresh_color: fresh_color };
 	}
 
 	document.body.classList.add("darkmode");
@@ -2383,8 +2419,8 @@ async function test_photo_gallery_dark_light_mode () {
 	document.body.classList.add("darkmode");
 	await new Promise(function (resolve) { setTimeout(resolve, 500); });
 
-	const tooltip_dark = window.getComputedStyle(tooltip).backgroundColor;
-	const panel_dark = window.getComputedStyle(panel).backgroundColor;
+	const tooltip_dark = _test_read_uncached_background(tooltip);
+	const panel_dark = _test_read_uncached_background(panel);
 
 	test_equal("Tooltip uses dark background in darkmode", /30,\s*30,\s*30/.test(tooltip_dark), true);
 	test_equal("Panel uses dark background in darkmode", /30,\s*30,\s*30/.test(panel_dark), true);
@@ -2392,8 +2428,8 @@ async function test_photo_gallery_dark_light_mode () {
 	document.body.classList.remove("darkmode");
 	await new Promise(function (resolve) { setTimeout(resolve, 500); });
 
-	const tooltip_light = window.getComputedStyle(tooltip).backgroundColor;
-	const panel_light = window.getComputedStyle(panel).backgroundColor;
+	const tooltip_light = _test_read_uncached_background(tooltip);
+	const panel_light = _test_read_uncached_background(panel);
 
 	test_equal("Tooltip uses light background in light mode", /255,\s*255,\s*255/.test(tooltip_light), true);
 	test_equal("Panel uses light background in light mode", /255,\s*255,\s*255/.test(panel_light), true);
