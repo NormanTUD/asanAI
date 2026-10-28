@@ -87,30 +87,38 @@ jobs:
             browser: chromium
             install: chromium
             quick: false
+            experimental: false
           - os: macos-latest
             browser: chromium
             install: chromium
             quick: false
+            experimental: false
           - os: windows-latest
             browser: firefox
             install: firefox
             quick: true
+            experimental: false
           - os: macos-latest
             browser: firefox
             install: firefox
             quick: true
+            experimental: false
           - os: windows-latest
             browser: chrome
             quick: true
+            experimental: false
           - os: macos-latest
             browser: chrome
             quick: true
+            experimental: false
           - os: windows-latest
             browser: msedge
             quick: true
+            experimental: false
           - os: macos-latest
             browser: msedge
             quick: true
+            experimental: false
           # WebKit is Playwright's Safari engine. Its quick suite currently
           # trips a tooltip-color assertion, so keep it non-blocking until
           # that engine-specific difference is fixed.
