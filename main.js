@@ -179,7 +179,7 @@ function init_tabs () {
 			}
 
 			if (ui.newPanel.attr("id") == "health_status") {
-				if (typeof enableAutoRecord === "function" && typeof layerIOStats !== "undefined" && !layerIOStats.enabled) {
+				if (typeof enableAutoRecord === "function" && typeof layerIOStats !== "undefined") {
 					layerIOStats.enabled = true;
 					enableAutoRecord();
 				}
