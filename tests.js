@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // in this browser. DEFAULT_EXPECTED_TEST_COUNT is the fallback for a fresh
 // browser/CI run; update it when the suite grows or shrinks. ?expected_tests=N
 // overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1394;
+var DEFAULT_EXPECTED_TEST_COUNT = 1399;
 var __test_expected_total = (function () {
 	try {
 		var m = /[?&]expected_tests=(\d+)/.exec(window.location.search);
@@ -1115,6 +1115,38 @@ function test_grid_tooltip_custom_images () {
 	return true;
 }
 
+function test_grid_tooltip_hides_on_tab_change () {
+	const tooltip = _get_grid_tooltip_element();
+	const old_display = tooltip.style.display;
+	const old_over = _grid_pointer_over_grid;
+	const old_x = _grid_pointer_client_x;
+	const old_y = _grid_pointer_client_y;
+	const old_region = _grid_tooltip_last_region_index;
+
+	try {
+		tooltip.style.display = "block";
+		_grid_pointer_over_grid = true;
+		_grid_pointer_client_x = 123;
+		_grid_pointer_client_y = 45;
+		_grid_tooltip_last_region_index = 2;
+
+		_handle_grid_visibility_entries([{ isIntersecting: false }]);
+
+		test_equal("Grid tooltip hides when its tab hides", tooltip.style.display, "none");
+		test_equal("Grid hover state clears when its tab hides", _grid_pointer_over_grid, false);
+		test_equal("Grid pointer x clears when its tab hides", _grid_pointer_client_x, null);
+		test_equal("Grid tooltip region resets when its tab hides", _grid_tooltip_last_region_index, -1);
+	} finally {
+		tooltip.style.display = old_display;
+		_grid_pointer_over_grid = old_over;
+		_grid_pointer_client_x = old_x;
+		_grid_pointer_client_y = old_y;
+		_grid_tooltip_last_region_index = old_region;
+	}
+
+	return true;
+}
+
 function test_resolve_maximally_activated_iterations() {
 	var $input = $("#max_activation_iterations");
 	var old_value = $input.val();
@@ -1683,6 +1715,8 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("test_faster_canvas_fill_order()", await test_faster_canvas_fill_order(), true);
 
 	test_equal("test_grid_tooltip_custom_images()", test_grid_tooltip_custom_images(), true);
+
+	test_equal("test_grid_tooltip_hides_on_tab_change()", test_grid_tooltip_hides_on_tab_change(), true);
 
 	test_equal('computeCRC32("")', computeCRC32(""), 0);
 	test_equal('computeCRC32("asasd")', computeCRC32("asasd"), 3324180253);

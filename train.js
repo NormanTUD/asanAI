@@ -2789,9 +2789,7 @@ function _draw_grid_init_counters(images, categories) {
 function _restore_last_grid_render() {
 	if (!_last_grid_canvas_data_url) return false;
 
-	var tooltip = _get_grid_tooltip_element();
-	tooltip.style.display = "none";
-	_grid_tooltip_last_region_index = -1;
+	_hide_grid_tooltip();
 
 	var $container = $("#canvas_grid_visualization");
 	var img = new Image();
@@ -2834,9 +2832,7 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 	_last_grid_draw_params = { images, categories, probabilities, category_overview };
 
 	_grid_image_hit_regions = [];
-	var tooltip = _get_grid_tooltip_element();
-	tooltip.style.display = "none";
-	_grid_tooltip_last_region_index = -1;
+	_hide_grid_tooltip();
 
 	var $container = $("#canvas_grid_visualization");
 
@@ -2959,6 +2955,30 @@ function _setup_grid_resize_listener() {
 	});
 }
 
+function _handle_grid_visibility_entries(entries) {
+	for (var i = 0; i < entries.length; i++) {
+		if (!entries[i].isIntersecting) {
+			// The pointer is not over the grid anymore when its tab was
+			// hidden (e.g. auto-jump during training); no mouseleave fires.
+			_leave_grid_hover();
+			continue;
+		}
+		if (!_grid_draw_params_still_valid()) return;
+
+		if (_grid_visibility_redraw_timeout !== null) clearTimeout(_grid_visibility_redraw_timeout);
+		_grid_visibility_redraw_timeout = setTimeout(function() {
+			_grid_visibility_redraw_timeout = null;
+			// Re-check at draw time: labels/model/dataset may have changed while the timeout was pending
+			if (!_grid_draw_params_still_valid()) return;
+			var el = document.getElementById("canvas_grid_visualization");
+			if (!el || el.offsetParent === null) return;
+			var p = _last_grid_draw_params;
+			draw_images_in_grid(p.images, p.categories, p.probabilities, p.category_overview);
+		}, 100);
+		return;
+	}
+}
+
 function _setup_grid_visibility_listener() {
 	if (_grid_visibility_observer !== null) return;
 
@@ -2968,24 +2988,7 @@ function _setup_grid_visibility_listener() {
 	// The grid is usually drawn from training callbacks while the training tab may still be hidden,
 	// which previously produced a zero-width (empty) canvas that was never re-drawn on tab activation.
 	// Re-draw (debounced) whenever the grid area becomes visible again.
-	_grid_visibility_observer = new IntersectionObserver(function(entries) {
-		for (var i = 0; i < entries.length; i++) {
-			if (!entries[i].isIntersecting) continue;
-			if (!_grid_draw_params_still_valid()) return;
-
-			if (_grid_visibility_redraw_timeout !== null) clearTimeout(_grid_visibility_redraw_timeout);
-			_grid_visibility_redraw_timeout = setTimeout(function() {
-				_grid_visibility_redraw_timeout = null;
-				// Re-check at draw time: labels/model/dataset may have changed while the timeout was pending
-				if (!_grid_draw_params_still_valid()) return;
-				var el = document.getElementById("canvas_grid_visualization");
-				if (!el || el.offsetParent === null) return;
-				var p = _last_grid_draw_params;
-				draw_images_in_grid(p.images, p.categories, p.probabilities, p.category_overview);
-			}, 100);
-			return;
-		}
-	}, { threshold: 0 });
+	_grid_visibility_observer = new IntersectionObserver(_handle_grid_visibility_entries, { threshold: 0 });
 
 	_grid_visibility_observer.observe($container[0]);
 }
@@ -3009,9 +3012,19 @@ function _get_grid_tooltip_element() {
 	return _grid_tooltip;
 }
 
-function _setup_grid_tooltip(canvas) {
-	var tooltip = _get_grid_tooltip_element();
+function _hide_grid_tooltip() {
+	if (_grid_tooltip) _grid_tooltip.style.display = "none";
+	_grid_tooltip_last_region_index = -1;
+}
 
+function _leave_grid_hover() {
+	_grid_pointer_over_grid = false;
+	_grid_pointer_client_x = null;
+	_grid_pointer_client_y = null;
+	_hide_grid_tooltip();
+}
+
+function _setup_grid_tooltip(canvas) {
 	canvas.style.pointerEvents = "auto";
 	canvas.style.cursor = "crosshair";
 
@@ -3023,16 +3036,11 @@ function _setup_grid_tooltip(canvas) {
 	});
 
 	canvas.addEventListener("mouseleave", function() {
-		_grid_pointer_over_grid = false;
-		_grid_pointer_client_x = null;
-		_grid_pointer_client_y = null;
-		tooltip.style.display = "none";
-		_grid_tooltip_last_region_index = -1;
+		_leave_grid_hover();
 	});
 
 	canvas.addEventListener("mousedown", function() {
-		tooltip.style.display = "none";
-		_grid_tooltip_last_region_index = -1;
+		_hide_grid_tooltip();
 	});
 }
 
@@ -3057,8 +3065,7 @@ function _grid_refresh_grid_tooltip(canvas, clientX, clientY) {
 	}
 
 	if (!region) {
-		tooltip.style.display = "none";
-		_grid_tooltip_last_region_index = -1;
+		_hide_grid_tooltip();
 		return;
 	}
 
