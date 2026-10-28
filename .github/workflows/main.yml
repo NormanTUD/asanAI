@@ -225,8 +225,10 @@ jobs:
             echo "::error::$debug"
           fi
 
-          concrete=$(grep -A6 -E '\[test_no_new_errors\]|\[test_no_new_warnings\]' browser-tests.log | tail -n 12 || true)
-          if [ -n "$concrete" ]; then
+          concrete_line=$(grep -n -E '\[test_no_new_errors\]|\[test_no_new_warnings\]' browser-tests.log | tail -n1 | cut -d: -f1 || true)
+          concrete=""
+          if [ -n "$concrete_line" ]; then
+            concrete=$(sed -n "${concrete_line},$((concrete_line + 20))p" browser-tests.log)
             encoded_concrete=$(printf '%s' "$concrete" | sed -e 's/%/%25/g' -e 's/\r/%0D/g' -e ':a;N;$!ba;s/\n/%0A/g')
             echo "::error::$encoded_concrete"
           fi
@@ -236,7 +238,11 @@ jobs:
             echo "### Concrete errors / warnings"
             echo
             echo '```text'
-            grep -E '\[test_no_new_errors\]|\[test_no_new_warnings\]|Stack-Trace:' browser-tests.log | tail -n 60 || true
+            if [ -n "$concrete" ]; then
+              printf '%s\n' "$concrete"
+            else
+              grep -E 'Stack-Trace:' browser-tests.log | tail -n 20 || true
+            fi
             echo '```'
             echo
             echo "<details><summary>Failure output</summary>"
