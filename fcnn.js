@@ -490,18 +490,14 @@ function draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuro
 	ctx.fill();
 
 	if (this_layer_output && this_layer_output.length > 0) {
-		var minVal = Math.min(...this_layer_output);
-		var maxVal = Math.max(...this_layer_output);
 		var value = this_layer_output[j];
 		var hasGlobalRange = Number.isFinite(global_min) && Number.isFinite(global_max) && global_max > global_min;
+		var minVal = hasGlobalRange ? global_min : Math.min(...this_layer_output);
+		var maxVal = hasGlobalRange ? global_max : Math.max(...this_layer_output);
 
 		var normalizedValue;
 		if (maxVal === minVal) {
-			if (hasGlobalRange) {
-				normalizedValue = Math.floor(((value - global_min) / (global_max - global_min)) * 255);
-			} else {
-				normalizedValue = value > 0 ? 255 : 0;
-			}
+			normalizedValue = value > 0 ? 255 : 0;
 		} else {
 			normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
 		}
@@ -540,7 +536,17 @@ function _compute_global_activation_range() {
 		}
 
 		try {
-			var flat = flatten(state.output[0]);
+			var output = state.output[0];
+			var shape = get_shape_from_array(output);
+
+			// Conv outputs are 4-D; they are drawn as rectangles, not circles.
+			// Dense neurons should span the dense activation range, so their
+			// global black/white endpoints are not stolen by a conv layer.
+			if (shape.length === 4) {
+				return;
+			}
+
+			var flat = flatten(output);
 
 			for (var i = 0; i < flat.length; i++) {
 				var value = flat[i];

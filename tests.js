@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // in this browser. DEFAULT_EXPECTED_TEST_COUNT is the fallback for a fresh
 // browser/CI run; update it when the suite grows or shrinks. ?expected_tests=N
 // overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1374;
+var DEFAULT_EXPECTED_TEST_COUNT = 1378;
 var __test_expected_total = (function () {
 	try {
 		var m = /[?&]expected_tests=(\d+)/.exec(window.location.search);
@@ -128,29 +128,37 @@ var __test_expected_total = (function () {
 	return DEFAULT_EXPECTED_TEST_COUNT;
 })();
 
-function _test_eta_text(done, total, slow_durations) {
+function _test_eta_text(done, total, slow_durations, elapsed_ms) {
 	if (total > 0 && done >= total) {
 		return human_readable_time(0);
 	}
 
-	if (done < 5 || slow_durations.length < 5) {
-		return "calculating…";
+	if (done >= 5 && slow_durations.length >= 5) {
+		var slow_sum = slow_durations.reduce(function (sum, duration) { return sum + duration; }, 0);
+		var slow_average = slow_sum / slow_durations.length;
+		var slow_ratio = slow_durations.length / done;
+		var remaining_slow = Math.max(0, total - done) * slow_ratio;
+
+		return human_readable_time((slow_average * remaining_slow) / 1000);
 	}
 
-	var slow_sum = slow_durations.reduce(function (sum, duration) { return sum + duration; }, 0);
-	var slow_average = slow_sum / slow_durations.length;
-	var slow_ratio = slow_durations.length / done;
-	var remaining_slow = Math.max(0, total - done) * slow_ratio;
+	// Fallback for suites that never accumulate five 30-second tests: after five
+	// minutes the overall average is stable enough to show a useful ETA.
+	if (done >= 25 && elapsed_ms >= 5 * 60 * 1000) {
+		var average = elapsed_ms / done;
 
-	return human_readable_time((slow_average * remaining_slow) / 1000);
+		return human_readable_time((average * Math.max(0, total - done)) / 1000);
+	}
+
+	return "calculating…";
 }
 
-function _test_format_progress(done, total, filtered, slow_durations) {
+function _test_format_progress(done, total, filtered, slow_durations, elapsed_ms) {
 	var pct = total > 0 ? Math.min(100, Math.round(done / total * 100)) : 0;
 	var width = 30;
 	var filled = Math.round(width * pct / 100);
 	var bar = "[" + "=".repeat(filled) + " ".repeat(width - filled) + "]";
-	var eta = filtered ? "n/a (filtered run)" : _test_eta_text(done, total, slow_durations);
+	var eta = filtered ? "n/a (filtered run)" : _test_eta_text(done, total, slow_durations, elapsed_ms);
 
 	return bar + " " + pct + "% of tests done (" + done + "/" + total + "), estimated time left: " + eta;
 }
@@ -173,7 +181,9 @@ var __test_progress_last_at = 0;
 var __test_progress_slow_durations = [];
 
 function _test_progress_text() {
-	return _test_format_progress(num_tests, __test_expected_total, __test_resume_active, __test_progress_slow_durations);
+	var elapsed = start_test_time ? get_current_timestamp() - start_test_time : 0;
+
+	return _test_format_progress(num_tests, __test_expected_total, __test_resume_active, __test_progress_slow_durations, elapsed);
 }
 
 function show_num_tests_overlay(name) {
@@ -344,11 +354,12 @@ function is_equal (a, b) {
 function test_test_progress_display () {
 	const slow = [31000, 32000, 33000, 34000, 35000];
 
-	test_equal("Progress display shows a filled 30-character bar", _test_format_progress(50, 100, false, slow).indexOf("[===============               ] 50% of tests done (50/100)") === 0, true);
-	test_equal("Progress display waits for five slow samples", _test_format_progress(50, 100, false, slow.slice(0, 4)).indexOf("estimated time left: calculating…") !== -1, true);
-	test_equal("Progress display shows an ETA after five slow samples", _test_format_progress(50, 100, false, slow).indexOf(", estimated time left: ") !== -1, true);
-	test_equal("Progress display caps the bar at 100 percent", _test_format_progress(120, 100, false, slow).indexOf("100% of tests done (120/100)") !== -1, true);
-	test_equal("Progress display omits the ETA for filtered runs", _test_format_progress(5, 100, true, slow).indexOf("n/a (filtered run)") !== -1, true);
+	test_equal("Progress display shows a filled 30-character bar", _test_format_progress(50, 100, false, slow, 0).indexOf("[===============               ] 50% of tests done (50/100)") === 0, true);
+	test_equal("Progress display waits for five slow samples", _test_format_progress(50, 100, false, slow.slice(0, 4), 0).indexOf("estimated time left: calculating…") !== -1, true);
+	test_equal("Progress display shows an ETA after five slow samples", _test_format_progress(50, 100, false, slow, 0).indexOf(", estimated time left: ") !== -1, true);
+	test_equal("Progress display falls back to the overall average after five minutes", _test_format_progress(50, 100, false, [], 5 * 60 * 1000).indexOf("estimated time left: calculating…") === -1, true);
+	test_equal("Progress display caps the bar at 100 percent", _test_format_progress(120, 100, false, slow, 0).indexOf("100% of tests done (120/100)") !== -1, true);
+	test_equal("Progress display omits the ETA for filtered runs", _test_format_progress(5, 100, true, slow, 0).indexOf("n/a (filtered run)") !== -1, true);
 
 	return true;
 }
@@ -962,7 +973,9 @@ function test_fcnn_neuron_colors_use_global_range_when_constant () {
 
 	test_equal("Constant positive activation uses the global scale (white)", center_value([1], 0, 0, 1), 255);
 	test_equal("Constant zero activation uses the global scale (black)", center_value([0], 0, 0, 1), 0);
-	test_equal("Varied activation still uses the per-layer scale (black)", center_value([0, 0.5, 1], 0, 0, 1), 0);
+	test_equal("Global minimum maps to black when the layer varies", center_value([0, 0.5, 1], 0, 0, 1), 0);
+	test_equal("Global maximum maps to white when the layer varies", center_value([0, 0.5, 1], 2, 0, 1), 255);
+	test_equal("Neuron colors use the global range across layers", center_value([5, 10], 1, 0, 100), 25);
 
 	const kernel_image = _build_kernel_image_data(ctx, [[0, 3], [1, 2]], 2, 2, 0, 3);
 	test_equal("Kernel image maps the smallest value to black", kernel_image.data[0], 0);
@@ -982,7 +995,10 @@ function test_fcnn_neuron_colors_use_global_range_when_constant () {
 
 	try {
 		layer_states_saved = {"0": {output: [[0, 2]]}, "1": {output: [[1]]}};
-		test_equal("Global activation range spans all layers", JSON.stringify(_compute_global_activation_range()), JSON.stringify([0, 2]));
+		test_equal("Global activation range spans all dense layers", JSON.stringify(_compute_global_activation_range()), JSON.stringify([0, 2]));
+
+		layer_states_saved = {"0": {output: [[0, 2]]}, "1": {output: [[[[99]]]]}};
+		test_equal("Global activation range ignores 4-D conv outputs", JSON.stringify(_compute_global_activation_range()), JSON.stringify([0, 2]));
 	} finally {
 		layer_states_saved = old_layer_states_saved;
 	}
