@@ -38,3 +38,4 @@ tests/__pycache__/
 feedback_data/
 __pycache__/
 job-log.txt
+failed_tests
