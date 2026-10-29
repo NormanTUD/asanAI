@@ -1511,7 +1511,9 @@ function get_last_layer_output_shape() {
 
 	const lastIndex = typeof get_last_layer === "function" ? get_last_layer() : null;
 	if (lastIndex === null || lastIndex < 0 || !model?.layers?.length || lastIndex >= model?.layers?.length) {
-		err("Invalid last layer index.");
+		// The GUI and the compiled model can briefly disagree while a data-origin
+		// switch rebuilds the model. That is a transient state, not an error.
+		dbg(`Invalid last layer index: ${lastIndex}, model has ${model?.layers?.length} layers.`);
 		return null;
 	}
 
