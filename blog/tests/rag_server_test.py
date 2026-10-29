@@ -200,6 +200,26 @@ def main():
     check(retried["grounded"] is True, "the retry can produce a grounded answer")
     check("McCulloch" in retried["answer"], "the retry answer is kept")
 
+    check(
+        server.heading_boost(
+            {"pt": "Brief History of AI", "h": "The Transformer and Attention (2017)"},
+            "When was the transformer invented?",
+        )
+        > server.heading_boost(
+            {"pt": "How Algorithms Work", "h": "Why it was invented"},
+            "When was the transformer invented?",
+        ),
+        "heading/year boost favors the Transformer 2017 section",
+    )
+
+    lang_engine = object.__new__(server.RagEngine)
+    lang_engine._ollama = lambda messages, max_tokens, temperature: "Der Transformer wurde 2017 entwickelt."
+    check(lang_engine.ensure_language("The Transformer was invented in 2017.", "de")
+          == "Der Transformer wurde 2017 entwickelt.",
+          "ensure_language translates a non-English answer")
+    check(lang_engine.ensure_language("Already English.", "en") == "Already English.",
+          "ensure_language leaves English answers alone")
+
     bm25 = server.BM25(["a perceptron is linear", "the history of rome"])
     check(bm25.search("perceptron")[0] == 0, "BM25 finds an exact term")
     check(bm25.search("perceptron") != bm25.search("rome"), "BM25 ranks different terms")

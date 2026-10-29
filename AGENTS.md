@@ -604,8 +604,9 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
   English Model2Vec index in `rag_data/`, reranks the top candidates, and
   answers with a small CPU-only Ollama model (default Qwen2.5-1.5B). Non-English
   questions are translated to English for retrieval and answered in the
-  question's language; answers must cite `[S1]…` or return a localized “not in
-  the course”. Install on a server with `blog/rag/install.sh`; after content
+  question's language (with a final language-normalisation pass); section
+  titles/page titles feed BM25, reranking and a heading/year boost. Answers must
+  cite `[S1]…` or return a localized “not in the course”. Install on a server with `blog/rag/install.sh`; after content
   changes run `blog/rag/reindex.sh` (or the repo builders above). The Python
   service binds to `127.0.0.1`; `ask.php` is the public proxy. Q&A are logged
   to `/var/lib/asanai-rag/queries.sqlite` (no IPs; blocked requests redacted)

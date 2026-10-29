@@ -60,7 +60,7 @@ RATE_DAY = int(os.environ.get("RATE_DAY", "20"))
 RATE_SECONDS = int(os.environ.get("RATE_SECONDS", "5"))
 CACHE_TTL = int(os.environ.get("CACHE_TTL_SECONDS", str(30 * 24 * 3600)))
 INITIAL_ETA = float(os.environ.get("INITIAL_ETA_SECONDS", "30"))
-CACHE_VERSION = "3"
+CACHE_VERSION = "4"
 QUERIES_DB = Path(os.environ.get("ASANAI_RAG_QUERIES_DB", "/var/lib/asanai-rag/queries.sqlite"))
 QUERY_LOG_RETENTION_DAYS = int(os.environ.get("QUERY_LOG_RETENTION_DAYS", "180"))
 
@@ -85,6 +85,15 @@ REFUSALS = {
     "zh": "课程中没有涉及这个内容。",
     "ja": "このコースではその内容を扱っていません。",
 }
+
+STOPWORDS = set(
+    "a an the is are was were be been being what who whom whose when where why how "
+    "which do does did to of in on for and or with about from as at by it its this "
+    "that these those me my we our you your".split()
+)
+HEADING_QUALIFIERS = {"vision", "diffusion", "graph", "music", "audio", "speech", "video"}
+DATE_QUESTION_RE = re.compile(r"\b(when|year|date|wann|jahr)\b", re.IGNORECASE)
+YEAR_RE = re.compile(r"\b(19|20)\d{2}\b")
 
 LANGUAGE_NAMES = {
     "en": "English",
@@ -138,6 +147,25 @@ def refusal(lang: str) -> str:
 
 def is_blocked_question(text: str) -> bool:
     return any(pattern.search(text or "") for pattern in BLOCKED_QUESTION_PATTERNS)
+
+
+def heading_boost(chunk: dict, question: str) -> float:
+    """Reward section titles that match the entity, and years for 'when' questions."""
+    terms = [term for term in tokenize(question) if term not in STOPWORDS]
+    heading = (str(chunk.get("pt", "")) + " " + str(chunk.get("h", ""))).lower()
+    heading_terms = set(tokenize(heading))
+    overlap = sum(1 for term in terms if term in heading_terms)
+    boost = 0.8 * overlap
+    for term in terms:
+        if len(term) > 4 and term in heading_terms:
+            boost += 0.4
+    if DATE_QUESTION_RE.search(question) and YEAR_RE.search(heading):
+        boost += 3.0
+    query_terms = set(terms)
+    for qualifier in HEADING_QUALIFIERS:
+        if qualifier in heading_terms and qualifier not in query_terms:
+            boost -= 1.5
+    return boost
 
 
 def tokenize(text: str) -> list[str]:
@@ -227,7 +255,10 @@ class RagEngine:
         self.meta, vectors, self.scales = load_index(data_dir)
         self.chunks = self.meta["chunks"]
         self.vectors = vectors.astype(np.float32)
-        self.bm25 = BM25([chunk["x"] for chunk in self.chunks])
+        self.bm25 = BM25([
+            chunk["pt"] + " " + chunk["h"] + " " + chunk["x"]
+            for chunk in self.chunks
+        ])
 
         tools_dir = BASE_DIR if (BASE_DIR / "build_semantic_index.py").exists() else BLOG_DIR / "tools"
         sys.path.insert(0, str(tools_dir))
@@ -251,22 +282,34 @@ class RagEngine:
     def retrieve(self, question: str, limit: int = 5):
         query = self.embedder.embed(question)
         dense_scores = (self.vectors @ query) * self.scales
-        dense = list(np.argsort(-dense_scores)[:15])
-        lexical = self.bm25.search(question, 15)
+        dense = list(np.argsort(-dense_scores)[:25])
+        lexical = self.bm25.search(question, 25)
         candidates = list(dict.fromkeys(dense + lexical))
         if self.reranker and candidates:
-            documents = [self.chunks[index]["x"][:700] for index in candidates]
+            documents = [
+                f"{self.chunks[index]['pt']} — {self.chunks[index]['h']}\n"
+                f"{self.chunks[index]['x'][:700]}"
+                for index in candidates
+            ]
             try:
                 scores = list(self.reranker.rerank(question, documents, batch_size=16))
                 order = sorted(
                     range(len(candidates)),
-                    key=lambda position: scores[position],
+                    key=lambda position: scores[position]
+                    + heading_boost(self.chunks[candidates[position]], question),
                     reverse=True,
                 )[:limit]
                 return [self.chunks[candidates[position]] for position in order]
             except Exception as exc:
                 print(f"warning: reranker failed: {exc}", file=sys.stderr)
-        return [self.chunks[index] for index in candidates[:limit]]
+        return [
+            self.chunks[index]
+            for index in sorted(
+                candidates,
+                key=lambda index: heading_boost(self.chunks[index], question),
+                reverse=True,
+            )[:limit]
+        ]
 
     def translate(self, question: str, lang: str) -> str:
         if primary_lang(lang) == "en":
@@ -275,8 +318,16 @@ class RagEngine:
             {
                 "role": "system",
                 "content": (
-                    "Translate the user's question into English. Keep names, "
-                    "code and technical terms. Output only the translation."
+                    "Translate the user's question into English faithfully. Keep "
+                    "names, code and technical terms. Do not add or change the "
+                    "subject or object. Examples:\n"
+                    "- \"Was haben McCulloch und Pitts gemacht?\" -> "
+                    "\"What did McCulloch and Pitts do?\"\n"
+                    "- \"Wann wurde der Transformer erfunden?\" -> "
+                    "\"When was the Transformer invented?\"\n"
+                    "- \"Wie funktioniert Backpropagation?\" -> "
+                    "\"How does backpropagation work?\"\n"
+                    "Output only the English translation."
                 ),
             },
             {"role": "user", "content": question},
@@ -287,6 +338,33 @@ class RagEngine:
         except Exception as exc:
             print(f"warning: translation failed: {exc}", file=sys.stderr)
             return question
+
+    def ensure_language(self, answer: str, lang: str) -> str:
+        if primary_lang(lang) == "en" or not answer.strip():
+            return answer
+        language = LANGUAGE_NAMES.get(primary_lang(lang), "English")
+        messages = [
+            {
+                "role": "system",
+                "content": (
+                    f"Translate the answer into {language}. Preserve [S1]-style "
+                    "citation markers and technical terms. If the answer is "
+                    f"already in {language}, return it unchanged. Output only "
+                    "the answer."
+                ),
+            },
+            {"role": "user", "content": answer},
+        ]
+        try:
+            translated = self._ollama(
+                messages,
+                max_tokens=MAX_ANSWER_TOKENS,
+                temperature=0.0,
+            ).strip()
+            return translated or answer
+        except Exception as exc:
+            print(f"warning: answer language step failed: {exc}", file=sys.stderr)
+            return answer
 
     def answer(self, question: str, lang: str, history: list, on_token=None) -> dict:
         english = self.translate(question, lang)
@@ -328,7 +406,10 @@ class RagEngine:
                 )
             retry = self.finalize(raw_retry, chunks, lang, english)
             if retry["grounded"]:
+                retry["answer"] = self.ensure_language(retry["answer"], lang)
                 return retry
+        if result["grounded"]:
+            result["answer"] = self.ensure_language(result["answer"], lang)
         return result
 
     def build_messages(self, question, english, chunks, lang, history):
@@ -351,7 +432,8 @@ class RagEngine:
                 previous = "Previous conversation:\n" + "\n".join(lines) + "\n\n"
         user = (
             f"{previous}Question (answer in {language}): {question}\n"
-            f"English retrieval query: {english}\n\n"
+            f"English retrieval query: {english}\n"
+            f"IMPORTANT: Write the final answer in {language} only.\n\n"
             "Passages:\n\n" + "\n\n".join(passages)
         )
         return [

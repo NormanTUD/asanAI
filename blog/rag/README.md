@@ -33,7 +33,12 @@ browser  ──POST /ask.php──▶  PHP proxy  ──▶  127.0.0.1:8090  (qu
   `[blocked request]`.
 - **Multilingual:** questions in other languages are translated to English for
   retrieval (the corpus is English); the answer is written in the question’s
-  language.
+  language, with a final language-normalisation pass if the model still answers
+  in English.
+- **Course-aware ranking:** section titles/page titles participate in BM25,
+  reranking and a heading/year boost, so date and entity questions (for example
+  “when was the Transformer invented?”) prefer headings such as
+  “The Transformer and Attention (2017)”.
 - **Local-only:** the Python service binds to `127.0.0.1`; `ask.php` is the only
   public entry.
 
