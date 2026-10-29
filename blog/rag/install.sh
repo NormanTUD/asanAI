@@ -23,6 +23,20 @@ RAG_DATA="$DATA_DIR/data"
 MODEL="${OLLAMA_MODEL:-qwen2.5:1.5b}"
 RERANK_MODEL="${RERANK_MODEL:-Xenova/ms-marco-MiniLM-L-6-v2}"
 
+wait_for_ollama() {
+	local tries="${1:-30}"
+	for _ in $(seq 1 "$tries"); do
+		if curl -fsS "http://127.0.0.1:11434/api/tags" >/dev/null 2>&1; then
+			return 0
+		fi
+		sleep 1
+	done
+	echo "error: Ollama API on 127.0.0.1:11434 did not become ready." >&2
+	systemctl status ollama --no-pager >&2 || true
+	journalctl -u ollama -n 60 --no-pager >&2 || true
+	return 1
+}
+
 if [ ! -f "$BLOG_DIR/tools/build_rag_index.py" ]; then
 	echo "error: $BLOG_DIR/tools/build_rag_index.py is missing." >&2
 	echo "Point ASANAI_BLOG_DIR at the blog directory." >&2
@@ -97,6 +111,7 @@ echo "[5/8] Pulling the language model (about 1 GB)"
 systemctl daemon-reload
 systemctl enable --now ollama
 systemctl restart ollama
+wait_for_ollama 30
 ollama pull "$MODEL"
 
 echo "[6/8] Downloading the reranker (about 80 MB)"
