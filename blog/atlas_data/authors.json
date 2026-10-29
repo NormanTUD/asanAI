@@ -81140,6 +81140,91 @@
   ]
  },
  {
+  "name": "Jessica Utrup",
+  "canon": "Jessica Utrup",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_fuxianhuia_fossil"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Junnn11",
+  "canon": "Junnn11",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_fuxianhuiid_cns"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Scott Loarie",
+  "canon": "Scott Loarie",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_pleurobrachia_bachei"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "UNE Photos",
+  "canon": "UNE Photos",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2011,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_anomalocaris_eye_fossil"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "incidencematrix",
+  "canon": "incidencematrix",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2015,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_octopus_eye"
+  ],
+  "cited_in": [
+   "philosophy"
+  ]
+ },
+ {
   "name": "Meta AI",
   "canon": "Meta AI",
   "alias": null,

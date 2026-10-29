@@ -13008,6 +13008,36 @@
    "year": "n.d.",
    "url": "https://commons.wikimedia.org/wiki/File:Burgess_Shale_Fossils.jpg"
   },
+  "img_fuxianhuia_fossil": {
+   "title": "Fuxianhuia protensa fossil (YPM IP 421686)",
+   "author": "Jessica Utrup",
+   "year": "2021",
+   "url": "https://commons.wikimedia.org/wiki/File:Fuxianhuia_protensa_(YPM_IP_421686).jpg"
+  },
+  "img_fuxianhuiid_cns": {
+   "title": "Central nervous system of Fuxianhuiida",
+   "author": "Junnn11",
+   "year": "2021",
+   "url": "https://commons.wikimedia.org/wiki/File:20211113_Fuxianhuiid_central_nervous_system.png"
+  },
+  "img_pleurobrachia_bachei": {
+   "title": "Pleurobrachia bachei (Pacific sea gooseberry)",
+   "author": "Scott Loarie",
+   "year": "2023",
+   "url": "https://commons.wikimedia.org/wiki/File:Pleurobrachia_bachei_267730929.jpg"
+  },
+  "img_anomalocaris_eye_fossil": {
+   "title": "Fossilised Anomalocaris eye preserved in pyrite",
+   "author": "UNE Photos",
+   "year": "2011",
+   "url": "https://commons.wikimedia.org/wiki/File:Fossilised_Anomalocaris_eye.jpg"
+  },
+  "img_octopus_eye": {
+   "title": "Eye of an octopus",
+   "author": "incidencematrix",
+   "year": "2015",
+   "url": "https://commons.wikimedia.org/wiki/File:Octopus_Eye_(23859301645).jpg"
+  },
   "img_vetulicola_cuneatus": {
    "title": "Vetulicola cuneatus, primitive deuterostome from the Chengjiang biota",
    "author": "Woudloper",
@@ -22448,8 +22478,17 @@
    "philosophy",
    "untold_history_i"
   ],
+  "img_fuxianhuia_fossil": [
+   "untold_history_i"
+  ],
+  "img_fuxianhuiid_cns": [
+   "untold_history_i"
+  ],
   "moroz2014ctenophore": [
    "philosophy",
+   "untold_history_i"
+  ],
+  "img_pleurobrachia_bachei": [
    "untold_history_i"
   ],
   "herculano2012brain": [
@@ -22460,6 +22499,9 @@
    "untold_history_i"
   ],
   "paterson2011anomalocaris": [
+   "untold_history_i"
+  ],
+  "img_anomalocaris_eye_fossil": [
    "untold_history_i"
   ],
   "nilsson1994eye": [
@@ -29129,6 +29171,9 @@
    "philosophy"
   ],
   "godfreysmith2016otherminds": [
+   "philosophy"
+  ],
+  "img_octopus_eye": [
    "philosophy"
   ],
   "ginsburg2019sensitive": [
@@ -60548,6 +60593,46 @@
    "maxyear": null,
    "keys": [
     "img_burgess_shale_fossils"
+   ]
+  },
+  "Jessica Utrup": {
+   "count": 1,
+   "minyear": 2021,
+   "maxyear": 2021,
+   "keys": [
+    "img_fuxianhuia_fossil"
+   ]
+  },
+  "Junnn11": {
+   "count": 1,
+   "minyear": 2021,
+   "maxyear": 2021,
+   "keys": [
+    "img_fuxianhuiid_cns"
+   ]
+  },
+  "Scott Loarie": {
+   "count": 1,
+   "minyear": 2023,
+   "maxyear": 2023,
+   "keys": [
+    "img_pleurobrachia_bachei"
+   ]
+  },
+  "UNE Photos": {
+   "count": 1,
+   "minyear": 2011,
+   "maxyear": 2011,
+   "keys": [
+    "img_anomalocaris_eye_fossil"
+   ]
+  },
+  "incidencematrix": {
+   "count": 1,
+   "minyear": 2015,
+   "maxyear": 2015,
+   "keys": [
+    "img_octopus_eye"
    ]
   },
   "Woudloper": {
