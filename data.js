@@ -1281,7 +1281,7 @@ function _render_tensor_to_canvas(_tensor, canvas) {
 	}
 
 	if(min_value < 0) {
-		_tensor = _tf_sub(tensor, min_value);
+		_tensor = tf_sub(_tensor, min_value);
 	}
 
 	var max_in_tensor = array_sync(max(_tensor));
@@ -1294,13 +1294,46 @@ function _render_tensor_to_canvas(_tensor, canvas) {
 		_tensor = tidy(() => { return tf_div(_tensor, max_value); });
 	}
 
+	var render_tensor = null;
+
 	try {
-		return toPixels(_tensor, canvas);
+		// toPixels() reads the tensor data asynchronously. Callers dispose their
+		// tensor right after this returns, so render a clone that stays alive
+		// until the promise settles.
+		render_tensor = _tensor.clone();
+		var pixels = toPixels(render_tensor, canvas);
 	} catch (e) {
+		if (render_tensor && !tensor_is_disposed(render_tensor)) {
+			render_tensor.dispose();
+		}
 		void(0); log("Shape:", _tensor.shape);
 		_tensor.print();
 		return null;
 	}
+
+	const dispose_render_tensor = function () {
+		if (render_tensor && !tensor_is_disposed(render_tensor)) {
+			render_tensor.dispose();
+		}
+	};
+
+	if (pixels && typeof pixels.then === "function") {
+		return pixels.then(
+			function () {
+				dispose_render_tensor();
+				return canvas;
+			},
+			function (e) {
+				dispose_render_tensor();
+				dbg("[augmented_preview] toPixels failed: " + e);
+				return null;
+			}
+		);
+	}
+
+	dispose_render_tensor();
+
+	return pixels === null ? null : canvas;
 }
 
 function _add_augmented_canvas_to_photo_gallery(canvas, render_promise) {
@@ -1313,29 +1346,70 @@ function _add_augmented_canvas_to_photo_gallery(canvas, render_promise) {
 	if (!container) {
 		const photos = document.getElementById("photos");
 		if (photos) photos.appendChild(canvas);
-		return;
+		return Promise.resolve(null);
 	}
 
-	const add_rendered_image = () => {
-		const img = new Image();
-		img._source_canvas = canvas;
-		img.src = canvas.toDataURL("image/png");
-		_photo_gallery_add_image(img, "augmented:" + uuidv4());
+	if (render_promise === null) {
+		dbg("[augmented_preview] render failed; skipping gallery entry");
+		return Promise.resolve(null);
+	}
 
-		// Keep augmented images with the other gallery sources so every preview has
-		// a stable, unique xpath for the image cache in train.js.
-		if (_photo_gallery.sources) {
-			_photo_gallery.sources.appendChild(img);
+	const wait_for_render = (render_promise && typeof render_promise.then === "function")
+		? render_promise
+		: Promise.resolve(canvas);
+
+	return wait_for_render.catch(function (e) {
+		dbg("[augmented_preview] render promise rejected: " + e);
+		return null;
+	}).then(function (rendered_canvas) {
+		if (rendered_canvas === null) {
+			dbg("[augmented_preview] render produced no canvas; skipping gallery entry");
+			return null;
 		}
-	};
 
-	// toPixels() paints asynchronously. Reading the canvas before it resolves
-	// produces a blank data URL, which used to make augmented previews invisible.
-	if (render_promise && typeof render_promise.then === "function") {
-		render_promise.then(add_rendered_image, add_rendered_image);
-	} else {
-		add_rendered_image();
-	}
+		if (!(canvas.width > 0 && canvas.height > 0)) {
+			dbg("[augmented_preview] canvas has no pixels (width=" + canvas.width + ", height=" + canvas.height + "); skipping gallery entry");
+			return null;
+		}
+
+		return new Promise(function (resolve) {
+			const img = new Image();
+			img._source_canvas = canvas;
+			let finished = false;
+
+			const finish = function () {
+				if (finished) return;
+				finished = true;
+				resolve(img);
+			};
+
+			// Resolve only after the data URL has decoded, so the gallery can draw
+			// the preview immediately and the test sees real pixels, not a blank cell.
+			img.addEventListener("load", finish, {once: true});
+			img.addEventListener("error", finish, {once: true});
+
+			try {
+				img.src = canvas.toDataURL("image/png");
+			} catch (e) {
+				dbg("[augmented_preview] toDataURL failed: " + e);
+				finish();
+				return;
+			}
+
+			_photo_gallery_add_image(img, "augmented:" + uuidv4());
+
+			// Keep augmented images with the other gallery sources so every preview
+			// has a stable, unique xpath for the image cache in train.js.
+			if (_photo_gallery.sources) {
+				_photo_gallery.sources.appendChild(img);
+			}
+
+			// Some browsers finish decoding a data URL before the listener fires.
+			if (img.complete && img.naturalWidth) {
+				finish();
+			}
+		});
+	});
 }
 
 function add_tensor_as_image_to_photos (_tensor) {
@@ -1348,19 +1422,22 @@ function add_tensor_as_image_to_photos (_tensor) {
 			_tensor = tensor(array_sync(_tensor)[0]);
 		} else {
 			const sync_data = array_sync(_tensor);
+			var pending_renders = [];
+
 			for (var tensor_idx = 0; tensor_idx < _tensor.shape[0]; tensor_idx++) {
 				var this_tensor = tensor(sync_data[tensor_idx]);
 				var canvas = document.createElement("canvas");
 				var render_promise = _render_tensor_to_canvas(this_tensor, canvas);
-				_add_augmented_canvas_to_photo_gallery(canvas, render_promise);
+				pending_renders.push(_add_augmented_canvas_to_photo_gallery(canvas, render_promise));
 			}
-			return;
+
+			return Promise.all(pending_renders);
 		}
 	}
 
 	var canvas = document.createElement("canvas");
 	var render_promise = _render_tensor_to_canvas(_tensor, canvas);
-	_add_augmented_canvas_to_photo_gallery(canvas, render_promise);
+	return _add_augmented_canvas_to_photo_gallery(canvas, render_promise);
 }
 
 function truncate_text (fullStr, strLen, separator = "...") {

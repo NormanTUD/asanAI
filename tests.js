@@ -2003,34 +2003,137 @@ function test_prepare_site_for_training_always_clears_plot() {
 	}
 }
 
+async function _test_await_with_timeout (promise, timeout_ms) {
+	let timer = null;
+
+	const timeout = new Promise(function (resolve) {
+		timer = setTimeout(function () { resolve("timeout"); }, timeout_ms);
+	});
+
+	try {
+		return await Promise.race([
+			Promise.resolve(promise).then(
+				function () { return "done"; },
+				function (e) { return "error: " + e; }
+			),
+			timeout
+		]);
+	} finally {
+		if (timer) {
+			clearTimeout(timer);
+		}
+	}
+}
+
+function _augmented_preview_state (old_urls) {
+	const entries = _photo_gallery.entries;
+	let found = null;
+	let found_index = -1;
+
+	for (let index = entries.length - 1; index >= 0; index--) {
+		const entry = entries[index];
+		if (entry && entry.img && String(entry.url).indexOf("augmented:") === 0 && !old_urls[String(entry.url)]) {
+			found = entry;
+			found_index = index;
+			break;
+		}
+	}
+
+	const pixel = found ? _photo_gallery_test_pixel(found_index) : null;
+
+	return {
+		found: found,
+		found_index: found_index,
+		added_to_gallery: !!found && found.img.tagName === "IMG" && !!found.img._source_canvas,
+		drawn_to_canvas: !!pixel && pixel[3] > 0,
+		pixel: pixel
+	};
+}
+
 async function test_augmented_previews_go_to_gallery_canvas() {
 	const old_entries = _photo_gallery.entries.slice();
 	const old_expected = _photo_gallery.expected;
 	const old_layout = _photo_gallery.layout;
-	const before_count = _photo_gallery.entries.length;
+	const old_urls = {};
+
+	old_entries.forEach(function (entry) {
+		old_urls[String(entry && entry.url)] = true;
+	});
+
+	const before_count = old_entries.length;
 	const t = tf.ones([8, 8, 3]);
+	let found = null;
+	let render_state = "not started";
+	let synchronous_pixels = false;
+	let state = null;
+	let added_to_gallery = false;
+	let drawn_to_canvas = false;
+	let no_loose_canvases = false;
 
 	try {
-		add_tensor_as_image_to_photos(t);
 		const fallback_img = new Image();
 		const fallback_canvas = document.createElement("canvas");
 		fallback_img._source_canvas = fallback_canvas;
-		const synchronous_pixels = _get_pixel_source_element(fallback_img) === fallback_canvas;
-		await new Promise(function (resolve) { setTimeout(resolve, 200); });
+		synchronous_pixels = _get_pixel_source_element(fallback_img) === fallback_canvas;
+
+		const render_result = add_tensor_as_image_to_photos(t);
+
+		if (render_result && typeof render_result.then === "function") {
+			render_state = await _test_await_with_timeout(render_result, 10000);
+		} else {
+			render_state = "synchronous";
+		}
+
+		// Decoding the data URL and drawing it can trail the render promise on
+		// some browsers, so poll for the visible result instead of using a fixed
+		// sleep. The old fixed 200 ms wait failed under slow WebGL readback.
+		const deadline = Date.now() + 5000;
+
+		do {
+			state = _augmented_preview_state(old_urls);
+			found = state.found;
+			added_to_gallery = state.added_to_gallery;
+			drawn_to_canvas = state.drawn_to_canvas;
+			no_loose_canvases = document.querySelectorAll("#photos canvas[id^='augmented_photo_']").length === 0;
+
+			if (added_to_gallery && drawn_to_canvas && no_loose_canvases) {
+				break;
+			}
+
+			await new Promise(function (resolve) { setTimeout(resolve, 50); });
+		} while (Date.now() < deadline);
+
+		const ok = added_to_gallery && synchronous_pixels && no_loose_canvases && drawn_to_canvas;
+
+		if (ok) {
+			return true;
+		}
+
 		const entries = _photo_gallery.entries;
-		const last = entries[entries.length - 1];
-		const added_to_gallery = entries.length === before_count + 1 &&
-			!!last && last.img && last.img.tagName === "IMG" && !!last.img._source_canvas && String(last.url).indexOf("augmented:") === 0;
-		const no_loose_canvases = document.querySelectorAll("#photos canvas[id^='augmented_photo_']").length === 0;
-		const drawn_pixel = _photo_gallery_test_pixel(before_count);
-		const drawn_to_canvas = !!drawn_pixel && drawn_pixel[3] > 0;
-		return added_to_gallery && synchronous_pixels && no_loose_canvases && drawn_to_canvas;
+		const canvas = _photo_gallery.canvas;
+		const layout = _photo_gallery.layout;
+
+		return [
+			"added_to_gallery=" + added_to_gallery,
+			"drawn_to_canvas=" + drawn_to_canvas,
+			"synchronous_pixels=" + synchronous_pixels,
+			"no_loose_canvases=" + no_loose_canvases,
+			"render=" + render_state,
+			"pixel=" + JSON.stringify(state && state.pixel),
+			"found_index=" + (state ? state.found_index : -1),
+			"before_count=" + before_count,
+			"after_count=" + entries.length,
+			"canvas=" + (canvas ? canvas.width + "x" + canvas.height : "none"),
+			"layout=" + (layout ? layout.css_width + "x" + layout.css_height + " cols=" + layout.cols : "none"),
+			"urls=" + JSON.stringify(entries.map(function (entry) { return String(entry && entry.url).slice(0, 20); }))
+		].join("; ");
 	} finally {
 		t.dispose();
-		const added = _photo_gallery.entries[before_count];
-		if (added && added.img && added.img.parentNode) {
-			added.img.remove();
+
+		if (found && found.img && found.img.parentNode) {
+			found.img.remove();
 		}
+
 		_photo_gallery.entries = old_entries;
 		_photo_gallery.expected = old_expected;
 		_photo_gallery.layout = old_layout;
