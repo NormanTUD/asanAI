@@ -217,7 +217,23 @@ For most of life's history there was no brain. A sponge has no neurons at all; a
 
 The fossil record of soft nervous tissue is almost empty, but it is not completely empty. In 2012, \cite[Ma et al. (2012)]{ma2012fuxianhuia} described *Fuxianhuia protensa*, a 520-million-year-old arthropod from Chengjiang whose brain, optic lobes, and segmental nerve cord are preserved in remarkable detail. It is one of the oldest known brains, and it already has the architecture of a modern arthropod: a tripartite brain, paired optic lobes, and a ladder-like ventral nerve cord. The first brain was not a blob; it was a segmented, sensory, front-end control system.
 
+<div class="image-row">
+    <figure>
+        <img src="fuxianhuia_protensa_fossil.jpg" alt="Fossil of Fuxianhuia protensa from the Chengjiang biota, showing the head shield and segmented body" />
+        <figcaption class="md">The \citealternativetitle{img_fuxianhuia_fossil} (CC0): a fossil of *Fuxianhuia protensa* from the Chengjiang biota. The species is famous for specimens in which the brain and optic lobes are preserved. Source: \citeauthor{img_fuxianhuia_fossil}, \citeyear{img_fuxianhuia_fossil}, \citealternativetitle{img_fuxianhuia_fossil}, Wikimedia Commons.</figcaption>
+    </figure>
+    <figure>
+        <img src="fuxianhuiid_cns.png" alt="Reconstruction of the central nervous system of a fuxianhuiid, based mainly on Fuxianhuia protensa" />
+        <figcaption class="md">The \citealternativetitle{img_fuxianhuiid_cns} (CC BY-SA 4.0): the brain, optic lobes, and ventral nerve cord of a fuxianhuiid, reconstructed mainly from *Fuxianhuia protensa*. Source: \citeauthor{img_fuxianhuiid_cns}, \citeyear{img_fuxianhuiid_cns}, \citealternativetitle{img_fuxianhuiid_cns}, Wikimedia Commons.</figcaption>
+    </figure>
+</div>
+
 The deepest surprise came from genomics. The ctenophores, or comb jellies, are among the simplest animals with neurons, and their genome sequence placed them near the base of the animal tree. \cite[Moroz et al. (2014)]{moroz2014ctenophore} found that ctenophores lack many of the genes that build the neurons of other animals, and that their neurotransmitters and synapses are partly different. The result reopened a question that had seemed settled: did the nervous system evolve once, in the common ancestor of all animals, or more than once, independently, in ctenophores and in the lineage that led to us? The answer is still debated, and it matters for the history of the mind: if neurons evolved twice, then the brain is not a single invention but a solution that evolution discovered more than once.
+
+<figure>
+    <img style="width: 55%; display: block; margin: 0 auto;" src="pleurobrachia_bachei.jpg" alt="Pleurobrachia bachei, a comb jelly, swimming in dark water" />
+    <figcaption class="md">The \citealternativetitle{img_pleurobrachia_bachei} (CC0): *Pleurobrachia bachei*, a ctenophore or comb jelly. Ctenophores have neurons, but many of the genes that build other animals' neurons are absent or not expressed in them. Source: \citeauthor{img_pleurobrachia_bachei}, \citeyear{img_pleurobrachia_bachei}, \citealternativetitle{img_pleurobrachia_bachei}, Wikimedia Commons.</figcaption>
+</figure>
 
 In vertebrates the brain is a tripartite organ -- hindbrain, midbrain, forebrain -- built around the same ancient senses. The hindbrain runs the automatic machinery of breathing and balance; the midbrain routes vision and hearing; the forebrain, in mammals, grows into the cortex. The human brain is not a scaled-up chimpanzee brain in every respect, but it is, in cell counts, a remarkably regular primate brain: about 86 billion neurons, most of them in the cerebral cortex and cerebellum, packed into an organ that costs about a fifth of the body's resting energy (\cite[Herculano-Houzel, 2012]{herculano2012brain}). What makes it special is not a new kind of cell but the number and connectivity of old ones -- and the culture that the organ can learn from.
 
@@ -226,6 +242,11 @@ In vertebrates the brain is a tripartite organ -- hindbrain, midbrain, forebrain
 Vision is older than eyes. The protein that catches light, **opsin**, is ancient and widely shared; even single-celled organisms have light-sensitive proteins (\cite[Schlosser, 2018]{schlosser2018senses}). What evolved later was the eye: a patch of photoreceptors, a pigment screen, a lens, and a retina that turns an image into a map. The first eyes were probably simple **eyespots**, patches of light-sensitive cells that told an animal which way was up or where the light came from. From there, evolution had only to add a cup, a pinhole, and a lens.
 
 The Cambrian fossil record shows how far the process had gone by 515 million years ago. \cite[Paterson et al. (2011)]{paterson2011anomalocaris} found that the giant predator *Anomalocaris* had **compound eyes** with more than 16,000 lenses in a single eye -- among the most acute eyes known from the Cambrian, and a sign that vision was already a weapon in the arms race of the seas. The first eyes were not passive windows; they were targeting systems.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="anomalocaris_eye_fossil.jpg" alt="Fossilised compound eye of Anomalocaris preserved in pyrite, showing the lenses" />
+    <figcaption class="md">The \citealternativetitle{img_anomalocaris_eye_fossil} (CC BY 2.0): an *Anomalocaris* eye preserved in pyrite. The compound eye had more than 16,000 lenses in a single eye (\cite[Paterson et al., 2011]{paterson2011anomalocaris}). Source: \citeauthor{img_anomalocaris_eye_fossil}, \citeyear{img_anomalocaris_eye_fossil}, \citealternativetitle{img_anomalocaris_eye_fossil}, Wikimedia Commons.</figcaption>
+</figure>
 
 The vertebrate eye and the cephalopod eye are the textbook case of **convergent evolution**: two lineages built a camera eye independently, with a lens, an iris, and a retina. They are not identical. The vertebrate retina is **inverted**: the photoreceptors point away from the light, and the nerve fibres run across the front of the retina and gather at the optic disc, leaving a **blind spot**. The cephalopod retina is everted, with the photoreceptors facing the light and no blind spot (\cite[Nilsson and Pelger, 1994]{nilsson1994eye}). This is not evidence of a perfect designer; it is evidence of a tinkerer who works with the materials at hand. \cite[Darwin (1859)]{darwin1859origin} already saw the difficulty and the way out: if the eye can vary in every generation, and if every small improvement helps, then a camera eye can be built by natural selection from a simple light-sensitive spot.
 
