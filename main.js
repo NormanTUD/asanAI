@@ -804,11 +804,6 @@ function set_values_from_url () {
 		$("#show_layer_data").prop("checked", true).trigger("change");
 	}
 
-	if(urlParams.get("auto_augment")) {
-		$("#auto_augment").prop("checked", true).trigger("change");
-		$("a[href*=\"tf_ribbon_augmentation\"]").show();
-	}
-
 	if(urlParams.get("valsplit")) {
 		$("#validationSplit").val(urlParams.get("valsplit")).trigger("change");
 	}

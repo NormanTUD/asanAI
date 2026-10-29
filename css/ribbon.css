@@ -249,6 +249,12 @@
 	text-align: left;
 }
 
+.ribbon-toolbar.ribbon-toolbar--columns {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+}
+
 .ribbon-toolbar table {
 	border-collapse: collapse;
 }

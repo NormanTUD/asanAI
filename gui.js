@@ -360,10 +360,8 @@ function hide_no_conv_stuff() {
 		$("[aria-labelledby='adversarial_tab_label']").show();
 		$(".hide_when_image").hide();
 	} else {
-		$("a[href*=\"tf_ribbon_augmentation\"]").hide().parent().hide();
 		$("[aria-labelledby='activation_atlas_tab_label']").hide();
 		$("[aria-labelledby='adversarial_tab_label']").hide();
-		$("#auto_augment").prop("checked", false);
 		show_hide_augment_tab();
 		$(".hide_when_no_image").hide();
 		$(".hide_when_image").show();
@@ -1613,14 +1611,6 @@ function _sync_mobile_dataset_panel() {
 	var maxf_ribbon = document.getElementById('max_number_of_files_per_category');
 	if (maxf && maxf_ribbon) maxf.value = maxf_ribbon.value;
 
-	var aug = document.getElementById('mobile_auto_augment');
-	var aug_ribbon = document.getElementById('auto_augment');
-	if (aug && aug_ribbon) aug.checked = aug_ribbon.checked;
-
-	// Augmentation sub-section visibility follows the augment checkbox
-	var augSection = document.getElementById('mobile_augmentation_section');
-	if (augSection) augSection.style.display = (aug && aug.checked) ? '' : 'none';
-
 	var ar = document.getElementById('mobile_augment_rotate_images');
 	var ar_ribbon = document.getElementById('augment_rotate_images');
 	if (ar && ar_ribbon) ar.checked = ar_ribbon.checked;
@@ -1636,6 +1626,21 @@ function _sync_mobile_dataset_panel() {
 	var fl = document.getElementById('mobile_augment_flip_left_right');
 	var fl_ribbon = document.getElementById('augment_flip_left_right');
 	if (fl && fl_ribbon) fl.checked = fl_ribbon.checked;
+
+	_sync_mobile_check('mobile_augment_brightness', 'augment_brightness');
+	_sync_mobile_value('mobile_augment_brightness_amount', 'augment_brightness_amount');
+	_sync_mobile_check('mobile_augment_contrast', 'augment_contrast');
+	_sync_mobile_value('mobile_augment_contrast_amount', 'augment_contrast_amount');
+	_sync_mobile_check('mobile_augment_saturation', 'augment_saturation');
+	_sync_mobile_value('mobile_augment_saturation_amount', 'augment_saturation_amount');
+	_sync_mobile_check('mobile_augment_grayscale', 'augment_grayscale');
+	_sync_mobile_check('mobile_augment_noise', 'augment_noise');
+	_sync_mobile_value('mobile_augment_noise_amount', 'augment_noise_amount');
+
+	// The augmentation section is always available; only the individual
+	// options decide whether images are augmented.
+	var augSection = document.getElementById('mobile_augmentation_section');
+	if (augSection) augSection.style.display = '';
 
 	// Training extras
 	var jt = document.getElementById('mobile_jump_to_interesting_tab');
@@ -2223,17 +2228,11 @@ async function highlight_code () {
 }
 
 function show_hide_augment_tab () {
-	if($("#auto_augment").is(":checked")) {
-		$("a[href*=\"tf_ribbon_augmentation\"]").show().parent().show();
-	} else {
-		$("a[href*=\"tf_ribbon_augmentation\"]").hide().parent().hide();
-	}
-
-	var augChecked = $("#auto_augment").is(":checked");
-	var m = document.getElementById("mobile_auto_augment");
-	if (m) m.checked = augChecked;
+	// Augmentation is always available. Whether anything is augmented is
+	// decided by the individual option checkboxes.
+	$("a[href*=\"tf_ribbon_augmentation\"]").show().parent().show();
 	var s = document.getElementById("mobile_augmentation_section");
-	if (s) s.style.display = augChecked ? "" : "none";
+	if (s) s.style.display = "";
 }
 
 function get_layer_activation_function (nr) {

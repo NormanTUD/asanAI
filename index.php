@@ -417,15 +417,9 @@
 							<input type="number" id="mobile_max_number_of_files_per_category" value="100" min="0" step="5" class="no_red_bg_when_empty" onchange="$('#max_number_of_files_per_category').val(this.value).trigger('change');">
 						</div>
 					</div>
-					<div class="mobile-panel-row expert_mode_only">
-						<span class="mobile-panel-label"><span class="TRANSLATEME_augment"></span>?</span>
-						<div class="mobile-panel-control">
-							<input type="checkbox" id="mobile_auto_augment" onchange="$('#auto_augment').prop('checked', this.checked); show_hide_augment_tab();">
-						</div>
-					</div>
 				</div>
 
-				<div class="mobile-panel-section expert_mode_only" id="mobile_augmentation_section" style="display:none">
+				<div class="mobile-panel-section expert_mode_only" id="mobile_augmentation_section">
 					<div class="mobile-panel-section-title" data-tr-text="augmentation">Augmentation</div>
 					<div class="mobile-panel-row">
 						<span class="mobile-panel-label"><span class="TRANSLATEME_auto_rotate_images"></span>?</span>
@@ -449,6 +443,60 @@
 						<span class="mobile-panel-label"><span class="TRANSLATEME_flip_left_right"></span></span>
 						<div class="mobile-panel-control">
 							<input type="checkbox" id="mobile_augment_flip_left_right" onchange="$('#augment_flip_left_right').prop('checked', this.checked).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_brightness"></span>?</span>
+						<div class="mobile-panel-control">
+							<input type="checkbox" id="mobile_augment_brightness" onchange="$('#augment_brightness').prop('checked', this.checked).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_brightness_amount"></span></span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_augment_brightness_amount" value="0.2" min="-1" max="1" step="0.05" onchange="$('#augment_brightness_amount').val(this.value).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_contrast"></span>?</span>
+						<div class="mobile-panel-control">
+							<input type="checkbox" id="mobile_augment_contrast" onchange="$('#augment_contrast').prop('checked', this.checked).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_contrast_amount"></span></span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_augment_contrast_amount" value="1.5" min="0" max="3" step="0.1" onchange="$('#augment_contrast_amount').val(this.value).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_saturation"></span>?</span>
+						<div class="mobile-panel-control">
+							<input type="checkbox" id="mobile_augment_saturation" onchange="$('#augment_saturation').prop('checked', this.checked).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_saturation_amount"></span></span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_augment_saturation_amount" value="1.5" min="0" max="3" step="0.1" onchange="$('#augment_saturation_amount').val(this.value).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_grayscale"></span></span>
+						<div class="mobile-panel-control">
+							<input type="checkbox" id="mobile_augment_grayscale" onchange="$('#augment_grayscale').prop('checked', this.checked).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_noise"></span>?</span>
+						<div class="mobile-panel-control">
+							<input type="checkbox" id="mobile_augment_noise" onchange="$('#augment_noise').prop('checked', this.checked).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_noise_amount"></span></span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_augment_noise_amount" value="0.05" min="0" max="0.5" step="0.01" onchange="$('#augment_noise_amount').val(this.value).trigger('change');">
 						</div>
 					</div>
 				</div>

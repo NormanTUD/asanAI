@@ -135,10 +135,6 @@
 							<td><span class="TRANSLATEME_img_per_cat"></span></td>
 							<td><input type="number" step=5 min="0" value="100" id="max_number_of_files_per_category" class="no_red_bg_when_empty" style="width: 40px"></td>
 						</tr>
-						<tr class="expert_mode_only">
-							<td><label class="ribbon-checkbox-label" for="auto_augment"><span class="TRANSLATEME_augment"></span>?</label></td>
-							<td><input type="checkbox" onclick="show_hide_augment_tab()" id="auto_augment"></td>
-						</tr>
 					</table>
 				</div>
 				<div class="ribbon-group-title"><span class="TRANSLATEME_image_options"></span></div>
@@ -412,7 +408,7 @@
 		<div class="ribbon-group-sep"></div>
 		<div class="ribbon-group-sep-hr"><hr></div>
 		<div class="ribbon-group" data-importance="4">
-			<div class="ribbon-toolbar">
+			<div class="ribbon-toolbar ribbon-toolbar--columns">
 				<table>
 					<tr>
 						<td><label class="ribbon-checkbox-label" for="augment_rotate_images"><span class="TRANSLATEME_auto_rotate_images"></span>?</label></td>
@@ -429,6 +425,48 @@
 					<tr>
 						<td><label class="ribbon-checkbox-label" for="augment_flip_left_right"><span class="TRANSLATEME_flip_left_right"></span></label></td>
 						<td><input type="checkbox" value=1 id="augment_flip_left_right"></td>
+					</tr>
+				</table>
+				<table>
+					<tr>
+						<td><label class="ribbon-checkbox-label" for="augment_brightness"><span class="TRANSLATEME_brightness"></span>?</label></td>
+						<td><input type="checkbox" value=1 id="augment_brightness"></td>
+					</tr>
+					<tr>
+						<td><span class="TRANSLATEME_brightness_amount"></span></td>
+						<td><input type="number" step="0.05" min="-1" max="1" value="0.2" id="augment_brightness_amount"></td>
+					</tr>
+					<tr>
+						<td><label class="ribbon-checkbox-label" for="augment_contrast"><span class="TRANSLATEME_contrast"></span>?</label></td>
+						<td><input type="checkbox" value=1 id="augment_contrast"></td>
+					</tr>
+					<tr>
+						<td><span class="TRANSLATEME_contrast_amount"></span></td>
+						<td><input type="number" step="0.1" min="0" max="3" value="1.5" id="augment_contrast_amount"></td>
+					</tr>
+				</table>
+				<table>
+					<tr>
+						<td><label class="ribbon-checkbox-label" for="augment_saturation"><span class="TRANSLATEME_saturation"></span>?</label></td>
+						<td><input type="checkbox" value=1 id="augment_saturation"></td>
+					</tr>
+					<tr>
+						<td><span class="TRANSLATEME_saturation_amount"></span></td>
+						<td><input type="number" step="0.1" min="0" max="3" value="1.5" id="augment_saturation_amount"></td>
+					</tr>
+					<tr>
+						<td><label class="ribbon-checkbox-label" for="augment_grayscale"><span class="TRANSLATEME_grayscale"></span></label></td>
+						<td><input type="checkbox" value=1 id="augment_grayscale"></td>
+					</tr>
+				</table>
+				<table>
+					<tr>
+						<td><label class="ribbon-checkbox-label" for="augment_noise"><span class="TRANSLATEME_noise"></span>?</label></td>
+						<td><input type="checkbox" value=1 id="augment_noise"></td>
+					</tr>
+					<tr>
+						<td><span class="TRANSLATEME_noise_amount"></span></td>
+						<td><input type="number" step="0.01" min="0" max="0.5" value="0.05" id="augment_noise_amount"></td>
 					</tr>
 				</table>
 			</div>

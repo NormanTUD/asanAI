@@ -1658,8 +1658,6 @@ function test_clear_attrament_clears_edges () {
 async function test_custom_drawn_images_with_augmentation() {
 	set_mode_to_expert();
 
-	$("#auto_augment").prop("checked", true);
-
 	$("#augment_rotate_images").prop("checked", true);
 	$("#augment_invert_images").prop("checked", true);
 	$("#augment_flip_left_right").prop("checked", true);
@@ -1678,7 +1676,9 @@ async function test_custom_drawn_images_with_augmentation() {
 
 	const ret = await train_neural_network();
 
-	$("#auto_augment").prop("checked", false);
+	["augment_rotate_images", "augment_invert_images", "augment_flip_left_right"].forEach(function (id) {
+		$("#" + id).prop("checked", false);
+	});
 
 	if(!is_valid_ret_object(ret, wanted_epochs)) {
 		return false;
@@ -1950,13 +1950,17 @@ function test_mobile_more_panel_markup() {
 function test_ribbon_labels_toggle_checkboxes() {
 	const ids = [
 		"auto_input_shape",
-		"auto_augment",
 		"jump_to_interesting_tab",
 		"shuffle_before_each_epoch",
 		"enable_tf_debug",
 		"augment_rotate_images",
 		"augment_invert_images",
-		"augment_flip_left_right"
+		"augment_flip_left_right",
+		"augment_brightness",
+		"augment_contrast",
+		"augment_saturation",
+		"augment_grayscale",
+		"augment_noise"
 	];
 
 	for (var idx = 0; idx < ids.length; idx++) {
@@ -3899,8 +3903,6 @@ function set_expert_and_auto_augment_and_activate_all_augmentations () {
 }
 
 function set_auto_augment() {
-	$("#auto_augment").prop("checked", false).trigger("change").click();
-
 	$("#tf_ribbon_augmentation").click();
 }
 
@@ -8325,6 +8327,122 @@ async function test_fcnn_editable_module () {
 	return true;
 }
 
+async function test_augmentation_options () {
+	const option_ids = [
+		"augment_rotate_images",
+		"augment_invert_images",
+		"augment_flip_left_right",
+		"augment_brightness",
+		"augment_contrast",
+		"augment_saturation",
+		"augment_grayscale",
+		"augment_noise"
+	];
+	const amount_ids = [
+		"number_of_rotations",
+		"augment_brightness_amount",
+		"augment_contrast_amount",
+		"augment_saturation_amount",
+		"augment_noise_amount"
+	];
+	const saved_checked = {};
+	const saved_values = {};
+	option_ids.forEach(function (id) { saved_checked[id] = $("#" + id).is(":checked"); });
+	amount_ids.forEach(function (id) { saved_values[id] = $("#" + id).val(); });
+
+	const original_add_tensor_as_image = window.add_tensor_as_image_to_photos;
+	window.add_tensor_as_image_to_photos = function () {};
+
+	const t3 = tensor([
+		[[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]],
+		[[0.2, 0.3, 0.4], [0.5, 0.6, 0.7]]
+	]);
+	const t4 = expand_dims(t3);
+
+	try {
+		test_equal("augmentation tab exists", $("a[href*='tf_ribbon_augmentation']").length, 1);
+		test_equal("augmentation tab is visible", $("a[href*='tf_ribbon_augmentation']").parent().css("display") !== "none", true);
+		test_equal("old augment checkbox removed", $("#auto_augment").length, 0);
+		option_ids.forEach(function (id) {
+			test_equal("augmentation control " + id, $("#" + id).length, 1);
+		});
+		amount_ids.forEach(function (id) {
+			test_equal("augmentation value " + id, $("#" + id).length, 1);
+		});
+		test_equal("mobile brightness control exists", $("#mobile_augment_brightness").length, 1);
+		test_equal("mobile noise control exists", $("#mobile_augment_noise").length, 1);
+
+		option_ids.forEach(function (id) { $("#" + id).prop("checked", false); });
+		test_equal("no augmentation selected", is_auto_augment(), false);
+		$("#augment_brightness").prop("checked", true);
+		test_equal("brightness enables augmentation", is_auto_augment(), true);
+
+		const original_values = array_sync(t4);
+
+		$("#augment_brightness_amount").val(0.2);
+		const bright = _augment_brightness_tensor(t4);
+		const bright_values = array_sync(bright);
+		test_equal("brightness shape", bright.shape.join(","), "1,2,2,3");
+		test_equal("brightness brightens", bright_values[0][0][0][0] > original_values[0][0][0][0], true);
+		await dispose(bright);
+
+		$("#augment_contrast_amount").val(2);
+		const contrast = _augment_contrast_tensor(t4);
+		const contrast_values = array_sync(contrast);
+		test_equal("contrast shape", contrast.shape.join(","), "1,2,2,3");
+		test_equal("contrast changes values", JSON.stringify(contrast_values) !== JSON.stringify(original_values), true);
+		await dispose(contrast);
+
+		const gray = _augment_grayscale_tensor(t4);
+		const gray_values = array_sync(gray);
+		test_equal("grayscale shape", gray.shape.join(","), "1,2,2,3");
+		test_equal("grayscale channels equal", gray_values[0][0][0][0] === gray_values[0][0][0][1] &&
+			gray_values[0][0][0][1] === gray_values[0][0][0][2], true);
+		await dispose(gray);
+
+		$("#augment_saturation_amount").val(0);
+		const desaturated = _augment_saturation_tensor(t4);
+		const desaturated_values = array_sync(desaturated);
+		test_equal("saturation zero channels equal", desaturated_values[0][0][0][0] === desaturated_values[0][0][0][1] &&
+			desaturated_values[0][0][0][1] === desaturated_values[0][0][0][2], true);
+		await dispose(desaturated);
+
+		$("#augment_noise_amount").val(0.2);
+		const noisy = _augment_noise_tensor(t4);
+		const noisy_values = array_sync(noisy);
+		test_equal("noise shape", noisy.shape.join(","), "1,2,2,3");
+		test_equal("noise changes values", JSON.stringify(noisy_values) !== JSON.stringify(original_values), true);
+		await dispose(noisy);
+
+		option_ids.forEach(function (id) { $("#" + id).prop("checked", false); });
+		$("#augment_brightness").prop("checked", true);
+		$("#augment_brightness_amount").val(0.2);
+
+		let x = t4.clone();
+		let y = [];
+		[x, y] = augment_extra_transformations(t4, 7, x, y);
+		test_equal("default augmentation adds sample", y.length, 1);
+		test_equal("default augmentation label", y[0], 7);
+		test_equal("default augmentation batch grows", x.shape[0], 2);
+		await dispose(x);
+
+		let custom_x = [];
+		let custom_y = [];
+		[custom_x, custom_y] = augment_custom_image_data(t3, 3, 255, custom_x, custom_y);
+		test_equal("custom augmentation adds sample", custom_x.length, 1);
+		test_equal("custom augmentation label", custom_y[0], 3);
+		test_equal("custom augmentation shape", custom_x[0].length, 2);
+	} finally {
+		option_ids.forEach(function (id) { $("#" + id).prop("checked", saved_checked[id]); });
+		amount_ids.forEach(function (id) { $("#" + id).val(saved_values[id]); });
+		window.add_tensor_as_image_to_photos = original_add_tensor_as_image;
+		await dispose(t3);
+		await dispose(t4);
+	}
+
+	return true;
+}
+
 async function run_tests (quick=0, disable_webcam=0) {
 	if (quick) {
 		__test_expected_total = __test_expected_quick_total;
@@ -8438,6 +8556,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_summary_module()", await test_summary_module(), true);
 		test_equal("test_loss_landscape_module()", await test_loss_landscape_module(), true);
 		test_equal("test_fcnn_editable_module()", await test_fcnn_editable_module(), true);
+		test_equal("test_augmentation_options()", await test_augmentation_options(), true);
 
 		test_no_new_errors_or_warnings();
 

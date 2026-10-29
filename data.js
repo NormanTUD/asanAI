@@ -1570,8 +1570,117 @@ async function jump_to_tab_if_applicable () {
 	}
 }
 
+var AUGMENT_OPTION_IDS = [
+	"augment_rotate_images",
+	"augment_invert_images",
+	"augment_flip_left_right",
+	"augment_brightness",
+	"augment_contrast",
+	"augment_saturation",
+	"augment_grayscale",
+	"augment_noise"
+];
+
+function _augment_option_checked(id) {
+	return $("#" + id).is(":checked");
+}
+
+function _augment_option_number(id, fallback) {
+	var value = parse_float($("#" + id).val());
+	return isFinite(value) ? value : fallback;
+}
+
+function has_any_augmentation_selected() {
+	for (var idx = 0; idx < AUGMENT_OPTION_IDS.length; idx++) {
+		if (_augment_option_checked(AUGMENT_OPTION_IDS[idx])) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function is_auto_augment() {
-	return $("#auto_augment").is(":checked");
+	// The old auto-augment checkbox was removed: selecting one or more
+	// augmentation options is now the switch that enables augmentation.
+	return has_any_augmentation_selected();
+}
+
+function _augment_image_channels(image_tensor) {
+	if (!image_tensor || !image_tensor.shape) return 0;
+	return image_tensor.shape[image_tensor.shape.length - 1];
+}
+
+function _augment_brightness_tensor(image_tensor) {
+	var amount = _augment_option_number("augment_brightness_amount", 0.2);
+	if (amount === 0) return null;
+	return tidy(() => clipByValue(tf_add(image_tensor, amount), 0, 1));
+}
+
+function _augment_contrast_tensor(image_tensor) {
+	var factor = _augment_option_number("augment_contrast_amount", 1.5);
+	if (!isFinite(factor) || factor < 0) factor = 1.5;
+	if (factor === 1) return null;
+	return tidy(() => {
+		var mean = tf_mean(image_tensor);
+		var adjusted = tf_add(tf_mul(tf_sub(image_tensor, mean), factor), mean);
+		return clipByValue(adjusted, 0, 1);
+	});
+}
+
+function _augment_grayscale_tensor(image_tensor) {
+	if (_augment_image_channels(image_tensor) !== 3) return null;
+	return tidy(() => {
+		var gray = tf_mean(image_tensor, -1, true);
+		return tf_concat(gray, [gray, gray], -1);
+	});
+}
+
+function _augment_saturation_tensor(image_tensor) {
+	var factor = _augment_option_number("augment_saturation_amount", 1.5);
+	if (!isFinite(factor) || factor < 0) factor = 1.5;
+	if (factor === 1 || _augment_image_channels(image_tensor) !== 3) return null;
+	return tidy(() => {
+		var gray = tf_mean(image_tensor, -1, true);
+		var gray3 = tf_concat(gray, [gray, gray], -1);
+		var adjusted = tf_add(gray3, tf_mul(tf_sub(image_tensor, gray3), factor));
+		return clipByValue(adjusted, 0, 1);
+	});
+}
+
+function _augment_noise_tensor(image_tensor) {
+	var amount = _augment_option_number("augment_noise_amount", 0.05);
+	amount = Math.abs(amount);
+	if (amount === 0) return null;
+	return tidy(() => {
+		var noise = randomUniform(image_tensor.shape, -amount, amount);
+		return clipByValue(tf_add(image_tensor, noise), 0, 1);
+	});
+}
+
+var AUGMENT_EXTRA_OPTIONS = [
+	{id: "augment_brightness", log: "brightened_image", transform: _augment_brightness_tensor},
+	{id: "augment_contrast", log: "contrast_adjusted_image", transform: _augment_contrast_tensor},
+	{id: "augment_saturation", log: "saturated_image", transform: _augment_saturation_tensor},
+	{id: "augment_grayscale", log: "grayscale_image", transform: _augment_grayscale_tensor},
+	{id: "augment_noise", log: "noisy_image", transform: _augment_noise_tensor}
+];
+
+function augment_extra_transformations(image_tensor, label, x, y) {
+	for (var idx = 0; idx < AUGMENT_EXTRA_OPTIONS.length; idx++) {
+		var option = AUGMENT_EXTRA_OPTIONS[idx];
+		if (!_augment_option_checked(option.id)) continue;
+
+		var augmented = option.transform(image_tensor);
+		if (!augmented || tensor_is_disposed(augmented)) continue;
+
+		l(language[lang][option.log] || option.log);
+		add_tensor_as_image_to_photos(augmented);
+		x = tf_concat(x, augmented);
+		y.push(label);
+		dispose(augmented); // await not possible
+	}
+
+	return [x, y];
 }
 
 async function resize_augment_invert_flip_left_right_rotate (image_idx, unresized_image, this_img, x, y) {
@@ -1599,6 +1708,7 @@ async function resize_augment_invert_flip_left_right_rotate (image_idx, unresize
 			}
 
 			[x, y] = augment_invert_flip_left_right(resized_image, this_category_counter, x, y);
+			[x, y] = augment_extra_transformations(resized_image, this_category_counter, x, y);
 		}
 
 		await dispose(resized_image);
@@ -2687,6 +2797,24 @@ function augment_custom_image_data(resized_image, label_nr, divide_by, x, y) {
 		// Flip left-right augmentation
 		if ($("#augment_flip_left_right").is(":checked")) {
 			[x, y] = _augment_custom_flip_lr(resized_image, label_nr, divide_by, x, y);
+		}
+
+		// Extra tensor-space augmentations (brightness, contrast, ...)
+		for (var extra_idx = 0; extra_idx < AUGMENT_EXTRA_OPTIONS.length; extra_idx++) {
+			var extra = AUGMENT_EXTRA_OPTIONS[extra_idx];
+			if (!_augment_option_checked(extra.id)) continue;
+
+			var extra_tensor = extra.transform(resized_image);
+			if (!extra_tensor || tensor_is_disposed(extra_tensor)) continue;
+
+			var extra_array = array_sync(extra_tensor);
+			if (Array.isArray(extra_array) && extra_array.length > 0) {
+				l(language[lang][extra.log] || extra.log);
+				add_tensor_as_image_to_photos(extra_tensor);
+				x.push(extra_array);
+				y.push(label_nr);
+			}
+			dispose(extra_tensor); // await not possible
 		}
 	} catch (e) {
 		err("[augment_custom_image_data] Unexpected error during augmentation: " + e);
