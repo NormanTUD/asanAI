@@ -1175,12 +1175,59 @@ function set_number_of_layers(val) {
 	return val;
 }
 
+function _ensure_layer_data_flow_intro () {
+	var $tab = $("#layer_visualizations_tab");
+
+	if(!$tab.length || $tab.find(".layer_data_flow_intro").length) {
+		return;
+	}
+
+	$tab.prepend(
+		"<div class='layer_data_flow_intro'>" +
+			"<div class='TRANSLATEME_layer_data_flow layer_data_flow_intro_title'></div>" +
+			"<div class='TRANSLATEME_layer_data_flow_explanation layer_data_flow_intro_text'></div>" +
+			"<div class='TRANSLATEME_layer_data_flow_empty layer_data_flow_empty'></div>" +
+		"</div>"
+	);
+
+	update_translations(); // await not possible
+}
+
+function _update_layer_data_flow_visibility () {
+	var $tab = $("#layer_visualizations_tab");
+
+	if(!$tab.length) {
+		return;
+	}
+
+	var filled_cards = 0;
+
+	$tab.find(".layer_data").each(function () {
+		var has_content = !!this.querySelector(".layer_header, canvas, img");
+
+		$(this).toggle(has_content);
+
+		if(has_content) {
+			filled_cards++;
+		}
+	});
+
+	$tab.find(".layer_data_flow_empty").toggle(filled_cards === 0);
+}
+
 function show_layer_visualization_tab (str=false) {
 	if (str)  {
 		$("#layer_visualizations_tab").html(str);
 	}
 
-	$("#layer_visualizations_tab").show();
+	_ensure_layer_data_flow_intro();
+	_update_layer_data_flow_visibility();
+
+	if($("#show_layer_data").is(":checked")) {
+		$("#layer_visualizations_tab").show();
+	} else {
+		$("#layer_visualizations_tab").hide();
+	}
 }
 
 function disable_flatten_layer () {

@@ -838,10 +838,10 @@ function show_and_append_layer_divs (layer_div, layer) {
 
 	try {
 		layer_div.show();
-		layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
+		layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>" + language[lang]["data_flow_input"] + ":</h4></div>");
 		layer_div.append("<div class='data_flow_visualization weight_matrix_header' style='display: none' id='layer_" + layer + "_kernel'><h4>" + language[lang]["weight_matrices"] + ":</h4></div>");
-		layer_div.append("<div class='data_flow_visualization output_header' style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
-		layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'></div>");
+		layer_div.append("<div class='data_flow_visualization output_header' style='display: none' id='layer_" + layer + "_output'><h4>" + language[lang]["data_flow_output"] + ":</h4></div>");
+		layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'><h4>" + language[lang]["data_flow_values"] + ":</h4></div>");
 	} catch (e) {
 		err(`[show_and_append_layer_divs] ${e}`);
 	}
@@ -1006,6 +1006,70 @@ function _dispatch_layer_viz(canvas_input, canvas_output, canvas_kernel, input, 
 	}
 }
 
+function _layer_data_latex_escape (value) {
+	var replacements = {
+		"\\": "\\textbackslash{}",
+		"{": "\\{",
+		"}": "\\}",
+		"$": "\\$",
+		"&": "\\&",
+		"#": "\\#",
+		"^": "\\^{}",
+		"_": "\\_",
+		"%": "\\%",
+		"~": "\\textasciitilde{}"
+	};
+
+	return ("" + value).replace(/[\\{}$&#^_%~]/g, function (match) {
+		return replacements[match];
+	});
+}
+
+function _classification_output_latex (output_data) {
+	var rows = [];
+
+	for (var output_idx = 0; output_idx < output_data.length; output_idx++) {
+		var value = output_data[output_idx];
+
+		if(!isFinite(value)) {
+			value = 0;
+		}
+
+		var label = labels && labels[output_idx] !== undefined && labels[output_idx] !== null
+			? labels[output_idx]
+			: language[lang]["data_flow_class"] + " " + output_idx;
+
+		rows.push("\\underbrace{" + Number(value).toFixed(4) + "}_{\\text{" + _layer_data_latex_escape(label) + "}}");
+	}
+
+	return "\\begin{pmatrix}" + rows.join(" \\\\ ") + "\\end{pmatrix}";
+}
+
+function _append_classification_output_latex (layer, output_data, output) {
+	if(!is_classification || !model || !model.outputShape || model.outputShape.length != 2) {
+		return;
+	}
+
+	if(layer != get_number_of_layers() - 1) {
+		return;
+	}
+
+	if(!Array.isArray(output_data) || get_shape_from_array(output_data).length != 1) {
+		return;
+	}
+
+	var max_classes = 12;
+
+	if(output_data.length < 1 || output_data.length > max_classes) {
+		return;
+	}
+
+	var $latex = $("<div class='temml_me data_flow_output_vector'></div>").text(_classification_output_latex(output_data));
+
+	output.append($latex).show();
+	_temml();
+}
+
 function draw_internal_states (layer, inputs, applied) {
 	typeassert(layer, int, "layer");
 	typeassert(inputs, array, "inputs");
@@ -1019,9 +1083,6 @@ function draw_internal_states (layer, inputs, applied) {
 		var output_data = array_sync(applied)[batchnr];
 
 		var layer_div = $($(".layer_data")[layer]);
-		if(batchnr == 0) {
-			layer_div.append("<h1>Layer data flow</h1>");
-		}
 
 		layer_div.html("<h3 class=\"data_flow_visualization layer_header\">Layer " + layer + " &mdash; " + $($(".layer_type")[layer]).val() + " " + get_layer_identification(layer) + "</h3>").hide();
 
@@ -1045,9 +1106,11 @@ function draw_internal_states (layer, inputs, applied) {
 		}
 
 		_dispatch_layer_viz(canvas_input, canvas_output, canvas_kernel, input, kernel, output, equations, output_data, layer);
+		_append_classification_output_latex(layer, output_data, output);
 	}
 
 	if(number_of_items_in_this_batch) {
+		_update_layer_data_flow_visibility();
 		$("#layer_visualizations_tab").show();
 	} else {
 		$("#layer_visualizations_tab").hide();

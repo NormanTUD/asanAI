@@ -26,6 +26,8 @@
 		</div>
 	</div>
 
+	<div id="layer_visualizations_tab" style="display: none" class="tab"></div>
+
 	<div class="container" id="predictcontainer">
 		<span id="predict_error" style="overflow: scroll; display: none"></span><br>
 		<span id="own_files" class="no_autochoose_next_on_click">
@@ -81,8 +83,5 @@
 	</div>
 
 	<div id="confusion_matrix"></div>
-
-	<div id="layer_visualizations_tab" style="display: none" class="tab">
-	</div>
 </div>
 

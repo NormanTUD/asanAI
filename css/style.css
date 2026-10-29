@@ -203,7 +203,27 @@ body {
 }
 
 .layer_data {
+	margin: 0 0 14px 0;
+	padding: 12px 16px;
+	border: 1px solid rgba(127, 127, 127, 0.22);
+	border-radius: 8px;
+	background: rgba(127, 127, 127, 0.04);
+	overflow-x: auto;
 	overflow-y: auto;
+}
+
+.layer_data h3.layer_header {
+	margin: 0 0 8px 0;
+	font-size: 1.05em;
+}
+
+.layer_data h4 {
+	margin: 14px 0 6px 0;
+	font-size: 0.8em;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	opacity: 0.75;
 }
 
 #predict_error {
@@ -1293,6 +1313,39 @@ button, select, input, textarea, checkbox, .large_button {
 
 #layer_visualizations_tab {
 	text-align: center;
+	margin: 10px 0 16px 0;
+}
+
+.layer_data_flow_intro {
+	margin: 0 0 12px 0;
+	padding: 10px 14px;
+	border-left: 3px solid rgba(52, 152, 219, 0.75);
+	border-radius: 4px;
+	background: rgba(127, 127, 127, 0.06);
+	text-align: left;
+	line-height: 1.5;
+}
+
+.layer_data_flow_intro_title {
+	font-weight: 700;
+	letter-spacing: 0.04em;
+}
+
+.layer_data_flow_intro_text {
+	font-size: 0.9em;
+	opacity: 0.8;
+}
+
+.layer_data_flow_empty {
+	margin-top: 8px;
+	font-size: 0.9em;
+	font-style: italic;
+	opacity: 0.75;
+}
+
+.data_flow_output_vector {
+	margin: 6px 0 4px 0;
+	overflow-x: auto;
 }
 
 .tt {
