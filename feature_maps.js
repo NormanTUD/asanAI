@@ -29,6 +29,19 @@ var COLOR_CORRELATION_SVD_SQRT = [
 var USER_COLOR_CORRELATION_MATRIX = null;
 var USE_USER_COLOR_CORRELATION = false;
 
+// tf.nextFrame() waits on requestAnimationFrame. In a backgrounded or stalled
+// browser tab that frame may never arrive, which would hang feature-map
+// generation forever. The timeout only exists to keep the loop responsive; the
+// next real frame still runs as soon as the browser paints again.
+function _await_next_frame_or_timeout (timeout_ms = 1000) {
+	return Promise.race([
+		nextFrame(), // cannot be async
+		new Promise(function (resolve) {
+			setTimeout(resolve, timeout_ms);
+		})
+	]);
+}
+
 function compute_color_correlation_from_data(imageTensors) {
 	try {
 		var result = tidy(() => {
@@ -487,7 +500,7 @@ async function _render_image_result(full_data, layer_idx, neuron, previewCanvas,
 	var data_hash = {
 		layer: layer_idx,
 		neuron: neuron,
-		model_hash: await get_model_config_hash()
+		model_hash: (typeof model_config_hash !== "undefined" && model_config_hash) ? model_config_hash : "_feature_map_"
 	};
 	scaleNestedArray(data);
 
@@ -884,7 +897,7 @@ async function draw_maximally_activated_neuron(layer_idx, neuron, max_neurons) {
 		return false;
 	}
 
-	await nextFrame();
+	await _await_next_frame_or_timeout();
 	return canvasses;
 }
 
@@ -1147,7 +1160,7 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 
 	_prepare_ui_for_generation(button, layer_idx);
 
-	await nextFrame();
+	await _await_next_frame_or_timeout();
 	dbg("Next frame awaited");
 
 	await gui_in_training(0);
@@ -1749,7 +1762,7 @@ async function _maybe_render_preview(data, iteration_idx, iterations, previewInt
 		if (useColorDecorrelation) {
 			await dispose(displayData);
 		}
-		await nextFrame();
+		await _await_next_frame_or_timeout();
 	}
 }
 

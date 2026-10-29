@@ -133,8 +133,17 @@ async function allow_editable_labels () {
 
 	editable_labels_queued = true;
 
-	while (started_training) {
+	var waited_ms = 0;
+
+	while (started_training && waited_ms < 30000) {
 		await delay(200);
+		waited_ms += 200;
+	}
+
+	if (started_training) {
+		dbg("[allow_editable_labels] Training is still running after 30s; leaving labels locked for now");
+		editable_labels_queued = false;
+		return;
 	}
 
 	$(".label_element").each((i, x) => {

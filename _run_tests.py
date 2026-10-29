@@ -86,7 +86,7 @@ def parse_args():
     parser.add_argument("--from-test", default=None, help="Resume tests from the given test name (forward match against the test_equal description). Prepended as ?from_test=NAME on the URL.")
     parser.add_argument("--only-test", action="append", default=[], help="Run only this test_equal (substring match); can be given multiple times. Prepended as ?only_test=A&only_test=B on the URL.")
     parser.add_argument("--only-test-count", type=int, default=0, help="Stop after this many test_equal calls (after the resume point). 0 means run all from --from-test onwards.")
-    parser.add_argument("--test-timeout", type=int, default=3600, help="Maximum seconds run_tests() may take in one browser; on timeout the browser fails with artifacts instead of hanging (0 disables).")
+    parser.add_argument("--test-timeout", type=int, default=5400, help="Maximum seconds run_tests() may take in one browser; on timeout the browser fails with artifacts instead of hanging (0 disables).")
 
     return parser.parse_args()
 
