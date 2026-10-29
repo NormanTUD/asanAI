@@ -11,6 +11,9 @@ import urllib.parse
 from typing import Optional
 from playwright.async_api import async_playwright, Error
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "tests"))
+from js_coverage import JsCoverage
+
 # GitHub Actions on Windows can hand us a non-UTF-8 console. Browser console
 # messages legitimately contain "…" and other non-ASCII text; without this the
 # logging module raises encoding errors on every line and the job can stall.
@@ -87,6 +90,9 @@ def parse_args():
     parser.add_argument("--only-test", action="append", default=[], help="Run only this test_equal (substring match); can be given multiple times. Prepended as ?only_test=A&only_test=B on the URL.")
     parser.add_argument("--only-test-count", type=int, default=0, help="Stop after this many test_equal calls (after the resume point). 0 means run all from --from-test onwards.")
     parser.add_argument("--test-timeout", type=int, default=5400, help="Maximum seconds run_tests() may take in one browser; on timeout the browser fails with artifacts instead of hanging (0 disables).")
+    parser.add_argument("--coverage", action="store_true", help="Collect JavaScript coverage while the bundled chromium browser runs; other browsers are skipped. Writes HTML, LCOV, JSON and a prioritized untested-code report.")
+    parser.add_argument("--coverage-dir", default="coverage", help="Directory for coverage reports (default: %(default)s).")
+    parser.add_argument("--coverage-exclude", action="append", default=[], metavar="PATH", help="Project-relative file or directory prefix to exclude from coverage (repeatable). Vendored trees such as libs/, tf/ and blog/ are always excluded.")
 
     return parser.parse_args()
 
@@ -196,6 +202,7 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
     context = None
     page = None
     playwright = None
+    coverage = None
     tracing_started = False
     tracing_saved = False
 
@@ -239,6 +246,24 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
 
         page = await context.new_page()
         capture_console(page, browser_name)
+
+        if args.coverage:
+            if browser_name == "chromium":
+                try:
+                    coverage = JsCoverage(
+                        page,
+                        url,
+                        args.coverage_dir,
+                        args.coverage_exclude,
+                        project_root=os.path.dirname(os.path.abspath(__file__)),
+                    )
+                    await coverage.start()
+                    logging.info(f"[{browser_name}] Collecting JavaScript coverage ...")
+                except Exception:
+                    logging.exception(f"[{browser_name}] Could not start JavaScript coverage; continuing without it")
+                    coverage = None
+            else:
+                logging.info(f"[{browser_name}] Coverage is only collected for the bundled chromium browser; skipping")
 
         try:
             await context.tracing.start(screenshots=False, snapshots=True, sources=True)
@@ -308,6 +333,14 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
         return 1
 
     finally:
+        if coverage is not None:
+            try:
+                await asyncio.wait_for(coverage.stop_and_report(browser_name), timeout=120)
+            except asyncio.TimeoutError:
+                logging.error(f"[{browser_name}] Writing the coverage report timed out")
+            except Exception:
+                logging.exception(f"[{browser_name}] Could not write the coverage report")
+
         if context:
             if tracing_started and not tracing_saved:
                 try:

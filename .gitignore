@@ -39,3 +39,5 @@ feedback_data/
 __pycache__/
 job-log.txt
 failed_tests
+coverage/
+test-artifacts/

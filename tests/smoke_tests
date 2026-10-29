@@ -25,5 +25,13 @@ for test in tests/find_*; do
 	echo ""
 done
 
+echo -e "${YELLOW}Testing tests/js_coverage_test.py ...${RESET}"
+if ! python3 tests/js_coverage_test.py; then
+	echo -e "${RED}tests/js_coverage_test.py failed${RESET}"
+	exit 1
+fi
+echo ""
+echo -e "${GREEN}-> tests/js_coverage_test.py OK${RESET}"
+
 echo -e "${GREEN}Smoke tests passed${RESET}"
 exit 0

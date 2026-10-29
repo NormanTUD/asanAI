@@ -64,7 +64,15 @@ jobs:
         run: |
           sudo Xvfb :99 -ac &
           export DISPLAY=:99
-          bash run_tests --no-smoke-tests
+          bash run_tests --no-smoke-tests --coverage
+
+      - name: Upload JavaScript coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-coverage-${{ matrix.os }}
+          path: coverage/chromium/
+          if-no-files-found: ignore
 
 
   # One job per OS. Every browser runs sequentially in that job. WebKit runs
@@ -158,8 +166,17 @@ jobs:
             --timings-json browser-timings.json \
             --timings-os "${{ matrix.os }}" \
             --artifacts-dir test-artifacts \
+            --coverage \
             --enable-fake-media \
             --fake-video tests/fake.y4m 2>&1 | tee browser-tests.log
+
+      - name: Upload JavaScript coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-coverage-${{ matrix.os }}
+          path: coverage/chromium/
+          if-no-files-found: ignore
 
       - name: Show PHP server log
         if: failure()
