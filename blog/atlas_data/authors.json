@@ -4668,7 +4668,8 @@
    "hohwy2020pp"
   ],
   "cited_in": [
-   "philosophy"
+   "philosophy",
+   "untold_history_i"
   ]
  },
  {
@@ -30070,7 +30071,8 @@
   "cited_in": [
    "human_mind",
    "metaphysics_of_ai",
-   "philosophy"
+   "philosophy",
+   "untold_history_i"
   ]
  },
  {
@@ -39483,12 +39485,14 @@
   "city": "Berlin, Germany",
   "year": 1867.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "helmholtz1863tonempfindungen",
    "helmholtz1867handbook"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "language"
   ]
  },
  {
@@ -70315,7 +70319,8 @@
    "metzinger2003being"
   ],
   "cited_in": [
-   "philosophy"
+   "philosophy",
+   "untold_history_i"
   ]
  },
  {
@@ -70352,7 +70357,8 @@
   ],
   "cited_in": [
    "human_mind",
-   "philosophy"
+   "philosophy",
+   "untold_history_i"
   ]
  },
  {
@@ -75103,11 +75109,13 @@
   "city": "Chengdu, China",
   "year": 2003.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "ma2012fuxianhuia",
    "hou2003chengjiang"
   ],
   "cited_in": [
+   "philosophy",
    "untold_history_i"
   ]
  },
@@ -80272,6 +80280,810 @@
   "cited_in": [
    "human_mind",
    "intro"
+  ]
+ },
+ {
+  "name": "Gerhard Schlosser",
+  "canon": "Gerhard Schlosser",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "schlosser2018senses"
+  ],
+  "cited_in": [
+   "language",
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "A. James Hudspeth",
+  "canon": "A. James Hudspeth",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1989,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hudspeth1989earworks"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Jennifer A. Clack",
+  "canon": "Jennifer A. Clack",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1997,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "clack1997tetrapod"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Wolfgang Maier and Irina Ruf",
+  "canon": "Wolfgang Maier and Irina Ruf",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "maier2016middleear"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Edgar F. Allin",
+  "canon": "Edgar F. Allin",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1975,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "allin1975middleear"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Walter Georg Kühne",
+  "canon": "Walter Georg Kühne",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1958,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kuhne1958morganucodon"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Geoffrey A. Manley",
+  "canon": "Geoffrey A. Manley",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2012,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "manley2012cochleae"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Fangyuan Mao et al.",
+  "canon": "Fangyuan Mao",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "mao2024jawear"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Simo Hemilä",
+  "canon": "Simo Hemilä",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1995,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hemila1995middleear"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Sirpa Nummela",
+  "canon": "Sirpa Nummela",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1995,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hemila1995middleear"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Tom Reuter",
+  "canon": "Tom Reuter",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1995,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hemila1995middleear"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Albert S. B. Edge and Zheng-Yi Chen",
+  "canon": "Albert S. B. Edge and Zheng-Yi Chen",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2008,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "edge2008haircell"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Dennis G. Pappas",
+  "canon": "Dennis G. Pappas",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1996,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "pappas1996otology"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Andreas Vesalius",
+  "canon": "Andreas Vesalius",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1543,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "vesalius1543fabrica"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Gabriele Falloppio",
+  "canon": "Gabriele Falloppio",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1561,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "falloppio1561observationes"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Joseph-Guichard Duverney",
+  "canon": "Joseph-Guichard Duverney",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1683,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "duverney1683traite"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Domenico Cotugno",
+  "canon": "Domenico Cotugno",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1760,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cotugno1760aquaeductibus"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Alfonso Corti",
+  "canon": "Alfonso Corti",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1851,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "corti1851recherches"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Georg von Békésy",
+  "canon": "Georg von Békésy",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1961,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bekesy1961nobel"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Thomas Gold",
+  "canon": "Thomas Gold",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1948,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gold1948hearing"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "David T. Kemp",
+  "canon": "David T. Kemp",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1978,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kemp1978emissions"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "William E. Brownell et al.",
+  "canon": "William E. Brownell",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1985,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "brownell1985electromotility"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Jing Zheng et al.",
+  "canon": "Jing Zheng",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2000,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "zheng2000prestin"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Peter G. Hepper and B. Shahidullah",
+  "canon": "Peter G. Hepper and B. Shahidullah",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1994,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hepper1994fetalhearing"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Anthony J. DeCasper and William P. Fifer",
+  "canon": "Anthony J. DeCasper and William P. Fifer",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1980,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "decasper1980mothervoice"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Anthony J. DeCasper and Melanie J. Spence",
+  "canon": "Anthony J. DeCasper and Melanie J. Spence",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1986,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "decasper1986prenatal"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Barbara S. Kisilevsky et al.",
+  "canon": "Barbara S. Kisilevsky",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2003,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kisilevsky2003fetalvoice"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Eino Partanen et al.",
+  "canon": "Eino Partanen",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2013,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "partanen2013prenatal"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Janet F. Werker and Richard C. Tees",
+  "canon": "Janet F. Werker and Richard C. Tees",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1984,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "werker1984crosslanguage"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Jacques Mehler et al.",
+  "canon": "Jacques Mehler",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1988,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "mehler1988precursor"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Christine Moon",
+  "canon": "Christine Moon",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1993,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "moon1993native"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Robin Panneton Cooper",
+  "canon": "Robin Panneton Cooper",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1993,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "moon1993native"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "William P. Fifer",
+  "canon": "William P. Fifer",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1993,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "moon1993native"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Michael Tye",
+  "canon": "Michael Tye",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2025,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "sep_qualia"
+  ],
+  "cited_in": [
+   "philosophy"
+  ]
+ },
+ {
+  "name": "Xiaoya Ma",
+  "canon": "Xiaoya Ma",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2012,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ma2012fuxianhuia"
+  ],
+  "cited_in": [
+   "philosophy",
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Gregory D. Edgecombe",
+  "canon": "Gregory D. Edgecombe",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2012,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ma2012fuxianhuia"
+  ],
+  "cited_in": [
+   "philosophy",
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Nicholas J. Strausfeld",
+  "canon": "Nicholas J. Strausfeld",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2012,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ma2012fuxianhuia"
+  ],
+  "cited_in": [
+   "philosophy",
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Leonid L. Moroz et al.",
+  "canon": "Leonid L. Moroz",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2014,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "moroz2014ctenophore"
+  ],
+  "cited_in": [
+   "philosophy",
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "John R. Paterson et al.",
+  "canon": "John R. Paterson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2011,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "paterson2011anomalocaris"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Dan-E. Nilsson and Susanne Pelger",
+  "canon": "Dan-E. Nilsson and Susanne Pelger",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1994,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "nilsson1994eye"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Jonathan Birch",
+  "canon": "Jonathan Birch",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "birch2020dimensions"
+  ],
+  "cited_in": [
+   "philosophy"
+  ]
+ },
+ {
+  "name": "Alexandra K. Schnell",
+  "canon": "Alexandra K. Schnell",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "birch2020dimensions"
+  ],
+  "cited_in": [
+   "philosophy"
+  ]
+ },
+ {
+  "name": "Nicola S. Clayton",
+  "canon": "Nicola S. Clayton",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "birch2020dimensions"
+  ],
+  "cited_in": [
+   "philosophy"
+  ]
+ },
+ {
+  "name": "Andrew B. Barron and Colin Klein",
+  "canon": "Andrew B. Barron and Colin Klein",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "barron2016insects"
+  ],
+  "cited_in": [
+   "philosophy"
+  ]
+ },
+ {
+  "name": "Philip Low et al.",
+  "canon": "Philip Low",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2012,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cambridge2012consciousness"
+  ],
+  "cited_in": [
+   "philosophy"
+  ]
+ },
+ {
+  "name": "Peter Godfrey-Smith",
+  "canon": "Peter Godfrey-Smith",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "godfreysmith2016otherminds"
+  ],
+  "cited_in": [
+   "philosophy"
+  ]
+ },
+ {
+  "name": "Simona Ginsburg and Eva Jablonka",
+  "canon": "Simona Ginsburg and Eva Jablonka",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ginsburg2019sensitive"
+  ],
+  "cited_in": [
+   "philosophy"
   ]
  },
  {
