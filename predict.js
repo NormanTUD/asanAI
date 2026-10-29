@@ -2822,7 +2822,6 @@ async function predict_data_img (item, force_category) {
 
 function remove_predict_data_img () {
 	$(".predict_data_img").remove();
-	$("#photo_gallery_prediction").hide().find(".photo_gallery_prediction_body").empty();
 
 	$("#remove_predict_data_img_predictions").hide();
 }

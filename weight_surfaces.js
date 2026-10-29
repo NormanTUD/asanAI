@@ -893,6 +893,60 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 		}
 	}
 
+	// ─── Plot Placeholders ──────────────────────────────────────────────────────
+
+	function _weight_full_title(li, layer_name, wi, shape) {
+		const weightLabel = (wi === 0 ? 'Kernel' : wi === 1 ? 'Bias' : `Weight[${wi}]`);
+		return `L${li} "${layer_name}" — ${weightLabel} [${shape.join('×')}]`;
+	}
+
+	// Every plot key a tensor will produce, mirroring the keys the render
+	// helpers use. Reservation only needs the key; the title is derived inside
+	// create_plot_div exactly as the real render would derive it.
+	function _planned_plot_keys(shape, fullTitle) {
+		if (!shape || !shape.length) return [];
+		if (shape.length > 5) return [];
+		if (shape.some(d => d <= 0)) return [];
+
+		const totalElements = shape.reduce((a, b) => a * b, 1);
+		if (totalElements > 100_000_000) return [];
+
+		const baseKey = (fullTitle || "plot").replace(/\s+/g, '_').replace(/[^\w-]/g, '');
+		const keys = [];
+
+		if (shape.length <= 1) {
+			keys.push(baseKey + "_1d");
+		} else if (shape.length === 2) {
+			keys.push(baseKey + "_heat");
+			if (shape[0] >= 3 && shape[1] >= 3 && opts.plot3d) {
+				keys.push(baseKey + "_surf");
+			}
+		} else if (shape.length === 3) {
+			const slices = Math.min(shape[2], opts.max_slices);
+			for (let i = 0; i < slices; i++) keys.push(baseKey + "_slice_" + i);
+		} else if (shape.length === 4) {
+			const slices = Math.min(shape[3], opts.max_slices);
+			for (let j = 0; j < slices; j++) keys.push(baseKey + "_slice4_" + j);
+		} else if (shape.length === 5) {
+			const slicesOut = Math.min(shape[4], opts.max_slices);
+			const slicesIn = Math.min(shape[3], opts.max_slices);
+			for (let oc = 0; oc < slicesOut; oc++) {
+				for (let ic = 0; ic < slicesIn; ic++) {
+					keys.push(baseKey + "_5d_" + ic + "_" + oc);
+				}
+			}
+		}
+
+		return keys;
+	}
+
+	// Create the fixed-height wrappers (with spinner) up front so the page
+	// reserves its final height instead of growing in 560 px jumps while the
+	// plots render one by one.
+	function _reserve_plot_placeholders(parent, shape, fullTitle) {
+		_planned_plot_keys(shape, fullTitle).forEach(key => create_plot_div(parent, "", key));
+	}
+
 	// ─── Main Execution ─────────────────────────────────────────────────────────
 
 	const parent = ensure_container(container_or_id);
@@ -961,6 +1015,26 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 			<span style="font-size:11px;opacity:0.7">${layerSummaries.join(' · ')}</span>
 		`;
 
+		// Reserve space for every plot before rendering anything. The wrappers
+		// are fixed-height and carry a spinner until their Plotly render
+		// replaces it, so the page keeps a stable height from the start.
+		// render_weight_array() is a no-op while boot is still running; do not
+		// leave spinners behind in that case.
+		for (let li = 0; finished_loading && li < layers.length; li++) {
+			const layer = layers[li];
+			const layer_name = layer?.name || `layer_${li}`;
+			const weights = safe_get_layer_weights(layer);
+			if (!weights || weights.length === 0) {
+				continue;
+			}
+
+			for (let wi = 0; wi < weights.length; wi++) {
+				const planned_shape = shape_from(weights[wi]);
+				if (!planned_shape || !planned_shape.length) continue;
+				_reserve_plot_placeholders(container, planned_shape, _weight_full_title(li, layer_name, wi, planned_shape));
+			}
+		}
+
 		// Render each layer's weights
 		for (let li = 0; li < layers.length; li++) {
 			const layer = layers[li];
@@ -996,8 +1070,7 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 
 				const { arr, shape } = result;
 
-				let weightLabel = (wi === 0 ? 'Kernel' : wi === 1 ? 'Bias' : `Weight[${wi}]`);
-				const fullTitle = `L${li} "${layer_name}" — ${weightLabel} [${shape.join('×')}]`;
+				const fullTitle = _weight_full_title(li, layer_name, wi, shape);
 				await render_weight_array(container, arr, fullTitle, shape, layer?.className || '');
 			}
 		}

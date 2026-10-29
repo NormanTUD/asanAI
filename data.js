@@ -288,7 +288,6 @@ var _photo_gallery = {
 	hover_token: 0,
 	hover_predicting: false,
 	tooltip: null,
-	panel: null,
 	resize_observer: null,
 	resize_frame: null
 };
@@ -328,7 +327,6 @@ function _photo_gallery_ensure_dom () {
 		container.appendChild(canvas);
 		canvas.addEventListener("mousemove", _photo_gallery_on_mousemove);
 		canvas.addEventListener("mouseleave", _photo_gallery_hide_tooltip);
-		canvas.addEventListener("click", _photo_gallery_on_click);
 	}
 
 	_photo_gallery.canvas = canvas;
@@ -927,52 +925,6 @@ function _photo_gallery_on_mousemove (event) {
 	}
 
 	_photo_gallery_position_tooltip(event.clientX, event.clientY);
-}
-
-function _photo_gallery_ensure_panel () {
-	if (_photo_gallery.panel && document.body.contains(_photo_gallery.panel)) {
-		return _photo_gallery.panel;
-	}
-
-	const panel = document.createElement("div");
-	panel.id = "photo_gallery_prediction";
-	panel.style.display = "none";
-	panel.innerHTML = "<button type='button' class='photo_gallery_prediction_close'>×</button><div class='photo_gallery_prediction_body'></div>";
-	panel.querySelector(".photo_gallery_prediction_close").addEventListener("click", function () {
-		panel.style.display = "none";
-		panel.querySelector(".photo_gallery_prediction_body").innerHTML = "";
-	});
-	document.body.appendChild(panel);
-	_photo_gallery.panel = panel;
-
-	return panel;
-}
-
-async function _photo_gallery_on_click (event) {
-	const index = _photo_gallery_index_at(event.clientX, event.clientY);
-
-	if (index < 0 || index >= _photo_gallery.entries.length) {
-		return;
-	}
-	if (typeof started_training !== "undefined" && started_training) {
-		return;
-	}
-
-	const entry = _photo_gallery.entries[index];
-	const panel = _photo_gallery_ensure_panel();
-	const body = panel.querySelector(".photo_gallery_prediction_body");
-
-	panel.style.display = "block";
-	body.innerHTML = "<span class='predict-spinner'>⏳</span>";
-
-	const result = await predict(entry.img);
-
-	if (result) {
-		body.innerHTML = "<div class='predict_data_img'>" + result + "</div>";
-		$("#remove_predict_data_img_predictions").show();
-	} else {
-		body.innerHTML = "";
-	}
 }
 
 function queue_image_dom_append(img) {

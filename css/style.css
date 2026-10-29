@@ -1546,6 +1546,28 @@ hr {
 	letter-spacing: 0.03em;
 }
 
+/* Visualization sub-tabs always stay on one row. Activating a wider (bold)
+   tab at the right edge used to wrap the remaining tabs onto a second line,
+   which shifted the whole panel. Scroll instead of wrapping, without adding
+   a scrollbar row that would change the height again. */
+#visualization_tab > .navi_list {
+	display: flex;
+	flex-wrap: nowrap;
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+#visualization_tab > .navi_list::-webkit-scrollbar {
+	display: none;
+}
+
+#visualization_tab > .navi_list > li {
+	float: none;
+	flex: 0 0 auto;
+}
+
 ::placeholder {
 	color: rgb(127, 127, 127);
 }
@@ -3440,50 +3462,6 @@ body:not(.darkmode) .bar-tooltip-raw {
 	align-items: center;
 	justify-content: flex-end;
 	text-align: right;
-}
-
-#photo_gallery_prediction {
-	position: fixed;
-	right: 20px;
-	bottom: 20px;
-	width: min(460px, 92vw);
-	max-height: 60vh;
-	overflow: auto;
-	z-index: 1000000;
-	background: rgba(30, 30, 30, 0.96);
-	color: #eee;
-	border: 1px solid rgba(255, 255, 255, 0.15);
-	border-radius: 10px;
-	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
-	padding: 12px;
-}
-
-#photo_gallery_prediction .photo_gallery_prediction_close {
-	position: absolute;
-	right: 8px;
-	top: 6px;
-	background: none;
-	border: none;
-	color: #eee;
-	font-size: 20px;
-	line-height: 1;
-	cursor: pointer;
-	padding: 2px 6px;
-}
-
-#photo_gallery_prediction .photo_gallery_prediction_body {
-	margin-top: 18px;
-}
-
-body:not(.darkmode) #photo_gallery_prediction {
-	background: var(--color-bg-primary);
-	color: var(--color-label-primary);
-	border: 1px solid var(--color-separator);
-	box-shadow: var(--shadow-md);
-}
-
-body:not(.darkmode) #photo_gallery_prediction .photo_gallery_prediction_close {
-	color: var(--color-label-primary);
 }
 
 body:not(.darkmode) #photo_gallery_tooltip {

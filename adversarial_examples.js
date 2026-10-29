@@ -129,11 +129,16 @@ var AdversarialExamples = (function () {
 		});
 	}
 
+	function _hasResults() {
+		return !!(_lastOrig || _lastPert || _lastAdv);
+	}
+
 	function _showSeed() {
 		var canvas = document.getElementById("adv_orig_canvas");
 		var empty = document.getElementById("adv_empty");
 		var controls = document.getElementById("adv_controls_panel");
 		var images = document.getElementById("adv_images");
+		var marginPlot = document.getElementById("adv_margin_plot");
 		var m = ExplainabilityLib.getModel();
 
 		if (!canvas) return;
@@ -142,14 +147,19 @@ var AdversarialExamples = (function () {
 			if (empty) empty.style.display = "block";
 			if (controls) controls.style.display = "none";
 			if (images) images.style.display = "none";
-			if (document.getElementById("adv_margin_plot")) document.getElementById("adv_margin_plot").style.display = "none";
+			if (marginPlot) marginPlot.style.display = "none";
 			return;
 		}
 
 		if (empty) empty.style.display = "none";
 		if (controls) controls.style.display = "block";
-		if (images) images.style.display = "flex";
-		if (document.getElementById("adv_margin_plot")) document.getElementById("adv_margin_plot").style.display = "block";
+
+		// Until an attack has produced images, the three canvases and the
+		// margin plot are empty. Showing them anyway looks like broken output
+		// (and reserves height for nothing), so reveal them only once there is
+		// something to draw.
+		if (images) images.style.display = _hasResults() ? "flex" : "none";
+		if (marginPlot) marginPlot.style.display = (_lastAdv && _lastMargins) ? "block" : "none";
 
 		if (_lastOrig) {
 			ExplainabilityLib.tensorToCanvas(_lastOrig, canvas);

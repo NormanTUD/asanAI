@@ -319,9 +319,18 @@ async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = fa
 			}
 		}
 
-		// .html() already replaces the children; an explicit .empty() before it
-		// only doubles the layout invalidation of the math DOM.
-		$("#math_tab_code").html(latex);
+		// Typeset the new LaTeX in a detached container first. Previously the
+		// raw source was written into the visible math tab and TEMML ran in a
+		// later task, so every training re-render briefly painted the
+		// unrendered formulas before the MathML appeared. Staging off-DOM keeps
+		// the old, already-typeset formulas on screen and swaps the new MathML
+		// in atomically — no flash and no intermediate height.
+		var staged_math_dom = document.createElement("div");
+		staged_math_dom.innerHTML = latex;
+		var staged_math_items = staged_math_dom.querySelectorAll(".temml_me");
+		for (var staged_math_idx = 0; staged_math_idx < staged_math_items.length; staged_math_idx++) {
+			render_temml_quick(staged_math_items[staged_math_idx], true);
+		}
 
 		try {
 			math_tab_code_elem = document.getElementById("math_tab_code");
@@ -329,36 +338,43 @@ async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = fa
 			var new_md5 = _render_md5 || await md5(latex);
 			var old_md5 = math_items_hashes[xpath];
 
+			while (math_tab_code_elem.firstChild) {
+				math_tab_code_elem.removeChild(math_tab_code_elem.firstChild);
+			}
+			while (staged_math_dom.firstChild) {
+				math_tab_code_elem.appendChild(staged_math_dom.firstChild);
+			}
+
 			if (new_md5 != old_md5 || force) {
-				// Typeset in a clean task. At this point the page layout is
-				// still dirty from the updated_page() that triggered this
-				// render (model rebuild, layer row removal, ...). Typesetting
-				// synchronously forces a full layout flush of the fresh MathML
-				// on top of that; with a 1-layer model the resulting flush
-				// never drains and the browser stalls on this line.
-				setTimeout(function() {
-					try {
-						try {
-							_temml();
-						} catch (e) {
-							if (!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
-								void(0); info("" + e);
-							} else if (("" + e).includes("too many function arguments")) {
-								void(0); err("TEMML: " + e);
-							} else {
-								throw new Error(e);
-							}
-						}
-					} catch (e) {
-						if (("" + e).includes("can't assign to property")) {
-							wrn(language[lang]["failed_temml"], e);
-						} else {
-							void write_error(e, null, null); // await not possible here
-						}
-					}
-				}, 0);
 				math_items_hashes[xpath] = new_md5;
 			}
+
+			// Pick up anything the staging pass did not handle (interactive
+			// containers, late real-data fixes). Staged formulas are already
+			// marked rendered, so this is cheap. The deferral keeps the
+			// updated_page() layout from being flushed synchronously here.
+			setTimeout(function() {
+				try {
+					try {
+						_temml();
+					} catch (e) {
+						if (!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
+							void(0); info("" + e);
+						} else if (("" + e).includes("too many function arguments")) {
+							void(0); err("TEMML: " + e);
+						} else {
+							throw new Error(e);
+						}
+					}
+					_math_dom_sanitize();
+				} catch (e) {
+					if (("" + e).includes("can't assign to property")) {
+						wrn(language[lang]["failed_temml"], e);
+					} else {
+						void write_error(e, null, null); // await not possible here
+					}
+				}
+			}, 0);
 
 			// DOM-level fix: replace x in rendered math with real values
 			setTimeout(function() {

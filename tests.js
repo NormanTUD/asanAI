@@ -113,8 +113,8 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1417;
-var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
+var DEFAULT_EXPECTED_TEST_COUNT = 1410;
+var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 497;
 
 function _test_expected_count (storage_key, fallback) {
 	try {
@@ -2287,7 +2287,6 @@ async function run_super_quick_tests (quick=0) {
 	await test_photo_gallery_hit_testing();
 	await test_photo_gallery_hover_prediction();
 	await test_photo_gallery_tooltip_alignment();
-	await test_photo_gallery_click_prediction();
 	await test_photo_gallery_dark_light_mode();
 	await test_photo_gallery_language();
 	await test_photo_gallery_canvas_dom_is_constant();
@@ -2645,43 +2644,6 @@ async function test_photo_gallery_tooltip_alignment () {
 	return true;
 }
 
-async function test_photo_gallery_click_prediction () {
-	const canvas = document.getElementById("photo_gallery_canvas");
-
-	if (!canvas) {
-		test_equal("Canvas missing for click test", false, true);
-		return false;
-	}
-
-	const rect = canvas.getBoundingClientRect();
-	const client_x = rect.left + 6;
-	const client_y = rect.top + 6;
-	const input_shape_before = model && model.input ? model.input.shape.slice() : null;
-
-	canvas.dispatchEvent(new MouseEvent("mousemove", {bubbles: true, cancelable: true, clientX: client_x, clientY: client_y}));
-	await _photo_gallery_wait_for_tooltip(2000);
-	canvas.dispatchEvent(new MouseEvent("click", {bubbles: true, cancelable: true, clientX: client_x, clientY: client_y}));
-	await new Promise(function (resolve) { setTimeout(resolve, 1500); });
-
-	const panel_displayed = $("#photo_gallery_prediction").css("display") !== "none";
-	const prediction_html = $("#photo_gallery_prediction .predict_data_img").length > 0;
-
-	test_equal("Click shows the prediction panel", panel_displayed, true);
-	test_equal("Click renders the prediction HTML", prediction_html, true);
-	test_equal("Click does not add visible per-image DOM nodes", $("#photos > img").length, 0);
-
-	if (input_shape_before) {
-		test_equal("Click keeps the model input batch dimension", JSON.stringify(model.input.shape), JSON.stringify(input_shape_before));
-	}
-
-	remove_predict_data_img();
-	await new Promise(function (resolve) { setTimeout(resolve, 100); });
-
-	test_equal("remove_predict_data_img hides the panel", $("#photo_gallery_prediction").css("display"), "none");
-
-	return true;
-}
-
 async function test_photo_gallery_dark_light_mode () {
 	const canvas = document.getElementById("photo_gallery_canvas");
 
@@ -2692,9 +2654,6 @@ async function test_photo_gallery_dark_light_mode () {
 
 	const original_darkmode = document.body.classList.contains("darkmode");
 	const tooltip = _photo_gallery_ensure_tooltip();
-	const panel = _photo_gallery_ensure_panel();
-
-	panel.style.display = "block";
 
 	const rect = canvas.getBoundingClientRect();
 	canvas.dispatchEvent(new MouseEvent("mousemove", {bubbles: true, cancelable: true, clientX: rect.left + 6, clientY: rect.top + 6}));
@@ -2711,25 +2670,20 @@ async function test_photo_gallery_dark_light_mode () {
 	await new Promise(function (resolve) { setTimeout(resolve, 500); });
 
 	const tooltip_dark = _test_read_uncached_background(tooltip);
-	const panel_dark = _test_read_uncached_background(panel);
 
 	test_equal("Tooltip uses dark background in darkmode", /30,\s*30,\s*30/.test(tooltip_dark), true);
-	test_equal("Panel uses dark background in darkmode", /30,\s*30,\s*30/.test(panel_dark), true);
 
 	document.body.classList.remove("darkmode");
 	await new Promise(function (resolve) { setTimeout(resolve, 500); });
 
 	const tooltip_light = _test_read_uncached_background(tooltip);
-	const panel_light = _test_read_uncached_background(panel);
 
 	test_equal("Tooltip uses light background in light mode", /255,\s*255,\s*255/.test(tooltip_light), true);
-	test_equal("Panel uses light background in light mode", /255,\s*255,\s*255/.test(panel_light), true);
 
 	if (original_darkmode) {
 		document.body.classList.add("darkmode");
 	}
 
-	panel.style.display = "none";
 	canvas.dispatchEvent(new MouseEvent("mouseleave", {bubbles: true, cancelable: true}));
 
 	return true;
@@ -7309,6 +7263,19 @@ async function test_adversarial_examples() {
 			return false;
 		}
 
+		var advImages = document.getElementById("adv_images");
+		var advMargin = document.getElementById("adv_margin_plot");
+
+		if (!advImages || advImages.style.display !== "none") {
+			err("[test_adversarial_examples] empty image panels should stay hidden before a run");
+			return false;
+		}
+
+		if (!advMargin || advMargin.style.display !== "none") {
+			err("[test_adversarial_examples] empty margin plot should stay hidden before a run");
+			return false;
+		}
+
 		var res = await AdversarialExamples.run({
 			method: "fgsm",
 			eps: 0.05,
@@ -7347,6 +7314,18 @@ async function test_adversarial_examples() {
 				err("[test_adversarial_examples] non-finite margin at " + i);
 				return false;
 			}
+		}
+
+		AdversarialExamples.init("adversarial_content");
+
+		if (advImages.style.display === "none") {
+			err("[test_adversarial_examples] image panels should be visible after a run");
+			return false;
+		}
+
+		if (advMargin.style.display === "none") {
+			err("[test_adversarial_examples] margin plot should be visible after a run");
+			return false;
 		}
 
 		if (num_errs !== old_errs) {

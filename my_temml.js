@@ -110,7 +110,7 @@ function _math_dom_sanitize() {
 	} catch(e) { console.warn("_math_dom_sanitize:", e); }
 }
 
-function render_temml_quick(e) {
+function render_temml_quick(e, force_math_tab_trust) {
 	const $e = $(e);
 	const latex = e.textContent.trim();
 	if (!latex) return;
@@ -126,7 +126,10 @@ function render_temml_quick(e) {
 	try {
 		const tmp = document.createElement("span");
 		const temml_options = { annotate: true };
-		if (e.closest && e.closest("#math_tab_code")) {
+		// Math-tab formulas are staged in a detached container before they are
+		// swapped in, so closest("#math_tab_code") cannot see the tab there.
+		// The caller passes force_math_tab_trust for that case.
+		if (force_math_tab_trust || (e.closest && e.closest("#math_tab_code"))) {
 			temml_options.trust = (context) => context.command === "\\class";
 		}
 		temml.render(latex, tmp, temml_options);

@@ -727,16 +727,19 @@ function _add_layer_debugger_hook (layer_idx) {
 		var output = model?.layers[${layer_idx}]?.original_apply_real(inputs, kwargs);
 
 		var shown_layer_debuggers = false;
+		var data_flow_enabled = $("#show_layer_data").is(":checked");
 
-		if(!disable_layer_debuggers) {
-			if($("#show_layer_data").is(":checked")) {
-				$("#layer_visualizations_tab").show();
-				draw_internal_states(${layer_idx}, inputs, output);
-				shown_layer_debuggers = true;
-			}
+		// During training this hook runs for every layer of every batch.
+		// Rebuilding the layer cards, canvases and LaTeX there freezes the
+		// training loop, so the DOM work is prediction-only. The tab keeps its
+		// "run a prediction" hint while training.
+		if(!disable_layer_debuggers && data_flow_enabled && !started_training) {
+			$("#layer_visualizations_tab").show();
+			draw_internal_states(${layer_idx}, inputs, output);
+			shown_layer_debuggers = true;
 		}
 
-		if(!shown_layer_debuggers) {
+		if(!shown_layer_debuggers && !(data_flow_enabled && started_training)) {
 			$("#layer_visualizations_tab").hide();
 		}
 
@@ -825,7 +828,9 @@ async function add_layer_debuggers () {
 		err(e);
 	}
 
-	if(!input_shape_is_image()) {
+	// Enabling the data flow while training must not start a prediction on the
+	// side; the next prediction after training fills the cards.
+	if(!input_shape_is_image() && !started_training) {
 		await predict_own_data_and_repredict();
 	}
 }
