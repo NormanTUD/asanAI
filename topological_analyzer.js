@@ -18,6 +18,15 @@
 
 var TopologicalAnalyzer = (function () {
 
+	function _t(key, fallback) {
+		try {
+			if (typeof language !== "undefined" && typeof lang !== "undefined" && language[lang] && language[lang][key]) {
+				return language[lang][key];
+			}
+		} catch (e) { /* fall through */ }
+		return fallback !== undefined ? fallback : key;
+	}
+
 	// ============================================================
 	// SINGLETON STATE
 	// ============================================================
@@ -653,7 +662,7 @@ var TopologicalAnalyzer = (function () {
 						(Array.isArray(ls.output[0]) ? ls.output.flat(Infinity) : ls.output) :
 						null;
 					layers.push({
-						name: "Layer " + keys[k],
+						name: _t("tda_layer", "Layer") + " " + keys[k],
 						type: "unknown",
 						input: ls.input ? (Array.isArray(ls.input) ? ls.input.flat(Infinity) : null) : null,
 						output: flatOutput,
@@ -681,8 +690,8 @@ var TopologicalAnalyzer = (function () {
 						var data = kernel.dataSync();
 						weights.push({
 							layerIndex: i,
-							layerName: layer.name || ("Layer " + i),
-							layerType: layer.getClassName ? layer.getClassName() : "unknown",
+							layerName: layer.name || (_t("tda_layer", "Layer") + " " + i),
+							layerType: layer.getClassName ? layer.getClassName() : _t("tda_unknown", "unknown"),
 							data: Array.from(data),
 							shape: kernel.shape
 						});
@@ -713,7 +722,7 @@ var TopologicalAnalyzer = (function () {
 		colorH1 = colorH1 || "#e74c3c";
 
 		var allFinite = pairs.filter(function (p) { return isFinite(p.death); });
-		if (allFinite.length === 0) return "<p style='opacity:0.5;font-size:11px;'>No finite persistence pairs</p>";
+		if (allFinite.length === 0) return "<p style='opacity:0.5;font-size:11px;'>" + _t("tda_no_finite_pairs", "No finite persistence pairs") + "</p>";
 
 		var maxVal = 0;
 		for (var i = 0; i < allFinite.length; i++) {
@@ -729,7 +738,7 @@ var TopologicalAnalyzer = (function () {
 		var svg = svgHeader(width, height, "pd_" + Math.random().toString(36).substr(2, 6));
 
 		// Title
-		svg += `<text x="${width / 2}" y="14" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.8">${title || "Persistence Diagram"}</text>`;
+		svg += `<text x="${width / 2}" y="14" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.8">${title || _t("tda_persistence_diagram", "Persistence Diagram")}</text>`;
 
 		// Diagonal line
 		svg += `<line x1="${pad}" y1="${pad + plotH}" x2="${pad + plotW}" y2="${pad}" stroke="currentColor" stroke-width="0.5" opacity="0.3" stroke-dasharray="3,3"/>`;
@@ -739,8 +748,8 @@ var TopologicalAnalyzer = (function () {
 		svg += `<line x1="${pad}" y1="${pad}" x2="${pad}" y2="${pad + plotH}" stroke="currentColor" stroke-width="0.5" opacity="0.5"/>`;
 
 		// Labels
-		svg += `<text x="${width / 2}" y="${height - 4}" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.6">Birth</text>`;
-		svg += `<text x="10" y="${height / 2}" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.6" transform="rotate(-90, 10, ${height / 2})">Death</text>`;
+		svg += `<text x="${width / 2}" y="${height - 4}" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.6">${_t("tda_birth", "Birth")}</text>`;
+		svg += `<text x="10" y="${height / 2}" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.6" transform="rotate(-90, 10, ${height / 2})">${_t("tda_death", "Death")}</text>`;
 
 		// Points
 		for (var i = 0; i < allFinite.length; i++) {
@@ -749,7 +758,7 @@ var TopologicalAnalyzer = (function () {
 			var y = pad + plotH - (p.death / maxVal) * plotH;
 			var color = p.dim === 1 ? colorH1 : colorH0;
 			var r = Math.min(5, Math.max(2, 3 + (p.death - p.birth) / maxVal * 5));
-			svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="${color}" opacity="0.7"><title>Birth: ${p.birth.toFixed(4)}, Death: ${p.death.toFixed(4)}, Persistence: ${(p.death - p.birth).toFixed(4)}</title></circle>`;
+			svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="${color}" opacity="0.7"><title>${_t("tda_birth_death_persistence", "Birth: {birth}, Death: {death}, Persistence: {persistence}").replace("{birth}", p.birth.toFixed(4)).replace("{death}", p.death.toFixed(4)).replace("{persistence}", (p.death - p.birth).toFixed(4))}</title></circle>`;
 		}
 
 		// Axis ticks
@@ -775,7 +784,7 @@ var TopologicalAnalyzer = (function () {
 		}
 
 		var finitePairs = allPairs.filter(function (p) { return isFinite(p.death); });
-		if (finitePairs.length === 0) return "<p style='opacity:0.5;font-size:11px;'>No finite persistence pairs for barcode</p>";
+		if (finitePairs.length === 0) return "<p style='opacity:0.5;font-size:11px;'>" + _t("tda_no_finite_pairs_barcode", "No finite persistence pairs for barcode") + "</p>";
 
 		var maxVal = 0;
 		for (var i = 0; i < finitePairs.length; i++) {
@@ -791,7 +800,7 @@ var TopologicalAnalyzer = (function () {
 		var svg = svgHeader(width, totalH, "bc_" + Math.random().toString(36).substr(2, 6));
 
 		// Title
-		svg += '<text x="' + (width / 2) + '" y="14" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.8">' + (title || "Persistence Barcode") + '</text>';
+		svg += '<text x="' + (width / 2) + '" y="14" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.8">' + (title || _t("tda_barcode", "Persistence Barcode")) + '</text>';
 
 		// Bars
 		for (var i = 0; i < finitePairs.length; i++) {
@@ -800,7 +809,7 @@ var TopologicalAnalyzer = (function () {
 			var x2 = pad + (p.death / maxVal) * plotW;
 			var y = pad + i * barH;
 			var color = p.dim === 1 ? "#e74c3c" : "#3498db";
-			svg += '<rect x="' + x1.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + Math.max(1, x2 - x1).toFixed(1) + '" height="' + (barH - 1).toFixed(1) + '" fill="' + color + '" opacity="0.8"><title>Dim ' + (p.dim || 0) + ': [' + p.birth.toFixed(4) + ', ' + p.death.toFixed(4) + ']</title></rect>';
+			svg += '<rect x="' + x1.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + Math.max(1, x2 - x1).toFixed(1) + '" height="' + (barH - 1).toFixed(1) + '" fill="' + color + '" opacity="0.8"><title>' + _t("tda_dimension_pair", "Dim {dim}: [{birth}, {death}]").replace("{dim}", (p.dim || 0)).replace("{birth}", p.birth.toFixed(4)).replace("{death}", p.death.toFixed(4)) + '</title></rect>';
 		}
 
 		// Axis
@@ -840,15 +849,15 @@ var TopologicalAnalyzer = (function () {
 
 		var svg = svgHeader(width, height, "betti_" + Math.random().toString(36).substr(2, 6));
 
-		svg += '<text x="' + (width / 2) + '" y="14" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.8">' + (title || "Betti Curves") + '</text>';
+		svg += '<text x="' + (width / 2) + '" y="14" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.8">' + (title || _t("tda_betti_curves", "Betti Curves")) + '</text>';
 
 		// Axes
 		svg += '<line x1="' + pad + '" y1="' + (pad + plotH) + '" x2="' + (pad + plotW) + '" y2="' + (pad + plotH) + '" stroke="currentColor" stroke-width="0.5" opacity="0.5"/>';
 		svg += '<line x1="' + pad + '" y1="' + pad + '" x2="' + pad + '" y2="' + (pad + plotH) + '" stroke="currentColor" stroke-width="0.5" opacity="0.5"/>';
 
 		// Labels
-		svg += '<text x="' + (width / 2) + '" y="' + (height - 4) + '" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.6">ε (filtration parameter)</text>';
-		svg += '<text x="10" y="' + (height / 2) + '" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.6" transform="rotate(-90, 10, ' + (height / 2) + ')">Betti number</text>';
+		svg += '<text x="' + (width / 2) + '" y="' + (height - 4) + '" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.6">' + _t("tda_axis_epsilon", "ε (filtration parameter)") + '</text>';
+		svg += '<text x="10" y="' + (height / 2) + '" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.6" transform="rotate(-90, 10, ' + (height / 2) + ')">' + _t("tda_axis_betti_number", "Betti number") + '</text>';
 
 		// Draw β₀ curve
 		var points0 = [];
@@ -877,9 +886,9 @@ var TopologicalAnalyzer = (function () {
 
 		// Legend
 		svg += '<line x1="' + (width - 90) + '" y1="' + (pad + 5) + '" x2="' + (width - 75) + '" y2="' + (pad + 5) + '" stroke="#3498db" stroke-width="2"/>';
-		svg += '<text x="' + (width - 72) + '" y="' + (pad + 8) + '" font-size="9" fill="currentColor" opacity="0.7">β₀ (components)</text>';
+		svg += '<text x="' + (width - 72) + '" y="' + (pad + 8) + '" font-size="9" fill="currentColor" opacity="0.7">' + _t("tda_legend_betti0", "β₀ (components)") + '</text>';
 		svg += '<line x1="' + (width - 90) + '" y1="' + (pad + 18) + '" x2="' + (width - 75) + '" y2="' + (pad + 18) + '" stroke="#e74c3c" stroke-width="2"/>';
-		svg += '<text x="' + (width - 72) + '" y="' + (pad + 21) + '" font-size="9" fill="currentColor" opacity="0.7">β₁ (loops)</text>';
+		svg += '<text x="' + (width - 72) + '" y="' + (pad + 21) + '" font-size="9" fill="currentColor" opacity="0.7">' + _t("tda_legend_betti1", "β₁ (loops)") + '</text>';
 
 		// Axis ticks
 		svg += '<text x="' + pad + '" y="' + (pad + plotH + 12) + '" font-size="8" fill="currentColor" opacity="0.5">0</text>';
@@ -910,7 +919,7 @@ var TopologicalAnalyzer = (function () {
 
 		var svg = svgHeader(width, height, "pl_" + Math.random().toString(36).substr(2, 6));
 
-		svg += '<text x="' + (width / 2) + '" y="14" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.8">' + (title || "Persistence Landscape λ₁") + '</text>';
+		svg += '<text x="' + (width / 2) + '" y="14" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.8">' + (title || _t("tda_persistence_landscape", "Persistence Landscape λ₁")) + '</text>';
 
 		// Axes
 		svg += '<line x1="' + pad + '" y1="' + (pad + plotH) + '" x2="' + (pad + plotW) + '" y2="' + (pad + plotH) + '" stroke="currentColor" stroke-width="0.5" opacity="0.5"/>';
@@ -954,7 +963,7 @@ var TopologicalAnalyzer = (function () {
 
 		var svg = svgHeader(width, height, "pc_" + Math.random().toString(36).substr(2, 6));
 
-		svg += '<text x="' + (width / 2) + '" y="14" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.8">' + (title || "Point Cloud (2D Projection)") + '</text>';
+		svg += '<text x="' + (width / 2) + '" y="14" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.8">' + (title || _t("tda_point_cloud", "Point Cloud (2D Projection)")) + '</text>';
 
 		// Axes
 		svg += '<rect x="' + pad + '" y="' + pad + '" width="' + plotW + '" height="' + plotH + '" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.2"/>';
@@ -991,7 +1000,7 @@ var TopologicalAnalyzer = (function () {
 
 		var svg = svgHeader(width, height, "wh_" + Math.random().toString(36).substr(2, 6));
 
-		svg += '<text x="' + (width / 2) + '" y="14" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.8">' + (title || "Weight Distribution") + '</text>';
+		svg += '<text x="' + (width / 2) + '" y="14" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.8">' + (title || _t("tda_weight_distribution", "Weight Distribution")) + '</text>';
 
 		for (var i = 0; i < histogram.bins.length; i++) {
 			var barH = (histogram.bins[i] / maxCount) * plotH;
@@ -1037,7 +1046,7 @@ var TopologicalAnalyzer = (function () {
 
 		var svg = svgHeader(actualW, actualH, "dm_" + Math.random().toString(36).substr(2, 6));
 
-		svg += '<text x="' + (actualW / 2) + '" y="14" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.8">' + (title || "Distance Matrix") + '</text>';
+		svg += '<text x="' + (actualW / 2) + '" y="14" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.8">' + (title || _t("tda_distance_matrix", "Distance Matrix")) + '</text>';
 
 		for (var i = 0; i < n; i++) {
 			for (var j = 0; j < n; j++) {
@@ -1360,8 +1369,8 @@ function attachTooltipListeners(container) {
 
 		injectStyles();
 		var html = "";
-		html += "<h2>🔬 Topological Data Analysis</h2>";
-		html += '<p style="opacity:0.6;font-size:0.85em;">Persistent homology, Betti numbers, persistence diagrams & landscapes for training data, layer activations, and weights.</p>';
+		html += "<h2>🔬 " + _t("tda_title", "Topological Data Analysis") + "</h2>";
+		html += '<p style="opacity:0.6;font-size:0.85em;">' + _t("tda_subtitle_long", "Persistent homology, Betti numbers, persistence diagrams & landscapes for training data, layer activations, and weights.") + '</p>';
 
 		// ============================================================
 		// 1. TRAINING DATA TOPOLOGY
@@ -1369,7 +1378,7 @@ function attachTooltipListeners(container) {
 		if (_state.config.showTrainingDataTopology) {
 			var trainingPoints = getTrainingData();
 			html += '<div class="tda-section">';
-			html += '<h3>📊 Training Data Topology</h3>';
+			html += '<h3>📊 ' + _t("tda_section_training", "Training Data Topology") + '</h3>';
 
 			if (trainingPoints && trainingPoints.length >= 3) {
 				var sampledPoints = subsample(trainingPoints, _state.config.maxPoints);
@@ -1386,14 +1395,14 @@ function attachTooltipListeners(container) {
 				var persistence = computeRipsPersistence(sampledPoints, maxDist * _state.config.ripsFiltrationMax / 2, _state.config.epsilonSteps);
 				var summary = computeTopologicalSummary(persistence);
 
-				html += '<p style="font-size:0.85em;opacity:0.6;">' + sampledPoints.length + ' points, dim=' + (sampledPoints[0].length) + ', max filtration ε=' + (maxDist * _state.config.ripsFiltrationMax / 2).toFixed(3) + '</p>';
+				html += '<p style="font-size:0.85em;opacity:0.6;">' + _t("tda_point_cloud_info", "{n} points, dim={dim}, max filtration ε={eps}").replace("{n}", sampledPoints.length).replace("{dim}", sampledPoints[0].length).replace("{eps}", (maxDist * _state.config.ripsFiltrationMax / 2).toFixed(3)) + '</p>';
 
 				html += '<div class="tda-grid">';
 
 				// Point cloud
 				if (_state.config.showPointCloud) {
 					html += '<div class="tda-grid-item">';
-					html += renderPointCloudSVG(sampledPoints, _state.config.svgWidth, _state.config.svgHeight, "Training Data Point Cloud");
+					html += renderPointCloudSVG(sampledPoints, _state.config.svgWidth, _state.config.svgHeight, _t("tda_chart_training_point_cloud", "Training Data Point Cloud"));
 					html += '</div>';
 				}
 
@@ -1403,21 +1412,21 @@ function attachTooltipListeners(container) {
 					for (var i = 0; i < persistence.h0.length; i++) allPairs.push({ birth: persistence.h0[i].birth, death: persistence.h0[i].death, dim: 0 });
 					for (var i = 0; i < persistence.h1.length; i++) allPairs.push({ birth: persistence.h1[i].birth, death: persistence.h1[i].death, dim: 1 });
 					html += '<div class="tda-grid-item">';
-					html += renderPersistenceDiagram(allPairs, _state.config.svgWidth, _state.config.svgHeight, "Persistence Diagram (Training)");
+					html += renderPersistenceDiagram(allPairs, _state.config.svgWidth, _state.config.svgHeight, _t("tda_chart_training_persistence", "Persistence Diagram (Training)"));
 					html += '</div>';
 				}
 
 				// Betti curves
 				if (_state.config.showBettiCurves) {
 					html += '<div class="tda-grid-item">';
-					html += renderBettiCurves(persistence.bettiCurve0, persistence.bettiCurve1, persistence.epsilonValues, _state.config.svgWidth, _state.config.svgHeight, "Betti Curves (Training)");
+					html += renderBettiCurves(persistence.bettiCurve0, persistence.bettiCurve1, persistence.epsilonValues, _state.config.svgWidth, _state.config.svgHeight, _t("tda_chart_training_betti", "Betti Curves (Training)"));
 					html += '</div>';
 				}
 
 				// Barcode
 				if (_state.config.showBarcode) {
 					html += '<div class="tda-grid-item">';
-					html += renderBarcode(persistence.h0, persistence.h1, _state.config.svgWidth, 150, "Persistence Barcode (Training)");
+					html += renderBarcode(persistence.h0, persistence.h1, _state.config.svgWidth, 150, _t("tda_chart_training_barcode", "Persistence Barcode (Training)"));
 					html += '</div>';
 				}
 
@@ -1425,24 +1434,24 @@ function attachTooltipListeners(container) {
 				var landscape = computePersistenceLandscape(persistence.h0, _state.config.numLandscapePoints, maxDist);
 				if (landscape.length > 0) {
 					html += '<div class="tda-grid-item">';
-					html += renderPersistenceLandscapeSVG(landscape, maxDist, _state.config.svgWidth, _state.config.svgHeight, "Persistence Landscape λ₁ (Training H₀)", "#9b59b6");
+					html += renderPersistenceLandscapeSVG(landscape, maxDist, _state.config.svgWidth, _state.config.svgHeight, _t("tda_chart_training_landscape", "Persistence Landscape λ₁ (Training H₀)"), "#9b59b6");
 					html += '</div>';
 				}
 
 				// Distance matrix
 				if (persistence.distMatrix && persistence.distMatrix.length > 0) {
 					html += '<div class="tda-grid-item">';
-					html += renderDistanceMatrixSVG(persistence.distMatrix, 200, 200, "Distance Matrix (Training)");
+					html += renderDistanceMatrixSVG(persistence.distMatrix, 200, 200, _t("tda_chart_training_distance", "Distance Matrix (Training)"));
 					html += '</div>';
 				}
 
 				html += '</div>'; // end tda-grid
 
 				// Summary table
-				html += renderSummaryTable(summary, "Topological Summary (Training Data)");
+				html += renderSummaryTable(summary, _t("tda_summary_training", "Topological Summary (Training Data)"));
 
 			} else {
-				html += '<div class="tda-no-data">No training data available. Start training.</div>';
+				html += '<div class="tda-no-data">' + _t("tda_no_training_data", "No training data available. Start training.") + '</div>';
 			}
 
 			html += '</div>'; // end tda-section
@@ -1454,10 +1463,10 @@ function attachTooltipListeners(container) {
 		if (_state.config.showWeightTopology) {
 			var weightDataArr = getWeightData();
 			html += '<div class="tda-section">';
-			html += '<h3>⚖️ Weight Topology</h3>';
+			html += '<h3>⚖️ ' + _t("tda_section_weights", "Weight Topology") + '</h3>';
 
 			if (weightDataArr && weightDataArr.length > 0) {
-				html += '<p style="font-size:0.85em;opacity:0.6;">' + weightDataArr.length + ' weight tensors analyzed</p>';
+				html += '<p style="font-size:0.85em;opacity:0.6;">' + _t("tda_weight_tensors_analyzed", "{n} weight tensors analyzed").replace("{n}", weightDataArr.length) + '</p>';
 
 				for (var wi = 0; wi < weightDataArr.length; wi++) {
 					var wInfo = weightDataArr[wi];
@@ -1470,7 +1479,7 @@ function attachTooltipListeners(container) {
 
 						// Weight histogram
 						html += '<div class="tda-grid-item">';
-						html += renderWeightHistogramSVG(wTopology.histogram, _state.config.svgWidth, 120, "Weight Distribution: " + wInfo.layerName);
+						html += renderWeightHistogramSVG(wTopology.histogram, _state.config.svgWidth, 120, _t("tda_chart_weight_distribution_name", "Weight Distribution: {name}").replace("{name}", wInfo.layerName));
 						html += '</div>';
 
 						// Persistence diagram for weights
@@ -1483,34 +1492,34 @@ function attachTooltipListeners(container) {
 								wAllPairs.push({ birth: wTopology.persistence.h1[p].birth, death: wTopology.persistence.h1[p].death, dim: 1 });
 							}
 							html += '<div class="tda-grid-item">';
-							html += renderPersistenceDiagram(wAllPairs, _state.config.svgWidth, _state.config.svgHeight, "Persistence Diagram: " + wInfo.layerName);
+							html += renderPersistenceDiagram(wAllPairs, _state.config.svgWidth, _state.config.svgHeight, _t("tda_chart_weight_persistence_name", "Persistence Diagram: {name}").replace("{name}", wInfo.layerName));
 							html += '</div>';
 						}
 
 						// Betti curves for weights
 						if (_state.config.showBettiCurves && wTopology.persistence.bettiCurve0) {
 							html += '<div class="tda-grid-item">';
-							html += renderBettiCurves(wTopology.persistence.bettiCurve0, wTopology.persistence.bettiCurve1, wTopology.persistence.epsilonValues, _state.config.svgWidth, _state.config.svgHeight, "Betti Curves: " + wInfo.layerName);
+							html += renderBettiCurves(wTopology.persistence.bettiCurve0, wTopology.persistence.bettiCurve1, wTopology.persistence.epsilonValues, _state.config.svgWidth, _state.config.svgHeight, _t("tda_chart_weight_betti_name", "Betti Curves: {name}").replace("{name}", wInfo.layerName));
 							html += '</div>';
 						}
 
 						// Barcode for weights
 						if (_state.config.showBarcode) {
 							html += '<div class="tda-grid-item">';
-							html += renderBarcode(wTopology.persistence.h0, wTopology.persistence.h1, _state.config.svgWidth, 120, "Barcode: " + wInfo.layerName);
+							html += renderBarcode(wTopology.persistence.h0, wTopology.persistence.h1, _state.config.svgWidth, 120, _t("tda_chart_weight_barcode_name", "Barcode: {name}").replace("{name}", wInfo.layerName));
 							html += '</div>';
 						}
 
 						html += '</div>'; // end tda-grid
 
 						// Summary
-						html += renderSummaryTable(wTopology.summary, "Weight Topology Summary: " + wInfo.layerName);
+						html += renderSummaryTable(wTopology.summary, _t("tda_summary_weight_name", "Weight Topology Summary: {name}").replace("{name}", wInfo.layerName));
 					} else {
-						html += '<p style="opacity:0.5;font-size:0.85em;">Insufficient weight data for topological analysis.</p>';
+						html += '<p style="opacity:0.5;font-size:0.85em;">' + _t("tda_insufficient_weight_data", "Insufficient weight data for topological analysis.") + '</p>';
 					}
 				}
 			} else {
-				html += '<div class="tda-no-data">No model weights available. Create and compile a model first.</div>';
+				html += '<div class="tda-no-data">' + _t("tda_no_model_weights", "No model weights available. Create and compile a model first.") + '</div>';
 			}
 
 			html += '</div>'; // end tda-section
@@ -1522,14 +1531,14 @@ function attachTooltipListeners(container) {
 		if (_state.config.showActivationTopology) {
 			var layerDataArr = getLayerData();
 			html += '<div class="tda-section">';
-			html += '<h3>💡 Activation Topology (Layer I/O)</h3>';
+			html += '<h3>💡 ' + _t("tda_section_activations", "Activation Topology (Layer I/O)") + '</h3>';
 
 			if (layerDataArr && layerDataArr.length > 0) {
-				html += '<p style="font-size:0.85em;opacity:0.6;">' + layerDataArr.length + ' layers with recorded activations</p>';
+				html += '<p style="font-size:0.85em;opacity:0.6;">' + _t("tda_layers_recorded", "{n} layers with recorded activations").replace("{n}", layerDataArr.length) + '</p>';
 
 				for (var li = 0; li < layerDataArr.length; li++) {
 					var layerInfo = layerDataArr[li];
-					html += '<h4>[' + li + '] ' + (layerInfo.name || 'Layer ' + li) + ' <span style="opacity:0.5;">(' + (layerInfo.type || 'unknown') + ')</span></h4>';
+					html += '<h4>[' + li + '] ' + (layerInfo.name || (_t("tda_layer", "Layer") + " " + li)) + ' <span style="opacity:0.5;">(' + (layerInfo.type || _t("tda_unknown", "unknown")) + ')</span></h4>';
 
 					html += '<div class="tda-grid">';
 
@@ -1546,18 +1555,18 @@ function attachTooltipListeners(container) {
 									actPairs.push({ birth: actTopology.persistence.h1[p].birth, death: actTopology.persistence.h1[p].death, dim: 1 });
 								}
 								html += '<div class="tda-grid-item">';
-								html += renderPersistenceDiagram(actPairs, _state.config.svgWidth, _state.config.svgHeight, "Output Persistence: " + (layerInfo.name || 'Layer ' + li));
+								html += renderPersistenceDiagram(actPairs, _state.config.svgWidth, _state.config.svgHeight, _t("tda_chart_output_persistence_name", "Output Persistence: {name}").replace("{name}", (layerInfo.name || (_t("tda_layer", "Layer") + " " + li))));
 								html += '</div>';
 							}
 
 							if (_state.config.showBettiCurves && actTopology.persistence.bettiCurve0) {
 								html += '<div class="tda-grid-item">';
-								html += renderBettiCurves(actTopology.persistence.bettiCurve0, actTopology.persistence.bettiCurve1, actTopology.persistence.epsilonValues, _state.config.svgWidth, _state.config.svgHeight, "Output Betti: " + (layerInfo.name || 'Layer ' + li));
+								html += renderBettiCurves(actTopology.persistence.bettiCurve0, actTopology.persistence.bettiCurve1, actTopology.persistence.epsilonValues, _state.config.svgWidth, _state.config.svgHeight, _t("tda_chart_output_betti_name", "Output Betti: {name}").replace("{name}", (layerInfo.name || (_t("tda_layer", "Layer") + " " + li))));
 								html += '</div>';
 							}
 
 							html += '<div class="tda-grid-item">';
-							html += renderSummaryTable(actTopology.summary, "Output Topology: " + (layerInfo.name || 'Layer ' + li));
+							html += renderSummaryTable(actTopology.summary, _t("tda_summary_output_name", "Output Topology: {name}").replace("{name}", (layerInfo.name || (_t("tda_layer", "Layer") + " " + li))));
 							html += '</div>';
 						}
 					}
@@ -1568,7 +1577,7 @@ function attachTooltipListeners(container) {
 						if (inTopology) {
 							if (_state.config.showBettiCurves && inTopology.persistence.bettiCurve0) {
 								html += '<div class="tda-grid-item">';
-								html += renderBettiCurves(inTopology.persistence.bettiCurve0, inTopology.persistence.bettiCurve1, inTopology.persistence.epsilonValues, _state.config.svgWidth, _state.config.svgHeight, "Input Betti: " + (layerInfo.name || 'Layer ' + li));
+								html += renderBettiCurves(inTopology.persistence.bettiCurve0, inTopology.persistence.bettiCurve1, inTopology.persistence.epsilonValues, _state.config.svgWidth, _state.config.svgHeight, _t("tda_chart_input_betti_name", "Input Betti: {name}").replace("{name}", (layerInfo.name || (_t("tda_layer", "Layer") + " " + li))));
 								html += '</div>';
 							}
 						}
@@ -1577,7 +1586,7 @@ function attachTooltipListeners(container) {
 					html += '</div>'; // end tda-grid
 				}
 			} else {
-				html += '<div class="tda-no-data">No layer activation data available. Run a prediction or start training to record layer I/O.</div>';
+				html += '<div class="tda-no-data">' + _t("tda_no_layer_activation_data", "No layer activation data available. Run a prediction or start training to record layer I/O.") + '</div>';
 			}
 
 			html += '</div>'; // end tda-section
@@ -1587,7 +1596,7 @@ function attachTooltipListeners(container) {
 		// 4. TOPOLOGICAL COMPARISON ACROSS LAYERS
 		// ============================================================
 		html += '<div class="tda-section">';
-		html += '<h3>📈 Topological Evolution Across Layers</h3>';
+		html += '<h3>📈 ' + _t("tda_section_evolution", "Topological Evolution Across Layers") + '</h3>';
 
 		var weightDataArr2 = getWeightData();
 		if (weightDataArr2 && weightDataArr2.length >= 2) {
@@ -1616,7 +1625,7 @@ function attachTooltipListeners(container) {
 				var evoPlotH = evoHeight - 2 * evoPad;
 
 				var svg = svgHeader(evoWidth, evoHeight, "evo_" + Math.random().toString(36).substr(2, 6));
-				svg += '<text x="' + (evoWidth / 2) + '" y="14" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.8">Topological Complexity Across Layers</text>';
+				svg += '<text x="' + (evoWidth / 2) + '" y="14" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.8">' + _t("tda_chart_evolution", "Topological Complexity Across Layers") + '</text>';
 
 				// Normalize values
 				var maxBetti = Math.max.apply(null, betti0Values) || 1;
@@ -1661,17 +1670,17 @@ function attachTooltipListeners(container) {
 
 				// Legend
 				svg += '<line x1="' + (evoWidth - 140) + '" y1="' + (evoPad + 5) + '" x2="' + (evoWidth - 125) + '" y2="' + (evoPad + 5) + '" stroke="#3498db" stroke-width="2.5"/>';
-				svg += '<text x="' + (evoWidth - 122) + '" y="' + (evoPad + 8) + '" font-size="9" fill="currentColor" opacity="0.7">β₀ (norm)</text>';
+				svg += '<text x="' + (evoWidth - 122) + '" y="' + (evoPad + 8) + '" font-size="9" fill="currentColor" opacity="0.7">' + _t("tda_legend_betti0_norm", "β₀ (norm)") + '</text>';
 				svg += '<line x1="' + (evoWidth - 140) + '" y1="' + (evoPad + 18) + '" x2="' + (evoWidth - 125) + '" y2="' + (evoPad + 18) + '" stroke="#e74c3c" stroke-width="2.5"/>';
-				svg += '<text x="' + (evoWidth - 122) + '" y="' + (evoPad + 21) + '" font-size="9" fill="currentColor" opacity="0.7">Total Pers. (norm)</text>';
+				svg += '<text x="' + (evoWidth - 122) + '" y="' + (evoPad + 21) + '" font-size="9" fill="currentColor" opacity="0.7">' + _t("tda_legend_persistence_norm", "Total Pers. (norm)") + '</text>';
 				svg += '<line x1="' + (evoWidth - 140) + '" y1="' + (evoPad + 31) + '" x2="' + (evoWidth - 125) + '" y2="' + (evoPad + 31) + '" stroke="#2ecc71" stroke-width="2.5" stroke-dasharray="4,2"/>';
-				svg += '<text x="' + (evoWidth - 122) + '" y="' + (evoPad + 34) + '" font-size="9" fill="currentColor" opacity="0.7">Entropy (norm)</text>';
+				svg += '<text x="' + (evoWidth - 122) + '" y="' + (evoPad + 34) + '" font-size="9" fill="currentColor" opacity="0.7">' + _t("tda_legend_entropy_norm", "Entropy (norm)") + '</text>';
 
 				svg += svgFooter();
 				html += svg;
 			}
 		} else {
-			html += '<div class="tda-no-data">Need at least 2 weight layers for cross-layer topological comparison.</div>';
+			html += '<div class="tda-no-data">' + _t("tda_need_two_weight_layers", "Need at least 2 weight layers for cross-layer topological comparison.") + '</div>';
 		}
 
 		html += '</div>'; // end tda-section

@@ -8,6 +8,14 @@
 
 var ActivationAtlas = (function () {
 
+	function _L(key, fallback) {
+		try {
+			var v = language[lang][key];
+			if (v !== undefined && v !== null && v !== "") return v;
+		} catch (e) { /* fall through */ }
+		return fallback !== undefined ? fallback : key;
+	}
+
 	var _SINGLETON_ID = "activation_atlas_singleton";
 	var _state = {
 		container: null,
@@ -538,18 +546,19 @@ var ActivationAtlas = (function () {
 	function _updateTimeEstimate() {
 		if (!_state.timeEstimateLabel) return;
 		if (_state.cellsCompleted < 1) {
-			_state.timeEstimateLabel.textContent = "Estimating time...";
+			_state.timeEstimateLabel.textContent = _L("atlas_estimating_time", "Estimating time...");
 			return;
 		}
 		var elapsed = (Date.now() - _state.generationStartTime) / 1000;
 		var perCell = elapsed / _state.cellsCompleted;
 		var remaining = perCell * (_state.totalCells - _state.cellsCompleted);
-		_state.timeEstimateLabel.textContent = "⏱ " + _formatTime(remaining) + " remaining (~" + perCell.toFixed(1) + "s/cell)";
+		_state.timeEstimateLabel.textContent = "⏱ " + _formatTime(remaining) + " " +
+			_L("atlas_time_remaining", "remaining") + " (~" + perCell.toFixed(1) + _L("atlas_seconds_per_cell", "s/cell") + ")";
 	}
 
 	function _buildAtlas(callback, progressFn) {
 		if (_state.isComputing) return;
-		if (typeof model === "undefined" || !model) { callback("No model available"); return; }
+		if (typeof model === "undefined" || !model) { callback(_L("atlas_no_model_short", "No model available")); return; }
 
 		_state.isComputing = true;
 		_state.stopRequested = false;
@@ -564,26 +573,26 @@ var ActivationAtlas = (function () {
 
 			if (!imgH || !imgW) {
 				_state.isComputing = false;
-				callback("Cannot determine input image dimensions from model");
+				callback(_L("atlas_cannot_determine_input", "Cannot determine input image dimensions from model"));
 				return;
 			}
 
 			var layerIdx = _getTargetLayerIndex();
 			var targetLayer = model.layers[layerIdx];
 
-			if (progressFn) progressFn("Extracting prototype activations from weights...", 0.02);
+			if (progressFn) progressFn(_L("atlas_progress_extracting", "Extracting prototype activations from weights..."), 0.02);
 
 			var protoData = _extractPrototypeActivations(layerIdx);
 			if (!protoData || protoData.prototypes.length < 3) {
 				_state.isComputing = false;
-				callback("Could not extract prototype activations from layer '" + targetLayer.name + "'. Try a different layer.");
+				callback(_L("atlas_could_not_extract", "Could not extract prototype activations from layer '{name}'. Try a different layer.").replace("{name}", targetLayer.name));
 				return;
 			}
 
 			var prototypes = protoData.prototypes;
 			var flatOutputSize = protoData.flatOutputSize;
 
-			if (progressFn) progressFn("Running t-SNE on " + prototypes.length + " prototypes...", 0.05);
+			if (progressFn) progressFn(_L("atlas_progress_tsne", "Running t-SNE on {n} prototypes...").replace("{n}", prototypes.length), 0.05);
 
 			var protoVectors = prototypes.map(function (p) { return Array.from(p.activation); });
 
@@ -612,7 +621,7 @@ var ActivationAtlas = (function () {
 			var perp = Math.max(2, Math.min(15, Math.floor(prototypes.length / 4)));
 			var embedded = _tsne(truncated, perp, 400);
 
-			if (progressFn) progressFn("Building grid and interpolating...", 0.1);
+			if (progressFn) progressFn(_L("atlas_progress_grid", "Building grid and interpolating..."), 0.1);
 
 			var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
 			for (var i = 0; i < embedded.length; i++) {
@@ -686,7 +695,7 @@ var ActivationAtlas = (function () {
 				}
 			}
 
-			if (progressFn) progressFn("Generating feature visualizations...", 0.12);
+			if (progressFn) progressFn(_L("atlas_progress_feature_vis", "Generating feature visualizations..."), 0.12);
 
 			_state.gridCells = allCells;
 			_state.totalCells = allCells.length;
@@ -702,9 +711,9 @@ var ActivationAtlas = (function () {
 					_state.isComputing = false;
 					_state.stopRequested = false;
 					_setToggleState("start");
-					if (progressFn) progressFn("Stopped by user.", cellIdx / totalCells);
+					if (progressFn) progressFn(_L("atlas_progress_stopped", "Stopped by user."), cellIdx / totalCells);
 					callback(null, {
-						layerName: targetLayer.name || ("Layer " + layerIdx),
+						layerName: targetLayer.name || (_L("atlas_layer", "Layer") + " " + layerIdx),
 						gridSize: gridSize,
 						totalCells: totalCells,
 						numPrototypes: prototypes.length,
@@ -722,7 +731,7 @@ var ActivationAtlas = (function () {
 					_setToggleState("start");
 
 					var meta = {
-						layerName: targetLayer.name || ("Layer " + layerIdx),
+						layerName: targetLayer.name || (_L("atlas_layer", "Layer") + " " + layerIdx),
 						gridSize: gridSize,
 						totalCells: totalCells,
 						numPrototypes: prototypes.length,
@@ -737,7 +746,7 @@ var ActivationAtlas = (function () {
 
 				var cell = allCells[cellIdx];
 				var pct = 0.12 + 0.88 * (cellIdx / totalCells);
-				if (progressFn) progressFn("Generating cell " + (cellIdx + 1) + "/" + totalCells, pct);
+				if (progressFn) progressFn(_L("atlas_progress_cell", "Generating cell {i}/{n}").replace("{i}", cellIdx + 1).replace("{n}", totalCells), pct);
 
 				_updateProgressUI(pct, cellIdx, totalCells);
 
@@ -756,9 +765,9 @@ var ActivationAtlas = (function () {
 						_state.isComputing = false;
 						_state.stopRequested = false;
 						_setToggleState("start");
-						if (progressFn) progressFn("Stopped by user.", cellIdx / totalCells);
+						if (progressFn) progressFn(_L("atlas_progress_stopped", "Stopped by user."), cellIdx / totalCells);
 						callback(null, {
-							layerName: targetLayer.name || ("Layer " + layerIdx),
+							layerName: targetLayer.name || (_L("atlas_layer", "Layer") + " " + layerIdx),
 							gridSize: gridSize,
 							totalCells: totalCells,
 							numPrototypes: prototypes.length,
@@ -805,7 +814,7 @@ var ActivationAtlas = (function () {
 		} catch (e) {
 			_state.isComputing = false;
 			console.error("[ActivationAtlas]", e);
-			callback("Error: " + (e.message || e));
+			callback(_L("atlas_error_prefix", "Error: ") + (e.message || e));
 		}
 	}
 
@@ -818,18 +827,18 @@ var ActivationAtlas = (function () {
 			_state.progressBar.style.width = (pct * 100).toFixed(1) + "%";
 		}
 		if (_state.progressLabel) {
-			_state.progressLabel.textContent = "Cell " + (cellIdx + 1) + "/" + totalCells + " (" + Math.round(pct * 100) + "%)";
+			_state.progressLabel.textContent = _L("atlas_cell_counter", "Cell {i}/{n} ({pct}%)").replace("{i}", cellIdx + 1).replace("{n}", totalCells).replace("{pct}", Math.round(pct * 100));
 		}
 	}
 
 	function _setToggleState(mode) {
 		if (!_state.toggleBtn) return;
 		if (mode === "stop") {
-			_state.toggleBtn.textContent = "⏹ Stop";
+			_state.toggleBtn.textContent = "⏹ " + _L("atlas_tab_stop", "Stop");
 			_state.toggleBtn.classList.add("atlas_toggle_stop");
 			_state.toggleBtn.classList.remove("atlas_toggle_start");
 		} else {
-			_state.toggleBtn.textContent = "▶ Generate";
+			_state.toggleBtn.textContent = "▶ " + _L("atlas_generate", "Generate");
 			_state.toggleBtn.classList.remove("atlas_toggle_stop");
 			_state.toggleBtn.classList.add("atlas_toggle_start");
 		}
@@ -945,18 +954,18 @@ var ActivationAtlas = (function () {
 
 			ctx.fillStyle = "#ffffff";
 			ctx.font = "bold 11px -apple-system, BlinkMacSystemFont, sans-serif";
-			ctx.fillText("Grid [" + hc.row + ", " + hc.col + "]", tooltipX + 10, tooltipY + 20);
+			ctx.fillText(_L("atlas_tooltip_grid", "Grid [{r}, {c}]").replace("{r}", hc.row).replace("{c}", hc.col), tooltipX + 10, tooltipY + 20);
 
 			ctx.font = "11px -apple-system, BlinkMacSystemFont, sans-serif";
 			ctx.fillStyle = "#aaaaaa";
 			if (hc.dominantNeuron >= 0) {
-				ctx.fillText("Nearest neuron: #" + hc.dominantNeuron, tooltipX + 10, tooltipY + 38);
+				ctx.fillText(_L("atlas_tooltip_nearest_neuron", "Nearest neuron: #{n}").replace("{n}", hc.dominantNeuron), tooltipX + 10, tooltipY + 38);
 			}
 
 			if (hc.topContributions && hc.topContributions.length > 0) {
 				ctx.fillStyle = "#888888";
 				ctx.font = "10px -apple-system, BlinkMacSystemFont, sans-serif";
-				var contribStr = "Mix: ";
+				var contribStr = _L("atlas_tooltip_mix", "Mix: ");
 				for (var ti = 0; ti < Math.min(hc.topContributions.length, 3); ti++) {
 					var contrib = hc.topContributions[ti];
 					contribStr += "#" + contrib.idx + "(" + (contrib.weight * 100).toFixed(0) + "%) ";
@@ -966,7 +975,7 @@ var ActivationAtlas = (function () {
 
 			ctx.fillStyle = "#666666";
 			ctx.font = "10px -apple-system, BlinkMacSystemFont, sans-serif";
-			ctx.fillText("Interpolated from " + (hc.topContributions ? hc.topContributions.length : "?") + " prototypes", tooltipX + 10, tooltipY + 74);
+			ctx.fillText(_L("atlas_tooltip_interpolated", "Interpolated from {n} prototypes").replace("{n}", (hc.topContributions ? hc.topContributions.length : "?")), tooltipX + 10, tooltipY + 74);
 
 			if (hc.topContributions) {
 				var cBarX = tooltipX + 10;
@@ -1005,13 +1014,13 @@ var ActivationAtlas = (function () {
 	}
 
 	function _getLabelName(idx) {
-		if (idx < 0) return "Unknown";
+		if (idx < 0) return _L("atlas_unknown", "Unknown");
 		try {
 			if (typeof labels !== "undefined" && Array.isArray(labels) && labels[idx]) {
 				return labels[idx];
 			}
 		} catch (e) { }
-		return "Neuron " + idx;
+		return _L("atlas_neuron", "Neuron {n}").replace("{n}", idx);
 	}
 
 	// ============================================================
@@ -1111,9 +1120,9 @@ var ActivationAtlas = (function () {
 		panel.className = "atlas_params_panel";
 
 		var params = [
-			{ label: "Grid Size", key: "gridSize", type: "select", options: [6, 8, 10, 12, 16] },
-			{ label: "Vis Steps", key: "featureVisSteps", type: "range", min: 64, max: 1024, step: 64 },
-			{ label: "Learning Rate", key: "featureVisLR", type: "range", min: 0.005, max: 0.1, step: 0.005, decimals: 3 }
+			{ label: _L("atlas_grid_size", "Grid Size"), key: "gridSize", type: "select", options: [6, 8, 10, 12, 16] },
+			{ label: _L("atlas_vis_steps", "Vis Steps"), key: "featureVisSteps", type: "range", min: 64, max: 1024, step: 64 },
+			{ label: _L("atlas_learning_rate", "Learning Rate"), key: "featureVisLR", type: "range", min: 0.005, max: 0.1, step: 0.005, decimals: 3 }
 		];
 
 		params.forEach(function (param) {
@@ -1191,8 +1200,8 @@ var ActivationAtlas = (function () {
 		// Toggle button (shows "Stop" during generation)
 		var toggleBtn = document.createElement("button");
 		toggleBtn.className = "atlas_btn atlas_toggle_btn atlas_toggle_stop";
-		toggleBtn.textContent = "⏹ Stop";
-		toggleBtn.title = "Stop generation";
+		toggleBtn.textContent = "⏹ " + _L("atlas_tab_stop", "Stop");
+		toggleBtn.title = _L("atlas_stop_generation", "Stop generation");
 		toggleBtn.onclick = function () {
 			_handleToggle(container);
 		};
@@ -1222,7 +1231,7 @@ var ActivationAtlas = (function () {
 
 		var progressLabel = document.createElement("span");
 		progressLabel.className = "atlas_progress_label";
-		progressLabel.textContent = "Initializing...";
+		progressLabel.textContent = _L("atlas_initializing", "Initializing...");
 		_state.progressLabel = progressLabel;
 		progressInfo.appendChild(progressLabel);
 
@@ -1282,7 +1291,7 @@ var ActivationAtlas = (function () {
 
 		// Update toggle button to "Generate" for re-generation
 		if (_state.toggleBtn) {
-			_state.toggleBtn.textContent = "▶ Generate";
+			_state.toggleBtn.textContent = "▶ " + _L("atlas_generate", "Generate");
 			_state.toggleBtn.classList.remove("atlas_toggle_stop");
 			_state.toggleBtn.classList.add("atlas_toggle_start");
 			_state.toggleBtn.style.animation = "none";
@@ -1320,9 +1329,11 @@ var ActivationAtlas = (function () {
 		if (meta && !meta.stopped && !wrapper.querySelector(".atlas_info")) {
 			var info = document.createElement("div");
 			info.className = "atlas_info";
-			info.innerHTML = "Layer: <strong>" + meta.layerName + "</strong> · Grid: " + meta.gridSize + "×" + meta.gridSize +
-				" · Prototypes: " + meta.numPrototypes + " · Neurons: " + meta.numNeurons +
-				" · Image: " + meta.imgH + "×" + meta.imgW;
+			info.innerHTML = _L("atlas_info_layer", "Layer:") + " <strong>" + meta.layerName + "</strong> · " +
+				_L("atlas_info_grid", "Grid:") + " " + meta.gridSize + "×" + meta.gridSize +
+				" · " + _L("atlas_info_prototypes", "Prototypes:") + " " + meta.numPrototypes +
+				" · " + _L("atlas_info_neurons", "Neurons:") + " " + meta.numNeurons +
+				" · " + _L("atlas_info_image", "Image:") + " " + meta.imgH + "×" + meta.imgW;
 			var canvas = wrapper.querySelector(".atlas_canvas");
 			if (canvas) {
 				wrapper.insertBefore(info, canvas);
@@ -1335,9 +1346,9 @@ var ActivationAtlas = (function () {
 		if (!wrapper.querySelector(".atlas_explanation")) {
 			var explanation = document.createElement("div");
 			explanation.className = "atlas_explanation";
-			explanation.innerHTML = "This atlas explores the model's learned activation space <em>without training data</em>. " +
+			explanation.innerHTML = _L("atlas_tab_explanation", "This atlas explores the model's learned activation space <em>without training data</em>. " +
 				"Prototype directions are extracted from layer weights, projected to 2D via t-SNE, and the space is filled via IDW interpolation. " +
-				"Each cell shows a gradient-ascent image of what the model \"sees\" for that interpolated activation.";
+				"Each cell shows a gradient-ascent image of what the model \"sees\" for that interpolated activation.");
 			wrapper.appendChild(explanation);
 		}
 	}
@@ -1352,12 +1363,12 @@ var ActivationAtlas = (function () {
 		if (typeof model !== "undefined" && model && model.layers) {
 			var autoOpt = document.createElement("option");
 			autoOpt.value = "-1";
-			autoOpt.textContent = "Auto (last hidden)";
+			autoOpt.textContent = _L("atlas_auto_last_hidden", "Auto (last hidden)");
 			layerSelect.appendChild(autoOpt);
 			for (var i = 0; i < model.layers.length; i++) {
 				var opt = document.createElement("option");
 				opt.value = "" + i;
-				opt.textContent = model.layers[i].name || ("Layer " + i);
+				opt.textContent = model.layers[i].name || (_L("atlas_layer", "Layer") + " " + i);
 				layerSelect.appendChild(opt);
 			}
 		}
@@ -1527,12 +1538,12 @@ var ActivationAtlas = (function () {
 		if (typeof model !== "undefined" && model && model.layers) {
 			var autoOpt = document.createElement("option");
 			autoOpt.value = "-1";
-			autoOpt.textContent = "Auto (last hidden)";
+			autoOpt.textContent = _L("atlas_auto_last_hidden", "Auto (last hidden)");
 			layerSelect.appendChild(autoOpt);
 			for (var i = 0; i < model.layers.length; i++) {
 				var opt = document.createElement("option");
 				opt.value = "" + i;
-				opt.textContent = model.layers[i].name || ("Layer " + i);
+				opt.textContent = model.layers[i].name || (_L("atlas_layer", "Layer") + " " + i);
 				layerSelect.appendChild(opt);
 			}
 		}
@@ -1555,8 +1566,8 @@ var ActivationAtlas = (function () {
 
 		var startBtn = document.createElement("button");
 		startBtn.className = "atlas_btn atlas_toggle_btn atlas_toggle_start atlas_start_btn";
-		startBtn.textContent = "▶ Start";
-		startBtn.title = "Start generating the activation atlas";
+		startBtn.textContent = "▶ " + _L("atlas_start", "Start");
+		startBtn.title = _L("atlas_start_generating", "Start generating the activation atlas");
 		startBtn.onclick = function () {
 			_handleToggle(container);
 		};
@@ -1583,15 +1594,15 @@ var ActivationAtlas = (function () {
 		ctx.fillStyle = "#ffffff";
 		ctx.font = "16px -apple-system, BlinkMacSystemFont, sans-serif";
 		ctx.textAlign = "center";
-		ctx.fillText("Click \"Start\" to generate the activation atlas", canvas.width / 2, canvas.height / 2);
+		ctx.fillText(_L("atlas_click_start_hint", "Click \"Start\" to generate the activation atlas"), canvas.width / 2, canvas.height / 2);
 		ctx.textAlign = "left";
 
 		// Explanation
 		var explanation = document.createElement("div");
 		explanation.className = "atlas_explanation";
-		explanation.innerHTML = "This atlas explores the model's learned activation space <em>without training data</em>. " +
+		explanation.innerHTML = _L("atlas_tab_explanation", "This atlas explores the model's learned activation space <em>without training data</em>. " +
 			"Prototype directions are extracted from layer weights, projected to 2D via t-SNE, and the space is filled via IDW interpolation. " +
-			"Each cell shows a gradient-ascent image of what the model \"sees\" for that interpolated activation.";
+			"Each cell shows a gradient-ascent image of what the model \"sees\" for that interpolated activation.");
 		wrapper.appendChild(explanation);
 
 		container.appendChild(wrapper);
