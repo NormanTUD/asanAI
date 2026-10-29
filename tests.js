@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1661;
+var DEFAULT_EXPECTED_TEST_COUNT = 2123;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -7070,6 +7070,901 @@ function _tiny_tests_origami_live_js() {
 	}
 }
 
+function _tiny_tests_fcnn_editable_js() {
+	var old_model = window.model;
+	var old_get_layer_weight_data = window.get_layer_weight_data;
+	var old_get_fcnn_data = window.get_fcnn_data;
+	var old_started_training = window.started_training;
+
+	try {
+		var light_html = _fcnn_edit_build_popup_html(false);
+		var dark_html = _fcnn_edit_build_popup_html(true);
+		test_equal("_fcnn_edit_build_popup_html has the weight input", light_html.indexOf("fcnn_edit_weight_num") !== -1, true);
+		test_equal("_fcnn_edit_build_popup_html has the bias input", light_html.indexOf("fcnn_edit_bias_num") !== -1, true);
+		test_equal("_fcnn_edit_build_popup_html uses a light border", light_html.indexOf("#ddd") !== -1, true);
+		test_equal("_fcnn_edit_build_popup_html uses a dark border", dark_html.indexOf("#444") !== -1, true);
+
+		window.started_training = false;
+		test_equal("_fcnn_edit_is_training is false while idle", _fcnn_edit_is_training(), false);
+		window.started_training = true;
+		test_equal("_fcnn_edit_is_training is true while training", _fcnn_edit_is_training(), true);
+
+		var fake_canvas = {
+			width: 200,
+			height: 100,
+			getBoundingClientRect: function () { return { left: 10, top: 20, width: 100, height: 50 }; }
+		};
+		var old_get_element = document.getElementById;
+		document.getElementById = function (id) {
+			if (id === "fcnn_canvas") return fake_canvas;
+			return old_get_element.call(document, id);
+		};
+		var canvas_pos = _fcnn_edit_convert_mouse_to_canvas({}, 60, 45);
+		test_equal("_fcnn_edit_convert_mouse_to_canvas scales x", canvas_pos.canvasMouseX, 100);
+		test_equal("_fcnn_edit_convert_mouse_to_canvas scales y", canvas_pos.canvasMouseY, 50);
+		document.getElementById = function (id) {
+			if (id === "fcnn_canvas") return null;
+			return old_get_element.call(document, id);
+		};
+		test_equal("_fcnn_edit_convert_mouse_to_canvas without a canvas", _fcnn_edit_convert_mouse_to_canvas({}, 1, 1), null);
+		document.getElementById = old_get_element;
+
+		var region = { x: 0, y: 0, w: 100, h: 100 };
+		test_equal("_fcnn_edit_map_to_neuron_indices top left", JSON.stringify(_fcnn_edit_map_to_neuron_indices(region, 0, 0, 3, 3)), '{"from_idx":0,"to_idx":0}');
+		test_equal("_fcnn_edit_map_to_neuron_indices bottom right", JSON.stringify(_fcnn_edit_map_to_neuron_indices(region, 100, 100, 3, 3)), '{"from_idx":2,"to_idx":2}');
+		test_equal("_fcnn_edit_map_to_neuron_indices center", JSON.stringify(_fcnn_edit_map_to_neuron_indices(region, 50, 50, 3, 3)), '{"from_idx":1,"to_idx":1}');
+		test_equal("_fcnn_edit_map_to_neuron_indices missing region", JSON.stringify(_fcnn_edit_map_to_neuron_indices({x: 0, y: 0, w: 0, h: 0}, 50, 50, 2, 2)), '{"from_idx":1,"to_idx":1}');
+
+		var weight_info = { shape: [2, 3], data: [1, 2, 3, 4, 5, 6], min: 1, max: 6 };
+		var lookup = _fcnn_edit_lookup_weight(weight_info, 1, 2);
+		test_equal("_fcnn_edit_lookup_weight flat index", lookup.weight_flat_idx, 5);
+		test_equal("_fcnn_edit_lookup_weight value", lookup.weightValue, 6);
+		test_equal("_fcnn_edit_lookup_weight shape metadata", lookup.rows + "x" + lookup.cols, "2x3");
+		var clamped = _fcnn_edit_lookup_weight(weight_info, 99, 99);
+		test_equal("_fcnn_edit_lookup_weight clamps indices", clamped.fi + "," + clamped.ti, "1,2");
+
+		test_equal("_fcnn_edit_layer_has_bias_of_size matches", _fcnn_edit_layer_has_bias_of_size({ getWeights: function () { return [{}, { shape: [2] }]; } }, 2), true);
+		test_equal("_fcnn_edit_layer_has_bias_of_size rejects a mismatch", _fcnn_edit_layer_has_bias_of_size({ getWeights: function () { return [{}, { shape: [3] }]; } }, 2), false);
+		test_equal("_fcnn_edit_layer_has_bias_of_size without weights", _fcnn_edit_layer_has_bias_of_size({ getWeights: function () { return []; } }, 2), false);
+		test_equal("_fcnn_edit_check_layer_bias finds getWeights biases", _fcnn_edit_check_layer_bias({ getWeights: function () { return [{}, { shape: [2] }]; } }, 2), true);
+		test_equal("_fcnn_edit_check_layer_bias finds weight variables", _fcnn_edit_check_layer_bias({ weights: [{}, { val: {} }] }, 2), true);
+		test_equal("_fcnn_edit_check_layer_bias without bias", _fcnn_edit_check_layer_bias({ getWeights: function () { return []; } }, 2), null);
+
+		window.model = {
+			layers: [
+				{ getWeights: function () { return [{}, { shape: [1] }]; } },
+				{ getWeights: function () { return [{}, { shape: [4] }]; } },
+				{ getWeights: function () { return [{}, { shape: [3] }]; } }
+			]
+		};
+		test_equal("_fcnn_edit_scan_adjacent_layers finds the next matching bias", _fcnn_edit_scan_adjacent_layers(1, 3), 2);
+		test_equal("_fcnn_edit_scan_adjacent_layers finds nothing", _fcnn_edit_scan_adjacent_layers(0, 9), null);
+
+		window.get_layer_weight_data = function () { return { data: [11, 22, 33] }; };
+		test_equal("_fcnn_edit_read_weight_at uses layer weight data", _fcnn_edit_read_weight_at({ from_layer: 0, meta_infos: [] }, 1), 22);
+		window.get_layer_weight_data = null;
+		window.model = { layers: [{ getWeights: function () { return [{ dataSync: function () { return Float32Array.from([7, 8]); } }]; } }] };
+		test_equal("_fcnn_edit_read_weight_at falls back to model weights", _fcnn_edit_read_weight_at({ from_layer: 0, meta_infos: [null, { nr: 0 }] }, 1), 8);
+		test_equal("_fcnn_edit_read_weight_at rejects out-of-range indices", _fcnn_edit_read_weight_at({ from_layer: 0, meta_infos: [null, { nr: 0 }] }, 9), null);
+
+		test_equal("_try_read_bias_from_getWeights reads biases", JSON.stringify(_try_read_bias_from_getWeights({ getWeights: function () { return [{}, { dataSync: function () { return Float32Array.from([5, 6]); } }]; } })), "[5,6]");
+		test_equal("_try_read_bias_from_weights_property reads weight variables", JSON.stringify(_try_read_bias_from_weights_property({ weights: [{}, { val: { dataSync: function () { return Float32Array.from([1, 2]); } } }] })), "[1,2]");
+		test_equal("_try_read_bias_from_layer_bias reads layer.bias", JSON.stringify(_try_read_bias_from_layer_bias({ bias: { val: { arraySync: function () { return [[3], [4]]; } } } })), "[3,4]");
+		test_equal("_try_extract_array_from_tensor flattens arraySync", JSON.stringify(_try_extract_array_from_tensor({ arraySync: function () { return [[1, 2], [3, 4]]; } })), "[1,2,3,4]");
+		test_equal("_try_extract_array_from_weight_variable reads read()", JSON.stringify(_try_extract_array_from_weight_variable({ read: function () { return { dataSync: function () { return Float32Array.from([9, 8]); } }; } })), "[9,8]");
+		test_equal("_check_layer_has_no_bias detects use_bias false", _check_layer_has_no_bias({ getConfig: function () { return { use_bias: false }; } }), true);
+		test_equal("_check_layer_has_no_bias defaults to false", _check_layer_has_no_bias({ getConfig: function () { return { use_bias: true }; } }), false);
+
+		window.model = { layers: [{ getWeights: function () { return [{}, { dataSync: function () { return Float32Array.from([4, 5]); } }]; } }] };
+		test_equal("_fcnn_edit_get_bias_data returns bias values", JSON.stringify(_fcnn_edit_get_bias_data(0)), "[4,5]");
+		test_equal("_fcnn_edit_get_bias_data rejects invalid layers", _fcnn_edit_get_bias_data(9), null);
+
+		window.get_fcnn_data = function () {
+			return [["out"], [2], [{ nr: 0 }, { nr: 1 }]];
+		};
+		window.model = { layers: [{ getWeights: function () { return [{}, { shape: [2] }]; } }, { getWeights: function () { return [{}, { shape: [2] }]; } }] };
+		test_equal("_fcnn_edit_find_dense_layer_for_neuron finds the first layer", _fcnn_edit_find_dense_layer_for_neuron(0), 0);
+		test_equal("_fcnn_edit_find_dense_layer_for_neuron finds a later layer", _fcnn_edit_find_dense_layer_for_neuron(1), 1);
+		window.model = null;
+		test_equal("_fcnn_edit_find_dense_layer_for_neuron without a model", _fcnn_edit_find_dense_layer_for_neuron(0), null);
+	} finally {
+		window.model = old_model;
+		window.get_layer_weight_data = old_get_layer_weight_data;
+		window.get_fcnn_data = old_get_fcnn_data;
+		window.started_training = old_started_training;
+	}
+}
+
+function _tiny_tests_drawing_js() {
+	var old_atrament_data = window.atrament_data;
+	try {
+		var id = "__asanai_drawing_probe__";
+		var box = document.createElement("div");
+		var canvas = document.createElement("canvas");
+		canvas.id = id;
+		canvas.width = 20;
+		canvas.height = 10;
+		var colorpicker = document.createElement("span");
+		colorpicker.className = "colorpicker_elements";
+		var slider = document.createElement("div");
+		slider.className = "pen_size_slider";
+		var picker = document.createElement("div");
+		picker.className = "jscolor";
+		var button = document.createElement("button");
+		box.appendChild(canvas);
+		box.appendChild(colorpicker);
+		box.appendChild(slider);
+		box.appendChild(picker);
+		box.appendChild(button);
+		document.body.appendChild(box);
+
+		window.atrament_data = {};
+		window.atrament_data[id] = { canvas: canvas, atrament: { mode: "erase" } };
+		hide_colorpicker_for_eraser(id);
+		test_equal("hide_colorpicker_for_eraser hides for erase mode", colorpicker.style.visibility, "hidden");
+		window.atrament_data[id].atrament.mode = "brush";
+		hide_colorpicker_for_eraser(id);
+		test_equal("hide_colorpicker_for_eraser shows for brush mode", colorpicker.style.visibility, "visible");
+
+		atrament_set_brush(button, id);
+		test_equal("atrament_set_brush sets brush mode", window.atrament_data[id].atrament.mode, "brush");
+		test_equal("atrament_set_brush shows the pen slider", slider.style.display !== "none", true);
+		test_equal("atrament_set_brush marks the button", button.classList.contains("green_icon"), true);
+		atrament_set_fill(button, id);
+		test_equal("atrament_set_fill sets fill mode", window.atrament_data[id].atrament.mode, "fill");
+		test_equal("atrament_set_fill hides the pen slider", slider.style.display, "none");
+
+		var marker_box = document.createElement("div");
+		var marker_parent = document.createElement("div");
+		var old_marker = document.createElement("button");
+		old_marker.className = "green_icon";
+		var marker = document.createElement("button");
+		marker_parent.appendChild(old_marker);
+		marker_parent.appendChild(marker);
+		marker_box.appendChild(marker_parent);
+		document.body.appendChild(marker_box);
+		green_marker(marker);
+		test_equal("green_marker removes the old marker", old_marker.classList.contains("green_icon"), false);
+		test_equal("green_marker adds the new marker", marker.classList.contains("green_icon"), true);
+
+		var original_canvas = document.createElement("canvas");
+		original_canvas.width = 8;
+		original_canvas.height = 6;
+		var cloned_canvas = clone_canvas(original_canvas);
+		test_equal("clone_canvas keeps width", cloned_canvas.width, 8);
+		test_equal("clone_canvas keeps height", cloned_canvas.height, 6);
+		test_equal("clone_canvas returns a new canvas", cloned_canvas !== original_canvas, true);
+
+		box.remove();
+		marker_box.remove();
+	} finally {
+		window.atrament_data = old_atrament_data;
+	}
+}
+
+function _tiny_tests_safety_js() {
+	var failure = new assertation_failed("probe");
+	test_equal("assertation_failed stores the message", failure.message, "probe");
+	test_equal("assert passes true values", assert(true, "probe"), undefined);
+	window.__asanai_typeassert_number = 3;
+	window.__asanai_typeassert_array = [];
+	test_equal("typeassert accepts numbers", typeassert(window.__asanai_typeassert_number, "number", "probe"), undefined);
+	test_equal("typeassert accepts arrays", typeassert(window.__asanai_typeassert_array, "array", "probe"), undefined);
+	delete window.__asanai_typeassert_number;
+	delete window.__asanai_typeassert_array;
+}
+
+function _tiny_tests_cookies_and_url_js() {
+	var old_href = window.location.href;
+	var name = "__asanai_cookie_probe__";
+	try {
+		set_get("asanai_test_param", "42");
+		test_equal("set_get writes a query parameter", window.location.search.indexOf("asanai_test_param=42") !== -1, true);
+		test_equal("get_get reads a query parameter", get_get("asanai_test_param"), "42");
+		test_equal("get_get falls back to the default", get_get("asanai_missing_param", "fallback"), "fallback");
+
+		document.cookie = name + "=1; path=/";
+		test_equal("delete_cookie prepares a cookie", get_cookie(name), "1");
+		delete_cookie(name);
+		test_equal("delete_cookie removes the cookie", get_cookie(name), null);
+	} finally {
+		history.replaceState(null, "", old_href);
+	}
+}
+
+function _tiny_tests_input_shape_js() {
+	test_equal("get_shape_from_file reads the feature shape", get_shape_from_file("# shape: (1, 28, 28, 1)\ndata"), "28, 28, 1");
+	test_equal("get_full_shape_without_batch replaces the batch size", JSON.stringify(get_full_shape_without_batch("# shape: (1, 28, 28, 1)")), "[null,28,28,1]");
+	test_equal("get_shape_from_array nested", JSON.stringify(get_shape_from_array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])), "[2,2,2]");
+	test_equal("generateOnesString repeats dimensions", generateOnesString("2d 3d"), "1,1,1,1,1");
+	test_equal("generateOnesString without numbers", generateOnesString("abc"), "");
+	test_equal("getDimFromString parses lowercase", getDimFromString("4d"), 4);
+	test_equal("getDimFromString parses uppercase", getDimFromString("2D"), 2);
+	test_equal("getDimFromString without a dimension", getDimFromString("abc"), null);
+	test_equal("safeGetDim parses strings", safeGetDim("4d"), 4);
+	test_equal("safeGetDim returns null for unknown strings", safeGetDim("abc"), null);
+	var thrown = false;
+	try { get_shape_from_array("not an array"); } catch (e) { thrown = e instanceof TypeError; }
+	test_equal("get_shape_from_array rejects non-arrays", thrown, true);
+
+	var old_input_shape = $("#inputShape").val();
+	var old_batch_size = $("#batchSize").val();
+	try {
+		$("#inputShape").val("[2, 3]");
+		$("#batchSize").val("16");
+		test_equal("get_input_shape reads the DOM", JSON.stringify(get_input_shape()), "[2,3]");
+		test_equal("get_input_shape_with_batch_size prepends the batch size", JSON.stringify(get_input_shape_with_batch_size()), "[16,2,3]");
+	} finally {
+		$("#inputShape").val(old_input_shape);
+		$("#batchSize").val(old_batch_size);
+	}
+}
+
+async function _tiny_tests_labels_js() {
+	var old_labels = labels;
+	var old_download = window.download;
+	var old_set_labels = window.set_labels;
+	var old_update_python_code = window.update_python_code;
+	var probe = document.createElement("input");
+	probe.value = "cat";
+	document.body.appendChild(probe);
+	try {
+		test_equal("_get_debug_msg_for_set_labels accepts softmax dense outputs", _get_debug_msg_for_set_labels([null, 3], "softmax", "Dense"), "");
+		var debug_msg = _get_debug_msg_for_set_labels([1], "relu", "Dense");
+		test_equal("_get_debug_msg_for_set_labels explains batch dimensions", debug_msg.indexOf(language[lang]["batch_dimension_in_output_shape_must_be_null"]) !== -1, true);
+		test_equal("_get_debug_msg_for_set_labels explains output ranks", debug_msg.indexOf(language[lang]["output_shape_length_must_be_two"]) !== -1, true);
+
+		var downloaded = null;
+		window.download = function (name, content) { downloaded = { name: name, content: content }; };
+		labels = ["a", "b"];
+		download_labels_json();
+		test_equal("download_labels_json uses labels.json", downloaded.name, "labels.json");
+		test_equal("download_labels_json serializes the labels", downloaded.content, '["a","b"]');
+
+		var loaded = null;
+		window.set_labels = async function (arr) { loaded = arr; };
+		await load_labels_from_json_string('["x","y"]');
+		test_equal("load_labels_from_json_string delegates to set_labels", JSON.stringify(loaded), '["x","y"]');
+
+		labels = ["old"];
+		var python_updates = 0;
+		window.update_python_code = async function () { python_updates++; return true; };
+		await update_label_by_nr(probe, 0);
+		test_equal("update_label_by_nr updates the label array", labels[0], "cat");
+		test_equal("update_label_by_nr refreshes python code", python_updates, 1);
+	} finally {
+		labels = old_labels;
+		window.download = old_download;
+		window.set_labels = old_set_labels;
+		window.update_python_code = old_update_python_code;
+		probe.remove();
+	}
+}
+
+function _tiny_tests_skip_connection_js() {
+	var old_settings = skip_connection_settings;
+	var old_hash = model_config_hash;
+	var old_get_number_of_layers = window.get_number_of_layers;
+	var old_updated_page = window.updated_page;
+	var wrapper = null;
+	try {
+		test_equal("_get_skip_initializer_default_value mean", _get_skip_initializer_default_value("mean", 0), 0);
+		test_equal("_get_skip_initializer_default_value stddev", _get_skip_initializer_default_value("stddev", 0), 0.05);
+		test_equal("_get_skip_initializer_default_value value", _get_skip_initializer_default_value("value", 0), 1);
+		test_equal("_get_skip_initializer_default_value mode", _get_skip_initializer_default_value("mode", 0), "fanIn");
+		test_equal("_get_skip_initializer_default_value distribution", _get_skip_initializer_default_value("distribution", 0), "normal");
+		test_equal("_get_skip_initializer_default_value fallback", _get_skip_initializer_default_value("unknown", 0), 1);
+
+		skip_connection_settings = [];
+		var init_html = _get_skip_initializer_sub_options_html(0, "glorotUniform", null);
+		test_equal("_get_skip_initializer_sub_options_html returns a string", typeof init_html, "string");
+		test_equal("_get_skip_initializer_sub_options_html rejects unknown initializers", _get_skip_initializer_sub_options_html(0, "__unknown__", null), "");
+		var option_html = add_skip_connection_option("dense", 0);
+		test_equal("add_skip_connection_option builds the checkbox row", option_html.indexOf("skip_connection_enabled") !== -1, true);
+		test_equal("build_skip_connection_html delegates", build_skip_connection_html("dense", 0).indexOf("skip_connection_tr") !== -1, true);
+
+		var param_input = document.createElement("input");
+		param_input.value = "0.5";
+		model_config_hash = "hash";
+		update_skip_connection_initializer_param(0, "mean", param_input);
+		test_equal("update_skip_connection_initializer_param stores floats", skip_connection_settings[0].initializer_params.mean, 0.5);
+		test_equal("update_skip_connection_initializer_param invalidates the config", model_config_hash, null);
+
+		var init_select = document.createElement("select");
+		var init_option = document.createElement("option");
+		init_option.value = "glorotUniform";
+		init_option.textContent = "glorotUniform";
+		init_select.appendChild(init_option);
+		init_select.value = "glorotUniform";
+		model_config_hash = "hash";
+		update_skip_connection_initializer(0, init_select);
+		test_equal("update_skip_connection_initializer stores the initializer", skip_connection_settings[0].initializer, "glorotUniform");
+		test_equal("update_skip_connection_initializer invalidates the config", model_config_hash, null);
+
+		wrapper = document.createElement("div");
+		wrapper.className = "layer_setting";
+		var init_row = document.createElement("tr");
+		init_row.className = "skip_connection_initializer_tr";
+		init_row.style.display = "none";
+		var count_row = document.createElement("tr");
+		count_row.className = "skip_connection_count_tr";
+		count_row.style.display = "none";
+		var option_row = document.createElement("tr");
+		option_row.className = "skip_connection_initializer_option_tr";
+		option_row.style.display = "none";
+		var checkbox = document.createElement("input");
+		checkbox.type = "checkbox";
+		checkbox.className = "skip_connection_enabled";
+		checkbox.checked = true;
+		wrapper.appendChild(init_row);
+		wrapper.appendChild(count_row);
+		wrapper.appendChild(option_row);
+		wrapper.appendChild(checkbox);
+		document.body.appendChild(wrapper);
+
+		skip_connection_settings = [];
+		var update_calls = 0;
+		window.get_number_of_layers = function () { return 3; };
+		window.updated_page = function () { update_calls++; };
+		toggle_skip_connection(0, checkbox);
+		test_equal("toggle_skip_connection enables the setting", skip_connection_settings[0].enabled, true);
+		test_equal("toggle_skip_connection shows the initializer row", init_row.style.display !== "none", true);
+		test_equal("toggle_skip_connection refreshes the page", update_calls, 1);
+		checkbox.checked = false;
+		toggle_skip_connection(0, checkbox);
+		test_equal("toggle_skip_connection disables the setting", skip_connection_settings[0].enabled, false);
+		test_equal("toggle_skip_connection hides the initializer row", init_row.style.display, "none");
+		test_equal("toggle_skip_connection refreshes again", update_calls, 2);
+	} finally {
+		skip_connection_settings = old_settings;
+		model_config_hash = old_hash;
+		window.get_number_of_layers = old_get_number_of_layers;
+		window.updated_page = old_updated_page;
+		if (wrapper) wrapper.remove();
+	}
+}
+
+function _tiny_tests_math_editable_js() {
+	var old_editables = _math_editables;
+	var old_popup = _math_pop_el;
+	var old_active = _math_active_ed;
+	var created_popup = !_math_pop_el;
+	var container = document.createElement("div");
+	var span = document.createElement("span");
+	span.setAttribute("data-math-eid", "probe");
+	container.appendChild(span);
+	document.body.appendChild(container);
+	try {
+		_math_editables = [];
+		var values = { probe: 1.23456, probe2: 2.5 };
+		var set_values = {};
+		math_register_editable("probe", function () { return values.probe; }, function (v) { set_values.probe = v; }, 0, 10, "Probe", { step: 0.1, decimals: 2 });
+		test_equal("math_register_editable adds an editable", math_find_editable("probe") !== null, true);
+		test_equal("math_register_editable stores options", math_find_editable("probe").step, 0.1);
+		test_equal("math_register_editable stores decimals", math_find_editable("probe").decimals, 2);
+		math_register_editable("probe", function () { return values.probe; }, function (v) { set_values.probe = v; }, 0, 10, "Probe 2", { step: 0.1, decimals: 2 });
+		test_equal("math_register_editable updates duplicates", _math_editables.length, 1);
+		test_equal("math_register_editable updates the label", math_find_editable("probe").label, "Probe 2");
+		test_equal("math_find_editable rejects unknown ids", math_find_editable("missing"), null);
+
+		var changed = null;
+		var event_value = null;
+		math_find_editable("probe").onChange = function (value) { changed = value; };
+		var listener = function (event) { event_value = event.detail.value; };
+		document.addEventListener("math_variable_changed", listener);
+		_math_on_variable_changed(math_find_editable("probe"));
+		document.removeEventListener("math_variable_changed", listener);
+		test_equal("_math_on_variable_changed updates the DOM", span.textContent, "1.23");
+		test_equal("_math_on_variable_changed calls onChange", changed, 1.23456);
+		test_equal("_math_on_variable_changed dispatches an event", event_value, 1.23456);
+
+		math_register_editable("probe2", function () { return values.probe2; }, function (v) { set_values.probe2 = v; }, 0, 10, "Probe 2", { decimals: 3 });
+		var colored = document.createElement("span");
+		colored.setAttribute("style", "color: #53d8fb");
+		colored.textContent = "9.99";
+		container.appendChild(colored);
+		_replace_colored_spans_with_editables(container, [{ eid: "probe2" }]);
+		test_equal("_replace_colored_spans_with_editables marks the span", colored.classList.contains("math-ed-num"), true);
+		test_equal("_replace_colored_spans_with_editables writes the value", colored.textContent, "2.500");
+		test_equal("_replace_colored_spans_with_editables stores the id", colored.getAttribute("data-math-eid"), "probe2");
+
+		var rendered = document.createElement("div");
+		el_render_single_latex_with_editables(rendered, "x + 1", []);
+		test_equal("el_render_single_latex_with_editables renders a wrapper", rendered.querySelectorAll(".math-hybrid-rendered").length, 1);
+
+		var popup = math_ensure_popup();
+		test_equal("math_ensure_popup creates one popup", popup.id, "math_var_popup");
+		test_equal("math_ensure_popup is idempotent", math_ensure_popup(), popup);
+		math_open_popup("probe2", { left: 100, top: 200, right: 200, bottom: 220, width: 100, height: 20 });
+		test_equal("math_open_popup marks the popup visible", popup.classList.contains("math-pop-visible"), true);
+		test_equal("math_open_popup sets the label", document.getElementById("math_pop_lbl").textContent, "Probe 2");
+		test_equal("math_open_popup sets the slider bounds", document.getElementById("math_pop_slider").min + "/" + document.getElementById("math_pop_slider").max, "0/10");
+		test_equal("math_open_popup stores the active editable", _math_active_ed.id, "probe2");
+		_math_update_popup_position();
+		test_equal("_math_update_popup_position positions the popup", popup.style.left !== "" && popup.style.top !== "", true);
+		math_close_popup();
+		test_equal("math_close_popup hides the popup", popup.classList.contains("math-pop-visible"), false);
+		test_equal("math_close_popup clears the active editable", _math_active_ed, null);
+	} finally {
+		if (created_popup && _math_pop_el) {
+			_math_pop_el.remove();
+			_math_pop_el = null;
+		}
+		_math_editables = old_editables;
+		_math_pop_el = old_popup;
+		_math_active_ed = old_active;
+		container.remove();
+	}
+}
+
+async function _tiny_tests_csv_js() {
+	var old_csv_value = $("#csv_file").val();
+	var old_show_csv_file = window.show_csv_file;
+	var error_box = document.getElementById("custom_function_error");
+	var old_error_html = error_box ? error_box.innerHTML : null;
+	var old_error_style = error_box ? error_box.getAttribute("style") : null;
+	try {
+		var fallback = _latex_fallback_html("<x>&");
+		test_equal("_latex_fallback_html escapes markup", fallback.indexOf("&lt;x&gt;&amp;") !== -1, true);
+		test_equal("_latex_fallback_html keeps the fallback class", fallback.indexOf("xy_matrix_fallback") !== -1, true);
+		var example = get_example_csv();
+		test_equal("get_example_csv has the header", example.indexOf("sex(m=0;w=1),height,shoe_size") === 0, true);
+		test_equal("get_example_csv has data rows", example.split("\n").length > 10, true);
+
+		var shown = 0;
+		window.show_csv_file = async function () { shown++; };
+		$("#csv_file").val("");
+		await load_shoe_example();
+		test_equal("load_shoe_example fills the CSV field", $("#csv_file").val(), example);
+		test_equal("load_shoe_example shows the CSV panel", shown > 0, true);
+
+		if (!error_box) {
+			error_box = document.createElement("div");
+			error_box.id = "custom_function_error";
+			document.body.appendChild(error_box);
+		}
+		var res = set_custom_function_error("probe error");
+		test_equal("set_custom_function_error returns an empty string", res, "");
+		test_equal("set_custom_function_error writes the message", error_box.innerHTML, "probe error");
+		test_equal("set_custom_function_error shows the box", error_box.style.display !== "none", true);
+	} finally {
+		$("#csv_file").val(old_csv_value);
+		window.show_csv_file = old_show_csv_file;
+		if (error_box) {
+			if (old_error_html === null) {
+				error_box.remove();
+			} else {
+				error_box.innerHTML = old_error_html;
+				if (old_error_style === null) error_box.removeAttribute("style");
+				else error_box.setAttribute("style", old_error_style);
+			}
+		}
+	}
+}
+
+async function _tiny_tests_plot_predict_js() {
+	var old_model = window.model;
+	var old_predict = window.__predict;
+	var old_get_weights = window.get_weights_as_string;
+	var old_react = Plotly.react;
+	var old_set_timeout = window.setTimeout;
+	var old_dark = window.is_dark_mode;
+	var prediction_tensor = null;
+	try {
+		test_equal("_pp_eq compares arrays", _pp_eq([1, 2], [1, 2]), true);
+		test_equal("_pp_eq rejects different arrays", _pp_eq([1, 2], [1, 3]), false);
+		test_equal("_pp_range includes the end", JSON.stringify(_pp_range(0, 1, 0.5)), "[0,0.5,1]");
+		test_equal("_pp_extract_vals reads suffix keys", JSON.stringify(_pp_extract_vals("p", { p_x_min: 1, p_x_max: 2, p_y_min: 3, p_y_max: 4, p_step: 5 })), '{"x_min":1,"x_max":2,"y_min":3,"y_max":4,"step":5}');
+
+		var layout_div = document.createElement("div");
+		window.is_dark_mode = true;
+		var dark_layout = _pp_base_layout(layout_div);
+		test_equal("_pp_base_layout uses white text in dark mode", dark_layout.font.color, "#fff");
+		window.is_dark_mode = false;
+		var light_layout = _pp_base_layout(layout_div);
+		test_equal("_pp_base_layout uses black text in light mode", light_layout.font.color, "#000");
+
+		window.model = { input: { shape: [null, 1] }, output: { shape: [null, 1] } };
+		test_equal("_pp_detect_case detects case A", _pp_detect_case().fallA, true);
+		window.model = { input: { shape: [null, 2] }, output: { shape: [null, 1] } };
+		test_equal("_pp_detect_case detects case B1", _pp_detect_case().fallB1, true);
+		window.model = { input: { shape: [null, 1] }, output: { shape: [null, 2] } };
+		test_equal("_pp_detect_case detects case B2", _pp_detect_case().fallB2, true);
+		test_equal("_pp_has_valid_model_shape accepts valid models", !!_pp_has_valid_model_shape(), true);
+		window.model = null;
+		test_equal("_pp_has_valid_model_shape rejects missing models", !!_pp_has_valid_model_shape(), false);
+
+		window.get_weights_as_string = function () { return "weights"; };
+		test_equal("_pp_get_weights delegates to the exporter", _pp_get_weights(), "weights");
+		window.get_weights_as_string = null;
+		test_equal("_pp_get_weights falls back to an empty string", _pp_get_weights(), "");
+
+		var camera = { eye: { x: 1, y: 2, z: 3 } };
+		var fake_dom = {
+			_fullLayout: { scene: { _scene: { getCamera: function () { return camera; } } } },
+			on: function () {}
+		};
+		var react_calls = 0;
+		Plotly.react = async function () { react_calls++; };
+		var camera_layout = {};
+		await ModelPlotter._pp_plot_preserve_camera(fake_dom, [{ type: "surface" }], camera_layout, {}, "probe");
+		test_equal("_pp_plot_preserve_camera sets uirevision", camera_layout.uirevision, "probe");
+		test_equal("_pp_plot_preserve_camera restores the camera", camera_layout.scene.camera, camera);
+		test_equal("_pp_plot_preserve_camera attaches one listener", fake_dom.__camera_listener, true);
+		test_equal("_pp_plot_preserve_camera calls Plotly.react", react_calls, 1);
+
+		var debounced_calls = 0;
+		window.setTimeout = function (fn) { fn(); return 1; };
+		var debounced = _pp_debounce(function () { debounced_calls++; }, 10);
+		debounced();
+		test_equal("_pp_debounce invokes the callback", debounced_calls, 1);
+		window.setTimeout = old_set_timeout;
+
+		window.__predict = async function (t) {
+			var n = t.shape[0];
+			t.dispose();
+			prediction_tensor = tf.zeros([n, 1]);
+			return prediction_tensor;
+		};
+		var trace = await _pp_caseA_batched(0, 1, 0.5);
+		test_equal("_pp_caseA_batched uses one line trace", trace.length, 1);
+		test_equal("_pp_caseA_batched returns the x range", JSON.stringify(trace[0].x), "[0,0.5,1]");
+		test_equal("_pp_caseA_batched returns one prediction per input", trace[0].y.length, 3);
+		prediction_tensor.dispose();
+	} finally {
+		window.model = old_model;
+		window.__predict = old_predict;
+		window.get_weights_as_string = old_get_weights;
+		Plotly.react = old_react;
+		window.setTimeout = old_set_timeout;
+		window.is_dark_mode = old_dark;
+	}
+}
+
+function _tiny_tests_python_code_js() {
+	var converted = convert_to_python_string({ a: 1, b: true, c: "x", d: [1, 2] });
+	test_equal("convert_to_python_string writes numbers", converted.indexOf("a: 1") !== -1, true);
+	test_equal("convert_to_python_string writes booleans", converted.indexOf("b: True") !== -1, true);
+	test_equal("convert_to_python_string quotes strings", converted.indexOf('c: "x"') !== -1, true);
+	test_equal("convert_to_python_string includes every key", converted.indexOf("d:") !== -1, true);
+
+	test_equal("model_add_python_structure marks MultiActivation as custom", model_add_python_structure("MultiActivation", {}, false).indexOf("custom to asanAI") !== -1, true);
+	var max3d = model_add_python_structure("MaxPooling3D", { pool_size: [2, 2, 2] }, false);
+	test_equal("model_add_python_structure writes MaxPooling3D", max3d.indexOf("MaxPooling3D") !== -1, true);
+	test_equal("model_add_python_structure writes the 3D pool size", max3d.indexOf("(2, 2, 2)") !== -1, true);
+	var max1d = model_add_python_structure("MaxPooling1D", { pool_size: [2] }, false);
+	test_equal("model_add_python_structure writes MaxPooling1D", max1d.indexOf("MaxPooling1D") !== -1, true);
+
+	var loader = _get_tensorflow_data_loader_code();
+	test_equal("_get_tensorflow_data_loader_code builds generators", loader.indexOf("flow_from_directory") !== -1, true);
+	test_equal("_get_tensorflow_data_loader_code uses the validation split", loader.indexOf("validation_split=") !== -1, true);
+	var run_sh = _get_run_sh_file_for_custom_training();
+	test_equal("_get_run_sh_file_for_custom_training has a shebang", run_sh.indexOf("#!/bin/bash") === 0, true);
+	test_equal("_get_run_sh_file_for_custom_training defines helpers", run_sh.indexOf("green_text") !== -1, true);
+	var readme = _get_readme_md_for_local_training();
+	test_equal("_get_readme_md_for_local_training has a title", readme.indexOf("# What is this?") !== -1, true);
+	test_equal("_get_readme_md_for_local_training mentions run.sh", readme.indexOf("run.sh") !== -1, true);
+	var predict_py = _get_predict_py_for_local_training();
+	test_equal("_get_predict_py_for_local_training defines the predictor", predict_py.indexOf("def predict_single_file") !== -1, true);
+	test_equal("_get_predict_py_for_local_training uses the image size", predict_py.indexOf("target_size=(") !== -1, true);
+	var save_code = _get_tensorflow_save_model_code();
+	test_equal("_get_tensorflow_save_model_code saves the model", save_code.indexOf("model.save") !== -1 || save_code.indexOf("saved_model") !== -1, true);
+}
+
+async function _tiny_tests_base_wrappers_extra_js() {
+	var binary_true = tensor2d([[1], [0]]);
+	var binary_pred = tensor2d([[0.9], [0.1]]);
+	var metric_tests = [
+		["meanAbsoluteError", tf_metrics_meanAbsoluteError],
+		["meanSquaredError", tf_metrics_meanSquaredError],
+		["binaryCrossentropy", tf_metrics_binaryCrossentropy],
+		["binaryAccuracy", tf_metrics_binaryAccuracy],
+		["precision", tf_metrics_precision],
+		["cosineProximity", tf_metrics_cosineProximity]
+	];
+	try {
+		for (var metric_idx = 0; metric_idx < metric_tests.length; metric_idx++) {
+			var metric_result = metric_tests[metric_idx][1](binary_true, binary_pred);
+			test_equal("tf_metrics_" + metric_tests[metric_idx][0] + " returns a tensor", is_tensor(metric_result), true);
+			test_equal("tf_metrics_" + metric_tests[metric_idx][0] + " is finite", Array.from(metric_result.dataSync()).every(isFinite), true);
+			await dispose(metric_result);
+		}
+
+		var mape_true = tensor2d([[1], [2]]);
+		var mape_pred = tensor2d([[1], [3]]);
+		var mape_result = tf_metrics_meanAbsolutePercentageError(mape_true, mape_pred);
+		test_equal("tf_metrics_meanAbsolutePercentageError is finite", Array.from(mape_result.dataSync()).every(isFinite), true);
+		await dispose(mape_result);
+
+		var categorical_true = tensor2d([[1, 0], [0, 1]]);
+		var categorical_pred = tensor2d([[0.9, 0.1], [0.2, 0.8]]);
+		var categorical_crossentropy = tf_metrics_categoricalCrossentropy(categorical_true, categorical_pred);
+		test_equal("tf_metrics_categoricalCrossentropy is finite", Array.from(categorical_crossentropy.dataSync()).every(isFinite), true);
+		await dispose(categorical_crossentropy);
+		var categorical_accuracy = tf_metrics_categoricalAccuracy(categorical_true, categorical_pred);
+		test_equal("tf_metrics_categoricalAccuracy is finite", Array.from(categorical_accuracy.dataSync()).every(isFinite), true);
+		await dispose(categorical_accuracy);
+		await dispose(mape_true, mape_pred, categorical_true, categorical_pred);
+
+		var moments_input = tensor1d([1, 2, 3]);
+		var moments = tf_moments(moments_input);
+		test_equal("tf_moments returns the mean", Number(moments.mean.dataSync()[0]), 2);
+		test_equal("tf_moments returns the variance", Math.abs(Number(moments.variance.dataSync()[0]) - 2 / 3) < 1e-6, true);
+		await dispose(moments_input, moments.mean, moments.variance);
+
+		var unique_input = tensor1d([1, 1, 2]);
+		var unique = tf_unique(unique_input);
+		test_equal("tf_unique returns unique values", JSON.stringify(Array.from(unique.values.dataSync())), "[1,2]");
+		test_equal("tf_unique returns indices", JSON.stringify(Array.from(unique.indices.dataSync())), "[0,0,1]");
+		await dispose(unique_input, unique.values, unique.indices);
+
+		var reshape_input = tensor1d([1, 2, 3, 4]);
+		var reshaped = tf_reshape(reshape_input, [2, 2]);
+		test_equal("tf_reshape keeps the shape", JSON.stringify(reshaped.shape), "[2,2]");
+		await dispose(reshape_input, reshaped);
+
+		var one_d = tensor1d([1, 2]);
+		var two_d = tensor2d([[1, 2], [3, 4]]);
+		test_equal("tensor1d returns rank one", one_d.shape.length, 1);
+		test_equal("tensor2d returns rank two", two_d.shape.length, 2);
+		await dispose(one_d, two_d);
+
+		var square_input = tensor1d([1, 2, 3]);
+		var squared = tf_square(square_input);
+		test_equal("tf_square squares values", JSON.stringify(Array.from(squared.dataSync())), "[1,4,9]");
+		await dispose(square_input, squared);
+
+		var sqrt_input = tensor1d([1, 4, 9]);
+		var roots = sqrt(sqrt_input);
+		test_equal("sqrt takes square roots", JSON.stringify(Array.from(roots.dataSync())), "[1,2,3]");
+		await dispose(sqrt_input, roots);
+
+		var random = randomUniform([2, 2]);
+		test_equal("randomUniform returns the requested shape", JSON.stringify(random.shape), "[2,2]");
+		test_equal("randomUniform stays between zero and one", Array.from(random.dataSync()).every(function (v) { return v >= 0 && v <= 1; }), true);
+		await dispose(random);
+
+		var image_input = tensor([[ [1], [2] ], [ [3], [4] ]]);
+		var resized = resizeBilinear(image_input, [4, 4]);
+		test_equal("resizeBilinear keeps rank three", resized.shape.length, 3);
+		test_equal("resizeBilinear uses the requested resolution", resized.shape[0] + "x" + resized.shape[1], "4x4");
+		await dispose(image_input, resized);
+
+		var shape_input = tensor2d([[0, 0], [0, 0]]);
+		var constant = tf_constant_shape(5, shape_input);
+		test_equal("tf_constant_shape keeps the shape", JSON.stringify(constant.shape), "[2,2]");
+		test_equal("tf_constant_shape fills with the value", Array.from(constant.dataSync()).every(function (v) { return v === 5; }), true);
+		await dispose(shape_input, constant);
+
+		var sequential_model = tf_sequential("__asanai_sequential_probe__");
+		test_equal("tf_sequential stores the UUID", sequential_model.uuid, "__asanai_sequential_probe__");
+		test_equal("tf_sequential starts empty", sequential_model.layers.length, 0);
+		sequential_model.add(tf.layers.dense({ units: 1, inputShape: [2] }));
+		test_equal("tf_sequential adds layers through the wrapper", sequential_model.layers.length, 1);
+		sequential_model.dispose();
+
+		var browser_file = new File(["probe"], "probe.txt", { type: "text/plain" });
+		var files = iobrowserFiles([browser_file]);
+		test_equal("iobrowserFiles returns a browser file set", !!files, true);
+
+		test_equal("get_epsilon is a small positive number", get_epsilon() > 0 && get_epsilon() < 1, true);
+	} finally {
+		await dispose(binary_true, binary_pred);
+	}
+}
+
+function _tiny_tests_math_mode_extra_js() {
+	var old_model = window.model;
+	var old_get_item_value = window.get_item_value;
+	var old_get_h = window._get_h;
+	var old_get_metric = window.get_metric;
+	var fake_tensors = [];
+	try {
+		test_equal("add_activation_function_to_latex linear is empty", add_activation_function_to_latex("linear"), "");
+		test_equal("add_activation_function_to_latex begins", add_activation_function_to_latex("relu", "begin"), "\t\\text{relu}\\left(");
+		test_equal("add_activation_function_to_latex ends", add_activation_function_to_latex("relu", "end"), "\\right)");
+
+		test_equal("_has_numbers accepts numbers", _has_numbers(3), true);
+		test_equal("_has_numbers rejects NaN", _has_numbers(NaN), false);
+		test_equal("_has_numbers accepts nested numbers", _has_numbers([[NaN], [1]]), true);
+		test_equal("_has_numbers rejects empty arrays", _has_numbers([]), false);
+		test_equal("_has_numbers rejects strings", _has_numbers("1"), false);
+		test_equal("_latex_is_balanced accepts balanced braces", _latex_is_balanced("\\frac{1}{2}"), true);
+		test_equal("_latex_is_balanced rejects open braces", _latex_is_balanced("{x"), false);
+		test_equal("_latex_is_balanced rejects extra closes", _latex_is_balanced("x}"), false);
+		test_equal("_latex_is_balanced ignores escaped braces", _latex_is_balanced("\\{x\\}"), true);
+		test_equal("_latex_is_balanced rejects non-strings", _latex_is_balanced(null), false);
+
+		test_equal("get_shape_from returns arrays", get_shape_from([1, 2]), [1, 2]);
+		test_equal("get_shape_from reads tensor shapes", get_shape_from({ shape: [3, 4] }), [3, 4]);
+		test_equal("get_shape_from rejects unknown objects", get_shape_from({}), null);
+
+		var items = { dropout: "0.2", stddev: "0.1", dropout_rate: "0.5", pool_size_x: "2", pool_size_y: "3", pool_size_z: "4" };
+		window.get_item_value = function (layer_idx, key) { return items[key]; };
+		window._get_h = function (layer_idx) { return "h_" + layer_idx; };
+		test_equal("get_alpha_dropout_latex includes the rate", get_alpha_dropout_latex(0).indexOf("0.2") !== -1, true);
+		test_equal("get_gaussian_noise_latex includes the stddev", get_gaussian_noise_latex(0).indexOf("0.1") !== -1, true);
+		test_equal("get_gaussian_dropout_latex includes the rate", get_gaussian_dropout_latex(0).indexOf("0.2") !== -1, true);
+		test_equal("get_dropout_latex converts to percent", get_dropout_latex(0).indexOf("50") !== -1, true);
+		test_equal("get_max_pooling_1d_latex uses h", get_max_pooling_1d_latex(1).indexOf("h_1") !== -1, true);
+		test_equal("get_max_pooling_2d_latex uses two maxima", get_max_pooling_2d_latex(1).indexOf("\\max_{j=1}^{M}") !== -1, true);
+		test_equal("get_max_pooling_3d_latex uses three maxima", get_max_pooling_3d_latex(1).indexOf("\\max_{l=1}^{P}") !== -1, true);
+		test_equal("get_average_pooling_1d_latex includes the pool size", get_average_pooling_1d_latex(1).indexOf("N = 2") !== -1, true);
+		test_equal("get_average_pooling_2d_latex includes both pool sizes", get_average_pooling_2d_latex(1).indexOf("M = 3") !== -1, true);
+		test_equal("get_average_pooling_3d_latex includes all pool sizes", get_average_pooling_3d_latex(1).indexOf("W = 4") !== -1, true);
+		test_equal("get_upsampling2d_latex uses h", get_upsampling2d_latex(1).indexOf("h_1") !== -1, true);
+		test_equal("get_debug_layer_latex describes the layer", get_debug_layer_latex().indexOf("does nothing") !== -1, true);
+
+		var activation_latex = get_activation_functions_latex("softmax", [[1, 2]], 0, null);
+		test_equal("get_activation_functions_latex renders equations", activation_latex.length > 0, true);
+
+		var layer = {
+			getInputAt: function () { return { shape: [null, 2] }; },
+			getOutputAt: function () { return { shape: [null, 3] }; }
+		};
+		window.model = { layers: [layer] };
+		test_equal("get_reshape_string includes the new shape", get_reshape_string(0).indexOf("[3]") !== -1, true);
+		test_equal("get_flatten_string describes a reshape", get_flatten_string(0).indexOf("Reshape") !== -1, true);
+
+		var gamma = tf.tensor1d([1, 2]);
+		var beta = tf.tensor1d([0, 1]);
+		var alpha = tf.tensor1d([2]);
+		var snake_beta = tf.tensor1d([1]);
+		var ma_values = {
+			aRelu: tf.tensor1d([0.5]),
+			aSnake: tf.tensor1d([0.25]),
+			aElu: tf.tensor1d([0]),
+			aSin: tf.tensor1d([0]),
+			snakeAlpha: tf.tensor1d([1])
+		};
+		fake_tensors.push(gamma, beta, alpha, snake_beta, ma_values.aRelu, ma_values.aSnake, ma_values.aElu, ma_values.aSin, ma_values.snakeAlpha);
+		window.model = {
+			layers: [
+				{ weights: [{ name: "gamma", val: gamma }, { name: "beta", val: beta }] },
+				{ weights: [{ name: "alpha", val: alpha }, { name: "beta", val: snake_beta }] },
+				{ weights: [
+					{ name: "aRelu", val: ma_values.aRelu },
+					{ name: "aSnake", val: ma_values.aSnake },
+					{ name: "aElu", val: ma_values.aElu },
+					{ name: "aSin", val: ma_values.aSin },
+					{ name: "snakeAlpha", val: ma_values.snakeAlpha }
+				] }
+			]
+		};
+		test_equal("get_layer_normalization_equation renders gamma and beta", get_layer_normalization_equation(0).indexOf("\\gamma") !== -1, true);
+		test_equal("get_snake_layer_latex renders the sine term", get_snake_layer_latex(1).indexOf("\\sin^2") !== -1, true);
+		var multi_latex = get_multiactivation_layer_latex(2);
+		test_equal("get_multiactivation_layer_latex renders ReLU", multi_latex.indexOf("ReLU") !== -1, true);
+		test_equal("get_multiactivation_layer_latex renders snake", multi_latex.indexOf("\\sin^2") !== -1, true);
+
+		var activation_names = get_activation_layer_names();
+		test_equal("get_activation_layer_names returns an array", Array.isArray(activation_names), true);
+		test_equal("get_activation_layer_names contains activations", activation_names.length > 0, true);
+
+		window.get_metric = function () { return "meanSquaredError"; };
+		var known_metric = get_metric_equations_string();
+		test_equal("get_metric_equations_string finds known metrics", known_metric.indexOf("has no metric-equation") === -1, true);
+		window.get_metric = function () { return "__unknown_metric__"; };
+		test_equal("get_metric_equations_string handles unknown metrics", get_metric_equations_string().indexOf("has no metric-equation") !== -1, true);
+	} finally {
+		window.model = old_model;
+		window.get_item_value = old_get_item_value;
+		window._get_h = old_get_h;
+		window.get_metric = old_get_metric;
+		fake_tensors.forEach(function (t) { if (t && !t.isDisposed) t.dispose(); });
+	}
+}
+
+function _tiny_tests_gui_extra_js() {
+	var key_path_source = { a: { b: 2 }, zero: 0 };
+	test_equal("get_key_from_path returns the root", get_key_from_path(key_path_source, []), key_path_source);
+	test_equal("get_key_from_path follows keys", get_key_from_path(key_path_source, ["a", "b"]), 2);
+	test_equal("get_key_from_path returns null for missing keys", get_key_from_path(key_path_source, ["missing"]), null);
+	test_equal("get_key_from_path returns null for falsy values", get_key_from_path(key_path_source, ["zero"]), null);
+	test_equal("last_index returns the final index", last_index([1, 2, 3]), 2);
+	test_equal("network_name_is_empty accepts empty strings", network_name_is_empty(""), true);
+	test_equal("network_name_is_empty accepts whitespace", network_name_is_empty("   "), true);
+	test_equal("network_name_is_empty rejects names", network_name_is_empty("net"), false);
+
+	var symbol = document.createElement("span");
+	symbol.id = "__asanai_gui_symbol__";
+	document.body.appendChild(symbol);
+	enable_symbol(symbol.id);
+	test_equal("enable_symbol enables the symbol", symbol.classList.contains("enabled_symbol"), true);
+	disable_symbol(symbol.id);
+	test_equal("disable_symbol disables the symbol", symbol.classList.contains("disabled_symbol"), true);
+
+	var colored = document.createElement("div");
+	colored.id = "__asanai_gui_colored__";
+	document.body.appendChild(colored);
+	color_msg_green(colored.id);
+	test_equal("color_msg_green sets a green background", colored.style.backgroundColor, "green");
+	color_msg_red(colored.id);
+	test_equal("color_msg_red sets a red background", colored.style.backgroundColor, "red");
+
+	var attr_el = document.createElement("div");
+	attr_el.setAttribute("data-old", "value");
+	attr_change_name(attr_el, "data-old", "data-new");
+	test_equal("attr_change_name copies the value", attr_el.getAttribute("data-new"), "value");
+	test_equal("attr_change_name removes the old attribute", attr_el.hasAttribute("data-old"), false);
+
+	var hidden_parent = document.createElement("div");
+	hidden_parent.style.display = "none";
+	var hidden_child = document.createElement("span");
+	hidden_parent.appendChild(hidden_child);
+	test_equal("is_hidden_or_has_hidden_parent sees hidden parents", is_hidden_or_has_hidden_parent(hidden_child), true);
+	hidden_parent.style.display = "block";
+	test_equal("is_hidden_or_has_hidden_parent accepts visible elements", is_hidden_or_has_hidden_parent(hidden_child), false);
+
+	var xpath_el = document.createElement("div");
+	xpath_el.id = "__asanai_xpath_probe__";
+	document.body.appendChild(xpath_el);
+	test_equal("get_element_xpath uses ids", get_element_xpath(xpath_el), 'id("__asanai_xpath_probe__")');
+	xpath_el.remove();
+
+	var old_model_dataset = $("#model_dataset").val();
+	var old_dataset = $("#dataset").val();
+	var old_data_origin = $("#data_origin").val();
+	var model_dataset_option = $("#model_dataset option").first().val();
+	var dataset_option = $("#dataset option").first().val();
+	var data_origin_option = $("#data_origin option").first().val();
+	try {
+		$("#model_dataset").val(model_dataset_option);
+		test_equal("get_chosen_dataset prefers model_dataset", get_chosen_dataset(), model_dataset_option);
+		$("#model_dataset").val("");
+		$("#dataset").val(dataset_option);
+		test_equal("get_chosen_dataset falls back to dataset", get_chosen_dataset(), dataset_option);
+		$("#data_origin").val(data_origin_option);
+		test_equal("get_data_origin reads the selector", get_data_origin(), data_origin_option);
+	} finally {
+		$("#model_dataset").val(old_model_dataset);
+		$("#dataset").val(old_dataset);
+		$("#data_origin").val(old_data_origin);
+	}
+
+	test_equal("human_readable_time handles one second", human_readable_time(1).length > 0, true);
+	test_equal("human_readable_time formats minutes", human_readable_time(61).length > 0, true);
+	test_equal("normalizeArray scales to bytes", JSON.stringify(normalizeArray([1, 2, 3])), "[0,127.5,255]");
+	test_equal("format_number handles null", format_number(null), "—");
+	test_equal("format_number formats decimals", format_number(1.23456789), "1.234568");
+	test_equal("format_number uses exponential notation", format_number(0.0001).indexOf("e") !== -1, true);
+	test_equal("format_number leaves strings", format_number("x"), "x");
+	test_equal("format_duration handles zero", format_duration(0), "—");
+	test_equal("format_duration formats seconds", format_duration(1000), "1s");
+	test_equal("format_duration formats minutes", format_duration(61000), "1m 1s");
+	test_equal("format_duration formats hours", format_duration(3661000), "1h 1m 1s");
+	test_equal("is_tablet returns a boolean", typeof is_tablet(), "boolean");
+	test_equal("is_touch_device returns a boolean", typeof is_touch_device(), "boolean");
+
+	var old_history_checked = $("#save_math_history").prop("checked");
+	try {
+		$("#save_math_history").prop("checked", true);
+		test_equal("enabled_saving_history reads the checkbox", enabled_saving_history(), true);
+		$("#save_math_history").prop("checked", false);
+		test_equal("enabled_saving_history reads unchecked boxes", enabled_saving_history(), false);
+	} finally {
+		$("#save_math_history").prop("checked", old_history_checked);
+	}
+
+	var existing_trainables = Array.from(document.querySelectorAll('input.input_data.trainable[type="checkbox"]'));
+	var saved_trainable_states = existing_trainables.map(function (el) { return el.checked; });
+	existing_trainables.forEach(function (el) { el.checked = false; });
+	var trainable = document.createElement("input");
+	trainable.type = "checkbox";
+	trainable.className = "input_data trainable";
+	trainable.checked = true;
+	document.body.appendChild(trainable);
+	test_equal("any_trainable_checked finds checked trainables", any_trainable_checked(), true);
+	trainable.checked = false;
+	test_equal("any_trainable_checked ignores unchecked trainables", any_trainable_checked(), false);
+	trainable.remove();
+	existing_trainables.forEach(function (el, index) { el.checked = saved_trainable_states[index]; });
+
+	symbol.remove();
+	colored.remove();
+	attr_el.remove();
+}
+
 function _tiny_tests_base_wrappers_async() {
 	var old_labels_backup;
 	return (async function() {
@@ -7120,6 +8015,20 @@ async function new_tiny_tests() {
 	_tiny_tests_predict_js();
 	_tiny_tests_fcnn_js();
 	_tiny_tests_misc();
+	_tiny_tests_fcnn_editable_js();
+	_tiny_tests_drawing_js();
+	_tiny_tests_safety_js();
+	_tiny_tests_cookies_and_url_js();
+	_tiny_tests_input_shape_js();
+	await _tiny_tests_labels_js();
+	_tiny_tests_skip_connection_js();
+	_tiny_tests_math_editable_js();
+	await _tiny_tests_csv_js();
+	await _tiny_tests_plot_predict_js();
+	_tiny_tests_python_code_js();
+	_tiny_tests_math_mode_extra_js();
+	_tiny_tests_gui_extra_js();
+	await _tiny_tests_base_wrappers_extra_js();
 	await _tiny_tests_easter_eggs_js();
 	_tiny_tests_debug_js();
 	_tiny_tests_math_mode_tooltips_js();
