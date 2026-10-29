@@ -651,6 +651,24 @@ def _write_priority(path, report, index_href):
             "</tr>"
         )
 
+    uncovered_rows = []
+    for file_info, _, _, _ in sorted(
+        files, key=lambda item: (item[0]["line_percent"], item[0]["path"])
+    ):
+        ranges = file_info.get("uncovered_lines") or []
+        if not ranges:
+            continue
+        percent = file_info["line_percent"]
+        href = urllib.parse.quote(file_info["path"] + ".html")
+        uncovered_rows.append(
+            "<tr>"
+            f'<td><a href="{html.escape(href)}">{html.escape(file_info["path"])}</a></td>'
+            f'<td>{percent:.2f}%</td>'
+            f'<td>{file_info["lines_total"] - file_info["lines_covered"]}</td>'
+            f'<td class="ranges"><code>{html.escape(_format_ranges(ranges))}</code></td>'
+            "</tr>"
+        )
+
     untested_table = _table(
         ["File", "Executable lines", "Untested functions"], untested_rows
     )
@@ -658,6 +676,9 @@ def _write_priority(path, report, index_href):
     function_table = _table(["File", "Function", "Lines", "Size"], function_rows)
     low_table = _table(
         ["File", "Line coverage", "Uncovered lines"], low_rows, empty=""
+    )
+    uncovered_table = _table(
+        ["File", "Coverage", "Uncovered count", "Line ranges"], uncovered_rows, empty=""
     )
 
     body = f"""<!DOCTYPE html>
@@ -668,6 +689,7 @@ def _write_priority(path, report, index_href):
             margin: 16px 0; max-width: 1100px; }}
 html.dark .priority {{ border-color: #f87171; }}
 .priority h2 {{ margin-top: 0; }}
+.ranges code {{ white-space: normal; word-break: break-word; }}
 </style></head><body>
 <p><a href="{html.escape(index_href)}">← all files</a></p>
 <h1>What to test next</h1>
@@ -704,6 +726,11 @@ of the file did. Open the file page to see the exact uncovered lines.</p>
 
 <h2>Lowest coverage among partially tested files (top 25)</h2>
 {low_table}
+
+<h2>Exact uncovered line ranges ({len(uncovered_rows)} files)</h2>
+<p class="muted">The same data as <a href="../uncovered.txt">uncovered.txt</a>.
+Red lines in the per-file pages show exactly which statements did not run.</p>
+{uncovered_table}
 </body></html>
 """
     os.makedirs(os.path.dirname(path), exist_ok=True)
