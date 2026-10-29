@@ -1493,3 +1493,46 @@ Autor, Lizenz und Quellenlink direkt in der Abbildung.
    Lokal: trinil_shell.jpg (3083x878)
    Genutzt in: geometry_i.php § "The Trinil shell"; tenminutes/history.html § "External memory" (image.php w=900)
    Status: OK - CC BY-SA 3.0
+
+=== CAMBRIAN BRAIN, EYE, AND CTENOPHORE (untold_history_i.php + philosophy.php, Stand: Oktober 2026) ===
+====================================================================
+
+1. img_fuxianhuia_fossil
+   URL: https://commons.wikimedia.org/wiki/File:Fuxianhuia_protensa_(YPM_IP_421686).jpg
+   Lizenz: CC0 (via Commons API extmetadata, LicenseShortName)
+   Autor: Jessica Utrup (Yale Peabody Museum)
+   Lokal: fuxianhuia_protensa_fossil.jpg (1920x1428)
+   Genutzt in: untold_history_i.php § "The First Brain"
+   Status: OK - CC0
+
+2. img_fuxianhuiid_cns
+   URL: https://commons.wikimedia.org/wiki/File:20211113_Fuxianhuiid_central_nervous_system.png
+   Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+   Autor: Junnn11
+   Lokal: fuxianhuiid_cns.png (800x501)
+   Genutzt in: untold_history_i.php § "The First Brain"
+   Status: OK - CC BY-SA 4.0
+
+3. img_pleurobrachia_bachei
+   URL: https://commons.wikimedia.org/wiki/File:Pleurobrachia_bachei_267730929.jpg
+   Lizenz: CC0 (via Commons API extmetadata)
+   Autor: Scott Loarie (iNaturalist)
+   Lokal: pleurobrachia_bachei.jpg (1536x2048)
+   Genutzt in: untold_history_i.php § "The First Brain"
+   Status: OK - CC0
+
+4. img_anomalocaris_eye_fossil
+   URL: https://commons.wikimedia.org/wiki/File:Fossilised_Anomalocaris_eye.jpg
+   Lizenz: CC BY 2.0 (via Commons API extmetadata)
+   Autor: UNE Photos
+   Lokal: anomalocaris_eye_fossil.jpg (1280x604, 1280px-Thumbnail der 3187x1505-Vorlage)
+   Genutzt in: untold_history_i.php § "The First Eye"
+   Status: OK - CC BY 2.0
+
+5. img_octopus_eye
+   URL: https://commons.wikimedia.org/wiki/File:Octopus_Eye_(23859301645).jpg
+   Lizenz: CC BY 2.0 (via Commons API extmetadata)
+   Autor: incidencematrix
+   Lokal: octopus_eye.jpg (1280x1893, 1280px-Thumbnail der 3384x5005-Vorlage)
+   Genutzt in: philosophy.php § "The Evolution of Qualia"
+   Status: OK - CC BY 2.0
