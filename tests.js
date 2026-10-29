@@ -1990,7 +1990,9 @@ async function test_augmented_previews_go_to_gallery_canvas() {
 		const added_to_gallery = entries.length === before_count + 1 &&
 			!!last && last.img && last.img.tagName === "IMG" && !!last.img._source_canvas && String(last.url).indexOf("augmented:") === 0;
 		const no_loose_canvases = document.querySelectorAll("#photos canvas[id^='augmented_photo_']").length === 0;
-		return added_to_gallery && synchronous_pixels && no_loose_canvases;
+		const drawn_pixel = _photo_gallery_test_pixel(before_count);
+		const drawn_to_canvas = !!drawn_pixel && drawn_pixel[3] > 0;
+		return added_to_gallery && synchronous_pixels && no_loose_canvases && drawn_to_canvas;
 	} finally {
 		t.dispose();
 		const added = _photo_gallery.entries[before_count];
@@ -4772,6 +4774,22 @@ async function wait_for_webcam_images(category_id, timeout_ms, required) {
 	});
 }
 
+async function wait_for_webcam_data_prediction (timeout_ms) {
+	const start_time = Date.now();
+
+	while (Date.now() - start_time < timeout_ms) {
+		const prediction = $("#webcam_data_prediction");
+
+		if (prediction.is(":visible") && prediction.find("table.predict_table tr").length > 0) {
+			return true;
+		}
+
+		await delay(250);
+	}
+
+	return false;
+}
+
 async function test_status_bar_tooltip_update_is_deferred() {
 	const original_update = window.update_status_bar_log_tooltip;
 	const original_last_l = last_l;
@@ -4959,6 +4977,11 @@ async function test_webcam(disable_webcam) {
 
 	$("#custom_webcam_training_data_small").click();
 	await delay(10000);
+
+	if (!await wait_for_webcam_data_prediction(15000)) {
+		err("Live webcam prediction table is not visible in custom images");
+		return false;
+	}
 
 	while (!$(".own_image_label").length) {
 		dbg("test_webcam: Waiting until .own_image_label is visible");

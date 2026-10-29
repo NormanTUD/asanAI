@@ -867,6 +867,7 @@
 	}
 
 	#webcam_prediction,
+	#webcam_data_prediction,
 	#prediction,
 	#handdrawn_predictions {
 		font-size: 16px;

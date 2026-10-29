@@ -1,6 +1,8 @@
 "use strict";
 
 var _webcam_start_in_progress = false;
+var auto_predict_webcam_custom_data_interval = null;
+var currently_predicting_webcam_custom_data = false;
 
 function _updateWebcamButtonToStopped() {
 	$("#show_webcam_button").html(`
@@ -161,12 +163,104 @@ function _show_webcam_data_stream_ui() {
 	$("#webcam_data").show();
 	$(".webcam_data_button").show();
 	webcam_custom_data_started = true;
+	_start_webcam_custom_data_prediction();
+}
+
+function _ensure_webcam_data_prediction_container() {
+	var prediction = $("#webcam_data_prediction");
+
+	if (!prediction.length) {
+		prediction = $("<div id='webcam_data_prediction' class='webcam_data_prediction'></div>");
+		$("#webcam_data").append(prediction);
+	}
+
+	return prediction;
+}
+
+function _start_webcam_custom_data_prediction() {
+	_ensure_webcam_data_prediction_container().show();
+
+	if (auto_predict_webcam_custom_data_interval !== null) {
+		return;
+	}
+
+	auto_predict_webcam_custom_data_interval = setInterval(predict_webcam_custom_data, 300);
+}
+
+function _stop_webcam_custom_data_prediction() {
+	if (auto_predict_webcam_custom_data_interval !== null) {
+		clearInterval(auto_predict_webcam_custom_data_interval);
+		auto_predict_webcam_custom_data_interval = null;
+	}
+
+	$("#webcam_data_prediction").hide().html("");
+}
+
+async function predict_webcam_custom_data() {
+	if (currently_predicting_webcam_custom_data || !cam || !webcam_custom_data_started || !model) {
+		return;
+	}
+
+	const prediction = $("#webcam_data_prediction");
+
+	if (!prediction.length || !prediction.is(":visible") || !input_shape_is_image()) {
+		return;
+	}
+
+	currently_predicting_webcam_custom_data = true;
+
+	var predict_data = null;
+	var predictions_tensor = null;
+
+	try {
+		const webcam_image = await cam.capture();
+
+		if (!webcam_image) {
+			return;
+		}
+
+		try {
+			predict_data = tidy(() => _get_resized_webcam(webcam_image));
+		} catch (e) {
+			dbg("[webcam_data] Could not resize the webcam image: " + e);
+			return;
+		} finally {
+			await dispose(webcam_image);
+		}
+
+		if (!predict_data) {
+			return;
+		}
+
+		try {
+			predictions_tensor = await __predict(predict_data);
+		} catch (e) {
+			dbg("[webcam_data] Could not predict the webcam image: " + e);
+			return;
+		}
+
+		if (!predictions_tensor || model.outputShape.length == 4) {
+			return;
+		}
+
+		const predictions = array_sync(predictions_tensor);
+
+		if (!predictions || !predictions.length) {
+			return;
+		}
+
+		await _webcam_predict_text(prediction, predictions[0]);
+	} finally {
+		await dispose(predictions_tensor, predict_data);
+		currently_predicting_webcam_custom_data = false;
+	}
 }
 
 function _stopWebcamDataStream() {
 	l(language[lang]["stopping_webcam"]);
 	_set_webcam_button_translation("enable_webcam");
 
+	_stop_webcam_custom_data_prediction();
 	$(".webcam_data_button").hide();
 	$("#webcam_data").hide().html("");
 	if (cam) {
@@ -352,6 +446,7 @@ function stop_webcam() {
 	if (cam) {
 		cam.stop();
 	}
+	_stop_webcam_custom_data_prediction();
 	$("#webcam").hide();
 	$("#webcam_prediction").hide();
 	window.cam = undefined;
@@ -420,6 +515,7 @@ async function get_data_from_webcam(force_restart = 0, _isRestart = false) {
 			await _startWebcamDataStream(video_element);
 		}
 	} else {
+		_stop_webcam_custom_data_prediction();
 		$(".webcam_data_button").hide();
 		$("#webcam_data").hide().html("");
 		if (cam) {

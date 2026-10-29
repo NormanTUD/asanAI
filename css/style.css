@@ -631,6 +631,12 @@ button:disabled:hover {
 	z-index: 99999;
 }
 
+#webcam_data_prediction {
+	font-size: 20px;
+	max-height: 220px;
+	overflow-y: auto;
+}
+
 .fireworks-container {
 	z-index: 10;
 	top: 0;
