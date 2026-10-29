@@ -3954,6 +3954,224 @@ window.bibData = {
 		year: 2025,
 		author: "Shigeru Miyagawa, Rob DeSalle, Vitor Augusto Nóbrega, Remo Nitschke, Mercedes Okumura, Ian Tattersall"
 	},
+
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  The Development of Hearing  (language.php)
+	 *  From the fish lateral line and the reptilian jaw to the fetal ear,
+	 *  the cochlear amplifier, and the first studies of otology.
+	 * ───────────────────────────────────────────────────────────────────── */
+
+	"schlosser2018senses": {
+		title: "A Short History of Nearly Every Sense: The Evolutionary History of Vertebrate Sensory Cell Types",
+		author: "Gerhard Schlosser",
+		year: 2018,
+		url: "https://pubmed.ncbi.nlm.nih.gov/29741623/",
+		alternativetitle: "Schlosser, 2018"
+	},
+	"hudspeth1989earworks": {
+		title: "How the Ear's Works Work",
+		author: "A. James Hudspeth",
+		year: 1989,
+		url: "https://pubmed.ncbi.nlm.nih.gov/2677742/",
+		alternativetitle: "Hudspeth, 1989"
+	},
+	"clack1997tetrapod": {
+		title: "The Evolution of Tetrapod Ears and the Fossil Record",
+		author: "Jennifer A. Clack",
+		year: 1997,
+		url: "https://pubmed.ncbi.nlm.nih.gov/9310195/",
+		alternativetitle: "Clack, 1997"
+	},
+	"maier2016middleear": {
+		title: "Evolution of the Mammalian Middle Ear: A Historical Review",
+		author: "Wolfgang Maier and Irina Ruf",
+		year: 2016,
+		url: "https://pubmed.ncbi.nlm.nih.gov/26397963/",
+		alternativetitle: "Maier and Ruf, 2016"
+	},
+	"allin1975middleear": {
+		title: "Evolution of the Mammalian Middle Ear",
+		author: "Edgar F. Allin",
+		year: 1975,
+		url: "https://pubmed.ncbi.nlm.nih.gov/1202224/",
+		alternativetitle: "Allin, 1975"
+	},
+	"kuhne1958morganucodon": {
+		title: "Rhaetische Triconodonten aus Glamorgan, ihre Stellung zwischen den Klassen Reptilia und Mammalia und ihre Bedeutung für die REICHART'sche Theorie",
+		author: "Walter Georg Kühne",
+		year: 1958,
+		url: "https://doi.org/10.1007/BF02989032",
+		alternativetitle: "Kühne, 1958 (Morganucodon)"
+	},
+	"manley2012cochleae": {
+		title: "Evolutionary Paths to Mammalian Cochleae",
+		author: "Geoffrey A. Manley",
+		year: 2012,
+		url: "https://pubmed.ncbi.nlm.nih.gov/22983571/",
+		alternativetitle: "Manley, 2012"
+	},
+	"mao2024jawear": {
+		title: "Fossils Document Evolutionary Changes of Jaw Joint to Mammalian Middle Ear",
+		author: "Fangyuan Mao et al.",
+		year: 2024,
+		url: "https://pubmed.ncbi.nlm.nih.gov/38570677/",
+		alternativetitle: "Mao et al., 2024"
+	},
+	"hemila1995middleear": {
+		title: "What Middle Ear Parameters Tell About Impedance Matching and High Frequency Hearing",
+		author: "Simo Hemilä, Sirpa Nummela, Tom Reuter",
+		year: 1995,
+		url: "https://pubmed.ncbi.nlm.nih.gov/7559177/",
+		alternativetitle: "Hemilä et al., 1995"
+	},
+	"edge2008haircell": {
+		title: "Hair Cell Regeneration",
+		author: "Albert S. B. Edge and Zheng-Yi Chen",
+		year: 2008,
+		url: "https://pubmed.ncbi.nlm.nih.gov/18929656/",
+		alternativetitle: "Edge and Chen, 2008"
+	},
+	"pappas1996otology": {
+		title: "Otology Through the Ages",
+		author: "Dennis G. Pappas",
+		year: 1996,
+		url: "https://pubmed.ncbi.nlm.nih.gov/8637729/",
+		alternativetitle: "Pappas, 1996"
+	},
+	"vesalius1543fabrica": {
+		title: "De humani corporis fabrica libri septem",
+		author: "Andreas Vesalius",
+		year: 1543,
+		url: "https://archive.org/details/BIUSante_00302_1543",
+		alternativetitle: "Vesalius, 1543"
+	},
+	"falloppio1561observationes": {
+		title: "Observationes anatomicae",
+		author: "Gabriele Falloppio",
+		year: 1561,
+		url: "https://archive.org/details/2235026R.nlm.nih.gov",
+		alternativetitle: "Falloppio, 1561"
+	},
+	"duverney1683traite": {
+		title: "Traité de l'organe de l'ouïe, contenant la structure, les usages et les maladies de toutes les parties de l'oreille",
+		author: "Joseph-Guichard Duverney",
+		year: 1683,
+		url: "https://archive.org/details/BIUSante_31852",
+		alternativetitle: "Duverney, 1683"
+	},
+	"cotugno1760aquaeductibus": {
+		title: "De aquaeductibus auris humanae internae anatomica dissertatio",
+		author: "Domenico Cotugno",
+		year: 1760,
+		url: "https://archive.org/details/b30522778",
+		alternativetitle: "Cotugno, 1760"
+	},
+	"corti1851recherches": {
+		title: "Recherches sur l'organe de l'ouïe des mammifères",
+		author: "Alfonso Corti",
+		year: 1851,
+		url: "https://archive.org/details/b2234410x",
+		alternativetitle: "Corti, 1851"
+	},
+	"helmholtz1863tonempfindungen": {
+		title: "Die Lehre von den Tonempfindungen als physiologische Grundlage für die Theorie der Musik",
+		author: "Hermann von Helmholtz",
+		year: 1863,
+		url: "https://archive.org/details/b2811677x",
+		alternativetitle: "Helmholtz, 1863"
+	},
+	"bekesy1961nobel": {
+		title: "Concerning the Pleasures of Observing, and the Mechanics of the Inner Ear",
+		author: "Georg von Békésy",
+		year: 1961,
+		url: "https://www.nobelprize.org/prizes/medicine/1961/bekesy/lecture/",
+		alternativetitle: "Békésy, Nobel Lecture (1961)"
+	},
+	"gold1948hearing": {
+		title: "Hearing. II. The Physical Basis of the Action of the Cochlea",
+		author: "Thomas Gold",
+		year: 1948,
+		url: "https://doi.org/10.1098/rspb.1948.0025",
+		alternativetitle: "Gold, 1948"
+	},
+	"kemp1978emissions": {
+		title: "Stimulated Acoustic Emissions from Within the Human Auditory System",
+		author: "David T. Kemp",
+		year: 1978,
+		url: "https://pubmed.ncbi.nlm.nih.gov/744838/",
+		alternativetitle: "Kemp, 1978"
+	},
+	"brownell1985electromotility": {
+		title: "Evoked Mechanical Responses of Isolated Cochlear Outer Hair Cells",
+		author: "William E. Brownell et al.",
+		year: 1985,
+		url: "https://pubmed.ncbi.nlm.nih.gov/3966153/",
+		alternativetitle: "Brownell et al., 1985"
+	},
+	"zheng2000prestin": {
+		title: "Prestin is the Motor Protein of Cochlear Outer Hair Cells",
+		author: "Jing Zheng et al.",
+		year: 2000,
+		url: "https://pubmed.ncbi.nlm.nih.gov/10821263/",
+		alternativetitle: "Zheng et al., 2000"
+	},
+	"hepper1994fetalhearing": {
+		title: "Development of Fetal Hearing",
+		author: "Peter G. Hepper and B. Shahidullah",
+		year: 1994,
+		url: "https://pubmed.ncbi.nlm.nih.gov/7979483/",
+		alternativetitle: "Hepper and Shahidullah, 1994"
+	},
+	"decasper1980mothervoice": {
+		title: "Of Human Bonding: Newborns Prefer Their Mothers' Voices",
+		author: "Anthony J. DeCasper and William P. Fifer",
+		year: 1980,
+		url: "https://pubmed.ncbi.nlm.nih.gov/7375928/",
+		alternativetitle: "DeCasper and Fifer, 1980"
+	},
+	"decasper1986prenatal": {
+		title: "Prenatal Maternal Speech Influences Newborns' Perception of Speech Sounds",
+		author: "Anthony J. DeCasper and Melanie J. Spence",
+		year: 1986,
+		url: "https://doi.org/10.1016/0163-6383(86)90025-1",
+		alternativetitle: "DeCasper and Spence, 1986"
+	},
+	"kisilevsky2003fetalvoice": {
+		title: "Effects of Experience on Fetal Voice Recognition",
+		author: "Barbara S. Kisilevsky et al.",
+		year: 2003,
+		url: "https://pubmed.ncbi.nlm.nih.gov/12741744/",
+		alternativetitle: "Kisilevsky et al., 2003"
+	},
+	"partanen2013prenatal": {
+		title: "Learning-Induced Neural Plasticity of Speech Processing Before Birth",
+		author: "Eino Partanen et al.",
+		year: 2013,
+		url: "https://pubmed.ncbi.nlm.nih.gov/23980148/",
+		alternativetitle: "Partanen et al., 2013"
+	},
+	"werker1984crosslanguage": {
+		title: "Cross-Language Speech Perception: Evidence for Perceptual Reorganization During the First Year of Life",
+		author: "Janet F. Werker and Richard C. Tees",
+		year: 1984,
+		url: "https://doi.org/10.1016/S0163-6383(84)80022-3",
+		alternativetitle: "Werker and Tees, 1984"
+	},
+	"mehler1988precursor": {
+		title: "A Precursor of Language Acquisition in Young Infants",
+		author: "Jacques Mehler et al.",
+		year: 1988,
+		url: "https://pubmed.ncbi.nlm.nih.gov/3168420/",
+		alternativetitle: "Mehler et al., 1988"
+	},
+	"moon1993native": {
+		title: "Two-Day-Olds Prefer Their Native Language",
+		author: "Christine Moon, Robin Panneton Cooper, William P. Fifer",
+		year: 1993,
+		url: "https://doi.org/10.1016/0163-6383(93)80007-U",
+		alternativetitle: "Moon et al., 1993"
+	},
+
 	"relufirst": {
 		title: "Visual Feature Extraction by a Multilayered Network of Analog Threshold Elements",
 		author: "Kunihiko Fukushima",
