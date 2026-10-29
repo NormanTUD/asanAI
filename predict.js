@@ -1909,6 +1909,24 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 	_draw_heatmap_running = true;
 
 	try {
+		if(!is_from_webcam) {
+			// Remember the last non-webcam image so enabling gradCAM or the
+			// layer data flow can refresh it without waiting for the next
+			// prediction.
+			if(predict_data && Array.isArray(predict_data.shape) && predict_data.shape.length == 4 && predict_data.shape[0] == 1) {
+				try {
+					window._last_predicted_image_input_arr = array_sync(predict_data);
+				} catch (e) {
+					dbg("[draw_heatmap] Could not remember the last image: " + extract_error_message(e));
+				}
+			}
+
+			if(!$("#show_grad_cam").is(":checked")) {
+				// The old heatmap no longer belongs to this input.
+				_grad_cam_has_heatmap = false;
+			}
+		}
+
 		if(!(
 			input_shape_is_image(is_from_webcam) &&
 			$("#show_grad_cam").is(":checked") &&
@@ -1950,7 +1968,9 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 
 			var shape = get_shape_from_array(img);
 			if(shape.length != 3) {
+				_grad_cam_has_heatmap = false;
 				$("#grad_cam_heatmap").hide();
+				$("#grad_cam_panel").hide();
 			} else {
 				var _height = shape[0];
 				var _width = shape[1];
@@ -1961,10 +1981,14 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 
 				scaleNestedArray(img);
 				var res = draw_grid(canvas, pxsz, img, 1, 0, null, null, null);
+				_grad_cam_has_heatmap = true;
 				$("#grad_cam_heatmap").show();
+				$("#grad_cam_panel").show();
 			}
 		} else {
+			_grad_cam_has_heatmap = false;
 			$("#grad_cam_heatmap").hide();
+			$("#grad_cam_panel").hide();
 		}
 
 		await dispose(heatmap);

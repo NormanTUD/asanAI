@@ -1,12 +1,12 @@
 <div id="predict_tab" class="tab user_select_none">
 	<div class="predict_visualization_toggles">
 		<span>
-			<span class="TRANSLATEME_show_layer_data_flow"></span>?
+			<label for="show_layer_data"><span class="TRANSLATEME_show_layer_data_flow"></span>?</label>
 			<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data">
 		</span>
 
 		<span class="hide_when_no_conv_visualizations">
-			<span class="TRANSLATEME_show_grad_cam"></span>?
+			<label for="show_grad_cam"><span class="TRANSLATEME_show_grad_cam"></span>?</label>
 			<input class="show_data" type="checkbox" value="1" onclick="enable_disable_grad_cam();add_layer_debuggers()" id="show_grad_cam">
 		</span>
 	</div>
@@ -25,8 +25,6 @@
 			</div>
 		</div>
 	</div>
-
-	<div id="layer_visualizations_tab" style="display: none" class="tab"></div>
 
 	<div class="container" id="predictcontainer">
 		<span id="predict_error" style="overflow: scroll; display: none"></span><br>
@@ -83,5 +81,7 @@
 	</div>
 
 	<div id="confusion_matrix"></div>
+
+	<div id="layer_visualizations_tab" style="display: none" class="tab"></div>
 </div>
 

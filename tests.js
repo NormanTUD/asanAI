@@ -113,8 +113,8 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1410;
-var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 499;
+var DEFAULT_EXPECTED_TEST_COUNT = 1417;
+var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
 	try {
@@ -202,6 +202,16 @@ function _test_progress_text() {
 	return _test_format_progress(num_tests, __test_expected_total, __test_resume_active, __test_progress_slow_durations, elapsed);
 }
 
+function _test_overlay_label(name, max_length = 200) {
+	name = "" + name;
+
+	if (name.length <= max_length) {
+		return name;
+	}
+
+	return name.slice(0, Math.max(0, max_length - 3)) + "...";
+}
+
 function show_num_tests_overlay(name) {
 	_test_record_progress_duration();
 
@@ -212,7 +222,7 @@ function show_num_tests_overlay(name) {
 
 	let div = document.createElement("div");
 	div.id = "num-tests-overlay";
-	div.innerHTML = `${_test_progress_text()}<br>Test ${num_tests}<br>${escape_html_for_test(name)}`;
+	div.innerHTML = `${_test_progress_text()}<br>Test ${num_tests}<br>${escape_html_for_test(_test_overlay_label(name))}`;
 	log(`${_test_progress_text()}\nTest ${num_tests}\n${name}`);
 
 	Object.assign(div.style, {
@@ -228,7 +238,10 @@ function show_num_tests_overlay(name) {
 		zIndex: "999999",
 		userSelect: "none",
 		cursor: "pointer",
-		whiteSpace: "nowrap",
+		whiteSpace: "normal",
+		wordBreak: "break-word",
+		maxWidth: "90vw",
+		textAlign: "center",
 	});
 
 	div.addEventListener("mouseenter", remove_num_tests_overlay);
@@ -386,6 +399,8 @@ function test_test_progress_display () {
 	var sync_grew = __test_expected_total === num_tests;
 	__test_expected_total = expected_before_sync;
 	test_equal("Progress display auto-grows the expected total", sync_grew, true);
+	test_equal("Progress overlay keeps short test names", _test_overlay_label("short"), "short");
+	test_equal("Progress overlay truncates very long test names", _test_overlay_label("x".repeat(500)).length, 200);
 
 	return true;
 }
@@ -1464,6 +1479,182 @@ async function test_show_layer_data_flow() {
 	return true;
 }
 
+function test_grad_cam_panel_waits_for_heatmap () {
+	var $checkbox = $("#show_grad_cam");
+	var $panel = $("#grad_cam_panel");
+	var $heatmap = $("#grad_cam_heatmap");
+	var original_checked = $checkbox.is(":checked");
+	var original_has_heatmap = _grad_cam_has_heatmap;
+	var original_panel_display = $panel[0].style.display;
+	var original_heatmap_display = $heatmap[0].style.display;
+	var original_show_layer_data = $("#show_layer_data").is(":checked");
+
+	// The kernel toggle wins over gradCAM and emits a warning; silence that path
+	// while we probe the panel state so the suite's warning counter stays clean.
+	$("#show_layer_data").prop("checked", false);
+	$checkbox.prop("checked", true);
+
+	_grad_cam_has_heatmap = false;
+	enable_disable_grad_cam(false);
+	var hidden_without_heatmap = $panel.css("display") === "none";
+
+	_grad_cam_has_heatmap = true;
+	enable_disable_grad_cam(false);
+	var shown_with_heatmap = $panel.css("display") !== "none";
+
+	$checkbox.prop("checked", original_checked);
+	_grad_cam_has_heatmap = original_has_heatmap;
+	enable_disable_grad_cam(false);
+	$panel[0].style.display = original_panel_display;
+	$heatmap[0].style.display = original_heatmap_display;
+	$("#show_layer_data").prop("checked", original_show_layer_data);
+
+	return hidden_without_heatmap && shown_with_heatmap;
+}
+
+async function test_grad_cam_repredicts_last_image () {
+	var original_predict = window.__predict;
+	var original_draw_heatmap = window.draw_heatmap;
+	var original_input_shape_is_image = window.input_shape_is_image;
+	var original_tensor_shape_matches_model = window.tensor_shape_matches_model;
+	var original_source = window._last_predicted_image_input_arr;
+	var original_checked = $("#show_grad_cam").is(":checked");
+	var original_has_heatmap = _grad_cam_has_heatmap;
+	var original_queue = waiting_updated_page_uuids.slice();
+	var predict_calls = 0;
+	var draw_calls = 0;
+
+	try {
+		waiting_updated_page_uuids.length = 0;
+		$("#show_grad_cam").prop("checked", true);
+		_grad_cam_has_heatmap = false;
+		window._last_predicted_image_input_arr = [[[[1, 2, 3]]]];
+		window.input_shape_is_image = function () { return true; };
+		window.tensor_shape_matches_model = function () { return true; };
+		window.__predict = async function () {
+			predict_calls++;
+			return tensor([[0.5, 0.5]]);
+		};
+		window.draw_heatmap = async function () {
+			draw_calls++;
+			_grad_cam_has_heatmap = true;
+		};
+
+		var success = await repredict_last_image_for_grad_cam();
+		var success_ok = success === true && predict_calls === 1 && draw_calls === 1;
+
+		_grad_cam_has_heatmap = false;
+		window._last_predicted_image_input_arr = null;
+		var no_source_ok = (await repredict_last_image_for_grad_cam()) === false && predict_calls === 1 && draw_calls === 1;
+
+		_grad_cam_has_heatmap = false;
+		window._last_predicted_image_input_arr = [[[[1, 2, 3]]]];
+		window.__predict = async function () {
+			predict_calls++;
+			throw new Error("deliberate repredict failure");
+		};
+		var failure_ok = (await repredict_last_image_for_grad_cam()) === false && predict_calls === 2 && draw_calls === 1;
+
+		$("#show_grad_cam").prop("checked", false);
+		_grad_cam_has_heatmap = false;
+		window._last_predicted_image_input_arr = [[[[1, 2, 3]]]];
+		window.__predict = async function () {
+			predict_calls++;
+			return tensor([[0.5, 0.5]]);
+		};
+		var layer_data_ok = (await repredict_last_image()) === true && predict_calls === 3 && draw_calls === 1;
+
+		return success_ok && no_source_ok && failure_ok && layer_data_ok;
+	} finally {
+		window.__predict = original_predict;
+		window.draw_heatmap = original_draw_heatmap;
+		window.input_shape_is_image = original_input_shape_is_image;
+		window.tensor_shape_matches_model = original_tensor_shape_matches_model;
+		window._last_predicted_image_input_arr = original_source;
+		$("#show_grad_cam").prop("checked", original_checked);
+		_grad_cam_has_heatmap = original_has_heatmap;
+		waiting_updated_page_uuids.length = 0;
+		Array.prototype.push.apply(waiting_updated_page_uuids, original_queue);
+	}
+}
+
+async function test_grad_cam_uniform_heatmap_is_low () {
+	var heat_map = null;
+	var zero_heatmap = null;
+	var uniform = null;
+
+	try {
+		heat_map = tensor([[[0, 0], [0, 0]]]);
+		zero_heatmap = _grad_cam_zero_heatmap(heat_map);
+		uniform = apply_color_map(zero_heatmap);
+
+		var shape_ok = JSON.stringify(zero_heatmap.shape) === "[1,2,2,1]";
+		var pixels = array_sync(uniform);
+		var low_ok = true;
+
+		for (var i = 0; i < pixels[0].length; i++) {
+			for (var j = 0; j < pixels[0][i].length; j++) {
+				var pixel = pixels[0][i][j];
+
+				if(Math.abs(pixel[0] - RGB_COLORMAP[0]) > 1e-5
+					|| Math.abs(pixel[1] - RGB_COLORMAP[1]) > 1e-5
+					|| Math.abs(pixel[2] - RGB_COLORMAP[2]) > 1e-5) {
+					low_ok = false;
+				}
+			}
+		}
+
+		return shape_ok && low_ok;
+	} catch (e) {
+		dbg("[test_grad_cam_uniform_heatmap_is_low] " + extract_error_message(e));
+		return false;
+	} finally {
+		await dispose(uniform, zero_heatmap, heat_map);
+	}
+}
+
+function test_clear_attrament_clears_edges () {
+	var sketcher = atrament_data && atrament_data.sketcher;
+
+	if(!sketcher || !sketcher.canvas) {
+		return false;
+	}
+
+	var canvas = sketcher.canvas;
+	var context = canvas.getContext("2d");
+	var saved = context.getImageData(0, 0, canvas.width, canvas.height);
+
+	try {
+		context.save();
+		context.setTransform(1, 0, 0, 1, 0, 0);
+		context.fillStyle = "#000000";
+		context.fillRect(0, 0, canvas.width, canvas.height);
+		context.restore();
+
+		clear_attrament("sketcher");
+
+		var points = [
+			[0, 0],
+			[canvas.width - 1, 0],
+			[0, canvas.height - 1],
+			[canvas.width - 1, canvas.height - 1],
+			[Math.floor(canvas.width / 2), Math.floor(canvas.height / 2)]
+		];
+
+		for (var point_idx = 0; point_idx < points.length; point_idx++) {
+			var pixel = context.getImageData(points[point_idx][0], points[point_idx][1], 1, 1).data;
+
+			if(pixel[0] < 250 || pixel[1] < 250 || pixel[2] < 250 || pixel[3] < 250) {
+				return false;
+			}
+		}
+
+		return true;
+	} finally {
+		context.putImageData(saved, 0, 0);
+	}
+}
+
 async function test_custom_drawn_images_with_augmentation() {
 	set_mode_to_expert();
 
@@ -1919,6 +2110,12 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("Test generateOnesString for maxPooling2D", generateOnesString("maxPooling2D"), "1,1");
 
 	test_equal("get_mode() is either 'expert' or 'beginner'", ["expert", "beginner"].includes(get_mode()), true);
+
+	test_equal("predict toggle labels activate their checkboxes", test_predict_toggle_labels_activate_checkboxes(), true);
+	test_equal("gradCAM panel waits for a heatmap", test_grad_cam_panel_waits_for_heatmap(), true);
+	test_equal("gradCAM repredicts the last image", await test_grad_cam_repredicts_last_image(), true);
+	test_equal("gradCAM keeps a uniform heatmap visible", await test_grad_cam_uniform_heatmap_is_low(), true);
+	test_equal("clearing the sketcher clears every edge", test_clear_attrament_clears_edges(), true);
 
 	//test_equal("test_math_mode_color_generator()", test_math_mode_color_generator(), true);
 
@@ -3286,6 +3483,44 @@ function enable_or_disable_show_layer_data(_status) {
 	if ($("#show_layer_data").is(":checked") !== _status) {
 		$("#show_layer_data").click();
 	}
+}
+
+function test_predict_toggle_labels_activate_checkboxes () {
+	var ids = ["show_layer_data", "show_grad_cam"];
+
+	for (var id_idx = 0; id_idx < ids.length; id_idx++) {
+		var id = ids[id_idx];
+		var label = document.querySelector("label[for='" + id + "']");
+		var input = document.getElementById(id);
+
+		if (!label || !input || label.control !== input) {
+			return false;
+		}
+
+		var original_checked = input.checked;
+		var original_onclick = input.getAttribute("onclick");
+
+		// Keep the label's default action (activate the checkbox) but skip the
+		// heavy inline handler while we probe the association.
+		input.removeAttribute("onclick");
+
+		label.click();
+		var toggled_on = input.checked !== original_checked;
+
+		label.click();
+		var toggled_back = input.checked === original_checked;
+
+		if (original_onclick !== null) {
+			input.setAttribute("onclick", original_onclick);
+		}
+		input.checked = original_checked;
+
+		if (!toggled_on || !toggled_back) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 async function set_first_kernel_initializer_to_constant (initializer_val) {

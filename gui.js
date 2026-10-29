@@ -151,13 +151,83 @@ async function get_cached_json(url) {
 	}
 }
 
-function enable_disable_grad_cam() {
-	if ($("#show_grad_cam").is(":checked")) {
+async function repredict_last_image () {
+	if(!finished_loading || is_setting_config || !model || !input_shape_is_image()) {
+		return false;
+	}
+
+	if(typeof started_training !== "undefined" && started_training) {
+		return false;
+	}
+
+	if(typeof currently_running_change_data_origin !== "undefined" && currently_running_change_data_origin) {
+		return false;
+	}
+
+	if(waiting_updated_page_uuids.length || _predict_running || _predict_full_running || _draw_heatmap_running) {
+		return false;
+	}
+
+	var last_input = window._last_predicted_image_input_arr;
+
+	if(!Array.isArray(last_input) || !last_input.length) {
+		return false;
+	}
+
+	var input_tensor = null;
+	var predictions_tensor = null;
+
+	try {
+		input_tensor = tensor(last_input);
+
+		if(!tensor_shape_matches_model(input_tensor)) {
+			dbg("[repredict_last_image] The remembered image does not match the current model; not repredicting.");
+			return false;
+		}
+
+		predictions_tensor = await __predict(input_tensor);
+
+		if(!predictions_tensor) {
+			dbg("[repredict_last_image] Repredicting the remembered image returned no predictions.");
+			return false;
+		}
+
+		if($("#show_grad_cam").is(":checked")) {
+			await draw_heatmap(predictions_tensor, input_tensor);
+		}
+
+		return true;
+	} catch (e) {
+		dbg("[repredict_last_image] Could not repredict the remembered image: " + extract_error_message(e));
+		return false;
+	} finally {
+		await dispose(predictions_tensor, input_tensor);
+	}
+}
+
+async function repredict_last_image_for_grad_cam () {
+	if(!$("#show_grad_cam").is(":checked") || _grad_cam_has_heatmap) {
+		return false;
+	}
+
+	var repredicted = await repredict_last_image();
+
+	return repredicted && _grad_cam_has_heatmap;
+}
+
+function enable_disable_grad_cam(auto_repredict = true) {
+	if ($("#show_grad_cam").is(":checked") && _grad_cam_has_heatmap) {
 		$("#grad_cam_panel").show();
 		$("#grad_cam_heatmap").show();
 	} else {
 		$("#grad_cam_panel").hide();
 		$("#grad_cam_heatmap").hide();
+
+		if ($("#show_grad_cam").is(":checked") && auto_repredict) {
+			setTimeout(async function () {
+				await repredict_last_image_for_grad_cam();
+			}, 0);
+		}
 	}
 
 	if($("#show_layer_data").is(":checked")) {
@@ -168,11 +238,19 @@ function enable_disable_grad_cam() {
 	hide_empty_tabs("visualization_ribbon");
 }
 
-function enable_disable_kernel_images() {
+function enable_disable_kernel_images(auto_repredict = true) {
 	if ($("#show_layer_data").is(":checked")) {
 $("#show_kernel_images").prop("disabled", false);
 		show_data_plotter();
 		show_layer_visualization_tab();
+
+		if(auto_repredict) {
+			setTimeout(async function () {
+				if($("#show_layer_data").is(":checked")) {
+					await repredict_last_image();
+				}
+			}, 0);
+		}
 	} else {
 		$("#show_kernel_images").prop("disabled", true);
 		hide_data_plotter();

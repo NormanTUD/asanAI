@@ -374,6 +374,10 @@ function _grad_cam_build_models_safe(_model, last_conv_layer_index) {
 	return { auxModel: auxModel, classifierModel: classifierModel };
 }
 
+function _grad_cam_zero_heatmap (heat_map) {
+	return expand_dims(tf_mul(heat_map, 0), -1);
+}
+
 function grad_cam_internal_compute_heatmap(aux_model, sub_model2, x, class_idx, overlay_factor) {
 	const EPSILON = 1e-7;
 
@@ -404,12 +408,13 @@ function grad_cam_internal_compute_heatmap(aux_model, sub_model2, x, class_idx, 
 		const max_abs_val = max_abs.dataSync()[0];
 
 		if (max_abs_val < EPSILON) {
-			// Truly zero everywhere — nothing to visualize
-			log(`grad_class_activation_map: heat_map is entirely zero, cannot generate.`);
-			return null;
+			// A blank or perfectly uniform image has no gradient to highlight.
+			// Keep gradCAM visible by showing the low end of the colour map
+			// everywhere instead of hiding the whole panel.
+			heat_map = _grad_cam_zero_heatmap(heat_map);
+		} else {
+			heat_map = expand_dims(tf_div(heat_map, tf_add(max_abs, EPSILON)), -1);
 		}
-
-		heat_map = expand_dims(tf_div(heat_map, tf_add(max_abs, EPSILON)), -1);
 	} else {
 		heat_map = heat_map_relu;
 		heat_map = expand_dims(tf_div(heat_map, tf_add(max_after_relu, EPSILON)), -1);

@@ -88,13 +88,17 @@ function clear_attrament (idname) {
 	}
 
 	try {
-		atrament_data[idname]["atrament"].context.fillStyle = "#ffffff";
-		atrament_data[idname]["atrament"].context.fillRect(
-			0,
-			0,
-			atrament_data[idname]["atrament"].canvas.width,
-			atrament_data[idname]["atrament"].canvas.height
-		);
+		var atrament = atrament_data[idname]["atrament"];
+		var context = atrament.context;
+
+		// Atrament translates its context by (0.5, 0.5) for smooth strokes.
+		// Filling through that transform leaves a half-pixel strip at the top
+		// and left edges, so clear the canvas in untransformed coordinates.
+		context.save();
+		context.setTransform(1, 0, 0, 1, 0, 0);
+		context.fillStyle = "#ffffff";
+		context.fillRect(0, 0, atrament.canvas.width, atrament.canvas.height);
+		context.restore();
 	} catch (e) {
 		err(e);
 	}

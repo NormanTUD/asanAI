@@ -11,6 +11,15 @@ import urllib.parse
 from typing import Optional
 from playwright.async_api import async_playwright, Error
 
+# GitHub Actions on Windows can hand us a non-UTF-8 console. Browser console
+# messages legitimately contain "…" and other non-ASCII text; without this the
+# logging module raises encoding errors on every line and the job can stall.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="backslashreplace")
+    except Exception:
+        pass
+
 DEFAULT_CHROMIUM_PATH = "/usr/bin/chromium"
 APP_READY_TIMEOUT_MS = 180_000
 APP_READY_EXPRESSION = (
@@ -77,6 +86,7 @@ def parse_args():
     parser.add_argument("--from-test", default=None, help="Resume tests from the given test name (forward match against the test_equal description). Prepended as ?from_test=NAME on the URL.")
     parser.add_argument("--only-test", action="append", default=[], help="Run only this test_equal (substring match); can be given multiple times. Prepended as ?only_test=A&only_test=B on the URL.")
     parser.add_argument("--only-test-count", type=int, default=0, help="Stop after this many test_equal calls (after the resume point). 0 means run all from --from-test onwards.")
+    parser.add_argument("--test-timeout", type=int, default=3600, help="Maximum seconds run_tests() may take in one browser; on timeout the browser fails with artifacts instead of hanging (0 disables).")
 
     return parser.parse_args()
 
@@ -257,8 +267,26 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
 
         test_expression = "run_tests(1)" if args.quick else "run_tests()"
         logging.info(f"[{browser_name}] Evaluating {test_expression} ...")
+        evaluate_task = asyncio.ensure_future(page.evaluate(test_expression))
+
+        if args.test_timeout > 0:
+            done, _ = await asyncio.wait({evaluate_task}, timeout=args.test_timeout)
+
+            if not done:
+                evaluate_task.cancel()
+                logging.error(
+                    f"[{browser_name}] {test_expression} did not finish within "
+                    f"{args.test_timeout}s; treating it as a timeout instead of hanging"
+                )
+                try:
+                    await asyncio.wait_for(_save_failure_artifacts(page, context, browser_name, args), timeout=30)
+                except asyncio.TimeoutError:
+                    logging.error(f"[{browser_name}] Could not save failure artifacts before the timeout")
+                tracing_saved = tracing_started
+                return 124
+
         try:
-            result = await page.evaluate(test_expression)
+            result = await evaluate_task
             logging.info(f"[{browser_name}] {test_expression} returned: {result}")
             if to_int_exit(result) != 0:
                 await _save_failure_artifacts(page, context, browser_name, args)
@@ -283,12 +311,16 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
         if context:
             if tracing_started and not tracing_saved:
                 try:
-                    await context.tracing.stop()
+                    await asyncio.wait_for(context.tracing.stop(), timeout=15)
+                except asyncio.TimeoutError:
+                    logging.error(f"[{browser_name}] Stopping the Playwright trace timed out")
                 except Exception:
                     pass
             try:
-                await context.close()
+                await asyncio.wait_for(context.close(), timeout=15)
                 logging.debug(f"[{browser_name}] Context closed successfully.")
+            except asyncio.TimeoutError:
+                logging.error(f"[{browser_name}] Closing the browser context timed out")
             except Exception:
                 logging.exception(f"[{browser_name}] Failed to close context")
 
@@ -297,8 +329,10 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
 
         if playwright:
             try:
-                await playwright.stop()
+                await asyncio.wait_for(playwright.stop(), timeout=15)
                 logging.debug(f"[{browser_name}] Playwright stopped cleanly.")
+            except asyncio.TimeoutError:
+                logging.error(f"[{browser_name}] Stopping Playwright timed out")
             except Exception:
                 logging.exception(f"[{browser_name}] Failed to stop Playwright cleanly")
 
