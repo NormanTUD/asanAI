@@ -693,6 +693,7 @@ var DimensionalityRiver = (function () {
 		var labelsSnapshot = _state._labelsSnapshot ? _state._labelsSnapshot.slice() : (typeof labels !== "undefined" && Array.isArray(labels) ? labels.slice() : null);
 
 		var html = "<div class='dimriver_scatter_wrapper' style='position:relative;'>";
+		html += _renderSilhouetteBadge(layer);
 		html += "<svg class='dimriver_svg' id='" + scatterId + "' width='100%' viewBox='0 0 " + width + " " + height + "'>";
 
 		html += "<rect x='" + margin + "' y='" + margin + "' width='" + plotW + "' height='" + plotH + "' fill='rgba(128,128,128,0.02)' stroke='rgba(128,128,128,0.1)' rx='4'/>";
@@ -702,8 +703,6 @@ var DimensionalityRiver = (function () {
 		html += _renderCentroids(layer, margin, plotW, plotH, minX, minY, rangeX, rangeY);
 
 		html += _renderPoints(embedded, layerLabels, misclassified, predictedLabels, margin, plotW, plotH, minX, minY, rangeX, rangeY, labelsSnapshot);
-
-		html += _renderSilhouetteBadge(layer, width, margin);
 
 		html += _renderMisclassificationBadge(misclassified, margin, height);
 
@@ -829,14 +828,12 @@ var DimensionalityRiver = (function () {
 		return html;
 	}
 
-	function _renderSilhouetteBadge(layer, width, margin) {
+	function _renderSilhouetteBadge(layer) {
 		if (layer.silhouette === null || layer.silhouette === undefined) return "";
 		var silVal = layer.silhouette.toFixed(3);
 		var silColor = layer.silhouette > 0.5 ? "#27ae60" : (layer.silhouette > 0.2 ? "#f39c12" : "#e74c3c");
-		var html = "";
-		html += "<rect x='" + (width - margin - 90) + "' y='" + (margin + 4) + "' width='86' height='20' rx='4' fill='rgba(255,255,255,0.85)' stroke='" + silColor + "' stroke-width='1'/>";
-		html += "<text x='" + (width - margin - 47) + "' y='" + (margin + 17) + "' text-anchor='middle' font-size='9' fill='" + silColor + "' font-weight='bold'>Silhouette: " + silVal + "</text>";
-		return html;
+		return "<div class='dimriver_silhouette_row'><span class='dimriver_silhouette_badge' style='color:" +
+			silColor + ";border-color:" + silColor + "'>Silhouette: " + silVal + "</span></div>";
 	}
 
 	function _renderMisclassificationBadge(misclassified, margin, height) {
@@ -1537,6 +1534,8 @@ var DimensionalityRiver = (function () {
 			".dimriver_card:hover { box-shadow: 0 3px 14px rgba(0,0,0,0.07); }",
 			".dimriver_card_header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }",
 			".dimriver_badge { font-size: 0.7em; opacity: 0.55; background: rgba(128,128,128,0.08); padding: 2px 8px; border-radius: 4px; }",
+			".dimriver_silhouette_row { display: flex; justify-content: flex-end; padding: 0 4px 2px 0; }",
+			".dimriver_silhouette_badge { display: inline-block; padding: 1px 7px; border-radius: 999px; border: 1px solid currentColor; background: rgba(128,128,128,0.08); font-size: 10px; font-weight: 700; line-height: 1.4; }",
 			".dimriver_legend { display: flex; gap: 12px; margin: 12px 0; font-size: 0.78em; opacity: 0.7; flex-wrap: wrap; justify-content: center; }",
 			".dimriver_legend_item { display: flex; align-items: center; gap: 4px; }",
 			".dimriver_legend_dot { width: 9px; height: 9px; border-radius: 50%; }",
