@@ -86,7 +86,7 @@
 					</tr>
 					<tr>
 						<td colspan=2>
-							<span class="TRANSLATEME_auto_input_shape"></span>
+							<label class="ribbon-checkbox-label" for="auto_input_shape"><span class="TRANSLATEME_auto_input_shape"></span></label>
 							<input type="checkbox" value=1 <?php print array_key_exists("no_auto_input_shape", $_GET) ? "" : "checked"; ?> onchange="allow_edit_input_shape()" id="auto_input_shape" />
 						</td>
 					</tr>
@@ -136,7 +136,7 @@
 							<td><input type="number" step=5 min="0" value="100" id="max_number_of_files_per_category" class="no_red_bg_when_empty" style="width: 40px"></td>
 						</tr>
 						<tr class="expert_mode_only">
-							<td><span class="TRANSLATEME_augment"></span>?</td>
+							<td><label class="ribbon-checkbox-label" for="auto_augment"><span class="TRANSLATEME_augment"></span>?</label></td>
 							<td><input type="checkbox" onclick="show_hide_augment_tab()" id="auto_augment"></td>
 						</tr>
 					</table>
@@ -158,7 +158,7 @@
 					</tr>
 					<tr>
 						<td>
-							<span class="symbol_button"><img height=16 src="_gui/icons/graph.svg" /></span> <span class="TRANSLATEME_autotab"></span>
+							<label class="ribbon-checkbox-label" for="jump_to_interesting_tab"><span class="symbol_button"><img height=16 src="_gui/icons/graph.svg" /></span> <span class="TRANSLATEME_autotab"></span></label>
 						</td>
 						<td>
 							<input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked>
@@ -243,11 +243,11 @@
 				<div class="ribbon-toolbar">
 					<table>
 						<tr>
-							<td><span class="TRANSLATEME_shuffle_before_each_epoch"></span>?</td>
+							<td><label class="ribbon-checkbox-label" for="shuffle_before_each_epoch"><span class="TRANSLATEME_shuffle_before_each_epoch"></span>?</label></td>
 							<td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch"></td>
 						</tr>
 						<tr>
-							<td><span class="TRANSLATEME_enable_tf_debug"></span></td>
+							<td><label class="ribbon-checkbox-label" for="enable_tf_debug"><span class="TRANSLATEME_enable_tf_debug"></span></label></td>
 							<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug"></td>
 						</tr>
 						<tr>
@@ -415,7 +415,7 @@
 			<div class="ribbon-toolbar">
 				<table>
 					<tr>
-						<td><span class="TRANSLATEME_auto_rotate_images"></span>?</td>
+						<td><label class="ribbon-checkbox-label" for="augment_rotate_images"><span class="TRANSLATEME_auto_rotate_images"></span>?</label></td>
 						<td><input type="checkbox" value=1 id="augment_rotate_images"></td>
 					</tr>
 					<tr>
@@ -423,11 +423,11 @@
 						<td><input type="number" min=1 value=4 id="number_of_rotations"></td>
 					</tr>
 					<tr>
-						<td><span class="TRANSLATEME_invert_images"></span>?</td>
+						<td><label class="ribbon-checkbox-label" for="augment_invert_images"><span class="TRANSLATEME_invert_images"></span>?</label></td>
 						<td><input type="checkbox" value=1 id="augment_invert_images"></td>
 					</tr>
 					<tr>
-						<td><span class="TRANSLATEME_flip_left_right"></span></td>
+						<td><label class="ribbon-checkbox-label" for="augment_flip_left_right"><span class="TRANSLATEME_flip_left_right"></span></label></td>
 						<td><input type="checkbox" value=1 id="augment_flip_left_right"></td>
 					</tr>
 				</table>

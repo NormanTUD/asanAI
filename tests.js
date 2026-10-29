@@ -113,8 +113,8 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1416;
-var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 503;
+var DEFAULT_EXPECTED_TEST_COUNT = 1417;
+var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
 	try {
@@ -1947,6 +1947,38 @@ function test_mobile_more_panel_markup() {
 		typeof mobile_open_tab === "function";
 }
 
+function test_ribbon_labels_toggle_checkboxes() {
+	const ids = [
+		"auto_input_shape",
+		"auto_augment",
+		"jump_to_interesting_tab",
+		"shuffle_before_each_epoch",
+		"enable_tf_debug",
+		"augment_rotate_images",
+		"augment_invert_images",
+		"augment_flip_left_right"
+	];
+
+	for (var idx = 0; idx < ids.length; idx++) {
+		const label = document.querySelector(`label.ribbon-checkbox-label[for='${ids[idx]}']`);
+		const checkbox = document.getElementById(ids[idx]);
+
+		if (!label || !checkbox || label.control !== checkbox) {
+			return false;
+		}
+	}
+
+	const checkbox = document.getElementById("jump_to_interesting_tab");
+	const label = document.querySelector("label.ribbon-checkbox-label[for='jump_to_interesting_tab']");
+	const before = checkbox.checked;
+
+	label.click();
+	const toggled = checkbox.checked !== before;
+	label.click();
+
+	return toggled && checkbox.checked === before;
+}
+
 function test_prepare_site_for_training_always_clears_plot() {
 	const old_unchanged = _model_fingerprint_unchanged;
 	const plot = document.getElementById("plotly_epoch_history");
@@ -2156,6 +2188,7 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("training data fetch reports detailed diagnostics", await test_training_data_fetch_reports_diagnostics(), true);
 	test_equal("hidden-tab Plotly charts resize after activation", await test_plotly_resize_after_tab_show(), true);
 	test_equal("mobile More panel exposes views and model actions", test_mobile_more_panel_markup(), true);
+	test_equal("ribbon labels toggle their checkboxes", test_ribbon_labels_toggle_checkboxes(), true);
 	test_equal("new training run always clears the old loss plot", test_prepare_site_for_training_always_clears_plot(), true);
 	test_equal("augmented previews are drawn into the photo gallery canvas", await test_augmented_previews_go_to_gallery_canvas(), true);
 

@@ -300,6 +300,10 @@ ul {
 	text-align: center;
 }
 
+.ribbon-checkbox-label {
+	cursor: pointer;
+}
+
 .optimizer_metadata_input {
 	max-width: 100px;
 }
