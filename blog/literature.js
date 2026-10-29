@@ -5703,6 +5703,13 @@ window.bibData = {
 		alternativetitle: "The Mechanical Turk",
 		url: "https://en.wikipedia.org/w/index.php?title=Mechanical_Turk"
 	},
+	"standage2002turk": {
+		title: "The Turk: The Life and Times of the Famous Eighteenth-Century Chess-Playing Machine",
+		author: "Tom Standage",
+		year: 2002,
+		url: "https://archive.org/details/turklifetimesoff0000stan",
+		alternativetitle: "Standage, The Turk (2002)"
+	},
 	"zhanghengseismoscope": {
 		author: "Wikipedia contributors",
 		year: "2026",
@@ -6332,6 +6339,27 @@ window.bibData = {
 		year: 2009,
 		url: "https://doi.org/10.1109/cvpr.2009.5206848",
 		alternativetitle: "ImageNet (Deng et al., 2009)"
+	},
+	"pew2016mturk": {
+		title: "What Is Mechanical Turk?",
+		author: "Pew Research Center",
+		year: 2016,
+		url: "https://www.pewresearch.org/internet/2016/07/11/what-is-mechanical-turk/",
+		alternativetitle: "Pew Research Center, What Is Mechanical Turk? (2016)"
+	},
+	"hara2018turkerwages": {
+		title: "A Data-Driven Analysis of Workers' Earnings on Amazon Mechanical Turk",
+		author: "Kotaro Hara, Abigail Adams, Kristy Milland, Saiph Savage, Chris Callison-Burch, Jeffrey P. Bigham",
+		year: 2018,
+		url: "https://arxiv.org/abs/1712.05796",
+		alternativetitle: "Hara et al., Workers' Earnings on Amazon Mechanical Turk (2018)"
+	},
+	"gray2019ghostwork": {
+		title: "Ghost Work: How to Stop Silicon Valley from Building a New Global Underclass",
+		author: "Mary L. Gray, Siddharth Suri",
+		year: 2019,
+		url: "https://ghostwork.info/",
+		alternativetitle: "Gray & Suri, Ghost Work (2019)"
 	},
 	"sgd": {
 		title: "A Stochastic Approximation Method",
@@ -16612,6 +16640,13 @@ window.bibData = {
 		url: "https://groups.csail.mit.edu/medg/people/psz/Licklider.html",
 		alternativetitle: "Licklider, Man-Computer Symbiosis (1960)"
 	},
+	"licklider1963intergalactic": {
+		title: "Memorandum for Members and Affiliates of the Intergalactic Computer Network",
+		author: "J. C. R. Licklider",
+		year: 1963,
+		url: "https://worrydream.com/refs/Licklider_1963_-_Members_and_Affiliates_of_the_Intergalactic_Computer_Network.pdf",
+		alternativetitle: "Licklider, Intergalactic Computer Network (1963)"
+	},
 	"maturana1980autopoiesis": {
 		title: "Autopoiesis and Cognition: The Realization of the Living",
 		author: "Humberto R. Maturana, Francisco J. Varela",
@@ -16972,6 +17007,20 @@ window.bibData = {
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/Algorithmic_fairness",
 		alternativetitle: "Algorithmic fairness (Wikipedia)"
+	},
+	"lowry1988blot": {
+		title: "A blot on the profession",
+		author: "Stella Lowry, Gordon Macpherson",
+		year: 1988,
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC2545288/",
+		alternativetitle: "Lowry & Macpherson, A blot on the profession (1988)"
+	},
+	"cre1988admissions": {
+		title: "Medical School Admissions: Report of a Formal Investigation into St. George's Hospital Medical School",
+		author: "Commission for Racial Equality",
+		year: 1988,
+		url: "https://wellcomecollection.org/works/t734qeeu",
+		alternativetitle: "Commission for Racial Equality, Medical School Admissions (1988)"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Common Myths (broad / cultural layer)  (myths.php)
