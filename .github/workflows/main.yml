@@ -404,17 +404,34 @@ jobs:
       - playwright-cross-platform
       - run-summary
     runs-on: ubuntu-latest
-    if: ${{ success() }}
+    if: ${{ success() && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     permissions:
       contents: write
     steps:
+      - name: Check tag push token
+        env:
+          TAG_PUSH_TOKEN: ${{ secrets.TAG_PUSH_TOKEN }}
+        run: |
+          if [ -z "$TAG_PUSH_TOKEN" ]; then
+            echo "::error::TAG_PUSH_TOKEN is not set. Add a PAT with Contents and Workflows write access as a repository secret."
+            exit 1
+          fi
+
       - name: Checkout Code
         uses: actions/checkout@v5
+        with:
+          # GITHUB_TOKEN is a GitHub App token without the workflows
+          # permission, so GitHub rejects tags whose commit changes a
+          # workflow file. Push with a PAT that has workflow scope instead.
+          token: ${{ secrets.TAG_PUSH_TOKEN }}
 
       - name: Create a new version
         run: |
           echo "Creating new version"
-          git tag ${{ github.run_number }} || true
-          git push origin --tags || true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag="${{ github.run_number }}"
+          if git ls-remote --tags --exit-code origin "refs/tags/$tag" >/dev/null 2>&1; then
+            echo "Tag $tag already exists; nothing to do."
+            exit 0
+          fi
+          git tag "$tag"
+          git push origin "refs/tags/$tag"
