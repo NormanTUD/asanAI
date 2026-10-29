@@ -4172,6 +4172,84 @@ window.bibData = {
 		alternativetitle: "Moon et al., 1993"
 	},
 
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  The First Brain, the First Eye, and the First Experience
+	 *  (untold_history_i.php, philosophy.php)
+	 *  The origin of nervous systems and vision, and the evolutionary
+	 *  question of when, or whether, experience began.
+	 * ───────────────────────────────────────────────────────────────────── */
+
+	"sep_qualia": {
+		title: "Qualia",
+		author: "Michael Tye",
+		year: 2025,
+		url: "https://plato.stanford.edu/entries/qualia/",
+		alternativetitle: "SEP: Qualia (Tye, rev. 2025)"
+	},
+	"ma2012fuxianhuia": {
+		title: "Complex Brain and Optic Lobes in an Early Cambrian Arthropod",
+		author: "Xiaoya Ma, Xianguang Hou, Gregory D. Edgecombe, Nicholas J. Strausfeld",
+		year: 2012,
+		url: "https://doi.org/10.1038/nature11495",
+		alternativetitle: "Ma et al., 2012"
+	},
+	"moroz2014ctenophore": {
+		title: "The Ctenophore Genome and the Evolutionary Origins of Neural Systems",
+		author: "Leonid L. Moroz et al.",
+		year: 2014,
+		url: "https://pubmed.ncbi.nlm.nih.gov/24847885/",
+		alternativetitle: "Moroz et al., 2014"
+	},
+	"paterson2011anomalocaris": {
+		title: "Acute Vision in the Giant Cambrian Predator Anomalocaris and the Origin of Compound Eyes",
+		author: "John R. Paterson et al.",
+		year: 2011,
+		url: "https://pubmed.ncbi.nlm.nih.gov/22158247/",
+		alternativetitle: "Paterson et al., 2011"
+	},
+	"nilsson1994eye": {
+		title: "A Pessimistic Estimate of the Time Required for an Eye to Evolve",
+		author: "Dan-E. Nilsson and Susanne Pelger",
+		year: 1994,
+		url: "https://pubmed.ncbi.nlm.nih.gov/8008757/",
+		alternativetitle: "Nilsson and Pelger, 1994"
+	},
+	"birch2020dimensions": {
+		title: "Dimensions of Animal Consciousness",
+		author: "Jonathan Birch, Alexandra K. Schnell, Nicola S. Clayton",
+		year: 2020,
+		url: "https://pubmed.ncbi.nlm.nih.gov/32830051/",
+		alternativetitle: "Birch et al., 2020"
+	},
+	"barron2016insects": {
+		title: "What Insects Can Tell Us About the Origins of Consciousness",
+		author: "Andrew B. Barron and Colin Klein",
+		year: 2016,
+		url: "https://pubmed.ncbi.nlm.nih.gov/27091981/",
+		alternativetitle: "Barron and Klein, 2016"
+	},
+	"cambridge2012consciousness": {
+		title: "The Cambridge Declaration on Consciousness",
+		author: "Philip Low et al.",
+		year: 2012,
+		url: "https://fcmconference.org/img/CambridgeDeclarationOnConsciousness.pdf",
+		alternativetitle: "Cambridge Declaration on Consciousness (2012)"
+	},
+	"godfreysmith2016otherminds": {
+		title: "Other Minds: The Octopus, the Sea, and the Deep Origins of Consciousness",
+		author: "Peter Godfrey-Smith",
+		year: 2016,
+		url: "https://archive.org/details/othermindsoctopu0000godf",
+		alternativetitle: "Godfrey-Smith, 2016"
+	},
+	"ginsburg2019sensitive": {
+		title: "The Evolution of the Sensitive Soul: Learning and the Origins of Consciousness",
+		author: "Simona Ginsburg and Eva Jablonka",
+		year: 2019,
+		url: "https://mitpress.mit.edu/9780262039292/the-evolution-of-the-sensitive-soul/",
+		alternativetitle: "Ginsburg and Jablonka, 2019"
+	},
+
 	"relufirst": {
 		title: "Visual Feature Extraction by a Multilayered Network of Analog Threshold Elements",
 		author: "Kunihiko Fukushima",

@@ -64,6 +64,8 @@ The modern physiology is a sequence of instruments. Corti's microscope found the
 The last turn was the discovery that the ear is not passive. Thomas Gold predicted in 1948 that the cochlea must contain an active amplifier, and David Kemp demonstrated otoacoustic emissions in 1978: click the ear, and it answers with a faint echo that disappears when the hair cells are damaged (\cite[Gold, 1948]{gold1948hearing}; \cite[Kemp, 1978]{kemp1978emissions}). The echo comes from outer hair cells that change length in response to voltage -- electromotility, shown in isolated cells in 1985 (\cite[Brownell et al., 1985]{brownell1985electromotility}) -- and the motor protein was identified as prestin in 2000 (\cite[Zheng et al., 2000]{zheng2000prestin}). The cochlea is not a microphone; it is an amplifier with a feedback loop.
 
 > **The short answer.** Hearing was first treated as a philosophical problem by Alcmaeon and Aristotle, as an anatomical problem by Vesalius, Falloppio, and Duverney, as a physiological problem by Helmholtz and Békésy, and as an evolutionary problem by Reichert, Gaupp, and the *Morganucodon* fossils.
+
+The same deep history produced the organ that hears and the organ that sees -- and, somewhere in that history, the first experience. Two of those movements are traced in [the first brain](untold_history_i.php#the-first-brain-from-nerve-net-to-cortex) and [the first eye](untold_history_i.php#the-first-eye-how-light-became-a-picture); the question of when experience began is taken up in [the chapter on philosophy](philosophy.php#consciousness).
 </div>
 
 <div class="md">
