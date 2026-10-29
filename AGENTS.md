@@ -796,12 +796,13 @@ dependency in a header won't resolve for a few days).
 | `python _run_tests.py --browser <name> [--quick] --url <url>` | Cross-platform Playwright runner (no Docker): `chromium`/`firefox`/`webkit` use Playwright's bundled builds, `chrome`/`msedge` the installed branded channels, `opera` a best-effort Chromium launch; `--quick` runs `run_tests(1)`; `--parallel N` runs up to N browsers at once; `--stop-on-failure` skips remaining browsers after a failure; `--artifacts-dir` stores screenshots/HTML/traces; `--timings-json FILE` records per-browser durations | failed tests | Windows/macOS Toolkit CI |
 
 `main.yml` runs the full Docker suite on Ubuntu and a direct-PHP/Playwright
-matrix with one job per OS and all browsers inside it (`--parallel 3` on
-Windows, `--parallel 1` on macOS so the 3-core runner and the plan's
-five-macOS-job limit are respected). Matrices use `fail-fast: false`. New
-pushes do **not** cancel older runs (no workflow `concurrency`), and there is
-no cross-job cancellation: every OS job
-finishes so the other OS results and timings survive a failure in one of them.
+matrix with one job per OS and all browsers inside it. Browsers run
+**sequentially** on every OS; WebKit runs first because it is the most
+platform-sensitive engine, then Chromium, Firefox, branded Chrome, Edge and
+Opera. Matrices use `fail-fast: false`. New pushes do **not** cancel older runs
+(no workflow `concurrency`), and there is no cross-job cancellation: every OS
+job finishes so the other OS results and timings survive a failure in one of
+them.
 The version tag is only pushed after all jobs succeed. Browser failures are
 summarized on the job's GitHub summary page (failed test, result counts,
 concrete error trace, collapsible raw log), and `run-summary` runs

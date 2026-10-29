@@ -877,6 +877,11 @@ async function get_available_cams () {
 	var webcams = [];
 	var ids = [];
 
+	if (!navigator.mediaDevices || typeof navigator.mediaDevices.enumerateDevices !== "function") {
+		dbg("[get_available_cams] MediaDevices API is not available");
+		return [webcams, ids];
+	}
+
 	await navigator.mediaDevices.enumerateDevices().then(function (devices) {
 		for(var device_idx = 0; device_idx < devices.length; device_idx++){
 			var device = devices[device_idx];

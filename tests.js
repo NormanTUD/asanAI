@@ -4444,6 +4444,11 @@ async function test_status_bar_tooltip_update_is_deferred() {
 }
 
 async function test_webcam_constraints_use_device_id_without_probe_stream() {
+	if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== "function") {
+		log_test("Testing webcam constraints skipped: getUserMedia not available");
+		return true;
+	}
+
 	const original_get_user_media = navigator.mediaDevices.getUserMedia;
 	const original_ids = available_webcams_ids;
 	const original_names = available_webcams;

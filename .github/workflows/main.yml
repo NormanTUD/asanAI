@@ -67,12 +67,11 @@ jobs:
           bash run_tests --no-smoke-tests
 
 
-  # One job per OS. Every browser runs in that job; --parallel controls how many
-  # run at once. Windows runs three at a time; macOS runs one at a time because
-  # the standard runner has only 3 cores / 7 GB and must also respect the
-  # plan-wide concurrent-macOS limit.
+  # One job per OS. Every browser runs sequentially in that job. WebKit runs
+  # first because it is the most platform-sensitive engine; --stop-on-failure
+  # then reports its result before the long Chromium/Firefox runs.
   playwright-cross-platform:
-    name: all browsers / ${{ matrix.os }} / full (parallel ${{ matrix.parallel }})
+    name: all browsers / ${{ matrix.os }} / full (sequential)
     needs: smoke-tests
     runs-on: ${{ matrix.os }}
     timeout-minutes: 360
@@ -81,9 +80,7 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            parallel: 3
           - os: macos-latest
-            parallel: 1
     steps:
       - name: Checkout Code
         uses: actions/checkout@v5
@@ -149,7 +146,7 @@ jobs:
           fi
 
           BROWSER_ARGS=()
-          for browser in chromium firefox chrome msedge webkit opera; do
+          for browser in webkit chromium firefox chrome msedge opera; do
             BROWSER_ARGS+=(--browser "$browser")
           done
 
@@ -157,7 +154,6 @@ jobs:
           python _run_tests.py \
             --url http://127.0.0.1:1122/index.php \
             "${BROWSER_ARGS[@]}" \
-            --parallel "${{ matrix.parallel }}" \
             --stop-on-failure \
             --timings-json browser-timings.json \
             --timings-os "${{ matrix.os }}" \
