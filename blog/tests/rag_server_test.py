@@ -49,6 +49,19 @@ class FakeOllama(BaseHTTPRequestHandler):
         length = int(self.headers.get("Content-Length") or 0)
         payload = json.loads(self.rfile.read(length).decode("utf-8"))
         FakeOllama.requests.append(payload)
+        if payload.get("stream"):
+            lines = [
+                {"message": {"content": "A "}, "done": False},
+                {"message": {"content": "perceptron"}, "done": False},
+                {"message": {"content": " [S1]."}, "done": True},
+            ]
+            body = "".join(json.dumps(line) + "\n" for line in lines).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/x-ndjson")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
         system = (payload.get("messages") or [{}])[0].get("content", "")
         content = "translated question" if "Translate" in system else "answer [S1]"
         self._json({"message": {"content": content}})
@@ -94,8 +107,10 @@ def get(base, path):
 class FakeEngine:
     chunks = [{"u": "history#x", "pt": "History", "h": "X", "x": "A perceptron."}]
 
-    def answer(self, question, lang, history):
+    def answer(self, question, lang, history, on_token=None):
         time.sleep(0.35)
+        if on_token:
+            on_token("A perceptron is a linear classifier [S1].")
         return {
             "grounded": True,
             "answer": "A perceptron is a linear classifier [S1].",
@@ -119,8 +134,13 @@ def main():
     refused = engine.finalize(server.NOT_IN_COURSE, chunks, "de", "frage")
     check(refused["grounded"] is False, "finalize rejects the not-in-course marker")
     check("Kurs" in refused["answer"], "refusal is localized")
-    uncited = engine.finalize("Just an answer.", chunks, "en", "question")
-    check(uncited["grounded"] is False, "finalize rejects an uncited answer")
+    uncited = engine.finalize("McCulloch and Pitts modelled the neuron.", chunks, "en",
+                             "question")
+    check(uncited["grounded"] is True, "finalize keeps an uncited answer")
+    check(uncited["sources"], "uncited answer still carries retrieved sources")
+    check(uncited["cited"] is False, "uncited answer is marked as such")
+    empty = engine.finalize("", chunks, "en", "question")
+    check(empty["grounded"] is False, "finalize rejects an empty answer")
 
     messages = engine.build_messages("Was ist ein Perzeptron?", "What is a perceptron?",
                                      chunks[:1], "de", [])
@@ -128,6 +148,30 @@ def main():
     check("[S1]" in messages[1]["content"], "prompt contains passage markers")
     check("history#x" in messages[1]["content"], "prompt contains source URLs")
     check("German" in messages[1]["content"], "prompt names the answer language")
+
+    # A NOT_IN_COURSE response triggers one permissive retry.
+    retry_engine = object.__new__(server.RagEngine)
+    retry_engine.translate = lambda question, lang: question
+    retry_engine.retrieve = lambda question, limit=5: chunks
+    retry_engine.build_messages = lambda *args: [
+        {"role": "system", "content": "system"},
+        {"role": "user", "content": "user"},
+    ]
+    retry_engine.finalize = server.RagEngine.finalize.__get__(retry_engine)
+    calls = {"count": 0}
+
+    def fake_stream(messages, max_tokens, temperature, on_token):
+        calls["count"] += 1
+        text = server.NOT_IN_COURSE if calls["count"] == 1 else "McCulloch and Pitts [S1]."
+        on_token(text)
+        return text
+
+    retry_engine._ollama_stream = fake_stream
+    tokens = []
+    retried = retry_engine.answer("who invented the neuron?", "en", [], on_token=tokens.append)
+    check(calls["count"] == 2, "a NOT_IN_COURSE answer is retried once")
+    check(retried["grounded"] is True, "the retry can produce a grounded answer")
+    check("McCulloch" in retried["answer"], "the retry answer is kept")
 
     bm25 = server.BM25(["a perceptron is linear", "the history of rome"])
     check(bm25.search("perceptron")[0] == 0, "BM25 finds an exact term")
@@ -158,6 +202,11 @@ def main():
               "translate calls Ollama for non-English questions")
         check(dummy.translate("What is a perceptron?", "en") == "What is a perceptron?",
               "translate skips English questions")
+        tokens = []
+        streamed = dummy._ollama_stream([{"role": "user", "content": "hi"}], 10, 0.0,
+                                        tokens.append)
+        check(streamed == "A perceptron [S1].", "streaming client concatenates tokens")
+        check("".join(tokens) == "A perceptron [S1].", "streaming client calls on_token")
     finally:
         server.OLLAMA_URL, server.OLLAMA_MODEL = old_url, old_model
         fake.shutdown()
@@ -170,6 +219,8 @@ def main():
 
     with tempfile.TemporaryDirectory(prefix="asanai-rag-test-") as tmp:
         cache = server.AnswerCache(Path(tmp) / "cache.sqlite")
+        old_proxy_ollama = server.OLLAMA_URL
+        server.OLLAMA_URL = "http://127.0.0.1:1"
         service = server.RagService(FakeEngine(), cache)
         service.rate = server.RateLimiter(100, 0)
         health = service.health()
@@ -261,6 +312,7 @@ def main():
                 except subprocess.TimeoutExpired:
                     php.kill()
         finally:
+            server.OLLAMA_URL = old_proxy_ollama
             httpd.shutdown()
             httpd.server_close()
 

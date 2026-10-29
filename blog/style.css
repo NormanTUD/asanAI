@@ -13851,6 +13851,19 @@ summary:focus-visible,
 	color: var(--mn-text-muted);
 	font-style: italic;
 }
+.rag-cursor {
+	display: inline-block;
+	width: 0.5em;
+	height: 1em;
+	margin-left: 2px;
+	vertical-align: -0.12em;
+	border-radius: 1px;
+	background: currentColor;
+	animation: rag-cursor-blink 1s steps(1) infinite;
+}
+@keyframes rag-cursor-blink {
+	50% { opacity: 0; }
+}
 .rag-chat-msg .rag-cite {
 	color: var(--mn-accent);
 	font-weight: 700;

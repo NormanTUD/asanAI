@@ -8,7 +8,8 @@
 		history: [],
 		busy: false,
 		mounted: false,
-		pollTimer: null
+		pollTimer: null,
+		streamNode: null
 	};
 	var els = {};
 
@@ -162,6 +163,22 @@
 		if (els.send) els.send.disabled = busy;
 	}
 
+	function visiblePartial(text) {
+		return String(text || '').split('[[NOT_IN_COURSE]]').join('');
+	}
+
+	function showPartial(text) {
+		text = visiblePartial(text);
+		if (!text) return;
+		if (!state.streamNode) {
+			state.streamNode = addMessage('assistant', '');
+			state.streamNode.classList.add('rag-chat-streaming');
+		}
+		state.streamNode.innerHTML = answerHtml(text, []) +
+			'<span class="rag-cursor" aria-hidden="true"></span>';
+		els.messages.scrollTop = els.messages.scrollHeight;
+	}
+
 	function submit() {
 		if (state.busy) return;
 		var question = (els.input.value || '').trim();
@@ -169,6 +186,7 @@
 		addMessage('user', esc(question));
 		els.input.value = '';
 		els.status.textContent = 'Generating your answer…';
+		state.streamNode = null;
 		setBusy(true);
 
 		var payload = {
@@ -207,18 +225,24 @@
 					} else {
 						els.status.textContent = statusText(data) ||
 							'Generating your answer…';
+						showPartial(data.partial || '');
 						poll(question, id, data);
 					}
 				})
 				.catch(function() { fail(null); });
-		}, 1500);
+		}, 400);
 	}
 
 	function finish(question, data) {
 		clearTimeout(state.pollTimer);
 		els.status.textContent = '';
-		addMessage('assistant', answerHtml(data.answer, data.sources),
-			data.grounded === false ? 'rag-chat-msg-refusal' : '');
+		var node = state.streamNode;
+		state.streamNode = null;
+		if (!node) node = addMessage('assistant', '');
+		node.classList.remove('rag-chat-streaming');
+		node.className = 'rag-chat-msg rag-chat-msg-assistant' +
+			(data.grounded === false ? ' rag-chat-msg-refusal' : '');
+		node.innerHTML = answerHtml(data.answer, data.sources);
 		state.history.push({ role: 'user', content: question });
 		state.history.push({ role: 'assistant', content: data.answer || '' });
 		state.history = state.history.slice(-6);
@@ -227,6 +251,10 @@
 
 	function fail(data) {
 		clearTimeout(state.pollTimer);
+		if (state.streamNode) {
+			state.streamNode.remove();
+			state.streamNode = null;
+		}
 		var message = 'The answer service is unavailable right now.';
 		if (data && data.error === 'queue_full') {
 			message = 'The answer queue is full. Please try again in a minute.';

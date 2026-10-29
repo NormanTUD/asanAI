@@ -106,7 +106,12 @@ MOCK = r"""
 			}
 			statusCalls += 1;
 			if (statusCalls <= 3) {
-				return reply({ status: 'running', position: 0, eta_seconds: 10 });
+				return reply({
+					status: 'running',
+					position: 0,
+					eta_seconds: 10,
+					partial: 'A perceptron is a linear classifier'
+				});
 			}
 			return reply({
 				status: 'done',
@@ -185,9 +190,15 @@ def main() -> int:
 		)
 		check("about 10 seconds" in status_text(browser),
 			"running status shows the remaining time", status_text(browser))
+		WebDriverWait(browser, 8).until(
+			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-assistant")) > 0
+		)
+		check("A perceptron is a linear classifier" in
+			browser.find_element(By.CSS_SELECTOR, ".rag-chat-msg-assistant").text,
+			"partial answer streams while generating")
 
 		WebDriverWait(browser, 10).until(
-			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-assistant")) > 0
+			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-sources")) > 0
 		)
 		answer = browser.find_element(By.CSS_SELECTOR, ".rag-chat-msg-assistant").text
 		check("A perceptron is a linear classifier" in answer,

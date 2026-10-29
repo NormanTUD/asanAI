@@ -17,7 +17,13 @@ browser  ──POST /ask.php──▶  PHP proxy  ──▶  127.0.0.1:8090  (qu
   5 seconds.
 - **Grounded answers:** top passages are supplied with `[S1]…` markers. The
   system prompt forbids outside knowledge and requires citations. If the model
-  finds no support, it returns a localized “the course does not cover that”.
+  returns `[[NOT_IN_COURSE]]` despite relevant passages, the service retries
+  once with a more permissive prompt; if it answers without markers, the
+  retrieved passages are attached as sources instead of returning a false
+  refusal. A localized “the course does not cover that” remains the fallback.
+- **Streaming:** while the model runs, `/status` carries the partial answer;
+  the chat polls every 400 ms and renders tokens as they arrive. No SSE and no
+  proxy buffering tricks are needed.
 - **Multilingual:** questions in other languages are translated to English for
   retrieval (the corpus is English); the answer is written in the question’s
   language.
