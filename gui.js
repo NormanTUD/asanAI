@@ -1506,6 +1506,17 @@ function mobile_close_drawer() {
 	}
 }
 
+function mobile_open_tab(label) {
+	if (!is_mobile_view()) return;
+
+	mobile_close_all();
+	mobile_close_drawer();
+
+	if (typeof show_tab_label === "function") {
+		show_tab_label(label, 1);
+	}
+}
+
 function mobile_train_action() {
 	if (!is_mobile_view()) return;
 
@@ -2907,6 +2918,7 @@ function update_ribbon_compactness($target_panel = null) {
 		_ribbon_restore_all();
 		_ribbon_more_button_li().hide();
 		close_ribbon_more_menu();
+		if ($("#ribbon")[0]) $("#ribbon")[0].style.height = "";
 		return;
 	}
 
@@ -2998,6 +3010,21 @@ function update_ribbon_compactness($target_panel = null) {
 	} else {
 		$li.hide();
 		close_ribbon_more_menu();
+	}
+
+	// Groups that cannot be collapsed (importance 1) may wrap onto another
+	// row. Give the ribbon enough height to show those rows instead of hiding
+	// them behind the panel's inner scrollbar.
+	var ribbonEl = $("#ribbon")[0];
+	if (ribbonEl) {
+		if (panel.scrollHeight > panel.clientHeight + 2) {
+			var tablistHeight = $("#tablist").outerHeight() || 0;
+			var needed = tablistHeight + panel.scrollHeight + 8;
+			var maxHeight = Math.max(220, Math.round(window.innerHeight * 0.55));
+			ribbonEl.style.height = Math.min(needed, maxHeight) + "px";
+		} else {
+			ribbonEl.style.height = "";
+		}
 	}
 }
 

@@ -36,7 +36,8 @@ var GradientFlowHeatmap = (function () {
 		offscreenCtx: null,
 		pendingRender: null,
 		frozenDuringCompute: false,
-		lastContainerId: null  // NEW: remember where we render
+		lastContainerId: null,  // NEW: remember where we render
+		cellTooltip: null
 	};
 
 	// ============================================================
@@ -88,6 +89,15 @@ var GradientFlowHeatmap = (function () {
 			".gflow_label_overlay span { font-size: 0.65em; color: rgba(255,255,255,0.85); text-shadow: 0 1px 3px rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }",
 			"@keyframes gflow_fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }",
 			".gflow_fade_in { animation: gflow_fadein 0.3s ease-out; }",
+			".gflow_cell_tooltip { position: fixed; z-index: 1000000; display: none; max-width: 320px; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.16); background: rgba(18,20,30,0.97); color: #eef2ff; box-shadow: 0 10px 32px rgba(0,0,0,0.4); font-size: 12px; line-height: 1.45; pointer-events: none; }",
+			".gflow_cell_tooltip .gflow_tip_title { font-size: 13px; font-weight: 700; display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; }",
+			".gflow_cell_tooltip .gflow_tip_title span { font-size: 11px; font-weight: 500; opacity: 0.6; }",
+			".gflow_cell_tooltip .gflow_tip_sub { font-size: 10.5px; opacity: 0.62; margin: 2px 0 7px; }",
+			".gflow_cell_tooltip .gflow_tip_grid { display: grid; grid-template-columns: auto auto; gap: 2px 12px; margin-bottom: 7px; }",
+			".gflow_cell_tooltip .gflow_tip_grid span { opacity: 0.66; }",
+			".gflow_cell_tooltip .gflow_tip_grid b { text-align: right; font-family: 'SF Mono', 'Fira Code', monospace; font-weight: 600; }",
+			".gflow_cell_tooltip .gflow_tip_health { font-weight: 700; margin: 4px 0 3px; }",
+			".gflow_cell_tooltip .gflow_tip_color { font-size: 10.5px; opacity: 0.55; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 6px; margin-top: 6px; }",
 		].join("\n");
 		document.head.appendChild(style);
 	}
@@ -519,6 +529,146 @@ var GradientFlowHeatmap = (function () {
 	}
 
 	// ============================================================
+	// CELL TOOLTIP
+	// ============================================================
+
+	function _gflow_esc(value) {
+		return String(value === undefined || value === null ? "" : value)
+			.replace(/&/g, "&amp;")
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;")
+			.replace(/"/g, "&quot;")
+			.replace(/'/g, "&#39;");
+	}
+
+	function _gflow_num(value) {
+		if (typeof value !== "number" || !isFinite(value)) return "—";
+		if (value === 0) return "0";
+		return value.toExponential(2);
+	}
+
+	function _gflow_ensure_tooltip() {
+		if (_state.cellTooltip && document.body.contains(_state.cellTooltip)) {
+			return _state.cellTooltip;
+		}
+		var tip = document.createElement("div");
+		tip.className = "gflow_cell_tooltip";
+		document.body.appendChild(tip);
+		_state.cellTooltip = tip;
+		return tip;
+	}
+
+	function _gflow_hide_tooltip() {
+		if (_state.cellTooltip) _state.cellTooltip.style.display = "none";
+	}
+
+	function _gflow_show_tooltip(event, canvas) {
+		var history = _state.history.length > 0 ? _state.history : _state.lastValidHistory;
+		if (!history || history.length === 0) return;
+		var numLayers = (history[0] && history[0].layers) ? history[0].layers.length : 0;
+		if (!numLayers) return;
+
+		var rect = canvas.getBoundingClientRect();
+		if (!rect.width || !rect.height) return;
+		var relativeX = (event.clientX - rect.left) / rect.width;
+		var relativeY = (event.clientY - rect.top) / rect.height;
+		if (relativeX < 0 || relativeX > 1 || relativeY < 0 || relativeY > 1) {
+			_gflow_hide_tooltip();
+			return;
+		}
+
+		var stepIndex = Math.min(history.length - 1, Math.max(0, Math.floor(relativeX * history.length)));
+		var layerIndex = Math.min(numLayers - 1, Math.max(0, Math.floor(relativeY * numLayers)));
+		var record = history[stepIndex];
+		var layer = record && record.layers ? record.layers[layerIndex] : null;
+		if (!layer) {
+			_gflow_hide_tooltip();
+			return;
+		}
+
+		var norms = [];
+		for (var i = 0; i < record.layers.length; i++) {
+			norms.push((record.layers[i] && typeof record.layers[i].gradNorm === "number") ? record.layers[i].gradNorm : -Infinity);
+		}
+		var sorted = norms.slice().sort(function(a, b) { return b - a; });
+		var rank = sorted.indexOf(layer.gradNorm) + 1;
+		if (rank < 1) rank = 1;
+
+		var previous = stepIndex > 0 && history[stepIndex - 1] && history[stepIndex - 1].layers
+			? history[stepIndex - 1].layers[layerIndex]
+			: null;
+		var changeText = _t("gflow_tip_no_prev", "no previous step");
+		var changeColor = "rgba(238,242,255,0.72)";
+		if (previous && typeof previous.gradNorm === "number" && previous.gradNorm > 0 && layer.gradNorm > 0) {
+			var ratio = layer.gradNorm / previous.gradNorm;
+			if (ratio > 1.05) {
+				changeText = "↑ " + ratio.toFixed(2) + "× " + _t("gflow_tip_stronger", "stronger");
+				changeColor = "#2ecc71";
+			} else if (ratio < 0.95) {
+				changeText = "↓ " + ratio.toFixed(2) + "× " + _t("gflow_tip_weaker", "weaker");
+				changeColor = "#e74c3c";
+			} else {
+				changeText = "→ " + ratio.toFixed(2) + "× " + _t("gflow_tip_same", "unchanged");
+			}
+		}
+
+		var healthText;
+		var healthColor;
+		if (!isFinite(layer.gradNorm) || layer.gradNorm === 0 || layer.gradNorm < 1e-30) {
+			healthText = _t("gflow_tip_health_dead", "No gradient — this layer is likely dead.");
+			healthColor = "#e74c3c";
+		} else if (layer.gradNorm < 1e-6) {
+			healthText = _t("gflow_tip_health_vanishing", "Very weak — possible vanishing gradient.");
+			healthColor = "#f39c12";
+		} else if (layer.gradNorm > 1e3) {
+			healthText = _t("gflow_tip_health_exploding", "Very large — possible exploding gradient.");
+			healthColor = "#e74c3c";
+		} else {
+			healthText = _t("gflow_tip_health_healthy", "Healthy gradient signal.");
+			healthColor = "#2ecc71";
+		}
+
+		var timeText = record.timestamp ? new Date(record.timestamp).toLocaleTimeString() : "—";
+		var tip = _gflow_ensure_tooltip();
+		tip.innerHTML =
+			"<div class='gflow_tip_title'>" + _gflow_esc(layer.name) +
+				"<span>" + _gflow_esc(layer.type) + " · " + _t("gflow_layer", "Layer") + " " + (layerIndex + 1) + "/" + numLayers + "</span></div>" +
+			"<div class='gflow_tip_sub'>" + _t("gflow_tip_step", "Step {i} of {n}").replace("{i}", stepIndex + 1).replace("{n}", history.length) +
+				" · " + _gflow_esc(timeText) + "</div>" +
+			"<div class='gflow_tip_grid'>" +
+				"<span>" + _t("gflow_tip_norm", "Gradient norm (L2)") + "</span><b>" + _gflow_num(layer.gradNorm) + "</b>" +
+				"<span>" + _t("gflow_tip_max_abs", "Max |gradient|") + "</span><b>" + _gflow_num(layer.gradMax) + "</b>" +
+				"<span>" + _t("gflow_tip_mean_abs", "Mean |gradient|") + "</span><b>" + _gflow_num(layer.gradMean) + "</b>" +
+				"<span>" + _t("gflow_tip_params", "Parameters") + "</span><b>" + (layer.paramCount || 0).toLocaleString() + "</b>" +
+				"<span>" + _t("gflow_tip_rank", "Rank at this step") + "</span><b>" + rank + " / " + numLayers + "</b>" +
+				"<span>" + _t("gflow_tip_change", "Change vs. previous") + "</span><b style='color:" + changeColor + "'>" + _gflow_esc(changeText) + "</b>" +
+			"</div>" +
+			"<div class='gflow_tip_health' style='color:" + healthColor + "'>" + _gflow_esc(healthText) + "</div>" +
+			"<div class='gflow_tip_color'>" + _t("gflow_tip_color", "Color = log10 gradient norm (bright = strong). One square = one layer at one training step.") + "</div>";
+		tip.style.display = "block";
+
+		var tipRect = tip.getBoundingClientRect();
+		var left = event.clientX + 16;
+		var top = event.clientY + 16;
+		if (left + tipRect.width > window.innerWidth - 10) left = event.clientX - tipRect.width - 16;
+		if (top + tipRect.height > window.innerHeight - 10) top = event.clientY - tipRect.height - 16;
+		tip.style.left = Math.max(8, left) + "px";
+		tip.style.top = Math.max(8, top) + "px";
+	}
+
+	function _gflow_bind_cell_tooltip(canvas) {
+		if (!canvas || canvas.__gflowTooltipBound) return;
+		canvas.__gflowTooltipBound = true;
+		canvas.style.cursor = "crosshair";
+		canvas.addEventListener("mousemove", function(event) { _gflow_show_tooltip(event, canvas); });
+		canvas.addEventListener("mouseleave", _gflow_hide_tooltip);
+		if (!window.__gflowScrollHideBound) {
+			window.__gflowScrollHideBound = true;
+			window.addEventListener("scroll", _gflow_hide_tooltip, { passive: true });
+		}
+	}
+
+	// ============================================================
 	// HEATMAP CANVAS RENDERING (DOUBLE-BUFFERED)
 	// ============================================================
 
@@ -845,6 +995,7 @@ var GradientFlowHeatmap = (function () {
 		if (!historyToRender || historyToRender.length === 0) return;
 
 		_renderHeatmapInPlace(canvas, historyToRender);
+		_gflow_bind_cell_tooltip(canvas);
 		_updateLayerLabels(heatmapWrap, latest);
 	}
 

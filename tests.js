@@ -113,8 +113,8 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1412;
-var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 499;
+var DEFAULT_EXPECTED_TEST_COUNT = 1414;
+var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 501;
 
 function _test_expected_count (storage_key, fallback) {
 	try {
@@ -1913,6 +1913,40 @@ async function test_training_data_fetch_reports_diagnostics() {
 	}
 }
 
+async function test_plotly_resize_after_tab_show() {
+	const original_resize = window.resize_all_plotly_elements;
+	let calls = 0;
+
+	window.resize_all_plotly_elements = function () {
+		calls++;
+	};
+
+	const panel = document.createElement("div");
+	const plot = document.createElement("div");
+	plot.id = "plotly_resize_test_target";
+	panel.appendChild(plot);
+
+	try {
+		schedule_plotly_resize_after_tab_show(panel);
+		await new Promise(function (resolve) { setTimeout(resolve, 450); });
+		return calls >= 2;
+	} finally {
+		window.resize_all_plotly_elements = original_resize;
+		panel.remove();
+	}
+}
+
+function test_mobile_more_panel_markup() {
+	const navButton = document.getElementById("mobile_nav_more");
+	const panel = document.getElementById("mobile_panel_more");
+
+	return !!navButton &&
+		!!panel &&
+		panel.querySelectorAll(".mobile-panel-section").length >= 2 &&
+		panel.querySelectorAll("button.mobile-panel-row").length >= 7 &&
+		typeof mobile_open_tab === "function";
+}
+
 async function test_failed_image_is_not_added_as_null() {
 	const original_handler = window.handleImageDownload;
 	const original_force_download = force_download;
@@ -2059,6 +2093,8 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("failed image is not added as a null sample", await test_failed_image_is_not_added_as_null(), true);
 	test_equal("training data fetch retries transient failures", await test_training_data_fetch_retries_transient_failures(), true);
 	test_equal("training data fetch reports detailed diagnostics", await test_training_data_fetch_reports_diagnostics(), true);
+	test_equal("hidden-tab Plotly charts resize after activation", await test_plotly_resize_after_tab_show(), true);
+	test_equal("mobile More panel exposes views and model actions", test_mobile_more_panel_markup(), true);
 
 	var fit_data = await get_fit_data();
 

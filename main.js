@@ -169,6 +169,10 @@ function init_tabs () {
 				load_cnn3d_lazily();
 			}
 
+			// Charts that were built while their tab was hidden keep Plotly's
+			// placeholder width. Resize them as soon as the panel is visible.
+			schedule_plotly_resize_after_tab_show(ui.newPanel && ui.newPanel[0]);
+
 			if (ui.newPanel.attr("id") == "weight_surfaces") {
 				window.__weight_surfaces_visible = true;
 			}
@@ -1121,6 +1125,34 @@ function resize_all_plotly_elements() {
         }
 
         return true;
+}
+
+// Plots created while their tab was hidden get Plotly's fallback width and do
+// not notice that the tab later became visible. Resize once the browser has
+// laid the panel out (and once more after fonts/controls settle), otherwise
+// the training charts stay at roughly half the screen width.
+function schedule_plotly_resize_after_tab_show(panel) {
+        if (!panel || typeof resize_all_plotly_elements !== "function") {
+                return;
+        }
+
+        if (!panel.querySelector("[id^='plotly_']")) {
+                return;
+        }
+
+        var resize = function() {
+                if (typeof resize_all_plotly_elements === "function") {
+                        resize_all_plotly_elements();
+                }
+        };
+
+        if (typeof requestAnimationFrame === "function") {
+                requestAnimationFrame(resize);
+        } else {
+                setTimeout(resize, 0);
+        }
+        setTimeout(resize, 120);
+        setTimeout(resize, 400);
 }
 
 function register_plotly_resize_listener() {

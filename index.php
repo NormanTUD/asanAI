@@ -317,6 +317,10 @@
 				<span class="mobile-nav-icon">&#9881;</span>
 				<span class="mobile-nav-label" data-tr-text="settings_mobile_label">Settings</span>
 			</button>
+			<button class="mobile-nav-item" id="mobile_nav_more" onclick="mobile_open_panel('more')">
+				<span class="mobile-nav-icon">&#8943;</span>
+				<span class="mobile-nav-label" data-tr-text="more_mobile_label">More</span>
+			</button>
 			<button class="mobile-nav-item" id="mobile_nav_help" onclick="mobile_open_panel('help')">
 				<span class="mobile-nav-icon">&#63;</span>
 				<span class="mobile-nav-label" data-tr-text="help_mobile_label">Help</span>
@@ -748,6 +752,50 @@
 							<input type="number" id="mobile_kernel_pixel_size" value="10" min="1" max="100" onchange="$('#kernel_pixel_size').val(this.value); change_kernel_pixel_size();">
 						</div>
 					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- More Panel: views and model actions not in the bottom bar -->
+		<div id="mobile_panel_more" class="mobile-panel">
+			<div class="mobile-panel-header">
+				<span class="mobile-panel-title" data-tr-text="more_mobile_label">More</span>
+				<button class="mobile-panel-close" onclick="mobile_close_all()">&times;</button>
+			</div>
+			<div class="mobile-panel-body">
+				<div class="mobile-panel-section">
+					<div class="mobile-panel-section-title" data-tr-text="views_mobile_label">Views</div>
+					<button class="mobile-panel-row" onclick="mobile_open_tab('training_data_tab_label')" style="width:100%; cursor:pointer; text-align:left; font-size:15px;">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_training_data"></span></span>
+						<span>&rarr;</span>
+					</button>
+					<button class="mobile-panel-row" onclick="mobile_open_tab('visualization_tab_label')" style="width:100%; cursor:pointer; text-align:left; font-size:15px;">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_visualization"></span></span>
+						<span>&rarr;</span>
+					</button>
+					<button class="mobile-panel-row" onclick="mobile_open_tab('summary_tab_label')" style="width:100%; cursor:pointer; text-align:left; font-size:15px;">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_summary"></span></span>
+						<span>&rarr;</span>
+					</button>
+					<button class="mobile-panel-row" onclick="mobile_open_tab('predict_tab_label')" style="width:100%; cursor:pointer; text-align:left; font-size:15px;">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_predict"></span></span>
+						<span>&rarr;</span>
+					</button>
+					<button class="mobile-panel-row" onclick="mobile_open_tab('code_tab_label')" style="width:100%; cursor:pointer; text-align:left; font-size:15px;">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_code"></span></span>
+						<span>&rarr;</span>
+					</button>
+				</div>
+				<div class="mobile-panel-section">
+					<div class="mobile-panel-section-title" data-tr-text="model_mobile_label">Model</div>
+					<button class="mobile-panel-row" onclick="download_model_and_weights_and_labels(); mobile_close_all();" style="width:100%; cursor:pointer; text-align:left; font-size:15px;">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_download_model"></span></span>
+						<span>&rarr;</span>
+					</button>
+					<button class="mobile-panel-row" onclick="open_upload_dialog(); mobile_close_all();" style="width:100%; cursor:pointer; text-align:left; font-size:15px;">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_upload_model"></span></span>
+						<span>&rarr;</span>
+					</button>
 				</div>
 			</div>
 		</div>
