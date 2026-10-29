@@ -3930,6 +3930,10 @@ async function test_augmented_training_images () {
 
 	const ret = await train_neural_network();
 
+	["augment_rotate_images", "augment_invert_images", "augment_flip_left_right"].forEach(function (id) {
+		$("#" + id).prop("checked", false);
+	});
+
 	if(!is_valid_ret_object(ret, wanted_epochs)) {
 		return false;
 	}
