@@ -7794,6 +7794,537 @@ async function test_representation_analysis() {
 	}
 }
 
+// ============================================================
+// Focused tests for theme.js, summary.js, loss_landscape.js and
+// fcnn_editable.js. These exercise the helpers directly so failures point
+// at the module rather than at unrelated model training.
+// ============================================================
+
+function _test_fake_tensor (data, shape) {
+	return {
+		shape: shape,
+		dataSync: function () { return Float32Array.from(data); },
+		arraySync: function () { return data; }
+	};
+}
+
+function _test_fake_weight (shape, data) {
+	return { name: "w", shape: shape, val: _test_fake_tensor(data, shape) };
+}
+
+function _test_fake_layer (name, type, inputShape, outputShape, weights, config) {
+	var layerWeights = weights || [];
+	return {
+		name: name,
+		inputShape: inputShape,
+		outputShape: outputShape,
+		trainableWeights: layerWeights,
+		nonTrainableWeights: [],
+		weights: layerWeights,
+		getClassName: function () { return type; },
+		getConfig: function () { return config || {}; },
+		getWeights: function () { return layerWeights.map(function (weight) { return weight.val; }); }
+	};
+}
+
+function _test_fake_bias_layer (biasValues, useBias) {
+	var kernel = {
+		shape: [Math.max(1, biasValues.length), 1],
+		dataSync: function () { return Float32Array.from([1, 2, 3, 4]); }
+	};
+	var bias = {
+		shape: [biasValues.length],
+		dataSync: function () { return Float32Array.from(biasValues); },
+		arraySync: function () { return biasValues; }
+	};
+	return {
+		name: "fake_bias_layer",
+		getClassName: function () { return "Dense"; },
+		getWeights: function () { return [kernel, bias]; },
+		weights: [],
+		getConfig: function () { return { use_bias: useBias !== false }; }
+	};
+}
+
+async function test_theme_module () {
+	var body = document.body;
+	var oldTransition = body.style.transition;
+	var oldFlag = body.dataset.themeTransitioning;
+	var oldStyle = document.getElementById("_theme_transition_style");
+	if (oldStyle) oldStyle.remove();
+
+	_apply_theme_transition();
+	test_equal("theme: adds transition style", !!document.getElementById("_theme_transition_style"), true);
+	test_equal("theme: sets transitioning flag", body.dataset.themeTransitioning, "true");
+	var firstStyle = document.getElementById("_theme_transition_style");
+	_apply_theme_transition();
+	test_equal("theme: transition style is reused", document.getElementById("_theme_transition_style"), firstStyle);
+
+	await _wait_for_theme_transition();
+	test_equal("theme: transition style removed", document.getElementById("_theme_transition_style"), null);
+	test_equal("theme: transitioning flag reset", body.dataset.themeTransitioning, "false");
+
+	var chooser = document.getElementById("theme_choser");
+	var cssMode = document.getElementById("css_mode");
+	var cssRibbon = document.getElementById("css_ribbon");
+	if (!chooser || !cssMode || !cssRibbon) {
+		test_equal("theme: required DOM elements exist", false, true);
+		return true;
+	}
+
+	var oldValue = chooser.value;
+	var oldMode = cssMode.getAttribute("href");
+	var oldRibbon = cssRibbon.getAttribute("href");
+	var oldSetCookie = window.set_cookie;
+	var cookieCalls = [];
+	var saved = {};
+	var stubs = ["write_descriptions", "write_model_to_latex_to_page", "invert_elements_in_dark_mode", "restart_fcnn", "check_number_values"];
+	stubs.forEach(function (name) {
+		saved[name] = window[name];
+		window[name] = function () { return Promise.resolve(); };
+	});
+	window.set_cookie = function (key, value) { cookieCalls.push([key, value]); };
+
+	try {
+		chooser.value = "";
+		await theme_choser();
+		test_equal("theme: empty selection leaves stylesheet", cssMode.getAttribute("href"), oldMode);
+		test_equal("theme: empty selection sets no cookie", cookieCalls.length, 0);
+
+		var theme = oldValue || "light";
+		chooser.value = theme;
+		await theme_choser();
+		test_equal("theme: css_mode updated", cssMode.getAttribute("href"), "css/" + theme + ".css");
+		test_equal("theme: css_ribbon updated", cssRibbon.getAttribute("href"), "css/ribbon" + theme + ".css");
+		test_equal("theme: cookie written", cookieCalls.length, 1);
+		test_equal("theme: cookie key", cookieCalls[0][0], "theme");
+		test_equal("theme: cookie value", cookieCalls[0][1], theme);
+	} finally {
+		stubs.forEach(function (name) {
+			if (saved[name] === undefined) delete window[name]; else window[name] = saved[name];
+		});
+		window.set_cookie = oldSetCookie;
+		chooser.value = oldValue;
+		if (oldMode === null) cssMode.removeAttribute("href"); else cssMode.setAttribute("href", oldMode);
+		if (oldRibbon === null) cssRibbon.removeAttribute("href"); else cssRibbon.setAttribute("href", oldRibbon);
+
+		var style = document.getElementById("_theme_transition_style");
+		if (style) style.remove();
+		body.style.transition = oldTransition || "";
+		if (oldFlag === undefined) delete body.dataset.themeTransitioning; else body.dataset.themeTransitioning = oldFlag;
+	}
+
+	return true;
+}
+
+async function test_summary_module () {
+	var layer1 = _test_fake_layer(
+		"dense_a",
+		"Dense",
+		[null, 2],
+		[null, 4],
+		[_test_fake_weight([2, 4], [1, 2, 3, 4, 5, 6, 7, 8]), _test_fake_weight([4], [1, 2, 3, 4])],
+		{ units: 4, activation: "relu", use_bias: true }
+	);
+	var layer2 = _test_fake_layer(
+		"conv_b",
+		"Conv2D",
+		[null, 8, 8, 1],
+		[null, 6, 6, 2],
+		[_test_fake_weight([3, 3, 1, 2], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]), _test_fake_weight([2], [1, 2])],
+		{ filters: 2, kernel_size: [3, 3] }
+	);
+
+	test_equal("summary: _product_of_dims", _product_of_dims([2, 3, null]), 6);
+	test_equal("summary: _safe_count_params", _safe_count_params([
+		{ shape: [2, 3] },
+		{ size: 5 },
+		{ tensor: { shape: [4] } }
+	]), 15);
+	test_equal("summary: _format_shape array", _format_shape([null, 3]), "[null,3]");
+	test_equal("summary: _format_shape null", _format_shape(null), "N/A");
+	test_equal("summary: _escape_html", _escape_html("<b>\"x\"&'"), "&lt;b&gt;&quot;x&quot;&amp;&#39;");
+	test_equal("summary: _format_shape_export", _format_shape_export([2, 3]), "[2,3]");
+	test_equal("summary: _csv_escape", _csv_escape('a"b'), 'a""b');
+	test_equal("summary: _latex_escape", _latex_escape("a_b&c%"), "a\\_b\\&c\\%");
+	test_equal("summary: _format_config_key snake", _format_config_key("kernel_initializer"), "Kernel initializer");
+	test_equal("summary: _format_config_key camel", _format_config_key("activationFunction"), "Activation Function");
+	test_equal("summary: _format_memory bytes", _format_memory(512), "512 B");
+	test_equal("summary: _format_memory KB", _format_memory(1024), "1.0 KB");
+	test_equal("summary: _format_memory MB", _format_memory(1048576), "1.00 MB");
+	test_equal("summary: layer icon dense", _get_layer_type_icon("Dense"), "◈");
+	test_equal("summary: layer icon conv", _get_layer_type_icon("conv2d"), "▦");
+	test_equal("summary: layer icon dropout", _get_layer_type_icon("Dropout"), "◌");
+	test_equal("summary: layer icon fallback", _get_layer_type_icon("unknown"), "◆");
+	test_equal("summary: _format_config_value class", _format_config_value({ class_name: "Foo" }), "Foo");
+	test_equal("summary: _format_config_value array", _format_config_value([1, 2]), "[1,2]");
+
+	var collected = _collect_layer_data([layer1, layer2]);
+	test_equal("summary: two layers collected", collected.layer_data.length, 2);
+	test_equal("summary: max params", collected.max_params, 20);
+	test_equal("summary: layer name kept", collected.layer_data[0].name, "dense_a");
+	test_equal("summary: layer type kept", collected.layer_data[1].layer_type, "Conv2D");
+	test_equal("summary: layer params", collected.layer_data[0].params, 12);
+
+	var row = _build_summary_row(collected.layer_data[0], 0, collected.max_params);
+	test_equal("summary: row contains param bar", row.indexOf("param-bar-fill") !== -1, true);
+	test_equal("summary: row contains layer name", row.indexOf("dense_a") !== -1, true);
+
+	var oldModel = window.model;
+	var oldLayerData = window._summary_layer_data;
+	var oldTotals = window._summary_totals;
+	window.model = { layers: [layer1, layer2], uuid: "test-summary-model" };
+	try {
+		var table = build_model_summary_table();
+		test_equal("summary: table id", table.indexOf('id="summary_table"') !== -1, true);
+		test_equal("summary: total row", table.indexOf("Total params: 32") !== -1, true);
+		test_equal("summary: layer data stored", window._summary_layer_data.length, 2);
+		test_equal("summary: totals stored", window._summary_totals.total, 32);
+	} finally {
+		if (oldModel === undefined) delete window.model; else window.model = oldModel;
+		window._summary_layer_data = oldLayerData;
+		window._summary_totals = oldTotals;
+	}
+
+	window._summary_totals = { total: 32, trainable: 32, non_trainable: 0 };
+	var tooltip = _build_layer_tooltip_html(collected.layer_data[0]);
+	test_equal("summary: tooltip header", tooltip.indexOf("dense_a") !== -1, true);
+	test_equal("summary: tooltip parameters", tooltip.indexOf("Parameters") !== -1, true);
+	test_equal("summary: tooltip shape flow", tooltip.indexOf("Shape Flow") !== -1, true);
+	test_equal("summary: tooltip memory", tooltip.indexOf("Memory") !== -1, true);
+
+	var markdown = _export_as_markdown(collected.layer_data, { total: 32, trainable: 32, non_trainable: 0 });
+	var csv = _export_as_csv(collected.layer_data, { total: 32, trainable: 32, non_trainable: 0 });
+	var latex = _export_as_latex(collected.layer_data, { total: 32, trainable: 32, non_trainable: 0 });
+	test_equal("summary: markdown export", markdown.indexOf("| dense_a (Dense) |") !== -1, true);
+	test_equal("summary: csv export", csv.indexOf('"dense_a"') !== -1, true);
+	test_equal("summary: latex export", latex.indexOf("\\begin{table}") !== -1, true);
+
+	var legacy = summary_to_table(["Layer  Input  Output  Params", "======", "dense_a  [null,2]  [null,4]  12"]);
+	test_equal("summary: legacy table", legacy.indexOf("<table") !== -1, true);
+
+	var oldStyle = document.getElementById("summary-tooltip-styles");
+	if (oldStyle) oldStyle.remove();
+	_inject_tooltip_styles();
+	var style = document.getElementById("summary-tooltip-styles");
+	test_equal("summary: style injected", !!style, true);
+	test_equal("summary: style has content", style && style.textContent.length > 100, true);
+	_inject_tooltip_styles();
+	test_equal("summary: style not duplicated", document.querySelectorAll("#summary-tooltip-styles").length, 1);
+
+	var exportBar = document.createElement("div");
+	exportBar.innerHTML = '<div id="summary_export_bar"></div>';
+	_build_export_bar(exportBar);
+	test_equal("summary: export buttons", exportBar.querySelectorAll(".summary-export-btn").length, 4);
+
+	var extras = document.createElement("div");
+	extras.innerHTML = '<div id="summary_export_bar"></div>';
+	_inject_summary_extras(extras);
+	test_equal("summary: extras inject export bar", extras.querySelectorAll(".summary-export-btn").length, 4);
+
+	window._summary_layer_data = collected.layer_data;
+	var listenerContainer = document.createElement("div");
+	listenerContainer.innerHTML = '<div class="summary-layer-name" data-layer-index="0" title="old"></div>';
+	_attach_tooltip_listeners(listenerContainer);
+	test_equal("summary: tooltip listener removes title", listenerContainer.querySelector(".summary-layer-name").hasAttribute("title"), false);
+
+	var oldDownload = window._download_text;
+	var oldClipboard = window._copy_to_clipboard;
+	var downloads = [];
+	var copies = [];
+	window._download_text = function (content, filename) { downloads.push([filename, content]); };
+	window._copy_to_clipboard = function (text) { copies.push(text); };
+	try {
+		_export_summary("markdown", null);
+		_export_summary("csv", null);
+		_export_summary("latex", null);
+		_export_summary("clipboard", null);
+		test_equal("summary: three downloads", downloads.length, 3);
+		test_equal("summary: clipboard export", copies.length, 1);
+	} finally {
+		window._download_text = oldDownload;
+		window._copy_to_clipboard = oldClipboard;
+		window._summary_layer_data = oldLayerData;
+		window._summary_totals = oldTotals;
+	}
+
+	return true;
+}
+
+async function test_loss_landscape_module () {
+	var model = tf.sequential();
+	model.add(tf.layers.dense({
+		units: 2,
+		inputShape: [2],
+		useBias: true,
+		kernelInitializer: "ones",
+		biasInitializer: "zeros"
+	}));
+	var input = tf.tensor2d([[1, 0]], [1, 2]);
+	var wanted = tf.tensor2d([[1, 2]], [1, 2]);
+
+	var oldLoss = $("#loss").val();
+	var oldErr = window.err;
+	var oldPlotly = window.Plotly;
+	var oldModel = window.model;
+	var oldGetXY = window.get_x_and_y;
+	var errCalls = [];
+	var plotlyCalls = [];
+	var container = document.createElement("div");
+	container.id = "test_loss_landscape_container";
+	container.style.width = "300px";
+	container.style.height = "200px";
+	document.body.appendChild(container);
+
+	window.err = function () { errCalls.push(Array.prototype.slice.call(arguments)); };
+	window.Plotly = {
+		newPlot: function (target, traces, layout) { plotlyCalls.push({ target: target, traces: traces, layout: layout }); },
+		Plots: { resize: function () {} }
+	};
+	$("#loss").val("meanSquaredError");
+
+	try {
+		test_equal("loss: model validation", ensure_model_has_layers(model), true);
+		var threw = false;
+		try { ensure_model_has_layers(null); } catch (e) { threw = true; }
+		test_equal("loss: rejects null model", threw, true);
+		threw = false;
+		try { ensure_model_has_layers({ layers: [] }); } catch (e) { threw = true; }
+		test_equal("loss: rejects empty model", threw, true);
+
+		test_equal("loss: accepts tensor", ensure_tensor(input, "input"), true);
+		threw = false;
+		try { ensure_tensor([1], "input"); } catch (e) { threw = true; }
+		test_equal("loss: rejects non-tensor", threw, true);
+
+		test_equal("loss: shape array valid", isShapeArray([null, 3]), true);
+		test_equal("loss: shape array negative", isShapeArray([2, -1]), false);
+		test_equal("loss: shape array non-array", isShapeArray("x"), false);
+
+		test_equal("loss: selected function", get_selected_loss_function(), tf.metrics.meanSquaredError);
+		var prediction = get_model_prediction(model, input);
+		test_equal("loss: prediction shape", prediction.shape.join(","), "1,2");
+		await dispose(prediction);
+
+		test_equal("loss: identical tensors have zero loss", calculate_loss(tf.metrics.meanSquaredError, wanted, wanted), 0);
+		test_equal("loss: finite data loss", isFinite(get_loss_from_data(model, input, wanted)), true);
+
+		var extracted = extract_flat_weights_from_model(model);
+		test_equal("loss: weights extracted", extracted.dim >= 2, true);
+		test_equal("loss: metadata lengths", extracted.sizes.length, extracted.shapes.length);
+		var modified = extracted.flat.slice();
+		modified[0] = modified[0] + 1;
+		rebuild_weights_from_flat(model, modified, extracted.sizes, extracted.shapes);
+		var after = extract_flat_weights_from_model(model);
+		test_equal("loss: weights rebuilt", Math.abs(after.flat[0] - modified[0]) < 1e-6, true);
+		rebuild_weights_from_flat(model, extracted.flat, extracted.sizes, extracted.shapes);
+
+		test_equal("loss: dot product", compute_dot([1, 2], [3, 4]), 11);
+		test_equal("loss: subtract mul", subtract_mul([5, 5], [1, 1], 2).join(","), "3,3");
+		test_equal("loss: vector norm", vector_norm([3, 4]), 5);
+		test_equal("loss: normalize zero", normalize_vector([0, 0]).join(","), "0,0");
+		test_equal("loss: normalize vector length", vector_norm(normalize_vector([3, 4])), 1);
+		test_equal("loss: scalar mul", scalarMulVec(3, [1, 2]).join(","), "3,6");
+		test_equal("loss: random vector length", generate_random_vector(5).length, 5);
+		var orthogonal = generate_orthogonal_vector([1, 0, 0]);
+		test_equal("loss: orthogonal dot", Math.abs(compute_dot(orthogonal, [1, 0, 0])) < 1e-9, true);
+		test_equal("loss: fallback axes", fallback_axes(2)[0].join(",") + "|" + fallback_axes(2)[1].join(","), "1,0|0,1");
+		test_equal("loss: standard basis", computeStandardBasis(3, model, extracted.flat, extracted.sizes, extracted.shapes, input, wanted)[0].join(","), "1,0,0");
+		test_equal("loss: fixed radius", compute_fixed_radius(2, 100), 1);
+		test_equal("loss: projection center", projection_center([1, 0], [3, 4]), 3);
+		test_equal("loss: projection range", get_projection_range([1, 0], [3, 4], 0.5).min, 2.5);
+		test_equal("loss: step", get_step(0, 10, 5), 2.5);
+		test_equal("loss: modified flat", generate_modified_flat([1, 1], [1, 0], [0, 1], 2, 3).join(","), "4,3");
+		test_equal("loss: format time seconds", formatTime(65), "01:05");
+		test_equal("loss: format time hours", formatTime(3661), "01:01:01");
+		test_equal("loss: format time invalid", formatTime(-1), "...");
+
+		var directions = get_directions_for_method("standard_basis", extracted.dim, model, extracted.flat, extracted.sizes, extracted.shapes, input, wanted);
+		test_equal("loss: standard direction count", directions.length, 2);
+		test_equal("loss: standard direction dim", directions[0].length, extracted.dim);
+		var randomDirections = get_directions_for_method("random_directions", extracted.dim, model, extracted.flat, extracted.sizes, extracted.shapes, input, wanted);
+		test_equal("loss: random direction normalized", Math.abs(vector_norm(randomDirections[0]) - 1) < 1e-6, true);
+		var filterDirections = get_directions_for_method("filter_normalized_random", extracted.dim, model, extracted.flat, extracted.sizes, extracted.shapes, input, wanted);
+		test_equal("loss: filter directions", filterDirections.length, 2);
+
+		var data = await get_loss_landscape_plot_data(model, input, wanted, 2, 2, "standard_basis");
+		test_equal("loss: grid data", !!data && data.length === 3 && data[0].length === 4, true);
+		var grid = reshape_flat_grid(data[0], data[1], data[2]);
+		test_equal("loss: grid reshaped", grid[0].length === 2 && grid[0][0].length === 2, true);
+		test_equal("loss: non-square grid rejected", reshape_flat_grid([1, 2, 3], [1, 2, 3], [1, 2, 3])[0].length, 0);
+
+		test_equal("loss: existing container", get_or_create_container("test_loss_landscape_container"), container);
+		var created = get_or_create_container("test_loss_landscape_missing_container");
+		test_equal("loss: container created", !!created && document.body.contains(created), true);
+		created.remove();
+
+		plot_loss_landscape_surface(data, "test_loss_landscape_container", "standard_basis");
+		test_equal("loss: surface plotted", plotlyCalls.length > 0, true);
+		await plot_loss_landscape_from_model_and_data(model, input, wanted, 2, 2, "test_loss_landscape_container", "standard_basis");
+		test_equal("loss: wrapper plotted", plotlyCalls.length >= 2, true);
+
+		var pcaData = await get_loss_landscape_plot_data(model, input, wanted, 2, 2, "loss_aware_pca");
+		test_equal("loss: PCA data", !!pcaData && pcaData[0].length === 4, true);
+		var sharpData = await get_loss_landscape_plot_data(model, input, wanted, 2, 2, "sharpness_aware_proxy");
+		test_equal("loss: sharpness data", !!sharpData && sharpData[0].length === 4, true);
+
+		window.model = {
+			layers: model.layers,
+			input: { shape: [null, 2] },
+			output: { shape: [null, 2] },
+			predict: function (value) { return model.predict(value); }
+		};
+		window.get_x_and_y = async function () {
+			return { x: tf.tensor2d([[1, 0]], [1, 2]), y: tf.tensor2d([[1, 2]], [1, 2]) };
+		};
+		var plotted = await plot_loss_landscape_from_model(null, 2, 2, "test_loss_landscape_container", "standard_basis");
+		test_equal("loss: plot from model", plotted, true);
+	} finally {
+		window.err = oldErr;
+		window.Plotly = oldPlotly;
+		window.model = oldModel;
+		window.get_x_and_y = oldGetXY;
+		$("#loss").val(oldLoss);
+
+		if (container.__resizeObserver) {
+			try { container.__resizeObserver.disconnect(); } catch (e) {}
+		}
+		container.remove();
+		await dispose(input);
+		await dispose(wanted);
+		if (typeof model.dispose === "function") model.dispose();
+	}
+
+	return true;
+}
+
+async function test_fcnn_editable_module () {
+	var lightHtml = _fcnn_edit_build_popup_html(false);
+	var darkHtml = _fcnn_edit_build_popup_html(true);
+	test_equal("fcnn: popup has weight input", lightHtml.indexOf('id="fcnn_edit_weight_num"') !== -1, true);
+	test_equal("fcnn: popup has bias input", lightHtml.indexOf('id="fcnn_edit_bias_num"') !== -1, true);
+	test_equal("fcnn: popup has indices", lightHtml.indexOf('id="fcnn_edit_from_idx"') !== -1, true);
+	test_equal("fcnn: light border", lightHtml.indexOf("#ddd") !== -1, true);
+	test_equal("fcnn: dark border", darkHtml.indexOf("#444") !== -1, true);
+
+	var oldStarted = window.started_training;
+	window.started_training = true;
+	test_equal("fcnn: training state true", _fcnn_edit_is_training(), true);
+	window.started_training = false;
+	test_equal("fcnn: training state false", _fcnn_edit_is_training(), false);
+	if (oldStarted === undefined) delete window.started_training; else window.started_training = oldStarted;
+
+	var existingCanvas = document.getElementById("fcnn_canvas");
+	var oldCanvasId = existingCanvas ? existingCanvas.id : null;
+	if (existingCanvas) existingCanvas.id = "fcnn_canvas_test_backup";
+	var testCanvas = document.createElement("canvas");
+	testCanvas.id = "fcnn_canvas";
+	testCanvas.width = 200;
+	testCanvas.height = 100;
+	testCanvas.style.cssText = "position:fixed;left:10px;top:20px;width:100px;height:50px;";
+	document.body.appendChild(testCanvas);
+	try {
+		var converted = _fcnn_edit_convert_mouse_to_canvas({}, 60, 45);
+		test_equal("fcnn: convert mouse x", Math.round(converted.canvasMouseX), 100);
+		test_equal("fcnn: convert mouse y", Math.round(converted.canvasMouseY), 50);
+	} finally {
+		testCanvas.remove();
+		if (existingCanvas) existingCanvas.id = oldCanvasId;
+	}
+
+	var region = { x: 0, y: 0, w: 100, h: 100 };
+	var mapped = _fcnn_edit_map_to_neuron_indices(region, 50, 50, 3, 5);
+	test_equal("fcnn: map from index", mapped.from_idx, 1);
+	test_equal("fcnn: map to index", mapped.to_idx, 2);
+	var clamped = _fcnn_edit_map_to_neuron_indices(region, 50, 1000, 3, 5);
+	test_equal("fcnn: map clamps from", clamped.from_idx, 2);
+	test_equal("fcnn: map clamps to", clamped.to_idx, 4);
+
+	var weightInfo = { shape: [2, 3], data: [0, 1, 2, 3, 4, 5] };
+	var lookup = _fcnn_edit_lookup_weight(weightInfo, 1, 2);
+	test_equal("fcnn: lookup flat index", lookup.weight_flat_idx, 5);
+	test_equal("fcnn: lookup value", lookup.weightValue, 5);
+	var clipped = _fcnn_edit_lookup_weight(weightInfo, 99, 99);
+	test_equal("fcnn: lookup clips rows", clipped.fi, 1);
+	test_equal("fcnn: lookup clips cols", clipped.ti, 2);
+
+	test_equal("fcnn: tensor data extraction", _try_extract_array_from_tensor(_test_fake_tensor([1, 2], [2])).join(","), "1,2");
+	test_equal("fcnn: tensor array fallback", _try_extract_array_from_tensor({ arraySync: function () { return [[3, 4]]; } }).join(","), "3,4");
+	test_equal("fcnn: tensor extraction rejects empty", _try_extract_array_from_tensor({}), null);
+	test_equal("fcnn: weight variable val", _try_extract_array_from_weight_variable({ val: _test_fake_tensor([5, 6], [2]) }).join(","), "5,6");
+	test_equal("fcnn: weight variable read", _try_extract_array_from_weight_variable({ read: function () { return _test_fake_tensor([7], [1]); } }).join(","), "7");
+	test_equal("fcnn: weight variable direct", _try_extract_array_from_weight_variable(_test_fake_tensor([8], [1])).join(","), "8");
+	test_equal("fcnn: no-bias config", _check_layer_has_no_bias({ getConfig: function () { return { use_bias: false }; } }), true);
+	test_equal("fcnn: bias config", _check_layer_has_no_bias({ getConfig: function () { return { use_bias: true }; } }), false);
+
+	var biasLayer = _test_fake_bias_layer([1, 2, 3]);
+	test_equal("fcnn: layer has exact bias", _fcnn_edit_layer_has_bias_of_size(biasLayer, 3), true);
+	test_equal("fcnn: layer rejects other bias", _fcnn_edit_layer_has_bias_of_size(biasLayer, 4), false);
+	test_equal("fcnn: check bias exact", _fcnn_edit_check_layer_bias(biasLayer, 3), true);
+	test_equal("fcnn: check bias larger", _fcnn_edit_check_layer_bias(biasLayer, 2), true);
+	test_equal("fcnn: check bias null layer", _fcnn_edit_check_layer_bias(null, 3), null);
+
+	var oldModel = window.model;
+	var oldGetFcnnData = window.get_fcnn_data;
+	var oldGetLayerWeightData = window.get_layer_weight_data;
+	var oldActive = _fcnn_edit_active;
+	var oldPopup = _fcnn_edit_popup_el;
+	var oldInitial = _fcnn_edit_initial_value;
+
+	try {
+		window.model = { layers: [_test_fake_bias_layer([1, 2, 3]), _test_fake_bias_layer([1, 2, 3]), _test_fake_bias_layer([1, 2, 3, 4, 5])] };
+		test_equal("fcnn: scans adjacent layer", _fcnn_edit_scan_adjacent_layers(1, 5), 2);
+
+		window.get_fcnn_data = function () { return [[], [3, 4], [null, { nr: 1 }]]; };
+		test_equal("fcnn: finds dense layer", _fcnn_edit_find_dense_layer_for_neuron(1), 1);
+		window.get_fcnn_data = function () { return [[], [3, 4], [{ nr: 0 }, { nr: 1 }]]; };
+		test_equal("fcnn: finds first dense layer", _fcnn_edit_find_dense_layer_for_neuron(0), 0);
+
+		test_equal("fcnn: bias data", _fcnn_edit_get_bias_data(1).join(","), "1,2,3");
+		test_equal("fcnn: bias data out of range", _fcnn_edit_get_bias_data(9), null);
+		window.model = { layers: [{ getWeights: function () { return []; }, getConfig: function () { return { use_bias: false }; } }] };
+		test_equal("fcnn: no bias layer", _fcnn_edit_get_bias_data(0), null);
+
+		window.model = { layers: [{
+			getWeights: function () { return [_test_fake_tensor([1], [1])]; }
+		}] };
+		_fcnn_edit_active = { meta_infos: [null, { nr: 0 }] };
+		var validated = _fcnn_edit_validate_tensor_access(0);
+		test_equal("fcnn: validates tensor access", !!validated && validated.meta.nr, 0);
+		window.model = { layers: [{ getWeights: function () { throw new Error("gone"); } }] };
+		test_equal("fcnn: invalid tensor access", _fcnn_edit_validate_tensor_access(0), null);
+
+		window.model = null;
+		window.get_layer_weight_data = function () { return { data: [10, 20, 30] }; };
+		_fcnn_edit_active = { meta_infos: [null, { nr: 0 }], from_layer: 0 };
+		test_equal("fcnn: reads weight", _fcnn_edit_read_weight_at(_fcnn_edit_active, 1), 20);
+		test_equal("fcnn: reads missing weight", _fcnn_edit_read_weight_at(_fcnn_edit_active, 9), null);
+
+		_fcnn_edit_active = null;
+		_fcnn_edit_initial_value = null;
+		_fcnn_edit_popup_el = null;
+		var existingPopup = document.getElementById("fcnn_edit_popup");
+		if (existingPopup) existingPopup.remove();
+		var popup = _fcnn_edit_ensure_popup();
+		test_equal("fcnn: popup created", !!popup && document.body.contains(popup), true);
+		test_equal("fcnn: popup reused", _fcnn_edit_ensure_popup(), popup);
+		_fcnn_edit_close_popup();
+		test_equal("fcnn: popup hidden", popup.style.display, "none");
+		popup.remove();
+	} finally {
+		window.model = oldModel;
+		window.get_fcnn_data = oldGetFcnnData;
+		window.get_layer_weight_data = oldGetLayerWeightData;
+		_fcnn_edit_active = oldActive;
+		_fcnn_edit_popup_el = oldPopup;
+		_fcnn_edit_initial_value = oldInitial;
+		var leftover = document.getElementById("fcnn_edit_popup");
+		if (leftover && leftover !== oldPopup) leftover.remove();
+	}
+
+	return true;
+}
+
 async function run_tests (quick=0, disable_webcam=0) {
 	if (quick) {
 		__test_expected_total = __test_expected_quick_total;
@@ -7903,6 +8434,10 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_adversarial_examples()", await test_adversarial_examples(), true);
 		test_equal("test_representation_analysis()", await test_representation_analysis(), true);
 		test_equal("test_multi_run_training()", await test_multi_run_training(), true);
+		test_equal("test_theme_module()", await test_theme_module(), true);
+		test_equal("test_summary_module()", await test_summary_module(), true);
+		test_equal("test_loss_landscape_module()", await test_loss_landscape_module(), true);
+		test_equal("test_fcnn_editable_module()", await test_fcnn_editable_module(), true);
 
 		test_no_new_errors_or_warnings();
 
