@@ -1902,50 +1902,75 @@ function get_output_size_at_layer(layer_idx) {
 }
 
 async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0) {
-	if(!(
-		input_shape_is_image(is_from_webcam) &&
-		$("#show_grad_cam").is(":checked") &&
-		!started_training &&
-		(await output_size_at_layer(get_output_size_at_layer(0), get_number_of_layers())).length == 2)
-	) {
+	if(_draw_heatmap_running) {
 		return;
 	}
 
-	warn_if_tensor_is_disposed(predictions_tensor);
-	var strongest_category = get_index_of_highest_category(predictions_tensor);
+	_draw_heatmap_running = true;
 
-	var original_disable_layer_debuggers = disable_layer_debuggers;
-	disable_layer_debuggers = 1;
-	var heatmap = await grad_class_activation_map(model, predict_data, strongest_category);
-	disable_layer_debuggers = original_disable_layer_debuggers;
-
-	if(heatmap) {
-		var canvas = $("#grad_cam_heatmap")[0];
-		var img = array_sync(heatmap)[0];
-
-		var max_height_width = Math.max(150, Math.min(width, Math.floor(window.innerWidth / 5)));
-
-		var shape = get_shape_from_array(img);
-		if(shape.length != 3) {
-			$("#grad_cam_heatmap").hide();
-		} else {
-			var _height = shape[0];
-			var _width = shape[1];
-
-			var largest = Math.max(_height, _width);
-
-			var pxsz = compute_pixel_size(largest, max_height_width);
-
-			scaleNestedArray(img);
-			var res = draw_grid(canvas, pxsz, img, 1, 0, null, null, null);
-			$("#grad_cam_heatmap").show();
+	try {
+		if(!(
+			input_shape_is_image(is_from_webcam) &&
+			$("#show_grad_cam").is(":checked") &&
+			!started_training &&
+			(await output_size_at_layer(get_output_size_at_layer(0), get_number_of_layers())).length == 2)
+		) {
+			return;
 		}
-	} else {
-		$("#grad_cam_heatmap").hide();
+
+		// The webcam loop owns this shared heatmap canvas while it is running.
+		// A drawing/file prediction must not hide or overwrite it mid-frame.
+		if(!is_from_webcam && auto_predict_webcam_interval !== null) {
+			return;
+		}
+
+		warn_if_tensor_is_disposed(predictions_tensor);
+		var strongest_category = get_index_of_highest_category(predictions_tensor);
+
+		var original_disable_layer_debuggers = disable_layer_debuggers;
+		var heatmap = null;
+		disable_layer_debuggers = 1;
+		try {
+			heatmap = await grad_class_activation_map(model, predict_data, strongest_category);
+		} finally {
+			disable_layer_debuggers = original_disable_layer_debuggers;
+		}
+
+		// The webcam may have started while this heatmap was being computed.
+		if(!is_from_webcam && auto_predict_webcam_interval !== null) {
+			await dispose(heatmap);
+			return;
+		}
+
+		if(heatmap) {
+			var canvas = $("#grad_cam_heatmap")[0];
+			var img = array_sync(heatmap)[0];
+
+			var max_height_width = Math.max(150, Math.min(width, Math.floor(window.innerWidth / 5)));
+
+			var shape = get_shape_from_array(img);
+			if(shape.length != 3) {
+				$("#grad_cam_heatmap").hide();
+			} else {
+				var _height = shape[0];
+				var _width = shape[1];
+
+				var largest = Math.max(_height, _width);
+
+				var pxsz = compute_pixel_size(largest, max_height_width);
+
+				scaleNestedArray(img);
+				var res = draw_grid(canvas, pxsz, img, 1, 0, null, null, null);
+				$("#grad_cam_heatmap").show();
+			}
+		} else {
+			$("#grad_cam_heatmap").hide();
+		}
+
+		await dispose(heatmap);
+	} finally {
+		_draw_heatmap_running = false;
 	}
-
-	await dispose(heatmap);
-
 }
 
 function _get_resized_webcam (webcam_image) {

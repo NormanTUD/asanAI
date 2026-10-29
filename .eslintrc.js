@@ -20,6 +20,7 @@ module.exports = {
 		"_predict_pending_args": "writable",
 		"_predict_running": "writable",
 		"_predict_visibility_observer": "writable",
+		"_draw_heatmap_running": "writable",
 		"create_model_queue": "writable",
 		"_plot_done": "writable",
 		"_write_latex_running": "writable",

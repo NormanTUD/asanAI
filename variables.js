@@ -1955,6 +1955,7 @@ var _predict_pending_args = null;
 var _predict_visibility_observer = null;
 var _predict_running = false;
 var _predict_full_running = false;
+var _draw_heatmap_running = false;
 var _predict_defer_retries = 0;
 var _PREDICT_DEFER_MAX = 20;
 

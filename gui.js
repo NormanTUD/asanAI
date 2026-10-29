@@ -153,8 +153,10 @@ async function get_cached_json(url) {
 
 function enable_disable_grad_cam() {
 	if ($("#show_grad_cam").is(":checked")) {
+		$("#grad_cam_panel").show();
 		$("#grad_cam_heatmap").show();
 	} else {
+		$("#grad_cam_panel").hide();
 		$("#grad_cam_heatmap").hide();
 	}
 
@@ -182,6 +184,7 @@ $("#show_kernel_images").prop("disabled", false);
 		$("#show_grad_cam").prop("checked", false).trigger("change");
 	}
 
+	$("#grad_cam_panel").hide();
 	$("#grad_cam_heatmap").hide();
 
 	hide_empty_tabs("visualization_ribbon");

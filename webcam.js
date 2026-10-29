@@ -308,6 +308,7 @@ async function show_webcam(force_restart = 0, _isRestart = false) {
 				cam.stop();
 			}
 			clearInterval(auto_predict_webcam_interval);
+			auto_predict_webcam_interval = null;
 		}
 
 		if (force_restart && stopped && !_isRestart) {
@@ -355,6 +356,7 @@ function stop_webcam() {
 	$("#webcam_prediction").hide();
 	window.cam = undefined;
 	clearInterval(auto_predict_webcam_interval);
+	auto_predict_webcam_interval = null;
 }
 
 function create_video_element_and_append(webcam, element_name = "created_video_element") {

@@ -1509,6 +1509,81 @@ hr {
 	overflow: auto;
 }
 
+.predict_visualization_toggles {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 1.5em;
+	margin-bottom: 6px;
+}
+
+.predict_visualization_toggles > span {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4em;
+}
+
+.grad_cam_panel {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 18px;
+	margin: 10px 0 16px 0;
+	padding: 12px 16px;
+	border: 1px solid rgba(127, 127, 127, 0.22);
+	border-radius: 8px;
+	background: rgba(127, 127, 127, 0.06);
+}
+
+.grad_cam_canvas_wrap {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 180px;
+	min-height: 180px;
+}
+
+.grad_cam_canvas_wrap canvas {
+	max-width: 100%;
+	height: auto;
+	image-rendering: pixelated;
+}
+
+.grad_cam_legend {
+	flex: 1 1 260px;
+	max-width: 420px;
+	line-height: 1.5;
+}
+
+.grad_cam_legend_title {
+	margin-bottom: 4px;
+	font-size: 0.78em;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	opacity: 0.7;
+}
+
+.grad_cam_legend_text {
+	margin: 0 0 12px 0;
+}
+
+.grad_cam_colorbar {
+	height: 12px;
+	border: 1px solid rgba(127, 127, 127, 0.25);
+	border-radius: 999px;
+	background: linear-gradient(90deg, #3d26a8 0%, #327bfc 25%, #18bfb5 50%, #d1bf27 75%, #f9fa14 100%);
+}
+
+.grad_cam_colorbar_labels {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 3px;
+	font-size: 0.75em;
+	opacity: 0.7;
+}
+
 .neurons_canvas_class {
 	margin: 10px;
 	border: 1px black dotted;

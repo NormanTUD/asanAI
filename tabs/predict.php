@@ -1,15 +1,30 @@
 <div id="predict_tab" class="tab user_select_none">
-	<span>
-		<span class="TRANSLATEME_show_layer_data_flow"></span>?
-		<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data"><br>
-	</span>
+	<div class="predict_visualization_toggles">
+		<span>
+			<span class="TRANSLATEME_show_layer_data_flow"></span>?
+			<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data">
+		</span>
 
-	<span class="hide_when_no_conv_visualizations">
-		<span class="TRANSLATEME_show_grad_cam"></span>?
-		<input class="show_data" type="checkbox" value="1" onclick="enable_disable_grad_cam();add_layer_debuggers()" id="show_grad_cam"><br>
-	</span>
+		<span class="hide_when_no_conv_visualizations">
+			<span class="TRANSLATEME_show_grad_cam"></span>?
+			<input class="show_data" type="checkbox" value="1" onclick="enable_disable_grad_cam();add_layer_debuggers()" id="show_grad_cam">
+		</span>
+	</div>
 
-	<canvas id="grad_cam_heatmap" style="display: none"></canvas>
+	<div id="grad_cam_panel" class="grad_cam_panel" style="display: none">
+		<div class="grad_cam_canvas_wrap">
+			<canvas id="grad_cam_heatmap"></canvas>
+		</div>
+		<div class="grad_cam_legend">
+			<div class="grad_cam_legend_title">Grad-CAM</div>
+			<p class="TRANSLATEME_grad_cam_what_it_is grad_cam_legend_text"></p>
+			<div class="grad_cam_colorbar" aria-hidden="true"></div>
+			<div class="grad_cam_colorbar_labels">
+				<span class="TRANSLATEME_grad_cam_color_low"></span>
+				<span class="TRANSLATEME_grad_cam_color_high"></span>
+			</div>
+		</div>
+	</div>
 
 	<div class="container" id="predictcontainer">
 		<span id="predict_error" style="overflow: scroll; display: none"></span><br>

@@ -108,12 +108,12 @@ function escape_html_for_test(name) {
 	);
 }
 
-// Progress display needs an expected total. The suite is dynamic (loops add
-// test_equal calls), so the exact total is learned from the last completed run
-// in this browser. DEFAULT_EXPECTED_TEST_COUNT is the fallback for a fresh
-// browser/CI run; update it when the suite grows or shrinks. ?expected_tests=N
-// overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1406;
+// Progress display needs an expected total. The suite is dynamic (loops and
+// log_test add test_equal calls while it runs), so treat these values only as a
+// starting estimate: _test_sync_expected_count() grows the total as tests are
+// discovered, and the run stores the observed count for the next run.
+// ?expected_tests=N overrides both.
+var DEFAULT_EXPECTED_TEST_COUNT = 1410;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 499;
 
 function _test_expected_count (storage_key, fallback) {
@@ -132,6 +132,15 @@ function _test_expected_count (storage_key, fallback) {
 
 var __test_expected_total = _test_expected_count("asanai_test_expected_count", DEFAULT_EXPECTED_TEST_COUNT);
 var __test_expected_quick_total = _test_expected_count("asanai_test_expected_quick_count", DEFAULT_EXPECTED_QUICK_TEST_COUNT);
+
+// The suite discovers tests while it runs, so the expected total cannot be a
+// fixed constant. Grow it as the count passes the estimate; the end of the run
+// pins it to the exact observed count.
+function _test_sync_expected_count () {
+	if (num_tests > __test_expected_total) {
+		__test_expected_total = num_tests;
+	}
+}
 
 function _test_eta_text(done, total, slow_durations, elapsed_ms) {
 	if (total > 0 && done >= total) {
@@ -240,6 +249,7 @@ function remove_num_tests_overlay() {
 
 function test_not_equal (name, is, should_be) {
 	num_tests++;
+	_test_sync_expected_count();
 	show_num_tests_overlay(name);
 	if(!is_equal(is, should_be)) {
 		//log("%c" + name + " OK", "background: green; color: white");
@@ -302,6 +312,7 @@ if (__test_resume_active) {
 }
 function test_equal (name, is, should_be) {
 	num_tests++;
+	_test_sync_expected_count();
 	// Pre-resume-point: skip if --from-test is set and we haven't reached it yet
 	if (__test_from_test && !__test_resume_reached) {
 		if (name.indexOf(__test_from_test) !== -1) {
@@ -368,6 +379,13 @@ function test_test_progress_display () {
 	test_equal("Progress display never shows an empty ETA", _test_format_progress(999, 1000, false, slow, 0).split("estimated time left: ")[1].length > 0, true);
 	test_equal("Progress display caps the bar at 100 percent", _test_format_progress(120, 100, false, slow, 0).indexOf("100% of tests done (120/100)") !== -1, true);
 	test_equal("Progress display omits the ETA for filtered runs", _test_format_progress(5, 100, true, slow, 0).indexOf("n/a (filtered run)") !== -1, true);
+
+	var expected_before_sync = __test_expected_total;
+	__test_expected_total = 0;
+	_test_sync_expected_count();
+	var sync_grew = __test_expected_total === num_tests;
+	__test_expected_total = expected_before_sync;
+	test_equal("Progress display auto-grows the expected total", sync_grew, true);
 
 	return true;
 }
@@ -4506,6 +4524,61 @@ function test_webcam_start_guard_keeps_early_stream_alive() {
 	}
 }
 
+async function test_gradcam_webcam_owns_heatmap_while_drawing () {
+	const original_interval = auto_predict_webcam_interval;
+	const original_grad_class_activation_map = window.grad_class_activation_map;
+	const original_input_shape_is_image = window.input_shape_is_image;
+	const original_output_size_at_layer = window.output_size_at_layer;
+	const original_get_output_size_at_layer = window.get_output_size_at_layer;
+	const original_get_index_of_highest_category = window.get_index_of_highest_category;
+	const original_started_training = started_training;
+	const original_show_grad_cam = $("#show_grad_cam").is(":checked");
+	const original_canvas_display = $("#grad_cam_heatmap").css("display");
+	let grad_calls = 0;
+
+	try {
+		window.input_shape_is_image = function () { return true; };
+		window.get_output_size_at_layer = function () { return [1, 2]; };
+		window.output_size_at_layer = async function () { return [1, 2]; };
+		window.get_index_of_highest_category = function () { return 0; };
+		window.grad_class_activation_map = async function () {
+			grad_calls++;
+			return null;
+		};
+
+		started_training = false;
+		$("#show_grad_cam").prop("checked", true);
+		$("#grad_cam_heatmap").show();
+
+		auto_predict_webcam_interval = 1;
+		await draw_heatmap({}, {}, 0);
+		const handdrawn_skipped_while_webcam = grad_calls === 0 && $("#grad_cam_heatmap").css("display") !== "none";
+
+		await draw_heatmap({}, {}, 1);
+		const webcam_still_renders = grad_calls === 1;
+
+		auto_predict_webcam_interval = null;
+		$("#grad_cam_heatmap").show();
+		await draw_heatmap({}, {}, 0);
+		const handdrawn_renders_when_webcam_stopped = grad_calls === 2;
+
+		return handdrawn_skipped_while_webcam &&
+			webcam_still_renders &&
+			handdrawn_renders_when_webcam_stopped &&
+			_draw_heatmap_running === false;
+	} finally {
+		auto_predict_webcam_interval = original_interval;
+		window.grad_class_activation_map = original_grad_class_activation_map;
+		window.input_shape_is_image = original_input_shape_is_image;
+		window.output_size_at_layer = original_output_size_at_layer;
+		window.get_output_size_at_layer = original_get_output_size_at_layer;
+		window.get_index_of_highest_category = original_get_index_of_highest_category;
+		started_training = original_started_training;
+		$("#show_grad_cam").prop("checked", original_show_grad_cam);
+		$("#grad_cam_heatmap").css("display", original_canvas_display);
+	}
+}
+
 async function _webcam_is_available () {
 	if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== "function") {
 		return false;
@@ -7178,6 +7251,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 	if(quick) {
 		remove_num_tests_overlay();
 
+		__test_expected_total = num_tests;
 		is_running_test = false;
 		tests_ended = true;
 
@@ -7192,6 +7266,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 	test_equal("test_status_bar_tooltip_update_is_deferred()", await test_status_bar_tooltip_update_is_deferred(), true);
 	test_equal("test_webcam_constraints_use_device_id_without_probe_stream()", await test_webcam_constraints_use_device_id_without_probe_stream(), true);
 	test_equal("test_webcam_start_guard_keeps_early_stream_alive()", test_webcam_start_guard_keeps_early_stream_alive(), true);
+	test_equal("test_gradcam_webcam_owns_heatmap_while_drawing()", await test_gradcam_webcam_owns_heatmap_while_drawing(), true);
 
 	tf.engine().startScope();
 
@@ -7274,13 +7349,9 @@ async function run_tests (quick=0, disable_webcam=0) {
 		console.warn("[from_test] \"" + __test_from_test + "\" did not match any test_equal name; every test was skipped");
 	}
 
-	test_summary();
+	__test_expected_total = num_tests;
 
-	if (num_tests !== __test_expected_total) {
-		var count_message = `[test-progress] suite ran ${num_tests} tests, expected ${__test_expected_total}; next run uses the observed count`;
-		console.warn(count_message);
-		log(count_message);
-	}
+	test_summary();
 
 	try {
 		var expected_key = quick ? "asanai_test_expected_quick_count" : "asanai_test_expected_count";
