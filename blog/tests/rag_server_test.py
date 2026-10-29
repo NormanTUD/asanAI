@@ -9,6 +9,7 @@ Run from blog/:  uv run tests/rag_server_test.py
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import socket
@@ -20,6 +21,8 @@ import time
 from pathlib import Path
 from http.server import BaseHTTPRequestHandler
 from urllib import request
+
+import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "rag"))
@@ -104,10 +107,29 @@ def get(base, path):
         return response.status, json.loads(response.read().decode("utf-8"))
 
 
+class FakeEmbedder:
+    dims = 128
+
+    def embed(self, text):
+        vector = np.zeros(self.dims, dtype=np.float32)
+        lower = text.lower()
+        if "perceptron" in lower:
+            vector[0] = 1.0
+        elif "derivative" in lower:
+            vector[1] = 1.0
+        else:
+            seed = int(hashlib.sha1(text.encode("utf-8")).hexdigest()[:8], 16)
+            vector[2 + seed % (self.dims - 2)] = 1.0
+        return vector
+
+
 class FakeEngine:
     chunks = [{"u": "history#x", "pt": "History", "h": "X", "x": "A perceptron."}]
+    embedder = FakeEmbedder()
+    calls = 0
 
     def answer(self, question, lang, history, on_token=None):
+        FakeEngine.calls += 1
         time.sleep(0.35)
         if on_token:
             on_token("A perceptron is a linear classifier [S1].")
@@ -245,7 +267,7 @@ def main():
             check(first_job.get("position") == 1, "the first job is first in the queue")
             check(first_job.get("eta_seconds", 0) >= 5, "queued job carries an ETA")
 
-            status, second_job = post(base, {"question": f"what is a derivative {time.time_ns()}", "lang": "en"},
+            status, second_job = post(base, {"question": f"what is a widget {time.time_ns()}", "lang": "en"},
                                       ip="10.0.0.2")
             check(status == 200 and second_job.get("position") == 2,
                   "the second job reports its queue position", str(second_job))
@@ -266,6 +288,14 @@ def main():
                                   ip="10.0.0.1")
             check(status == 200 and cached.get("status") == "done" and cached.get("cached"),
                   "a repeated question is served from the cache")
+
+            before = FakeEngine.calls
+            status, semantic = post(
+                base, {"question": "what is the perceptron?", "lang": "en"}, ip="10.0.0.4"
+            )
+            check(status == 200 and semantic.get("cached") and semantic.get("semantic"),
+                  "a paraphrased question is served from the semantic cache", str(semantic))
+            check(FakeEngine.calls == before, "the semantic cache avoids a new generation")
 
             try:
                 get(base, "/status?id=doesnotexist")
@@ -297,7 +327,7 @@ def main():
                       "PHP proxy forwards health", str(health))
                 status, job = post(
                     php_base,
-                    {"question": f"what is a derivative {time.time_ns()}", "lang": "en"},
+                    {"question": f"what is a widget {time.time_ns()}", "lang": "en"},
                     ip="10.0.0.3",
                     path="/ask.php",
                 )

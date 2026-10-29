@@ -35,6 +35,8 @@ RAG_DATA = Path(os.environ.get("ASANAI_RAG_DATA", str(BLOG_DIR / "rag_data")))
 CACHE_DB = Path(os.environ.get("ASANAI_RAG_CACHE", "/var/lib/asanai-rag/cache.sqlite"))
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434").rstrip("/")
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen2.5:1.5b")
+KEEP_ALIVE = os.environ.get("OLLAMA_KEEP_ALIVE", "24h")
+CACHE_SEMANTIC_THRESHOLD = float(os.environ.get("CACHE_SEMANTIC_THRESHOLD", "0.90"))
 RERANK_MODEL = os.environ.get("RERANK_MODEL", "Xenova/ms-marco-MiniLM-L-6-v2")
 
 MAX_QUEUE = int(os.environ.get("MAX_QUEUE", "20"))
@@ -46,7 +48,7 @@ RATE_DAY = int(os.environ.get("RATE_DAY", "20"))
 RATE_SECONDS = int(os.environ.get("RATE_SECONDS", "5"))
 CACHE_TTL = int(os.environ.get("CACHE_TTL_SECONDS", str(30 * 24 * 3600)))
 INITIAL_ETA = float(os.environ.get("INITIAL_ETA_SECONDS", "30"))
-CACHE_VERSION = "2"
+CACHE_VERSION = "3"
 
 MAGIC = 0x4D4E5356
 WORD_RE = re.compile(r"[^\W_]+", re.UNICODE)
@@ -116,6 +118,13 @@ def refusal(lang: str) -> str:
 
 def tokenize(text: str) -> list[str]:
     return WORD_RE.findall(text.lower())
+
+
+def cache_history_hash(history: list) -> str:
+    if not history:
+        return ""
+    payload = json.dumps(history[-4:], ensure_ascii=False)
+    return hashlib.sha1(payload.encode("utf-8")).hexdigest()
 
 
 def cache_key(question: str, lang: str, history: list) -> str:
@@ -210,7 +219,7 @@ class RagEngine:
         try:
             from fastembed.rerank.cross_encoder import TextCrossEncoder
 
-            threads = max(1, (os.cpu_count() or 2) - 1)
+            threads = max(1, os.cpu_count() or 2)
             self.reranker = TextCrossEncoder(RERANK_MODEL, threads=threads)
         except Exception as exc:  # a missing reranker must not take the service down
             print(f"warning: reranker unavailable: {exc}", file=sys.stderr)
@@ -218,8 +227,8 @@ class RagEngine:
     def retrieve(self, question: str, limit: int = 5):
         query = self.embedder.embed(question)
         dense_scores = (self.vectors @ query) * self.scales
-        dense = list(np.argsort(-dense_scores)[:20])
-        lexical = self.bm25.search(question, 20)
+        dense = list(np.argsort(-dense_scores)[:15])
+        lexical = self.bm25.search(question, 15)
         candidates = list(dict.fromkeys(dense + lexical))
         if self.reranker and candidates:
             documents = [self.chunks[index]["x"][:700] for index in candidates]
@@ -304,7 +313,7 @@ class RagEngine:
         for index, chunk in enumerate(chunks, 1):
             passages.append(
                 f"[S{index}] {chunk['pt']} — {chunk['h']}\n"
-                f"URL: {chunk['u']}\n{chunk['x']}"
+                f"URL: {chunk['u']}\n{chunk['x'][:700]}"
             )
         previous = ""
         if history:
@@ -397,12 +406,23 @@ class RagEngine:
             "cited": bool(citations),
         }
 
+    def warmup(self):
+        try:
+            self._ollama(
+                [{"role": "user", "content": "hello"}],
+                max_tokens=1,
+                temperature=0.0,
+            )
+            print("ollama model warm", flush=True)
+        except Exception as exc:
+            print(f"warning: model warm-up failed: {exc}", file=sys.stderr)
+
     def _ollama(self, messages, max_tokens: int, temperature: float) -> str:
         payload = {
             "model": OLLAMA_MODEL,
             "messages": messages,
             "stream": False,
-            "keep_alive": "5m",
+            "keep_alive": KEEP_ALIVE,
             "options": {
                 "temperature": temperature,
                 "top_p": 0.9,
@@ -431,7 +451,7 @@ class RagEngine:
             "model": OLLAMA_MODEL,
             "messages": messages,
             "stream": True,
-            "keep_alive": "5m",
+            "keep_alive": KEEP_ALIVE,
             "options": {
                 "temperature": temperature,
                 "top_p": 0.9,
@@ -475,8 +495,14 @@ class AnswerCache:
             db.execute(
                 "CREATE TABLE IF NOT EXISTS answers ("
                 "key TEXT PRIMARY KEY, answer TEXT, grounded INTEGER, "
-                "sources TEXT, lang TEXT, query_en TEXT, created INTEGER)"
+                "sources TEXT, lang TEXT, query_en TEXT, created INTEGER, "
+                "embedding BLOB, history_hash TEXT)"
             )
+            columns = {row[1] for row in db.execute("PRAGMA table_info(answers)")}
+            if "embedding" not in columns:
+                db.execute("ALTER TABLE answers ADD COLUMN embedding BLOB")
+            if "history_hash" not in columns:
+                db.execute("ALTER TABLE answers ADD COLUMN history_hash TEXT")
 
     def get(self, key: str):
         with sqlite3.connect(self.path, timeout=5) as db:
@@ -494,12 +520,15 @@ class AnswerCache:
             "query_en": row[4] or "",
         }
 
-    def put(self, key: str, result: dict, lang: str):
+    def put(self, key: str, result: dict, lang: str, embedding=None, history_hash: str = ""):
+        blob = None
+        if embedding is not None:
+            blob = np.asarray(embedding, dtype=np.float32).tobytes()
         with sqlite3.connect(self.path, timeout=5) as db:
             db.execute(
                 "INSERT OR REPLACE INTO answers "
-                "(key, answer, grounded, sources, lang, query_en, created) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?)",
+                "(key, answer, grounded, sources, lang, query_en, created, embedding, history_hash) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     key,
                     result.get("answer", ""),
@@ -508,8 +537,43 @@ class AnswerCache:
                     primary_lang(lang),
                     result.get("query_en", ""),
                     int(time.time()),
+                    blob,
+                    history_hash,
                 ),
             )
+
+    def get_semantic(self, embedding, lang: str, history_hash: str = ""):
+        if embedding is None:
+            return None
+        query = np.asarray(embedding, dtype=np.float32)
+        norm = float(np.linalg.norm(query))
+        if norm == 0:
+            return None
+        query = query / norm
+        with sqlite3.connect(self.path, timeout=5) as db:
+            rows = db.execute(
+                "SELECT answer, grounded, sources, query_en, created, embedding "
+                "FROM answers WHERE lang = ? AND history_hash = ? "
+                "AND embedding IS NOT NULL AND created >= ?",
+                (primary_lang(lang), history_hash, int(time.time() - CACHE_TTL)),
+            ).fetchall()
+        best = None
+        best_score = CACHE_SEMANTIC_THRESHOLD
+        for answer, grounded, sources, query_en, _created, blob in rows:
+            vector = np.frombuffer(blob, dtype=np.float32)
+            if vector.shape != query.shape:
+                continue
+            score = float(np.dot(query, vector))
+            if score >= best_score:
+                best_score = score
+                best = {
+                    "grounded": bool(grounded),
+                    "answer": answer,
+                    "sources": json.loads(sources or "[]"),
+                    "query_en": query_en or "",
+                    "semantic": True,
+                }
+        return best
 
 
 class RateLimiter:
@@ -545,6 +609,8 @@ class Job:
     result: dict | None = None
     partial: str = ""
     error: str | None = None
+    embedding: object | None = None
+    history_hash: str = ""
 
 
 class RagService:
@@ -566,14 +632,28 @@ class RagService:
         if len(question) > MAX_QUESTION_CHARS:
             return 400, {"error": "question_too_long"}
         history = history[-6:] if isinstance(history, list) else []
+        history_hash = cache_history_hash(history)
         key = cache_key(question, lang, history)
         cached = self.cache.get(key)
+        embedding = None
+        if not cached and not history and primary_lang(lang) == "en":
+            embedder = getattr(self.engine, "embedder", None)
+            if embedder is not None:
+                embedding = embedder.embed(question)
+                cached = self.cache.get_semantic(embedding, lang, history_hash)
         if cached:
             return 200, {"status": "done", "cached": True, **cached}
         allowed, retry_after = self.rate.check(ip)
         if not allowed:
             return 429, {"error": "rate_limited", "retry_after": retry_after}
-        job = Job(id=uuid.uuid4().hex, question=question, lang=lang, history=history)
+        job = Job(
+            id=uuid.uuid4().hex,
+            question=question,
+            lang=lang,
+            history=history,
+            embedding=embedding,
+            history_hash=history_hash,
+        )
         try:
             self.queue.put_nowait(job)
         except queue.Full:
@@ -676,7 +756,13 @@ class RagService:
                     job.result = result
                     job.status = "done"
                     job.finished = time.time()
-                self.cache.put(cache_key(job.question, job.lang, job.history), result, job.lang)
+                self.cache.put(
+                    cache_key(job.question, job.lang, job.history),
+                    result,
+                    job.lang,
+                    embedding=job.embedding,
+                    history_hash=job.history_hash,
+                )
             except Exception as exc:  # keep the worker alive
                 with self.lock:
                     job.error = str(exc)[:500]
@@ -755,6 +841,7 @@ def main() -> int:
         return 2
     engine = RagEngine(data_dir)
     service = RagService(engine, AnswerCache(CACHE_DB))
+    threading.Thread(target=engine.warmup, daemon=True).start()
     port = int(os.environ.get("ASANAI_RAG_PORT", "8090"))
     host = os.environ.get("ASANAI_RAG_HOST", "127.0.0.1")
     server = ThreadingHTTPServer((host, port), Handler)

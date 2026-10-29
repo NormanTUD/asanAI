@@ -18,7 +18,7 @@ TimeoutStopSec=20
 # One answer at a time; leave CPU for Apache and Ollama.
 MemoryHigh=1200M
 MemoryMax=1500M
-CPUQuota=100%
+CPUQuota=200%
 Nice=10
 IOSchedulingClass=idle
 
