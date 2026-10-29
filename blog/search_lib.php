@@ -8,7 +8,7 @@ if (!defined('SEARCH_LIB_LOADED')) {
 function search_excludes() {
 	return [
 		'index.php', 'index_full.php', 'functions.php', 'search.php', 'search_lib.php',
-		'ask.php', 'asanai_blog_proxy.php', 'graph.php', 'literature.php', 'knowledge_map.php',
+		'ask.php', 'questions.php', 'asanai_blog_proxy.php', 'graph.php', 'literature.php', 'knowledge_map.php',
 		'_aurora_test.php', 'stats.php', 'track.php', 'feedback.php', 'feedback_track.php',
 	];
 }

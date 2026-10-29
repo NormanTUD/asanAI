@@ -153,6 +153,40 @@ def seed(db_path: Path) -> None:
 		db.commit()
 
 
+def seed_questions(db_path: Path) -> None:
+	with sqlite3.connect(db_path) as db:
+		db.execute(
+			"CREATE TABLE rag_queries ("
+			"id INTEGER PRIMARY KEY AUTOINCREMENT, ts INTEGER NOT NULL, day TEXT NOT NULL, "
+			"question TEXT NOT NULL, answer TEXT NOT NULL, lang TEXT NOT NULL, "
+			"grounded INTEGER NOT NULL DEFAULT 0, cached INTEGER NOT NULL DEFAULT 0, "
+			"semantic INTEGER NOT NULL DEFAULT 0, model TEXT NOT NULL, query_en TEXT, "
+			"sources TEXT, queue_seconds REAL, generation_seconds REAL, error TEXT)"
+		)
+		now = int(time.time())
+		db.execute(
+			"INSERT INTO rag_queries (ts, day, question, answer, lang, grounded, cached, "
+			"semantic, model, query_en, sources, queue_seconds, generation_seconds, error) "
+			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+			(
+				now,
+				time.strftime("%Y-%m-%d"),
+				"what is a perceptron?",
+				"A perceptron is a linear classifier [S1].",
+				"en",
+				1,
+				0,
+				0,
+				"qwen2.5:1.5b",
+				"what is a perceptron?",
+				'[{"id":"S1","title":"Brief History of AI","heading":"The Perceptron","url":"history#the-perceptron"}]',
+				0.0,
+				12.5,
+				"",
+			),
+		)
+
+
 def main() -> int:
 	port = free_port()
 	base = f"http://127.0.0.1:{port}/stats.php"
@@ -163,9 +197,12 @@ def main() -> int:
 		password_path.write_text("ui-test-password\n", encoding="utf-8")
 		password_path.chmod(0o400)
 		seed(db_path)
+		questions_db = tmp_path / "queries.sqlite"
+		seed_questions(questions_db)
 
 		env = os.environ.copy()
 		env["MN_ANALYTICS_DB"] = str(db_path)
+		env["ASANAI_RAG_QUERIES_DB"] = str(questions_db)
 		env["BLOG_STATS_PASSWORD_FILE"] = str(password_path)
 		env["MN_ANALYTICS_DISABLED"] = "1"
 		server = subprocess.Popen(
@@ -274,6 +311,15 @@ def main() -> int:
 			check(browser.execute_script("return document.body.classList.contains('light')"), "light mode opens")
 			browser.find_element(By.ID, "theme-toggle").click()
 			time.sleep(0.3)
+
+			browser.get(f"http://127.0.0.1:{port}/questions.php")
+			WebDriverWait(browser, 15).until(
+				EC.presence_of_element_located((By.CSS_SELECTOR, ".card"))
+			)
+			check("what is a perceptron?" in browser.find_element(By.TAG_NAME, "main").text,
+				"course questions admin lists logged questions")
+			check("Brief History of AI" in browser.find_element(By.TAG_NAME, "main").text,
+				"course questions admin shows sources")
 
 			severe = [entry for entry in browser.get_log("browser") if entry.get("level") == "SEVERE"]
 			check(not severe, "no severe console errors", str(severe))

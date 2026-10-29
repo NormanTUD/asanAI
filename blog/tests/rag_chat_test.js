@@ -40,5 +40,10 @@ check(chat.esc('a & b < c "d"') === 'a &amp; b &lt; c &quot;d&quot;', 'escapes e
 var missing = chat.answerHtml('no source here [S9]', sources);
 check(missing.indexOf('[S9]') !== -1, 'unknown citation is left visible');
 
+check(chat.visiblePartial('foo [[NOT_IN_COURSE]] bar') === 'foo  bar',
+	'double-bracket refusal marker is hidden');
+check(chat.visiblePartial('foo [NOT_IN_COURSE] bar') === 'foo  bar',
+	'single-bracket refusal marker is hidden');
+
 console.log('\n' + pass + ' passed, ' + fail + ' failed');
 if (fail > 0) process.exit(1);

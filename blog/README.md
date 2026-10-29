@@ -187,6 +187,9 @@ uv run blog/tests/rag_browser_test.py
 
 CI uses a fake Ollama server and mocked chat responses; it never downloads the
 1.5B model or the reranker. Only the real install and service use the models.
+Logged questions and answers are available to the signed-in administrator under
+**Course questions** in the stats navigation (or `/questions`); no IP addresses
+are stored and blocked requests are redacted.
 
 ## Where to read it
 

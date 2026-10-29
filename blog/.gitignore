@@ -13,3 +13,4 @@ qai.pdf
 .analytics_disabled
 .feedback_disabled
 test/papers/
+.rag_queries_db

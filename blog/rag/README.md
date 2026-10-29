@@ -25,8 +25,12 @@ browser  ──POST /ask.php──▶  PHP proxy  ──▶  127.0.0.1:8090  (qu
   retrieved passages are attached as sources instead of returning a false
   refusal. A localized “the course does not cover that” remains the fallback.
 - **Streaming:** while the model runs, `/status` carries the partial answer;
-  the chat polls every 400 ms and renders tokens as they arrive. No SSE and no
-  proxy buffering tricks are needed.
+  the chat polls every 400 ms and renders tokens as they arrive. The first
+  tokens are held back briefly so a refusing answer cannot flash its preamble.
+  No SSE and no proxy buffering tricks are needed.
+- **Safety filter:** obvious hateful/repetition instructions are refused
+  immediately without calling the model. The query is stored only as
+  `[blocked request]`.
 - **Multilingual:** questions in other languages are translated to English for
   retrieval (the corpus is English); the answer is written in the question’s
   language.
@@ -148,6 +152,19 @@ Edit `/etc/asanai-rag.env` and `systemctl restart asanai-rag`:
 CPU/memory limits are in `/etc/systemd/system/ollama.service.d/override.conf`
 and `asanai-rag.service`. On a 2-core server the defaults leave headroom for
 Apache; lower `CPUQuota` if the site feels sluggish.
+
+## Question log and admin view
+
+Every completed or cached answer is written to
+`/var/lib/asanai-rag/queries.sqlite` (override with
+`ASANAI_RAG_QUERIES_DB`): question, answer, language, grounded/cached/semantic
+flags, model, sources, queue and generation times. There are no IP addresses or
+reader identities. Blocked requests are redacted; retention is 180 days.
+
+The installer writes the path to `blog/.rag_queries_db` so the blog can find
+it. Open **Course questions** from the stats navigation, or `/questions`
+directly. It uses the same administrator password and `mnstats` session as
+`/stats` (sign in there first).
 
 ## Tests
 

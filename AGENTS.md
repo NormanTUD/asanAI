@@ -607,9 +607,11 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
   question's language; answers must cite `[S1]…` or return a localized “not in
   the course”. Install on a server with `blog/rag/install.sh`; after content
   changes run `blog/rag/reindex.sh` (or the repo builders above). The Python
-  service binds to `127.0.0.1`; `ask.php` is the public proxy. Tests:
-  `node blog/tests/rag_chat_test.js`, `uv run blog/tests/rag_server_test.py`,
-  `uv run blog/tests/rag_index_test.py`.
+  service binds to `127.0.0.1`; `ask.php` is the public proxy. Q&A are logged
+  to `/var/lib/asanai-rag/queries.sqlite` (no IPs; blocked requests redacted)
+  and shown at `/questions`, linked from the stats nav and using the same
+  admin session/password. Tests: `node blog/tests/rag_chat_test.js`,
+  `uv run blog/tests/rag_server_test.py`, `uv run blog/tests/rag_index_test.py`.
 - **Read-progress** (`progress_tracker.js`): per-tile 10-segment "where I've
   been" bars, dwell-time based (a band counts as read after ≥3 s). Passive —
   nothing to wire up in lessons.

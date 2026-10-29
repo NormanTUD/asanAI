@@ -88,6 +88,7 @@ cat > /etc/asanai-rag.env <<EOF
 ASANAI_BLOG_DIR=$BLOG_DIR
 ASANAI_RAG_DATA=$RAG_DATA
 ASANAI_RAG_CACHE=$DATA_DIR/cache.sqlite
+ASANAI_RAG_QUERIES_DB=$DATA_DIR/queries.sqlite
 ASANAI_RAG_HOST=127.0.0.1
 ASANAI_RAG_PORT=8090
 
@@ -110,6 +111,8 @@ INITIAL_ETA_SECONDS=30
 EOF
 chown root:www-data /etc/asanai-rag.env
 chmod 0640 /etc/asanai-rag.env
+printf '%s\n' "$DATA_DIR/queries.sqlite" > "$BLOG_DIR/.rag_queries_db"
+chmod 0644 "$BLOG_DIR/.rag_queries_db"
 
 echo "[5/8] Pulling the language model (about 1 GB)"
 systemctl daemon-reload

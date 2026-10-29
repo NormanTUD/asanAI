@@ -19,6 +19,16 @@ RewriteRule ^december$ december.html [L]
     </IfModule>
 </FilesMatch>
 
+# RAG question-log path file must not be served.
+<FilesMatch "^\.rag_queries_db$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
 # Local analytics kill switch must not be served.
 <FilesMatch "^\.analytics_disabled$">
     <IfModule mod_authz_core.c>

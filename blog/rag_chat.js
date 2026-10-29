@@ -164,7 +164,9 @@
 	}
 
 	function visiblePartial(text) {
-		return String(text || '').split('[[NOT_IN_COURSE]]').join('');
+		return String(text || '').replace(
+			/\[\[?\s*NOT[\s_-]*IN[\s_-]*COURSE\s*\]?\]/gi, ''
+		);
 	}
 
 	function selectionInside(node) {
@@ -316,7 +318,8 @@
 		module.exports = {
 			statusText: statusText,
 			answerHtml: answerHtml,
-			esc: esc
+			esc: esc,
+			visiblePartial: visiblePartial
 		};
 	}
 })();

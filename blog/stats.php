@@ -3580,6 +3580,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 	<nav class="admin-nav" aria-label="Admin areas">
 		<a class="<?php echo $view === 'analytics' ? 'active' : ''; ?>" href="stats?view=analytics" data-admin-view="analytics">Analytics</a>
 		<a class="<?php echo $view === 'feedback' ? 'active' : ''; ?>" href="stats?view=feedback" data-admin-view="feedback">Reader feedback</a>
+		<a href="questions">Course questions</a>
 	</nav>
 
 	<div class="feedback-embed" id="feedback-embed"<?php echo $view === 'feedback' ? '' : ' hidden'; ?>>
