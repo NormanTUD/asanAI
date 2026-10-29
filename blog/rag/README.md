@@ -140,6 +140,19 @@ CPU/memory limits are in `/etc/systemd/system/ollama.service.d/override.conf`
 and `asanai-rag.service`. On a 2-core server the defaults leave headroom for
 Apache; lower `CPUQuota` if the site feels sluggish.
 
+## Tests
+
+CI never downloads the Ollama model or the reranker:
+
+- `node blog/tests/rag_chat_test.js` — status text, citations and escaping only;
+- `uv run blog/tests/rag_index_test.py` — reads the committed index;
+- `uv run blog/tests/rag_server_test.py` — fake engine, fake Ollama HTTP server,
+  queue/ETA/cache/proxy checks;
+- `uv run blog/tests/rag_browser_test.py` — mocks the `ask.php` replies in the
+  page, checks the chat UI without a backend.
+
+Only `install.sh` and the real `server.py` use Ollama and the reranker model.
+
 ## Uninstall
 
 ```bash

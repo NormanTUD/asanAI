@@ -185,6 +185,9 @@ uv run blog/tests/rag_index_test.py
 uv run blog/tests/rag_browser_test.py
 ```
 
+CI uses a fake Ollama server and mocked chat responses; it never downloads the
+1.5B model or the reranker. Only the real install and service use the models.
+
 ## Where to read it
 
 The course is served from the same host as the
