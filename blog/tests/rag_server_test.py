@@ -183,6 +183,12 @@ def main():
     check(first is True and second is False and retry >= 1, "rate limiter enforces the gap")
 
     check(server.primary_lang("de-DE") == "de", "language tag is reduced to its primary part")
+    versioned = server.cache_key("what is a perceptron", "en", [])
+    old_version = server.CACHE_VERSION
+    server.CACHE_VERSION = "old"
+    old_key = server.cache_key("what is a perceptron", "en", [])
+    server.CACHE_VERSION = old_version
+    check(versioned != old_key, "cache key includes the prompt version")
     check(server.refusal("xx") == server.REFUSALS["en"], "unknown language falls back to English")
 
     fake = server.ThreadingHTTPServer(("127.0.0.1", 0), FakeOllama)

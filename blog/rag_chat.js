@@ -167,6 +167,14 @@
 		return String(text || '').split('[[NOT_IN_COURSE]]').join('');
 	}
 
+	function selectionInside(node) {
+		var selection = window.getSelection && window.getSelection();
+		if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
+			return false;
+		}
+		return node.contains(selection.anchorNode) || node.contains(selection.focusNode);
+	}
+
 	function showPartial(text) {
 		text = visiblePartial(text);
 		if (!text) return;
@@ -174,6 +182,8 @@
 			state.streamNode = addMessage('assistant', '');
 			state.streamNode.classList.add('rag-chat-streaming');
 		}
+		// Never replace the node while the reader is selecting its text.
+		if (selectionInside(state.streamNode)) return;
 		state.streamNode.innerHTML = answerHtml(text, []) +
 			'<span class="rag-cursor" aria-hidden="true"></span>';
 		els.messages.scrollTop = els.messages.scrollHeight;

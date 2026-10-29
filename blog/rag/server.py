@@ -46,6 +46,7 @@ RATE_DAY = int(os.environ.get("RATE_DAY", "20"))
 RATE_SECONDS = int(os.environ.get("RATE_SECONDS", "5"))
 CACHE_TTL = int(os.environ.get("CACHE_TTL_SECONDS", str(30 * 24 * 3600)))
 INITIAL_ETA = float(os.environ.get("INITIAL_ETA_SECONDS", "30"))
+CACHE_VERSION = "2"
 
 MAGIC = 0x4D4E5356
 WORD_RE = re.compile(r"[^\W_]+", re.UNICODE)
@@ -120,7 +121,9 @@ def tokenize(text: str) -> list[str]:
 def cache_key(question: str, lang: str, history: list) -> str:
     normalized = " ".join(question.lower().split())
     tail = history[-4:] if history else []
-    payload = json.dumps([primary_lang(lang), normalized, tail], ensure_ascii=False)
+    payload = json.dumps(
+        [CACHE_VERSION, primary_lang(lang), normalized, tail], ensure_ascii=False
+    )
     return hashlib.sha1(payload.encode("utf-8")).hexdigest()
 
 

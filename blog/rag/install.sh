@@ -146,7 +146,11 @@ rm -rf "$INDEX_TMP"
 echo "[8/8] Starting the answer service"
 install -m 0644 "$SCRIPT_DIR/asanai-rag.service" /etc/systemd/system/asanai-rag.service
 systemctl daemon-reload
-systemctl enable --now asanai-rag
+systemctl stop asanai-rag 2>/dev/null || true
+# Old answers may have been cached with an older prompt/model; drop them.
+rm -f "$DATA_DIR/cache.sqlite"
+systemctl enable asanai-rag
+systemctl restart asanai-rag
 
 echo "Waiting for the service to become healthy..."
 RAG_HEALTHY=0

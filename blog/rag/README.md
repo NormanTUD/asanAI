@@ -12,6 +12,9 @@ browser  ──POST /ask.php──▶  PHP proxy  ──▶  127.0.0.1:8090  (qu
                                                     └── 127.0.0.1:11434 (Ollama, Qwen2.5)
 ```
 
+- **Answer cache:** keyed by prompt version, language, question and recent
+  history. Updating the prompt invalidates old answers; the installer clears the
+  cache once so an old “not covered” answer cannot stick.
 - **Queue:** one generation at a time. The browser shows the queue position and
   an ETA. The queue holds 20 requests; per-IP limits are 20/day and one every
   5 seconds.

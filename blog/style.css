@@ -13788,6 +13788,16 @@ summary:focus-visible,
 #rag-chat-panel[hidden] {
 	display: none;
 }
+#rag-chat-panel,
+.rag-chat-messages,
+.rag-chat-msg {
+	-webkit-user-select: text;
+	user-select: text;
+}
+#rag-chat-panel button {
+	-webkit-user-select: none;
+	user-select: none;
+}
 .rag-chat-header {
 	display: flex;
 	align-items: center;

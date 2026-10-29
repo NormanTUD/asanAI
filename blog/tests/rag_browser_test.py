@@ -209,6 +209,7 @@ def main() -> int:
 			"return document.querySelector('.rag-chat-msg-assistant').innerHTML"
 		), "citation points at the lesson")
 
+
 		# Enter sends; Shift+Enter inserts a newline and does not send.
 		input_el = browser.find_element(By.CSS_SELECTOR, ".rag-chat-input")
 		input_el.send_keys("What is a derivative?")
@@ -230,6 +231,23 @@ def main() -> int:
 		check("\n" in value, "Shift+Enter inserts a newline", repr(value))
 		check(len(browser.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")) == 2,
 			"Shift+Enter does not send the message")
+
+		selected = browser.execute_script("""
+			const question = document.querySelector('.rag-chat-msg-user');
+			const answer = document.querySelector('.rag-chat-msg-assistant');
+			const range = document.createRange();
+			range.setStart(question.firstChild, 0);
+			range.setEnd(answer, answer.childNodes.length);
+			const selection = window.getSelection();
+			selection.removeAllRanges();
+			selection.addRange(range);
+			return selection.toString();
+		""")
+		check("What is a perceptron?" in selected and "A perceptron" in selected,
+			"question and answer can be selected together", selected[:200])
+		check(browser.execute_script(
+			"return getComputedStyle(document.querySelector('.rag-chat-msg')).userSelect"
+		) in ("text", "auto"), "chat text is selectable")
 
 		severe = [entry for entry in browser.get_log("browser")
 				  if entry.get("level") == "SEVERE"]
