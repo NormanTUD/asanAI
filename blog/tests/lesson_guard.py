@@ -223,7 +223,7 @@ def guard_fold_quad_map(js: str) -> list[str]:
 CITE_SKIP = {
     "functions.php", "index.php", "index_full.php", "asanai_blog_proxy.php",
     "graph.php", "image.php", "mobile-prepend.php", "mobile-loader.php",
-    "search_lib.php", "search.php",
+    "search_lib.php", "search.php", "ask.php",
 }
 
 CITE_MACRO = re.compile(

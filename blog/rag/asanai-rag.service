@@ -1,0 +1,32 @@
+[Unit]
+Description=asanAI blog RAG answer service
+Documentation=file:/opt/asanai-rag/README.md
+After=network.target ollama.service
+Wants=ollama.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/asanai-rag
+EnvironmentFile=/etc/asanai-rag.env
+ExecStart=/opt/asanai-rag/venv/bin/python /opt/asanai-rag/server.py
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=20
+
+# One answer at a time; leave CPU for Apache and Ollama.
+MemoryHigh=1200M
+MemoryMax=1500M
+CPUQuota=100%
+Nice=10
+IOSchedulingClass=idle
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/var/lib/asanai-rag
+
+[Install]
+WantedBy=multi-user.target

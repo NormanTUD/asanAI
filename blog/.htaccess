@@ -1,5 +1,9 @@
 RewriteEngine On
 
+# RAG server code and its generated index are not web assets. Return 404
+# so install.sh and the service source are indistinguishable from a missing file.
+RewriteRule ^(?:rag|rag_data)/ - [R=404,L]
+
 # The December calendar is a standalone landing page (december.html).
 # Serve it for the pretty URL before the generic .php rewrite.
 RewriteCond %{REQUEST_FILENAME}.html -f
@@ -40,12 +44,13 @@ RewriteRule ^analytics_data/ - [F,L]
 
 
 # 1. External redirect: remove .php (dynamic, without duplicated paths)
-#    stats.php, feedback.php, feedback_track.php and track.php are POST targets;
-#    never redirect their .php form.
+#    stats.php, feedback.php, feedback_track.php, track.php and ask.php are
+#    POST targets; never redirect their .php form.
 RewriteCond %{REQUEST_URI} !/stats\.php(?:\?|$)
 RewriteCond %{REQUEST_URI} !/track\.php(?:\?|$)
 RewriteCond %{REQUEST_URI} !/feedback\.php(?:\?|$)
 RewriteCond %{REQUEST_URI} !/feedback_track\.php(?:\?|$)
+RewriteCond %{REQUEST_URI} !/ask\.php(?:\?|$)
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^?\s]+)\.php(?:\?|\s) [NC]
 RewriteRule ^ %1 [R=301,L]
 

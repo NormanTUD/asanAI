@@ -132,6 +132,59 @@ pure keyword path, checks that the preference survives a reload, and checks
 that regex/fuzzy modes and a failed model load still work. The blog CI workflow
 runs all of these on every push or pull request that touches `blog/**`.
 
+### Optional: ask-the-course chat
+
+The search stays local and instant. An optional server-side service adds a
+small **“Ask the course”** button: it retrieves the best passages, reranks them,
+and lets a CPU-only Ollama model answer **strictly from those passages**, with
+lesson links. It is disabled automatically until the service is installed
+(`ask.php` health check), and it never runs for normal page views.
+
+- one generation at a time, queue of 20, per-IP rate limits, answer cache;
+- ETA and queue position shown in the panel (English status text);
+- non-English questions are translated to English for retrieval and answered
+  in the question's language;
+- model default: Qwen2.5-1.5B-Instruct (about 1 GB, Apache-2.0), capped at 2 GB
+  RAM; reranker: ms-marco-MiniLM-L-6-v2 (about 80 MB);
+- service binds to `127.0.0.1`; `ask.php` is the public proxy.
+
+Install on an Ubuntu/Debian server with `sudo` and `systemd`:
+
+```bash
+cd blog/rag
+sudo ./install.sh
+# or, if the blog is elsewhere:
+sudo ASANAI_BLOG_DIR=/srv/asanai/blog ./install.sh
+```
+
+The installer pulls Ollama and the model, installs the systemd units and builds
+the RAG index. Check it with:
+
+```bash
+curl http://127.0.0.1:8090/health
+journalctl -u asanai-rag -f
+```
+
+After lesson edits, rebuild the browser indexes and the server index:
+
+```bash
+uv run blog/tools/build_semantic_index.py
+uv run blog/tools/build_rag_index.py          # commits blog/rag_data/
+sudo /opt/asanai-rag/reindex.sh               # on the server
+```
+
+Switch models with `sudo /opt/asanai-rag/set-model.sh qwen2.5:0.5b`; tune queue,
+rate limits and context in `/etc/asanai-rag.env`; CPU/memory caps live in the
+systemd units. Full instructions, tuning and uninstall are in
+[`rag/README.md`](rag/README.md).
+
+```bash
+node blog/tests/rag_chat_test.js
+uv run blog/tests/rag_server_test.py
+uv run blog/tests/rag_index_test.py
+uv run blog/tests/rag_browser_test.py
+```
+
 ## Where to read it
 
 The course is served from the same host as the

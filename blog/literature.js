@@ -16644,7 +16644,7 @@ window.bibData = {
 		title: "Memorandum for Members and Affiliates of the Intergalactic Computer Network",
 		author: "J. C. R. Licklider",
 		year: 1963,
-		url: "https://worrydream.com/refs/Licklider_1963_-_Members_and_Affiliates_of_the_Intergalactic_Computer_Network.pdf",
+		url: "https://archive.org/download/RANDMEMOS.PDFARCHIVE/977.pdf",
 		alternativetitle: "Licklider, Intergalactic Computer Network (1963)"
 	},
 	"maturana1980autopoiesis": {

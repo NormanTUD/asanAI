@@ -22,11 +22,14 @@ again before reporting done.
   ask before adding anything new.
 - Rebuild the search indexes after blog source changes. — After editing a
   top-level lesson `.php`, `literature.js`, `search_lib.php`, or the semantic
-  chunker, run `uv run blog/tools/build_semantic_index.py` from the repository
-  root and commit the regenerated `.search_cache.json`, `semantic_index.json`
-  and `semantic_vectors.bin`. It refreshes the lexical cache through PHP and
-  the semantic vectors; `blog/tests/semantic_index_test.py` fails in CI when
-  they are stale.
+  chunker, run `uv run blog/tools/build_semantic_index.py` **and**
+  `uv run blog/tools/build_rag_index.py` from the repository root, then commit
+  the regenerated `.search_cache.json`, `semantic_index.json`,
+  `semantic_vectors.bin`, `blog/rag_data/rag_index.json` and
+  `blog/rag_data/rag_vectors.bin`. They refresh the lexical cache through PHP,
+  the browser vectors and the server-side RAG vectors;
+  `blog/tests/semantic_index_test.py` and `blog/tests/rag_index_test.py` fail in
+  CI when they are stale.
 - Leave it cleaner than you found it. — Code, markup, prose, and structure
   should be better after your change than before. Tidy only what you touch; do
   not start unrelated refactors.
@@ -133,6 +136,8 @@ tags.**
 | `blog/todo/` | **Staging** draft lessons — not part of the course |
 | `blog/test/` | One-off HTML experiments/scratch — not part of the course |
 | `blog/py/` | Python snippets inlined into lessons via `get_string_of_file_or_die()` |
+| `blog/rag/` | Optional server-side RAG answer service (Ollama + queue + installer); not web-served |
+| `blog/rag_data/` | Generated server-side RAG index (full chunks + int8 vectors), web-denied |
 | `blog/lndw*/`, `blog/coq/`, `blog/nanoGPT/`, `blog/llm_interpretability_papers/` | Research/working material, not served |
 | `cosmo*/`, `taurus/`, `presentation/` | Kiosk/exhibition variants (standalone, don't refactor for the main site). **`cosmo_ok/` is gitignored** — local only, never commit |
 | `manual/`, `manual.html`, `screens/`, `documentation/` | Toolkit docs & assets |
@@ -584,12 +589,27 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
   vectors. Question-like queries follow semantic order; short keyword queries
   fuse lexical + semantic with reciprocal rank fusion. **After editing lessons,
   `literature.js`, `search_lib.php`, or the chunker, rerun
-  `uv run blog/tools/build_semantic_index.py` and commit the regenerated
-  `.search_cache.json`, `semantic_index.json` and
-  `semantic_vectors.bin`.** The script refreshes the lexical cache via PHP and
-  the semantic vectors. Tests: `node blog/tests/semantic_js_test.js` and
-  `uv run blog/tests/semantic_index_test.py`; the latter fails if the index is
-  stale.
+  `uv run blog/tools/build_semantic_index.py` and
+  `uv run blog/tools/build_rag_index.py`, then commit the regenerated
+  `.search_cache.json`, `semantic_index.json`, `semantic_vectors.bin` and
+  `rag_data/`.** The scripts refresh the lexical cache via PHP, the browser
+  vectors and the server-side RAG vectors. Tests:
+  `node blog/tests/semantic_js_test.js`,
+  `uv run blog/tests/semantic_index_test.py`,
+  `uv run blog/tests/rag_index_test.py`; the index tests fail when stale.
+- **RAG answer chat** (`rag_chat.js` + `ask.php` + `rag/`): optional floating
+  “Ask the course” panel. It only appears when `ask.php?health=1` reports a
+  healthy local service. `rag/server.py` runs one generation at a time with a
+  queue, per-IP rate limits and an answer cache; it retrieves with the packed
+  English Model2Vec index in `rag_data/`, reranks the top candidates, and
+  answers with a small CPU-only Ollama model (default Qwen2.5-1.5B). Non-English
+  questions are translated to English for retrieval and answered in the
+  question's language; answers must cite `[S1]…` or return a localized “not in
+  the course”. Install on a server with `blog/rag/install.sh`; after content
+  changes run `blog/rag/reindex.sh` (or the repo builders above). The Python
+  service binds to `127.0.0.1`; `ask.php` is the public proxy. Tests:
+  `node blog/tests/rag_chat_test.js`, `uv run blog/tests/rag_server_test.py`,
+  `uv run blog/tests/rag_index_test.py`.
 - **Read-progress** (`progress_tracker.js`): per-tile 10-segment "where I've
   been" bars, dwell-time based (a band counts as read after ≥3 s). Passive —
   nothing to wire up in lessons.
@@ -806,7 +826,11 @@ dependency in a header won't resolve for a few days).
 | `uv run blog/tests/link_checker.py blog/` | every `url:` in `literature.js` returns 2xx; PDFs must start `%PDF`; TLS/bot-block soft-passes never fail | real failures | `blog/**` + weekly cron |
 | `uv run blog/tests/literature_dup_keys.py blog/` | every top-level key in `literature.js` appears exactly once (JS object last-wins would silently hide a duplicate) | **any duplicate** | `blog/**` |
 | `node blog/tests/{topics,math_alt,keypoint,search_js,semantic_js}_test.js` | DOM-stubbed unit tests of BlogTopics (interests, math dial, learned), math-alts, keypoints, search, semantic ranking | any failed check | `blog/**` |
+| `node blog/tests/rag_chat_test.js` | RAG chat status text, citation links, HTML escaping | any failed check | `blog/**` |
 | `uv run blog/tests/semantic_index_test.py` | semantic index freshness vs `.search_cache.json`, vector shape, Python↔JS tokenizer parity, int8 vector fidelity | stale index or any failed check | `blog/**` (semantic-index job) |
+| `uv run blog/tests/rag_index_test.py` | server RAG index freshness vs `.search_cache.json`, vector shape, no redirect/macro chunks | stale index or any failed check | `blog/**` (semantic-index job) |
+| `uv run blog/tests/rag_server_test.py` | RAG retrieval helpers, grounding/citations, queue position/ETA, answer cache, HTTP API (fake Ollama) | any failed check | `blog/**` (semantic-index job) |
+| `uv run blog/tests/{semantic,rag}_browser_test.py` | headless-Chrome UI: semantic question + AI toggle + fallback; RAG chat health, queue/ETA text, answer and source links | any failed check | `blog/**` (php-render job) |
 | `uv run blog/tests/php_render_validator.py blog/` | headless-Chrome render (PHP built-in server): console error → exit 1; unrendered `$$` (with `_`/`\`) outside a `<div>` → exit 2; width overflow → exit 3 (only with `--check-width`); `--all-lessons --check-width --width-only` sweeps every lesson + the width gate via `window.__layoutGuardrailCheck()` | per exit codes | index.php only (width job currently disabled in CI) |
 | `uv run blog/tests/typo_checker.py blog/` | spell-checks lesson prose; whitelist `blog/tests/typo_whitelist.txt` (one word/line, case-insensitive, append to add) | typos | **local only** |
 | `uv run blog/tests/latex_error_checker.py --docroot blog/` | Playwright sweep of every lesson for LaTeX/render errors + static risk scan (`--trace` for traces) | failures (risk warnings don't) | **local only** |

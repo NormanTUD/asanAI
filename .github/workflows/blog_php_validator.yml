@@ -31,7 +31,7 @@ jobs:
       - name: Install PHP CLI
         run: |
           sudo apt-get update
-          sudo apt-get install -y php-cli php-sqlite3
+          sudo apt-get install -y php-cli php-curl php-sqlite3
 
       - name: Install uv
         run: |
@@ -98,7 +98,7 @@ jobs:
       - name: Install PHP CLI
         run: |
           sudo apt-get update
-          sudo apt-get install -y php-cli
+          sudo apt-get install -y php-cli php-curl
 
       - name: Install Chromium dependencies
         run: |
@@ -149,6 +149,9 @@ jobs:
       - name: Run semantic search tests
         run: node blog/tests/semantic_js_test.js
 
+      - name: Run RAG chat formatting tests
+        run: node blog/tests/rag_chat_test.js
+
   semantic-index-test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -164,7 +167,7 @@ jobs:
       - name: Install PHP CLI
         run: |
           sudo apt-get update
-          sudo apt-get install -y php-cli
+          sudo apt-get install -y php-cli php-curl
 
       - name: Install uv
         run: |
@@ -173,6 +176,12 @@ jobs:
 
       - name: Run semantic index test
         run: uv run blog/tests/semantic_index_test.py
+
+      - name: Run RAG index test
+        run: uv run blog/tests/rag_index_test.py
+
+      - name: Run RAG server test
+        run: uv run blog/tests/rag_server_test.py
 
   php-render-validation:
     runs-on: ubuntu-latest
@@ -183,7 +192,7 @@ jobs:
       - name: Install PHP CLI
         run: |
           sudo apt-get update
-          sudo apt-get install -y php-cli
+          sudo apt-get install -y php-cli php-curl
 
       - name: Install uv
         run: |
@@ -207,6 +216,10 @@ jobs:
       - name: Run Semantic Search Browser Test
         run: |
           uv run blog/tests/semantic_browser_test.py
+
+      - name: Run RAG Chat Browser Test
+        run: |
+          uv run blog/tests/rag_browser_test.py
 
       - name: Run Analytics Client Tracker Test
         run: |
@@ -233,7 +246,7 @@ jobs:
       - name: Install PHP CLI
         run: |
           sudo apt-get update
-          sudo apt-get install -y php-cli
+          sudo apt-get install -y php-cli php-curl
 
       - name: Install uv
         run: |

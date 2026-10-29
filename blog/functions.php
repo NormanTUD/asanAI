@@ -228,6 +228,7 @@ function load_base_js ($defer = false) {
 	js("three.min", null, $defer);
 	js("search", null, $defer);
 	js("semantic_search", null, $defer);
+	js("rag_chat", null, $defer);
 	js("topics", null, $defer);
 	js("keypoint", null, $defer);
 	js("progress_tracker", null, $defer);
