@@ -147,7 +147,22 @@ echo "[8/8] Starting the answer service"
 install -m 0644 "$SCRIPT_DIR/asanai-rag.service" /etc/systemd/system/asanai-rag.service
 systemctl daemon-reload
 systemctl enable --now asanai-rag
-sleep 2
+
+echo "Waiting for the service to become healthy..."
+RAG_HEALTHY=0
+for _ in $(seq 1 30); do
+	if curl -fsS "http://127.0.0.1:8090/health" >/dev/null 2>&1; then
+		RAG_HEALTHY=1
+		break
+	fi
+	sleep 1
+done
+if [ "$RAG_HEALTHY" -ne 1 ]; then
+	echo "error: the answer service did not become healthy." >&2
+	systemctl status asanai-rag --no-pager >&2 || true
+	journalctl -u asanai-rag -n 80 --no-pager >&2 || true
+	exit 1
+fi
 
 echo
 echo "== Health =="
