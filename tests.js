@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1417;
+var DEFAULT_EXPECTED_TEST_COUNT = 1661;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -6300,6 +6300,772 @@ function _tiny_tests_misc() {
 	test_equal("collapse_into_segments mixed", JSON.stringify(collapse_into_segments(["x","x","y","y","z"])), '[{"x":[0,1]},{"y":[2,3]},{"z":[4]}]');
 }
 
+async function _tiny_tests_easter_eggs_js() {
+	var old_random = Math.random;
+	var old_confetti = window.confetti;
+	var old_set_timeout = window.setTimeout;
+	var old_raf = window.requestAnimationFrame;
+	var calls = [];
+
+	try {
+		Math.random = function () { return 0.5; };
+		test_equal("randomInRange midpoint", randomInRange(2, 4), 3);
+		test_equal("randomInRange low edge", randomInRange(0, 10), 5);
+		test_equal("randomInRange negative range", randomInRange(-4, 0), -2);
+
+		test_equal("_next zero", _next(0, 10), 0);
+		test_equal("_next exact multiple", _next(10, 10), 10);
+		test_equal("_next rounds up", _next(11, 10), 20);
+		test_equal("_next already above", _next(25, 10), 30);
+		test_equal("_next small multiple", _next(3, 2), 4);
+
+		window.confetti = function (opts) { calls.push(opts); };
+		window.requestAnimationFrame = function () { return 1; };
+		show_snow();
+		test_equal("show_snow fires one confetti frame", calls.length, 1);
+		test_equal("show_snow uses white circles", JSON.stringify(calls[0].colors), '["#ffffff"]');
+		test_equal("show_snow requests the next frame", typeof window.requestAnimationFrame === "function", true);
+
+		calls = [];
+		confetti_a();
+		test_equal("confetti_a particle count", calls[0].particleCount, 100);
+		test_equal("confetti_a origin y", calls[0].origin.y, 0.6);
+
+		calls = [];
+		confetti_b();
+		test_equal("confetti_b particle count is randomized", calls[0].particleCount, 75);
+		test_equal("confetti_b angle is randomized", calls[0].angle, 90);
+
+		calls = [];
+		confetti_c();
+		test_equal("confetti_c fires five bursts", calls.length, 5);
+		test_equal("confetti_c particle distribution", JSON.stringify(calls.map(function (c) { return c.particleCount; })), "[50,40,70,20,20]");
+		test_equal("confetti_c keeps default origin", calls[0].origin.y, 0.7);
+
+		calls = [];
+		window.setTimeout = function (fn) { fn(); return 1; };
+		confetti_d();
+		test_equal("confetti_d fires six bursts", calls.length, 6);
+		test_equal("confetti_d alternates star and circle", calls[0].shapes[0] + "/" + calls[1].shapes[0], "star/circle");
+		test_equal("confetti_d first burst is larger", calls[0].particleCount > calls[1].particleCount, true);
+		window.setTimeout = old_set_timeout;
+
+		calls = [];
+		window.setTimeout = function (fn) { fn(); return 1; };
+		Math.random = function () { return 0; };
+		_confetti();
+		test_equal("_confetti dispatches to confetti_a", calls.length, 1);
+		calls = [];
+		Math.random = function () { return 0.25; };
+		_confetti();
+		test_equal("_confetti dispatches to confetti_b", calls.length, 1);
+		calls = [];
+		Math.random = function () { return 0.45; };
+		_confetti();
+		test_equal("_confetti dispatches to confetti_c", calls.length, 5);
+		calls = [];
+		Math.random = function () { return 0.65; };
+		_confetti();
+		test_equal("_confetti dispatches to confetti_d", calls.length, 6);
+		window.setTimeout = old_set_timeout;
+
+		var old_counter = fireworks_counter;
+		var old_in_fireworks = in_fireworks;
+		var confetti_calls = 0;
+		var old_confetti_function = _confetti;
+		_confetti = function () { confetti_calls++; };
+		fireworks_counter = 9;
+		in_fireworks = 0;
+		await easter_egg_fireworks(1);
+		test_equal("easter_egg_fireworks increments the counter", fireworks_counter, 10);
+		test_equal("easter_egg_fireworks celebrates every tenth step", confetti_calls, 1);
+		in_fireworks = 1;
+		await easter_egg_fireworks(1);
+		test_equal("easter_egg_fireworks ignores overlapping runs", fireworks_counter, 10);
+		_confetti = old_confetti_function;
+		fireworks_counter = old_counter;
+		in_fireworks = old_in_fireworks;
+	} finally {
+		Math.random = old_random;
+		window.confetti = old_confetti;
+		window.setTimeout = old_set_timeout;
+		window.requestAnimationFrame = old_raf;
+	}
+}
+
+function _tiny_tests_debug_js() {
+	test_equal("_getTimestamp has millisecond precision", /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}$/.test(_getTimestamp()), true);
+	test_equal("checkCurrentUrlParams matches the debug query", checkCurrentUrlParams(), new URLSearchParams(window.location.search).get("debug") === "1");
+
+	function __asanai_param_names(a, b, c) { return a + b + c; }
+	test_equal("get_param_names reads all names", JSON.stringify(get_param_names(__asanai_param_names)), '["a","b","c"]');
+	test_equal("get_param_names handles a function without parameters", JSON.stringify(get_param_names(function () {})), "[]");
+
+	window.__asanai_count_test = function (a, b) { return a + b; };
+	window.__asanai_zero_test = function () { return 1; };
+	test_equal("countParametersByFunctionName counts parameters", countParametersByFunctionName("__asanai_count_test"), 2);
+	test_equal("countParametersByFunctionName handles no parameters", countParametersByFunctionName("__asanai_zero_test"), 0);
+	test_equal("countParametersByFunctionName rejects unknown names", countParametersByFunctionName("__asanai_missing_test"), -1);
+	delete window.__asanai_count_test;
+	delete window.__asanai_zero_test;
+
+	test_equal("shortenFloat rounds to decimals", shortenFloat(1.23456, 2), "1.23");
+	test_equal("shortenFloat accepts numeric strings", shortenFloat("2.5", 2), "2.50");
+	test_equal("shortenFloat keeps non-numbers", shortenFloat("abc", 2), "abc");
+	test_equal("shortenFloat keeps null", shortenFloat(null, 2), null);
+	test_equal("colorize wraps text", colorize("x", "red").indexOf("<span style='color: red'>x</span>") === 0, true);
+	test_equal("colorize without color returns text", colorize("x"), "x");
+
+	var random_array = generateRandomArray(12, 12);
+	test_equal("generateRandomArray uses the requested length", random_array.length, 12);
+	test_equal("generateRandomArray only produces primitives", random_array.every(function (v) { return ["string", "boolean", "number"].indexOf(typeof v) !== -1; }), true);
+
+	var stack = detect_and_color_stacktrace("foo@https://example.com/a.js:1:2");
+	test_equal("detect_and_color_stacktrace colors the function", stack.indexOf("<span style='color: #af0f0f;'>foo</span>") !== -1, true);
+	test_equal("detect_and_color_stacktrace colors the URL", stack.indexOf("<span style='color: #0f0faf;'>https://example.com/a.js:1:2</span>") !== -1, true);
+	test_equal("detect_and_color_stacktrace leaves plain text alone", detect_and_color_stacktrace("plain"), "plain");
+
+	var table_html = create_html_table_from_json([{name: "a"}, {name: "a"}, {name: "b"}]);
+	test_equal("create_html_table_from_json emits a header", table_html.indexOf("<th>name</th>") !== -1, true);
+	test_equal("create_html_table_from_json removes duplicate rows", (table_html.match(/<tr>/g) || []).length, 3);
+
+	window.__asanai_env_probe = 424242;
+	var env_html = _dump_env_to_html();
+	test_equal("_dump_env_to_html includes primitive globals", env_html.indexOf("__asanai_env_probe") !== -1 && env_html.indexOf("424242") !== -1, true);
+	delete window.__asanai_env_probe;
+
+	var log_length = _full_debug_log.length;
+	log_less("__asanai_log_less__");
+	test_equal("log_less stores one entry", _full_debug_log.length, log_length + 1);
+	log_once("__asanai_log_once__");
+	var once_length = _full_debug_log.length;
+	log_once("__asanai_log_once__");
+	test_equal("log_once suppresses repeats", _full_debug_log.length, once_length);
+	var info_length = _full_debug_log.length;
+	info("__asanai_info__");
+	test_equal("info stores one entry", _full_debug_log.length, info_length + 1);
+	var old_last_dbg_msg = last_dbg_msg;
+	last_dbg_msg = "";
+	var dbg_length = _full_debug_log.length;
+	dbg("__asanai_dbg__");
+	var dbg_after_first = _full_debug_log.length;
+	dbg("__asanai_dbg__");
+	var dbg_after_second = _full_debug_log.length;
+	test_equal("dbg stores an entry", dbg_after_first > dbg_length, true);
+	test_equal("dbg suppresses consecutive duplicates", dbg_after_second, dbg_after_first);
+	last_dbg_msg = old_last_dbg_msg;
+
+	test_equal("get_mem exposes tensor memory", typeof get_mem().numTensors, "number");
+}
+
+function _tiny_tests_math_mode_tooltips_js() {
+	function mvtTestWeight(name, shape, values) {
+		return { name: name, shape: shape, isDisposed: false, dataSync: function () { return values; } };
+	}
+	function mvtTestEntry(variable) {
+		return { name: variable.name, val: variable };
+	}
+	function mvtTestLayer(name, weights) {
+		return { name: name, trainableWeights: weights.map(mvtTestEntry), weights: weights.map(mvtTestEntry) };
+	}
+
+	var old_model = window.model;
+	var old_xy_data = window.xy_data_global;
+
+	try {
+		test_equal("_mvt_decode_class rejects null", _mvt_decode_class(null), null);
+		test_equal("_mvt_decode_class rejects foreign classes", _mvt_decode_class("foo"), null);
+		test_equal("_mvt_decode_class rejects short tags", _mvt_decode_class("mv-kernel"), null);
+		test_equal("_mvt_decode_class rejects bad layer tokens", _mvt_decode_class("mv-kernel-Lx"), null);
+		test_equal("_mvt_decode_class decodes weights", JSON.stringify(_mvt_decode_class("mv-kernel-L0-1-2")), '{"kind":"kernel","layer":0,"indices":[1,2],"weight_name":null}');
+		test_equal("_mvt_decode_class decodes names with colons", JSON.stringify(_mvt_decode_class("mv-bias-L3-0-kernel:0")), '{"kind":"bias","layer":3,"indices":[0],"weight_name":"kernel:0"}');
+		test_equal("_mvt_decode_class keeps hyphenated names", JSON.stringify(_mvt_decode_class("mv-skip-L2-foo-bar")), '{"kind":"skip","layer":2,"indices":[],"weight_name":"foo-bar"}');
+
+		var hover_parent = document.createElement("div");
+		hover_parent.className = "mv-bias-L0-0";
+		var hover_child = document.createElement("span");
+		hover_parent.appendChild(hover_child);
+		test_equal("_mvt_find_mv_element finds the parent tag", _mvt_find_mv_element(hover_child), hover_parent);
+		test_equal("_mvt_find_mv_element finds itself", _mvt_find_mv_element(hover_parent), hover_parent);
+		test_equal("_mvt_find_mv_element ignores untagged trees", _mvt_find_mv_element(document.body), null);
+
+		var kernel = mvtTestWeight("dense/kernel:0", [2, 2], [1, 2, 3, 4]);
+		var bias = mvtTestWeight("dense/bias:0", [2], [0, 0]);
+		var moving = mvtTestWeight("dense/moving_mean:0", [2], [0, 0]);
+		var dense_layer = mvtTestLayer("dense", [kernel, bias]);
+		dense_layer.weights.push(mvtTestEntry(moving));
+		dense_layer.epsilon = 1e-7;
+		dense_layer.maxValue = 6;
+		dense_layer.alpha = 0.1;
+		dense_layer.theta = 1.5;
+
+		window.model = { layers: [dense_layer] };
+		test_equal("_mvt_tf_layer resolves the GUI index", _mvt_tf_layer(0), dense_layer);
+		test_equal("_mvt_tf_layer returns null out of range", _mvt_tf_layer(5), null);
+
+		var variables = _mvt_layer_variables(0);
+		test_equal("_mvt_layer_variables keeps trainable and non-trainable weights", JSON.stringify(variables.map(function (v) { return v.name; })), '["dense/kernel:0","dense/bias:0","dense/moving_mean:0"]');
+		test_equal("_mvt_pick_variable finds the kernel", _mvt_pick_variable(0, {kind: "kernel", weight_name: null}).name, "dense/kernel:0");
+		test_equal("_mvt_pick_variable finds the bias", _mvt_pick_variable(0, {kind: "bias"}).name, "dense/bias:0");
+		test_equal("_mvt_pick_variable finds gamma", _mvt_pick_variable(0, {kind: "gamma"}), null);
+		test_equal("_mvt_pick_variable falls back to the first snake weight", _mvt_pick_variable(0, {kind: "snake"}).name, "dense/kernel:0");
+		test_equal("_mvt_pick_variable rejects unknown kinds", _mvt_pick_variable(0, {kind: "unknown"}), null);
+
+		test_equal("_mvt_flat_index maps 2D cells", _mvt_flat_index({kind: "kernel", layer: 0, indices: [1, 1]}), 3);
+		test_equal("_mvt_flat_index skips the leading bias row", _mvt_flat_index({kind: "bias", layer: 0, indices: [0, 1]}), 1);
+		test_equal("_mvt_flat_index rejects a non-zero leading row", _mvt_flat_index({kind: "bias", layer: 0, indices: [1, 1]}), -1);
+		test_equal("_mvt_flat_index rejects out-of-range cells", _mvt_flat_index({kind: "bias", layer: 0, indices: [0, 5]}), -1);
+		test_equal("_mvt_flat_index returns zero without indices", _mvt_flat_index({kind: "kernel", layer: 0, indices: []}), 0);
+		test_equal("_mvt_weight_shape copies the shape", JSON.stringify(_mvt_weight_shape({kind: "kernel", layer: 0})), "[2,2]");
+		test_equal("_mvt_model_generation lists live weights", _mvt_model_generation().indexOf("dense/kernel:0:2x2") !== -1, true);
+		test_equal("_mvt_gui_index_for_raw skips internal layers", (function () {
+			window.model = { layers: [{ name: "skip_proj_1" }, { name: "dense_1" }, { name: "dense_2" }] };
+			return _mvt_gui_index_for_raw(2);
+		})(), 1);
+		window.model = { layers: [dense_layer] };
+
+		var skip_model = {
+			layers: [
+				{ name: "dense_1", trainableWeights: [] },
+				{ name: "skip_proj_2", trainableWeights: [{ name: "skip_proj_2_kernel:0", val: mvtTestWeight("skip_proj_2_kernel:0", [2, 2], [1, 2, 3, 4]) }] }
+			]
+		};
+		window.model = skip_model;
+		test_equal("_mvt_find_skip_variable finds skip kernels", _mvt_find_skip_variable({weight_name: "skip_proj_2"}).name, "skip_proj_2_kernel:0");
+		test_equal("_mvt_find_skip_variable ignores other layers", _mvt_find_skip_variable({weight_name: "nope"}), null);
+		window.model = { layers: [dense_layer] };
+
+		var hist_key = _mvt_hist_key("bias", 0, "", 1);
+		_mvt_hist_record(hist_key, NaN, 1);
+		_mvt_hist_record(hist_key, Infinity, 2);
+		test_equal("_mvt_hist_record ignores non-finite values", _mvt_hist_get(hist_key), null);
+		_mvt_hist_record(hist_key, 1.5, 1000);
+		_mvt_hist_record(hist_key, 2.5, 2000);
+		test_equal("_mvt_hist_get returns recorded values", JSON.stringify(_mvt_hist_get(hist_key).v), "[1.5,2.5]");
+		var old_hist_max = _mvt_hist_max_points;
+		_mvt_hist_max_points = 4;
+		for (var hist_i = 3; hist_i <= 6; hist_i++) {
+			_mvt_hist_record(hist_key, hist_i, 2000 + hist_i);
+		}
+		test_equal("_mvt_hist_record caps the ring buffer", _mvt_hist_get(hist_key).v.length <= 4, true);
+		test_equal("_mvt_hist_record keeps the newest value", _mvt_hist_get(hist_key).v[_mvt_hist_get(hist_key).v.length - 1], 6);
+		_mvt_hist_max_points = old_hist_max;
+		delete _mvt_hist[hist_key];
+
+		test_equal("_mvt_weight_key_info maps depthwise kernels", JSON.stringify(_mvt_weight_key_info("depthwise_kernel")), '{"kind":"kernel","name":"depthwise"}');
+		test_equal("_mvt_weight_key_info maps pointwise kernels", JSON.stringify(_mvt_weight_key_info("pointwise_kernel")), '{"kind":"kernel","name":"pointwise"}');
+		test_equal("_mvt_weight_key_info maps plain kernels", JSON.stringify(_mvt_weight_key_info("dense/kernel:0")), '{"kind":"kernel","name":""}');
+		test_equal("_mvt_weight_key_info maps biases", JSON.stringify(_mvt_weight_key_info("dense/bias:0")), '{"kind":"bias","name":""}');
+		test_equal("_mvt_weight_key_info maps moving statistics to null", _mvt_weight_key_info("dense/moving_mean:0"), null);
+		test_equal("_mvt_weight_key_info maps multi-activations", JSON.stringify(_mvt_weight_key_info("aRelu")), '{"kind":"ma","name":"aRelu"}');
+		test_equal("_mvt_weight_key_info maps snakeAlpha first", JSON.stringify(_mvt_weight_key_info("snakeAlpha")), '{"kind":"ma","name":"snakeAlpha"}');
+		test_equal("_mvt_weight_key_info maps alpha to snake", JSON.stringify(_mvt_weight_key_info("alpha")), '{"kind":"snake","name":"alpha"}');
+		test_equal("_mvt_weight_key_info rejects unknown weights", _mvt_weight_key_info("dense/x:0"), null);
+
+		window.xy_data_global = null;
+		test_equal("_mvt_get_batch without data", _mvt_get_batch(), null);
+		var batch_x = tf.tensor2d([[0, 0], [1, 1]], [2, 2]);
+		var batch_y = tf.tensor2d([[0], [1]], [2, 1]);
+		window.xy_data_global = { x: batch_x, y: batch_y };
+		var small_batch = _mvt_get_batch();
+		test_equal("_mvt_get_batch reuses a small batch", small_batch.x === batch_x && !small_batch.owned, true);
+		var big_x = tf.tensor2d(Array.from({ length: 40 }, function (_, i) { return [i, i + 1]; }), [40, 2]);
+		var big_y = tf.tensor2d(Array.from({ length: 40 }, function (_, i) { return [i % 2]; }), [40, 1]);
+		window.xy_data_global = { x: big_x, y: big_y };
+		var big_batch = _mvt_get_batch();
+		test_equal("_mvt_get_batch subsamples large batches", big_batch.x.shape[0], 32);
+		test_equal("_mvt_get_batch owns subsampled tensors", big_batch.owned, true);
+		big_batch.x.dispose();
+		big_batch.y.dispose();
+		big_x.dispose();
+		big_y.dispose();
+
+		window.model = { loss: "meanSquaredError" };
+		var prediction = tf.tensor2d([[1], [2]], [2, 1]);
+		var target = tf.tensor2d([[0], [0]], [2, 1]);
+		var mse = _mvt_loss_value(prediction, target);
+		test_equal("_mvt_loss_value uses the model loss name", Number(mse.dataSync()[0]), 2.5);
+		mse.dispose();
+		window.model.loss = "absoluteDifference";
+		var absolute_difference = _mvt_loss_value(prediction, target);
+		test_equal("_mvt_loss_value supports other named losses", Number(absolute_difference.dataSync()[0]), 1.5);
+		absolute_difference.dispose();
+		window.model.loss = function (y, p) { return tf.mean(tf.abs(tf.sub(y, p))); };
+		var custom = _mvt_loss_value(prediction, target);
+		test_equal("_mvt_loss_value supports custom losses", Number(custom.dataSync()[0]), 1.5);
+		custom.dispose();
+		window.model.loss = "notALoss";
+		var fallback = _mvt_loss_value(prediction, target);
+		test_equal("_mvt_loss_value falls back to mean squared error", Number(fallback.dataSync()[0]), 2.5);
+		fallback.dispose();
+		prediction.dispose();
+		target.dispose();
+		batch_x.dispose();
+		batch_y.dispose();
+		window.model = { layers: [dense_layer] };
+
+		test_equal("_mvt_stats rejects empty data", _mvt_stats([]), null);
+		var stats = _mvt_stats([1, 2, 3, 4]);
+		test_equal("_mvt_stats counts values", stats.n, 4);
+		test_equal("_mvt_stats min and max", stats.min + "/" + stats.max, "1/4");
+		test_equal("_mvt_stats mean", stats.mean, 2.5);
+		test_equal("_mvt_stats std", Math.abs(stats.std - Math.sqrt(1.25)) < 1e-12, true);
+		test_equal("_mvt_percentile below the range", _mvt_percentile([1, 2, 3, 4], 0), 0);
+		test_equal("_mvt_percentile at a value", _mvt_percentile([1, 2, 3, 4], 2), 0.375);
+		test_equal("_mvt_percentile above the range", _mvt_percentile([1, 2, 3, 4], 5), 1);
+
+		test_equal("_mvt_svg_sparkline needs two points", _mvt_svg_sparkline([1]), "");
+		test_equal("_mvt_svg_sparkline draws a polyline", _mvt_svg_sparkline([1, 2, 3]).indexOf("<polyline") !== -1, true);
+		test_equal("_mvt_svg_sparkline handles constant values", _mvt_svg_sparkline([1, 1, 1]).indexOf("<svg") === 0, true);
+		test_equal("_mvt_svg_dist_strip draws a value dot", _mvt_svg_dist_strip(0.5, 0, 1, 0.5).indexOf("<circle") !== -1, true);
+		test_equal("_mvt_svg_dist_strip handles a degenerate range", _mvt_svg_dist_strip(1, 1, 1, 1).indexOf("<svg") === 0, true);
+		test_equal("_mvt_cell_color handles a zero maximum", _mvt_cell_color(1, 0), "rgba(255,255,255,0.08)");
+		test_equal("_mvt_cell_color uses blue for positives", _mvt_cell_color(5, 10), "rgba(126,200,255,0.57)");
+		test_equal("_mvt_cell_color uses red for negatives", _mvt_cell_color(-5, 10), "rgba(255,136,136,0.57)");
+		test_equal("_mvt_cell_color clamps large values", _mvt_cell_color(20, 10), "rgba(126,200,255,1.00)");
+		test_equal("_mvt_svg_tensor_map rejects rank three", _mvt_svg_tensor_map([1, 2, 3, 4], [2, 2, 1], 0), "");
+		test_equal("_mvt_svg_tensor_map rejects short data", _mvt_svg_tensor_map([1, 2, 3], [2, 2], 0), "");
+		test_equal("_mvt_svg_tensor_map draws a grid", (_mvt_svg_tensor_map([1, 2, 3, 4], [2, 2], 1).match(/<rect/g) || []).length, 5);
+		test_equal("_mvt_svg_histogram needs two points", _mvt_svg_histogram([1]), "");
+		test_equal("_mvt_svg_histogram draws bins", _mvt_svg_histogram([1, 2, 3]).indexOf("<rect") !== -1, true);
+		test_equal("_mvt_svg_histogram handles constant values", _mvt_svg_histogram([5, 5]).indexOf("<svg") === 0, true);
+		test_equal("_mvt_svg_bar needs a maximum", _mvt_svg_bar(1, 0), "");
+		test_equal("_mvt_svg_bar draws positive bars", _mvt_svg_bar(5, 10).indexOf("#7ddd7d") !== -1, true);
+		test_equal("_mvt_svg_bar draws negative bars", _mvt_svg_bar(-5, 10).indexOf("#ff8888") !== -1, true);
+		test_equal("_mvt_fmt keeps null", _mvt_fmt(null), "null");
+		test_equal("_mvt_fmt keeps NaN", _mvt_fmt(NaN), "NaN");
+		test_equal("_mvt_fmt trims trailing zeros", _mvt_fmt(1.5), "1.5");
+		test_equal("_mvt_fmt uses exponential notation for tiny values", _mvt_fmt(0.00001), "1.000e-5");
+		test_equal("_mvt_fmt uses exponential notation for huge values", _mvt_fmt(1000000), "1.000e+6");
+		test_equal("_mvt_grad_span handles missing values", _mvt_grad_span(null).indexOf("n/a") !== -1, true);
+		test_equal("_mvt_grad_span colors positives", _mvt_grad_span(1).indexOf("mvt_grad_pos") !== -1, true);
+		test_equal("_mvt_grad_span colors negatives", _mvt_grad_span(-1).indexOf("mvt_grad_neg") !== -1, true);
+		test_equal("_mvt_describe_tag describes biases", _mvt_describe_tag({kind: "bias"}), language[lang]["mv_tooltip_header_bias"]);
+		test_equal("_mvt_describe_tag includes parameter names", _mvt_describe_tag({kind: "param", weight_name: "theta"}).indexOf("theta") !== -1, true);
+		test_equal("_mvt_describe_tag falls back to the kind", _mvt_describe_tag({kind: "weird"}), "weird");
+		test_equal("_mvt_param_property maps epsilon", _mvt_param_property({kind: "epsilon"}), "epsilon");
+		test_equal("_mvt_param_property maps max_value", _mvt_param_property({kind: "param", weight_name: "max_value"}), "maxValue");
+		test_equal("_mvt_param_property rejects unknown parameters", _mvt_param_property({kind: "param", weight_name: "x"}), null);
+
+		test_equal("_mvt_get_display_value reads epsilon", _mvt_get_display_value({kind: "epsilon", layer: 0}), 1e-7);
+		test_equal("_mvt_get_display_value reads max_value", _mvt_get_display_value({kind: "param", layer: 0, weight_name: "max_value"}), 6);
+		test_equal("_mvt_get_display_value returns null for h", _mvt_get_display_value({kind: "h", layer: 0}), null);
+		test_equal("_mvt_get_display_value reads weights", _mvt_get_display_value({kind: "kernel", layer: 0, indices: [1, 0]}), 3);
+		test_equal("_mvt_get_display_value rejects out-of-range cells", _mvt_get_display_value({kind: "bias", layer: 0, indices: [0, 9]}), null);
+		var base_html = _mvt_build_base_html({kind: "bias", layer: 0, indices: [0, 1]});
+		test_equal("_mvt_build_base_html includes the title", base_html.indexOf(language[lang]["mv_tooltip_header_bias"]) !== -1, true);
+		test_equal("_mvt_build_base_html includes the value", base_html.indexOf("mvt_val") !== -1, true);
+
+		var created_tooltip = !_mvt_tooltip;
+		var tooltip = _mvt_ensure_tooltip();
+		test_equal("_mvt_ensure_tooltip creates one node", tooltip.id, "mv_tooltip");
+		test_equal("_mvt_ensure_tooltip is idempotent", _mvt_ensure_tooltip(), tooltip);
+		test_equal("_mvt_add_styles installs the stylesheet", !!document.getElementById("mv_tooltip_styles"), true);
+		tooltip.innerHTML = "<div>size probe</div>";
+		tooltip.style.display = "block";
+		var size = _mvt_get_size();
+		test_equal("_mvt_get_size caches the measured content", _mvt_size_cache.html, tooltip.innerHTML);
+		test_equal("_mvt_get_size returns numeric dimensions", typeof size.w + typeof size.h, "numbernumber");
+		_mvt_position({clientX: 10, clientY: 12});
+		test_equal("_mvt_position positions the tooltip", _mvt_tooltip.style.left !== "" && _mvt_tooltip.style.top !== "", true);
+
+		var old_append = _mvt_append_pooled_info;
+		_mvt_append_pooled_info = function () {};
+		_mvt_init();
+		var over_parent = document.createElement("div");
+		over_parent.className = "mv-bias-L0-0";
+		var over_child = document.createElement("span");
+		over_parent.appendChild(over_child);
+		document.body.appendChild(over_parent);
+		var hover_before = _mvt_hover_id;
+		_mvt_on_over({ target: over_child, clientX: 20, clientY: 30 });
+		test_equal("_mvt_on_over shows the tooltip", _mvt_tooltip.style.display, "block");
+		test_equal("_mvt_on_over advances the hover id", _mvt_hover_id > hover_before, true);
+		test_equal("_mvt_on_over renders the header", _mvt_tooltip.innerHTML.indexOf(language[lang]["mv_tooltip_header_bias"]) !== -1, true);
+		over_parent.dispatchEvent(new MouseEvent("mouseout", { bubbles: true, relatedTarget: document.body }));
+		test_equal("_mvt_on_over hides on mouseout", _mvt_tooltip.style.display, "none");
+		_mvt_append_pooled_info = old_append;
+		over_parent.remove();
+		if (created_tooltip) {
+			tooltip.remove();
+			_mvt_tooltip = null;
+		}
+	} finally {
+		window.model = old_model;
+		window.xy_data_global = old_xy_data;
+	}
+}
+
+function _tiny_tests_tda_js() {
+	var state = TDAAnalysis.getState();
+	var saved = {
+		mode: state.mode,
+		filterDimension: state.filterDimension,
+		sortBy: state.sortBy,
+		sliderMaxPoints: state.sliderMaxPoints,
+		sliderMinPersistence: state.sliderMinPersistence,
+		sliderTakensWindow: state.sliderTakensWindow,
+		sliderEpsilonSteps: state.sliderEpsilonSteps,
+		container: state.container,
+		containerId: state.containerId,
+		lastResult: state.lastResult,
+		history: state.history.slice(),
+		expandedCards: Object.assign({}, state.expandedCards)
+	};
+	var old_xy_data = window.xy_data_global;
+	var old_layer_io = window.layerIOStats;
+	var old_model = window.model;
+	var test_container = document.createElement("div");
+	test_container.style.width = "600px";
+	document.body.appendChild(test_container);
+
+	function tdaRaw(data, shape) {
+		return { dataSync: function () { return Float64Array.from(data); }, shape: shape };
+	}
+
+	try {
+		window.xy_data_global = null;
+		window.layerIOStats = null;
+		window.model = null;
+		test_equal("TDA raw mode reports missing data", TDAAnalysis.analyze("raw_data").error, "tda_no_raw_data");
+		test_equal("TDA activation mode reports missing data", TDAAnalysis.analyze("activations").error, "tda_no_activation_data");
+		test_equal("TDA weight mode reports missing model", TDAAnalysis.analyze("weights").error, "tda_no_model");
+		test_equal("TDA auto mode reports missing data", TDAAnalysis.analyze("auto").error, "tda_no_data_available");
+
+		window.xy_data_global = {
+			x: tdaRaw([0, 0, 0, 1, 1, 0, 1, 1, 4, 4, 4, 5], [6, 2]),
+			y: null
+		};
+		var history_before = TDAAnalysis.getHistory().length;
+		var raw_result = TDAAnalysis.analyze("raw_data");
+		test_equal("TDA raw analysis succeeds", raw_result.error, null);
+		test_equal("TDA raw analysis returns one cloud", raw_result.layers.length, 1);
+		test_equal("TDA raw analysis keeps all points", raw_result.layers[0].numPoints, 6);
+		test_equal("TDA raw analysis keeps the point dimension", raw_result.layers[0].pointDim, 2);
+		test_equal("TDA raw analysis counts topological features", raw_result.layers[0].summary.totalFeatures > 0, true);
+		test_equal("TDA raw analysis partitions H0 and H1", raw_result.layers[0].summary.h0Count + raw_result.layers[0].summary.h1Count, raw_result.layers[0].summary.totalFeatures);
+		test_equal("TDA raw analysis builds betti curves", raw_result.layers[0].bettiCurve0.length > 0, true);
+		test_equal("TDA raw analysis records history", TDAAnalysis.getHistory().length, history_before + 1);
+		test_equal("TDA getLastResult returns the latest run", TDAAnalysis.getLastResult(), raw_result);
+
+		state.sliderTakensWindow = 4;
+		window.xy_data_global = { x: tdaRaw([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], null), y: null };
+		var takens = TDAAnalysis.analyze("raw_data");
+		test_equal("TDA reshapes 1D data into Takens windows", takens.layers[0].pointDim, 3);
+		test_equal("TDA Takens embedding yields eight points", takens.layers[0].numPoints, 8);
+
+		state.sliderMaxPoints = 4;
+		window.xy_data_global = { x: tdaRaw([0, 0, 1, 1, 2, 2, 3, 3, 4, 4], [5, 2]), y: null };
+		var capped = TDAAnalysis.analyze("raw_data");
+		test_equal("TDA caps the point cloud size", capped.layers[0].numPoints, 4);
+
+		state.sliderTakensWindow = saved.sliderTakensWindow;
+		state.sliderMaxPoints = saved.sliderMaxPoints;
+		window.xy_data_global = {
+			x: tdaRaw([0, 0, 0, 1, 1, 0, 1, 1, 4, 4, 4, 5], [6, 2]),
+			y: null
+		};
+		window.layerIOStats = {
+			records: [{
+				layers: [{ output: [0, 1, 2, 3, 4, 5], outputShape: [3, 2], layerName: "dense_probe", layerType: "dense", layerIndex: 1 }]
+			}]
+		};
+		var activation_result = TDAAnalysis.analyze("activations");
+		test_equal("TDA activation analysis reads layer IO records", activation_result.layers.length, 1);
+		test_equal("TDA activation analysis keeps layer names", activation_result.layers[0].name, "dense_probe");
+		window.layerIOStats = { records: [{ layers: [{ output: [1, 2, 3] }] }] };
+		test_equal("TDA activation analysis rejects short outputs", TDAAnalysis.analyze("activations").error, "tda_no_activation_data");
+
+		window.model = {
+			getWeights: function () { return [{ isDisposed: false, shape: [4, 2], dataSync: function () { return Float64Array.from([1, 2, 3, 4, 5, 6, 7, 8]); } }]; },
+			weights: [{ name: "dense/kernel:0" }]
+		};
+		var weight_result = TDAAnalysis.analyze("weights");
+		test_equal("TDA weight analysis reads model weights", weight_result.layers.length, 1);
+		test_equal("TDA weight analysis names the weight", weight_result.layers[0].name, "dense/kernel:0");
+		window.model = null;
+
+		var rendered = TDAAnalysis.render(test_container, "raw_data");
+		test_equal("TDA render fills the container", rendered.querySelectorAll(".tda_container").length, 1);
+		test_equal("TDA render draws layer cards", rendered.querySelectorAll(".tda_card").length, 1);
+		test_equal("TDA render draws four sliders", rendered.querySelectorAll(".tda_slider_input").length, 4);
+		test_equal("TDA render draws persistence points", rendered.querySelectorAll(".tda_pd_point").length > 0, true);
+		test_equal("TDA render draws the point cloud", rendered.querySelectorAll(".tda_cloud_point").length, 6);
+		test_equal("TDA render draws betti curves", rendered.querySelectorAll(".tda_plot_box svg").length >= 4, true);
+
+		var card_header = rendered.querySelector(".tda_card_header_toggle");
+		var card_body = rendered.querySelector(".tda_card_body");
+		card_header.click();
+		test_equal("TDA card header collapses the body", card_body.style.display, "none");
+		card_header.click();
+		test_equal("TDA card header expands the body", card_body.style.display, "");
+
+		var pd_point = rendered.querySelector(".tda_pd_point");
+		pd_point.dispatchEvent(new MouseEvent("mouseenter"));
+		test_equal("TDA persistence points grow on hover", parseFloat(pd_point.getAttribute("r")) > 0, true);
+		pd_point.dispatchEvent(new MouseEvent("mouseleave"));
+		pd_point.dispatchEvent(new MouseEvent("click"));
+		test_equal("TDA point click opens the detail card", rendered.querySelectorAll(".tda_point_detail").length, 1);
+		rendered.querySelector(".tda_detail_close").click();
+		test_equal("TDA detail close removes the card", rendered.querySelectorAll(".tda_point_detail").length, 0);
+
+		var cloud_point = rendered.querySelector(".tda_cloud_point");
+		cloud_point.dispatchEvent(new MouseEvent("mouseenter"));
+		test_equal("TDA cloud points grow on hover", cloud_point.getAttribute("r"), "5");
+		cloud_point.dispatchEvent(new MouseEvent("mouseleave"));
+		test_equal("TDA cloud points shrink again", cloud_point.getAttribute("r"), "2.5");
+
+		var slider = rendered.querySelector(".tda_slider_input");
+		slider.value = "100";
+		slider.dispatchEvent(new Event("input"));
+		test_equal("TDA slider input updates state", TDAAnalysis.getState().sliderMaxPoints, 100);
+		test_equal("TDA slider label follows the value", slider.parentElement.querySelector(".tda_slider_val").textContent, "100");
+		slider.dispatchEvent(new Event("change"));
+		test_equal("TDA slider change re-renders", TDAAnalysis.getState().sliderMaxPoints, 100);
+
+		TDAAnalysis.setFilter(0);
+		test_equal("TDA filter updates state", TDAAnalysis.getState().filterDimension, 0);
+		TDAAnalysis.setSortBy("name");
+		test_equal("TDA sort updates state", TDAAnalysis.getState().sortBy, "name");
+		TDAAnalysis.setMode("activations");
+		test_equal("TDA mode switch updates state", TDAAnalysis.getState().mode, "activations");
+		TDAAnalysis.setMode("raw_data");
+		TDAAnalysis.refresh();
+		test_equal("TDA refresh keeps the container mounted", test_container.querySelectorAll(".tda_container").length, 1);
+
+		TDAAnalysis.startAutoUpdate(60000);
+		test_equal("TDA auto-update starts a timer", TDAAnalysis.getState().autoUpdateTimer !== null, true);
+		TDAAnalysis.toggleAutoUpdate();
+		test_equal("TDA auto-update toggles off", TDAAnalysis.getState().autoUpdateTimer, null);
+		TDAAnalysis.startAutoUpdate(60000);
+		TDAAnalysis.stopAutoUpdate();
+		test_equal("TDA auto-update stops cleanly", TDAAnalysis.getState().autoUpdateTimer, null);
+	} finally {
+		if (state.autoUpdateTimer) clearInterval(state.autoUpdateTimer);
+		state.autoUpdateTimer = null;
+		state.mode = saved.mode;
+		state.filterDimension = saved.filterDimension;
+		state.sortBy = saved.sortBy;
+		state.sliderMaxPoints = saved.sliderMaxPoints;
+		state.sliderMinPersistence = saved.sliderMinPersistence;
+		state.sliderTakensWindow = saved.sliderTakensWindow;
+		state.sliderEpsilonSteps = saved.sliderEpsilonSteps;
+		state.container = saved.container;
+		state.containerId = saved.containerId;
+		state.lastResult = saved.lastResult;
+		state.history.length = 0;
+		saved.history.forEach(function (entry) { state.history.push(entry); });
+		state.expandedCards = saved.expandedCards;
+		window.xy_data_global = old_xy_data;
+		window.layerIOStats = old_layer_io;
+		window.model = old_model;
+		test_container.remove();
+	}
+}
+
+function _tiny_tests_origami_live_js() {
+	var state = OrigamiLive._state;
+	var saved = {
+		config: OrigamiLive.getConfig(),
+		pipeline: state.pipeline,
+		xTensor: state.cache.xTensor,
+		xHash: state.cache.xHash,
+		sampleCount: state.cache.sampleCount,
+		off: state.off,
+		offKey: state.offKey,
+		pendingRender: state.pendingRender,
+		dirty: state.dirty,
+		lastFingerprint: state.lastFingerprint,
+		lastViewHash: state.lastViewHash,
+		lastChainSig: state.lastChainSig,
+		lastRevision: state.lastRevision,
+		modelRef: state.modelRef,
+		errorStreak: state.errorStreak
+	};
+	var old_model = window.model;
+	var old_initialised = window._origami_live_initialised;
+	var old_origami_api = window.OrigamiLive;
+	var old_tab_state = {
+		visible: window._origami_live_tab_state.visible,
+		retryCount: window._origami_live_tab_state.retryCount,
+		retryTimer: window._origami_live_tab_state.retryTimer
+	};
+	var test_tensors = [];
+	var test_x = null;
+
+	function origamiTestDense(name, inDim, units, activation, kernelValues, biasValues) {
+		var kernel = tf.tensor2d(kernelValues, [inDim, units]);
+		var bias = tf.tensor1d(biasValues);
+		test_tensors.push(kernel, bias);
+		return {
+			name: name,
+			isDisposed: false,
+			outputShape: [null, units],
+			inputShape: [null, inDim],
+			getClassName: function () { return "Dense"; },
+			getConfig: function () { return { activation: activation }; },
+			getWeights: function () { return [kernel, bias]; }
+		};
+	}
+
+	try {
+		test_equal("OrigamiLive exposes its modes", OrigamiLive.MODE_FOLD + "/" + OrigamiLive.MODE_BOUNDARY + "/" + OrigamiLive.MODE_STACK, "fold/boundary/stack");
+		test_equal("OrigamiLive class colors are stable", OrigamiLive.classColor(0), OrigamiLive.palette.classes[0]);
+		test_equal("OrigamiLive class colors wrap around", OrigamiLive.classColor(OrigamiLive.palette.classes.length), OrigamiLive.palette.classes[0]);
+		test_equal("OrigamiLive class colors reject negatives", OrigamiLive.classColor(-1), 0x8a8a8a);
+		test_equal("OrigamiLive CSS colors are hexadecimal", /^#[0-9a-f]{6}$/.test(OrigamiLive.classColorCss(1)), true);
+
+		window.model = null;
+		var missing_chain = OrigamiLive._buildChain();
+		test_equal("OrigamiLive buildChain without model", missing_chain.chain.length, 0);
+		test_equal("OrigamiLive buildChain reports missing layers", missing_chain.reason, "no_layers");
+
+		var dense = origamiTestDense("dense_probe", 2, 2, "relu", [1, 0.5, 0.5, 1], [0, 0]);
+		window.model = { inputs: [{ shape: [null, 2] }], layers: [dense] };
+		var built = OrigamiLive._buildChain();
+		test_equal("OrigamiLive buildChain succeeds", built.reason, null);
+		test_equal("OrigamiLive buildChain starts at the input", built.chain.length, 2);
+		test_equal("OrigamiLive buildChain keeps the input dimension", built.chain[0].dim, 2);
+		test_equal("OrigamiLive buildChain keeps the dense dimension", built.chain[1].dim, 2);
+		test_equal("OrigamiLive buildChain detects hard folds", built.chain[1].foldKind, "hard");
+
+		test_x = tf.tensor2d([[0, 0], [1, 0], [0, 1], [1, 1], [0.5, 0.5], [2, 2]], [6, 2]);
+		state.cache.xTensor = test_x;
+		state.cache.sampleCount = 6;
+		OrigamiLive.setConfig({ gridRes: 8, maxPoints: 50, maxLayers: 6, boundaryRes: 20 });
+		var pipeline = OrigamiLive._computePipeline(built.chain);
+		test_equal("OrigamiLive computes a pipeline", !!pipeline, true);
+		test_equal("OrigamiLive pipeline covers every stage", pipeline.stages.length, 2);
+		test_equal("OrigamiLive pipeline projects the samples", pipeline.stages[0].dataPos.length, 18);
+		test_equal("OrigamiLive pipeline builds the sheet", pipeline.stages[0].sheet.n, 64);
+		test_equal("OrigamiLive pipeline extracts folds", pipeline.stages[1].folds.planes.length > 0, true);
+		test_equal("OrigamiLive pipeline reconstructs the boundary", pipeline.boundary.multi, true);
+
+		var activation_layer = {
+			name: "activation_probe",
+			isDisposed: false,
+			outputShape: [null, 2],
+			getClassName: function () { return "Activation"; },
+			getConfig: function () { return { activation: "relu" }; }
+		};
+		window.model = { inputs: [{ shape: [null, 2] }], layers: [dense, activation_layer] };
+		var passthrough = OrigamiLive._buildChain();
+		test_equal("OrigamiLive buildChain folds activation layers into the previous stage", passthrough.chain.length, 2);
+		test_equal("OrigamiLive buildChain adopts passthrough activations", passthrough.chain[1].activation, "relu");
+		test_equal("OrigamiLive buildChain marks adopted folds", passthrough.chain[1].foldKind, "hard");
+
+		var unknown_dim_layer = {
+			name: "unknown_probe",
+			isDisposed: false,
+			outputShape: [null],
+			getClassName: function () { return "Dense"; },
+			getConfig: function () { return {}; }
+		};
+		window.model = { inputs: [{ shape: [null, 2] }], layers: [unknown_dim_layer, dense] };
+		var partial_chain = OrigamiLive._buildChain();
+		test_equal("OrigamiLive buildChain skips unknown dimensions", partial_chain.chain.length, 2);
+		test_equal("OrigamiLive buildChain reports skipped layers", partial_chain.skipped.length, 1);
+		window.model = { inputs: [{ shape: [null, 2] }], layers: [unknown_dim_layer] };
+		var short_chain = OrigamiLive._buildChain();
+		test_equal("OrigamiLive buildChain rejects too-short chains", short_chain.reason, "too_short");
+
+		OrigamiLive.setConfig({ convPatchMode: true });
+		var conv_layer = {
+			name: "conv_probe",
+			isDisposed: false,
+			inputShape: [null, 5, 5, 1],
+			outputShape: [null, 3, 3, 4],
+			getClassName: function () { return "Conv2D"; },
+			getConfig: function () { return { kernelSize: [3, 3], filters: 4 }; }
+		};
+		window.model = { inputs: [{ shape: [null, 5, 5, 1] }], layers: [conv_layer] };
+		var conv_chain = OrigamiLive._buildChain();
+		test_equal("OrigamiLive buildChain treats convolutions as patch networks", conv_chain.chain[1].convPatch.patchDim, 9);
+		test_equal("OrigamiLive buildChain caps convolution dimensions", conv_chain.chain[1].dim, 3);
+
+		var crossing = OrigamiLive._marchingSquares(Float64Array.from([-1, 1, -1, 1]), 2, [0, 1], [0, 1], 1);
+		test_equal("OrigamiLive marching squares emits segments", crossing.length, 6);
+		test_equal("OrigamiLive marching squares ignores uniform fields", OrigamiLive._marchingSquares(Float64Array.from([1, 1, 1, 1]), 2, [0, 1], [0, 1], 1), null);
+		test_equal("OrigamiLive marching squares skips invalid samples", OrigamiLive._marchingSquares(Float64Array.from([NaN, 1, -1, 1]), 2, [0, 1], [0, 1], 1), null);
+
+		window.model = {
+			inputs: [{ shape: [null, 2] }],
+			layers: [
+				{ getClassName: function () { return "InputLayer"; }, outputShape: [null, 2] },
+				{ getClassName: function () { return "Dense"; }, outputShape: [null, 2] }
+			]
+		};
+		test_equal("OrigamiLive compatibility accepts dense chains", _origami_live_compatible(), true);
+		window.model.layers.push({ getClassName: function () { return "Conv2D"; }, outputShape: [null, 3, 3, 2] });
+		test_equal("OrigamiLive compatibility rejects convolutions", _origami_live_compatible(), false);
+		window.model = null;
+		test_equal("OrigamiLive compatibility rejects missing models", _origami_live_compatible(), false);
+
+		var fake_label = document.createElement("li");
+		var fake_span = document.createElement("span");
+		fake_span.id = "origami_live_tab_label";
+		fake_label.appendChild(fake_span);
+		var old_get_element = document.getElementById;
+		document.getElementById = function (id) {
+			if (id === "origami_live_tab_label") return fake_span;
+			return old_get_element.call(document, id);
+		};
+		try {
+			_origamiLiveApplyTabVisibility(false);
+			test_equal("OrigamiLive tab hides for incompatible models", fake_label.style.display, "none");
+			_origamiLiveApplyTabVisibility(true);
+			test_equal("OrigamiLive tab shows for compatible models", fake_label.style.display, "");
+			window._origami_live_tab_state.visible = false;
+			window._origami_live_tab_state.retryCount = 0;
+			window.model = {
+				inputs: [{ shape: [null, 2] }],
+				layers: [
+					{ getClassName: function () { return "InputLayer"; }, outputShape: [null, 2] },
+					{ getClassName: function () { return "Dense"; }, outputShape: [null, 2] }
+				]
+			};
+			window.check_origami_live_tab();
+			test_equal("OrigamiLive tab check marks compatible models visible", window._origami_live_tab_state.visible, true);
+		} finally {
+			document.getElementById = old_get_element;
+		}
+
+		var init_calls = 0;
+		window.OrigamiLive = { init: function (target) { init_calls++; return "init:" + target; } };
+		window._origami_live_initialised = false;
+		test_equal("create_origami_live delegates to init", create_origami_live("probe"), "init:probe");
+		test_equal("create_origami_live calls init once", init_calls, 1);
+		var update_calls = 0;
+		window.OrigamiLive = { update: function () { update_calls++; return "updated"; } };
+		window._origami_live_initialised = true;
+		test_equal("update_origami_live delegates to update", update_origami_live(), "updated");
+		test_equal("update_origami_live calls update once", update_calls, 1);
+	} finally {
+		window.model = old_model;
+		window.OrigamiLive = old_origami_api;
+		window._origami_live_initialised = old_initialised;
+		window._origami_live_tab_state.visible = old_tab_state.visible;
+		window._origami_live_tab_state.retryCount = old_tab_state.retryCount;
+		OrigamiLive.setConfig(saved.config);
+		state.pipeline = saved.pipeline;
+		state.cache.xTensor = saved.xTensor;
+		state.cache.xHash = saved.xHash;
+		state.cache.sampleCount = saved.sampleCount;
+		state.off = saved.off;
+		state.offKey = saved.offKey;
+		state.pendingRender = saved.pendingRender;
+		state.dirty = saved.dirty;
+		state.lastFingerprint = saved.lastFingerprint;
+		state.lastViewHash = saved.lastViewHash;
+		state.lastChainSig = saved.lastChainSig;
+		state.lastRevision = saved.lastRevision;
+		state.modelRef = saved.modelRef;
+		state.errorStreak = saved.errorStreak;
+		if (test_x) test_x.dispose();
+		test_tensors.forEach(function (t) { if (t && !t.isDisposed) t.dispose(); });
+	}
+}
+
 function _tiny_tests_base_wrappers_async() {
 	var old_labels_backup;
 	return (async function() {
@@ -6350,6 +7116,11 @@ async function new_tiny_tests() {
 	_tiny_tests_predict_js();
 	_tiny_tests_fcnn_js();
 	_tiny_tests_misc();
+	await _tiny_tests_easter_eggs_js();
+	_tiny_tests_debug_js();
+	_tiny_tests_math_mode_tooltips_js();
+	_tiny_tests_tda_js();
+	_tiny_tests_origami_live_js();
 	await _tiny_tests_base_wrappers_async();
 
 	return true;
