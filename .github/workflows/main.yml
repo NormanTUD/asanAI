@@ -189,6 +189,12 @@ jobs:
             echo "::error::Browser test failed: $failed_test"
           fi
 
+          readiness_error=$(grep -m1 'App did not report ready' browser-tests.log || true)
+          if [ -n "$readiness_error" ]; then
+            echo "**App readiness:** \`$readiness_error\`" >> "$summary"
+            echo "::error::$readiness_error"
+          fi
+
           counts=$(grep -oE '[0-9]+ tests, ok: [0-9]+, failed: [0-9]+' browser-tests.log | tail -n1 || true)
           if [ -n "$counts" ]; then
             echo "**Result:** $counts" >> "$summary"

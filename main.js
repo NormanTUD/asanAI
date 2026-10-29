@@ -826,9 +826,9 @@ function set_architecture_from_url () {
 	var urlParams = new URLSearchParams(window.location.search);
 	var architecture = urlParams.get("architecture");
 	if (architecture && traindata_struct[architecture]) {
-		// Mark the option with the `selected` content attribute as well, so the
-		// pageshow handler (which resets every select to its `selected` option or
-		// index 0) keeps this choice instead of falling back to the first option.
+		// Mark the option with the `selected` content attribute as well, so a
+		// browser restoring form state from history keeps this choice instead of
+		// falling back to the first option.
 		$("#dataset option[value='" + architecture + "']").attr("selected", "selected");
 		$("#dataset").val(architecture);
 		// Re-derive the per-model dataset override (#model_dataset) from the new
@@ -1349,7 +1349,38 @@ async function _init_app_finalization(LM) {
 	dbg(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 }
 
+function reset_form_controls_to_defaults() {
+	document.querySelectorAll('input, select, textarea').forEach(function(el) {
+		try {
+			if (el.type === 'checkbox' || el.type === 'radio') {
+				el.checked = el.defaultChecked;
+			} else if (el.tagName === 'SELECT') {
+				var defaultOption = el.querySelector('option[selected]');
+				if (defaultOption) {
+					el.value = defaultOption.value;
+				} else {
+					el.selectedIndex = 0;
+				}
+			} else if (el.type === 'file') {
+				// File-Inputs können nicht programmatisch gesetzt werden, überspringen
+				return;
+			} else {
+				el.value = el.defaultValue;
+			}
+		} catch (e) {
+			// Manche Elemente (z.B. file inputs) werfen DOMException beim Setzen von value
+		}
+	});
+}
+
 $(document).ready(async function() {
+	// Reset values the browser may have restored from history *before* the
+	// async boot applies the saved configuration. Doing this on pageshow (which
+	// fires after load) raced with boot: on slow pages the reset wiped the
+	// config (input shape, width/height, layer count) after set_config() had
+	// applied it, so model creation failed. See test_pageshow_does_not_reset_app_state.
+	reset_form_controls_to_defaults();
+
 	var LM = language[lang];
 
 	if(window.LoaderNetwork) {
@@ -1377,28 +1408,4 @@ $(document).ready(async function() {
 
 	await _init_app_data_and_handlers(LM);
 	await _init_app_finalization(LM);
-});
-
-window.addEventListener('pageshow', function(event) {
-    document.querySelectorAll('input, select, textarea').forEach(function(el) {
-        try {
-            if (el.type === 'checkbox' || el.type === 'radio') {
-                el.checked = el.defaultChecked;
-            } else if (el.tagName === 'SELECT') {
-                var defaultOption = el.querySelector('option[selected]');
-                if (defaultOption) {
-                    el.value = defaultOption.value;
-                } else {
-                    el.selectedIndex = 0;
-                }
-            } else if (el.type === 'file') {
-                // File-Inputs können nicht programmatisch gesetzt werden, überspringen
-                return;
-            } else {
-                el.value = el.defaultValue;
-            }
-        } catch (e) {
-            // Manche Elemente (z.B. file inputs) werfen DOMException beim Setzen von value
-        }
-    });
 });

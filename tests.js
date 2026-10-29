@@ -113,8 +113,8 @@ function escape_html_for_test(name) {
 // in this browser. DEFAULT_EXPECTED_TEST_COUNT is the fallback for a fresh
 // browser/CI run; update it when the suite grows or shrinks. ?expected_tests=N
 // overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1405;
-var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 496;
+var DEFAULT_EXPECTED_TEST_COUNT = 1406;
+var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 499;
 
 function _test_expected_count (storage_key, fallback) {
 	try {
@@ -1682,6 +1682,26 @@ async function test_failed_image_is_not_added_as_null() {
 	}
 }
 
+function test_pageshow_does_not_reset_app_state() {
+	var fields = ["#inputShape", "#width", "#height", "#number_of_layers", "#max_number_of_files_per_category", "#divide_by", "#loss"];
+	var read_values = function () {
+		return fields.map(function (selector) { return $(selector).val(); });
+	};
+
+	var before = read_values();
+	if (!before[0]) {
+		return false;
+	}
+
+	window.dispatchEvent(new Event("pageshow"));
+	if (typeof PageTransitionEvent === "function") {
+		window.dispatchEvent(new PageTransitionEvent("pageshow", {persisted: true}));
+	}
+
+	var after = read_values();
+	return JSON.stringify(before) === JSON.stringify(after);
+}
+
 async function run_super_quick_tests (quick=0) {
 	test_equal("test ok", 1, 1);
 	test_not_equal("test not equal", 1, 2);
@@ -1771,6 +1791,8 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("is_number_array([1,2,3,4,5])", is_number_array([1,2,3,4,5]), true);
 
 	test_equal("is_number_array([1,2,\"a\",4,5])", is_number_array([1,2,"a",4,5]), false);
+
+	test_equal("pageshow does not reset app state", test_pageshow_does_not_reset_app_state(), true);
 
 	test_equal("heuristic_layer_possibility_check(0, \"flatten\")", heuristic_layer_possibility_check(0, "flatten"), true);
 	test_equal("heuristic_layer_possibility_check(0, \"dense\")", heuristic_layer_possibility_check(0, "dense"), true);

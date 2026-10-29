@@ -921,6 +921,11 @@ bash run_tests --no-smoke-tests --no-docker --chromium \
   `get_number_of_model_names.php` are legacy in the live root deployment.
 - Duplicate definitions exist in legacy code (e.g. `_predict_table` twice in
   `predict.js` — the first is dead).
+- Never reset form controls from `pageshow`: it fires after `load`, so on a
+  slow page it can wipe `set_config()` while boot is still applying it (empty
+  input shape → `conv2d` model creation fails). Reset defaults synchronously at
+  the start of `$(document).ready` instead; `test_pageshow_does_not_reset_app_state`
+  guards this.
 
 **Blog**
 

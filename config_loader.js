@@ -14,15 +14,14 @@ async function _set_config_apply_settings (config, index, update_step) {
 		return null;
 	}
 
-	if(keras_layers === false) {
-		return null;
-	}
-
 	if (config["input_shape"]) {
 		update_step(language[lang]["setting_input_shape"]);
 		await set_input_shape(config["input_shape"]);
+	} else if (config["model_structure"]) {
+		// Status saves carry a model_structure and weights but no input shape;
+		// they reuse the shape currently shown in the UI.
 	} else {
-		if(!set_is_from_config_or_return(config)) {
+		if(!await set_is_from_config_or_return(config)) {
 			return null;
 		}
 	}
@@ -380,14 +379,11 @@ function apply_config_value_to_model_structure (config, key, model_structure_idx
 
 async function set_is_from_config_or_return (config) {
 	try {
-		await set_is_from_config_is(config);
+		return await set_is_from_config_is(config);
 	} catch (e) {
-		if(handle_set_config_load_input_shape_error(e)) {
-			return true;
-		}
+		handle_set_config_load_input_shape_error(e);
+		return false;
 	}
-
-	return false;
 }
 
 async function set_is_from_config_is(config) {
@@ -402,7 +398,11 @@ async function set_is_from_config_is(config) {
 		}
 
 		await set_input_shape("[" + is.join(", ") + "]");
+		return true;
 	}
+
+	// No batch_input_shape in the config: keep the shape currently in the UI.
+	return get_input_shape().length > 0;
 }
 
 function get_is_from_config (config) {

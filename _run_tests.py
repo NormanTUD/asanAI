@@ -247,9 +247,13 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
             await page.wait_for_function(APP_READY_EXPRESSION, timeout=APP_READY_TIMEOUT_MS, polling=100)
             logging.info(f"[{browser_name}] App reported ready")
         except Error:
-            logging.warning(
-                f"[{browser_name}] App did not report ready within {APP_READY_TIMEOUT_MS/1000:.0f}s; starting tests anyway"
+            logging.error(
+                f"[{browser_name}] App did not report ready within {APP_READY_TIMEOUT_MS/1000:.0f}s; "
+                "aborting without running tests"
             )
+            await _save_failure_artifacts(page, context, browser_name, args)
+            tracing_saved = tracing_started
+            return 1
 
         test_expression = "run_tests(1)" if args.quick else "run_tests()"
         logging.info(f"[{browser_name}] Evaluating {test_expression} ...")
