@@ -1853,7 +1853,12 @@ async function run_neural_network (recursive=0) {
 	// zero epochs and silently "complete", then mislead by jumping to the
 	// predict tab. Surface it instead.
 	if (!_run_x_shape || !_run_x_shape.length || !_run_x_shape[0] || !_run_y_shape || !_run_y_shape.length || !_run_y_shape[0]) {
-		err('[run_neural_network] training data is empty (0 samples) — aborting fit');
+		err('[run_neural_network] training data is empty (0 samples) — aborting fit. dataset=' +
+			JSON.stringify(typeof get_chosen_dataset === "function" ? get_chosen_dataset() : null) +
+			', x_shape=' + JSON.stringify(_run_x_shape || []) +
+			', y_shape=' + JSON.stringify(_run_y_shape || []) +
+			'. The data loader above logs the failing file, URL, every attempt and the HTTP/network error. ' +
+			'If there is no loader error, verify that traindata/<dataset>/x.txt and y.txt exist, are non-empty and are served as text.');
 		return;
 	}
 

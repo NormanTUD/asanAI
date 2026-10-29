@@ -113,8 +113,8 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1410;
-var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 497;
+var DEFAULT_EXPECTED_TEST_COUNT = 1412;
+var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 499;
 
 function _test_expected_count (storage_key, fallback) {
 	try {
@@ -1864,6 +1864,55 @@ async function test_load_image_retries_transient_failures() {
 	}
 }
 
+async function test_training_data_fetch_retries_transient_failures() {
+	const original_fetch = window._fetch_training_data_text;
+	let calls = 0;
+
+	window._fetch_training_data_text = async function () {
+		calls++;
+		if (calls < 3) {
+			const e = new Error("simulated transient transport failure");
+			e.http_status = 0;
+			throw e;
+		}
+		return "# shape: (1, 1)\n1\n";
+	};
+
+	try {
+		const text = await _get_training_data_from_filename("x.txt");
+		return calls === 3 && typeof text === "string" && text.indexOf("# shape") === 0;
+	} finally {
+		window._fetch_training_data_text = original_fetch;
+	}
+}
+
+async function test_training_data_fetch_reports_diagnostics() {
+	const original_fetch = window._fetch_training_data_text;
+
+	window._fetch_training_data_text = async function () {
+		const e = new Error("simulated net::ERR_NO_BUFFER_SPACE");
+		e.http_status = 0;
+		e.status_text = "error";
+		e.ready_state = 0;
+		throw e;
+	};
+
+	try {
+		await _get_training_data_from_filename("y.txt", 2);
+		return false;
+	} catch (e) {
+		const message = "" + (e && e.message ? e.message : e);
+		return message.indexOf("y.txt") !== -1 &&
+			message.indexOf("after 2 attempts") !== -1 &&
+			message.indexOf("simulated net::ERR_NO_BUFFER_SPACE") !== -1 &&
+			message.indexOf("http_status=0") !== -1 &&
+			message.indexOf("status_text=error") !== -1 &&
+			message.indexOf("Checks:") !== -1;
+	} finally {
+		window._fetch_training_data_text = original_fetch;
+	}
+}
+
 async function test_failed_image_is_not_added_as_null() {
 	const original_handler = window.handleImageDownload;
 	const original_force_download = force_download;
@@ -2008,6 +2057,8 @@ async function run_super_quick_tests (quick=0) {
 
 	test_equal("load_image_with_retry retries transient failures", await test_load_image_retries_transient_failures(), true);
 	test_equal("failed image is not added as a null sample", await test_failed_image_is_not_added_as_null(), true);
+	test_equal("training data fetch retries transient failures", await test_training_data_fetch_retries_transient_failures(), true);
+	test_equal("training data fetch reports detailed diagnostics", await test_training_data_fetch_reports_diagnostics(), true);
 
 	var fit_data = await get_fit_data();
 

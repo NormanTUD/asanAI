@@ -81,15 +81,107 @@ function numpy_str_to_tf_tensor(numpy_str) {
 	return x;
 }
 
-async function _get_training_data_from_filename(filename) {
+function _training_data_fetch_error_details(err) {
+	if (!err) return "unknown error";
+
+	var parts = [];
+	if (err.name) parts.push(err.name + ": " + (err.message || ""));
+	else parts.push("" + err);
+
+	if (err.http_status !== undefined) parts.push("http_status=" + err.http_status);
+	if (err.status_text) parts.push("status_text=" + err.status_text);
+	if (err.ready_state !== undefined) parts.push("ready_state=" + err.ready_state);
+
+	return parts.join(", ");
+}
+
+// One fetch attempt, using fetch() where available and jQuery.ajax() as the
+// fallback. Both paths attach the status fields we need for the diagnostics.
+async function _fetch_training_data_text(url) {
+	if (typeof fetch === "function") {
+		var response = await fetch(url, { cache: "no-store" });
+		if (!response.ok) {
+			var http_error = new Error("HTTP " + response.status + " " + response.statusText);
+			http_error.http_status = response.status;
+			http_error.status_text = response.statusText;
+			throw http_error;
+		}
+		return await response.text();
+	}
+
+	return await new Promise(function(resolve, reject) {
+		$.ajax({ url: url, dataType: "text", cache: false })
+			.done(resolve)
+			.fail(function(jqXHR, textStatus, errorThrown) {
+				var e = new Error("XHR " + textStatus + (errorThrown ? ": " + errorThrown : ""));
+				e.http_status = jqXHR ? jqXHR.status : 0;
+				e.status_text = jqXHR ? jqXHR.statusText : "";
+				e.ready_state = jqXHR ? jqXHR.readyState : -1;
+				reject(e);
+			});
+	});
+}
+
+async function _get_training_data_from_filename(filename, max_attempts = 4) {
 	assert(typeof(filename) == "string", "filename must be string, not " + typeof(filename));
 
 	const chosen_dataset = get_chosen_dataset();
-	dbg(`Trying to get ${filename} for dataset '${chosen_dataset}'`);
+	const base_url = "traindata/" + chosen_dataset + "/" + filename;
+	max_attempts = Math.max(1, parseInt(max_attempts, 10) || 4);
+	const failures = [];
 
-	var res = await $.get("traindata/" + chosen_dataset + "/" + filename);
+	for (let attempt = 1; attempt <= max_attempts; attempt++) {
+		// Retries bypass the browser cache and any half-written response from
+		// the previous attempt. This matters for transient transport errors such
+		// as Opera's net::ERR_NO_BUFFER_SPACE, where the same URL usually loads
+		// fine on the next try.
+		const url = attempt === 1
+			? base_url
+			: base_url + "?_retry=" + attempt + "&_t=" + Date.now();
 
-	return res;
+		dbg(`Trying to get ${filename} for dataset '${chosen_dataset}' (attempt ${attempt}/${max_attempts})`);
+
+		try {
+			const text = await _fetch_training_data_text(url);
+
+			if (typeof text !== "string" || text.trim() === "") {
+				throw new Error("response body is empty");
+			}
+
+			if (/^\s*</.test(text)) {
+				throw new Error("response is HTML, not training data (is the traindata path being served?)");
+			}
+
+			if (attempt > 1) {
+				dbg(`[get_x_and_y_from_txt_files] ${filename} succeeded on attempt ${attempt}/${max_attempts}`);
+			}
+
+			return text;
+		} catch (e) {
+			failures.push({
+				attempt: attempt,
+				url: url,
+				details: _training_data_fetch_error_details(e)
+			});
+
+			if (attempt < max_attempts) {
+				await new Promise(function(resolve) { setTimeout(resolve, 150 * attempt); });
+			}
+		}
+	}
+
+	const failure_lines = failures.map(function(f) {
+		return "  " + f.attempt + ". " + f.url + "\n     " + f.details;
+	}).join("\n");
+
+	throw new Error(
+		"Could not load training data file '" + filename + "' for dataset '" + chosen_dataset + "' after " +
+		max_attempts + " attempts.\n" +
+		"Failures:\n" + failure_lines + "\n" +
+		"Checks: the file must exist at '" + base_url + "' and be served as text; the server log should show the request. " +
+		"A transient browser/network failure (e.g. net::ERR_NO_BUFFER_SPACE), an empty/HTML response, or a missing file are the usual causes. " +
+		"Reload the page, clear the browser cache, verify the file, then retry."
+	);
 }
 
 function shuffle (_array) {
@@ -1472,10 +1564,20 @@ function check_x_y_in_xy_data(xy_data) {
 
 async function get_x_and_y_from_txt_files_and_show_when_possible () {
 	var x, y;
+	var x_attempted = false;
+	var y_attempted = false;
+	var x_loaded = false;
+	var y_loaded = false;
 
 	try {
+		x_attempted = true;
 		var x_string = await _get_training_data_from_filename("x.txt");
+		x_loaded = true;
+
+		y_attempted = true;
 		var y_string = await _get_training_data_from_filename("y.txt");
+		y_loaded = true;
+
 		x = numpy_str_to_tf_tensor(x_string);
 		y = numpy_str_to_tf_tensor(y_string);
 
@@ -1529,11 +1631,15 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 		}
 
 		if (show_error) {
-			err("" + errorContent);
+			err("" + errorContent +
+				"\nTraining data load state: x.txt=" + (x_loaded ? "loaded" : (x_attempted ? "failed" : "not attempted")) +
+				", y.txt=" + (y_loaded ? "loaded" : (y_attempted ? "failed" : "not attempted")));
 			console.trace();
 		}
 
-		wrn('[get_x_and_y_from_txt_files] falling back to empty x/y tensors');
+		wrn('[get_x_and_y_from_txt_files] falling back to empty x/y tensors (x.txt="' +
+			(x_loaded ? "loaded" : (x_attempted ? "failed" : "not attempted")) +
+			'", y.txt="' + (y_loaded ? "loaded" : (y_attempted ? "failed" : "not attempted")) + '")');
 		x = tensor([]);
 		y = tensor([]);
 	}
