@@ -1270,70 +1270,117 @@ function reset_percentage_div_if_not_skip_real_image_download(percentage_div, sk
 	}
 }
 
-function _render_tensor_to_canvas(_tensor, canvas) {
-	var min_value = 0;
-	var max_value = 0;
-
-	var min_in_tensor = array_sync(min(_tensor));
-
-	if(min_in_tensor < min_value) {
-		min_value = min_in_tensor;
-	}
-
-	if(min_value < 0) {
-		_tensor = tf_sub(_tensor, min_value);
-	}
-
-	var max_in_tensor = array_sync(max(_tensor));
-
-	if(max_in_tensor > max_value) {
-		max_value = max_in_tensor;
-	}
-
-	if(max_value != 0) {
-		_tensor = tidy(() => { return tf_div(_tensor, max_value); });
-	}
-
-	var render_tensor = null;
-
+function _render_placeholder_canvas(canvas) {
 	try {
-		// toPixels() reads the tensor data asynchronously. Callers dispose their
-		// tensor right after this returns, so render a clone that stays alive
-		// until the promise settles.
-		render_tensor = _tensor.clone();
-		var pixels = toPixels(render_tensor, canvas);
+		canvas.width = 8;
+		canvas.height = 8;
+		var context = canvas.getContext("2d");
+		if (!context) return null;
+		context.fillStyle = "#9aa4b2";
+		context.fillRect(0, 0, 8, 8);
+		return canvas;
 	} catch (e) {
-		if (render_tensor && !tensor_is_disposed(render_tensor)) {
-			render_tensor.dispose();
-		}
-		void(0); log("Shape:", _tensor.shape);
-		_tensor.print();
+		dbg("[augmented_preview] could not create placeholder canvas: " + e);
 		return null;
 	}
+}
 
-	const dispose_render_tensor = function () {
-		if (render_tensor && !tensor_is_disposed(render_tensor)) {
-			render_tensor.dispose();
-		}
-	};
+function _render_tensor_to_canvas(_tensor, canvas) {
+	var values = null;
 
-	if (pixels && typeof pixels.then === "function") {
-		return pixels.then(
-			function () {
-				dispose_render_tensor();
-				return canvas;
-			},
-			function (e) {
-				dispose_render_tensor();
-				dbg("[augmented_preview] toPixels failed: " + e);
-				return null;
-			}
-		);
+	try {
+		values = array_sync(_tensor);
+	} catch (e) {
+		// A lost WebGL context can make even data readback fail. A neutral
+		// placeholder is better than crashing the whole training/predict path.
+		dbg("[augmented_preview] could not read tensor data: " + e);
+		return _render_placeholder_canvas(canvas);
 	}
 
-	dispose_render_tensor();
+	if (!Array.isArray(values) || values.length === 0) {
+		return _render_placeholder_canvas(canvas);
+	}
 
-	return pixels === null ? null : canvas;
+	var shape = _tensor.shape || [];
+	var height = 0;
+	var width = 0;
+	var channels = 0;
+
+	if (shape.length === 2) {
+		height = shape[0];
+		width = shape[1];
+		channels = 1;
+	} else if (shape.length === 3) {
+		height = shape[0];
+		width = shape[1];
+		channels = shape[2];
+	} else if (shape.length === 4 && shape[0] === 1) {
+		height = shape[1];
+		width = shape[2];
+		channels = shape[3];
+		values = values[0];
+	}
+
+	if (!height || !width || (channels !== 1 && channels !== 3 && channels !== 4)) {
+		return _render_placeholder_canvas(canvas);
+	}
+
+	var flat = values.flat(Infinity);
+	if (!Array.isArray(flat) || flat.length < height * width * channels) {
+		return _render_placeholder_canvas(canvas);
+	}
+
+	var min_value = 0;
+	var max_value = 0;
+	for (var i = 0; i < flat.length; i++) {
+		var value = Number(flat[i]) || 0;
+		if (value < min_value) min_value = value;
+		if (value > max_value) max_value = value;
+	}
+
+	var shift = min_value < 0 ? -min_value : 0;
+	var shifted_max = max_value + shift;
+	var scale = shifted_max !== 0 ? 1 / shifted_max : 1;
+
+	var to_byte = function (value) {
+		return Math.max(0, Math.min(255, Math.round(((Number(value) || 0) + shift) * scale * 255)));
+	};
+
+	try {
+		canvas.width = width;
+		canvas.height = height;
+		var context = canvas.getContext("2d");
+		if (!context) return _render_placeholder_canvas(canvas);
+
+		var image_data = context.createImageData(width, height);
+		var pixels = image_data.data;
+
+		for (var pixel = 0; pixel < width * height; pixel++) {
+			var base = pixel * channels;
+			var target = pixel * 4;
+
+			if (channels === 1) {
+				var gray = to_byte(flat[base]);
+				pixels[target] = gray;
+				pixels[target + 1] = gray;
+				pixels[target + 2] = gray;
+				pixels[target + 3] = 255;
+			} else {
+				pixels[target] = to_byte(flat[base]);
+				pixels[target + 1] = to_byte(flat[base + 1]);
+				pixels[target + 2] = to_byte(flat[base + 2]);
+				pixels[target + 3] = channels === 4
+					? Math.max(0, Math.min(255, Math.round((Number(flat[base + 3]) || 0) * 255)))
+					: 255;
+			}
+		}
+
+		context.putImageData(image_data, 0, 0);
+		return canvas;
+	} catch (e) {
+		dbg("[augmented_preview] canvas rendering failed: " + e);
+		return _render_placeholder_canvas(canvas);
+	}
 }
 
 function _add_augmented_canvas_to_photo_gallery(canvas, render_promise) {
