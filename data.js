@@ -1295,14 +1295,15 @@ function _render_tensor_to_canvas(_tensor, canvas) {
 	}
 
 	try {
-		toPixels(_tensor, canvas);
+		return toPixels(_tensor, canvas);
 	} catch (e) {
 		void(0); log("Shape:", _tensor.shape);
 		_tensor.print();
+		return null;
 	}
 }
 
-function _add_augmented_canvas_to_photo_gallery(canvas) {
+function _add_augmented_canvas_to_photo_gallery(canvas, render_promise) {
 	const container = _photo_gallery_container();
 
 	// The photo gallery canvas is the normal preview surface: it draws all
@@ -1315,15 +1316,25 @@ function _add_augmented_canvas_to_photo_gallery(canvas) {
 		return;
 	}
 
-	const img = new Image();
-	img._source_canvas = canvas;
-	img.src = canvas.toDataURL("image/png");
-	_photo_gallery_add_image(img, "augmented:" + uuidv4());
+	const add_rendered_image = () => {
+		const img = new Image();
+		img._source_canvas = canvas;
+		img.src = canvas.toDataURL("image/png");
+		_photo_gallery_add_image(img, "augmented:" + uuidv4());
 
-	// Keep augmented images with the other gallery sources so every preview has
-	// a stable, unique xpath for the image cache in train.js.
-	if (_photo_gallery.sources) {
-		_photo_gallery.sources.appendChild(img);
+		// Keep augmented images with the other gallery sources so every preview has
+		// a stable, unique xpath for the image cache in train.js.
+		if (_photo_gallery.sources) {
+			_photo_gallery.sources.appendChild(img);
+		}
+	};
+
+	// toPixels() paints asynchronously. Reading the canvas before it resolves
+	// produces a blank data URL, which used to make augmented previews invisible.
+	if (render_promise && typeof render_promise.then === "function") {
+		render_promise.then(add_rendered_image, add_rendered_image);
+	} else {
+		add_rendered_image();
 	}
 }
 
@@ -1340,16 +1351,16 @@ function add_tensor_as_image_to_photos (_tensor) {
 			for (var tensor_idx = 0; tensor_idx < _tensor.shape[0]; tensor_idx++) {
 				var this_tensor = tensor(sync_data[tensor_idx]);
 				var canvas = document.createElement("canvas");
-				_render_tensor_to_canvas(this_tensor, canvas);
-				_add_augmented_canvas_to_photo_gallery(canvas);
+				var render_promise = _render_tensor_to_canvas(this_tensor, canvas);
+				_add_augmented_canvas_to_photo_gallery(canvas, render_promise);
 			}
 			return;
 		}
 	}
 
 	var canvas = document.createElement("canvas");
-	_render_tensor_to_canvas(_tensor, canvas);
-	_add_augmented_canvas_to_photo_gallery(canvas);
+	var render_promise = _render_tensor_to_canvas(_tensor, canvas);
+	_add_augmented_canvas_to_photo_gallery(canvas, render_promise);
 }
 
 function truncate_text (fullStr, strLen, separator = "...") {

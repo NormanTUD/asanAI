@@ -2012,13 +2012,13 @@ async function test_augmented_previews_go_to_gallery_canvas() {
 
 	try {
 		add_tensor_as_image_to_photos(t);
-		const entries = _photo_gallery.entries;
-		const last = entries[entries.length - 1];
 		const fallback_img = new Image();
 		const fallback_canvas = document.createElement("canvas");
 		fallback_img._source_canvas = fallback_canvas;
 		const synchronous_pixels = _get_pixel_source_element(fallback_img) === fallback_canvas;
 		await new Promise(function (resolve) { setTimeout(resolve, 200); });
+		const entries = _photo_gallery.entries;
+		const last = entries[entries.length - 1];
 		const added_to_gallery = entries.length === before_count + 1 &&
 			!!last && last.img && last.img.tagName === "IMG" && !!last.img._source_canvas && String(last.url).indexOf("augmented:") === 0;
 		const no_loose_canvases = document.querySelectorAll("#photos canvas[id^='augmented_photo_']").length === 0;
