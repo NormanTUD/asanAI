@@ -215,11 +215,11 @@ class RagEngine:
     def retrieve(self, question: str, limit: int = 5):
         query = self.embedder.embed(question)
         dense_scores = (self.vectors @ query) * self.scales
-        dense = list(np.argsort(-dense_scores)[:30])
-        lexical = self.bm25.search(question, 30)
+        dense = list(np.argsort(-dense_scores)[:20])
+        lexical = self.bm25.search(question, 20)
         candidates = list(dict.fromkeys(dense + lexical))
         if self.reranker and candidates:
-            documents = [self.chunks[index]["x"] for index in candidates]
+            documents = [self.chunks[index]["x"][:700] for index in candidates]
             try:
                 scores = list(self.reranker.rerank(question, documents, batch_size=16))
                 order = sorted(
