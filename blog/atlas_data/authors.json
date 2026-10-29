@@ -14372,12 +14372,14 @@
   "city": "New York, USA",
   "year": 0.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "metz2023godfather",
    "bartz2025anthropic"
   ],
   "cited_in": [
-   "ai_and_society"
+   "ai_and_society",
+   "ai_existential_risk"
   ]
  },
  {
@@ -24098,9 +24100,10 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "wang2018glue"
+   "wang2018glue",
+   "wang2019superglue"
   ],
   "cited_in": [
    "evaluation",
@@ -28360,12 +28363,14 @@
   "city": "Beijing, China",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "china2023algorithmic"
+   "china2023algorithmic",
+   "china2025labelling"
   ],
   "cited_in": [
-   "global_ai_ecosystem"
+   "global_ai_ecosystem",
+   "law_regulation"
   ]
  },
  {
@@ -33718,14 +33723,15 @@
   "city": "San Francisco, USA",
   "year": 2024.0,
   "conf": 1,
-  "works": 6,
+  "works": 7,
   "keys": [
    "lewis2020rag",
    "lindsey2025biology",
    "ameisen2025circuit",
    "perez2022emergent",
    "hubinger2024sleeperagents",
-   "kadavath2022selfknowledge"
+   "kadavath2022selfknowledge",
+   "perez2022redteaming"
   ],
   "cited_in": [
    "ai_existential_risk",
@@ -33857,13 +33863,14 @@
   "city": "Brussels, Belgium",
   "year": 2024.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "euaiact2024",
    "gdpr2018",
    "eu2019dsm",
    "eu2016gdpr",
-   "eu2024aiact"
+   "eu2024aiact",
+   "pld2024"
   ],
   "cited_in": [
    "ai_and_society",
@@ -34893,12 +34900,14 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "perez2022emergent"
+   "perez2022emergent",
+   "perez2022redteaming"
   ],
   "cited_in": [
-   "philosophy"
+   "philosophy",
+   "reliability"
   ]
  },
  {
@@ -35454,15 +35463,18 @@
   "city": "Cambridge, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 3,
+  "works": 5,
   "keys": [
    "fli2023pause",
    "fli2025ban",
-   "eu_ai_act_wiki"
+   "eu_ai_act_wiki",
+   "asilomar2017",
+   "aiact_timeline"
   ],
   "cited_in": [
    "ai_and_society",
-   "ai_existential_risk"
+   "ai_existential_risk",
+   "alignment"
   ]
  },
  {
@@ -45262,12 +45274,14 @@
   "city": "Redmond, United States",
   "year": 1998.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "scholkopf2001ocsvm"
+   "scholkopf2001ocsvm",
+   "platt1999probabilistic"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "reliability"
   ]
  },
  {
@@ -54183,11 +54197,13 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "meng2024simpo"
+   "meng2024simpo",
+   "shi2024mink"
   ],
   "cited_in": [
+   "evaluation",
    "reinforcement_learning"
   ]
  },
@@ -58102,14 +58118,16 @@
   "city": "Cambridge, USA",
   "year": 1948.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "wiener1948cybernetics",
    "behaviorpurpose1943",
    "wienergodandgolem1964",
-   "wienerhumaneuse1950"
+   "wienerhumaneuse1950",
+   "wiener1960moral"
   ],
   "cited_in": [
+   "alignment",
    "history",
    "people_of_ai",
    "untold_history_iii"
@@ -59632,14 +59650,15 @@
   "city": "Palo Alto, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 6,
+  "works": 7,
   "keys": [
    "park2023generativeagents",
    "liu2023lostmiddle",
    "garg2022incontext",
    "liang2023helm",
    "rajpurkar2016squad",
-   "liang2022helm"
+   "liang2022helm",
+   "dubois2024alpacaeval"
   ],
   "cited_in": [
    "algorithms",
@@ -64746,12 +64765,14 @@
   "city": "San Francisco, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "perez2022emergent"
+   "perez2022emergent",
+   "perez2022redteaming"
   ],
   "cited_in": [
-   "philosophy"
+   "philosophy",
+   "reliability"
   ]
  },
  {
@@ -69737,13 +69758,15 @@
   "city": "New York, USA",
   "year": 1958.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "newyorktimesperceptron",
+   "metz2023godfather",
    "bartz2025anthropic"
   ],
   "cited_in": [
    "ai_and_society",
+   "ai_existential_risk",
    "history",
    "minimalneuron",
    "untold_history_iii"
@@ -73674,7 +73697,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 378,
+  "works": 381,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -74053,7 +74076,10 @@
    "karl_pearson_wiki",
    "cooklevin_wiki",
    "binarysearch_wiki",
-   "cyc_wiki"
+   "cyc_wiki",
+   "ai_copyright_wiki",
+   "colorado2024ai",
+   "coe2024ai"
   ],
   "cited_in": [
    "activationlab",
@@ -74071,6 +74097,7 @@
    "human_mind",
    "information_market",
    "language",
+   "law_regulation",
    "math_ii",
    "math_iii",
    "math_iv",
@@ -76074,10 +76101,11 @@
   "city": "Oxford, UK",
   "year": 2023.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "shumailov2023modelcollapse",
-   "kendall2017uncertainties"
+   "kendall2017uncertainties",
+   "farquhar2024semantic"
   ],
   "cited_in": [
    "philosophy",
@@ -80209,6 +80237,3809 @@
   ],
   "cited_in": [
    "origami"
+  ]
+ },
+ {
+  "name": "Jim Belk",
+  "canon": "Jim Belk",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2010,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hopf_link_image"
+  ],
+  "cited_in": [
+   "math_iv"
+  ]
+ },
+ {
+  "name": "Pablo A. Gimenez",
+  "canon": "Pablo A. Gimenez",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2012,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cuevadelasmanos_image"
+  ],
+  "cited_in": [
+   "human_mind",
+   "intro"
+  ]
+ },
+ {
+  "name": "Mark Riehl",
+  "canon": "Mark Riehl",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "thomas_bayes_image"
+  ],
+  "cited_in": [
+   "statistics_ii"
+  ]
+ },
+ {
+  "name": "U.S. Navy",
+  "canon": "U.S. Navy",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": null,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "perceptronimagedetection"
+  ],
+  "cited_in": [
+   "atlas",
+   "history",
+   "intro"
+  ]
+ },
+ {
+  "name": "James the photographer",
+  "canon": "James the photographer",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2007,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "deep_blue_image"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Meta AI",
+  "canon": "Meta AI",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2025,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "meta2025llama4"
+  ],
+  "cited_in": [
+   "frontier"
+  ]
+ },
+ {
+  "name": "J. J. O'Connor and E. F. Robertson",
+  "canon": "J. J. O'Connor and E. F. Robertson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": null,
+  "conf": 0,
+  "works": 20,
+  "keys": [
+   "macTutorZero",
+   "macTutorBabylonianNumerals",
+   "macTutorBabylonianMathematics",
+   "macTutorEgyptianNumerals",
+   "macTutorRealNumbers",
+   "macTutorFunctions",
+   "macTutorInfinity",
+   "macTutorE",
+   "macTutorSetTheory",
+   "macTutorNapier",
+   "macTutorBurgi",
+   "macTutorKepler",
+   "macTutorTaylor",
+   "macTutorMaclaurin",
+   "eudoxus_mactutor",
+   "zuchongzhi_mactutor",
+   "gram1883",
+   "madhava_mactutor",
+   "weierstrass_mactutor",
+   "boscovich_mactutor"
+  ],
+  "cited_in": [
+   "derivativelab",
+   "geometry_ii",
+   "losslab",
+   "math_i",
+   "math_ii",
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Brahmagupta; Henry Thomas Colebrooke (trans.)",
+  "canon": "Brahmagupta; Henry Thomas Colebrooke",
+  "alias": "trans.",
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": null,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "brahmagupta_colebrooke"
+  ],
+  "cited_in": [
+   "math_i"
+  ]
+ },
+ {
+  "name": "Richard Dedekind",
+  "canon": "Richard Dedekind",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": null,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "dedekind1872"
+  ],
+  "cited_in": [
+   "math_i"
+  ]
+ },
+ {
+  "name": "Georg Cantor",
+  "canon": "Georg Cantor",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1895,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cantor1895"
+  ],
+  "cited_in": [
+   "math_i"
+  ]
+ },
+ {
+  "name": "Robert Grosseteste",
+  "canon": "Robert Grosseteste",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": null,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "grosseteste_on_light"
+  ],
+  "cited_in": [
+   "math_i"
+  ]
+ },
+ {
+  "name": "Jeff Miller",
+  "canon": "Jeff Miller",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 4,
+  "keys": [
+   "millerOperation",
+   "miller_functionsymbols",
+   "miller_tensor",
+   "miller_vector"
+  ],
+  "cited_in": [
+   "math_i",
+   "math_ii"
+  ]
+ },
+ {
+  "name": "Hermann Grassmann",
+  "canon": "Hermann Grassmann",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1844,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "grassmann1844ausdehnungslehre"
+  ],
+  "cited_in": [
+   "geometry_ii",
+   "math_ii",
+   "math_iv"
+  ]
+ },
+ {
+  "name": "J. J. O'Connor; E. F. Robertson",
+  "canon": "J. J. O'Connor; E. F. Robertson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "mactutor_matrices_determinants"
+  ],
+  "cited_in": [
+   "math_ii"
+  ]
+ },
+ {
+  "name": "Gabriel Cramer",
+  "canon": "Gabriel Cramer",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1750,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cramer1750introduction"
+  ],
+  "cited_in": [
+   "math_ii"
+  ]
+ },
+ {
+  "name": "Ferdinand Georg Frobenius",
+  "canon": "Ferdinand Georg Frobenius",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1878,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "frobenius1878linear",
+   "frobenius1879differential"
+  ],
+  "cited_in": [
+   "math_ii"
+  ]
+ },
+ {
+  "name": "Issai Schur",
+  "canon": "Issai Schur",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1911,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "schur1911bilinear"
+  ],
+  "cited_in": [
+   "math_ii"
+  ]
+ },
+ {
+  "name": "Solomon Kullback; Richard Leibler",
+  "canon": "Solomon Kullback; Richard Leibler",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1951,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kullback1951information"
+  ],
+  "cited_in": [
+   "losslab",
+   "math_ii"
+  ]
+ },
+ {
+  "name": "Irving John Good",
+  "canon": "Irving John Good",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1952,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "good1952rational"
+  ],
+  "cited_in": [
+   "math_ii"
+  ]
+ },
+ {
+  "name": "R. Duncan Luce",
+  "canon": "R. Duncan Luce",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1959,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "luce1959individualchoice"
+  ],
+  "cited_in": [
+   "activationlab",
+   "math_ii"
+  ]
+ },
+ {
+  "name": "MacTutor History of Mathematics Archive",
+  "canon": "MacTutor History of Mathematics Archive",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": null,
+  "conf": 0,
+  "works": 6,
+  "keys": [
+   "eudoxus_mactutor",
+   "zuchongzhi_mactutor",
+   "gram1883",
+   "madhava_mactutor",
+   "weierstrass_mactutor",
+   "boscovich_mactutor"
+  ],
+  "cited_in": [
+   "derivativelab",
+   "geometry_ii",
+   "losslab",
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Archimedes; T. L. Heath (translator)",
+  "canon": "Archimedes; T. L. Heath",
+  "alias": "translator",
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1897,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "archimedes_works_heath"
+  ],
+  "cited_in": [
+   "derivativelab",
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Isaac Newton; John Colson (translator)",
+  "canon": "Isaac Newton; John Colson",
+  "alias": "translator",
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1736,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "newton1736fluxions"
+  ],
+  "cited_in": [
+   "algorithms",
+   "derivativelab",
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Bonaventura Cavalieri",
+  "canon": "Bonaventura Cavalieri",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1635,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cavalieri1635geometria"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Henri Lebesgue",
+  "canon": "Henri Lebesgue",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1902,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lebesgue1902integrale"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Alexander N. Gorban",
+  "canon": "Alexander N. Gorban",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gorban2018blessing"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Ivan Y. Tyukin",
+  "canon": "Ivan Y. Tyukin",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gorban2018blessing"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Mikhail Gromov",
+  "canon": "Mikhail Gromov",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1983,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gromov1983isoperimetric"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Vitali D. Milman",
+  "canon": "Vitali D. Milman",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1983,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gromov1983isoperimetric"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Michel Talagrand",
+  "canon": "Michel Talagrand",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1995,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "talagrand1995concentration"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Lawrence Cayton",
+  "canon": "Lawrence Cayton",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2005,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cayton2005manifold"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Kevin Beyer",
+  "canon": "Kevin Beyer",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1999,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "beyer1999nearest"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Jonathan Goldstein",
+  "canon": "Jonathan Goldstein",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1999,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "beyer1999nearest"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Uri Shaft",
+  "canon": "Uri Shaft",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1999,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "beyer1999nearest"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Joint Committee for Guides in Metrology (JCGM)",
+  "canon": "Joint Committee for Guides in Metrology",
+  "alias": "JCGM",
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2012,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jcgm2012vim"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Harry Deutsch",
+  "canon": "Harry Deutsch",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1995,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "russell_paradox_sep"
+  ],
+  "cited_in": [
+   "math_iii",
+   "symbolic_ai"
+  ]
+ },
+ {
+  "name": "Oliver Marshall",
+  "canon": "Oliver Marshall",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1995,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "russell_paradox_sep"
+  ],
+  "cited_in": [
+   "math_iii",
+   "symbolic_ai"
+  ]
+ },
+ {
+  "name": "Andrew David Irvine",
+  "canon": "Andrew David Irvine",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1995,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "russell_paradox_sep"
+  ],
+  "cited_in": [
+   "math_iii",
+   "symbolic_ai"
+  ]
+ },
+ {
+  "name": "Peter Dybjer",
+  "canon": "Peter Dybjer",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "intuitionistic_type_theory_sep"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Erik Palmgren",
+  "canon": "Erik Palmgren",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "intuitionistic_type_theory_sep"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Vladimir Voevodsky",
+  "canon": "Vladimir Voevodsky",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2006,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "voevodsky2006hlambda",
+   "voevodsky2010equivalence"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Chiyuan Zhang",
+  "canon": "Chiyuan Zhang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "zhang2017rethinking"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Moritz Hardt",
+  "canon": "Moritz Hardt",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "zhang2017rethinking"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Benjamin Recht",
+  "canon": "Benjamin Recht",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "zhang2017rethinking"
+  ],
+  "cited_in": [
+   "math_iii"
+  ]
+ },
+ {
+  "name": "Jean le Rond d'Alembert",
+  "canon": "Jean le Rond d'Alembert",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1747,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "dalembert1747"
+  ],
+  "cited_in": [
+   "geometry_ii"
+  ]
+ },
+ {
+  "name": "Edwin Bidwell Wilson",
+  "canon": "Edwin Bidwell Wilson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1901,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gibbs_wilson1901"
+  ],
+  "cited_in": [
+   "geometry_ii"
+  ]
+ },
+ {
+  "name": "J. Willard Gibbs",
+  "canon": "J. Willard Gibbs",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1901,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gibbs_wilson1901"
+  ],
+  "cited_in": [
+   "geometry_ii"
+  ]
+ },
+ {
+  "name": "Oliver Heaviside",
+  "canon": "Oliver Heaviside",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1893,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "heaviside1893electromagnetic"
+  ],
+  "cited_in": [
+   "geometry_ii"
+  ]
+ },
+ {
+  "name": "Michael J. Crowe",
+  "canon": "Michael J. Crowe",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1967,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "crowe1967vectoranalysis"
+  ],
+  "cited_in": [
+   "geometry_ii"
+  ]
+ },
+ {
+  "name": "G. W. Stewart",
+  "canon": "G. W. Stewart",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1993,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "stewart1993svd"
+  ],
+  "cited_in": [
+   "geometry_ii"
+  ]
+ },
+ {
+  "name": "Erhard Schmidt",
+  "canon": "Erhard Schmidt",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1907,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "schmidt1907"
+  ],
+  "cited_in": [
+   "geometry_ii"
+  ]
+ },
+ {
+  "name": "Carl Eckart",
+  "canon": "Carl Eckart",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1936,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "eckartyoung1936"
+  ],
+  "cited_in": [
+   "geometry_ii"
+  ]
+ },
+ {
+  "name": "Gale J. Young",
+  "canon": "Gale J. Young",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1936,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "eckartyoung1936"
+  ],
+  "cited_in": [
+   "geometry_ii"
+  ]
+ },
+ {
+  "name": "Gene H. Golub",
+  "canon": "Gene H. Golub",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1970,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "golubreinsch1970"
+  ],
+  "cited_in": [
+   "geometry_ii"
+  ]
+ },
+ {
+  "name": "Christian Reinsch",
+  "canon": "Christian Reinsch",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1970,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "golubreinsch1970"
+  ],
+  "cited_in": [
+   "geometry_ii"
+  ]
+ },
+ {
+  "name": "J. B. Rosen",
+  "canon": "J. B. Rosen",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1960,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rosen1960"
+  ],
+  "cited_in": [
+   "geometry_ii"
+  ]
+ },
+ {
+  "name": "Otto Toeplitz",
+  "canon": "Otto Toeplitz",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1911,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "toeplitz1911"
+  ],
+  "cited_in": [
+   "geometry_ii"
+  ]
+ },
+ {
+  "name": "Emmy Noether",
+  "canon": "Emmy Noether",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1918,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "noether1918"
+  ],
+  "cited_in": [
+   "geometry_ii"
+  ]
+ },
+ {
+  "name": "Ovid",
+  "canon": "Ovid",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 8,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ovid_metamorphoses"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Pierre-François Verhulst",
+  "canon": "Pierre-François Verhulst",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1838,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "verhulst1838logistic"
+  ],
+  "cited_in": [
+   "activationlab"
+  ]
+ },
+ {
+  "name": "Stefan Elfwing",
+  "canon": "Stefan Elfwing",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "elfwing2017silu"
+  ],
+  "cited_in": [
+   "activationlab"
+  ]
+ },
+ {
+  "name": "Eiji Uchibe",
+  "canon": "Eiji Uchibe",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "elfwing2017silu"
+  ],
+  "cited_in": [
+   "activationlab"
+  ]
+ },
+ {
+  "name": "Kenji Doya",
+  "canon": "Kenji Doya",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "elfwing2017silu"
+  ],
+  "cited_in": [
+   "activationlab"
+  ]
+ },
+ {
+  "name": "Bert Speelpenning",
+  "canon": "Bert Speelpenning",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1980,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "speelpenning1980"
+  ],
+  "cited_in": [
+   "autodiff"
+  ]
+ },
+ {
+  "name": "Andreas Griewank",
+  "canon": "Andreas Griewank",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1989,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "griewank1989",
+   "griewank2008"
+  ],
+  "cited_in": [
+   "autodiff"
+  ]
+ },
+ {
+  "name": "Andrea Walther",
+  "canon": "Andrea Walther",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2008,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "griewank2008"
+  ],
+  "cited_in": [
+   "autodiff"
+  ]
+ },
+ {
+  "name": "Roy Frostig",
+  "canon": "Roy Frostig",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jax2018"
+  ],
+  "cited_in": [
+   "autodiff"
+  ]
+ },
+ {
+  "name": "Peter Hawkins",
+  "canon": "Peter Hawkins",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jax2018"
+  ],
+  "cited_in": [
+   "autodiff"
+  ]
+ },
+ {
+  "name": "Matthew James Johnson",
+  "canon": "Matthew James Johnson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jax2018"
+  ],
+  "cited_in": [
+   "autodiff"
+  ]
+ },
+ {
+  "name": "Chris Leary",
+  "canon": "Chris Leary",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jax2018"
+  ],
+  "cited_in": [
+   "autodiff"
+  ]
+ },
+ {
+  "name": "George Necula",
+  "canon": "George Necula",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jax2018"
+  ],
+  "cited_in": [
+   "autodiff"
+  ]
+ },
+ {
+  "name": "Jake VanderPlas",
+  "canon": "Jake VanderPlas",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jax2018"
+  ],
+  "cited_in": [
+   "autodiff"
+  ]
+ },
+ {
+  "name": "Skye Wanderman-Milne",
+  "canon": "Skye Wanderman-Milne",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jax2018"
+  ],
+  "cited_in": [
+   "autodiff"
+  ]
+ },
+ {
+  "name": "Qiao Zhang",
+  "canon": "Qiao Zhang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jax2018"
+  ],
+  "cited_in": [
+   "autodiff"
+  ]
+ },
+ {
+  "name": "David Zipser",
+  "canon": "David Zipser",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1989,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "williams1989"
+  ],
+  "cited_in": [
+   "recurrent_networks"
+  ]
+ },
+ {
+  "name": "Yonghui Wu et al.",
+  "canon": "Yonghui Wu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wu2016gnmt"
+  ],
+  "cited_in": [
+   "recurrent_networks"
+  ]
+ },
+ {
+  "name": "Lior Wolf",
+  "canon": "Lior Wolf",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "press2017tying"
+  ],
+  "cited_in": [
+   "transformer"
+  ]
+ },
+ {
+  "name": "Qiang Wang",
+  "canon": "Qiang Wang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2019preln"
+  ],
+  "cited_in": [
+   "transformer"
+  ]
+ },
+ {
+  "name": "Bei Li",
+  "canon": "Bei Li",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2019preln"
+  ],
+  "cited_in": [
+   "transformer"
+  ]
+ },
+ {
+  "name": "Tong Xiao",
+  "canon": "Tong Xiao",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2019preln"
+  ],
+  "cited_in": [
+   "transformer"
+  ]
+ },
+ {
+  "name": "Jingbo Zhu",
+  "canon": "Jingbo Zhu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2019preln"
+  ],
+  "cited_in": [
+   "transformer"
+  ]
+ },
+ {
+  "name": "Changliang Li",
+  "canon": "Changliang Li",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2019preln"
+  ],
+  "cited_in": [
+   "transformer"
+  ]
+ },
+ {
+  "name": "Derek F. Wong",
+  "canon": "Derek F. Wong",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2019preln"
+  ],
+  "cited_in": [
+   "transformer"
+  ]
+ },
+ {
+  "name": "Lidia S. Chao",
+  "canon": "Lidia S. Chao",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2019preln"
+  ],
+  "cited_in": [
+   "transformer"
+  ]
+ },
+ {
+  "name": "Arthur Szlam",
+  "canon": "Arthur Szlam",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2015,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "sukhbaatar2015memnn"
+  ],
+  "cited_in": [
+   "transformer"
+  ]
+ },
+ {
+  "name": "Rob Fergus",
+  "canon": "Rob Fergus",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2015,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "sukhbaatar2015memnn"
+  ],
+  "cited_in": [
+   "transformer"
+  ]
+ },
+ {
+  "name": "Aäron van den Oord",
+  "canon": "Aäron van den Oord",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bytnet2016"
+  ],
+  "cited_in": [
+   "transformer"
+  ]
+ },
+ {
+  "name": "Lasse Espeholt",
+  "canon": "Lasse Espeholt",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bytnet2016"
+  ],
+  "cited_in": [
+   "transformer"
+  ]
+ },
+ {
+  "name": "Jiaming Song",
+  "canon": "Jiaming Song",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "song2020ddim"
+  ],
+  "cited_in": [
+   "diffusion"
+  ]
+ },
+ {
+  "name": "Chenlin Meng",
+  "canon": "Chenlin Meng",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "song2020ddim"
+  ],
+  "cited_in": [
+   "diffusion"
+  ]
+ },
+ {
+  "name": "Abhishek Kumar",
+  "canon": "Abhishek Kumar",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "song2021sde"
+  ],
+  "cited_in": [
+   "diffusion"
+  ]
+ },
+ {
+  "name": "Alex Nichol",
+  "canon": "Alex Nichol",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021,
+  "conf": 0,
+  "works": 3,
+  "keys": [
+   "nichol2021improved",
+   "dhariwal2021diffusion",
+   "ramesh2022dalle2"
+  ],
+  "cited_in": [
+   "diffusion"
+  ]
+ },
+ {
+  "name": "Casey Chu",
+  "canon": "Casey Chu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ramesh2022dalle2"
+  ],
+  "cited_in": [
+   "diffusion"
+  ]
+ },
+ {
+  "name": "Tao Lei",
+  "canon": "Tao Lei",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "zhou2022expertchoice"
+  ],
+  "cited_in": [
+   "mixture_of_experts"
+  ]
+ },
+ {
+  "name": "Hanxiao Liu",
+  "canon": "Hanxiao Liu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "zhou2022expertchoice"
+  ],
+  "cited_in": [
+   "mixture_of_experts"
+  ]
+ },
+ {
+  "name": "James Laudon",
+  "canon": "James Laudon",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "zhou2022expertchoice"
+  ],
+  "cited_in": [
+   "mixture_of_experts"
+  ]
+ },
+ {
+  "name": "Lean Wang",
+  "canon": "Lean Wang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2024auxfree"
+  ],
+  "cited_in": [
+   "mixture_of_experts"
+  ]
+ },
+ {
+  "name": "Huazuo Gao",
+  "canon": "Huazuo Gao",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2024auxfree"
+  ],
+  "cited_in": [
+   "mixture_of_experts"
+  ]
+ },
+ {
+  "name": "Chenggang Zhao",
+  "canon": "Chenggang Zhao",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2024auxfree"
+  ],
+  "cited_in": [
+   "mixture_of_experts"
+  ]
+ },
+ {
+  "name": "Xu Sun",
+  "canon": "Xu Sun",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2024auxfree"
+  ],
+  "cited_in": [
+   "mixture_of_experts"
+  ]
+ },
+ {
+  "name": "Fuzhao Xue",
+  "canon": "Fuzhao Xue",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "xue2024openmoe"
+  ],
+  "cited_in": [
+   "mixture_of_experts"
+  ]
+ },
+ {
+  "name": "Zian Zheng",
+  "canon": "Zian Zheng",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "xue2024openmoe"
+  ],
+  "cited_in": [
+   "mixture_of_experts"
+  ]
+ },
+ {
+  "name": "Yao Fu",
+  "canon": "Yao Fu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "xue2024openmoe"
+  ],
+  "cited_in": [
+   "mixture_of_experts"
+  ]
+ },
+ {
+  "name": "Jinjie Ni",
+  "canon": "Jinjie Ni",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "xue2024openmoe"
+  ],
+  "cited_in": [
+   "mixture_of_experts"
+  ]
+ },
+ {
+  "name": "Zangwei Zheng",
+  "canon": "Zangwei Zheng",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "xue2024openmoe"
+  ],
+  "cited_in": [
+   "mixture_of_experts"
+  ]
+ },
+ {
+  "name": "Wangchunshu Zhou",
+  "canon": "Wangchunshu Zhou",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "xue2024openmoe"
+  ],
+  "cited_in": [
+   "mixture_of_experts"
+  ]
+ },
+ {
+  "name": "Yang You",
+  "canon": "Yang You",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "xue2024openmoe"
+  ],
+  "cited_in": [
+   "mixture_of_experts"
+  ]
+ },
+ {
+  "name": "Peter J. Huber",
+  "canon": "Peter J. Huber",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1964,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "huber1964"
+  ],
+  "cited_in": [
+   "losslab"
+  ]
+ },
+ {
+  "name": "Tsung-Yi Lin",
+  "canon": "Tsung-Yi Lin",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lin2017focal"
+  ],
+  "cited_in": [
+   "losslab"
+  ]
+ },
+ {
+  "name": "Marilyn Strathern",
+  "canon": "Marilyn Strathern",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1997,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "strathern1997"
+  ],
+  "cited_in": [
+   "losslab"
+  ]
+ },
+ {
+  "name": "J. Kiefer",
+  "canon": "J. Kiefer",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1952,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kiefer1952stochastic"
+  ],
+  "cited_in": [
+   "optimizerlab"
+  ]
+ },
+ {
+  "name": "J. Wolfowitz",
+  "canon": "J. Wolfowitz",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1952,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kiefer1952stochastic"
+  ],
+  "cited_in": [
+   "optimizerlab"
+  ]
+ },
+ {
+  "name": "Yurii E. Nesterov",
+  "canon": "Yurii E. Nesterov",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1983,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "nesterov1983method"
+  ],
+  "cited_in": [
+   "optimizerlab"
+  ]
+ },
+ {
+  "name": "Scott Deerwester",
+  "canon": "Scott Deerwester",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1990,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "deerwester1990lsa"
+  ],
+  "cited_in": [
+   "embeddinglab"
+  ]
+ },
+ {
+  "name": "Susan T. Dumais",
+  "canon": "Susan T. Dumais",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1990,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "deerwester1990lsa"
+  ],
+  "cited_in": [
+   "embeddinglab"
+  ]
+ },
+ {
+  "name": "George W. Furnas",
+  "canon": "George W. Furnas",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1990,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "deerwester1990lsa"
+  ],
+  "cited_in": [
+   "embeddinglab"
+  ]
+ },
+ {
+  "name": "Thomas K. Landauer",
+  "canon": "Thomas K. Landauer",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1990,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "deerwester1990lsa"
+  ],
+  "cited_in": [
+   "embeddinglab"
+  ]
+ },
+ {
+  "name": "Richard Harshman",
+  "canon": "Richard Harshman",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1990,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "deerwester1990lsa"
+  ],
+  "cited_in": [
+   "embeddinglab"
+  ]
+ },
+ {
+  "name": "Jiaqi Mu",
+  "canon": "Jiaqi Mu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "mu2018allbutthetop"
+  ],
+  "cited_in": [
+   "embeddinglab"
+  ]
+ },
+ {
+  "name": "Suma Bhat",
+  "canon": "Suma Bhat",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "mu2018allbutthetop"
+  ],
+  "cited_in": [
+   "embeddinglab"
+  ]
+ },
+ {
+  "name": "Pramod Viswanath",
+  "canon": "Pramod Viswanath",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "mu2018allbutthetop"
+  ],
+  "cited_in": [
+   "embeddinglab"
+  ]
+ },
+ {
+  "name": "Hieu Pham",
+  "canon": "Hieu Pham",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2015,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "luong2015attention"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Yao-Hung Hubert Tsai",
+  "canon": "Yao-Hung Hubert Tsai",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "tsai2019kernel"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Makoto Yamada",
+  "canon": "Makoto Yamada",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "tsai2019kernel"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Louis-Philippe Morency",
+  "canon": "Louis-Philippe Morency",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "tsai2019kernel"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Urvashi Khandelwal",
+  "canon": "Urvashi Khandelwal",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "clark2019bertattention"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Clara Meister",
+  "canon": "Clara Meister",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "meister2022typical"
+  ],
+  "cited_in": [
+   "samplinglab"
+  ]
+ },
+ {
+  "name": "Tiago Pimentel",
+  "canon": "Tiago Pimentel",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "meister2022typical"
+  ],
+  "cited_in": [
+   "samplinglab"
+  ]
+ },
+ {
+  "name": "Gian Wiher",
+  "canon": "Gian Wiher",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "meister2022typical"
+  ],
+  "cited_in": [
+   "samplinglab"
+  ]
+ },
+ {
+  "name": "Ryan Cotterell",
+  "canon": "Ryan Cotterell",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "meister2022typical"
+  ],
+  "cited_in": [
+   "samplinglab"
+  ]
+ },
+ {
+  "name": "Shouyuan Chen",
+  "canon": "Shouyuan Chen",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "chen2023position"
+  ],
+  "cited_in": [
+   "positionalembeddingslab"
+  ]
+ },
+ {
+  "name": "Sherman Wong",
+  "canon": "Sherman Wong",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "chen2023position"
+  ],
+  "cited_in": [
+   "positionalembeddingslab"
+  ]
+ },
+ {
+  "name": "Liangjian Chen",
+  "canon": "Liangjian Chen",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "chen2023position"
+  ],
+  "cited_in": [
+   "positionalembeddingslab"
+  ]
+ },
+ {
+  "name": "Bruce T. Lowerre",
+  "canon": "Bruce T. Lowerre",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1976,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lowerre1976harpy"
+  ],
+  "cited_in": [
+   "samplinglab"
+  ]
+ },
+ {
+  "name": "Yixuan Su",
+  "canon": "Yixuan Su",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "su2022contrastive"
+  ],
+  "cited_in": [
+   "samplinglab"
+  ]
+ },
+ {
+  "name": "Tian Lan",
+  "canon": "Tian Lan",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "su2022contrastive"
+  ],
+  "cited_in": [
+   "samplinglab"
+  ]
+ },
+ {
+  "name": "Yan Wang",
+  "canon": "Yan Wang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "su2022contrastive"
+  ],
+  "cited_in": [
+   "samplinglab"
+  ]
+ },
+ {
+  "name": "Dani Yogatama",
+  "canon": "Dani Yogatama",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "su2022contrastive"
+  ],
+  "cited_in": [
+   "samplinglab"
+  ]
+ },
+ {
+  "name": "Lingpeng Kong",
+  "canon": "Lingpeng Kong",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "su2022contrastive"
+  ],
+  "cited_in": [
+   "samplinglab"
+  ]
+ },
+ {
+  "name": "Nigel Collier",
+  "canon": "Nigel Collier",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "su2022contrastive"
+  ],
+  "cited_in": [
+   "samplinglab"
+  ]
+ },
+ {
+  "name": "Josiah Willard Gibbs",
+  "canon": "Josiah Willard Gibbs",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1902,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gibbs1902"
+  ],
+  "cited_in": [
+   "samplinglab"
+  ]
+ },
+ {
+  "name": "Rémi Bardenet",
+  "canon": "Rémi Bardenet",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2011,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bergstra2011algorithms"
+  ],
+  "cited_in": [
+   "hyperparameters"
+  ]
+ },
+ {
+  "name": "Balázs Kégl",
+  "canon": "Balázs Kégl",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2011,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bergstra2011algorithms"
+  ],
+  "cited_in": [
+   "hyperparameters"
+  ]
+ },
+ {
+  "name": "Donald R. Jones",
+  "canon": "Donald R. Jones",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1998,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jones1998ego"
+  ],
+  "cited_in": [
+   "hyperparameters"
+  ]
+ },
+ {
+  "name": "Matthias Schonlau",
+  "canon": "Matthias Schonlau",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1998,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jones1998ego"
+  ],
+  "cited_in": [
+   "hyperparameters"
+  ]
+ },
+ {
+  "name": "William J. Welch",
+  "canon": "William J. Welch",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1998,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jones1998ego"
+  ],
+  "cited_in": [
+   "hyperparameters"
+  ]
+ },
+ {
+  "name": "Lisha Li",
+  "canon": "Lisha Li",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "li2016hyperband"
+  ],
+  "cited_in": [
+   "hyperparameters"
+  ]
+ },
+ {
+  "name": "Kevin Jamieson",
+  "canon": "Kevin Jamieson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "li2016hyperband"
+  ],
+  "cited_in": [
+   "hyperparameters"
+  ]
+ },
+ {
+  "name": "Giulia DeSalvo",
+  "canon": "Giulia DeSalvo",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "li2016hyperband"
+  ],
+  "cited_in": [
+   "hyperparameters"
+  ]
+ },
+ {
+  "name": "Afshin Rostamizadeh",
+  "canon": "Afshin Rostamizadeh",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "li2016hyperband"
+  ],
+  "cited_in": [
+   "hyperparameters"
+  ]
+ },
+ {
+  "name": "Ameet Talwalkar",
+  "canon": "Ameet Talwalkar",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "li2016hyperband"
+  ],
+  "cited_in": [
+   "hyperparameters"
+  ]
+ },
+ {
+  "name": "Max Jaderberg",
+  "canon": "Max Jaderberg",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jaderberg2017pbt"
+  ],
+  "cited_in": [
+   "hyperparameters"
+  ]
+ },
+ {
+  "name": "Valentin Dalibard",
+  "canon": "Valentin Dalibard",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jaderberg2017pbt"
+  ],
+  "cited_in": [
+   "hyperparameters"
+  ]
+ },
+ {
+  "name": "Stephen A. Cook",
+  "canon": "Stephen A. Cook",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1971,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cook1971complexity"
+  ],
+  "cited_in": [
+   "algorithms"
+  ]
+ },
+ {
+  "name": "C. A. R. Hoare",
+  "canon": "C. A. R. Hoare",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1969,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hoare1969axiomatic"
+  ],
+  "cited_in": [
+   "algorithms"
+  ]
+ },
+ {
+  "name": "Artur d'Avila Garcez",
+  "canon": "Artur d'Avila Garcez",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "garcez2020neurosymbolic"
+  ],
+  "cited_in": [
+   "symbolic_ai"
+  ]
+ },
+ {
+  "name": "Luis C. Lamb",
+  "canon": "Luis C. Lamb",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "garcez2020neurosymbolic"
+  ],
+  "cited_in": [
+   "symbolic_ai"
+  ]
+ },
+ {
+  "name": "Amit Singhal",
+  "canon": "Amit Singhal",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2012,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "singhal2012knowledge"
+  ],
+  "cited_in": [
+   "symbolic_ai"
+  ]
+ },
+ {
+  "name": "Ellen M. Voorhees",
+  "canon": "Ellen M. Voorhees",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1999,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "voorhees1999trecqa"
+  ],
+  "cited_in": [
+   "rag"
+  ]
+ },
+ {
+  "name": "Christopher Buckley",
+  "canon": "Christopher Buckley",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1988,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "salton1988termweighting"
+  ],
+  "cited_in": [
+   "rag"
+  ]
+ },
+ {
+  "name": "Barlas Oğuz",
+  "canon": "Barlas Oğuz",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "karpukhin2020dpr"
+  ],
+  "cited_in": [
+   "rag"
+  ]
+ },
+ {
+  "name": "Ledell Wu",
+  "canon": "Ledell Wu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "karpukhin2020dpr"
+  ],
+  "cited_in": [
+   "rag"
+  ]
+ },
+ {
+  "name": "Sergey Edunov",
+  "canon": "Sergey Edunov",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "karpukhin2020dpr"
+  ],
+  "cited_in": [
+   "rag"
+  ]
+ },
+ {
+  "name": "Kelvin Guu",
+  "canon": "Kelvin Guu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "guu2020realm"
+  ],
+  "cited_in": [
+   "rag"
+  ]
+ },
+ {
+  "name": "Zora Tung",
+  "canon": "Zora Tung",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "guu2020realm"
+  ],
+  "cited_in": [
+   "rag"
+  ]
+ },
+ {
+  "name": "Panupong Pasupat",
+  "canon": "Panupong Pasupat",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "guu2020realm"
+  ],
+  "cited_in": [
+   "rag"
+  ]
+ },
+ {
+  "name": "Akari Asai",
+  "canon": "Akari Asai",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "asai2023selfrag"
+  ],
+  "cited_in": [
+   "rag"
+  ]
+ },
+ {
+  "name": "Zeqiu Wu",
+  "canon": "Zeqiu Wu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "asai2023selfrag"
+  ],
+  "cited_in": [
+   "rag"
+  ]
+ },
+ {
+  "name": "Avirup Sil",
+  "canon": "Avirup Sil",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "asai2023selfrag"
+  ],
+  "cited_in": [
+   "rag"
+  ]
+ },
+ {
+  "name": "Darren Edge",
+  "canon": "Darren Edge",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "edge2024graphrag"
+  ],
+  "cited_in": [
+   "rag"
+  ]
+ },
+ {
+  "name": "Ha Trinh",
+  "canon": "Ha Trinh",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "edge2024graphrag"
+  ],
+  "cited_in": [
+   "rag"
+  ]
+ },
+ {
+  "name": "Newman Cheng",
+  "canon": "Newman Cheng",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "edge2024graphrag"
+  ],
+  "cited_in": [
+   "rag"
+  ]
+ },
+ {
+  "name": "John E. Laird",
+  "canon": "John E. Laird",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1987,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "laird1987soar"
+  ],
+  "cited_in": [
+   "agents"
+  ]
+ },
+ {
+  "name": "Paul S. Rosenbloom",
+  "canon": "Paul S. Rosenbloom",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1987,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "laird1987soar"
+  ],
+  "cited_in": [
+   "agents"
+  ]
+ },
+ {
+  "name": "John R. Anderson",
+  "canon": "John R. Anderson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2004,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "anderson2004actr"
+  ],
+  "cited_in": [
+   "agents"
+  ]
+ },
+ {
+  "name": "Daniel Bothell",
+  "canon": "Daniel Bothell",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2004,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "anderson2004actr"
+  ],
+  "cited_in": [
+   "agents"
+  ]
+ },
+ {
+  "name": "Michael D. Byrne",
+  "canon": "Michael D. Byrne",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2004,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "anderson2004actr"
+  ],
+  "cited_in": [
+   "agents"
+  ]
+ },
+ {
+  "name": "Scott Douglass",
+  "canon": "Scott Douglass",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2004,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "anderson2004actr"
+  ],
+  "cited_in": [
+   "agents"
+  ]
+ },
+ {
+  "name": "Christian Lebiere",
+  "canon": "Christian Lebiere",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2004,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "anderson2004actr"
+  ],
+  "cited_in": [
+   "agents"
+  ]
+ },
+ {
+  "name": "Yulin Qin",
+  "canon": "Yulin Qin",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2004,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "anderson2004actr"
+  ],
+  "cited_in": [
+   "agents"
+  ]
+ },
+ {
+  "name": "Significant Gravitas",
+  "canon": "Significant Gravitas",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "autogpt2023"
+  ],
+  "cited_in": [
+   "agents"
+  ]
+ },
+ {
+  "name": "Guanzhi Wang",
+  "canon": "Guanzhi Wang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2023voyager"
+  ],
+  "cited_in": [
+   "agents"
+  ]
+ },
+ {
+  "name": "Yuqi Xie",
+  "canon": "Yuqi Xie",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2023voyager"
+  ],
+  "cited_in": [
+   "agents"
+  ]
+ },
+ {
+  "name": "Yunfan Jiang",
+  "canon": "Yunfan Jiang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2023voyager"
+  ],
+  "cited_in": [
+   "agents"
+  ]
+ },
+ {
+  "name": "Qingyun Wu",
+  "canon": "Qingyun Wu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wu2023autogen"
+  ],
+  "cited_in": [
+   "agents"
+  ]
+ },
+ {
+  "name": "Gagan Bansal",
+  "canon": "Gagan Bansal",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wu2023autogen"
+  ],
+  "cited_in": [
+   "agents"
+  ]
+ },
+ {
+  "name": "Jieyu Zhang",
+  "canon": "Jieyu Zhang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wu2023autogen"
+  ],
+  "cited_in": [
+   "agents"
+  ]
+ },
+ {
+  "name": "UK Government",
+  "canon": "UK Government",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bletchley2023"
+  ],
+  "cited_in": [
+   "alignment"
+  ]
+ },
+ {
+  "name": "UK Department for Science",
+  "canon": "UK Department for Science",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "aisi2023"
+  ],
+  "cited_in": [
+   "alignment"
+  ]
+ },
+ {
+  "name": "Innovation and Technology",
+  "canon": "Innovation and Technology",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "aisi2023"
+  ],
+  "cited_in": [
+   "alignment"
+  ]
+ },
+ {
+  "name": "National Institute of Standards and Technology",
+  "canon": "National Institute of Standards and Technology",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "nist2023airmf"
+  ],
+  "cited_in": [
+   "alignment"
+  ]
+ },
+ {
+  "name": "UNESCO",
+  "canon": "UNESCO",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "unesco2021ai"
+  ],
+  "cited_in": [
+   "alignment",
+   "law_regulation"
+  ]
+ },
+ {
+  "name": "OECD",
+  "canon": "OECD",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "oecd2019ai"
+  ],
+  "cited_in": [
+   "alignment",
+   "law_regulation"
+  ]
+ },
+ {
+  "name": "The White House",
+  "canon": "The White House",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "eo14110"
+  ],
+  "cited_in": [
+   "alignment"
+  ]
+ },
+ {
+  "name": "European Data Protection Board",
+  "canon": "European Data Protection Board",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "edpb2024ai"
+  ],
+  "cited_in": [
+   "law_regulation"
+  ]
+ },
+ {
+  "name": "Office of the Governor of California",
+  "canon": "Office of the Governor of California",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2025,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "sb53cal2025"
+  ],
+  "cited_in": [
+   "law_regulation"
+  ]
+ },
+ {
+  "name": "Weijia Shi",
+  "canon": "Weijia Shi",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "shi2024mink"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Anirudh Ajith",
+  "canon": "Anirudh Ajith",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "shi2024mink"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Colin White",
+  "canon": "Colin White",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "white2024livebench"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Samuel Dooley",
+  "canon": "Samuel Dooley",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "white2024livebench"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Manley Roberts",
+  "canon": "Manley Roberts",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "white2024livebench"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Yann Dubois",
+  "canon": "Yann Dubois",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "dubois2024alpacaeval"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Balázs Galambosi",
+  "canon": "Balázs Galambosi",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "dubois2024alpacaeval"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Tatsunori B. Hashimoto",
+  "canon": "Tatsunori B. Hashimoto",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "dubois2024alpacaeval"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Evan Miller",
+  "canon": "Evan Miller",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "miller2024errorbars"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Vladimir Vovk",
+  "canon": "Vladimir Vovk",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2005,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "vovk2005algorithmic"
+  ],
+  "cited_in": [
+   "reliability"
+  ]
+ },
+ {
+  "name": "Alexander Gammerman",
+  "canon": "Alexander Gammerman",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2005,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "vovk2005algorithmic"
+  ],
+  "cited_in": [
+   "reliability"
+  ]
+ },
+ {
+  "name": "Glenn Shafer",
+  "canon": "Glenn Shafer",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2005,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "vovk2005algorithmic"
+  ],
+  "cited_in": [
+   "reliability"
+  ]
+ },
+ {
+  "name": "Yonatan Geifman",
+  "canon": "Yonatan Geifman",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "geifman2017selective"
+  ],
+  "cited_in": [
+   "reliability"
+  ]
+ },
+ {
+  "name": "Ran El-Yaniv",
+  "canon": "Ran El-Yaniv",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "geifman2017selective"
+  ],
+  "cited_in": [
+   "reliability"
+  ]
+ },
+ {
+  "name": "Sebastian Farquhar",
+  "canon": "Sebastian Farquhar",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "farquhar2024semantic"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Jannik Kossen",
+  "canon": "Jannik Kossen",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "farquhar2024semantic"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Lorenz Kuhn",
+  "canon": "Lorenz Kuhn",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "farquhar2024semantic"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Yada Pruksachatkun",
+  "canon": "Yada Pruksachatkun",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2019superglue"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Nikita Nangia",
+  "canon": "Nikita Nangia",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2019superglue"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Victor Quach",
+  "canon": "Victor Quach",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "quach2023conformal"
+  ],
+  "cited_in": [
+   "reliability"
+  ]
+ },
+ {
+  "name": "Adam Fisch",
+  "canon": "Adam Fisch",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "quach2023conformal"
+  ],
+  "cited_in": [
+   "reliability"
+  ]
+ },
+ {
+  "name": "Tal Schuster",
+  "canon": "Tal Schuster",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "quach2023conformal"
+  ],
+  "cited_in": [
+   "reliability"
+  ]
+ },
+ {
+  "name": "Laura Weidinger",
+  "canon": "Laura Weidinger",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "weidinger2023sociotechnical"
+  ],
+  "cited_in": [
+   "reliability"
+  ]
+ },
+ {
+  "name": "Maribeth Rauh",
+  "canon": "Maribeth Rauh",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "weidinger2023sociotechnical"
+  ],
+  "cited_in": [
+   "reliability"
+  ]
+ },
+ {
+  "name": "Nahema Marchal",
+  "canon": "Nahema Marchal",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "weidinger2023sociotechnical"
+  ],
+  "cited_in": [
+   "reliability"
   ]
  }
 ]

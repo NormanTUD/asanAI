@@ -139,11 +139,11 @@ def main():
     expected_entries = None
     if os.path.exists(lit):
         with open(lit, encoding="utf-8") as f:
-            # top-level bibData keys only (tab-indented), UNIQUE — must match
+            # top-level bibData keys only (indented), UNIQUE — must match
             # the parse pattern in atlas_parse_bib.py. Unique because
             # literature.js carries duplicate top-level keys (JS last-wins) and
             # parse_bib dedupes them; counting occurrences would inflate the total.
-            expected_entries = len(set(re.findall(r'\n\t"([^"]+)"\s*:\s*\{', f.read())))
+            expected_entries = len(set(re.findall(r'\n[ \t]+"([^"]+)"\s*:\s*\{', f.read())))
     if expected_entries is not None:
         check("entries match literature.js", len(bib["entries"]) == expected_entries,
               "%d vs %d" % (len(bib["entries"]), expected_entries))

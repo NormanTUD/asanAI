@@ -414,6 +414,24 @@ def merge_authors(rows, bib, report):
         bc, _ = canonical_author_name(bib_name)
         bib_by_canon.setdefault(bc.casefold(), []).append(bdata)
 
+    # Bibliographies grow between placement passes. Fill every plausible name
+    # that has no placement row as explicitly unplaced (conf 0, no coordinates)
+    # so coverage stays complete without inventing a location.
+    for bib_name, bdata in bib.get("authors", {}).items():
+        canon, alias = canonical_author_name(bib_name)
+        if not is_plausible_name(canon):
+            continue
+        key = canon.casefold()
+        if key in groups:
+            continue
+        groups[key] = {
+            "name": bib_name.strip(), "canon": canon, "alias": alias,
+            "lat": None, "lng": None, "city": "",
+            "year": bdata.get("minyear"), "conf": 0,
+        }
+        order.append(key)
+        report.setdefault("author_autofill", []).append(canon)
+
     out = []
     for key in order:
         rec = groups[key]
@@ -647,6 +665,7 @@ def main(argv):
     report = {
         "entity_merges": 0, "entity_rejects": [], "entity_repairs": {},
         "author_merges": 0, "author_row_rejects": [], "author_repairs": {},
+        "author_autofill": [],
         "load_errors": [], "missing_files": [], "coverage_missing": [],
     }
 
@@ -706,8 +725,9 @@ def main(argv):
             rows.append((row, fname))
     print("author rows raw: %d" % len(rows))
     authors = merge_authors(rows, bib, report)
-    print("authors merged: %d (rejected rows: %d, merges: %d)" %
-          (len(authors), len(report["author_row_rejects"]), report["author_merges"]))
+    print("authors merged: %d (rejected rows: %d, merges: %d, autofilled unplaced: %d)" %
+          (len(authors), len(report["author_row_rejects"]), report["author_merges"],
+           len(report["author_autofill"])))
 
     # coverage: every bib author name must be covered by some placed row (after canon)
     covered = set(x["canon"].casefold() for x in authors)

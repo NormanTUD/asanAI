@@ -30,17 +30,22 @@ SKIP_SLUGS = {"functions", "index", "index_full", "search_lib",
 def parse_entries(content):
     """Top-level keys of bibData: lines of the form  \t"key": {"""
     starts = [(m.group(1), m.start()) for m in
-              re.finditer(r'\n\t"([^"]+)"\s*:\s*\{', content)]
+              re.finditer(r'\n[ \t]+"([^"]+)"\s*:\s*\{', content)]
     parsed = {}
     for n, (key, pos) in enumerate(starts):
         end = starts[n + 1][1] if n + 1 < len(starts) else len(content)
         body = content[pos:end]
 
-        def grab(field):
-            m = re.search(field + r'\s*:\s*"([^"]*)"', body)
+        def grab(field, numeric=False):
+            # Field names are usually bare (title: "…") but a few entries use
+            # quoted keys ({"title":"…"}); years may be quoted or numeric.
+            pattern = r'"?' + re.escape(field) + r'"?\s*:\s*'
+            pattern += r'(-?\d+(?:\.\d+)?)' if numeric else r'"([^"]*)"'
+            m = re.search(pattern, body)
             return m.group(1) if m else None
 
-        title, author, year, url = grab("title"), grab("author"), grab("year"), grab("url")
+        title, author, url = grab("title"), grab("author"), grab("url")
+        year = grab("year", numeric=True) or grab("year")
         if title is None and author is None:
             continue
         parsed[key] = {"title": title or "", "author": author or "",
