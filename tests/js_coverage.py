@@ -829,7 +829,7 @@ def write_reports(report, output_dir):
     _write_priority(
         os.path.join(output_dir, "html", "priority.html"),
         report,
-        os.path.relpath(index_path, os.path.join(output_dir, "html")),
+        os.path.relpath(index_path, os.path.join(output_dir, "html")).replace(os.sep, "/"),
     )
     for file_info, analysis, source, _ in report["files"]:
         page_path = os.path.join(output_dir, "html", file_info["path"] + ".html")
@@ -838,7 +838,7 @@ def write_reports(report, output_dir):
             file_info,
             analysis,
             source,
-            os.path.relpath(index_path, os.path.dirname(page_path)),
+            os.path.relpath(index_path, os.path.dirname(page_path)).replace(os.sep, "/"),
         )
 
     summary = {
