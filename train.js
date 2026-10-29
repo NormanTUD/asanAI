@@ -525,10 +525,12 @@ async function _train_neural_network_start () {
 	}
 	last_model_fingerprint = new_fingerprint;
 
-	if (!_model_fingerprint_unchanged) {
-		training_logs_batch = get_empty_plotly("Loss");
-		training_logs_epoch = get_empty_plotly("Loss");
-	}
+	// Every manual training run starts a fresh loss plot. Keeping the previous
+	// arrays when the model fingerprint was unchanged made a second "Start
+	// training" append to the old curve (or skip Plotly.newPlot entirely).
+	training_logs_batch = get_empty_plotly("Loss");
+	training_logs_epoch = get_empty_plotly("Loss");
+	_clear_plotly_epoch_history();
 
 	last_batch_time = 0;
 
@@ -2449,9 +2451,9 @@ async function reset_stuff_after_training (x_and_y) {
 }
 
 function prepare_site_for_training() {
-	if (!_model_fingerprint_unchanged) {
-		_clear_plotly_epoch_history();
-	}
+	// A training run always gets its own plot, even when the model/
+	// hyperparameter fingerprint is unchanged.
+	_clear_plotly_epoch_history();
 }
 
 async function set_input_shape_from_xs(x_and_y) {

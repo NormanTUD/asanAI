@@ -113,8 +113,8 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 1414;
-var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 501;
+var DEFAULT_EXPECTED_TEST_COUNT = 1416;
+var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 503;
 
 function _test_expected_count (storage_key, fallback) {
 	try {
@@ -1947,6 +1947,57 @@ function test_mobile_more_panel_markup() {
 		typeof mobile_open_tab === "function";
 }
 
+function test_prepare_site_for_training_always_clears_plot() {
+	const old_unchanged = _model_fingerprint_unchanged;
+	const plot = document.getElementById("plotly_epoch_history");
+	if (!plot) return false;
+	const wrapper = plot.parentElement;
+	const old_html = plot.innerHTML;
+	const old_plot_display = plot.style.display;
+	const old_wrapper_display = wrapper.style.display;
+
+	try {
+		plot.innerHTML = "<div class='plotly'>old run</div>";
+		plot.style.display = "block";
+		wrapper.style.display = "block";
+		_model_fingerprint_unchanged = true;
+		prepare_site_for_training();
+		return plot.innerHTML === "" && wrapper.style.display === "none";
+	} finally {
+		_model_fingerprint_unchanged = old_unchanged;
+		plot.innerHTML = old_html;
+		plot.style.display = old_plot_display;
+		wrapper.style.display = old_wrapper_display;
+	}
+}
+
+async function test_augmented_previews_go_to_gallery_canvas() {
+	const old_entries = _photo_gallery.entries.slice();
+	const old_expected = _photo_gallery.expected;
+	const old_layout = _photo_gallery.layout;
+	const before_count = _photo_gallery.entries.length;
+	const t = tf.ones([8, 8, 3]);
+
+	try {
+		add_tensor_as_image_to_photos(t);
+		await new Promise(function (resolve) { setTimeout(resolve, 200); });
+		const entries = _photo_gallery.entries;
+		const last = entries[entries.length - 1];
+		const added_to_gallery = entries.length === before_count + 1 &&
+			!!last && last.img && last.img.tagName === "IMG" && String(last.url).indexOf("augmented:") === 0;
+		const no_loose_canvases = document.querySelectorAll("#photos canvas[id^='augmented_photo_']").length === 0;
+		return added_to_gallery && no_loose_canvases;
+	} finally {
+		t.dispose();
+		_photo_gallery.entries = old_entries;
+		_photo_gallery.expected = old_expected;
+		_photo_gallery.layout = old_layout;
+		_photo_gallery_hide_tooltip();
+		try { _photo_gallery_apply_layout(old_expected || old_entries.length); } catch (e) {}
+		try { _photo_gallery_redraw(); } catch (e) {}
+	}
+}
+
 async function test_failed_image_is_not_added_as_null() {
 	const original_handler = window.handleImageDownload;
 	const original_force_download = force_download;
@@ -2095,6 +2146,8 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("training data fetch reports detailed diagnostics", await test_training_data_fetch_reports_diagnostics(), true);
 	test_equal("hidden-tab Plotly charts resize after activation", await test_plotly_resize_after_tab_show(), true);
 	test_equal("mobile More panel exposes views and model actions", test_mobile_more_panel_markup(), true);
+	test_equal("new training run always clears the old loss plot", test_prepare_site_for_training_always_clears_plot(), true);
+	test_equal("augmented previews are drawn into the photo gallery canvas", await test_augmented_previews_go_to_gallery_canvas(), true);
 
 	var fit_data = await get_fit_data();
 

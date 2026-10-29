@@ -1302,6 +1302,24 @@ function _render_tensor_to_canvas(_tensor, canvas) {
 	}
 }
 
+function _add_augmented_canvas_to_photo_gallery(canvas) {
+	const container = _photo_gallery_container();
+
+	// The photo gallery canvas is the normal preview surface: it draws all
+	// samples (including augmented ones) in the same grid and keeps the
+	// existing hover/tooltip hit-testing. Only fall back to a loose canvas if
+	// there is no gallery at all.
+	if (!container) {
+		const photos = document.getElementById("photos");
+		if (photos) photos.appendChild(canvas);
+		return;
+	}
+
+	const img = new Image();
+	img.src = canvas.toDataURL("image/png");
+	_photo_gallery_add_image(img, "augmented:" + uuidv4());
+}
+
 function add_tensor_as_image_to_photos (_tensor) {
 	assert(typeof(_tensor) == "object", "_tensor must be an object");
 	assert(Object.keys(_tensor).includes("shape"), "_tensor must be an object that contains a shape subkey");
@@ -1311,29 +1329,20 @@ function add_tensor_as_image_to_photos (_tensor) {
 		if(_tensor.shape[0] == 1) {
 			_tensor = tensor(array_sync(_tensor)[0]);
 		} else {
-			const photos = document.getElementById("photos");
-			const frag = document.createDocumentFragment();
 			const sync_data = array_sync(_tensor);
 			for (var tensor_idx = 0; tensor_idx < _tensor.shape[0]; tensor_idx++) {
 				var this_tensor = tensor(sync_data[tensor_idx]);
 				var canvas = document.createElement("canvas");
-				canvas.id = "augmented_photo_" + uuidv4();
 				_render_tensor_to_canvas(this_tensor, canvas);
-				frag.appendChild(canvas);
+				_add_augmented_canvas_to_photo_gallery(canvas);
 			}
-			photos.appendChild(frag);
 			return;
 		}
 	}
 
-	var uuid = uuidv4();
-	var id = "augmented_photo_" + uuid;
-	canvas = document.createElement("canvas");
-	canvas.id = id;
-	document.getElementById("photos").appendChild(canvas);
-
+	var canvas = document.createElement("canvas");
 	_render_tensor_to_canvas(_tensor, canvas);
-
+	_add_augmented_canvas_to_photo_gallery(canvas);
 }
 
 function truncate_text (fullStr, strLen, separator = "...") {
