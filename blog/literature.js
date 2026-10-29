@@ -15595,6 +15595,46 @@ window.bibData = {
 		license: "CC BY 2.0",
 		alternativetitle: "Burgess Shale fossils"
 	},
+	"img_fuxianhuia_fossil": {
+		title: "Fuxianhuia protensa fossil (YPM IP 421686)",
+		author: "Jessica Utrup",
+		year: 2021,
+		url: "https://commons.wikimedia.org/wiki/File:Fuxianhuia_protensa_(YPM_IP_421686).jpg",
+		license: "CC0",
+		alternativetitle: "Fuxianhuia protensa fossil"
+	},
+	"img_fuxianhuiid_cns": {
+		title: "Central nervous system of Fuxianhuiida",
+		author: "Junnn11",
+		year: 2021,
+		url: "https://commons.wikimedia.org/wiki/File:20211113_Fuxianhuiid_central_nervous_system.png",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Fuxianhuiid central nervous system"
+	},
+	"img_pleurobrachia_bachei": {
+		title: "Pleurobrachia bachei (Pacific sea gooseberry)",
+		author: "Scott Loarie",
+		year: 2023,
+		url: "https://commons.wikimedia.org/wiki/File:Pleurobrachia_bachei_267730929.jpg",
+		license: "CC0",
+		alternativetitle: "Pleurobrachia bachei"
+	},
+	"img_anomalocaris_eye_fossil": {
+		title: "Fossilised Anomalocaris eye preserved in pyrite",
+		author: "UNE Photos",
+		year: 2011,
+		url: "https://commons.wikimedia.org/wiki/File:Fossilised_Anomalocaris_eye.jpg",
+		license: "CC BY 2.0",
+		alternativetitle: "Fossilised Anomalocaris eye"
+	},
+	"img_octopus_eye": {
+		title: "Eye of an octopus",
+		author: "incidencematrix",
+		year: 2015,
+		url: "https://commons.wikimedia.org/wiki/File:Octopus_Eye_(23859301645).jpg",
+		license: "CC BY 2.0",
+		alternativetitle: "Octopus eye"
+	},
 	"img_vetulicola_cuneatus": {
 		title: "Vetulicola cuneatus, primitive deuterostome from the Chengjiang biota",
 		author: "Woudloper",
