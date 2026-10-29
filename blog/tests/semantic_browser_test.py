@@ -247,6 +247,23 @@ def main() -> int:
 				"macro braces are cleaned from snippets")
 			check("Frank Rosenblatt" in first, "caption text survives snippet cleaning")
 
+		# Redirect stubs have no content and must never surface as a result.
+		set_query(browser, "untold history")
+		wait_for_results(browser, "untold history")
+		hrefs = browser.execute_script(
+			"return Array.from(document.querySelectorAll('.search-result-item'))"
+			".map(function (link) { return link.getAttribute('href'); });"
+		)
+		check(
+			all(href.split("#")[0] != "untold_history" for href in hrefs),
+			"redirect stub is not a search result",
+			str(hrefs[:5]),
+		)
+		check(
+			all(title.strip() != "untold_history" for title in item_titles(browser, 12)),
+			"redirect stub title is not shown",
+		)
+
 		# The AI checkbox must switch to pure keyword search and remember it.
 		set_ai_toggle(browser, False)
 		question = "why do neural networks need nonlinear activation functions"

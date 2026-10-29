@@ -270,16 +270,17 @@ def iter_chunks(page, max_chars: int):
         (block["text"][:320] for block in blocks if block["type"] == "text" and len(block["text"]) >= 40),
         "",
     )
-    yield {
-        "t": "page",
-        "p": name,
-        "pt": title,
-        "h": "",
-        "x": intro or title,
-        "u": name,
-        "i": "",
-        "e": f"{title}. {intro}" if intro else title,
-    }
+    if intro:
+        yield {
+            "t": "page",
+            "p": name,
+            "pt": title,
+            "h": "",
+            "x": intro,
+            "u": name,
+            "i": "",
+            "e": f"{title}. {intro}",
+        }
 
     heading = ""
     heading_slug = ""

@@ -99,6 +99,12 @@ After the figure.
 </div>
 PHP);
 
+fixtureFile($fixtureDir, 'redirect.php', <<<'PHP'
+<?php
+header('Location: math_i.php', true, 301);
+exit;
+PHP);
+
 fixtureFile($fixtureDir, 'macros.php', <<<'PHP'
 <?php include_once("functions.php");
 <!--
@@ -301,6 +307,9 @@ check(pagesHave($d, 'macros'), 'macros: index term is searchable');
 
 /* ---------- exclusion / limits ---------- */
 
+$pages = buildIndex($fixtureDir, ['index.php', 'zz_secret.php'], false);
+check(!isset($pages['redirect']), 'pages without searchable blocks are not indexed');
+
 $d = q('secrettermxyz');
 check(count($d['grouped']) === 0, 'excluded file is not searched by default');
 
@@ -343,6 +352,7 @@ unlink($fixtureDir . '/attention.php');
 unlink($fixtureDir . '/math_ii.php');
 unlink($fixtureDir . '/zz_secret.php');
 unlink($fixtureDir . '/figmd.php');
+unlink($fixtureDir . '/redirect.php');
 unlink($fixtureDir . '/macros.php');
 unlink($fixtureDir . '/literature.js');
 unlink($cacheDir . '/cache.php');

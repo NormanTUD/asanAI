@@ -105,6 +105,11 @@ def main():
     ]
     check(not raw_macro, "semantic chunks contain no raw figure or citation markup")
 
+    check(not any(chunk["p"] == "untold_history" for chunk in meta["chunks"]),
+          "redirect stubs are not in the semantic index")
+    check(not any(chunk["x"].strip() == chunk["p"] for chunk in meta["chunks"]),
+          "no chunk snippet is just a page slug")
+
     magic, version, count, dims = struct.unpack_from("<4I", data, 0)
     check(magic == 0x4D4E5356, "vector file magic is MNSV")
     check(version == 1, "vector file version is 1")

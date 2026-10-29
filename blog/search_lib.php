@@ -574,6 +574,8 @@ function buildIndex($dir, $exclude = null, $useCache = true) {
 		$content = @file_get_contents($f);
 		if ($content === false) continue;
 		$blocks = extractBlocks($content, $bibData);
+		/* Redirect stubs and pure-PHP endpoints have no searchable text. */
+		if (count($blocks) === 0) continue;
 		foreach ($blocks as $i => $b) {
 			$blocks[$i]['norm'] = searchNormalize($b['text']);
 			$blocks[$i]['fold'] = foldDiacritics(mb_strtolower($b['text'], 'UTF-8'));

@@ -20,6 +20,13 @@ again before reporting done.
 - Minimal change — no new dependencies without asking. — Smallest diff that
   solves the problem. Libraries stay vendored (no CDN, no package manager);
   ask before adding anything new.
+- Rebuild the search indexes after blog source changes. — After editing a
+  top-level lesson `.php`, `literature.js`, `search_lib.php`, or the semantic
+  chunker, run `uv run blog/tools/build_semantic_index.py` from the repository
+  root and commit the regenerated `.search_cache.json`, `semantic_index.json`
+  and `semantic_vectors.bin`. It refreshes the lexical cache through PHP and
+  the semantic vectors; `blog/tests/semantic_index_test.py` fails in CI when
+  they are stale.
 - Leave it cleaner than you found it. — Code, markup, prose, and structure
   should be better after your change than before. Tidy only what you touch; do
   not start unrelated refactors.
@@ -575,10 +582,12 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
   embedded in the browser by the vendored `blog/vendor/model2vec/` (packed
   4-bit potion-base-8M, English-only) and ranked against precomputed chunk
   vectors. Question-like queries follow semantic order; short keyword queries
-  fuse lexical + semantic with reciprocal rank fusion. Regenerate after lesson
-  edits with `uv run blog/tools/build_semantic_index.py` (refreshes
-  `.search_cache.json` via PHP, writes `semantic_index.json` +
-  `semantic_vectors.bin`). Tests: `node blog/tests/semantic_js_test.js` and
+  fuse lexical + semantic with reciprocal rank fusion. **After editing lessons,
+  `literature.js`, `search_lib.php`, or the chunker, rerun
+  `uv run blog/tools/build_semantic_index.py` and commit the regenerated
+  `.search_cache.json`, `semantic_index.json` and
+  `semantic_vectors.bin`.** The script refreshes the lexical cache via PHP and
+  the semantic vectors. Tests: `node blog/tests/semantic_js_test.js` and
   `uv run blog/tests/semantic_index_test.py`; the latter fails if the index is
   stale.
 - **Read-progress** (`progress_tracker.js`): per-tile 10-segment "where I've
