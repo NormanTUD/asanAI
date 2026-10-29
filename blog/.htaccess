@@ -85,3 +85,18 @@ RewriteRule ^(.*)$ %{REQUEST_URI}.php [L]
     Header always set Cache-Control "no-cache, must-revalidate"
     Header always set Pragma "no-cache"
 </IfModule>
+
+# The packed embedding model is versioned by its filename and never changes
+# in place, so it can be cached for a year. The generated index files stay
+# on the revalidating no-cache path above: they are regenerated in place.
+<IfModule mod_headers.c>
+    <FilesMatch "potion-base-8M\.bin$">
+        Header always set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+</IfModule>
+
+# JSON payloads (search results and the generated semantic index) compress
+# well; the int8 vector file deliberately has no filter (it is near-random).
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE application/json
+</IfModule>

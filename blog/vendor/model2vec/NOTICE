@@ -1,0 +1,9 @@
+model2vec-js 0.1.0
+MIT License — https://github.com/ShakirasHips/model2vec-js
+Vendored files: model.js, tokenizer.js, format.js, load.js
+
+Bundled model: minishlab/potion-base-8M
+MIT License — https://huggingface.co/minishlab/potion-base-8M
+Vendored file: models/potion-base-8M.bin (packed 4-bit, 256 dimensions)
+
+The full license text is in LICENSE.

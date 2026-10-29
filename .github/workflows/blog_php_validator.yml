@@ -42,6 +42,10 @@ jobs:
         run: |
           uv run blog/tests/php_validator.py blog/
 
+      - name: Run Search Engine Tests
+        run: |
+          php blog/tests/search_test.php
+
       - name: Run Analytics Tests
         run: |
           php blog/tests/analytics_test.php
@@ -142,6 +146,34 @@ jobs:
       - name: Run search tests
         run: node blog/tests/search_js_test.js
 
+      - name: Run semantic search tests
+        run: node blog/tests/semantic_js_test.js
+
+  semantic-index-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install PHP CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y php-cli
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Run semantic index test
+        run: uv run blog/tests/semantic_index_test.py
+
   php-render-validation:
     runs-on: ubuntu-latest
     steps:
@@ -171,6 +203,10 @@ jobs:
       - name: Run PHP Render Validator
         run: |
           uv run blog/tests/php_render_validator.py blog/
+
+      - name: Run Semantic Search Browser Test
+        run: |
+          uv run blog/tests/semantic_browser_test.py
 
       - name: Run Analytics Client Tracker Test
         run: |

@@ -227,6 +227,7 @@ function load_base_js ($defer = false) {
 	js("loader", null, $defer);
 	js("three.min", null, $defer);
 	js("search", null, $defer);
+	js("semantic_search", null, $defer);
 	js("topics", null, $defer);
 	js("keypoint", null, $defer);
 	js("progress_tracker", null, $defer);

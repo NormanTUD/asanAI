@@ -63,6 +63,75 @@ meaning in a high-dimensional space.
 - Every factual claim and every image is **cited** — sources live in
   [`literature.js`](literature.js) and are link-checked in CI.
 
+## Search
+
+The course has two search layers, both entirely local:
+
+- **Keyword search** — `search.php` / `search_lib.php` scan every lesson, split
+  the text into heading, paragraph and caption blocks, and rank exact terms,
+  prefixes, regex (`/pattern/`) and fuzzy (`~term`) matches. The parsed blocks
+  are cached in `.search_cache.json`. PHP rebuilds that cache automatically
+  when a lesson, `literature.js` or `search_lib.php` changes; it is also
+  refreshed by the semantic indexer below.
+- **Semantic search** — the same blocks are embedded once with
+  [Model2Vec](https://github.com/MinishLab/model2vec) and stored as compact
+  int8 vectors. The browser embeds only the query, using the vendored
+  [`model2vec-js`](vendor/model2vec/) runtime and the 4-bit
+  `minishlab/potion-base-8M` model (MIT, English-only). There is no API key, no
+  GPU and no server-side inference. The **AI search** checkbox in the search
+  window turns this layer off and leaves a pure keyword search; the choice is
+  remembered in `localStorage` (`mn_search_ai`).
+
+### Regenerating the semantic index
+
+Run this after editing, adding or removing a lesson, after changing
+`literature.js`, or after changing the block extraction in `search_lib.php`:
+
+```bash
+cd blog
+uv run tools/build_semantic_index.py
+```
+
+`uv` reads the PEP 723 header in the script and installs the only dependency,
+`numpy`. If `numpy` is already installed, plain `python3
+tools/build_semantic_index.py` works too. The script:
+
+1. calls `php tools/dump_search_blocks.php`, which refreshes
+   `.search_cache.json` and returns exactly the blocks the keyword search uses;
+2. expands `\marginfig`, `\sideimage`, `\sidenote`, `\index` and `\label`,
+   resolves citations, and splits long paragraphs at sentence boundaries;
+3. embeds every chunk with the vendored packed model and quantizes the vectors;
+4. writes `semantic_index.json` (chunk metadata, page titles, snippets, source
+   hash) and `semantic_vectors.bin` (header + per-vector scales + int8 vectors).
+
+`--probe "a natural-language question"` prints the nearest chunks and is useful
+for checking retrieval quality. A build takes roughly 15–25 seconds on a normal
+laptop and produces about 5 MB of JSON (≈1 MB gzipped) and 3 MB of vectors.
+
+The index records a content hash of its sources. CI runs
+`blog/tests/semantic_index_test.py`, which fails when that hash no longer
+matches the lessons — rerun the command above and commit the two regenerated
+files.
+
+### Search tests
+
+From the repository root:
+
+```bash
+php blog/tests/search_test.php                 # lexical helpers, macros, cache
+node blog/tests/search_js_test.js              # modes, snippets, hybrid fusion
+node blog/tests/semantic_js_test.js            # model, index, cosine ranking
+uv run blog/tests/semantic_index_test.py       # freshness, tokenizer, vectors
+uv run blog/tests/semantic_browser_test.py     # real UI: question, toggle, fallback
+```
+
+The browser test boots a temporary PHP server and headless Chromium, opens the
+search window, asks a natural-language question, checks the `MEANING` results
+and the Frank-Rosenblatt macro snippet, disables AI search and verifies the
+pure keyword path, checks that the preference survives a reload, and checks
+that regex/fuzzy modes and a failed model load still work. The blog CI workflow
+runs all of these on every push or pull request that touches `blog/**`.
+
 ## Where to read it
 
 The course is served from the same host as the

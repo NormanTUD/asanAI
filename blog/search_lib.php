@@ -206,6 +206,73 @@ function cleanMarkdown($text) {
 	return $text;
 }
 
+/* Read a balanced {…} argument starting at $pos. Returns its content and the
+ * position after the closing brace, or null when the braces are unbalanced. */
+function readSearchBraced($text, $pos) {
+	$len = strlen($text);
+	if ($pos >= $len || $text[$pos] !== '{') return null;
+	$depth = 0;
+	$start = $pos + 1;
+	for ($i = $pos; $i < $len; $i++) {
+		if ($text[$i] === '{') $depth++;
+		elseif ($text[$i] === '}') {
+			$depth--;
+			if ($depth === 0) {
+				return ['content' => substr($text, $start, $i - $start), 'end' => $i + 1];
+			}
+		}
+	}
+	return null;
+}
+
+/* Expand the prose macros that carry visible text so figure file names and
+ * macro braces never reach a search snippet. Citations stay in the caption
+ * and are resolved by resolveCitations() afterwards. */
+function expandSearchMacros($text) {
+	$out = '';
+	$len = strlen($text);
+	$i = 0;
+	while ($i < $len) {
+		if ($text[$i] !== '\\') {
+			$out .= $text[$i++];
+			continue;
+		}
+		if (!preg_match('/^\\\\(marginfig|sideimage|sidenote|index|label)\b/', substr($text, $i), $m)) {
+			$out .= $text[$i++];
+			continue;
+		}
+
+		$command = $m[1];
+		$pos = $i + 1 + strlen($command);
+		if ($command === 'sideimage' && $pos < $len && $text[$pos] === '[') {
+			$close = strpos($text, ']', $pos);
+			if ($close !== false) $pos = $close + 1;
+		}
+
+		$first = readSearchBraced($text, $pos);
+		if ($first === null) {
+			$out .= $text[$i++];
+			continue;
+		}
+
+		if ($command === 'marginfig' || $command === 'sideimage') {
+			$second = readSearchBraced($text, $first['end']);
+			if ($second === null) {
+				$out .= $first['content'];
+				$i = $first['end'];
+			} else {
+				$out .= $second['content'];
+				$i = $second['end'];
+			}
+			continue;
+		}
+
+		$out .= $first['content'];
+		$i = $first['end'];
+	}
+	return $out;
+}
+
 function resolveCitations($text, $bibData) {
 	$text = preg_replace_callback('/\\\\(footcite|cite|citeauthor|citeauthorlastnameand|citetitle|citeyear|citealternativetitle|citeurl)(?:\[([^\]]*)\])?\{([^}]+)\}/', function($m) use ($bibData) {
 		$type = $m[1];
@@ -241,9 +308,10 @@ function resolveCitations($text, $bibData) {
 }
 
 function cleanText($text, $bibData) {
+	$text = expandSearchMacros($text);
 	$text = cleanMath($text);
-	$text = cleanMarkdown($text);
 	$text = resolveCitations($text, $bibData);
+	$text = cleanMarkdown($text);
 	$text = preg_replace('/\s+/', ' ', $text);
 	return trim($text);
 }
@@ -437,8 +505,8 @@ function extractBlocks($content, $bibData) {
 	return $blocks;
 }
 
-/* Build (and optionally cache) the search index for a directory of PHP pages. */
-function buildIndex($dir, $exclude = null, $useCache = true) {
+/* Fingerprint of the source files that feed the search index. */
+function searchCacheKey($dir, $exclude = null) {
 	if ($exclude === null) $exclude = search_excludes();
 	$dir = rtrim($dir, '/');
 	$files = glob($dir . '/*.php');
@@ -455,7 +523,39 @@ function buildIndex($dir, $exclude = null, $useCache = true) {
 	$fingerprint['__lit__'] = file_exists($litFile) ? @filemtime($litFile) : 0;
 	$fingerprint['__lib__'] = @filemtime(__FILE__);
 	ksort($fingerprint);
-	$key = sha1(json_encode($fingerprint));
+	return sha1(json_encode($fingerprint));
+}
+
+/* Content hash of the same sources, stable across checkouts. Used to tell
+ * whether the generated semantic index still matches the lessons. */
+function searchSourceHash($dir, $exclude = null) {
+	if ($exclude === null) $exclude = search_excludes();
+	$dir = rtrim($dir, '/');
+	$files = glob($dir . '/*.php');
+	sort($files);
+
+	$hash = hash_init('sha1');
+	foreach ($files as $f) {
+		$name = basename($f);
+		if (in_array($name, $exclude, true)) continue;
+		hash_update($hash, $name . "\0");
+		hash_update($hash, (string)@file_get_contents($f));
+	}
+	$litFile = $dir . '/literature.js';
+	hash_update($hash, 'literature.js' . "\0");
+	hash_update($hash, file_exists($litFile) ? (string)@file_get_contents($litFile) : '');
+	hash_update($hash, 'search_lib.php' . "\0");
+	hash_update($hash, (string)@file_get_contents(__FILE__));
+	return hash_final($hash);
+}
+
+/* Build (and optionally cache) the search index for a directory of PHP pages. */
+function buildIndex($dir, $exclude = null, $useCache = true) {
+	if ($exclude === null) $exclude = search_excludes();
+	$dir = rtrim($dir, '/');
+	$files = glob($dir . '/*.php');
+
+	$key = searchCacheKey($dir, $exclude);
 
 	$cacheFile = $dir . '/.search_cache.json';
 	if ($useCache && file_exists($cacheFile)) {
@@ -465,6 +565,7 @@ function buildIndex($dir, $exclude = null, $useCache = true) {
 		}
 	}
 
+	$litFile = $dir . '/literature.js';
 	$bibData = loadLiterature($litFile);
 	$pages = [];
 	foreach ($files as $f) {

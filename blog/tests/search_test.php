@@ -99,9 +99,25 @@ After the figure.
 </div>
 PHP);
 
+fixtureFile($fixtureDir, 'macros.php', <<<'PHP'
+<?php include_once("functions.php");
+<!--
+COURSE_METADATA:
+title: Macro Cleaning
+-->
+<div class="md">
+## Frank Rosenblatt
+\marginfig{frank_rosenblatt_commons.jpg}{Frank Rosenblatt. \cite{img_frank_rosenblatt}. [CC BY-SA 4.0](https://example.com).}
+</div>
+<div class="md">
+A sentence with a \sidenote{sidenotemarker text with \cite{img_frank_rosenblatt}.} and an \index{indexedterm}.
+</div>
+PHP);
+
 fixtureFile($fixtureDir, 'literature.js', <<<'JS'
 var literature = {
   "key": {title: "Sketch of the Analytical Engine", author: "Ada Lovelace", year: 1843, url: "http://example.com"},
+  "img_frank_rosenblatt": {title: "Frank Rosenblatt", author: "Anonymous / Heinz Nixdorf MuseumsForum", year: 1958, url: "http://example.com"},
 };
 JS);
 
@@ -267,6 +283,22 @@ $d = q('lovelace');
 check(pagesHave($d, 'math_i'), 'citation author is searchable');
 check(($d['grouped'][0]['page'] ?? '') === 'math_i', 'citation author found in math_i');
 
+/* ---------- macro cleaning (regression: raw figure markup in snippets) ---------- */
+
+$d = q('rosenblatt');
+$macroText = implode(' ', array_map(fn($r) => $r['snippet'], $d['results']));
+check(pagesHave($d, 'macros'), 'macros: the marginfig caption is searchable');
+check(strpos($macroText, 'frank_rosenblatt_commons.jpg') === false, 'macros: figure file name never reaches a snippet');
+check(strpos($macroText, '{') === false && strpos($macroText, '}') === false, 'macros: macro braces never reach a snippet');
+check(strpos($macroText, 'Frank Rosenblatt') !== false, 'macros: marginfig caption survives cleaning');
+check(strpos($macroText, 'img_frank_rosenblatt') === false, 'macros: citation key is resolved before markdown emphasis stripping');
+
+$d = q('sidenotemarker');
+check(pagesHave($d, 'macros'), 'macros: sidenote text is searchable');
+
+$d = q('indexedterm');
+check(pagesHave($d, 'macros'), 'macros: index term is searchable');
+
 /* ---------- exclusion / limits ---------- */
 
 $d = q('secrettermxyz');
@@ -311,6 +343,7 @@ unlink($fixtureDir . '/attention.php');
 unlink($fixtureDir . '/math_ii.php');
 unlink($fixtureDir . '/zz_secret.php');
 unlink($fixtureDir . '/figmd.php');
+unlink($fixtureDir . '/macros.php');
 unlink($fixtureDir . '/literature.js');
 unlink($cacheDir . '/cache.php');
 unlink($cacheDir . '/.search_cache.json');

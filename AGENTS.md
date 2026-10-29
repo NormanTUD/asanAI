@@ -571,6 +571,16 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
 - **Search** (`Ctrl+K` or `/`): modes are plain, `/regex/`, `~fuzzy`;
   normalization folds diacritics and Greek letters (search_lib.php). Indexing
   is server-side per request, cached in `blog/.search_cache.json`.
+- **Semantic search** (`semantic_search.js`): normal-language queries are also
+  embedded in the browser by the vendored `blog/vendor/model2vec/` (packed
+  4-bit potion-base-8M, English-only) and ranked against precomputed chunk
+  vectors. Question-like queries follow semantic order; short keyword queries
+  fuse lexical + semantic with reciprocal rank fusion. Regenerate after lesson
+  edits with `uv run blog/tools/build_semantic_index.py` (refreshes
+  `.search_cache.json` via PHP, writes `semantic_index.json` +
+  `semantic_vectors.bin`). Tests: `node blog/tests/semantic_js_test.js` and
+  `uv run blog/tests/semantic_index_test.py`; the latter fails if the index is
+  stale.
 - **Read-progress** (`progress_tracker.js`): per-tile 10-segment "where I've
   been" bars, dwell-time based (a band counts as read after ≥3 s). Passive —
   nothing to wire up in lessons.
@@ -786,7 +796,8 @@ dependency in a header won't resolve for a few days).
 | `uv run blog/tests/lesson_guard.py blog/` | per-lesson static regression guards (currently `math_iv.php`: headings-in-md, citation keys, 3D wiring) — extend the `LESSONS` list per lesson — plus blog-wide citation-integration, quiz-option-balance and site-footer guards | any guard | `blog/**` |
 | `uv run blog/tests/link_checker.py blog/` | every `url:` in `literature.js` returns 2xx; PDFs must start `%PDF`; TLS/bot-block soft-passes never fail | real failures | `blog/**` + weekly cron |
 | `uv run blog/tests/literature_dup_keys.py blog/` | every top-level key in `literature.js` appears exactly once (JS object last-wins would silently hide a duplicate) | **any duplicate** | `blog/**` |
-| `node blog/tests/{topics,math_alt,keypoint,search_js}_test.js` | DOM-stubbed unit tests of BlogTopics (interests, math dial, learned), math-alts, keypoints, search | any failed check | `blog/**` |
+| `node blog/tests/{topics,math_alt,keypoint,search_js,semantic_js}_test.js` | DOM-stubbed unit tests of BlogTopics (interests, math dial, learned), math-alts, keypoints, search, semantic ranking | any failed check | `blog/**` |
+| `uv run blog/tests/semantic_index_test.py` | semantic index freshness vs `.search_cache.json`, vector shape, Python↔JS tokenizer parity, int8 vector fidelity | stale index or any failed check | `blog/**` (semantic-index job) |
 | `uv run blog/tests/php_render_validator.py blog/` | headless-Chrome render (PHP built-in server): console error → exit 1; unrendered `$$` (with `_`/`\`) outside a `<div>` → exit 2; width overflow → exit 3 (only with `--check-width`); `--all-lessons --check-width --width-only` sweeps every lesson + the width gate via `window.__layoutGuardrailCheck()` | per exit codes | index.php only (width job currently disabled in CI) |
 | `uv run blog/tests/typo_checker.py blog/` | spell-checks lesson prose; whitelist `blog/tests/typo_whitelist.txt` (one word/line, case-insensitive, append to add) | typos | **local only** |
 | `uv run blog/tests/latex_error_checker.py --docroot blog/` | Playwright sweep of every lesson for LaTeX/render errors + static risk scan (`--trace` for traces) | failures (risk warnings don't) | **local only** |

@@ -6305,7 +6305,26 @@ html.atlas-overlap #reader-toggle {
 	border-bottom: 1px solid var(--mn-border-light);
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	flex-wrap: wrap;
+	column-gap: 12px;
+	row-gap: 4px;
+}
+.search-ai-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 0.72rem;
+	color: var(--mn-text-muted);
+	cursor: pointer;
+	user-select: none;
+	white-space: nowrap;
+}
+.search-ai-toggle input {
+	width: 13px;
+	height: 13px;
+	margin: 0;
+	accent-color: var(--mn-accent);
+	cursor: pointer;
 }
 .search-hint-mode {
 	margin-left: auto;
@@ -6464,6 +6483,24 @@ html.atlas-overlap #reader-toggle {
 	background: var(--mn-accent-lighter);
 	color: var(--mn-accent);
 	border: 1px solid var(--mn-accent-light);
+}
+.search-result-badge-semantic {
+	height: 16px;
+	padding: 0 6px;
+	font-size: 0.58rem;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	background: var(--mn-emerald-light);
+	color: var(--mn-emerald);
+	border-color: color-mix(in srgb, var(--mn-emerald) 35%, var(--mn-border));
+}
+.search-loading-label {
+	margin: 12px 0 0;
+	font-size: 0.82rem;
+	color: var(--mn-text-muted);
+}
+.search-loading {
+	gap: 12px;
 }
 
 .search-result-snippet {

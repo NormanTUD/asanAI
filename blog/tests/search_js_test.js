@@ -80,6 +80,23 @@ if (I) {
 
 	var m = I.extractMatchFromSnippet('Multi-Head Attention', '/attention/');
 	check(m.toLowerCase() === 'attention', 'extractMatchFromSnippet extracts matched text');
+
+	check(I.isQuestionLike('why do neural networks need activation functions'), 'multi-word query is question-like');
+	check(I.isQuestionLike('attention?'), 'trailing question mark is question-like');
+	check(!I.isQuestionLike('backpropagation'), 'single keyword is not question-like');
+
+	var semantic = [{ url: 'a#one', page: 'a', pageTitle: 'A', title: 'semantic', snippet: 's', semantic: true }];
+	var lexical = [
+		{ url: 'a#one', page: 'a', pageTitle: 'A', title: 'lexical duplicate', snippet: 'l' },
+		{ url: 'b#two', page: 'b', pageTitle: 'B', title: 'lexical only', snippet: 'l2' }
+	];
+	var questionFused = I.fuseResults(lexical, semantic, true);
+	check(questionFused.length === 2, 'question fusion dedupes shared URLs');
+	check(questionFused[0].url === 'a#one', 'question fusion keeps the semantic hit first');
+
+	var shortFused = I.fuseResults(lexical, semantic, false);
+	check(shortFused.length === 2, 'rank fusion dedupes shared URLs');
+	check(shortFused[0].semantic === false, 'a lexical+semantic hit is not marked semantic-only');
 }
 
 console.log('\n' + pass + ' passed, ' + fail + ' failed');

@@ -7,6 +7,13 @@
 	var debounceTimer = null;
 	var trigger = null;
 	var lastFocus = null;
+	var searchSeq = 0;
+	var semanticEnabled = true;
+	try {
+		semanticEnabled = window.localStorage.getItem('mn_search_ai') !== '0';
+	} catch (e) {
+		semanticEnabled = true;
+	}
 
 	function init() {
 		if (document.getElementById('search-overlay')) return;
@@ -23,11 +30,14 @@
 			'<div class="search-modal">' +
 				'<div class="search-header">' +
 					'					<svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>' +
-					'<input type="text" class="search-input" placeholder="Search across all modules…" aria-label="Search across all lessons" spellcheck="false">' +
+					'<input type="text" class="search-input" placeholder="Search or ask a question…" aria-label="Search across all lessons or ask a question" spellcheck="false">' +
 					'<button type="button" class="search-close" aria-label="Close search">&times;</button>' +
 				'</div>' +
 				'<div class="search-hints">' +
-					'<span class="search-hint-default">Press <kbd>Esc</kbd> to close &middot; <kbd>/pattern/</kbd> regex &middot; <kbd>~term</kbd> fuzzy</span>' +
+					'<span class="search-hint-default">Press <kbd>Esc</kbd> to close &middot; <kbd>/pattern/</kbd> regex &middot; <kbd>~term</kbd> fuzzy &middot; or ask a question in plain language</span>' +
+					'<label class="search-ai-toggle" title="Find results by meaning with a local model. Uncheck for pure keyword search.">' +
+						'<input type="checkbox" id="search-ai-toggle"> AI search' +
+					'</label>' +
 					'<span class="search-hint-mode" id="search-hint-mode"></span>' +
 				'</div>' +
 				'<div class="search-results" aria-live="polite"></div>' +
@@ -45,6 +55,14 @@
 
 		input.addEventListener('input', onInput);
 		input.addEventListener('keydown', onKeyDown);
+
+		var aiToggle = overlay.querySelector('#search-ai-toggle');
+		if (aiToggle) {
+			aiToggle.checked = semanticEnabled;
+			aiToggle.addEventListener('change', function() {
+				setSemanticEnabled(aiToggle.checked);
+			});
+		}
 
 		trigger = document.getElementById('search-trigger');
 		if (trigger) {
@@ -163,6 +181,7 @@
 
 	function doSearch(rawQuery) {
 		var query = normalizeSmartQuotes(rawQuery);
+		var seq = ++searchSeq;
 		if (abortController) {
 			abortController.abort();
 		}
@@ -171,11 +190,17 @@
 		resultsContainer.innerHTML = '<div class="search-loading"><div class="search-spinner"></div></div>';
 		activeIndex = -1;
 
+		var semantic = null;
+		if (semanticEnabled && detectMode(query) === 'normal' && window.MNSemantic) {
+			semantic = window.MNSemantic.load().catch(function() { return null; });
+		}
+
 		fetch('search.php?q=' + encodeURIComponent(query), {
 			signal: abortController.signal
 		})
 		.then(function(r) { return r.json(); })
 		.then(function(data) {
+			if (seq !== searchSeq) return;
 			if (data.error) {
 				renderError(data.error, query);
 				return;
@@ -189,11 +214,120 @@
 				hlQuery = '';
 			}
 			renderResults(items || [], query, hlQuery, mode, data.total);
+
+			if (!semantic || mode !== 'normal') return;
+			if (items.length === 0) showSemanticPending();
+			semantic.then(function() {
+				if (seq !== searchSeq || !window.MNSemantic) return;
+				var meaning = window.MNSemantic.search(query, { limit: 60, maxPerPage: 5 });
+				if (!meaning || meaning.length === 0) {
+					if (items.length === 0) renderResults([], query, query, 'normal', 0);
+					return;
+				}
+				var fused = fuseResults(items, meaning, isQuestionLike(query));
+				renderResults(fused, query, query, 'normal', fused.length);
+			});
 		})
 		.catch(function(err) {
 			if (err.name === 'AbortError') return;
+			if (seq !== searchSeq) return;
 			renderError('Search failed. Please try again.', query);
 		});
+	}
+
+	function showSemanticPending() {
+		resultsContainer.innerHTML =
+			'<div class="search-loading"><div class="search-spinner"></div>' +
+			'<p class="search-loading-label">Searching by meaning…</p></div>';
+		window.dispatchEvent(new CustomEvent('mnsearch:results', { detail: { count: 0 } }));
+	}
+
+	function setSemanticEnabled(enabled) {
+		semanticEnabled = !!enabled;
+		try {
+			window.localStorage.setItem('mn_search_ai', semanticEnabled ? '1' : '0');
+		} catch (e) {
+			/* private mode: the preference simply does not persist */
+		}
+		var toggle = overlay && overlay.querySelector('#search-ai-toggle');
+		if (toggle) toggle.checked = semanticEnabled;
+		if (overlay && overlay.classList.contains('search-open') && input) {
+			var query = input.value.trim();
+			if (query.length >= 2) doSearch(query);
+		}
+	}
+
+	function isQuestionLike(query) {
+		if (query.indexOf('?') !== -1) return true;
+		var words = query.toLowerCase().split(/\s+/).filter(function(word) { return word.length > 0; });
+		if (words.length >= 4) return true;
+		return /^(what|why|how|when|where|which|who|whom|whose|does|do|did|is|are|was|were|can|could|should|would|explain|describe|difference|compare)\b/.test(words[0] || '');
+	}
+
+	/* Question-like queries follow the semantic ranking and append lexical
+	 * matches that it missed. Shorter keyword queries use reciprocal rank
+	 * fusion, where exact terms keep their weight. */
+	function fuseResults(lexical, meaning, questionLike) {
+		lexical = lexical || [];
+		meaning = meaning || [];
+
+		if (questionLike) {
+			var seen = Object.create(null);
+			var ordered = [];
+			meaning.slice(0, 40).forEach(function(result) {
+				seen[result.url || (result.page + '|' + result.title)] = true;
+				ordered.push(result);
+			});
+			for (var i = 0; i < lexical.length && ordered.length < 60; i++) {
+				var key = lexical[i].url || (lexical[i].page + '|' + lexical[i].title);
+				if (seen[key]) continue;
+				seen[key] = true;
+				ordered.push(lexical[i]);
+			}
+			return ordered;
+		}
+
+		var k = 60;
+		var byKey = Object.create(null);
+		var merged = [];
+
+		function add(result, position, semantic) {
+			var key = result.url || (result.page + '|' + result.title);
+			var entry = byKey[key];
+			if (!entry) {
+				entry = {};
+				for (var p in result) {
+					if (Object.prototype.hasOwnProperty.call(result, p)) entry[p] = result[p];
+				}
+				entry._rrf = 0;
+				entry._lexical = false;
+				entry._semantic = false;
+				byKey[key] = entry;
+				merged.push(entry);
+			}
+			entry._rrf += 1 / (k + position + 1);
+			if (semantic) {
+				entry._semantic = true;
+				if (!entry._lexical) {
+					entry.snippet = result.snippet;
+					entry.title = result.title;
+					entry.img = result.img || entry.img;
+				}
+			} else {
+				entry._lexical = true;
+			}
+		}
+
+		lexical.forEach(function(result, i) { add(result, i, false); });
+		meaning.forEach(function(result, i) { add(result, i, true); });
+		merged.sort(function(a, b) { return b._rrf - a._rrf; });
+		merged.forEach(function(entry) {
+			entry.semantic = entry._semantic && !entry._lexical;
+			delete entry._rrf;
+			delete entry._lexical;
+			delete entry._semantic;
+		});
+		return merged;
 	}
 
 	function renderError(message, query) {
@@ -248,6 +382,7 @@
 					'<div class="search-result-body">' +
 					'<div class="search-result-title">' +
 						escHtml(r.title) +
+						(r.semantic ? ' <span class="search-result-badge search-result-badge-semantic">meaning</span>' : '') +
 					'</div>' +
 					'<div class="search-result-snippet">' + highlightText(escHtml(r.snippet), hlQuery, mode) + '</div>' +
 					'</div>' +
@@ -331,7 +466,7 @@
 		resultsContainer.innerHTML =
 			'<div class="search-empty">' +
 				'<div class="search-empty-icon">&#128269;</div>' +
-				'<p>Start typing to search across all course modules</p>' +
+				'<p>Start typing, or ask a question in plain language</p>' +
 			'</div>';
 	}
 
@@ -400,7 +535,11 @@
 			normalizeSmartQuotes: normalizeSmartQuotes,
 			splitTerms: splitTerms,
 			highlightText: highlightText,
-			extractMatchFromSnippet: extractMatchFromSnippet
+			extractMatchFromSnippet: extractMatchFromSnippet,
+			isQuestionLike: isQuestionLike,
+			fuseResults: fuseResults,
+			isSemanticEnabled: function() { return semanticEnabled; },
+			setSemanticEnabled: setSemanticEnabled
 		}
 	};
 
