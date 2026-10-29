@@ -6178,6 +6178,18 @@ async function run_python_code_tests() {
 		return false;
 	}
 
+	if($("#pyodide_console_output").text().includes("Pyodide failed to initialize")) {
+		err("pyodide_console_output contains a false 'Pyodide failed to initialize' error although the runtime is ready");
+		return false;
+	}
+
+	if(!document.querySelector("[onclick='pyodideCopyCode()']") ||
+		!document.querySelector("[onclick='pyodideDownloadCode()']") ||
+		!document.querySelector("[onclick='pyodideInsertModelInfo()']")) {
+		err("Python editor toolbar is missing the copy/download/model-info controls");
+		return false;
+	}
+
 	pyodideEditorClear();
 	await delay(1000);
 
@@ -6191,6 +6203,11 @@ async function run_python_code_tests() {
 
 	if(!$("#pyodide_console_output").text().includes("Hello, World")) {
 		err("#pyodide_console_output does not contain 'Hello, World' after clicking 'Run' for default program");
+		return false;
+	}
+
+	if(!/Done \([0-9.]+ s\)/.test($("#pyodide_console_output").text())) {
+		err("pyodide_console_output does not show the run duration in the Done line");
 		return false;
 	}
 

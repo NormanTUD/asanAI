@@ -35,6 +35,7 @@
 	let pyodideInstance = null;
 	let pyodideReady = false;
 	let pyodideLoading = false;
+	let pyodideInitPromise = null;
 	let isRunning = false;
 	let livePredictEnabled = true;
 	let lastPredictionResult = null;
@@ -1364,6 +1365,47 @@ if input_data is not None:
 		appendConsole("[📥 Output downloaded]\n", "info");
 	}
 
+	function copyEditorCode() {
+		const textarea = document.getElementById("pyodide_editor_textarea");
+		if (!textarea) return;
+		const text = textarea.value;
+		const done = function() { appendConsole("[📋 Code copied to clipboard]\n", "info"); };
+		if (navigator.clipboard && navigator.clipboard.writeText) {
+			navigator.clipboard.writeText(text).then(done).catch(function() { fallbackCopyText(text, done); });
+		} else {
+			fallbackCopyText(text, done);
+		}
+	}
+
+	function fallbackCopyText(text, done) {
+		var ta = document.createElement("textarea");
+		ta.value = text;
+		document.body.appendChild(ta);
+		ta.select();
+		try { document.execCommand("copy"); } catch (e) { /* ignore */ }
+		document.body.removeChild(ta);
+		if (done) done();
+	}
+
+	function downloadEditorCode() {
+		const textarea = document.getElementById("pyodide_editor_textarea");
+		if (!textarea) return;
+		const blob = new Blob([textarea.value], { type: "text/x-python" });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement("a");
+		a.href = url;
+		a.download = "asanai_python_" + Date.now() + ".py";
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+		URL.revokeObjectURL(url);
+		appendConsole("[💾 Code downloaded as .py]\n", "info");
+	}
+
+	function insertModelInfoSnippet() {
+		insertSnippet("\n# Model summary\n_print_model_summary()\n");
+	}
+
 	// =========================================================================
 	// RICH CONSOLE OUTPUT (Jupyter-like)
 	// =========================================================================
@@ -1571,50 +1613,76 @@ if input_data is not None:
 	// =========================================================================
 
 		async function initPyodide() {
-			if (pyodideReady || pyodideLoading) return;
-			pyodideLoading = true;
-			setStatus("⏳ Loading...", "loading");
+			if (pyodideReady) return pyodideInstance;
 
-			var maxRetries = 3;
-			var attempt = 0;
+			// If an initialization is already in flight, every caller waits for
+			// that same promise. Returning immediately here used to make callers
+			// report "Pyodide failed to initialize" while it was still loading,
+			// even though it became ready a moment later.
+			if (pyodideInitPromise) {
+				return await pyodideInitPromise;
+			}
 
-			while (attempt < maxRetries) {
-				attempt++;
-				try {
-					if (typeof loadPyodide === "undefined") {
-						throw new Error("loadPyodide is not defined. Ensure libs/pyodide.js is loaded.");
-					}
+			pyodideInitPromise = (async function() {
+				pyodideLoading = true;
+				setStatus("⏳ Loading...", "loading");
 
-					// Yield to the browser before heavy work
-					await new Promise(function(resolve) { setTimeout(resolve, 0); });
+				var maxRetries = 6;
+				var lastError = null;
 
-					pyodideInstance = await loadPyodide({
-						indexURL: "libs/",
-						stdout: function (text) { appendConsole(text + "\n", "stdout"); },
-						stderr: function (text) { appendConsole(text + "\n", "stderr"); },
-					});
+				for (var attempt = 1; attempt <= maxRetries; attempt++) {
+					try {
+						if (!pyodideInstance) {
+							if (typeof loadPyodide === "undefined") {
+								throw new Error("loadPyodide is not defined. Ensure libs/pyodide.js is loaded.");
+							}
 
-					// Yield again before setting up the Python env
-					await new Promise(function(resolve) { setTimeout(resolve, 0); });
+							// Yield to the browser before heavy work
+							await new Promise(function(resolve) { setTimeout(resolve, 0); });
 
-					await setupPythonEnvironment();
+							pyodideInstance = await loadPyodide({
+								indexURL: "libs/",
+								stdout: function (text) { appendConsole(text + "\n", "stdout"); },
+								stderr: function (text) { appendConsole(text + "\n", "stderr"); },
+							});
+						}
 
-					pyodideReady = true;
-					pyodideLoading = false;
-					setStatus("✓ Ready", "ready");
-					return;
-				} catch (e) {
-					console.error("Pyodide init attempt " + attempt + " failed:", e);
-					if (attempt < maxRetries) {
-						appendConsole("[⏳ Pyodide init failed, retrying (" + attempt + "/" + maxRetries + ")...]\n", "warn");
-						await new Promise(function (resolve) { setTimeout(resolve, 1000 * attempt); });
-					} else {
+						// Yield again before setting up the Python env. If the
+						// runtime already exists (setup failed on a previous
+						// attempt), only the setup is retried — never call
+						// loadPyodide() twice for the same runtime.
+						await new Promise(function(resolve) { setTimeout(resolve, 0); });
+
+						await setupPythonEnvironment();
+
+						pyodideReady = true;
 						pyodideLoading = false;
-						setStatus("✗ Failed", "error");
-						appendConsole("[ERROR] Pyodide failed to initialize after " + maxRetries + " attempts: " + e.message + "\n", "stderr");
-						appendConsole("[💡 Hint] Try refreshing the page or check your network connection.\n", "info");
+						setStatus("✓ Ready", "ready");
+						return pyodideInstance;
+					} catch (e) {
+						lastError = e;
+						console.error("Pyodide init attempt " + attempt + "/" + maxRetries + " failed:", e);
+						if (attempt < maxRetries) {
+							var delayMs = Math.min(6000, Math.round(500 * Math.pow(1.5, attempt - 1)));
+							appendConsole("[⏳ Pyodide still loading, retrying in " + (delayMs / 1000).toFixed(1) + "s (" + attempt + "/" + maxRetries + ")…]\n", "warn");
+							await new Promise(function (resolve) { setTimeout(resolve, delayMs); });
+						}
 					}
 				}
+
+				pyodideLoading = false;
+				setStatus("✗ Failed", "error");
+				appendConsole("[ERROR] Pyodide failed to initialize after " + maxRetries + " attempts: " + (lastError && lastError.message ? lastError.message : lastError) + "\n", "stderr");
+				appendConsole("[💡 Hint] Try refreshing the page or check your network connection.\n", "info");
+				return null;
+			})();
+
+			try {
+				return await pyodideInitPromise;
+			} finally {
+				// Allow a later explicit retry if init ultimately failed. When it
+				// succeeded, pyodideReady short-circuits future calls.
+				pyodideInitPromise = null;
 			}
 		}
 
@@ -2713,13 +2781,15 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 			hideErrorIndicator();
 
 			appendConsole("\n─── Run #" + thisRun + " ───\n", "info");
+			const runStartedAt = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
 
 			try {
 				await refreshModelInPython();
 				await pyodideInstance.runPythonAsync(code);
 
 				if (isRunning && thisRun === runCounter) {
-					appendConsole("─── ✓ Done ───\n", "info");
+					const runMs = ((typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now()) - runStartedAt;
+					appendConsole("─── ✓ Done (" + (runMs / 1000).toFixed(2) + " s) ───\n", "info");
 					setStatus("✓ Ready", "ready");
 
 					var runBtn = document.getElementById("pyodide_run_btn");
@@ -4414,6 +4484,9 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 	window.pyodideToggleFullscreen = toggleFullscreen;
 	window.pyodideCopyOutput = copyConsoleOutput;
 	window.pyodideDownloadOutput = downloadConsoleOutput;
+	window.pyodideCopyCode = copyEditorCode;
+	window.pyodideDownloadCode = downloadEditorCode;
+	window.pyodideInsertModelInfo = insertModelInfoSnippet;
 	window.pyodideChangeFontSize = changeFontSize;
 	window.pyodideToggleWordWrap = toggleWordWrap;
 	window.pyodideInsertSnippet = insertSnippet;

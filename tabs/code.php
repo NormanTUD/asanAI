@@ -77,6 +77,9 @@
 				<button onclick="pyodideToggleExamples()" class="pe-btn pe-btn-clear pe-tooltip" data-tip="Show examples">
 					📚 <span class="TRANSLATEME_pe_examples"></span>
 				</button>
+				<button onclick="pyodideInsertModelInfo()" class="pe-btn pe-btn-clear pe-tooltip" data-tip="Insert a model summary snippet">
+					🧠 <span class="TRANSLATEME_pe_model_info"></span>
+				</button>
 				<button id="pyodide_webcam_btn_simple" onclick="pyodideStartWebcam()" class="pe-btn pe-btn-clear pe-tooltip" data-tip="Ctrl+Shift+W">
 					📷 <span class="TRANSLATEME_pe_webcam"></span>
 				</button>
@@ -97,6 +100,12 @@
 				</button>
 				<button onclick="pyodideDownloadOutput()" class="pe-btn pe-btn-clear pe-advanced-only pe-tooltip" data-tip="Download output as .txt">
 					📥 <span class="TRANSLATEME_pe_save"></span>
+				</button>
+				<button onclick="pyodideCopyCode()" class="pe-btn pe-btn-clear pe-advanced-only pe-tooltip" data-tip="Copy editor code">
+					📄 <span class="TRANSLATEME_pe_copy_code"></span>
+				</button>
+				<button onclick="pyodideDownloadCode()" class="pe-btn pe-btn-clear pe-advanced-only pe-tooltip" data-tip="Download editor code as .py">
+					💾 <span class="TRANSLATEME_pe_download_code"></span>
 				</button>
 				<div class="pe-separator pe-advanced-only"></div>
 				<label class="pe-advanced-only" style="font-size:12px;cursor:pointer;color:var(--pe-text);display:flex;align-items:center;gap:4px;">
