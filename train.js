@@ -3276,6 +3276,18 @@ async function reset_cached_loaded_images () {
 	_cached_loaded_images = {};
 }
 
+function _get_pixel_source_element (image_element) {
+	// Augmented previews are stored as data-URL images so the gallery can draw
+	// them, but their IMG may still be decoding when the training visualization
+	// reads the gallery. The canvas they were rendered from is a synchronous
+	// pixel source for that window.
+	if (image_element && image_element.tagName === "IMG" && image_element._source_canvas && (!image_element.complete || !image_element.naturalWidth)) {
+		return image_element._source_canvas;
+	}
+
+	return image_element;
+}
+
 function cached_load_resized_image (image_element) {
 	var image_element_xpath = get_element_xpath(image_element);
 
@@ -3284,7 +3296,7 @@ function cached_load_resized_image (image_element) {
 	}
 
 	var res = tidy(() => {
-		var image_from_element = fromPixels(image_element);
+		var image_from_element = fromPixels(_get_pixel_source_element(image_element));
 		var _res = expand_dims(resize_image(image_from_element, [height, width]));
 
 		_res = divNoNan(_res, parse_float($("#divide_by").val()));

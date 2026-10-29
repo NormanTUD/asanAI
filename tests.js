@@ -1980,15 +1980,23 @@ async function test_augmented_previews_go_to_gallery_canvas() {
 
 	try {
 		add_tensor_as_image_to_photos(t);
-		await new Promise(function (resolve) { setTimeout(resolve, 200); });
 		const entries = _photo_gallery.entries;
 		const last = entries[entries.length - 1];
+		const fallback_img = new Image();
+		const fallback_canvas = document.createElement("canvas");
+		fallback_img._source_canvas = fallback_canvas;
+		const synchronous_pixels = _get_pixel_source_element(fallback_img) === fallback_canvas;
+		await new Promise(function (resolve) { setTimeout(resolve, 200); });
 		const added_to_gallery = entries.length === before_count + 1 &&
-			!!last && last.img && last.img.tagName === "IMG" && String(last.url).indexOf("augmented:") === 0;
+			!!last && last.img && last.img.tagName === "IMG" && !!last.img._source_canvas && String(last.url).indexOf("augmented:") === 0;
 		const no_loose_canvases = document.querySelectorAll("#photos canvas[id^='augmented_photo_']").length === 0;
-		return added_to_gallery && no_loose_canvases;
+		return added_to_gallery && synchronous_pixels && no_loose_canvases;
 	} finally {
 		t.dispose();
+		const added = _photo_gallery.entries[before_count];
+		if (added && added.img && added.img.parentNode) {
+			added.img.remove();
+		}
 		_photo_gallery.entries = old_entries;
 		_photo_gallery.expected = old_expected;
 		_photo_gallery.layout = old_layout;

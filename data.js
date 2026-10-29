@@ -1316,8 +1316,15 @@ function _add_augmented_canvas_to_photo_gallery(canvas) {
 	}
 
 	const img = new Image();
+	img._source_canvas = canvas;
 	img.src = canvas.toDataURL("image/png");
 	_photo_gallery_add_image(img, "augmented:" + uuidv4());
+
+	// Keep augmented images with the other gallery sources so every preview has
+	// a stable, unique xpath for the image cache in train.js.
+	if (_photo_gallery.sources) {
+		_photo_gallery.sources.appendChild(img);
+	}
 }
 
 function add_tensor_as_image_to_photos (_tensor) {
