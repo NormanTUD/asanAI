@@ -7365,12 +7365,46 @@ async function test_representation_analysis() {
 
 		RepresentationAnalysis.init("representation_content");
 
+		var runHint = document.getElementById("rep_run_hint");
+		var ckaPanel = document.getElementById("rep_cka_panel");
+		var sepPanelBefore = document.getElementById("rep_sep_panel");
+
+		if (!runHint || runHint.style.display === "none") {
+			err("[test_representation_analysis] analyze hint should be visible before a run");
+			return false;
+		}
+
+		if (!ckaPanel || ckaPanel.style.display !== "none") {
+			err("[test_representation_analysis] empty CKA panel should stay hidden before a run");
+			return false;
+		}
+
+		if (!sepPanelBefore || sepPanelBefore.style.display !== "none") {
+			err("[test_representation_analysis] empty separability panel should stay hidden before a run");
+			return false;
+		}
+
 		var sizeEl = document.getElementById("rep_sample_size");
 		if (sizeEl) {
 			sizeEl.value = "16";
 		}
 
 		await RepresentationAnalysis.runFromUI();
+
+		if (runHint.style.display !== "none") {
+			err("[test_representation_analysis] analyze hint should disappear after a run");
+			return false;
+		}
+
+		if (ckaPanel.style.display === "none") {
+			err("[test_representation_analysis] CKA panel should be visible after a run");
+			return false;
+		}
+
+		if (ExplainabilityLib.isClassification() && sepPanelBefore.style.display === "none") {
+			err("[test_representation_analysis] separability panel should be visible after a run");
+			return false;
+		}
 
 		var state = RepresentationAnalysis.getInternalState();
 

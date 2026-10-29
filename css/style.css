@@ -1546,26 +1546,18 @@ hr {
 	letter-spacing: 0.03em;
 }
 
-/* Visualization sub-tabs always stay on one row. Activating a wider (bold)
-   tab at the right edge used to wrap the remaining tabs onto a second line,
-   which shifted the whole panel. Scroll instead of wrapping, without adding
-   a scrollbar row that would change the height again. */
-#visualization_tab > .navi_list {
-	display: flex;
-	flex-wrap: nowrap;
-	overflow-x: auto;
-	overflow-y: hidden;
-	scrollbar-width: none;
-	-ms-overflow-style: none;
-}
-
-#visualization_tab > .navi_list::-webkit-scrollbar {
-	display: none;
-}
-
+/* jQuery UI makes the active tab 1 px shorter (margin-bottom: -1px) and the
+   theme animates that box change with `transition: all`. In the floated
+   visualization tab list this shifts the row layout while switching tabs and
+   can push the last tab onto a new line. Keep the active box identical and
+   skip the transition; colour and background still switch instantly. */
 #visualization_tab > .navi_list > li {
-	float: none;
-	flex: 0 0 auto;
+	transition: none !important;
+}
+
+#visualization_tab > .navi_list > li.ui-tabs-active {
+	margin-bottom: 0 !important;
+	padding-bottom: 4px !important;
 }
 
 ::placeholder {

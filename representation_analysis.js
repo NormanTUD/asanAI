@@ -77,7 +77,8 @@ var RepresentationAnalysis = (function () {
 			'		</div>' +
 			'		<div class="rep_status" id="rep_status"></div>' +
 			'	</div>' +
-			'	<div class="rep_panel">' +
+			'	<div class="rep_empty" id="rep_run_hint"><span class="TRANSLATEME_rep_run_hint"></span></div>' +
+			'	<div class="rep_panel" id="rep_cka_panel" style="display:none">' +
 			'		<div class="rep_section_title"><span class="TRANSLATEME_rep_cka_title"></span></div>' +
 			'		<div class="rep_section_hint"><span class="TRANSLATEME_rep_cka_hint"></span></div>' +
 			'		<div class="rep_plot" id="rep_cka_plot"></div>' +
@@ -103,20 +104,31 @@ var RepresentationAnalysis = (function () {
 	function _updateGating() {
 		var empty = document.getElementById("rep_empty");
 		var controls = document.getElementById("rep_controls_panel");
+		var runHint = document.getElementById("rep_run_hint");
+		var ckaPanel = document.getElementById("rep_cka_panel");
 		var sepPanel = document.getElementById("rep_sep_panel");
 		var m = ExplainabilityLib.getModel();
+		var hasResults = !!(_lastZ && _lastNames);
 
 		if (!m) {
 			if (empty) empty.style.display = "block";
 			if (controls) controls.style.display = "none";
+			if (runHint) runHint.style.display = "none";
+			if (ckaPanel) ckaPanel.style.display = "none";
+			if (sepPanel) sepPanel.style.display = "none";
 			return;
 		}
 
 		if (empty) empty.style.display = "none";
 		if (controls) controls.style.display = "block";
 
+		// Before the first analysis the plots would be empty frames with a
+		// large reserved height. Hide them and point at the Analyze button;
+		// the panels appear once there is data to draw.
+		if (runHint) runHint.style.display = hasResults ? "none" : "block";
+		if (ckaPanel) ckaPanel.style.display = hasResults ? "block" : "none";
 		if (sepPanel) {
-			sepPanel.style.display = ExplainabilityLib.isClassification() ? "block" : "none";
+			sepPanel.style.display = (hasResults && ExplainabilityLib.isClassification()) ? "block" : "none";
 		}
 	}
 
