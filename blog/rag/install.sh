@@ -17,6 +17,7 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BLOG_DIR="${ASANAI_BLOG_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
+BLOG_OWNER="$(stat -c '%U' "$BLOG_DIR")"
 SERVICE_DIR="/opt/asanai-rag"
 DATA_DIR="/var/lib/asanai-rag"
 RAG_DATA="$DATA_DIR/data"
@@ -72,6 +73,9 @@ install -d -m 0755 -o www-data -g www-data "$DATA_DIR/hf" "$DATA_DIR/fastembed"
 chown -R www-data:www-data "$DATA_DIR"
 install -m 0644 "$SCRIPT_DIR/server.py" "$SCRIPT_DIR/requirements.txt" "$SCRIPT_DIR/README.md" "$SERVICE_DIR/"
 install -m 0755 "$SCRIPT_DIR/reindex.sh" "$SCRIPT_DIR/set-model.sh" "$SERVICE_DIR/"
+install -m 0644 "$BLOG_DIR/tools/build_semantic_index.py" "$SERVICE_DIR/"
+install -d -m 0755 "$SERVICE_DIR/models"
+install -m 0644 "$BLOG_DIR/vendor/model2vec/models/potion-base-8M.bin" "$SERVICE_DIR/models/"
 python3 -m venv "$SERVICE_DIR/venv"
 "$SERVICE_DIR/venv/bin/pip" install --upgrade pip
 "$SERVICE_DIR/venv/bin/pip" install -r "$SERVICE_DIR/requirements.txt"
@@ -126,13 +130,18 @@ print("reranker ready")
 PY
 
 echo "[7/8] Building the retrieval index"
-# The builder lives in the blog checkout, so it can import the shared chunker.
-sudo -u www-data env \
-	HF_HOME="$DATA_DIR/hf" \
-	FASTEMBED_CACHE_PATH="$DATA_DIR/fastembed" \
+# Run as the blog owner: /home/<user> is often not traversable by www-data,
+# and the builder refreshes .search_cache.json in the blog. The result is
+# installed into the service's data directory as www-data.
+INDEX_TMP="$(mktemp -d)"
+chown "$BLOG_OWNER:$BLOG_OWNER" "$INDEX_TMP"
+sudo -u "$BLOG_OWNER" env \
 	"$SERVICE_DIR/venv/bin/python" "$BLOG_DIR/tools/build_rag_index.py" \
 		--blog-dir "$BLOG_DIR" \
-		--out-dir "$RAG_DATA"
+		--out-dir "$INDEX_TMP"
+install -o www-data -g www-data -m 0644 \
+	"$INDEX_TMP/rag_index.json" "$INDEX_TMP/rag_vectors.bin" "$RAG_DATA/"
+rm -rf "$INDEX_TMP"
 
 echo "[8/8] Starting the answer service"
 install -m 0644 "$SCRIPT_DIR/asanai-rag.service" /etc/systemd/system/asanai-rag.service

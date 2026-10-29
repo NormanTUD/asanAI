@@ -30,6 +30,7 @@ from urllib import error, request
 import numpy as np
 
 BLOG_DIR = Path(os.environ.get("ASANAI_BLOG_DIR", "/var/www/asanai/blog"))
+BASE_DIR = Path(__file__).resolve().parent
 RAG_DATA = Path(os.environ.get("ASANAI_RAG_DATA", str(BLOG_DIR / "rag_data")))
 CACHE_DB = Path(os.environ.get("ASANAI_RAG_CACHE", "/var/lib/asanai-rag/cache.sqlite"))
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434").rstrip("/")
@@ -174,16 +175,21 @@ def load_index(data_dir: Path):
 
 
 class RagEngine:
-    def __init__(self, blog_dir: Path = BLOG_DIR, data_dir: Path = RAG_DATA):
+    def __init__(self, data_dir: Path = RAG_DATA):
         self.meta, vectors, self.scales = load_index(data_dir)
         self.chunks = self.meta["chunks"]
         self.vectors = vectors.astype(np.float32)
         self.bm25 = BM25([chunk["x"] for chunk in self.chunks])
 
-        sys.path.insert(0, str(blog_dir / "tools"))
+        tools_dir = BASE_DIR if (BASE_DIR / "build_semantic_index.py").exists() else BLOG_DIR / "tools"
+        sys.path.insert(0, str(tools_dir))
         from build_semantic_index import Embedder, load_packed
 
-        model_path = blog_dir / "vendor" / "model2vec" / "models" / "potion-base-8M.bin"
+        model_path = Path(
+            os.environ.get("ASANAI_RAG_MODEL", str(BASE_DIR / "models" / "potion-base-8M.bin"))
+        )
+        if not model_path.exists():
+            model_path = BLOG_DIR / "vendor" / "model2vec" / "models" / "potion-base-8M.bin"
         self.embedder = Embedder(*load_packed(model_path))
         self.reranker = None
         try:
@@ -626,7 +632,7 @@ def main() -> int:
             file=sys.stderr,
         )
         return 2
-    engine = RagEngine(BLOG_DIR, data_dir)
+    engine = RagEngine(data_dir)
     service = RagService(engine, AnswerCache(CACHE_DB))
     port = int(os.environ.get("ASANAI_RAG_PORT", "8090"))
     host = os.environ.get("ASANAI_RAG_HOST", "127.0.0.1")
