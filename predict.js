@@ -1225,7 +1225,9 @@ async function predict(item) {
 		await force_restart_fcnn();
 	}
 
-	TopologicalAnalyzer.update();
+	if (typeof TopologicalAnalyzer !== "undefined") {
+		TopologicalAnalyzer.update();
+	}
 
 	_predict_full_running = false;
 

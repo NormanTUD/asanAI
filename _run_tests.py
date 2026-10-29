@@ -127,23 +127,36 @@ def resolve_chromium_executable(args):
     return None
 
 
-def capture_console(page, browser_name: str):
+def capture_console(page, browser_label: str):
     def handle_console(msg):
         fn = LOG_LEVELS.get(msg.type, logging.info)
-        fn(f"[{browser_name}] [console.{msg.type}] {msg.text}")
+        fn(f"[{browser_label}] [console.{msg.type}] {msg.text}")
+
+    def handle_request_failed(request):
+        if ".js" not in request.url:
+            return
+        logging.warning(f"[{browser_label}] [requestfailed] {request.url} {request.failure}")
+
+    def handle_response(response):
+        if ".js" not in response.url or response.status < 400:
+            return
+        logging.warning(f"[{browser_label}] [http {response.status}] {response.url}")
 
     page.on("console", handle_console)
-    page.on("pageerror", lambda exc: logging.error(f"[{browser_name}] [pageerror] {exc}"))
-    page.on("crash", lambda: logging.error(f"[{browser_name}] [crash] Page crashed"))
-    page.on("close", lambda: logging.debug(f"[{browser_name}] [close] Page closed"))
+    page.on("requestfailed", handle_request_failed)
+    page.on("response", handle_response)
+    page.on("pageerror", lambda exc: logging.error(f"[{browser_label}] [pageerror] {exc}"))
+    page.on("crash", lambda: logging.error(f"[{browser_label}] [crash] Page crashed"))
+    page.on("close", lambda: logging.debug(f"[{browser_label}] [close] Page closed"))
 
-async def _save_failure_artifacts(page, context, browser_name, args):
+async def _save_failure_artifacts(page, context, browser_name, args, browser_label=None):
 	artifacts_dir = os.path.abspath(args.artifacts_dir)
+	label = browser_label or browser_name
 
 	try:
 		os.makedirs(artifacts_dir, exist_ok=True)
 	except Exception:
-		logging.exception(f"[{browser_name}] Could not create artifacts dir {artifacts_dir}")
+		logging.exception(f"[{label}] Could not create artifacts dir {artifacts_dir}")
 		return False
 
 	stamp = time.strftime("%Y%m%d-%H%M%S")
@@ -154,30 +167,31 @@ async def _save_failure_artifacts(page, context, browser_name, args):
 			await page.screenshot(path=os.path.join(artifacts_dir, f"failure-{browser_name}-{stamp}.png"), full_page=False, timeout=5000)
 			saved = True
 		except Exception:
-			logging.exception(f"[{browser_name}] Could not save failure screenshot")
+			logging.exception(f"[{label}] Could not save failure screenshot")
 
 		try:
 			with open(os.path.join(artifacts_dir, f"failure-{browser_name}-{stamp}.html"), "w", encoding="utf-8") as handle:
 				handle.write(await page.content())
 			saved = True
 		except Exception:
-			logging.exception(f"[{browser_name}] Could not save failure page HTML")
+			logging.exception(f"[{label}] Could not save failure page HTML")
 
 	if context is not None:
 		try:
 			await context.tracing.stop(path=os.path.join(artifacts_dir, f"trace-{browser_name}-{stamp}.zip"))
 			saved = True
 		except Exception:
-			logging.exception(f"[{browser_name}] Could not save Playwright trace")
+			logging.exception(f"[{label}] Could not save Playwright trace")
 
 	return saved
 
 
-async def run(browser_name: str, executable_path: Optional[str], url: str, wait_time: int, args):
+async def run(browser_name: str, executable_path: Optional[str], url: str, wait_time: int, args, browser_label: Optional[str] = None):
     """
     Runs one browser session. For Firefox we use launch_persistent_context(...) so we can supply firefox_user_prefs.
     Returns the value returned by page.evaluate("run_tests()") or a non-zero int on error.
     """
+    browser_label = browser_label or browser_name
     chromium_based = browser_name in ("chromium", "chrome", "msedge", "opera")
     launch_args = []
     if chromium_based:
@@ -211,7 +225,7 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
 
         if browser_name == "firefox":
             if args.enable_fake_media and args.fake_video:
-                logging.warning(f"[{browser_name}] --fake-video provided but Firefox cannot use a file for fake webcam; file will be ignored and a static test image will be used.")
+                logging.warning(f"[{browser_label}] --fake-video provided but Firefox cannot use a file for fake webcam; file will be ignored and a static test image will be used.")
             tmp_user_dir = tempfile.mkdtemp(prefix="pw_firefox_profile_")
             context = await playwright.firefox.launch_persistent_context(
                 tmp_user_dir,
@@ -245,7 +259,7 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
             context = await browser.new_context(permissions=["camera", "microphone"])
 
         page = await context.new_page()
-        capture_console(page, browser_name)
+        capture_console(page, browser_label)
 
         if args.coverage:
             if browser_name == "chromium":
@@ -258,40 +272,40 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
                         project_root=os.path.dirname(os.path.abspath(__file__)),
                     )
                     await coverage.start()
-                    logging.info(f"[{browser_name}] Collecting JavaScript coverage ...")
+                    logging.info(f"[{browser_label}] Collecting JavaScript coverage ...")
                 except Exception:
-                    logging.exception(f"[{browser_name}] Could not start JavaScript coverage; continuing without it")
+                    logging.exception(f"[{browser_label}] Could not start JavaScript coverage; continuing without it")
                     coverage = None
             else:
-                logging.info(f"[{browser_name}] Coverage is only collected for the bundled chromium browser; skipping")
+                logging.info(f"[{browser_label}] Coverage is only collected for the bundled chromium browser; skipping")
 
         try:
             await context.tracing.start(screenshots=False, snapshots=True, sources=True)
             tracing_started = True
         except Exception:
-            logging.warning(f"[{browser_name}] Could not start Playwright tracing")
+            logging.warning(f"[{browser_label}] Could not start Playwright tracing")
 
-        logging.info(f"[{browser_name}] Navigating to {url} ...")
+        logging.info(f"[{browser_label}] Navigating to {url} ...")
         await page.goto(url, timeout=15000)
 
-        logging.info(f"[{browser_name}] Waiting {wait_time/1000:.1f}s before running tests...")
+        logging.info(f"[{browser_label}] Waiting {wait_time/1000:.1f}s before running tests...")
         await page.wait_for_timeout(wait_time)
 
-        logging.info(f"[{browser_name}] Waiting for the app to finish loading...")
+        logging.info(f"[{browser_label}] Waiting for the app to finish loading...")
         try:
             await page.wait_for_function(APP_READY_EXPRESSION, timeout=APP_READY_TIMEOUT_MS, polling=100)
-            logging.info(f"[{browser_name}] App reported ready")
+            logging.info(f"[{browser_label}] App reported ready")
         except Error:
             logging.error(
-                f"[{browser_name}] App did not report ready within {APP_READY_TIMEOUT_MS/1000:.0f}s; "
+                f"[{browser_label}] App did not report ready within {APP_READY_TIMEOUT_MS/1000:.0f}s; "
                 "aborting without running tests"
             )
-            await _save_failure_artifacts(page, context, browser_name, args)
+            await _save_failure_artifacts(page, context, browser_name, args, browser_label)
             tracing_saved = tracing_started
             return 1
 
         test_expression = "run_tests(1)" if args.quick else "run_tests()"
-        logging.info(f"[{browser_name}] Evaluating {test_expression} ...")
+        logging.info(f"[{browser_label}] Evaluating {test_expression} ...")
         evaluate_task = asyncio.ensure_future(page.evaluate(test_expression))
 
         if args.test_timeout > 0:
@@ -300,36 +314,36 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
             if not done:
                 evaluate_task.cancel()
                 logging.error(
-                    f"[{browser_name}] {test_expression} did not finish within "
+                    f"[{browser_label}] {test_expression} did not finish within "
                     f"{args.test_timeout}s; treating it as a timeout instead of hanging"
                 )
                 try:
-                    await asyncio.wait_for(_save_failure_artifacts(page, context, browser_name, args), timeout=30)
+                    await asyncio.wait_for(_save_failure_artifacts(page, context, browser_name, args, browser_label), timeout=30)
                 except asyncio.TimeoutError:
-                    logging.error(f"[{browser_name}] Could not save failure artifacts before the timeout")
+                    logging.error(f"[{browser_label}] Could not save failure artifacts before the timeout")
                 tracing_saved = tracing_started
                 return 124
 
         try:
             result = await evaluate_task
-            logging.info(f"[{browser_name}] {test_expression} returned: {result}")
+            logging.info(f"[{browser_label}] {test_expression} returned: {result}")
             if to_int_exit(result) != 0:
-                await _save_failure_artifacts(page, context, browser_name, args)
+                await _save_failure_artifacts(page, context, browser_name, args, browser_label)
                 tracing_saved = tracing_started
             return result
         except Error as e:
-            logging.error(f"[{browser_name}] Playwright evaluation error: {e}")
-            await _save_failure_artifacts(page, context, browser_name, args)
+            logging.error(f"[{browser_label}] Playwright evaluation error: {e}")
+            await _save_failure_artifacts(page, context, browser_name, args, browser_label)
             tracing_saved = tracing_started
             return 1
 
     except Exception:
-        logging.exception(f"[{browser_name}] Unhandled exception during run")
+        logging.exception(f"[{browser_label}] Unhandled exception during run")
         try:
-            await _save_failure_artifacts(page, context, browser_name, args)
+            await _save_failure_artifacts(page, context, browser_name, args, browser_label)
             tracing_saved = tracing_started
         except Exception:
-            logging.exception(f"[{browser_name}] Could not save failure artifacts")
+            logging.exception(f"[{browser_label}] Could not save failure artifacts")
         return 1
 
     finally:
@@ -337,25 +351,25 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
             try:
                 await asyncio.wait_for(coverage.stop_and_report(browser_name), timeout=120)
             except asyncio.TimeoutError:
-                logging.error(f"[{browser_name}] Writing the coverage report timed out")
+                logging.error(f"[{browser_label}] Writing the coverage report timed out")
             except Exception:
-                logging.exception(f"[{browser_name}] Could not write the coverage report")
+                logging.exception(f"[{browser_label}] Could not write the coverage report")
 
         if context:
             if tracing_started and not tracing_saved:
                 try:
                     await asyncio.wait_for(context.tracing.stop(), timeout=15)
                 except asyncio.TimeoutError:
-                    logging.error(f"[{browser_name}] Stopping the Playwright trace timed out")
+                    logging.error(f"[{browser_label}] Stopping the Playwright trace timed out")
                 except Exception:
                     pass
             try:
                 await asyncio.wait_for(context.close(), timeout=15)
-                logging.debug(f"[{browser_name}] Context closed successfully.")
+                logging.debug(f"[{browser_label}] Context closed successfully.")
             except asyncio.TimeoutError:
-                logging.error(f"[{browser_name}] Closing the browser context timed out")
+                logging.error(f"[{browser_label}] Closing the browser context timed out")
             except Exception:
-                logging.exception(f"[{browser_name}] Failed to close context")
+                logging.exception(f"[{browser_label}] Failed to close context")
 
         # 🔧 Delay to allow pending Playwright transport writes to flush
         await asyncio.sleep(0.2)
@@ -363,17 +377,17 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
         if playwright:
             try:
                 await asyncio.wait_for(playwright.stop(), timeout=15)
-                logging.debug(f"[{browser_name}] Playwright stopped cleanly.")
+                logging.debug(f"[{browser_label}] Playwright stopped cleanly.")
             except asyncio.TimeoutError:
-                logging.error(f"[{browser_name}] Stopping Playwright timed out")
+                logging.error(f"[{browser_label}] Stopping Playwright timed out")
             except Exception:
-                logging.exception(f"[{browser_name}] Failed to stop Playwright cleanly")
+                logging.exception(f"[{browser_label}] Failed to stop Playwright cleanly")
 
         if tmp_user_dir and os.path.isdir(tmp_user_dir):
             try:
                 shutil.rmtree(tmp_user_dir)
             except Exception:
-                logging.exception(f"[{browser_name}] Failed to remove temp profile dir {tmp_user_dir}")
+                logging.exception(f"[{browser_label}] Failed to remove temp profile dir {tmp_user_dir}")
 
 async def main():
     args = parse_args()
@@ -417,6 +431,9 @@ async def main():
 
     async def _run_one (browser_name):
         async with semaphore:
+            browser_index = selected.index(browser_name) + 1
+            browser_label = f"{browser_name}, browser {browser_index}/{len(selected)}"
+
             if args.stop_on_failure and failure_event.is_set():
                 return (browser_name, 1, 0.0, True)
 
@@ -428,10 +445,10 @@ async def main():
 
             started = time.monotonic()
             try:
-                r = await run(browser_name, executable_path, url_with_from_test, args.wait, args)
+                r = await run(browser_name, executable_path, url_with_from_test, args.wait, args, browser_label)
                 rc = to_int_exit(r)
             except Exception:
-                logging.exception(f"[{browser_name}] Unhandled exception during run")
+                logging.exception(f"[{browser_label}] Unhandled exception during run")
                 rc = 1
 
             duration = time.monotonic() - started

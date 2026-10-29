@@ -1828,5 +1828,9 @@ function attachTooltipListeners(container) {
 })();
 
 function create_topological_analyzer () {
+	if (typeof TopologicalAnalyzer === "undefined") {
+		console.warn("[topological_analyzer] TopologicalAnalyzer script did not load; skipping init.");
+		return;
+	}
 	TopologicalAnalyzer.init("topological_data_analysis");
 }

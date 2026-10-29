@@ -85,7 +85,7 @@ async function updated_page(no_graph_restart=null, disable_auto_enable_valid_lay
 
 	await plot_model_plot(true);
 
-	if($("#tda_analyzer_singleton").length) {
+	if($("#tda_analyzer_singleton").length && typeof TopologicalAnalyzer !== "undefined") {
 		TopologicalAnalyzer.update();
 	}
 

@@ -834,7 +834,9 @@ async function get_fit_data () {
 
 		show_or_hide_beginner_or_expert_mode_stuff();
 
-		TopologicalAnalyzer.update();
+		if (typeof TopologicalAnalyzer !== "undefined") {
+			TopologicalAnalyzer.update();
+		}
 	};
 
 	callbacks["onBatchEnd"] = async function (batch, logs) {
