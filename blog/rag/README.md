@@ -7,7 +7,7 @@ from the blog, reranks them, and lets a small CPU-only language model answer
 ```
 browser  ──POST /ask.php──▶  PHP proxy  ──▶  127.0.0.1:8090  (queue + retrieval)
                                                     │
-                                                    ├── rag_data/ (static Model2Vec index)
+                                                    ├── rag_data/ (bge-small vectors)
                                                     ├── fastembed reranker (MiniLM)
                                                     └── 127.0.0.1:11434 (Ollama, Qwen2.5)
 ```
@@ -64,7 +64,10 @@ If the blog is somewhere else:
 sudo ASANAI_BLOG_DIR=/srv/asanai/blog ./install.sh
 ```
 
-The installer is idempotent and does the following:
+The installer is idempotent. It uses the bge-small index committed in the
+repository when its source hash matches the lessons; otherwise it rebuilds it
+(on two CPU cores that one-time build can take around 25 minutes). It does the
+following:
 
 1. installs Python, PHP CLI/cURL, curl and certificates;
 2. installs Ollama if missing;

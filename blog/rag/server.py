@@ -36,6 +36,7 @@ RAG_DATA = Path(os.environ.get("ASANAI_RAG_DATA", str(BLOG_DIR / "rag_data")))
 CACHE_DB = Path(os.environ.get("ASANAI_RAG_CACHE", "/var/lib/asanai-rag/cache.sqlite"))
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434").rstrip("/")
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen2.5:1.5b")
+EMBED_MODEL = os.environ.get("EMBED_MODEL", "BAAI/bge-small-en-v1.5")
 KEEP_ALIVE = os.environ.get("OLLAMA_KEEP_ALIVE", "24h")
 CACHE_SEMANTIC_THRESHOLD = float(os.environ.get("CACHE_SEMANTIC_THRESHOLD", "0.90"))
 STREAM_BUFFER_CHARS = int(os.environ.get("STREAM_BUFFER_CHARS", "120"))
@@ -152,14 +153,14 @@ def is_blocked_question(text: str) -> bool:
 def heading_boost(chunk: dict, question: str) -> float:
     """Reward section titles that match the entity, and years for 'when' questions."""
     terms = [term for term in tokenize(question) if term not in STOPWORDS]
-    heading = (str(chunk.get("pt", "")) + " " + str(chunk.get("h", ""))).lower()
+    heading = str(chunk.get("h", "")).lower()
     heading_terms = set(tokenize(heading))
     overlap = sum(1 for term in terms if term in heading_terms)
-    boost = 0.8 * overlap
+    boost = 1.2 * overlap
     for term in terms:
         if len(term) > 4 and term in heading_terms:
-            boost += 0.4
-    if DATE_QUESTION_RE.search(question) and YEAR_RE.search(heading):
+            boost += 0.6
+    if overlap and DATE_QUESTION_RE.search(question) and YEAR_RE.search(heading):
         boost += 3.0
     query_terms = set(terms)
     for qualifier in HEADING_QUALIFIERS:
@@ -260,16 +261,10 @@ class RagEngine:
             for chunk in self.chunks
         ])
 
-        tools_dir = BASE_DIR if (BASE_DIR / "build_semantic_index.py").exists() else BLOG_DIR / "tools"
-        sys.path.insert(0, str(tools_dir))
-        from build_semantic_index import Embedder, load_packed
+        from fastembed import TextEmbedding
 
-        model_path = Path(
-            os.environ.get("ASANAI_RAG_MODEL", str(BASE_DIR / "models" / "potion-base-8M.bin"))
-        )
-        if not model_path.exists():
-            model_path = BLOG_DIR / "vendor" / "model2vec" / "models" / "potion-base-8M.bin"
-        self.embedder = Embedder(*load_packed(model_path))
+        threads = max(1, os.cpu_count() or 2)
+        self.embedder = TextEmbedding(EMBED_MODEL, threads=threads)
         self.reranker = None
         try:
             from fastembed.rerank.cross_encoder import TextCrossEncoder
@@ -279,8 +274,15 @@ class RagEngine:
         except Exception as exc:  # a missing reranker must not take the service down
             print(f"warning: reranker unavailable: {exc}", file=sys.stderr)
 
+    def embed_question(self, text: str):
+        vector = np.asarray(list(self.embedder.query_embed([text]))[0], dtype=np.float32)
+        norm = float(np.linalg.norm(vector))
+        if norm:
+            vector /= norm
+        return vector
+
     def retrieve(self, question: str, limit: int = 5):
-        query = self.embedder.embed(question)
+        query = self.embed_question(question)
         dense_scores = (self.vectors @ query) * self.scales
         dense = list(np.argsort(-dense_scores)[:25])
         lexical = self.bm25.search(question, 25)
@@ -476,7 +478,7 @@ class RagEngine:
         # the passages. Do not turn such an answer into a false "not in course";
         # attach the retrieved passages as sources instead.
         if not sources and len(answer) >= 20:
-            for index, chunk in enumerate(chunks[:3]):
+            for index, chunk in enumerate(chunks[:2]):
                 key = chunk["u"]
                 if key in seen:
                     continue
@@ -837,9 +839,14 @@ class RagService:
         cached = self.cache.get(key)
         embedding = None
         if not cached and not history and primary_lang(lang) == "en":
-            embedder = getattr(self.engine, "embedder", None)
-            if embedder is not None:
-                embedding = embedder.embed(question)
+            embed_question = getattr(self.engine, "embed_question", None)
+            if embed_question is not None:
+                embedding = embed_question(question)
+            else:
+                embedder = getattr(self.engine, "embedder", None)
+                if embedder is not None:
+                    embedding = embedder.embed(question)
+            if embedding is not None:
                 cached = self.cache.get_semantic(embedding, lang, history_hash)
         if cached:
             self.query_log.write(
@@ -957,10 +964,6 @@ class RagService:
                     job.question, job.lang, job.history, on_token=on_token
                 )
                 elapsed = time.time() - started
-                with self.lock:
-                    job.result = result
-                    job.status = "done"
-                    job.finished = time.time()
                 self.cache.put(
                     cache_key(job.question, job.lang, job.history),
                     result,
@@ -975,6 +978,10 @@ class RagService:
                     queue_seconds=(job.started or started) - job.created,
                     generation_seconds=elapsed,
                 )
+                with self.lock:
+                    job.result = result
+                    job.status = "done"
+                    job.finished = time.time()
             except Exception as exc:  # keep the worker alive
                 elapsed = time.time() - started
                 with self.lock:

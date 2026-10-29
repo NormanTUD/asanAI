@@ -129,6 +129,9 @@ class FakeEngine:
     embedder = FakeEmbedder()
     calls = 0
 
+    def embed_question(self, text):
+        return self.embedder.embed(text)
+
     def answer(self, question, lang, history, on_token=None):
         FakeEngine.calls += 1
         time.sleep(0.35)

@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # /// script
 # requires-python = ">=3.10"
-# dependencies = ["numpy"]
+# dependencies = ["numpy", "fastembed"]
 # ///
 """Build the server-side retrieval index used by the optional RAG answer service.
 
 This index stores the full chunk text (the browser semantic index stores short
-display snippets) and uses the same packed potion-base-8M model as the browser
-search. German questions are translated to English by the local LLM before
-retrieval, and the answer is written in the question's language.
+display snippets) and embeds it with bge-small-en-v1.5, a real transformer
+retriever that is much stronger than the browser's static Model2Vec model.
+German questions are translated to English by the local LLM before retrieval,
+and the answer is written in the question's language.
 
 Usage:
     uv run tools/build_rag_index.py
@@ -32,9 +33,9 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
-from build_semantic_index import Embedder, iter_chunks, load_packed  # noqa: E402
+from build_semantic_index import iter_chunks  # noqa: E402
 
-DEFAULT_MODEL = ROOT / "vendor" / "model2vec" / "models" / "potion-base-8M.bin"
+DEFAULT_MODEL = "BAAI/bge-small-en-v1.5"
 DEFAULT_OUT = ROOT / "rag_data"
 MAGIC = 0x4D4E5356
 VERSION = 1
@@ -51,7 +52,7 @@ def load_blocks(blog_dir: Path):
     return json.loads(result.stdout)
 
 
-def build(blog_dir: Path, out_dir: Path, model_path: Path, max_chars: int):
+def build(blog_dir: Path, out_dir: Path, model_name: str, max_chars: int, batch_size: int):
     payload = load_blocks(blog_dir)
     chunks = []
     texts = []
@@ -65,11 +66,25 @@ def build(blog_dir: Path, out_dir: Path, model_path: Path, max_chars: int):
             texts.append(chunk.pop("e"))
             chunks.append(chunk)
 
-    embedder = Embedder(*load_packed(model_path))
-    vectors = np.empty((len(chunks), embedder.dims), dtype=np.float32)
-    for index, text in enumerate(texts):
-        vectors[index] = embedder.embed(text)
-    dims = int(embedder.dims)
+    from fastembed import TextEmbedding
+
+    model = TextEmbedding(model_name=model_name)
+    # Group similar lengths: transformer batches pad to the longest text in the
+    # batch, and these chunks vary from 40 to 900 characters.
+    order = sorted(range(len(texts)), key=lambda index: len(texts[index]))
+    ordered_texts = [texts[index] for index in order]
+    vectors = None
+    for count, vector in enumerate(
+        model.passage_embed(ordered_texts, batch_size=batch_size), 1
+    ):
+        if vectors is None:
+            vectors = np.empty((len(texts), len(vector)), dtype=np.float32)
+        vectors[order[count - 1]] = vector
+        if count % 1000 == 0:
+            print(f"  embedded {count}/{len(texts)}", flush=True)
+    dims = int(vectors.shape[1])
+    norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+    np.divide(vectors, np.maximum(norms, 1e-9), out=vectors)
 
     max_abs = np.max(np.abs(vectors), axis=1)
     inverse = np.zeros_like(max_abs)
@@ -81,7 +96,7 @@ def build(blog_dir: Path, out_dir: Path, model_path: Path, max_chars: int):
     out_dir.mkdir(parents=True, exist_ok=True)
     meta = {
         "version": VERSION,
-        "model": "potion-base-8M",
+        "model": model_name,
         "dims": dims,
         "count": len(chunks),
         "built": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -96,11 +111,15 @@ def build(blog_dir: Path, out_dir: Path, model_path: Path, max_chars: int):
         handle.write(struct.pack("<4I", MAGIC, VERSION, len(chunks), dims))
         handle.write(scales.astype("<f4").tobytes())
         handle.write(quantized.tobytes())
-    return meta, quantized, scales, embedder
+    return meta, quantized, scales
 
 
-def probe(query, meta, quantized, scales, embedder):
-    qvec = embedder.embed(query)
+def probe(query, meta, quantized, scales, model_name):
+    from fastembed import TextEmbedding
+
+    model = TextEmbedding(model_name=model_name)
+    qvec = np.asarray(list(model.query_embed([query]))[0], dtype=np.float32)
+    qvec /= max(float(np.linalg.norm(qvec)), 1e-9)
     scores = (quantized.astype(np.float32) @ qvec) * scales
     order = np.argsort(-scores)[:8]
     print(f"\n? {query}")
@@ -114,16 +133,18 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--blog-dir", type=Path, default=ROOT)
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT)
-    parser.add_argument("--model", type=Path, default=DEFAULT_MODEL)
+    parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--max-chars", type=int, default=900)
+    parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--probe", action="append", default=[])
     args = parser.parse_args()
 
-    meta, quantized, scales, embedder = build(
+    meta, quantized, scales = build(
         args.blog_dir.resolve(),
         args.out_dir.resolve(),
-        args.model.resolve(),
+        args.model,
         args.max_chars,
+        args.batch_size,
     )
     print(
         f"wrote {meta['count']} chunks, {meta['dims']} dims\n"

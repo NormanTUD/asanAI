@@ -23,6 +23,7 @@ DATA_DIR="/var/lib/asanai-rag"
 RAG_DATA="$DATA_DIR/data"
 MODEL="${OLLAMA_MODEL:-qwen2.5:1.5b}"
 RERANK_MODEL="${RERANK_MODEL:-Xenova/ms-marco-MiniLM-L-6-v2}"
+EMBED_MODEL="${EMBED_MODEL:-BAAI/bge-small-en-v1.5}"
 
 wait_for_ollama() {
 	local tries="${1:-30}"
@@ -73,9 +74,6 @@ install -d -m 0755 -o www-data -g www-data "$DATA_DIR/hf" "$DATA_DIR/fastembed"
 chown -R www-data:www-data "$DATA_DIR"
 install -m 0644 "$SCRIPT_DIR/server.py" "$SCRIPT_DIR/requirements.txt" "$SCRIPT_DIR/README.md" "$SERVICE_DIR/"
 install -m 0755 "$SCRIPT_DIR/reindex.sh" "$SCRIPT_DIR/set-model.sh" "$SERVICE_DIR/"
-install -m 0644 "$BLOG_DIR/tools/build_semantic_index.py" "$SERVICE_DIR/"
-install -d -m 0755 "$SERVICE_DIR/models"
-install -m 0644 "$BLOG_DIR/vendor/model2vec/models/potion-base-8M.bin" "$SERVICE_DIR/models/"
 python3 -m venv "$SERVICE_DIR/venv"
 "$SERVICE_DIR/venv/bin/pip" install --upgrade pip
 "$SERVICE_DIR/venv/bin/pip" install -r "$SERVICE_DIR/requirements.txt"
@@ -94,6 +92,7 @@ ASANAI_RAG_PORT=8090
 
 OLLAMA_URL=http://127.0.0.1:11434
 OLLAMA_MODEL=$MODEL
+EMBED_MODEL=$EMBED_MODEL
 RERANK_MODEL=$RERANK_MODEL
 
 HF_HOME=$DATA_DIR/hf
@@ -121,30 +120,44 @@ systemctl restart ollama
 wait_for_ollama 30
 ollama pull "$MODEL"
 
-echo "[6/8] Downloading the reranker (about 80 MB)"
+echo "[6/8] Downloading the embedding and reranking models"
 sudo -u www-data env \
 	HF_HOME="$DATA_DIR/hf" \
 	FASTEMBED_CACHE_PATH="$DATA_DIR/fastembed" \
-	"$SERVICE_DIR/venv/bin/python" - "$RERANK_MODEL" <<'PY'
+	"$SERVICE_DIR/venv/bin/python" - "$EMBED_MODEL" "$RERANK_MODEL" <<'PY'
 import sys
+from fastembed import TextEmbedding
 from fastembed.rerank.cross_encoder import TextCrossEncoder
-TextCrossEncoder(sys.argv[1])
-print("reranker ready")
+TextEmbedding(sys.argv[1])
+TextCrossEncoder(sys.argv[2])
+print("models ready")
 PY
 
-echo "[7/8] Building the retrieval index"
-# Run as the blog owner: /home/<user> is often not traversable by www-data,
-# and the builder refreshes .search_cache.json in the blog. The result is
-# installed into the service's data directory as www-data.
-INDEX_TMP="$(mktemp -d)"
-chown "$BLOG_OWNER:$BLOG_OWNER" "$INDEX_TMP"
-sudo -u "$BLOG_OWNER" env \
-	"$SERVICE_DIR/venv/bin/python" "$BLOG_DIR/tools/build_rag_index.py" \
-		--blog-dir "$BLOG_DIR" \
-		--out-dir "$INDEX_TMP"
-install -o www-data -g www-data -m 0644 \
-	"$INDEX_TMP/rag_index.json" "$INDEX_TMP/rag_vectors.bin" "$RAG_DATA/"
-rm -rf "$INDEX_TMP"
+echo "[7/8] Installing the retrieval index"
+BLOG_HASH=$(php -r 'require $argv[1] . "/search_lib.php"; echo searchSourceHash($argv[1], search_excludes());' "$BLOG_DIR" 2>/dev/null || true)
+INDEX_HASH=""
+if [ -f "$BLOG_DIR/rag_data/rag_index.json" ]; then
+	INDEX_HASH=$("$SERVICE_DIR/venv/bin/python" -c 'import json,sys; print(json.load(open(sys.argv[1])).get("sourceHash", ""))' "$BLOG_DIR/rag_data/rag_index.json" 2>/dev/null || true)
+fi
+if [ -n "$INDEX_HASH" ] && [ "$INDEX_HASH" = "$BLOG_HASH" ]; then
+	echo "Using the index committed in the blog repository."
+	install -o www-data -g www-data -m 0644 \
+		"$BLOG_DIR/rag_data/rag_index.json" "$BLOG_DIR/rag_data/rag_vectors.bin" "$RAG_DATA/"
+else
+	echo "The committed index is stale; rebuilding (this can take a few minutes)."
+	# Run as the blog owner: /home/<user> is often not traversable by www-data,
+	# and the builder refreshes .search_cache.json in the blog. The result is
+	# installed into the service's data directory as www-data.
+	INDEX_TMP="$(mktemp -d)"
+	chown "$BLOG_OWNER:$BLOG_OWNER" "$INDEX_TMP"
+	sudo -u "$BLOG_OWNER" env \
+		"$SERVICE_DIR/venv/bin/python" "$BLOG_DIR/tools/build_rag_index.py" \
+			--blog-dir "$BLOG_DIR" \
+			--out-dir "$INDEX_TMP"
+	install -o www-data -g www-data -m 0644 \
+		"$INDEX_TMP/rag_index.json" "$INDEX_TMP/rag_vectors.bin" "$RAG_DATA/"
+	rm -rf "$INDEX_TMP"
+fi
 
 echo "[8/8] Starting the answer service"
 install -m 0644 "$SCRIPT_DIR/asanai-rag.service" /etc/systemd/system/asanai-rag.service

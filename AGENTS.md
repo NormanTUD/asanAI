@@ -601,7 +601,7 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
   “Ask the course” panel. It only appears when `ask.php?health=1` reports a
   healthy local service. `rag/server.py` runs one generation at a time with a
   queue, per-IP rate limits and an answer cache; it retrieves with the packed
-  English Model2Vec index in `rag_data/`, reranks the top candidates, and
+  bge-small-en-v1.5 vectors in `rag_data/`, reranks the top candidates, and
   answers with a small CPU-only Ollama model (default Qwen2.5-1.5B). Non-English
   questions are translated to English for retrieval and answered in the
   question's language (with a final language-normalisation pass); section

@@ -55,7 +55,7 @@ def main():
     data = VECTORS.read_bytes()
 
     check(meta.get("version") == 1, "RAG index version is 1")
-    check(meta.get("model") == "potion-base-8M", "RAG index names the embedding model")
+    check(meta.get("model") == "BAAI/bge-small-en-v1.5", "RAG index names the embedding model")
     check(meta.get("sourceHash") == current_source_hash(),
           "RAG index is fresh (run tools/build_rag_index.py after lesson edits)")
 
