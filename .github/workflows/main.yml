@@ -329,12 +329,73 @@ jobs:
           pattern: browser-timings-*
           path: browser-timings
 
+      - name: Download coverage reports
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: js-coverage-*
+          path: coverage-artifacts
+
       - name: Write job timing summary
         uses: actions/github-script@v7
         with:
           script: |
             const summarize = require(process.env.GITHUB_WORKSPACE + "/tests/job_timing_summary.js");
             await summarize.write_run_summary({ github, context, core });
+
+      - name: Write coverage summary
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import glob
+          import json
+          import os
+
+          summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+          paths = sorted(
+              glob.glob("coverage-artifacts/**/summary.json", recursive=True)
+          )
+          lines = ["## Test coverage", ""]
+
+          if not paths:
+              lines.append("No coverage artifact was produced.")
+          else:
+              headline_path = next(
+                  (path for path in paths if "ubuntu" in path), paths[0]
+              )
+              with open(headline_path, encoding="utf-8") as handle:
+                  headline = json.load(handle)["summary"]
+              lines.append(
+                  f"**Overall line coverage: {headline['lines']['percent']:.2f}%** "
+                  f"({headline['lines']['covered']:,}/{headline['lines']['total']:,}) · "
+                  f"functions {headline['functions']['percent']:.2f}% "
+                  f"({headline['functions']['covered']:,}/{headline['functions']['total']:,})"
+              )
+              lines.append("")
+              lines.append("| Job | Lines | Functions | Files |")
+              lines.append("|---|---:|---:|---:|")
+              for path in paths:
+                  with open(path, encoding="utf-8") as handle:
+                      data = json.load(handle)
+                  summary = data["summary"]
+                  parts = os.path.relpath(path, "coverage-artifacts").split(os.sep)
+                  label = next(
+                      (part for part in parts if part.startswith("js-coverage-")),
+                      parts[0],
+                  )
+                  lines.append(
+                      f"| `{label}` "
+                      f"| **{summary['lines']['percent']:.2f}%** "
+                      f"({summary['lines']['covered']:,}/{summary['lines']['total']:,}) "
+                      f"| {summary['functions']['percent']:.2f}% "
+                      f"({summary['functions']['covered']:,}/{summary['functions']['total']:,}) "
+                      f"| {summary['files']} |"
+                  )
+
+          with open(summary_path, "a", encoding="utf-8") as handle:
+              handle.write("\n".join(lines) + "\n")
+          PY
 
   tag-version:
     needs:
