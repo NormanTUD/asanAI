@@ -77,10 +77,13 @@
 		button.setAttribute('aria-label', 'Ask the course');
 		button.setAttribute('title', 'Ask the course');
 		button.innerHTML =
-			'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" ' +
+			'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" ' +
 			'stroke="currentColor" stroke-width="2" stroke-linecap="round" ' +
-			'stroke-linejoin="round" aria-hidden="true">' +
-			'<path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.5 8.9 8.9 0 0 1-4-1L3 21l2-5.5a8.4 8.4 0 0 1-1-4A8.5 8.5 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5z"/>' +
+			'stroke-linejoin="round" aria-hidden="true" focusable="false">' +
+			'<path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>' +
+			'<circle cx="8" cy="10" r="0.8" fill="currentColor" stroke="none"/>' +
+			'<circle cx="12" cy="10" r="0.8" fill="currentColor" stroke="none"/>' +
+			'<circle cx="16" cy="10" r="0.8" fill="currentColor" stroke="none"/>' +
 			'</svg>';
 
 		var panel = document.createElement('div');
@@ -116,6 +119,12 @@
 
 		button.addEventListener('click', open);
 		panel.querySelector('.rag-chat-close').addEventListener('click', close);
+		els.input.addEventListener('keydown', function(event) {
+			if (event.key === 'Enter' && !event.shiftKey) {
+				event.preventDefault();
+				submit();
+			}
+		});
 		panel.querySelector('.rag-chat-form').addEventListener('submit', function(event) {
 			event.preventDefault();
 			submit();
@@ -177,7 +186,7 @@
 			if (data && data.status === 'done') {
 				finish(question, data);
 			} else if (data && data.id) {
-				poll(question, data);
+				poll(question, data.id, data);
 			} else {
 				fail(data);
 			}
@@ -185,9 +194,8 @@
 		.catch(function() { fail(null); });
 	}
 
-	function poll(question, first) {
+	function poll(question, id, first) {
 		els.status.textContent = statusText(first);
-		var id = first.id;
 		state.pollTimer = setTimeout(function() {
 			fetch('ask.php?status=' + encodeURIComponent(id), { cache: 'no-store' })
 				.then(function(response) { return response.json(); })
@@ -199,7 +207,7 @@
 					} else {
 						els.status.textContent = statusText(data) ||
 							'Generating your answer…';
-						poll(question, data || first);
+						poll(question, id, data);
 					}
 				})
 				.catch(function() { fail(null); });

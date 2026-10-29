@@ -24,6 +24,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.os_manager import ChromeType
@@ -100,8 +101,11 @@ MOCK = r"""
 			return reply({ ok: true, ready: true, ollama: true, model: 'mock', model_present: true });
 		}
 		if (url.indexOf('ask.php?status=') !== -1) {
+			if (url.indexOf('undefined') !== -1) {
+				return reply({ error: 'unknown_job' });
+			}
 			statusCalls += 1;
-			if (statusCalls === 1) {
+			if (statusCalls <= 3) {
 				return reply({ status: 'running', position: 0, eta_seconds: 10 });
 			}
 			return reply({
@@ -156,6 +160,13 @@ def main() -> int:
 			lambda d: not d.find_element(By.ID, "rag-chat-panel").get_attribute("hidden")
 		)
 		check(True, "the chat panel opens")
+		check(browser.execute_script(
+			"return document.querySelectorAll('#rag-chat-toggle svg path, "
+			"#rag-chat-toggle svg circle').length"
+		) >= 2, "the chat button has a visible icon")
+		check(browser.execute_script(
+			"return getComputedStyle(document.querySelector('.rag-chat-close')).color"
+		) == "rgb(225, 29, 72)", "the close button is red")
 
 		browser.execute_script(
 			"const input = document.querySelector('.rag-chat-input');"
@@ -186,6 +197,28 @@ def main() -> int:
 		check("history#the-perceptron" in browser.execute_script(
 			"return document.querySelector('.rag-chat-msg-assistant').innerHTML"
 		), "citation points at the lesson")
+
+		# Enter sends; Shift+Enter inserts a newline and does not send.
+		input_el = browser.find_element(By.CSS_SELECTOR, ".rag-chat-input")
+		input_el.send_keys("What is a derivative?")
+		input_el.send_keys(Keys.ENTER)
+		WebDriverWait(browser, 8).until(
+			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")) >= 2
+		)
+		check(True, "Enter sends the message")
+
+		browser.execute_script("document.querySelector('.rag-chat-input').value = ''")
+		input_el = browser.find_element(By.CSS_SELECTOR, ".rag-chat-input")
+		input_el.click()
+		input_el.send_keys("line one")
+		input_el.send_keys(Keys.SHIFT + Keys.ENTER)
+		input_el.send_keys("line two")
+		value = browser.execute_script(
+			"return document.querySelector('.rag-chat-input').value"
+		)
+		check("\n" in value, "Shift+Enter inserts a newline", repr(value))
+		check(len(browser.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")) == 2,
+			"Shift+Enter does not send the message")
 
 		severe = [entry for entry in browser.get_log("browser")
 				  if entry.get("level") == "SEVERE"]

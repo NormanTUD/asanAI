@@ -13763,6 +13763,12 @@ summary:focus-visible,
 	transform: translateY(-2px);
 	box-shadow: 0 14px 34px rgba(15, 23, 42, 0.28);
 }
+#rag-chat-toggle svg {
+	display: block;
+	width: 22px;
+	height: 22px;
+	flex: none;
+}
 #rag-chat-panel {
 	position: fixed;
 	right: 22px;
@@ -13794,11 +13800,19 @@ summary:focus-visible,
 }
 .rag-chat-close {
 	border: 0;
+	border-radius: 6px;
+	padding: 0 6px;
 	background: transparent;
-	color: var(--mn-text-muted);
-	font-size: 1.35rem;
-	line-height: 1;
+	color: var(--mn-rose);
+	font-size: 1.5rem;
+	line-height: 1.1;
 	cursor: pointer;
+}
+.rag-chat-close:hover,
+.rag-chat-close:focus-visible {
+	background: color-mix(in srgb, var(--mn-rose) 12%, transparent);
+	color: var(--mn-rose);
+	outline: none;
 }
 .rag-chat-messages {
 	flex: 1;
