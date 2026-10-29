@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code Patterns — Ein interaktives Bestiarium</title>
+<meta name="description" content="Zwölf Entwurfsmuster interaktiv erklärt: Singleton, Factory Method, Builder, Prototype, Adapter, Decorator, Facade, Proxy, Observer, Strategy, Command und State — mit Diagrammen, JavaScript und Laboren zum Anfassen.">
+<link rel="stylesheet" href="code_patterns.css">
+<script>
+try {
+  var saved = localStorage.getItem("pattern-atlas-theme");
+  if (saved === "light" || saved === "dark") document.documentElement.dataset.theme = saved;
+} catch (error) {}
+</script>
+</head>
+<body>
+<a class="skip-link" href="#atlas">Zum Atlas springen</a>
+
+<div class="aurora" aria-hidden="true">
+  <span class="aurora-a"></span>
+  <span class="aurora-b"></span>
+  <span class="aurora-c"></span>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="topbar">
+  <a class="brand" href="#top" aria-label="Zum Seitenanfang">
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M16 2.5 29.5 16 16 29.5 2.5 16Z" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      <path d="M16 8.5 23.5 16 16 23.5 8.5 16Z" fill="currentColor" opacity=".55"/>
+    </svg>
+    <span>Pattern<em>Atlas</em></span>
+  </a>
+  <nav class="topnav" aria-label="Hauptnavigation">
+    <a href="#atlas">Atlas</a>
+    <a href="#principles">Prinzipien</a>
+    <a href="#register">Register</a>
+    <button class="nav-quiz" type="button" data-open-quiz>Muster-Detektiv</button>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Farbschema wechseln" title="Farbschema wechseln">
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero" aria-labelledby="hero-title">
+    <canvas id="hero-canvas" aria-hidden="true"></canvas>
+    <div class="hero-inner">
+      <p class="eyebrow"><span class="eyebrow-line"></span>Ein interaktives Bestiarium der Software-Muster</p>
+      <h1 id="hero-title">Code<br><em>Patterns</em></h1>
+      <p class="hero-sub">Zwölf Muster, die aus Code Architektur machen. Kein Auswendiglernen: anfassen, kaputt machen, verstehen. Jedes Muster mit einem Labor, das sofort auf dich reagiert.</p>
+      <div class="hero-cta">
+        <a class="btn btn--primary btn--lg" href="#atlas">
+          Atlas öffnen
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v13M5 11l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <button class="btn btn--ghost btn--lg" type="button" data-open-quiz>Muster-Detektiv spielen</button>
+      </div>
+      <dl class="hero-stats">
+        <div><dt>12</dt><dd>Muster im Labor</dd></div>
+        <div><dt>3</dt><dd>Familien</dd></div>
+        <div><dt>0</dt><dd>Bibliotheken</dd></div>
+      </dl>
+    </div>
+    <a class="scroll-hint" href="#atlas" aria-label="Zum Atlas scrollen">
+      <span>scrollen</span>
+      <i></i>
+    </a>
+  </section>
+
+  <section id="atlas" class="section atlas" aria-labelledby="atlas-title">
+    <div class="section-head">
+      <p class="eyebrow"><span class="eyebrow-line"></span>Der Katalog</p>
+      <h2 id="atlas-title">Zwölf Muster,<br><em>zum Anfassen.</em></h2>
+      <p>Die Gang of Four hat 1994 dreiundzwanzig Muster beschrieben. Hier sind die zwölf, bei denen man am meisten sieht — jeweils mit einem kleinen Labor, echtem JavaScript und den Stolperfallen, die in keinem Lehrbuch fehlen.</p>
+    </div>
+
+    <div class="atlas-grid">
+      <aside class="rail" aria-label="Musterkatalog">
+        <div class="rail-search">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m13.2 13.2 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <input type="search" data-search placeholder="Muster suchen …" aria-label="Muster suchen" autocomplete="off" spellcheck="false">
+          <kbd>/</kbd>
+        </div>
+        <div class="rail-filters" role="group" aria-label="Nach Familie filtern">
+          <button type="button" class="filter is-active" data-filter="all">Alle <span>12</span></button>
+          <button type="button" class="filter" data-filter="creational">Kreational <span>4</span></button>
+          <button type="button" class="filter" data-filter="structural">Struktural <span>4</span></button>
+          <button type="button" class="filter" data-filter="behavioral">Verhalten <span>4</span></button>
+        </div>
+        <div class="rail-list" data-rail-list></div>
+        <p class="rail-hint"><kbd>J</kbd><kbd>K</kbd> wechseln · <kbd>/</kbd> suchen</p>
+      </aside>
+
+      <div class="stage-wrap">
+        <article id="stage" class="stage" data-family="creational" aria-live="polite"></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="principles" class="section principles" aria-labelledby="principles-title">
+    <div class="section-head">
+      <p class="eyebrow"><span class="eyebrow-line"></span>Die Haltung</p>
+      <h2 id="principles-title">Muster sind kein<br><em>Rezeptbuch.</em></h2>
+      <p>Sie sind Vokabular. Sie helfen dir, über Code zu sprechen, bevor du ihn schreibst. Vier Sätze, die mehr wert sind als jede Liste von dreiundzwanzig Namen.</p>
+    </div>
+    <div class="principles-grid">
+      <article class="principle">
+        <span class="principle-num">01</span>
+        <h3>Gegen Schnittstellen programmieren.</h3>
+        <p>Nicht „welche Klasse brauche ich?“, sondern „was muss das Ding können?“. Wer die Schnittstelle kennt, kann die Implementierung austauschen — und genau das ist die Grundlage fast jedes Musters.</p>
+      </article>
+      <article class="principle">
+        <span class="principle-num">02</span>
+        <h3>Komposition vor Vererbung.</h3>
+        <p>Vererbung ist eine enge Umarmung. Komposition lässt dich Verhalten zu- und abschalten. Decorator, Strategy und Adapter sind Variationen dieses einen Gedankens.</p>
+      </article>
+      <article class="principle">
+        <span class="principle-num">03</span>
+        <h3>Kapsele, was sich ändert.</h3>
+        <p>Suche die Stelle, an der dein Code morgen wahrscheinlich anders aussehen wird. Schreibe heute eine Grenze darum. Das Muster ergibt sich oft von selbst.</p>
+      </article>
+      <article class="principle">
+        <span class="principle-num">04</span>
+        <h3>Weniger ist mehr.</h3>
+        <p>Ein Muster, das du nicht brauchst, ist zusätzliche Indirektion. Die beste Architektur ist oft die, die man nicht sieht — nicht die mit den meisten Klassen.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="register" class="section register" aria-labelledby="register-title">
+    <div class="section-head">
+      <p class="eyebrow"><span class="eyebrow-line"></span>Das Register</p>
+      <h2 id="register-title">Die restlichen<br><em>Spezies.</em></h2>
+      <p>Nicht jedes Muster braucht ein Labor. Diese zehn sind trotzdem Teil des Bestiariums — als Karte, die du im Kopf behalten kannst.</p>
+    </div>
+    <div class="register-grid" data-register-grid></div>
+  </section>
+
+  <section class="closing" aria-labelledby="closing-title">
+    <p class="eyebrow"><span class="eyebrow-line"></span>Genug gelesen</p>
+    <h2 id="closing-title">Welches Muster<br><em>steckt dahinter?</em></h2>
+    <p>Acht kleine Szenarien. Du wählst das Muster, das am besten passt — und erfährst sofort, warum.</p>
+    <button class="btn btn--primary btn--lg" type="button" data-open-quiz>Muster-Detektiv starten</button>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <p><strong>PatternAtlas</strong><br>Ein interaktives Bestiarium der Software-Muster.</p>
+    </div>
+    <div class="footer-col">
+      <span class="footer-label">Recherche</span>
+      <p>Gang of Four: <em>Design Patterns</em> (1994) · <a href="https://refactoring.guru/design-patterns" target="_blank" rel="noopener">Refactoring.Guru</a> · <a href="https://en.wikipedia.org/wiki/Software_design_pattern" target="_blank" rel="noopener">Wikipedia</a></p>
+    </div>
+    <div class="footer-col">
+      <span class="footer-label">Technik</span>
+      <p>Vanilla HTML, CSS und JavaScript. Keine Bibliotheken, kein Build, kein Tracking. Läuft offline.</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 PatternAtlas · für neugierige Menschen gebaut</span>
+    <a href="#top">Nach oben ↑</a>
+  </div>
+</footer>
+
+<dialog id="quiz" class="quiz" aria-labelledby="quiz-title">
+  <div class="quiz-top">
+    <div>
+      <p class="eyebrow"><span class="eyebrow-line"></span>Muster-Detektiv</p>
+      <span class="quiz-count" data-quiz-count>Frage 1 von 8</span>
+    </div>
+    <button class="quiz-close" type="button" data-close-quiz aria-label="Quiz schließen">&times;</button>
+  </div>
+  <div class="quiz-progress" aria-hidden="true"><span data-quiz-bar></span></div>
+  <div class="quiz-body" data-quiz-body>
+    <h3 id="quiz-title" data-quiz-question></h3>
+    <div class="quiz-options" data-quiz-options></div>
+    <p class="quiz-feedback" data-quiz-feedback></p>
+    <button class="btn btn--primary" type="button" data-quiz-next hidden>Weiter</button>
+  </div>
+  <div class="quiz-done" data-quiz-done hidden>
+    <span class="quiz-done-mark" aria-hidden="true">◇</span>
+    <h3>Auswertung</h3>
+    <p class="quiz-score" data-quiz-score></p>
+    <p class="quiz-verdict" data-quiz-verdict></p>
+    <button class="btn btn--primary" type="button" data-quiz-restart>Nochmal spielen</button>
+  </div>
+</dialog>
+
+<script src="code_patterns.js"></script>
+</body>
+</html>
