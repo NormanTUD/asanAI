@@ -376,6 +376,11 @@ function renderMarkdown() {
 			rawContent = BlogTopics.preprocess(rawContent);
 		}
 
+		// 2d. YouTube markers: [youtube]ID[/youtube] → click-to-load card
+		if (window.BlogYouTube && BlogYouTube.preprocess) {
+			rawContent = BlogYouTube.preprocess(rawContent);
+		}
+
 		// 3. Erst jetzt das Markdown (mit den bereits fertigen Spans) parsen
 		container.innerHTML = marked.parse(rawContent);
 		// 3r. Put the rendered <math> elements back (verbatim nodes).
@@ -421,6 +426,9 @@ function renderMarkdown() {
 		if (window.BlogTopics && BlogTopics.preprocess) {
 			fnContainer.innerHTML = BlogTopics.preprocess(fnContainer.innerHTML);
 		}
+		if (window.BlogYouTube && BlogYouTube.preprocess) {
+			fnContainer.innerHTML = BlogYouTube.preprocess(fnContainer.innerHTML);
+		}
 		fnContainer.innerHTML = marked.parse(fnContainer.innerHTML);
 		restoreContainerMath(fnContainer, stashedFnMath);
 		smartPunct(fnContainer);
@@ -434,6 +442,9 @@ function renderMarkdown() {
 		const stashedSrcMath = stashContainerMath(srcContainer);
 		if (window.BlogTopics && BlogTopics.preprocess) {
 			srcContainer.innerHTML = BlogTopics.preprocess(srcContainer.innerHTML);
+		}
+		if (window.BlogYouTube && BlogYouTube.preprocess) {
+			srcContainer.innerHTML = BlogYouTube.preprocess(srcContainer.innerHTML);
 		}
 		srcContainer.innerHTML = marked.parse(srcContainer.innerHTML);
 		restoreContainerMath(srcContainer, stashedSrcMath);
