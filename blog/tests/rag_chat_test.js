@@ -80,6 +80,8 @@ check(chat.errorText({ error: 'unknown_job' }).indexOf('restarted') !== -1,
 	'lost-job error suggests retrying');
 check(chat.errorText({ error: 'rate_limited', retry_after: 7 }).indexOf('7') !== -1,
 	'rate-limit error includes the retry delay');
+check(chat.errorText({ error: 'queue_full' }).toLowerCase().indexOf('queue is full') !== -1,
+	'a full queue gets its own message');
 
 check(chat.visiblePartial('foo [[NOT_IN_COURSE]] bar') === 'foo  bar',
 	'double-bracket refusal marker is hidden');

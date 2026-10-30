@@ -172,6 +172,8 @@ def main() -> int:
 			"return document.querySelectorAll('#rag-chat-toggle svg path, "
 			"#rag-chat-toggle svg circle').length"
 		) >= 2, "the chat button has a visible icon")
+		check(len(browser.find_elements(By.CSS_SELECTOR, ".rag-chat-title-sub")) == 0,
+			"the chat title has no subtitle")
 		check(browser.execute_script(
 			"return getComputedStyle(document.querySelector('.rag-chat-close')).color"
 		) == "rgb(225, 29, 72)", "the close button is red")

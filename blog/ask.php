@@ -117,9 +117,25 @@ foreach (array_slice(is_array($payload['history'] ?? null) ? $payload['history']
 	if (!is_array($turn) || !isset($turn['content']) || !is_string($turn['content'])) {
 		continue;
 	}
+	$queryEn = is_string($turn['query_en'] ?? null) ? substr($turn['query_en'], 0, 600) : '';
+	$sources = [];
+	$rawSources = $turn['sources'] ?? null;
+	if (is_array($rawSources)) {
+		foreach (array_slice($rawSources, -4) as $source) {
+			if (!is_array($source)) {
+				continue;
+			}
+			$sources[] = [
+				'title' => is_string($source['title'] ?? null) ? substr($source['title'], 0, 200) : '',
+				'heading' => is_string($source['heading'] ?? null) ? substr($source['heading'], 0, 200) : '',
+			];
+		}
+	}
 	$history[] = [
 		'role' => is_string($turn['role'] ?? null) ? substr($turn['role'], 0, 16) : 'user',
 		'content' => substr($turn['content'], 0, 2000),
+		'query_en' => $queryEn,
+		'sources' => $sources,
 	];
 }
 $payload['history'] = $history;

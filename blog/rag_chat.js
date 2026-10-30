@@ -370,9 +370,14 @@
 		panel.hidden = true;
 		panel.innerHTML =
 			'<div class="rag-chat-header">' +
-				'<div class="rag-chat-title">' +
+				'<div class="rag-chat-brand">' +
+					'<span class="rag-chat-brand-mark" aria-hidden="true">' +
+						'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' +
+						'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>' +
+						'<path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>' +
+						'</svg>' +
+					'</span>' +
 					'<span class="rag-chat-title-main">Ask the course</span>' +
-					'<span class="rag-chat-title-sub">AI answers · verify lessons &amp; sources</span>' +
 				'</div>' +
 				'<div class="rag-chat-actions">' +
 					'<button type="button" class="rag-chat-clear" aria-label="Clear conversation" title="Clear conversation">' +
@@ -402,7 +407,11 @@
 			'<form class="rag-chat-form">' +
 				'<textarea class="rag-chat-input" rows="2" maxlength="2000" ' +
 				'placeholder="Ask a question about the course…" aria-label="Your question"></textarea>' +
-				'<button type="submit" class="rag-chat-send">Send</button>' +
+				'<button type="submit" class="rag-chat-send" aria-label="Send" title="Send">' +
+					'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+					'<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>' +
+					'</svg>' +
+				'</button>' +
 			'</form>';
 
 		document.body.appendChild(button);
@@ -685,7 +694,18 @@
 		pruneBrokenImages(node);
 		if (follow) scrollMessages();
 		state.history.push({ role: 'user', content: question });
-		state.history.push({ role: 'assistant', content: answer });
+		var contextSources = sources.slice(0, 4).map(function(source) {
+			return {
+				title: String(source && source.title || '').slice(0, 200),
+				heading: String(source && source.heading || '').slice(0, 200)
+			};
+		});
+		state.history.push({
+			role: 'assistant',
+			content: answer,
+			query_en: data && typeof data.query_en === 'string' ? data.query_en : '',
+			sources: contextSources
+		});
 		state.history = state.history.slice(-6);
 		state.messages.push({
 			role: 'assistant',

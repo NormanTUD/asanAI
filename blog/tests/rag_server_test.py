@@ -134,6 +134,25 @@ class FakeEmbedder:
         return vector
 
 
+class BlockingEngine:
+    started = threading.Event()
+    release = threading.Event()
+    questions = []
+
+    def answer(self, question, lang, history, on_token=None):
+        BlockingEngine.started.set()
+        BlockingEngine.release.wait(2)
+        BlockingEngine.questions.append(question)
+        return {
+            "grounded": True,
+            "answer": "A queued answer [S1].",
+            "sources": [
+                {"id": "S1", "title": "History", "heading": "X", "url": "history#x"}
+            ],
+            "query_en": question,
+        }
+
+
 class FakeEngine:
     chunks = [{"u": "history#x", "pt": "History", "h": "X", "x": "A perceptron."}]
     embedder = FakeEmbedder()
@@ -219,6 +238,29 @@ def main():
     check("[S1]" in messages[1]["content"], "prompt contains passage markers")
     check("history#x" in messages[1]["content"], "prompt contains source URLs")
     check("German" in messages[1]["content"], "prompt names the answer language")
+
+    follow_history = [
+        {
+            "role": "assistant",
+            "query_en": "What is a perceptron?",
+            "sources": [{"title": "Brief History of AI", "heading": "The Perceptron"}],
+        }
+    ]
+    follow_query = engine.retrieval_query("And what does it do?", follow_history)
+    check("What is a perceptron?" in follow_query and "The Perceptron" in follow_query,
+          "follow-up retrieval includes the previous question and source headings")
+    check(engine.retrieval_query("What is a derivative?", follow_history)
+          == "What is a derivative?", "new questions keep their own retrieval query")
+    check(server.is_followup("Und was macht das?"), "German follow-ups are recognized")
+    history_messages = engine.build_messages(
+        "And what does it do?",
+        "And what does it do?",
+        chunks[:1],
+        "en",
+        [{"role": "assistant", "content": "Old answer [S1].", "query_en": "old"}],
+    )
+    check("Old answer [S1]" not in history_messages[1]["content"],
+          "previous citations are stripped from follow-up context")
 
     # A NOT_IN_COURSE response triggers one permissive retry.
     retry_engine = object.__new__(server.RagEngine)
@@ -552,6 +594,55 @@ def main():
             server.OLLAMA_URL = old_proxy_ollama
             httpd.shutdown()
             httpd.server_close()
+
+    BlockingEngine.started.clear()
+    BlockingEngine.release.clear()
+    BlockingEngine.questions.clear()
+    with tempfile.TemporaryDirectory(prefix="asanai-rag-queue-test-") as tmp:
+        queue_cache = server.AnswerCache(Path(tmp) / "cache.sqlite")
+        queue_service = server.RagService(BlockingEngine(), queue_cache)
+        queue_service.query_log = server.QueryLog(Path(tmp) / "queries.sqlite")
+        queue_service.rate = server.RateLimiter(100, 0)
+        first = None
+        accepted = []
+        try:
+            status, first = queue_service.submit("queue question 0", "en", [], "10.1.0.1")
+            check(status == 200 and first.get("id"), "queue: first request is accepted")
+            check(BlockingEngine.started.wait(2), "queue: worker starts the first request")
+            for index in range(1, 21):
+                status, job = queue_service.submit(
+                    f"queue question {index}", "en", [], f"10.1.0.{index + 1}"
+                )
+                check(status == 200 and job.get("id"), f"queue: request {index} is accepted")
+                accepted.append(job)
+            check(queue_service.queue.qsize() == 20,
+                  "queue: holds at most 20 waiting requests",
+                  str(queue_service.queue.qsize()))
+            check(accepted[0].get("position") == 2 and accepted[-1].get("position") == 21,
+                  "queue: positions count the running request",
+                  f"{accepted[0].get('position')}..{accepted[-1].get('position')}")
+            status, overflow = queue_service.submit(
+                "queue question 21", "en", [], "10.1.1.1"
+            )
+            check(status == 429 and overflow.get("error") == "queue_full",
+                  "queue: overflow is rejected with 429", str(overflow))
+        finally:
+            BlockingEngine.release.set()
+        jobs = ([first] if first else []) + accepted
+        deadline = time.time() + 5
+        finals = []
+        while time.time() < deadline:
+            finals = [queue_service.status(job["id"]) for job in jobs]
+            if finals and all(item and item.get("status") == "done" for item in finals):
+                break
+            time.sleep(0.05)
+        check(finals and all(item and item.get("status") == "done" for item in finals),
+              "queue: every accepted request finishes",
+              str(finals[-1] if finals else None))
+        check(BlockingEngine.questions[:3] == [
+            "queue question 0", "queue question 1", "queue question 2"
+        ], "queue: requests are generated in FIFO order",
+              str(BlockingEngine.questions[:3]))
 
     print(f"\n{passed} passed, {failed} failed")
     return 1 if failed else 0

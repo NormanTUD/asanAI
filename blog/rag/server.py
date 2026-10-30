@@ -101,6 +101,25 @@ STOPWORDS = set(
 HEADING_QUALIFIERS = {"vision", "diffusion", "graph", "music", "audio", "speech", "video"}
 DATE_QUESTION_RE = re.compile(r"\b(when|year|date|wann|jahr)\b", re.IGNORECASE)
 YEAR_RE = re.compile(r"\b(19|20)\d{2}\b")
+FOLLOWUP_PREFIX_RE = re.compile(
+    r"^(?:and|but|also|so|then|why|how|what about|"
+    r"und|aber|auch|dann|warum|wieso|was ist mit)\b",
+    re.IGNORECASE,
+)
+FOLLOWUP_RE = re.compile(
+    r"\b(?:it|its|this|that|these|those|they|them|their|he|she|him|her|his|"
+    r"the former|the latter|the first|the second|the third|above|previous|earlier|"
+    r"das|dies|diese|dieser|diesem|diesen|es|sie|er|ihm|ihn|ihr|ihre|"
+    r"davon|dabei|damit|dazu|daraus|darüber|vorher|vorige|zweite|erste)\b",
+    re.IGNORECASE,
+)
+
+
+def is_followup(question: str) -> bool:
+    text = (question or "").strip()
+    if not text or len(text) > 160:
+        return False
+    return bool(FOLLOWUP_PREFIX_RE.match(text) or FOLLOWUP_RE.search(text))
 
 LANGUAGE_NAMES = {
     "en": "English",
@@ -424,9 +443,41 @@ class RagEngine:
             print(f"warning: answer language step failed: {exc}", file=sys.stderr)
             return answer
 
+    def retrieval_query(self, question: str, history: list) -> str:
+        text = (question or "").strip()
+        if not text or not history or not is_followup(text):
+            return text
+        parts = [text]
+        for turn in reversed(history[-4:]):
+            if not isinstance(turn, dict) or turn.get("role") != "assistant":
+                continue
+            previous = turn.get("query_en")
+            if isinstance(previous, str) and previous.strip():
+                parts.append(previous.strip()[:400])
+            sources = turn.get("sources")
+            if isinstance(sources, list):
+                for source in sources[:3]:
+                    if not isinstance(source, dict):
+                        continue
+                    title = str(source.get("title") or "").strip()
+                    heading = str(source.get("heading") or "").strip()
+                    if title:
+                        parts.append(title[:200])
+                    if heading and heading.lower() != title.lower():
+                        parts.append(heading[:200])
+            break
+        unique = []
+        seen = set()
+        for part in parts:
+            key = part.lower()
+            if key and key not in seen:
+                seen.add(key)
+                unique.append(part)
+        return " ".join(unique)[:700]
+
     def answer(self, question: str, lang: str, history: list, on_token=None) -> dict:
         english = self.translate(question, lang)
-        chunks = self.retrieve(english, 4)
+        chunks = self.retrieve(self.retrieval_query(english, history), 4)
         if not chunks:
             return {
                 "grounded": False,
@@ -499,10 +550,16 @@ class RagEngine:
             for turn in history[-4:]:
                 role = turn.get("role", "user")
                 content = str(turn.get("content", ""))[:1200]
+                if role == "assistant":
+                    content = CITE_RE.sub("", content).strip()
                 if content:
                     lines.append(f"{role}: {content}")
             if lines:
-                previous = "Previous conversation:\n" + "\n".join(lines) + "\n\n"
+                previous = (
+                    "Previous conversation (citations there refer to earlier passages):\n"
+                    + "\n".join(lines)
+                    + "\n\n"
+                )
         user = (
             f"{previous}Question (answer in {language}): {question}\n"
             f"English retrieval query: {english}\n"
@@ -1239,9 +1296,23 @@ class Handler(BaseHTTPRequestHandler):
                 if not isinstance(turn, dict) or not isinstance(turn.get("content"), str):
                     continue
                 role = turn.get("role")
+                query_en = turn.get("query_en")
+                query_en = query_en[:600] if isinstance(query_en, str) else ""
+                sources = []
+                raw_sources = turn.get("sources")
+                if isinstance(raw_sources, list):
+                    for source in raw_sources[-4:]:
+                        if not isinstance(source, dict):
+                            continue
+                        sources.append({
+                            "title": str(source.get("title") or "")[:200],
+                            "heading": str(source.get("heading") or "")[:200],
+                        })
                 history.append({
                     "role": role[:16] if isinstance(role, str) else "user",
                     "content": turn["content"][:2000],
+                    "query_en": query_en,
+                    "sources": sources,
                 })
         ip = self.headers.get("X-Client-IP") or self.client_address[0]
         code, result = self.service.submit(question, lang, history, ip)
