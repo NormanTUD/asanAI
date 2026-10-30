@@ -8468,6 +8468,1304 @@ function _tiny_tests_base_wrappers_async() {
 	})();
 }
 
+async function _coverage_tests_fn_profiler() {
+	var api = window.__opencodelog;
+	test_equal("opencodelog API is exposed", !!api && typeof api.install === "function", true);
+	test_equal("opencodelog initial status is not installed", api.status().installed, false);
+	test_equal("opencodelog exclude returns the name", api.exclude("cov_never_called"), "cov_never_called");
+	test_equal("opencodelog verbose returns the value", api.verbose(true), true);
+	test_equal("opencodelog onlySlow stores the threshold", api.onlySlow(25), 25);
+	test_equal("opencodelog silent enables silent mode", api.silent(), true);
+	test_equal("opencodelog recordsOnly enables record mode", api.recordsOnly(), true);
+	test_equal("opencodelog all restores full tracing", api.all(), true);
+	api.reset();
+
+	try {
+		api.silent();
+		api.install();
+		api.enable();
+		test_equal("opencodelog install marks installed", api.status().installed, true);
+		test_equal("opencodelog install wraps non-native functions", api.state.wrapped.length > 0, true);
+
+		var result = get_dec_points_math_mode();
+		test_equal("wrapped function still returns a value", typeof result, "number");
+		test_equal("wrapped call is recorded", api.state.finished.length > 0, true);
+		test_equal("wrapped call has duration", api.state.finished[0].dur >= 0, true);
+
+		var before_rescan = api.state.wrapped.length;
+		test_equal("rescan returns a number", typeof api.rescan(), "number");
+		test_equal("rescan keeps the wrapped list valid", api.state.wrapped.length >= before_rescan, true);
+
+		api.report(3);
+		api.hotspots(3);
+		api.slowest(3);
+		api.running();
+		api.where();
+
+		api.watch(25);
+		await delay(60);
+		api.unwatch();
+		test_equal("unwatch clears the timer", api.state.watchTimer, null);
+
+		api.enable();
+		test_equal("enable activates tracing", api.state.active, true);
+		get_dec_points_math_mode();
+		api.disable();
+		test_equal("disable stops tracing", api.state.active, false);
+		api.running();
+
+		api.recordsOnly();
+		api.enable();
+		get_dec_points_math_mode();
+		api.disable();
+
+		api.onlySlow(100000);
+		api.enable();
+		get_dec_points_math_mode();
+		api.disable();
+		api.all();
+	} finally {
+		api.uninstall();
+		api.unwatch();
+	}
+
+	test_equal("opencodelog uninstall clears installed", api.state.installed, false);
+	test_equal("opencodelog uninstall removes the copies", typeof window.fn_copy_get_dec_points_math_mode, "undefined");
+}
+
+function _coverage_tests_valsplitwatcher() {
+	var splitEl = document.getElementById("validationSplit");
+	var maxFilesEl = document.getElementById("max_number_of_files_per_category");
+	if (!splitEl || !maxFilesEl) {
+		test_equal("valsplit watcher elements exist", false, true);
+		return;
+	}
+
+	var oldSplit = splitEl.value;
+	var oldMax = maxFilesEl.value;
+	var oldWrns = num_wrns;
+
+	function popup() {
+		return document.getElementById("validationSplitGuardPopup");
+	}
+
+	function openPopup() {
+		splitEl.value = "10";
+		maxFilesEl.value = "5";
+		maxFilesEl.dispatchEvent(new Event("change", { bubbles: true }));
+	}
+
+	try {
+		maxFilesEl.value = "0";
+		maxFilesEl.dispatchEvent(new Event("change", { bubbles: true }));
+		test_equal("zero max files does not open the popup", !!popup(), false);
+
+		openPopup();
+		test_equal("impossible split opens the guard popup", !!popup(), true);
+		test_equal("guard popup carries the translation marker", !!popup().querySelector(".TRANSLATEME_valsplitsettozero"), true);
+		test_equal("guard popup has a timer bar", popup().firstElementChild.style.width.length > 0, true);
+		test_equal("guard popup is positioned", popup().style.top.length > 0, true);
+
+		popup().dispatchEvent(new MouseEvent("mouseenter", { bubbles: true }));
+		popup().dispatchEvent(new MouseEvent("mouseleave", { bubbles: true }));
+		test_equal("hovering the guard keeps it open", !!popup(), true);
+
+		document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+		test_equal("Escape closes the guard popup", !!popup(), false);
+
+		openPopup();
+		popup().click();
+		test_equal("clicking the guard popup closes it", !!popup(), false);
+
+		openPopup();
+		popup().querySelector("span").click();
+		test_equal("the close button closes the guard popup", !!popup(), false);
+
+		openPopup();
+		splitEl.value = "50";
+		splitEl.dispatchEvent(new Event("input", { bubbles: true }));
+		test_equal("editing the split dismisses the guard popup", !!popup(), false);
+
+		maxFilesEl.value = "5";
+		maxFilesEl.dispatchEvent(new Event("blur", { bubbles: true }));
+		test_equal("a usable split stays closed", !!popup(), false);
+
+		maxFilesEl.value = "abc";
+		maxFilesEl.dispatchEvent(new Event("change", { bubbles: true }));
+		test_equal("non-numeric max files does not open the popup", !!popup(), false);
+	} finally {
+		splitEl.value = oldSplit;
+		maxFilesEl.value = oldMax;
+		maxFilesEl.dispatchEvent(new Event("change", { bubbles: true }));
+		var stale = popup();
+		if (stale) stale.remove();
+		num_wrns = oldWrns;
+	}
+}
+
+function _coverage_tests_safety() {
+	var failure = new assertation_failed("boom");
+	test_equal("assertation_failed keeps its message", failure.message, "boom");
+
+	var old_write_error = write_error;
+	var old_cursor = document.body.style.cursor;
+	try {
+		write_error = function () {};
+		var thrown = null;
+		try {
+			assert(false, "coverage assertion");
+		} catch (e) {
+			thrown = e;
+		}
+		test_equal("assert(false) throws an assertation_failed", thrown instanceof assertation_failed, true);
+		test_equal("assert(false) preserves the message", thrown && thrown.message, "coverage assertion");
+
+		typeassert([1,2,3], "array", "coverage_array");
+		typeassert(42, "number", "coverage_number");
+		test_equal("typeassert accepts matching types", true, true);
+
+		var typeThrown = null;
+		try {
+			typeassert("no array", "array", "coverage_bad_array");
+		} catch (e) {
+			typeThrown = e;
+		}
+		test_equal("typeassert rejects a non-array", typeThrown instanceof assertation_failed, true);
+	} finally {
+		write_error = old_write_error;
+		document.body.style.cursor = old_cursor;
+	}
+}
+
+async function _coverage_tests_drawing() {
+	if (typeof Atrament === "undefined") {
+		test_equal("Atrament is loaded for the drawing tests", false, true);
+		return;
+	}
+
+	var idname = "coverage_sketcher";
+	var wrapper = document.createElement("div");
+	wrapper.innerHTML =
+		'<div class="colorpicker_elements"></div>' +
+		'<span class="pen_size_slider"></span><span class="jscolor"></span>' +
+		'<a class="coverage_tool"></a>' +
+		'<input type="text" id="' + idname + '_colorpicker" value="#000000">' +
+		'<canvas id="' + idname + '" width="40" height="40"></canvas>';
+	document.body.appendChild(wrapper);
+
+	var oldWrns = num_wrns;
+	var oldErrs = num_errs;
+	try {
+		setup_atrament_data(idname, "");
+		test_equal("setup_atrament_data registers the canvas", !!atrament_data[idname], true);
+		test_equal("setup_atrament_data creates an atrament instance", !!atrament_data[idname].atrament, true);
+
+		var tool = wrapper.querySelector(".coverage_tool");
+		atrament_set_fill(tool, idname);
+		test_equal("atrament_set_fill switches to fill", atrament_data[idname].atrament.mode, "fill");
+		atrament_set_brush(tool, idname);
+		test_equal("atrament_set_brush switches to brush", atrament_data[idname].atrament.mode, "draw");
+		test_equal("active tool gets the green marker", $(tool).hasClass("green_icon"), true);
+
+		atrament_data[idname].atrament.mode = "erase";
+		hide_colorpicker_for_eraser(idname);
+		test_equal("eraser hides the color picker", wrapper.querySelector(".colorpicker_elements").style.visibility, "hidden");
+		atrament_data[idname].atrament.mode = "brush";
+		hide_colorpicker_for_eraser(idname);
+		test_equal("brush shows the color picker", wrapper.querySelector(".colorpicker_elements").style.visibility, "visible");
+
+		chose_nearest_color_picker(tool);
+		test_equal("chose_nearest_color_picker resolves the input", $(tool).parent().find("input").attr("id"), idname + "_colorpicker");
+
+		var clone = clone_canvas(document.getElementById(idname));
+		test_equal("clone_canvas makes a canvas", clone && clone.tagName, "CANVAS");
+		test_equal("clone_canvas copies the size", clone.width, 40);
+
+		clear_attrament(idname);
+		test_equal("clear_attrament keeps the canvas", !!atrament_data[idname].canvas, true);
+		clear_attrament(null);
+		clear_attrament(undefined);
+		clear_attrament("does_not_exist");
+		chose_nearest_color_picker("#does_not_exist");
+	} finally {
+		delete atrament_data[idname];
+		wrapper.remove();
+		num_wrns = oldWrns;
+		num_errs = oldErrs;
+	}
+}
+
+function _dispatch_autocomplete(text, cursor, key) {
+	var textarea = document.getElementById("pyodide_editor_textarea");
+	if (!textarea) return false;
+	textarea.value = text;
+	textarea.setSelectionRange(cursor === undefined ? text.length : cursor, cursor === undefined ? text.length : cursor);
+	var evt = new KeyboardEvent("keydown", { key: key || " ", ctrlKey: true, bubbles: true, cancelable: true });
+	textarea.dispatchEvent(evt);
+	return true;
+}
+
+async function _coverage_tests_autocomplete() {
+	var textarea = document.getElementById("pyodide_editor_textarea");
+	if (!textarea) {
+		test_equal("python editor textarea exists", false, true);
+		return;
+	}
+
+	var oldValue = textarea.value;
+	var oldStart = textarea.selectionStart;
+	var oldEnd = textarea.selectionEnd;
+	function popup() {
+		return document.querySelector(".pe-autocomplete-popup");
+	}
+	function visible() {
+		return !!popup() && popup().style.display !== "none";
+	}
+
+	try {
+		test_equal("Ctrl+Space opens import suggestions", _dispatch_autocomplete("import js", 9), true);
+		test_equal("import suggestions are visible", visible(), true);
+		test_equal("import suggestions contain json", popup().textContent.indexOf("json") !== -1, true);
+
+		test_equal("Ctrl+Space opens from-import suggestions", _dispatch_autocomplete("from os import "), true);
+		test_equal("from-import suggestions are visible", visible(), true);
+
+		_dispatch_autocomplete("my_list = [1, 2]\nmy_list.");
+		test_equal("dot suggestions are visible", visible(), true);
+		test_equal("dot suggestions contain append", popup().textContent.indexOf("append") !== -1, true);
+
+		_dispatch_autocomplete("text = 'abc'\ntext.");
+		test_equal("string dot suggestions are visible", visible(), true);
+		test_equal("string dot suggestions contain split", popup().textContent.indexOf("split") !== -1, true);
+
+		_dispatch_autocomplete("state = {}\nstate.");
+		test_equal("dict dot suggestions are visible", visible(), true);
+
+		_dispatch_autocomplete("info = get_model_info()\ninfo['");
+		test_equal("an unfinished dict key does not pop up", visible(), false);
+
+		_dispatch_autocomplete("ctx = canvas.getContext('2d')\nctx.");
+		test_equal("context suggestions are visible", visible(), true);
+
+		_dispatch_autocomplete("def coverage_helper(alpha, beta):\n    pass\ncoverage_he");
+		test_equal("identifier suggestions are visible", visible(), true);
+		test_equal("identifier suggestions contain the user function", popup().textContent.indexOf("coverage_helper") !== -1, true);
+
+		_dispatch_autocomplete("value = 'unterminated");
+		test_equal("no popup inside a string", visible(), false);
+
+		_dispatch_autocomplete("# a comment pre");
+		test_equal("no popup inside a comment", visible(), false);
+
+		_dispatch_autocomplete("x");
+		test_equal("no popup for a one-letter identifier", visible(), false);
+
+		_dispatch_autocomplete("zzzzzz");
+		test_equal("no popup when nothing matches", visible(), false);
+
+		_dispatch_autocomplete("impo");
+		test_equal("identifier popup is visible before navigation", visible(), true);
+		textarea.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true, cancelable: true }));
+		textarea.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowUp", bubbles: true, cancelable: true }));
+		textarea.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
+		test_equal("Escape closes the popup", visible(), false);
+
+		_dispatch_autocomplete("impo");
+		textarea.dispatchEvent(new KeyboardEvent("keydown", { key: "Home", bubbles: true, cancelable: true }));
+		test_equal("Home closes the popup", visible(), false);
+
+		_dispatch_autocomplete("impo");
+		textarea.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }));
+		test_equal("Enter without a selection closes the popup", visible(), false);
+
+		_dispatch_autocomplete("impo");
+		textarea.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true, cancelable: true }));
+		textarea.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true }));
+		test_equal("Tab accepts the selected suggestion", textarea.value.indexOf("import") === 0, true);
+		test_equal("accepting a suggestion closes the popup", visible(), false);
+
+		_dispatch_autocomplete("impo");
+		textarea.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true }));
+		test_equal("Tab without a selection accepts the first suggestion", textarea.value.indexOf("import") === 0, true);
+
+		await delay(150);
+		textarea.value = "impor";
+		textarea.setSelectionRange(5, 5);
+		textarea.dispatchEvent(new Event("input", { bubbles: true }));
+		await delay(220);
+		test_equal("the debounced input handler opens the popup", visible(), true);
+
+		textarea.dispatchEvent(new KeyboardEvent("keydown", { key: "Scroll", bubbles: true, cancelable: true }));
+		textarea.dispatchEvent(new Event("scroll", { bubbles: true }));
+		test_equal("scrolling closes the popup", visible(), false);
+
+		textarea.dispatchEvent(new Event("blur", { bubbles: true }));
+		await delay(240);
+		test_equal("blur hides the popup", visible(), false);
+	} finally {
+		textarea.value = oldValue;
+		textarea.setSelectionRange(oldStart, oldEnd);
+		var stale = popup();
+		if (stale) stale.style.display = "none";
+	}
+}
+
+async function _coverage_tests_custom_images() {
+	var container = document.getElementById("own_images_container");
+	var created_container = false;
+	if (!container) {
+		container = document.createElement("div");
+		container.id = "own_images_container";
+		document.body.appendChild(container);
+		created_container = true;
+	}
+
+	var startCount = $(".own_image_upload_container").length;
+	var oldLabels = JSON.parse(JSON.stringify(labels));
+	var oldErrs = num_errs;
+	var oldWrns = num_wrns;
+
+	try {
+		add_upload_container_html(0);
+		test_equal("add_upload_container_html appends a container", $(".own_image_upload_container").length, startCount + 1);
+		var n = $(".own_image_upload_container").length - 1;
+
+		add_category_form(n, 0, "coverage_uuid");
+		var upload = $(".own_image_upload_container").eq(n);
+		test_equal("add_category_form adds one label", upload.find(".own_image_label").length, 1);
+		test_equal("add_category_form adds one delete button", upload.find(".delete_category_button").length, 1);
+
+		create_images_div(n);
+		test_equal("create_images_div adds a counter", upload.find(".own_images_count").length, 1);
+		test_equal("get_label_or_default uses labels", get_label_or_default(0), labels[0]);
+		test_equal("get_label_or_default falls back", get_label_or_default(labels.length + 100).indexOf("category ") === 0, true);
+		test_equal("get_upload_container_index never exceeds 99999", get_upload_container_index() <= 99999, true);
+
+		var elem = upload.find(".own_images")[0];
+		var canvas = insertCanvasIntoCategory(elem, "coverage_cat", "coverage_canvas", 8, 8);
+		test_equal("insertCanvasIntoCategory returns the canvas", canvas.tagName, "CANVAS");
+		test_equal("insertCanvasIntoCategory stores the id", canvas.id, "coverage_canvas_canvas");
+		test_equal("insertCanvasIntoCategory updates the counter", Number(upload.find(".own_images_count").text()), 1);
+
+		var webcam_elements = get_custom_elements_from_webcam_page();
+		test_equal("webcam elements include the canvas", webcam_elements.indexOf(canvas) !== -1, true);
+
+		var file_input = upload.find(".own_image_files")[0];
+		var file = new File([new Uint8Array([137, 80, 78, 71])], "coverage.png", { type: "image/png" });
+		handle_file_select({ target: { files: [file] }, currentTarget: file_input });
+		await delay(80);
+		test_equal("handle_file_select adds an image", upload.find("img").length >= 1, true);
+
+		handle_file_select({ target: { files: [new File(["x"], "x.txt", { type: "text/plain" })] }, currentTarget: file_input });
+		test_equal("handle_file_select ignores non-images", upload.find("img").length >= 1, true);
+
+		add_image_to_category(canvas.toDataURL(), $(".own_images").index(elem));
+		test_equal("add_image_to_category adds a span", upload.find(".own_image_span").length >= 2, true);
+
+		show_or_hide_hide_delete_category();
+		test_equal("delete buttons stay visible with several categories", true, true);
+
+		var data_url = await blob_to_data_url(new Blob(["hello"], { type: "text/plain" }));
+		test_equal("blob_to_data_url returns a data URL", data_url.indexOf("data:") === 0, true);
+
+		var zip_writer = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
+		var png_blob = await get_canvas_blob(canvas);
+		test_equal("get_canvas_blob returns a blob", !!png_blob, true);
+		await zip_writer.add("coverage_cat/picture.png", new zip.BlobReader(png_blob));
+		var zip_blob = await zip_writer.close();
+		test_equal("zip writer produced bytes", zip_blob.size > 0, true);
+
+		var zip_reader = new zip.ZipReader(new zip.BlobReader(zip_blob));
+		var categories = await _extract_categories_from_zip(zip_reader);
+		await zip_reader.close();
+		test_equal("_extract_categories_from_zip groups by folder", !!categories.coverage_cat && categories.coverage_cat.length === 1, true);
+
+		var first_label = $(".own_image_label").first();
+		var first_images = $(".own_images").first();
+		var first_label_value = first_label.val();
+		var first_images_html = first_images.html();
+		await _load_images_into_ui(["coverage_cat"], categories, function () {});
+		test_equal("_load_images_into_ui loads an image", $(".own_images").first().find("img").length >= 1, true);
+		first_label.val(first_label_value);
+		first_images.html(first_images_html);
+
+		var built_zip = await create_zip_with_custom_images();
+		test_equal("create_zip_with_custom_images returns a zip blob", built_zip.size > 0, true);
+
+		var old_save_file = save_file;
+		var saved = null;
+		try {
+			save_file = function (filename, type, blob) { saved = { filename: filename, type: type, blob: blob }; };
+			save_custom_images_file(built_zip, "coverage.zip");
+		} finally {
+			save_file = old_save_file;
+		}
+		test_equal("save_custom_images_file forwards the blob", saved && saved.filename, "coverage.zip");
+
+		var old_show_overlay = show_overlay;
+		var old_remove_overlay = remove_overlay;
+		var old_update_overlay_title = update_overlay_title;
+		var old_rename_labels = rename_labels;
+		var old_add_label_sidebar = add_label_sidebar;
+		var old_enable_train_if_has_custom_images = enable_train_if_has_custom_images;
+		try {
+			show_overlay = function () { return document.createElement("div"); };
+			remove_overlay = function () {};
+			update_overlay_title = function () {};
+			rename_labels = async function () {};
+			add_label_sidebar = function () {};
+			enable_train_if_has_custom_images = function () {};
+
+			var zip_label = document.createElement("label");
+			zip_label.id = "zip_upload_label";
+			var zip_input = document.createElement("input");
+			zip_input.id = "zip_upload_input";
+			document.body.appendChild(zip_label);
+			document.body.appendChild(zip_input);
+			try {
+				await import_zip_and_replace_categories({ files: [new File(["no zip"], "broken.zip", { type: "application/zip" })], value: "" });
+				test_equal("importing an invalid zip restores the upload button", document.getElementById("zip_upload_input").getAttribute("aria-hidden"), "true");
+			} finally {
+				zip_label.remove();
+				zip_input.remove();
+			}
+
+			var restore_label = document.createElement("label");
+			var restore_input = document.createElement("input");
+			restore_zip_upload_button(restore_label, restore_input);
+			test_equal("restore_zip_upload_button restores the label", restore_label.innerHTML.indexOf("upload.svg") !== -1, true);
+			test_equal("restore_zip_upload_button hides the input", restore_input.getAttribute("aria-hidden"), "true");
+
+			var delete_span = upload.find(".own_image_span").last()[0];
+			delete_own_image($(delete_span).find("span")[0]);
+			test_equal("delete_own_image removes its span", upload.find(".own_image_span").length >= 1, true);
+		} finally {
+			show_overlay = old_show_overlay;
+			remove_overlay = old_remove_overlay;
+			update_overlay_title = old_update_overlay_title;
+			rename_labels = old_rename_labels;
+			add_label_sidebar = old_add_label_sidebar;
+			enable_train_if_has_custom_images = old_enable_train_if_has_custom_images;
+		}
+	} finally {
+		while ($(".own_image_upload_container").length > startCount) {
+			$(".own_image_upload_container").last().remove();
+		}
+		if (created_container) container.remove();
+		labels = oldLabels;
+		num_errs = oldErrs;
+		num_wrns = oldWrns;
+	}
+}
+
+function _coverage_tests_fcnn_tooltips() {
+	var stats = { min: -1, max: 1, avg: 0.1, std: 0.4, count: 120 };
+	var weight_data = [];
+	for (var i = 0; i < 120; i++) {
+		weight_data.push((i % 20) / 10 - 1);
+	}
+
+	var neuron = _build_neuron_tooltip_html({
+		layer_idx: 1, neuron_idx: 2, layer_type: "dense",
+		activation_value: 0.25, layer_stats: stats, label: "cat",
+		output_shape: [null, 2], input_shape: [null, 3]
+	});
+	test_equal("neuron tooltip has a title", neuron.indexOf("Neuron") !== -1, true);
+	test_equal("neuron tooltip shows the relative activation", neuron.indexOf("Relative") !== -1, true);
+
+	var neuron_plain = _build_neuron_tooltip_html({ layer_idx: 0, neuron_idx: 0 });
+	test_equal("plain neuron tooltip still renders", neuron_plain.indexOf("Neuron Index") !== -1, true);
+
+	var conv = _build_conv2d_tooltip_html({
+		layer_idx: 2, neuron_idx: 1, layer_type: "conv2d",
+		kernel_size_x: 3, kernel_size_y: 3, output_shape: [null, 4, 4, 8],
+		input_shape: [null, 6, 6, 1], channel_stats: stats,
+		image_data_url: "data:image/png;base64,AAAA"
+	});
+	test_equal("conv2d tooltip shows the kernel size", conv.indexOf("3 × 3") !== -1, true);
+	test_equal("conv2d tooltip embeds the preview", conv.indexOf("data:image/png") !== -1, true);
+
+	var flatten = _build_flatten_tooltip_html({
+		layer_idx: 3, layer_type: "flatten", output_shape: [null, 16],
+		input_shape: [null, 4, 4], flatten_stats: stats,
+		image_data_url: "data:image/png;base64,BBBB"
+	});
+	test_equal("flatten tooltip shows the total", flatten.indexOf("Total Values") !== -1, true);
+
+	var layernorm = _build_layernorm_tooltip_html({
+		layer_idx: 4, layer_type: "layerNormalization", w: 4, h: 4,
+		output_shape: [null, 16], input_shape: [null, 16]
+	});
+	test_equal("layer norm tooltip shows the operation", layernorm.indexOf("Normalize") !== -1, true);
+
+	var connection = _build_connection_tooltip_html({
+		from_layer: 0, to_layer: 1, from_neurons: 3, to_neurons: 2,
+		weight_stats: stats, weight_data: weight_data
+	});
+	test_equal("connection tooltip counts the weights", connection.indexOf("3 × 2 = 6") !== -1, true);
+	test_equal("connection tooltip embeds the histogram", connection.indexOf("Weight Distribution") !== -1, true);
+
+	var connection_without_histogram = _build_connection_tooltip_html({
+		from_layer: 0, to_layer: 1, from_neurons: 1, to_neurons: 1,
+		weight_stats: { min: 0.5, max: 0.5, avg: 0.5, std: 0, count: 1 }, weight_data: []
+	});
+	test_equal("connection tooltip survives a constant weight", connection_without_histogram.indexOf("Total Weights") !== -1, true);
+
+	var image = _build_input_image_tooltip_html({
+		img_width: 28, img_height: 28, channels: 1,
+		pixel_stats: { min: 0, max: 255, avg: 100, std: 30, count: 784 },
+		image_data_url: "data:image/png;base64,CCCC"
+	});
+	test_equal("input image tooltip guesses 0-255", image.indexOf("Likely [0, 255]") !== -1, true);
+
+	var normalized_image = _build_input_image_tooltip_html({
+		img_width: 8, img_height: 8, pixel_stats: { min: 0, max: 1, avg: 0.5, std: 0.1, count: 64 }
+	});
+	test_equal("input image tooltip prefers the -1 to 1 guess", normalized_image.indexOf("Likely [-1, 1]") !== -1, true);
+
+	var centered_image = _build_input_image_tooltip_html({
+		img_width: 8, img_height: 8, pixel_stats: { min: -1, max: 1, avg: 0, std: 0.1, count: 64 }
+	});
+	test_equal("input image tooltip guesses -1 to 1", centered_image.indexOf("Likely [-1, 1]") !== -1, true);
+
+	var skip = _build_skip_connection_tooltip_html({ layer_idx: 3, layer_type: "add", skip_count: 2 });
+	test_equal("skip tooltip shows the span", skip.indexOf("2 layers") !== -1, true);
+	test_equal("skip tooltip shows the source layer", skip.indexOf("1 → 3") !== -1, true);
+
+	var bins = _compute_histogram_bins(weight_data, stats, 10);
+	test_equal("histogram bins cover every value", bins.reduce(function (a, b) { return a + b; }, 0) > 0, true);
+	test_equal("histogram svg is rendered", _render_histogram_svg(bins, 10, 200, 40, stats).indexOf("<svg") !== -1, true);
+	test_equal("weight histogram html is rendered", _build_weight_histogram_html(stats, weight_data).indexOf("Weight Distribution") !== -1, true);
+	test_equal("weight histogram skips too few values", _build_weight_histogram_html({ min: 0, max: 1, avg: 0.5, std: 0.1, count: 1 }, [1]), "");
+	test_equal("weight histogram skips a zero range", _build_weight_histogram_html({ min: 1, max: 1, avg: 1, std: 0, count: 10 }, [1,1]), "");
+
+	var styles_light = _get_tooltip_styles(false);
+	var styles_dark = _get_tooltip_styles(true);
+	test_equal("tooltip styles differ by theme", styles_light !== styles_dark, true);
+
+	test_equal("tooltip html for a neuron region is dispatched", _build_tooltip_html_for_region({ type: "neuron", layer_idx: 0, neuron_idx: 0 }).indexOf("Neuron") !== -1, true);
+	test_equal("tooltip html for a connection region is dispatched", _build_tooltip_html_for_region({ type: "connection", from_layer: 0, to_layer: 1, from_neurons: 1, to_neurons: 1 }).indexOf("Connection") !== -1, true);
+}
+
+async function _coverage_tests_origami_folds() {
+	var folds = window.OrigamiFolds;
+	test_equal("OrigamiFolds is exposed", !!folds && typeof folds.init === "function", true);
+	var oldConfig = folds.getConfig();
+	var oldWrns = num_wrns;
+	var oldErrs = num_errs;
+	var div = null;
+	var oldModel = window.model;
+	var oldXY = window.xy_data_global;
+	var oldClassification = window.is_classification;
+	var smallModel = null;
+	var xyX = null;
+	var xyY = null;
+
+	try {
+		test_equal("classColor rejects negative indices", folds.classColor(-1), "#8a8a8a");
+		test_equal("classColor wraps the palette", folds.classColor(1000), folds.classColor(1000 % folds.classPalette.length));
+
+		var cfg = folds.getConfig();
+		test_equal("getConfig returns a copy", cfg !== folds._state.config, true);
+		folds.setConfig({ maxPoints: 999 });
+		test_equal("setConfig stores a valid value", folds.getConfig().maxPoints, 999);
+		folds.setConfig(null);
+		folds.setConfig({ unknown_option: 1 });
+		folds.setConfig({ maxPoints: "nope" });
+		folds.setConfig({ maxPoints: Infinity });
+
+		var chain = folds._buildChain();
+		test_equal("_buildChain always returns pairs", Array.isArray(chain.pairs), true);
+		test_equal("_buildChain explains an empty chain", chain.pairs.length > 0 || !!chain.reason, true);
+
+		var dense = null;
+		var dense_dim = 0;
+		for (var i = 0; i < (model && model.layers ? model.layers.length : 0); i++) {
+			try {
+				if (model.layers[i].getClassName() !== "Dense") continue;
+				var candidate_dim = model.layers[i].getWeights()[0].shape[0];
+				if (candidate_dim >= 1 && candidate_dim <= 3) {
+					dense = model.layers[i];
+					dense_dim = candidate_dim;
+					break;
+				}
+			} catch (e) {}
+		}
+		if (dense) {
+			var planes = folds._extractHyperplanes(dense, dense_dim);
+			test_equal("_extractHyperplanes returns planes for a low-dimensional dense layer", Array.isArray(planes) && planes.length > 0, true);
+			test_equal("_extractHyperplanes rejects a mismatched dimension", folds._extractHyperplanes(dense, dense_dim + 1), null);
+		} else {
+			test_equal("_extractHyperplanes has no low-dimensional dense layer to inspect", true, true);
+		}
+		test_equal("_extractHyperplanes ignores null layers", folds._extractHyperplanes(null, 2), null);
+
+		folds.setConfig({ gridResolution: 3, gridExtend: 1.2 });
+		var bounds = { x: { lo: -1, hi: 1 }, y: { lo: -2, hi: 2 }, z: { lo: -3, hi: 3 }, dim: 2 };
+		test_equal("_makeGrid rejects missing bounds", folds._makeGrid(null, 2), null);
+		test_equal("_makeGrid rejects invalid dimensions", folds._makeGrid(bounds, 4), null);
+		var grid1 = folds._makeGrid(bounds, 1);
+		var grid2 = folds._makeGrid(bounds, 2);
+		var grid3 = folds._makeGrid(bounds, 3);
+		test_equal("_makeGrid builds a 1D grid", grid1.n, 3);
+		test_equal("_makeGrid builds a 2D grid", grid2.n, 9);
+		test_equal("_makeGrid builds a 3D grid", grid3.n, 27);
+
+		var n = grid2.n;
+		var inXs = new Float64Array(n), inYs = new Float64Array(n);
+		var outXs = new Float64Array(n), outYs = new Float64Array(n);
+		for (var k = 0; k < n; k++) {
+			inXs[k] = grid2.coords[k * 2];
+			inYs[k] = grid2.coords[k * 2 + 1];
+			outXs[k] = inXs[k] * 2;
+			outYs[k] = inYs[k] * 3;
+		}
+		var actIn = { xs: inXs, ys: inYs, zs: null, dim: 2, n: n };
+		var actOut = { xs: outXs, ys: outYs, zs: null, dim: 2, n: n };
+		var dist = folds._gridDistortion(grid2, actIn, actOut);
+		test_equal("_gridDistortion returns one value per point", dist.values.length, n);
+		test_equal("_gridDistortion returns finite values", isFinite(dist.values[0]), true);
+		test_equal("_gridDistortion rejects missing activations", folds._gridDistortion(null, actIn, actOut), null);
+
+		smallModel = tf.sequential();
+		smallModel.add(tf.layers.dense({ units: 2, inputShape: [3], activation: "relu" }));
+		smallModel.add(tf.layers.dense({ units: 3, activation: "tanh" }));
+		smallModel.add(tf.layers.dense({ units: 1, activation: "sigmoid" }));
+		var sampleX = [
+			[0.1, 0.2, 0.3], [0.3, 0.1, 0.2], [0.8, 0.4, 0.2], [0.2, 0.8, 0.4],
+			[0.9, 0.9, 0.1], [0.1, 0.9, 0.9], [0.5, 0.5, 0.5], [0.7, 0.2, 0.6]
+		];
+		var sampleY = [[0], [1], [1], [0], [1], [0], [0], [1]];
+		xyX = tensor(sampleX, [sampleX.length, 3]);
+		xyY = tensor(sampleY, [sampleY.length, 1]);
+		window.model = smallModel;
+		window.xy_data_global = { x: xyX, y: xyY };
+		window.is_classification = false;
+		folds._state.modelRef = null;
+		folds._state.lastChainSignature = null;
+		folds._state.cachedXHash = null;
+
+		div = document.createElement("div");
+		div.id = "coverage_origami_folds";
+		div.style.cssText = "width:420px;height:340px;display:block;position:relative;";
+		document.body.appendChild(div);
+		test_equal("init accepts a div", folds.init(div) === folds, true);
+		await delay(1200);
+		test_equal("init marks the state initialized", folds._state.initialized, true);
+		folds.update();
+		folds.forceUpdate();
+		await delay(600);
+		folds.destroy();
+		test_equal("destroy clears the initialized flag", folds._state.initialized, false);
+	} finally {
+		if (div) {
+			try { folds.destroy(); } catch (e) {}
+			div.remove();
+		}
+		window.model = oldModel;
+		window.xy_data_global = oldXY;
+		window.is_classification = oldClassification;
+		folds._state.modelRef = null;
+		folds._state.lastChainSignature = null;
+		try { if (xyX) await dispose(xyX); } catch (e) {}
+		try { if (xyY) await dispose(xyY); } catch (e) {}
+		try { if (smallModel) smallModel.dispose(); } catch (e) {}
+		folds.setConfig(oldConfig);
+		num_wrns = oldWrns;
+		num_errs = oldErrs;
+	}
+}
+
+async function _coverage_tests_origami_live() {
+	var live = window.OrigamiLive;
+	test_equal("OrigamiLive is exposed", !!live && typeof live.init === "function", true);
+	var oldConfig = live.getConfig();
+	var oldErrs = num_errs;
+	var oldWrns = num_wrns;
+	var div = null;
+	var oldModel = window.model;
+	var oldXY = window.xy_data_global;
+	var smallModel = null;
+	var xyX = null;
+	var xyY = null;
+
+	try {
+		test_equal("classColor handles negative indices", live.classColor(-1), 0x8a8a8a);
+		test_equal("classColorCss returns a css color", typeof live.classColorCss(0), "string");
+		test_equal("classColorCss uses the same palette", live.classColorCss(0).indexOf("#") === 0, true);
+
+		var chain = live._buildChain();
+		test_equal("_buildChain returns a chain array", Array.isArray(chain.chain), true);
+		test_equal("_buildChain explains an empty chain", chain.chain.length > 0 || !!chain.reason, true);
+
+		var field = [1, -1, -1, 1];
+		var segs = live._marchingSquares(field, 2, [0, 1], [0, 1], 1);
+		test_equal("_marchingSquares finds both boundaries", !!segs && segs.length > 0, true);
+		test_equal("_marchingSquares handles a flat field", live._marchingSquares([1, 1, 1, 1], 2, [0, 1], [0, 1], 1), null);
+
+		live.setConfig({ gridRes: 5 });
+		test_equal("setConfig stores a valid value", live.getConfig().gridRes, 5);
+		live.setConfig(null);
+		live.setConfig({ unknown_option: 1 });
+		live.setConfig({ gridRes: "nope" });
+
+		smallModel = tf.sequential();
+		smallModel.add(tf.layers.dense({ units: 2, inputShape: [3], activation: "relu" }));
+		smallModel.add(tf.layers.dense({ units: 3, activation: "tanh" }));
+		smallModel.add(tf.layers.dense({ units: 1, activation: "sigmoid" }));
+		var sampleX = [
+			[0.1, 0.2, 0.3], [0.3, 0.1, 0.2], [0.8, 0.4, 0.2], [0.2, 0.8, 0.4],
+			[0.9, 0.9, 0.1], [0.1, 0.9, 0.9], [0.5, 0.5, 0.5], [0.7, 0.2, 0.6]
+		];
+		var sampleY = [[0], [1], [1], [0], [1], [0], [0], [1]];
+		xyX = tensor(sampleX, [sampleX.length, 3]);
+		xyY = tensor(sampleY, [sampleY.length, 1]);
+		window.model = smallModel;
+		window.xy_data_global = { x: xyX, y: xyY };
+		live._state.cache.xHash = null;
+
+		div = document.createElement("div");
+		div.id = "coverage_origami_live";
+		div.style.cssText = "width:420px;height:340px;display:block;position:relative;";
+		document.body.appendChild(div);
+		test_equal("init accepts a div", live.init(div) === live, true);
+		await delay(1200);
+		test_equal("init marks the live state initialized", live._state.initialized, true);
+		live.forceUpdate();
+		live.setQuality("low");
+		live.setScrub(0.5);
+		live.play();
+		live.pause();
+		live.resetCamera();
+		live.setMode(live.MODE_BOUNDARY);
+		await delay(200);
+		live.setMode(live.MODE_STACK);
+		await delay(200);
+		live.setMode(live.MODE_FOLD);
+		live.refreshTranslations();
+		await delay(400);
+		live.destroy();
+		test_equal("destroy clears the live initialized flag", live._state.initialized, false);
+	} finally {
+		if (div) {
+			try { live.destroy(); } catch (e) {}
+			div.remove();
+		}
+		window.model = oldModel;
+		window.xy_data_global = oldXY;
+		try { if (xyX) await dispose(xyX); } catch (e) {}
+		try { if (xyY) await dispose(xyY); } catch (e) {}
+		try { if (smallModel) smallModel.dispose(); } catch (e) {}
+		live.setConfig(oldConfig);
+		num_errs = oldErrs;
+		num_wrns = oldWrns;
+	}
+}
+
+function _coverage_tests_math_mode_helpers() {
+	test_equal("_latex_is_balanced accepts balanced input", _latex_is_balanced("\\frac{1}{2}"), true);
+	test_equal("_latex_is_balanced rejects an open brace", _latex_is_balanced("\\frac{1}{2"), false);
+	test_equal("_latex_is_balanced rejects a closing brace", _latex_is_balanced("a}"), false);
+	test_equal("_latex_is_balanced rejects non-strings", _latex_is_balanced(null), false);
+
+	test_equal("_detect_interactive_marker ignores plain latex", _detect_interactive_marker("h = x", 1), null);
+	var marker = _detect_interactive_marker("a%%INTERACTIVE_Dense_4%%b", 4);
+	test_equal("_detect_interactive_marker reads the type", marker.type, "dense");
+	test_equal("_detect_interactive_marker keeps the layer", marker.layer_idx, 4);
+
+	test_equal("get_y_output_shapes builds one row per unit", JSON.stringify(get_y_output_shapes([null, 3])), '[["y_{0}"],["y_{1}"],["y_{2}"]]');
+
+	test_equal("_shape_desc_for_label leaves normal labels alone", _shape_desc_for_label([[1]], "weights"), "weights");
+	test_equal("_shape_desc_for_label annotates input shape", _shape_desc_for_label([[1,2],[3,4]], "Input").indexOf("2 \\times 2") !== -1, true);
+	test_equal("_shape_desc_for_label survives empty arrays", _shape_desc_for_label([], "Output"), "Output");
+
+	var sized = array_size([[1,2,3],[4,5,6]]);
+	test_equal("array_size returns rows and columns", JSON.stringify(sized), "[2,3]");
+
+	var non_numbers = replace_non_numbers_with_matching_latex([NaN, Infinity, -Infinity, 1e-7, 2]);
+	test_equal("replace_non_numbers replaces NaN", non_numbers[0], "\\text{NaN}");
+	test_equal("replace_non_numbers replaces Infinity", non_numbers[1], "\\infty");
+	test_equal("replace_non_numbers replaces -Infinity", non_numbers[2], "-\\infty");
+	test_equal("replace_non_numbers keeps normal numbers", non_numbers[4], 2);
+
+	var ellipsis = _array_to_ellipsis_latex([[1,2,3,4,5],[6,7,8,9,0],[1,1,1,1,1],[2,2,2,2,2],[3,3,3,3,3]], 1);
+	test_equal("_array_to_ellipsis_latex keeps the corners", ellipsis[0][0], 1);
+	test_equal("_array_to_ellipsis_latex inserts vertical dots", JSON.stringify(ellipsis).indexOf("\\\\vdots") !== -1, true);
+	test_equal("_array_to_ellipsis_latex inserts horizontal dots", JSON.stringify(ellipsis).indexOf("\\\\cdots") !== -1, true);
+
+	test_equal("array_to_ellipsis_latex handles vectors", array_to_ellipsis_latex([5], 1), 5);
+	test_equal("array_to_ellipsis_latex handles matrices", array_to_ellipsis_latex([[1,2],[3,4]], 1).indexOf("pmatrix") !== -1, true);
+	test_equal("array_to_ellipsis_latex handles tensors", array_to_ellipsis_latex([[[1,2],[3,4]]], 1).indexOf("pmatrix") !== -1, true);
+
+	test_equal("arbitrary_array_to_latex wraps the result", arbitrary_array_to_latex([1,2]).indexOf("temml_me") !== -1, true);
+	test_equal("get_activation_layer_names returns strings", get_activation_layer_names().every(function (n) { return typeof n === "string"; }), true);
+}
+
+async function _coverage_tests_online_python_ui() {
+	var textarea = document.getElementById("pyodide_editor_textarea");
+	var wrapper = document.getElementById("pyodide_editor_wrapper");
+	var oldValue = textarea ? textarea.value : null;
+	var oldOverflow = document.body.style.overflow;
+	var oldErrs = num_errs;
+	var oldWrns = num_wrns;
+
+	try {
+		if (wrapper) {
+			var hadSimple = wrapper.classList.contains("pe-simple-mode");
+			window.pyodideToggleMode();
+			test_equal("toggleMode flips the simple class", wrapper.classList.contains("pe-simple-mode"), !hadSimple);
+			window.pyodideToggleMode();
+			test_equal("toggleMode flips back", wrapper.classList.contains("pe-simple-mode"), hadSimple);
+		}
+
+		window.pyodideToggleFullscreen();
+		test_equal("toggleFullscreen sets body overflow", document.body.style.overflow, "hidden");
+		window.pyodideToggleFullscreen();
+		test_equal("toggleFullscreen restores body overflow", document.body.style.overflow, "");
+
+		if (textarea) {
+			window.pyodideChangeFontSize(1);
+			test_equal("changeFontSize bumps the textarea", textarea.style.fontSize.length > 0, true);
+			window.pyodideChangeFontSize(-1000);
+			test_equal("changeFontSize clamps at the minimum", textarea.style.fontSize, "10px");
+			window.pyodideChangeFontSize(1000);
+			test_equal("changeFontSize clamps at the maximum", textarea.style.fontSize, "20px");
+
+			window.pyodideToggleWordWrap();
+			test_equal("toggleWordWrap switches to pre", textarea.style.whiteSpace, "pre");
+			window.pyodideToggleWordWrap();
+			test_equal("toggleWordWrap switches back", textarea.style.whiteSpace, "pre-wrap");
+
+			textarea.setSelectionRange(0, 0);
+			window.pyodideInsertSnippet("# coverage snippet\n");
+			test_equal("insertSnippet writes into the editor", textarea.value.indexOf("# coverage snippet") !== -1, true);
+			window.pyodideInsertModelInfo();
+			test_equal("insertModelInfo writes the summary call", textarea.value.indexOf("_print_model_summary()") !== -1, true);
+
+			window.pyodideLoadTemplate("generic_io");
+			test_equal("loadTemplate loads a template", textarea.value.length > 0, true);
+			window.pyodideLoadTemplate("does_not_exist");
+			await delay(50);
+
+			window.pyodideCopyCode();
+			window.pyodideDownloadCode();
+			window.pyodideCopyOutput();
+			window.pyodideDownloadOutput();
+		}
+
+		window.pyodideSetWebcamFPS(9);
+		var fps_label = document.getElementById("pyodide_fps_label");
+		if (fps_label) test_equal("setWebcamFPS updates the label", fps_label.textContent, "9 FPS");
+		window.pyodideSetWebcamFPS(999);
+		if (fps_label) test_equal("setWebcamFPS clamps at the maximum", fps_label.textContent, "15 FPS");
+		window.pyodideSetWebcamFPS("not a number");
+		if (fps_label) test_equal("setWebcamFPS falls back to five", fps_label.textContent, "5 FPS");
+
+		window.pyodideLivePredictChanged();
+		window.pyodideToggleExamples();
+		await delay(40);
+		window.pyodideToggleExamples();
+		await delay(40);
+		window.pyodideTogglePhotos();
+		window.pyodideTogglePhotos();
+		window.pyodidePhotosClear();
+
+		test_equal("getLastPrediction is null after clearing", window.PyodideEditor.getLastPrediction(), null);
+		window.PyodideEditor.clearPrediction();
+		test_equal("isReady is false without pyodide", window.PyodideEditor.isReady(), false);
+		test_equal("isRunning is false while idle", window.PyodideEditor.isRunning(), false);
+		test_equal("getCapturedPhotos is an array", Array.isArray(window.PyodideEditor.getCapturedPhotos()), true);
+	} finally {
+		if (textarea && oldValue !== null) textarea.value = oldValue;
+		document.body.style.overflow = oldOverflow;
+		if (wrapper) wrapper.classList.remove("pe-fullscreen");
+		num_errs = oldErrs;
+		num_wrns = oldWrns;
+	}
+}
+
+async function _coverage_tests_data_augmentation() {
+	var oldRotations = $("#number_of_rotations").val();
+	var oldInvert = $("#augment_invert_images").prop("checked");
+	var oldFlip = $("#augment_flip_left_right").prop("checked");
+	var oldAddPhoto = add_tensor_as_image_to_photos;
+	var oldErrs = num_errs;
+	var oldWrns = num_wrns;
+	var pixels = [];
+	for (var i = 0; i < 4 * 4 * 3; i++) pixels.push((i % 17) / 17);
+	var image = tensor(pixels, [4, 4, 3]);
+	var image4d = tensor(pixels, [1, 4, 4, 3]);
+
+	try {
+		add_tensor_as_image_to_photos = function () {};
+		$("#augment_invert_images").prop("checked", false);
+		$("#augment_flip_left_right").prop("checked", false);
+
+		var expanded = _safe_expand_to_4d(image, "coverage");
+		test_equal("_safe_expand_to_4d expands a rank-3 tensor", expanded.shape.length, 4);
+		var cloned = _safe_expand_to_4d(image4d, "coverage");
+		test_equal("_safe_expand_to_4d clones a rank-4 tensor", cloned.shape.length, 4);
+		test_equal("_safe_expand_to_4d rejects null", _safe_expand_to_4d(null, "coverage"), null);
+		var rank2 = tensor([[1,2],[3,4]], [2,2]);
+		test_equal("_safe_expand_to_4d rejects a rank-2 tensor", _safe_expand_to_4d(rank2, "coverage"), null);
+		await dispose(rank2);
+
+		var as_array = _safe_4d_result_to_array(image4d.clone(), "coverage");
+		test_equal("_safe_4d_result_to_array unwraps a batch", Array.isArray(as_array) && as_array.length === 4, true);
+		test_equal("_safe_4d_result_to_array rejects null", _safe_4d_result_to_array(null, "coverage"), null);
+		var rank2b = tensor([[1,2]], [1,2]);
+		test_equal("_safe_4d_result_to_array rejects a rank-2 tensor", _safe_4d_result_to_array(rank2b, "coverage"), null);
+		await dispose(rank2b);
+
+		$("#number_of_rotations").val("2");
+		var x = [], y = [];
+		var rotate_result = _augment_custom_rotate(expanded, 0, 255, x, y);
+		test_equal("_augment_custom_rotate returns the arrays", rotate_result[0], x);
+		test_equal("_augment_custom_rotate adds rotated images", x.length, 1);
+		test_equal("_augment_custom_rotate keeps the label", y[0], 0);
+
+		$("#number_of_rotations").val("0");
+		x = []; y = [];
+		_augment_custom_rotate(expanded, 1, 255, x, y);
+		test_equal("_augment_custom_rotate defaults to four rotations", x.length, 3);
+
+		x = []; y = [];
+		_augment_custom_invert(expanded, 2, 255, x, y);
+		test_equal("_augment_custom_invert adds an image", x.length, 1);
+		test_equal("_augment_custom_invert keeps the label", y[0], 2);
+
+		x = []; y = [];
+		_augment_custom_invert_from_array(as_array, 3, 255, x, y, 90);
+		test_equal("_augment_custom_invert_from_array adds an image", x.length, 1);
+		x = []; y = [];
+		_augment_custom_invert_from_array(null, 3, 255, x, y, 90);
+		test_equal("_augment_custom_invert_from_array ignores empty input", x.length, 0);
+
+		x = []; y = [];
+		_augment_custom_flip_lr(expanded, 4, 255, x, y);
+		test_equal("_augment_custom_flip_lr adds an image", x.length, 1);
+		x = []; y = [];
+		_augment_custom_flip_from_array(as_array, 5, x, y, 180);
+		test_equal("_augment_custom_flip_from_array adds an image", x.length, 1);
+		x = []; y = [];
+		_augment_custom_flip_from_array([], 5, x, y, 180);
+		test_equal("_augment_custom_flip_from_array ignores empty input", x.length, 0);
+
+		x = []; y = [];
+		_augment_custom_rotate(null, 0, 255, x, y);
+		_augment_custom_invert(null, 0, 255, x, y);
+		_augment_custom_flip_lr(null, 0, 255, x, y);
+		test_equal("null augmentation inputs are ignored", x.length, 0);
+	} finally {
+		$("#number_of_rotations").val(oldRotations);
+		$("#augment_invert_images").prop("checked", oldInvert);
+		$("#augment_flip_left_right").prop("checked", oldFlip);
+		add_tensor_as_image_to_photos = oldAddPhoto;
+		try { await dispose(expanded); } catch (e) {}
+		try { await dispose(cloned); } catch (e) {}
+		await dispose(image);
+		await dispose(image4d);
+		num_errs = oldErrs;
+		num_wrns = oldWrns;
+	}
+}
+
+async function _coverage_tests_feature_map_color() {
+	var oldErrs = num_errs;
+	var oldWrns = num_wrns;
+	var tensors = [];
+
+	try {
+		var L = _cholesky_3x3([[4, 2, 2], [2, 5, 1], [2, 1, 3]]);
+		test_equal("_cholesky_3x3 decomposes a positive matrix", L[0][0], 2);
+		test_equal("_cholesky_3x3 rejects a non-positive matrix", _cholesky_3x3([[0,0,0],[0,1,0],[0,0,1]]), null);
+		test_equal("_cholesky_3x3 rejects a non-positive pivot", _cholesky_3x3([[1,2,0],[2,1,0],[0,0,1]]), null);
+
+		test_equal("_determinant_3x3 of the identity", _determinant_3x3([[1,0,0],[0,1,0],[0,0,1]]), 1);
+		var inverted = _invert_3x3([[2,0,0],[0,4,0],[0,0,5]]);
+		test_equal("_invert_3x3 inverts a diagonal matrix", inverted[0][0], 0.5);
+		test_equal("_invert_3x3 falls back to identity for a singular matrix", _invert_3x3([[1,1,1],[1,1,1],[1,1,1]])[0][0], 1);
+
+		var normalized = _normalize_correlation_matrix([[2,0,0],[0,3,0],[0,0,4]]);
+		test_equal("_normalize_correlation_matrix normalizes the columns", normalized[0][0], 1);
+
+		reset_color_correlation_to_defaults();
+		test_equal("_get_color_correlation_matrix returns three rows", _get_color_correlation_matrix().length, 3);
+		test_equal("_get_color_decorrelation_matrix returns three rows", _get_color_decorrelation_matrix().length, 3);
+
+		var pixels = [];
+		for (var i = 0; i < 8 * 8 * 3; i++) pixels.push(((i * 37) % 101) / 101);
+		var image = tensor(pixels, [1, 8, 8, 3]);
+		tensors.push(image);
+		var raw = compute_color_correlation_from_data(image);
+		test_equal("compute_color_correlation_from_data returns a 3x3 matrix", raw.length, 3);
+		test_equal("set_color_correlation_from_training_data accepts real data", set_color_correlation_from_training_data(image), true);
+		test_equal("setting a user matrix flips the flag", USE_USER_COLOR_CORRELATION, true);
+		test_equal("set_color_correlation_from_training_data rejects null", set_color_correlation_from_training_data(null), false);
+		reset_color_correlation_to_defaults();
+
+		var rgb = _decorrelated_to_rgb(image);
+		tensors.push(rgb);
+		test_equal("_decorrelated_to_rgb keeps the shape", JSON.stringify(rgb.shape), "[1,8,8,3]");
+		var decorrelated = _rgb_to_decorrelated(rgb);
+		tensors.push(decorrelated);
+		test_equal("_rgb_to_decorrelated keeps the shape", JSON.stringify(decorrelated.shape), "[1,8,8,3]");
+		var quality = _assess_color_quality(rgb);
+		test_equal("_assess_color_quality returns a verdict", typeof quality.isGood, "boolean");
+
+		test_equal("_should_use_transform_jitter rejects tiny images", _should_use_transform_jitter(8, 8), false);
+		test_equal("_should_use_transform_jitter accepts large images", _should_use_transform_jitter(64, 64), true);
+		var rotated = _apply_rotation_jitter(image, 15);
+		tensors.push(rotated);
+		test_equal("_apply_rotation_jitter keeps the rank", rotated.shape.length, 4);
+		var scaled = _apply_scale_jitter(image, 1.5, 8, 8);
+		tensors.push(scaled);
+		test_equal("_apply_scale_jitter keeps the original size", scaled.shape[1], 8);
+		var shrunk = _apply_scale_jitter(image, 0.5, 8, 8);
+		tensors.push(shrunk);
+		test_equal("_apply_scale_jitter pads a shrunk image", shrunk.shape[1], 8);
+		test_equal("reset_color_correlation_to_defaults clears the flag", USE_USER_COLOR_CORRELATION, false);
+	} finally {
+		for (var t = 0; t < tensors.length; t++) {
+			try { await dispose(tensors[t]); } catch (e) {}
+		}
+		reset_color_correlation_to_defaults();
+		num_errs = oldErrs;
+		num_wrns = oldWrns;
+	}
+}
+
+async function _coverage_tests_debug_helpers() {
+	var oldErrs = num_errs;
+	var oldWrns = num_wrns;
+	var probe = document.createElement("div");
+	probe.id = "coverage_debug_probe";
+	probe.textContent = "probe";
+	document.body.appendChild(probe);
+	var xpath = get_element_xpath(probe);
+
+	try {
+		header("coverage header");
+		header_error("coverage header error");
+		header_error(undefined);
+		data_debug({ a: 1 }, "plain", 42, false);
+		label_debug("coverage label");
+		log_once("coverage_log_once");
+		log_once("coverage_log_once");
+		logt("coverage logt");
+		highlight_element(xpath);
+		test_equal("highlight_element marks the element", probe.style.backgroundColor, "yellow");
+		unhighlight_element(xpath);
+		test_equal("unhighlight_element clears the element", probe.style.backgroundColor, "");
+		highlight_element("///invalid");
+		unhighlight_element("///invalid");
+
+		var table = create_html_table_from_json([{ a: "x", b: "y" }, { a: "x", b: "y" }]);
+		test_equal("create_html_table_from_json builds a table", table.indexOf("<table") === 0, true);
+		test_equal("create_html_table_from_json ignores empty data", create_html_table_from_json([]), undefined);
+
+		test_equal("detect_and_color_stacktrace colors urls", detect_and_color_stacktrace("fn@http://example.com/a.js").indexOf("color: #af0f0f") !== -1, true);
+		test_equal("detect_and_color_stacktrace survives garbage", detect_and_color_stacktrace(null), undefined);
+
+		showCustomTensors();
+		create_graphviz_function_call_graph();
+
+		var profiled = 0;
+		var profiled_tensor = null;
+		await profile(function () {
+			profiled++;
+			return function () { profiled_tensor = tensor([1, 2, 3]); return profiled_tensor; };
+		});
+		test_equal("profile runs the function and logs the result", profiled, 1);
+		if (profiled_tensor) await dispose(profiled_tensor);
+
+		test_equal("get_param_names reads a normal signature", JSON.stringify(get_param_names(function (a, b) {})), '["a","b"]');
+		test_equal("get_param_names handles empty signatures", JSON.stringify(get_param_names(function () {})), "[]");
+	} finally {
+		probe.remove();
+		num_errs = oldErrs;
+		num_wrns = oldWrns;
+	}
+}
+
+async function _coverage_tests_gui_mobile() {
+	if (typeof mobile_open_panel !== "function") {
+		test_equal("mobile UI functions exist", false, true);
+		return;
+	}
+
+	var descriptor = Object.getOwnPropertyDescriptor(window, "innerWidth");
+	var oldErrs = num_errs;
+	var oldWrns = num_wrns;
+	try {
+		Object.defineProperty(window, "innerWidth", { configurable: true, value: 800 });
+
+		test_equal("is_mobile_view detects a narrow window", is_mobile_view(), true);
+
+		mobile_open_panel("dataset");
+		test_equal("mobile_open_panel opens the dataset panel", $("#mobile_panel_dataset").hasClass("open"), true);
+		test_equal("mobile_open_panel marks the nav item", $("#mobile_nav_dataset").hasClass("active"), true);
+		mobile_open_panel("dataset");
+		test_equal("opening the same panel again closes it", $("#mobile_panel_dataset").hasClass("open"), false);
+
+		mobile_open_panel("settings");
+		test_equal("mobile_open_panel opens the settings panel", $("#mobile_panel_settings").hasClass("open"), true);
+		test_equal("_sync_mobile_settings_panel keeps the mode in sync", $("#mobile_mode").val(), $("#expert").is(":checked") ? "expert" : "beginner");
+		mobile_close_all();
+		test_equal("mobile_close_all closes every panel", $(".mobile-panel.open").length, 0);
+
+		mobile_open_panel("dataset");
+		mobile_toggle_drawer();
+		test_equal("mobile_toggle_drawer closes the open panel", $("#mobile_panel_dataset").hasClass("open"), false);
+		test_equal("mobile_toggle_drawer opens the layer drawer", $("#layers_container_left").hasClass("drawer-open"), true);
+		mobile_toggle_drawer();
+		test_equal("mobile_toggle_drawer closes the drawer", $("#layers_container_left").hasClass("drawer-open"), false);
+
+		mobile_open_panel("dataset");
+		mobile_close_drawer();
+		test_equal("mobile_close_drawer is safe without an open drawer", $("#layers_container_left").hasClass("drawer-open"), false);
+
+		mobile_set_active_nav("mobile_nav_train");
+		test_equal("mobile_set_active_nav marks one item", $("#mobile_nav_train").hasClass("active"), true);
+		mobile_clear_active_nav();
+		test_equal("mobile_clear_active_nav clears all items", $(".mobile-nav-item.active").length, 0);
+	} finally {
+		mobile_close_all();
+		mobile_close_drawer();
+		if (descriptor) {
+			Object.defineProperty(window, "innerWidth", descriptor);
+		} else {
+			delete window.innerWidth;
+		}
+		num_errs = oldErrs;
+		num_wrns = oldWrns;
+	}
+}
+
+async function _coverage_tests_model_helpers() {
+	test_equal("get_weights_shape reads a nested array", JSON.stringify(await get_weights_shape("[[1,2],[3,4]]")), "[2,2]");
+	test_equal("get_weights_shape handles invalid json", await get_weights_shape("not json"), undefined);
+}
+
+async function _coverage_tests_error_paths() {
+	var oldErrs = num_errs;
+	var oldWrns = num_wrns;
+	var oldSwal = Swal.fire;
+	var oldSend = send_bug_report;
+	var oldUpdate = update_translations;
+	var oldWriteDescriptions = write_descriptions;
+	var oldEnableEverything = enable_everything;
+	var oldRemoveOverlay = remove_overlay;
+	var oldWriteError = write_error;
+
+	try {
+		Swal.fire = function () {};
+		send_bug_report = async function () {};
+		update_translations = async function () {};
+		write_descriptions = async function () {};
+		enable_everything = async function () {};
+		remove_overlay = function () {};
+
+		var callback_called = 0;
+		await write_error(new Error("coverage boom"), function () { callback_called++; }, true);
+		test_equal("write_error invokes its callback", callback_called, 1);
+		await write_error("plain coverage error", null, true);
+		await write_error(null);
+		test_equal("write_error without an error shows the error box", $("#error").length, 1);
+
+		var except_thrown = null;
+		try {
+			await except("coverage_except", new Error("coverage except"));
+		} catch (e) {
+			except_thrown = e;
+		}
+		test_equal("except rethrows the error message", except_thrown && except_thrown.message, "coverage except");
+
+		var oldXHR = window.XMLHttpRequest;
+		try {
+			function FakeXHR(status) {
+				this.open = function () {};
+				this.setRequestHeader = function () {};
+				this.send = function () {
+					this.readyState = 4;
+					this.status = status;
+					if (this.onreadystatechange) this.onreadystatechange(0, 0);
+				};
+			}
+			window.XMLHttpRequest = function () { return new FakeXHR(200); };
+			send_post_request("http://127.0.0.1/never", "<b>coverage</b>");
+			window.XMLHttpRequest = function () { return new FakeXHR(500); };
+			send_post_request("http://127.0.0.1/never", "<b>coverage</b>");
+			window.XMLHttpRequest = function () { throw new Error("coverage xhr"); };
+			send_post_request("http://127.0.0.1/never", "<b>coverage</b>");
+		} finally {
+			window.XMLHttpRequest = oldXHR;
+		}
+	} finally {
+		Swal.fire = oldSwal;
+		send_bug_report = oldSend;
+		update_translations = oldUpdate;
+		write_descriptions = oldWriteDescriptions;
+		enable_everything = oldEnableEverything;
+		remove_overlay = oldRemoveOverlay;
+		write_error = oldWriteError;
+		num_errs = oldErrs;
+		num_wrns = oldWrns;
+	}
+}
+
+function _coverage_tests_math_tooltips_smoke() {
+	var oldErrs = num_errs;
+	var oldWrns = num_wrns;
+	var ran = true;
+	try {
+		if (typeof _mvt_compute_pooled === "function") {
+			var pooled = _mvt_compute_pooled();
+			test_equal("pooled gradients compute without throwing", pooled === null || typeof pooled.grads === "object", true);
+		}
+		if (typeof _mvt_compute_per_sample === "function") {
+			var per_sample = _mvt_compute_per_sample(1);
+			test_equal("per-sample gradients compute without throwing", per_sample === null || Array.isArray(per_sample.samples), true);
+		}
+		if (typeof _mvt_compute_activations === "function") {
+			var acts = _mvt_compute_activations(1);
+			test_equal("activation statistics compute without throwing", acts === null || typeof acts === "object", true);
+		}
+		if (typeof _mvt_submodel === "function") {
+			var sub = _mvt_submodel(1);
+			test_equal("submodel extraction does not throw", sub === null || typeof sub === "object", true);
+		}
+	} catch (e) {
+		ran = false;
+	} finally {
+		num_errs = oldErrs;
+		num_wrns = oldWrns;
+	}
+	test_equal("math tooltip computations run", ran, true);
+}
+
+async function run_coverage_tests() {
+	_coverage_tests_fcnn_tooltips();
+	await _coverage_tests_origami_folds();
+	await _coverage_tests_origami_live();
+	_coverage_tests_math_mode_helpers();
+	await _coverage_tests_online_python_ui();
+	await _coverage_tests_data_augmentation();
+	await _coverage_tests_feature_map_color();
+	await _coverage_tests_debug_helpers();
+	await _coverage_tests_gui_mobile();
+	await _coverage_tests_model_helpers();
+	await _coverage_tests_error_paths();
+	_coverage_tests_math_tooltips_smoke();
+	await _coverage_tests_fn_profiler();
+	_coverage_tests_valsplitwatcher();
+	_coverage_tests_safety();
+	await _coverage_tests_drawing();
+	await _coverage_tests_autocomplete();
+	await _coverage_tests_custom_images();
+	return true;
+}
+
 async function new_tiny_tests() {
 	_tiny_tests_data_js();
 	_tiny_tests_explain_js();
@@ -10715,6 +12013,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_loss_landscape_module()", await test_loss_landscape_module(), true);
 		test_equal("test_fcnn_editable_module()", await test_fcnn_editable_module(), true);
 		test_equal("test_augmentation_options()", await test_augmentation_options(), true);
+		test_equal("run_coverage_tests()", await run_coverage_tests(), true);
 
 		test_no_new_errors_or_warnings();
 

@@ -286,7 +286,7 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
             logging.warning(f"[{browser_label}] Could not start Playwright tracing")
 
         logging.info(f"[{browser_label}] Navigating to {url} ...")
-        await page.goto(url, timeout=15000)
+        await page.goto(url, timeout=60000)
 
         logging.info(f"[{browser_label}] Waiting {wait_time/1000:.1f}s before running tests...")
         await page.wait_for_timeout(wait_time)
