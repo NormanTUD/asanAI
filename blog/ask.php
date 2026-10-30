@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
+header('X-Content-Type-Options: nosniff');
+header('Referrer-Policy: no-referrer');
 set_time_limit(15);
 
 $service = rtrim(getenv('ASANAI_RAG_URL') ?: 'http://127.0.0.1:8090', '/');
@@ -81,12 +83,12 @@ function rag_client_ip(): string {
 
 if ($method === 'GET' && isset($_GET['health'])) {
 	[, $data] = rag_request($service . '/health');
-	/* A missing backend is not an error the browser should log. */
-	rag_reply(200, $data);
+	/* Public health is only a boolean; model paths and queue internals stay local. */
+	rag_reply(200, ['ok' => !empty($data['ok'])]);
 }
 
 if ($method === 'GET' && isset($_GET['status'])) {
-	$id = preg_replace('/[^a-f0-9]/', '', (string)$_GET['status']);
+	$id = substr(preg_replace('/[^a-f0-9]/', '', (string)$_GET['status']), 0, 64);
 	if ($id === '') {
 		rag_reply(400, ['error' => 'invalid_id']);
 	}
@@ -103,12 +105,24 @@ if ($raw === false || strlen($raw) > 32768) {
 	rag_reply(413, ['error' => 'body_too_large']);
 }
 $payload = json_decode($raw, true);
-if (!is_array($payload) || !isset($payload['question'])) {
+if (!is_array($payload) || !isset($payload['question']) || !is_string($payload['question'])) {
 	rag_reply(400, ['error' => 'invalid_json']);
 }
-$payload['question'] = (string)$payload['question'];
-$payload['lang'] = (string)($payload['lang'] ?? 'en');
-$payload['history'] = is_array($payload['history'] ?? null) ? $payload['history'] : [];
+if (mb_strlen($payload['question'], 'UTF-8') > 2000) {
+	rag_reply(400, ['error' => 'question_too_long']);
+}
+$payload['lang'] = is_string($payload['lang'] ?? null) ? substr($payload['lang'], 0, 8) : 'en';
+$history = [];
+foreach (array_slice(is_array($payload['history'] ?? null) ? $payload['history'] : [], -6) as $turn) {
+	if (!is_array($turn) || !isset($turn['content']) || !is_string($turn['content'])) {
+		continue;
+	}
+	$history[] = [
+		'role' => is_string($turn['role'] ?? null) ? substr($turn['role'], 0, 16) : 'user',
+		'content' => substr($turn['content'], 0, 2000),
+	];
+}
+$payload['history'] = $history;
 $body = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 [$code, $data] = rag_request(
 	$service . '/ask',

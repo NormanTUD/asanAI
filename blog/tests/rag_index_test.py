@@ -82,6 +82,8 @@ def main():
     )
     check(not any(macro.search(chunk["x"]) for chunk in chunks),
           "RAG chunks contain no raw LaTeX citation macros")
+    check(any(chunk.get("img") or chunk.get("i") for chunk in chunks),
+          "RAG index keeps figure captions and image paths")
 
     scales = np.frombuffer(data, dtype="<f4", count=count, offset=16)
     vectors = np.frombuffer(

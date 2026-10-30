@@ -68,6 +68,9 @@
 		if (error === 'unknown_job') {
 			return 'The answer service restarted while generating. Please try again.';
 		}
+		if (error === 'generation_failed') {
+			return 'The answer could not be generated. Please try again.';
+		}
 		if (error === 'timeout') {
 			return 'This is taking longer than expected. Please try again.';
 		}
@@ -83,16 +86,36 @@
 		return 'The answer service is unavailable right now. Please try again.';
 	}
 
+	function unescapeHtml(value) {
+		return String(value || '')
+			.replace(/&amp;/g, '&')
+			.replace(/&lt;/g, '<')
+			.replace(/&gt;/g, '>')
+			.replace(/&quot;/g, '"')
+			.replace(/&#39;/g, "'");
+	}
+
 	function safeLink(url) {
 		url = String(url || '').trim();
-		if (/^https?:\/\//i.test(url)) return url;
-		if (/^\/(?!\/)/.test(url) || /^#/.test(url)) return url;
-		if (/^[a-zA-Z0-9_-]+(?:[\/#?][a-zA-Z0-9_.\/#?=&%+-]*)?$/.test(url)) return url;
+		if (!url) return '';
+		if (/(^|\/)\.\.(\/|$)/.test(url) || /%2e%2e/i.test(url)) return '';
+		if (/^#/.test(url) || /^\/(?!\/)/.test(url)) return url;
+		if (/^[a-zA-Z0-9_.-]+(?:[\/#?][a-zA-Z0-9_.\/#?=&%+-]*)?$/.test(url)) return url;
+		if (typeof window !== 'undefined' && window.location) {
+			try {
+				var parsed = new URL(url, window.location.href);
+				if (parsed.origin === window.location.origin) {
+					return parsed.pathname + parsed.search + parsed.hash;
+				}
+			} catch (error) {
+				return '';
+			}
+		}
 		return '';
 	}
 
 	function answerHtml(answer, sources) {
-		var byId = {};
+		var byId = Object.create(null);
 		(sources || []).forEach(function(source) {
 			if (source && source.id) byId[source.id] = source;
 		});
@@ -106,14 +129,21 @@
 		html = html.replace(/`([^`\n]+)`/g, function(_, code) {
 			return stash('<code>' + code + '</code>');
 		});
+		html = html.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, function(_, alt, rawUrl) {
+			var safe = safeLink(unescapeHtml(rawUrl));
+			if (!safe) return alt;
+			return stash('<img class="rag-inline-image" src="' + escAttr(safe) +
+				'" alt="' + alt + '" loading="lazy">');
+		});
 		html = html.replace(/\[(?:S(\d+)|(\d+))\]/g, function(marker, sourceNumber, bareNumber) {
 			var number = sourceNumber || bareNumber;
 			var source = byId['S' + number];
-			if (!source || !source.url) return marker;
-			return stash('<a class="rag-cite" href="' + escAttr(source.url) + '">[' + number + ']</a>');
+			var sourceUrl = source ? safeLink(source.url) : '';
+			if (!sourceUrl) return marker;
+			return stash('<a class="rag-cite" href="' + escAttr(sourceUrl) + '">[' + number + ']</a>');
 		});
-		html = html.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function(_, label, url) {
-			var safe = safeLink(url);
+		html = html.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function(_, label, rawUrl) {
+			var safe = safeLink(unescapeHtml(rawUrl));
 			if (!safe) return label;
 			return stash('<a href="' + escAttr(safe) + '" target="_blank" rel="noopener noreferrer">' + label + '</a>');
 		});
@@ -131,9 +161,19 @@
 			html += '<div class="rag-sources"><strong>Sources</strong><ul>';
 			sources.forEach(function(source) {
 				if (!source || !source.url) return;
+				var safe = safeLink(source.url);
+				if (!safe) return;
 				var label = esc(source.title || source.url);
 				if (source.heading) label += ' — ' + esc(source.heading);
-				html += '<li><a href="' + escAttr(source.url) + '">' + label + '</a></li>';
+				var image = source.img ? safeLink(source.img) : '';
+				html += '<li>';
+				if (image) {
+					var imageAlt = esc(source.imgCaption || source.title || '');
+					html += '<a class="rag-source-figure" href="' + escAttr(safe) + '">' +
+						'<img class="rag-source-thumb" src="' + escAttr(image) + '" alt="' +
+						imageAlt + '" loading="lazy"></a>';
+				}
+				html += '<a href="' + escAttr(safe) + '">' + label + '</a></li>';
 			});
 			html += '</ul></div>';
 		}
@@ -241,6 +281,7 @@
 				message.text.slice(0, 4000),
 				Array.isArray(message.sources) ? message.sources : []
 			));
+			pruneBrokenImages(node);
 			if (message.grounded === false) node.classList.add('rag-chat-msg-refusal');
 		});
 		if (state.messages.length) scrollMessages();
@@ -438,6 +479,17 @@
 		return node;
 	}
 
+	function pruneBrokenImages(root) {
+		if (!root) return;
+		root.querySelectorAll('img').forEach(function(image) {
+			if (image.complete && image.naturalWidth === 0) {
+				image.remove();
+				return;
+			}
+			image.addEventListener('error', function() { image.remove(); }, { once: true });
+		});
+	}
+
 	function setBusy(busy) {
 		state.busy = busy;
 		if (els.send) els.send.disabled = busy;
@@ -487,6 +539,7 @@
 		state.lastPartial = text;
 		state.streamNode.innerHTML = answerHtml(text, []) +
 			'<span class="rag-cursor" aria-hidden="true"></span>';
+		pruneBrokenImages(state.streamNode);
 		if (follow) scrollMessages();
 	}
 
@@ -629,6 +682,7 @@
 		node.className = 'rag-chat-msg rag-chat-msg-assistant' +
 			(data.grounded === false ? ' rag-chat-msg-refusal' : '');
 		node.innerHTML = answerHtml(answer, sources);
+		pruneBrokenImages(node);
 		if (follow) scrollMessages();
 		state.history.push({ role: 'user', content: question });
 		state.history.push({ role: 'assistant', content: answer });

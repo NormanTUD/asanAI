@@ -121,7 +121,9 @@ MOCK = r"""
 					id: 'S1',
 					title: 'Brief History of AI',
 					heading: 'The Perceptron',
-					url: 'history#the-perceptron'
+					url: 'history#the-perceptron',
+					img: 'frank_rosenblatt_portrait.jpg',
+					imgCaption: 'Frank Rosenblatt portrait'
 				}]
 			});
 		}
@@ -226,6 +228,11 @@ def main() -> int:
 		check("history#the-perceptron" in assistant_html, "citation points at the lesson")
 		check("<strong>" in assistant_html and "<em>" in assistant_html,
 			"markdown bold and italic render in answers")
+		check(len(browser.find_elements(By.CSS_SELECTOR, ".rag-source-thumb")) == 1,
+			"source figures render as thumbnails")
+		check("frank_rosenblatt_portrait.jpg" in
+			browser.find_element(By.CSS_SELECTOR, ".rag-source-thumb").get_attribute("src"),
+			"source figure points at the course image")
 
 
 		# Enter sends; Shift+Enter inserts a newline and does not send.

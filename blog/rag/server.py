@@ -181,7 +181,7 @@ def cache_history_hash(history: list) -> str:
     if not history:
         return ""
     payload = json.dumps(history[-4:], ensure_ascii=False)
-    return hashlib.sha1(payload.encode("utf-8")).hexdigest()
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 def cache_key(question: str, lang: str, history: list) -> str:
@@ -190,7 +190,7 @@ def cache_key(question: str, lang: str, history: list) -> str:
     payload = json.dumps(
         [CACHE_VERSION, primary_lang(lang), normalized, tail], ensure_ascii=False
     )
-    return hashlib.sha1(payload.encode("utf-8")).hexdigest()
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 class BM25:
@@ -260,8 +260,11 @@ class RagEngine:
         self.meta, vectors, self.scales = load_index(data_dir)
         self.chunks = self.meta["chunks"]
         self.sections = {}
+        self.figures = {}
         for index, chunk in enumerate(self.chunks):
             self.sections.setdefault((chunk["p"], chunk["h"]), []).append(index)
+            if chunk.get("img") or chunk.get("i"):
+                self.figures.setdefault((chunk["p"], chunk["h"]), []).append(chunk)
         self.vectors = vectors.astype(np.float32)
         self.bm25 = BM25([
             chunk["pt"] + " " + chunk["h"] + " " + chunk["x"]
@@ -479,9 +482,12 @@ class RagEngine:
         language = LANGUAGE_NAMES.get(primary_lang(lang), "English")
         passages = []
         for index, chunk in enumerate(chunks, 1):
+            text = (chunk.get("context") or chunk["x"])[:1400]
+            image = chunk.get("img") or chunk.get("i") or ""
             passages.append(
                 f"[S{index}] {chunk['pt']} — {chunk['h']}\n"
-                f"URL: {chunk['u']}\n{(chunk.get('context') or chunk['x'])[:1400]}"
+                f"URL: {chunk['u']}\n{text}"
+                + (f"\nImage: {image}" if image else "")
             )
         previous = ""
         if history:
@@ -503,6 +509,25 @@ class RagEngine:
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": user},
         ]
+
+    def _source_for(self, chunk: dict, number: int) -> dict:
+        image = chunk.get("img") or chunk.get("i") or ""
+        image_caption = chunk.get("x", "") if image else ""
+        if not image:
+            figures = getattr(self, "figures", {}).get(
+                (chunk.get("p"), chunk.get("h")), []
+            )
+            if figures:
+                image = figures[0].get("img") or figures[0].get("i") or ""
+                image_caption = figures[0].get("x", "")
+        return {
+            "id": f"S{number}",
+            "title": chunk["pt"],
+            "heading": chunk["h"],
+            "url": chunk["u"],
+            "img": image,
+            "imgCaption": image_caption,
+        }
 
     def finalize(self, raw: str, chunks: list, lang: str, english: str = "") -> dict:
         answer = (raw or "").strip()
@@ -526,14 +551,7 @@ class RagEngine:
             if key in seen:
                 continue
             seen.add(key)
-            sources.append(
-                {
-                    "id": f"S{index + 1}",
-                    "title": chunk["pt"],
-                    "heading": chunk["h"],
-                    "url": chunk["u"],
-                }
-            )
+            sources.append(self._source_for(chunk, index + 1))
 
         # Small models often forget the [S#] markers even when they answer from
         # the passages. Do not turn such an answer into a false "not in course";
@@ -544,14 +562,7 @@ class RagEngine:
                 if key in seen:
                     continue
                 seen.add(key)
-                sources.append(
-                    {
-                        "id": f"S{index + 1}",
-                        "title": chunk["pt"],
-                        "heading": chunk["h"],
-                        "url": chunk["u"],
-                    }
-                )
+                sources.append(self._source_for(chunk, index + 1))
             if sources:
                 print(
                     "warning: answer without citations; attaching retrieved sources: "
@@ -729,6 +740,10 @@ class AnswerCache:
                     db.execute("ALTER TABLE answers ADD COLUMN embedding BLOB")
                 if "history_hash" not in columns:
                     db.execute("ALTER TABLE answers ADD COLUMN history_hash TEXT")
+            try:
+                os.chmod(self.path, 0o640)
+            except Exception:
+                pass
         except Exception as exc:
             print(f"warning: answer cache unavailable: {exc}", file=sys.stderr)
 
@@ -862,6 +877,10 @@ class QueryLog:
                     "DELETE FROM rag_queries WHERE ts < ?",
                     (int(time.time()) - QUERY_LOG_RETENTION_DAYS * 86400,),
                 )
+            try:
+                os.chmod(self.path, 0o640)
+            except Exception:
+                pass
         except Exception as exc:
             print(f"warning: query log unavailable: {exc}", file=sys.stderr)
 
@@ -909,6 +928,13 @@ class RateLimiter:
     def check(self, ip: str):
         now = time.time()
         with self.lock:
+            if len(self.hits) > 5000:
+                for key in list(self.hits):
+                    fresh = [stamp for stamp in self.hits[key] if now - stamp < 86400]
+                    if fresh:
+                        self.hits[key] = fresh
+                    else:
+                        del self.hits[key]
             hits = [stamp for stamp in self.hits.get(ip, []) if now - stamp < 86400]
             self.hits[ip] = hits
             if hits and now - hits[-1] < self.min_seconds:
@@ -950,12 +976,17 @@ class RagService:
         threading.Thread(target=self._work, daemon=True).start()
 
     def submit(self, question: str, lang: str, history: list, ip: str):
-        question = (question or "").strip()
+        if not isinstance(question, str):
+            return 400, {"error": "invalid_question"}
+        question = question.strip()
         if len(question) < 3:
             return 400, {"error": "question_too_short"}
         if len(question) > MAX_QUESTION_CHARS:
             return 400, {"error": "question_too_long"}
         if is_blocked_question(question):
+            allowed, retry_after = self.rate.check(ip)
+            if not allowed:
+                return 429, {"error": "rate_limited", "retry_after": retry_after}
             blocked = {
                 "grounded": False,
                 "answer": refusal(lang),
@@ -1036,7 +1067,7 @@ class RagService:
                     "partial": job.partial,
                 }
             if job.status == "error":
-                return {"status": "error", "error": job.error or "generation failed"}
+                return {"status": "error", "error": "generation_failed"}
             return {"status": "done", **(job.result or {})}
 
     def health(self):
@@ -1162,7 +1193,10 @@ class Handler(BaseHTTPRequestHandler):
             self._json(200, self.service.health())
             return
         if path == "/status":
-            job_id = (query.get("id") or [""])[0]
+            job_id = (query.get("id") or [""])[0][:64]
+            if not re.fullmatch(r"[a-f0-9]+", job_id or ""):
+                self._json(404, {"error": "unknown_job"})
+                return
             result = self.service.status(job_id)
             self._json(200 if result else 404, result or {"error": "unknown_job"})
             return
@@ -1181,9 +1215,26 @@ class Handler(BaseHTTPRequestHandler):
         except Exception:
             self._json(400, {"error": "invalid_json"})
             return
-        question = str(payload.get("question") or "")
-        lang = str(payload.get("lang") or "en")[:8]
-        history = payload.get("history") or []
+        if not isinstance(payload, dict):
+            self._json(400, {"error": "invalid_json"})
+            return
+        question = payload.get("question")
+        if not isinstance(question, str):
+            self._json(400, {"error": "invalid_question"})
+            return
+        lang = payload.get("lang")
+        lang = lang[:8] if isinstance(lang, str) else "en"
+        raw_history = payload.get("history")
+        history = []
+        if isinstance(raw_history, list):
+            for turn in raw_history[-6:]:
+                if not isinstance(turn, dict) or not isinstance(turn.get("content"), str):
+                    continue
+                role = turn.get("role")
+                history.append({
+                    "role": role[:16] if isinstance(role, str) else "user",
+                    "content": turn["content"][:2000],
+                })
         ip = self.headers.get("X-Client-IP") or self.client_address[0]
         code, result = self.service.submit(question, lang, history, ip)
         self._json(code, result)
@@ -1196,6 +1247,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> int:
+    os.umask(0o027)
     data_dir = RAG_DATA
     if not (data_dir / "rag_index.json").exists():
         print(
@@ -1209,6 +1261,8 @@ def main() -> int:
     threading.Thread(target=engine.warmup, daemon=True).start()
     port = int(os.environ.get("ASANAI_RAG_PORT", "8090"))
     host = os.environ.get("ASANAI_RAG_HOST", "127.0.0.1")
+    if host not in ("127.0.0.1", "::1", "localhost"):
+        print(f"warning: binding to non-loopback host {host}", file=sys.stderr)
     server = ThreadingHTTPServer((host, port), Handler)
     server.daemon_threads = True
     Handler.service = service

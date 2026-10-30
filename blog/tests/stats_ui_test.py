@@ -164,26 +164,58 @@ def seed_questions(db_path: Path) -> None:
 			"sources TEXT, queue_seconds REAL, generation_seconds REAL, error TEXT)"
 		)
 		now = int(time.time())
-		db.execute(
+		db.executemany(
 			"INSERT INTO rag_queries (ts, day, question, answer, lang, grounded, cached, "
 			"semantic, model, query_en, sources, queue_seconds, generation_seconds, error) "
 			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-			(
-				now,
-				time.strftime("%Y-%m-%d"),
-				"what is a perceptron?",
-				"A perceptron is a linear classifier [S1].",
-				"en",
-				1,
-				0,
-				0,
-				"qwen2.5:1.5b",
-				"what is a perceptron?",
-				'[{"id":"S1","title":"Brief History of AI","heading":"The Perceptron","url":"history#the-perceptron"}]',
-				0.0,
-				12.5,
-				"",
-			),
+			[
+				(
+					now,
+					time.strftime("%Y-%m-%d"),
+					"what is a perceptron?",
+					"A **perceptron** is a *linear* classifier [S1].\n\n"
+					"![Portrait](frank_rosenblatt_portrait.jpg)",
+					"en",
+					1,
+					0,
+					0,
+					"qwen2.5:1.5b",
+					"what is a perceptron?",
+					'[{"id":"S1","title":"Brief History of AI","heading":"The Perceptron","url":"history#the-perceptron"}]',
+					0.0,
+					12.5,
+					"",
+				),
+				(
+					now - 60,
+					time.strftime("%Y-%m-%d"),
+					"how does backpropagation work?",
+					"Backpropagation [cached answer].",
+					"en",
+					1,
+					1,
+					0,
+					"qwen2.5:1.5b",
+					"how does backpropagation work?",
+					"[]",
+					0.0,
+					0.0,
+					"",
+				),
+			],
+		)
+
+
+def seed_answer_cache(db_path: Path) -> None:
+	with sqlite3.connect(db_path) as db:
+		db.execute(
+			"CREATE TABLE answers (key TEXT PRIMARY KEY, answer TEXT, grounded INTEGER, "
+			"sources TEXT, lang TEXT, query_en TEXT, created INTEGER, "
+			"embedding BLOB, history_hash TEXT)"
+		)
+		db.execute(
+			"INSERT INTO answers VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+			("seed-key", "cached answer", 1, "[]", "en", "cached", int(time.time()), None, ""),
 		)
 
 
@@ -199,10 +231,13 @@ def main() -> int:
 		seed(db_path)
 		questions_db = tmp_path / "queries.sqlite"
 		seed_questions(questions_db)
+		cache_db = tmp_path / "cache.sqlite"
+		seed_answer_cache(cache_db)
 
 		env = os.environ.copy()
 		env["MN_ANALYTICS_DB"] = str(db_path)
 		env["ASANAI_RAG_QUERIES_DB"] = str(questions_db)
+		env["ASANAI_RAG_CACHE"] = str(cache_db)
 		env["BLOG_STATS_PASSWORD_FILE"] = str(password_path)
 		env["MN_ANALYTICS_DISABLED"] = "1"
 		server = subprocess.Popen(
@@ -320,6 +355,45 @@ def main() -> int:
 				"course questions admin lists logged questions")
 			check("Brief History of AI" in browser.find_element(By.TAG_NAME, "main").text,
 				"course questions admin shows sources")
+			check(bool(browser.find_elements(By.CSS_SELECTOR, ".card .a strong")),
+				"course questions renders answer markdown")
+			check(bool(browser.find_elements(By.CSS_SELECTOR, ".card .a em")),
+				"course questions renders answer emphasis")
+			check("**" not in browser.find_element(By.CSS_SELECTOR, ".card .a").text,
+				"course questions leaves no markdown asterisks")
+			check(bool(browser.find_elements(By.CSS_SELECTOR, ".card .a .answer-image")),
+				"course questions renders answer images")
+
+			browser.find_element(By.XPATH, "//button[contains(., 'Clear answer cache')]").click()
+			WebDriverWait(browser, 10).until(
+				EC.presence_of_element_located((By.CSS_SELECTOR, ".flash"))
+			)
+			check("Cleared 1 cached answer" in browser.find_element(By.CSS_SELECTOR, ".flash").text,
+				"course questions clears the answer cache")
+			with sqlite3.connect(cache_db) as db:
+				check(db.execute("SELECT COUNT(*) FROM answers").fetchone()[0] == 0,
+					"answer cache is empty after clearing")
+
+			browser.find_element(By.XPATH, "//button[contains(., 'Delete cached log entries')]").click()
+			WebDriverWait(browser, 10).until(
+				EC.presence_of_element_located((By.CSS_SELECTOR, ".flash"))
+			)
+			check("Deleted 1 cached log entry" in browser.find_element(By.CSS_SELECTOR, ".flash").text,
+				"course questions deletes cached log entries")
+			main_text = browser.find_element(By.TAG_NAME, "main").text
+			check("backpropagation" not in main_text and "perceptron" in main_text,
+				"cached log deletion leaves uncached questions")
+
+			browser.find_element(By.XPATH,
+				"//article[contains(., 'what is a perceptron?')]//button[contains(., 'Delete this question')]"
+			).click()
+			WebDriverWait(browser, 10).until(
+				EC.presence_of_element_located((By.CSS_SELECTOR, ".flash"))
+			)
+			check("Question deleted" in browser.find_element(By.CSS_SELECTOR, ".flash").text,
+				"course questions deletes a single question")
+			check("No questions match these filters." in browser.find_element(By.TAG_NAME, "main").text,
+				"question log is empty after deleting the last row")
 
 			severe = [entry for entry in browser.get_log("browser") if entry.get("level") == "SEVERE"]
 			check(not severe, "no severe console errors", str(severe))

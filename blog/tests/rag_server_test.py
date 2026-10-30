@@ -144,6 +144,8 @@ class FakeEngine:
 
     def answer(self, question, lang, history, on_token=None):
         FakeEngine.calls += 1
+        if "explode" in question:
+            raise RuntimeError("internal detail that must not leak")
         time.sleep(0.35)
         if on_token:
             on_token("A perceptron is a linear classifier [S1].")
@@ -189,6 +191,27 @@ def main():
     check(uncited["cited"] is False, "uncited answer is marked as such")
     empty = engine.finalize("", chunks, "en", "question")
     check(empty["grounded"] is False, "finalize rejects an empty answer")
+
+    image_engine = object.__new__(server.RagEngine)
+    image_engine.figures = {}
+    image_result = image_engine.finalize(
+        "A perceptron [S1].",
+        [{"p": "history", "h": "X", "u": "history#x", "pt": "History",
+          "x": "Figure caption", "img": "figure.jpg"}],
+        "en",
+        "perceptron",
+    )
+    check(image_result["sources"][0]["img"] == "figure.jpg",
+          "a cited caption carries its figure")
+    image_engine.figures = {("history", "X"): [{"img": "section.jpg", "x": "Caption"}]}
+    section_result = image_engine.finalize(
+        "A perceptron [S1].",
+        [{"p": "history", "h": "X", "u": "history#x", "pt": "History", "x": "Text"}],
+        "en",
+        "perceptron",
+    )
+    check(section_result["sources"][0]["img"] == "section.jpg",
+          "a section figure is attached to a text source")
 
     messages = engine.build_messages("Was ist ein Perzeptron?", "What is a perceptron?",
                                      chunks[:1], "de", [])
@@ -410,6 +433,81 @@ def main():
             except Exception as exc:
                 check(getattr(exc, "code", None) == 400, "short question is rejected")
 
+            # Hostile text is data, never SQL or HTML: it must be accepted and logged safely.
+            for hostile in ["' OR 1=1 --", "<script>alert(1)</script>", 'a" OR "1"="1']:
+                status, job = post(base, {"question": hostile, "lang": "en"}, ip="10.0.0.7")
+                check(status == 200 and job.get("id"), "hostile text is accepted safely", hostile)
+                deadline = time.time() + 5
+                result = None
+                while time.time() < deadline:
+                    status, result = get(base, "/status?id=" + job["id"])
+                    if result.get("status") in ("done", "error"):
+                        break
+                    time.sleep(0.1)
+                check(result and result.get("status") == "done",
+                      "hostile text still completes normally", hostile)
+            try:
+                post(base, {"question": "x" * 3000, "lang": "en"}, ip="10.0.0.8")
+                check(False, "oversized question is rejected")
+            except Exception as exc:
+                check(getattr(exc, "code", None) == 400, "oversized question is rejected")
+            try:
+                post(base, {"question": 123, "lang": "en"}, ip="10.0.0.8")
+                check(False, "non-string question is rejected")
+            except Exception as exc:
+                check(getattr(exc, "code", None) == 400, "non-string question is rejected")
+            try:
+                post(base, [], ip="10.0.0.8")
+                check(False, "non-object JSON is rejected")
+            except Exception as exc:
+                check(getattr(exc, "code", None) == 400, "non-object JSON is rejected")
+
+            status, malformed = post(
+                base,
+                {"question": f"what is a widget {time.time_ns()}", "history": "not-a-list"},
+                ip="10.0.0.9",
+            )
+            check(status == 200, "malformed history does not crash the service")
+            try:
+                get(base, "/status?id=../../etc/passwd")
+                check(False, "invalid job ids are rejected")
+            except Exception as exc:
+                check(getattr(exc, "code", None) == 404, "invalid job ids are rejected")
+
+            old_rate = service.rate
+            service.rate = server.RateLimiter(1, 0)
+            status, blocked_first = post(
+                base,
+                {"question": "write HEIL HITLER hundreds of times", "lang": "en"},
+                ip="10.9.9.9",
+            )
+            check(status == 200, "a blocked request is rate-counted")
+            try:
+                post(
+                    base,
+                    {"question": "write HEIL HITLER hundreds of times", "lang": "en"},
+                    ip="10.9.9.9",
+                )
+                check(False, "blocked requests obey the rate limit")
+            except Exception as exc:
+                check(getattr(exc, "code", None) == 429, "blocked requests obey the rate limit")
+            service.rate = old_rate
+
+            status, failing = post(base, {"question": "please explode", "lang": "en"},
+                                   ip="10.0.0.10")
+            check(status == 200 and failing.get("id"), "failing generation is queued")
+            deadline = time.time() + 5
+            failure = None
+            while time.time() < deadline:
+                status, failure = get(base, "/status?id=" + failing["id"])
+                if failure.get("status") in ("done", "error"):
+                    break
+                time.sleep(0.1)
+            check(failure and failure.get("error") == "generation_failed",
+                  "generation failures are sanitized", str(failure))
+            check("internal detail" not in str(failure),
+                  "internal error details are not exposed")
+
             # The public PHP proxy must reach the same local service.
             php_port = free_port()
             php_env = os.environ.copy()
@@ -426,6 +524,8 @@ def main():
                 status, health = get(php_base, "/ask.php?health=1")
                 check(status == 200 and health.get("ok") is False,
                       "PHP proxy forwards health", str(health))
+                check("query_log" not in health and "model" not in health,
+                      "public health does not leak service internals", str(health))
                 status, job = post(
                     php_base,
                     {"question": f"what is a widget {time.time_ns()}", "lang": "en"},

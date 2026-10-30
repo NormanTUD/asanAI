@@ -49,10 +49,32 @@ check(markdown.indexOf('<em>italic</em>') !== -1, 'italic markdown renders');
 check(markdown.indexOf('<code>code</code>') !== -1, 'inline code renders');
 check(chat.answerHtml('`**not bold**`', []).indexOf('<strong>') === -1,
 	'markdown inside code stays literal');
-check(chat.answerHtml('[site](https://example.com)', []).indexOf('href="https://example.com"') !== -1,
-	'safe external links render');
+check(chat.answerHtml('[lesson](history#the-perceptron)', []).indexOf('href="history#the-perceptron"') !== -1,
+	'relative lesson links render');
+check(chat.answerHtml('[ext](https://example.com)', []).indexOf('href=') === -1,
+	'external links are not rendered');
 check(chat.answerHtml('[bad](javascript:alert(1))', []).indexOf('href=') === -1,
 	'unsafe link schemes are not rendered');
+check(chat.answerHtml('See [S1].', [{ id: 'S1', title: 'Bad', url: 'javascript:alert(1)' }])
+	.indexOf('href=') === -1, 'unsafe source URLs are not linked');
+
+var inlineImage = chat.answerHtml('![Portrait](frank_rosenblatt_portrait.jpg)', []);
+check(inlineImage.indexOf('<img') !== -1 &&
+	inlineImage.indexOf('src="frank_rosenblatt_portrait.jpg"') !== -1,
+	'safe inline markdown images render');
+check(chat.answerHtml('![x](https://evil.example/x.png)', []).indexOf('<img') === -1,
+	'external inline images are blocked');
+var sourceImage = chat.answerHtml('See [S1].', [{
+	id: 'S1', title: 'History', url: 'history#perceptron',
+	img: 'frank_rosenblatt_portrait.jpg', imgCaption: 'Portrait'
+}]);
+check(sourceImage.indexOf('rag-source-thumb') !== -1, 'source figures render as thumbnails');
+check(chat.answerHtml('See [S1].', [{
+	id: 'S1', title: 'Bad', url: 'history#x', img: 'javascript:alert(1)'
+}]).indexOf('rag-source-thumb') === -1, 'unsafe source images are blocked');
+check(chat.answerHtml('[query](image.php?f=x&w=2)', []).indexOf('src=') === -1 &&
+	chat.answerHtml('[query](image.php?f=x&w=2)', []).indexOf('href="image.php?f=x&amp;w=2"') !== -1,
+	'URL query ampersands survive escaping');
 
 check(chat.errorText({ error: 'unknown_job' }).indexOf('restarted') !== -1,
 	'lost-job error suggests retrying');

@@ -54,13 +54,14 @@ RewriteRule ^analytics_data/ - [F,L]
 
 
 # 1. External redirect: remove .php (dynamic, without duplicated paths)
-#    stats.php, feedback.php, feedback_track.php, track.php and ask.php are
-#    POST targets; never redirect their .php form.
+#    stats.php, feedback.php, feedback_track.php, track.php, ask.php and
+#    questions.php are POST targets; never redirect their .php form.
 RewriteCond %{REQUEST_URI} !/stats\.php(?:\?|$)
 RewriteCond %{REQUEST_URI} !/track\.php(?:\?|$)
 RewriteCond %{REQUEST_URI} !/feedback\.php(?:\?|$)
 RewriteCond %{REQUEST_URI} !/feedback_track\.php(?:\?|$)
 RewriteCond %{REQUEST_URI} !/ask\.php(?:\?|$)
+RewriteCond %{REQUEST_URI} !/questions\.php(?:\?|$)
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^?\s]+)\.php(?:\?|\s) [NC]
 RewriteRule ^ %1 [R=301,L]
 
