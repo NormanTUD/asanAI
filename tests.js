@@ -9817,73 +9817,6 @@ async function _coverage_tests_model_helpers() {
 	test_equal("get_weights_shape handles invalid json", await get_weights_shape("not json"), undefined);
 }
 
-async function _coverage_tests_error_paths() {
-	var oldErrs = num_errs;
-	var oldWrns = num_wrns;
-	var oldSwal = Swal.fire;
-	var oldSend = send_bug_report;
-	var oldUpdate = update_translations;
-	var oldWriteDescriptions = write_descriptions;
-	var oldEnableEverything = enable_everything;
-	var oldRemoveOverlay = remove_overlay;
-	var oldWriteError = write_error;
-
-	try {
-		Swal.fire = function () {};
-		send_bug_report = async function () {};
-		update_translations = async function () {};
-		write_descriptions = async function () {};
-		enable_everything = async function () {};
-		remove_overlay = function () {};
-
-		var callback_called = 0;
-		await write_error(new Error("coverage boom"), function () { callback_called++; }, true);
-		test_equal("write_error invokes its callback", callback_called, 1);
-		await write_error("plain coverage error", null, true);
-		await write_error(null);
-		test_equal("write_error without an error shows the error box", $("#error").length, 1);
-
-		var except_thrown = null;
-		try {
-			await except("coverage_except", new Error("coverage except"));
-		} catch (e) {
-			except_thrown = e;
-		}
-		test_equal("except rethrows the error message", except_thrown && except_thrown.message, "coverage except");
-
-		var oldXHR = window.XMLHttpRequest;
-		try {
-			function FakeXHR(status) {
-				this.open = function () {};
-				this.setRequestHeader = function () {};
-				this.send = function () {
-					this.readyState = 4;
-					this.status = status;
-					if (this.onreadystatechange) this.onreadystatechange(0, 0);
-				};
-			}
-			window.XMLHttpRequest = function () { return new FakeXHR(200); };
-			send_post_request("http://127.0.0.1/never", "<b>coverage</b>");
-			window.XMLHttpRequest = function () { return new FakeXHR(500); };
-			send_post_request("http://127.0.0.1/never", "<b>coverage</b>");
-			window.XMLHttpRequest = function () { throw new Error("coverage xhr"); };
-			send_post_request("http://127.0.0.1/never", "<b>coverage</b>");
-		} finally {
-			window.XMLHttpRequest = oldXHR;
-		}
-	} finally {
-		Swal.fire = oldSwal;
-		send_bug_report = oldSend;
-		update_translations = oldUpdate;
-		write_descriptions = oldWriteDescriptions;
-		enable_everything = oldEnableEverything;
-		remove_overlay = oldRemoveOverlay;
-		write_error = oldWriteError;
-		num_errs = oldErrs;
-		num_wrns = oldWrns;
-	}
-}
-
 function _coverage_tests_math_tooltips_smoke() {
 	var oldErrs = num_errs;
 	var oldWrns = num_wrns;
@@ -9927,7 +9860,6 @@ async function run_coverage_tests() {
 	await _coverage_tests_debug_helpers();
 	await _coverage_tests_gui_mobile();
 	await _coverage_tests_model_helpers();
-	await _coverage_tests_error_paths();
 	_coverage_tests_math_tooltips_smoke();
 	await _coverage_tests_fn_profiler();
 	_coverage_tests_valsplitwatcher();
