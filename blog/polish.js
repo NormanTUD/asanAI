@@ -661,7 +661,6 @@
 		lb.innerHTML = '<button class="cl-lb-x" type="button" aria-label="Close">\u00d7</button>'
 			+ '<button class="cl-lb-prev" type="button" aria-label="Previous image">\u2039</button>'
 			+ '<button class="cl-lb-next" type="button" aria-label="Next image">\u203a</button>'
-			+ '<div class="cl-lb-hint" aria-hidden="true">Scroll to zoom &middot; drag to pan</div>'
 			+ '<img alt=""><figcaption></figcaption>';
 		document.body.appendChild(lb);
 		const img = lb.querySelector('img');

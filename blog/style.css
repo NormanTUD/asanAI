@@ -9593,23 +9593,6 @@ html.dark .cl-cite-tip {
 }
 #cl-lb.is-zoomed img { cursor: grab; }
 #cl-lb.is-dragging img { cursor: grabbing; }
-#cl-lb.is-zoomed .cl-lb-hint { opacity: 0; }
-.cl-lb-hint {
-	position: fixed;
-	top: 18px;
-	left: 50%;
-	transform: translateX(-50%);
-	z-index: 2147483647;
-	pointer-events: none;
-	color: rgba(255,255,255,.72);
-	font-size: .7rem;
-	letter-spacing: .06em;
-	text-transform: uppercase;
-	white-space: nowrap;
-	opacity: 0;
-	transition: opacity .18s ease;
-}
-#cl-lb.is-visible .cl-lb-hint { opacity: 1; }
 /* Caption is fully styled by polish.js (inline + !important) — this
    rule is just a baseline so the element isn't invisible before JS
    runs. */
