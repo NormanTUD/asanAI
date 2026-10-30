@@ -7366,6 +7366,27 @@ window.bibData = {
 		url: "https://spectrum.ieee.org/elektro-the-motoman-had-the-biggest-brain-at-the-1939-worlds-fair",
 		alternativetitle: "Marsh, Elektro the Moto-Man (IEEE Spectrum, 2018)"
 	},
+	"harmon1973faces": {
+		title: "The Recognition of Faces",
+		author: "Leon D. Harmon",
+		year: 1973,
+		url: "https://www.scientificamerican.com/article/the-recognition-of-faces/",
+		alternativetitle: "Harmon, The Recognition of Faces (Scientific American, 1973)"
+	},
+	"harmon1981ai": {
+		title: "Artificial intelligence: accent is on artificial",
+		author: "Leon D. Harmon",
+		year: 1981,
+		url: "https://www.csmonitor.com/1981/0224/022445.html",
+		alternativetitle: "Harmon, Artificial intelligence: accent is on artificial (1981)"
+	},
+	"harmonwiki": {
+		title: "Leon Harmon",
+		author: "Wikipedia contributors",
+		year: 2024,
+		url: "https://en.wikipedia.org/wiki/Leon_Harmon",
+		alternativetitle: "Leon Harmon (Wikipedia)"
+	},
 	"afflictor2014mcculloch": {
 		title: "Old Print Article: “Warns Machines May Some Day Take Over The World,” Brooklyn Daily Eagle (1948)",
 		author: "Darren D’Addario",

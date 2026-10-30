@@ -73710,7 +73710,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 381,
+  "works": 382,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -73785,6 +73785,7 @@
    "prehistoriccounting",
    "ancientnumeralsystems",
    "history_of_a",
+   "harmonwiki",
    "brooks2024sora",
    "music_theory",
    "midi",
@@ -81301,6 +81302,24 @@
    "people_of_ai",
    "symbolic_ai",
    "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Leon D. Harmon",
+  "canon": "Leon D. Harmon",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1973,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "harmon1973faces",
+   "harmon1981ai"
+  ],
+  "cited_in": [
+   "history"
   ]
  },
  {

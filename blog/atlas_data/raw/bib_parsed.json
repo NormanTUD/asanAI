@@ -6414,6 +6414,24 @@
    "year": "2018",
    "url": "https://spectrum.ieee.org/elektro-the-motoman-had-the-biggest-brain-at-the-1939-worlds-fair"
   },
+  "harmon1973faces": {
+   "title": "The Recognition of Faces",
+   "author": "Leon D. Harmon",
+   "year": "1973",
+   "url": "https://www.scientificamerican.com/article/the-recognition-of-faces/"
+  },
+  "harmon1981ai": {
+   "title": "Artificial intelligence: accent is on artificial",
+   "author": "Leon D. Harmon",
+   "year": "1981",
+   "url": "https://www.csmonitor.com/1981/0224/022445.html"
+  },
+  "harmonwiki": {
+   "title": "Leon Harmon",
+   "author": "Wikipedia contributors",
+   "year": "2024",
+   "url": "https://en.wikipedia.org/wiki/Leon_Harmon"
+  },
   "afflictor2014mcculloch": {
    "title": "Old Print Article: “Warns Machines May Some Day Take Over The World,” Brooklyn Daily Eagle (1948)",
    "author": "Darren D’Addario",
@@ -25356,6 +25374,15 @@
    "history",
    "philosophy"
   ],
+  "harmon1973faces": [
+   "history"
+  ],
+  "harmonwiki": [
+   "history"
+  ],
+  "harmon1981ai": [
+   "history"
+  ],
   "schmidhuber2025cnn": [
    "history"
   ],
@@ -30312,7 +30339,7 @@
    ]
   },
   "Wikipedia contributors": {
-   "count": 381,
+   "count": 382,
    "minyear": 2007,
    "maxyear": 2026,
    "keys": [
@@ -30389,6 +30416,7 @@
     "prehistoriccounting",
     "ancientnumeralsystems",
     "history_of_a",
+    "harmonwiki",
     "brooks2024sora",
     "music_theory",
     "midi",
@@ -46740,6 +46768,15 @@
    "maxyear": 1993,
    "keys": [
     "crevier1993ai"
+   ]
+  },
+  "Leon D. Harmon": {
+   "count": 2,
+   "minyear": 1973,
+   "maxyear": 1981,
+   "keys": [
+    "harmon1973faces",
+    "harmon1981ai"
    ]
   },
   "Darren D’Addario": {
