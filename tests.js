@@ -8928,9 +8928,10 @@ async function _coverage_tests_custom_images() {
 		test_equal("webcam elements include the canvas", webcam_elements.indexOf(canvas) !== -1, true);
 
 		var file_input = upload.find(".own_image_files")[0];
-		var file = new File([new Uint8Array([137, 80, 78, 71])], "coverage.png", { type: "image/png" });
+		var tiny_png_file = dataURLToBlob("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==");
+		var file = new File([tiny_png_file], "coverage.png", { type: "image/png" });
 		handle_file_select({ target: { files: [file] }, currentTarget: file_input });
-		await delay(80);
+		await delay(150);
 		test_equal("handle_file_select adds an image", upload.find("img").length >= 1, true);
 
 		handle_file_select({ target: { files: [new File(["x"], "x.txt", { type: "text/plain" })] }, currentTarget: file_input });
