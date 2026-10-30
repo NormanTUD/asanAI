@@ -8277,6 +8277,9 @@ function _tiny_tests_my_temml_js() {
 async function _tiny_tests_custom_images_js() {
 	var old_labels = labels;
 	var old_cam = cam;
+	var webcamData = document.getElementById("webcam_data");
+	var webcamDataParent = webcamData ? webcamData.parentNode : null;
+	var webcamDataNext = webcamData ? webcamData.nextSibling : null;
 	var container = document.createElement("div");
 	container.className = "own_image_upload_container";
 	document.body.appendChild(container);
@@ -8323,6 +8326,16 @@ async function _tiny_tests_custom_images_js() {
 		sidebarLabel.remove();
 		add_label_sidebar();
 		if (!hadSidebar) {
+			// add_label_sidebar() moves #webcam_data into the sidebar it creates.
+			// Put it back before removing the probe sidebar, otherwise the live
+			// webcam UI disappears from the document for the rest of the run.
+			if (webcamData && webcamDataParent) {
+				if (webcamDataNext && webcamDataNext.parentNode === webcamDataParent) {
+					webcamDataParent.insertBefore(webcamData, webcamDataNext);
+				} else {
+					webcamDataParent.appendChild(webcamData);
+				}
+			}
 			var createdSidebar = document.getElementById("labelSidebar");
 			if (createdSidebar) createdSidebar.remove();
 		}
