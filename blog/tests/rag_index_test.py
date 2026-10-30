@@ -10,6 +10,7 @@ Run from blog/:  uv run tests/rag_index_test.py
 from __future__ import annotations
 
 import json
+import re
 import struct
 import subprocess
 import sys
@@ -75,6 +76,12 @@ def main():
     check(not any("frankrosenblattcommons.jpg" in chunk["x"]
                   or "img_frank_rosenblatt" in chunk["x"] for chunk in chunks),
           "RAG chunks contain no raw figure or citation markup")
+    macro = re.compile(
+        r"\\(?:cite|citeauthor|citeyear|citetitle|citealternativetitle|"
+        r"footcite|marginfig|sideimage|sidenote|index|label)\b"
+    )
+    check(not any(macro.search(chunk["x"]) for chunk in chunks),
+          "RAG chunks contain no raw LaTeX citation macros")
 
     scales = np.frombuffer(data, dtype="<f4", count=count, offset=16)
     vectors = np.frombuffer(

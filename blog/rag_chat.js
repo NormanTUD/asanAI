@@ -20,7 +20,8 @@
 		seq: 0,
 		lastQuestion: '',
 		startedAt: 0,
-		eta: null
+		eta: null,
+		slow: false
 	};
 	var els = {};
 
@@ -104,6 +105,10 @@
 	}
 
 	function slowNote(data, text) {
+		var SLOW_NOTE = 'This is taking a bit longer than expected.';
+		if (state.slow) {
+			return (text ? text + ' ' : '') + SLOW_NOTE;
+		}
 		var raw = data && data.eta_seconds;
 		var eta = raw == null ? null : Math.round(Number(raw));
 		if (eta == null || !isFinite(eta)) {
@@ -116,8 +121,8 @@
 			state.eta = { value: eta, repeats: 1 };
 		}
 		if (state.eta.repeats >= 4) {
-			return (text ? text + ' ' : '') +
-				'This is taking a bit longer than expected.';
+			state.slow = true;
+			return (text ? text + ' ' : '') + SLOW_NOTE;
 		}
 		return text;
 	}
@@ -393,6 +398,7 @@
 		state.startedAt = Date.now();
 		state.streamNode = null;
 		state.eta = null;
+		state.slow = false;
 		if (addUser) {
 			addMessage('user', esc(question));
 			state.messages.push({ role: 'user', text: question });
@@ -491,6 +497,7 @@
 		}
 		clearTimeout(state.pollTimer);
 		state.eta = null;
+		state.slow = false;
 		els.status.textContent = '';
 		var sources = Array.isArray(data.sources) ? data.sources : [];
 		var node = state.streamNode;
@@ -518,6 +525,7 @@
 		if (seq !== state.seq) return;
 		clearTimeout(state.pollTimer);
 		state.eta = null;
+		state.slow = false;
 		if (state.streamNode) {
 			state.streamNode.remove();
 			state.streamNode = null;
@@ -546,6 +554,7 @@
 		state.history = [];
 		state.messages = [];
 		state.eta = null;
+		state.slow = false;
 		try {
 			localStorage.removeItem(STORAGE_KEY);
 		} catch (error) {

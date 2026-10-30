@@ -223,6 +223,18 @@ def main():
     check(lang_engine.ensure_language("Already English.", "en") == "Already English.",
           "ensure_language leaves English answers alone")
 
+    ctx_engine = object.__new__(server.RagEngine)
+    ctx_engine.chunks = [
+        {"p": "a", "h": "H", "u": "a#h", "x": "one"},
+        {"p": "a", "h": "H", "u": "a#h", "x": "two"},
+        {"p": "b", "h": "H2", "u": "b#h2", "x": "three"},
+    ]
+    ctx_engine.sections = {("a", "H"): [0, 1], ("b", "H2"): [2]}
+    ctx = ctx_engine._with_context(0, max_chars=100)
+    check("one" in ctx["context"] and "two" in ctx["context"],
+          "retrieval context expands to neighbouring chunks in the same section")
+    check("three" not in ctx["context"], "retrieval context stays inside the section")
+
     bm25 = server.BM25(["a perceptron is linear", "the history of rome"])
     check(bm25.search("perceptron")[0] == 0, "BM25 finds an exact term")
     check(bm25.search("perceptron") != bm25.search("rome"), "BM25 ranks different terms")

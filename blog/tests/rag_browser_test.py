@@ -209,7 +209,9 @@ def main() -> int:
 		WebDriverWait(browser, 8).until(
 			lambda d: "taking a bit longer" in status_text(d)
 		)
-		check(True, "a repeated ETA shows the slower hint")
+		time.sleep(1)
+		check("taking a bit longer" in status_text(browser),
+			"the slower hint stays visible instead of flickering")
 
 		WebDriverWait(browser, 10).until(
 			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-sources")) > 0

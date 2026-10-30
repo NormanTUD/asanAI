@@ -255,6 +255,9 @@ class RagEngine:
     def __init__(self, data_dir: Path = RAG_DATA):
         self.meta, vectors, self.scales = load_index(data_dir)
         self.chunks = self.meta["chunks"]
+        self.sections = {}
+        for index, chunk in enumerate(self.chunks):
+            self.sections.setdefault((chunk["p"], chunk["h"]), []).append(index)
         self.vectors = vectors.astype(np.float32)
         self.bm25 = BM25([
             chunk["pt"] + " " + chunk["h"] + " " + chunk["x"]
@@ -281,6 +284,35 @@ class RagEngine:
             vector /= norm
         return vector
 
+    def _with_context(self, index: int, max_chars: int = 1400):
+        chunk = dict(self.chunks[index])
+        group = self.sections.get((chunk["p"], chunk["h"]), [index])
+        try:
+            position = group.index(index)
+        except ValueError:
+            position = 0
+        selected = [index]
+        total = len(chunk["x"])
+        left, right = position - 1, position + 1
+        while total < max_chars and (left >= 0 or right < len(group)):
+            next_index = None
+            if right < len(group):
+                candidate = group[right]
+                if total + len(self.chunks[candidate]["x"]) + 1 <= max_chars:
+                    next_index = candidate
+                    right += 1
+            if next_index is None and left >= 0:
+                candidate = group[left]
+                if total + len(self.chunks[candidate]["x"]) + 1 <= max_chars:
+                    next_index = candidate
+                    left -= 1
+            if next_index is None:
+                break
+            selected.append(next_index)
+            total += len(self.chunks[next_index]["x"]) + 1
+        chunk["context"] = " ".join(self.chunks[i]["x"] for i in sorted(selected))
+        return chunk
+
     def retrieve(self, question: str, limit: int = 5):
         query = self.embed_question(question)
         dense_scores = (self.vectors @ query) * self.scales
@@ -301,11 +333,11 @@ class RagEngine:
                     + heading_boost(self.chunks[candidates[position]], question),
                     reverse=True,
                 )[:limit]
-                return [self.chunks[candidates[position]] for position in order]
+                return [self._with_context(candidates[position]) for position in order]
             except Exception as exc:
                 print(f"warning: reranker failed: {exc}", file=sys.stderr)
         return [
-            self.chunks[index]
+            self._with_context(index)
             for index in sorted(
                 candidates,
                 key=lambda index: heading_boost(self.chunks[index], question),
@@ -370,7 +402,7 @@ class RagEngine:
 
     def answer(self, question: str, lang: str, history: list, on_token=None) -> dict:
         english = self.translate(question, lang)
-        chunks = self.retrieve(english, 5)
+        chunks = self.retrieve(english, 4)
         if not chunks:
             return {
                 "grounded": False,
@@ -420,7 +452,7 @@ class RagEngine:
         for index, chunk in enumerate(chunks, 1):
             passages.append(
                 f"[S{index}] {chunk['pt']} — {chunk['h']}\n"
-                f"URL: {chunk['u']}\n{chunk['x'][:700]}"
+                f"URL: {chunk['u']}\n{(chunk.get('context') or chunk['x'])[:1400]}"
             )
         previous = ""
         if history:
