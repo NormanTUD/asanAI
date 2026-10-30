@@ -191,6 +191,7 @@ function renderLatex($expr) {
 }
 
 function cleanMarkdown($text) {
+	$text = preg_replace('/\[youtube\][^\[]*\[\/youtube\]/i', '', $text);
 	$text = preg_replace('/\[([^\]]*)\]\([^)]*\)/', '$1', $text);
 	$text = preg_replace('/!\[([^\]]*)\]\([^)]*\)/', '$1', $text);
 	$text = preg_replace('/[*_]{2,3}([^*_]+)[*_]{2,3}/', '$1', $text);
