@@ -1383,8 +1383,21 @@ function _render_tensor_to_canvas(_tensor, canvas) {
 	}
 }
 
-function _add_augmented_canvas_to_photo_gallery(canvas, render_promise) {
+function _augmented_preview_category_label(category) {
+	if (category === undefined || category === null || category === "") return null;
+	if (typeof category === "number" && typeof labels !== "undefined" && labels && labels[category] !== undefined) {
+		return String(labels[category]);
+	}
+	return String(category);
+}
+
+function _add_augmented_canvas_to_photo_gallery(canvas, render_promise, category) {
 	const container = _photo_gallery_container();
+	const category_label = _augmented_preview_category_label(category);
+
+	if (category_label !== null) {
+		canvas.dataset.category = category_label;
+	}
 
 	// The photo gallery canvas is the normal preview surface: it draws all
 	// samples (including augmented ones) in the same grid and keeps the
@@ -1422,6 +1435,9 @@ function _add_augmented_canvas_to_photo_gallery(canvas, render_promise) {
 		return new Promise(function (resolve) {
 			const img = new Image();
 			img._source_canvas = canvas;
+			if (category_label !== null) {
+				img.dataset.category = category_label;
+			}
 			let finished = false;
 
 			const finish = function () {
@@ -1459,7 +1475,7 @@ function _add_augmented_canvas_to_photo_gallery(canvas, render_promise) {
 	});
 }
 
-function add_tensor_as_image_to_photos (_tensor) {
+function add_tensor_as_image_to_photos (_tensor, category) {
 	assert(typeof(_tensor) == "object", "_tensor must be an object");
 	assert(Object.keys(_tensor).includes("shape"), "_tensor must be an object that contains a shape subkey");
 	assert(_tensor.shape.length >= 3 && _tensor.shape.length <= 4, "_tensor must have 3 or 4 dimensions");
@@ -1478,7 +1494,7 @@ function add_tensor_as_image_to_photos (_tensor) {
 				var this_tensor = tensor(sync_data[tensor_idx]);
 				var canvas = document.createElement("canvas");
 				var render_promise = _render_tensor_to_canvas(this_tensor, canvas);
-				pending_renders.push(_add_augmented_canvas_to_photo_gallery(canvas, render_promise));
+				pending_renders.push(_add_augmented_canvas_to_photo_gallery(canvas, render_promise, category));
 			}
 
 			return Promise.all(pending_renders);
@@ -1490,7 +1506,7 @@ function add_tensor_as_image_to_photos (_tensor) {
 	if (promoted_tensor) {
 		dispose(promoted_tensor); // cannot be async
 	}
-	return _add_augmented_canvas_to_photo_gallery(canvas, render_promise);
+	return _add_augmented_canvas_to_photo_gallery(canvas, render_promise, category);
 }
 
 function truncate_text (fullStr, strLen, separator = "...") {
@@ -1522,7 +1538,7 @@ function _concat_augmentation_batch(x, addition) {
 function augment_rotate_images_function(image_tensor, degree, this_category_counter, x, y, label_nr) {
 	l(language[lang]["rotating_image"] + ": " + degree + "°");
 	var augmented_img = rotateWithOffset(image_tensor, degrees_to_radians(degree));
-	add_tensor_as_image_to_photos(augmented_img);
+	add_tensor_as_image_to_photos(augmented_img, this_category_counter);
 	x = _concat_augmentation_batch(x, augmented_img);
 	y.push(this_category_counter);
 
@@ -1532,7 +1548,7 @@ function augment_rotate_images_function(image_tensor, degree, this_category_coun
 		var added = add(augmented_img, add_value);
 		var inverted = abs(added);
 		dispose(added); // cannot be async
-		add_tensor_as_image_to_photos(inverted);
+		add_tensor_as_image_to_photos(inverted, this_category_counter);
 		x = _concat_augmentation_batch(x, inverted);
 		dispose(inverted); // cannot be async
 		y.push(this_category_counter);
@@ -1541,7 +1557,7 @@ function augment_rotate_images_function(image_tensor, degree, this_category_coun
 	if ($("#augment_flip_left_right").is(":checked")) {
 		l(language[lang]["flip_left_right_that_has_been_turned"] + " " + degree + "°");
 		var flipped = flipLeftRight(augmented_img);
-		add_tensor_as_image_to_photos(flipped);
+		add_tensor_as_image_to_photos(flipped, this_category_counter);
 		x = _concat_augmentation_batch(x, flipped);
 		dispose(flipped); // cannot be async
 		y.push(label_nr);
@@ -1557,7 +1573,7 @@ function augment_invert_images(image_tensor, this_category_counter, x, y) {
 	var added = add(image_tensor, add_value);
 	var inverted = abs(added);
 	dispose(added); // cannot be async
-	add_tensor_as_image_to_photos(inverted);
+	add_tensor_as_image_to_photos(inverted, this_category_counter);
 	x = _concat_augmentation_batch(x, inverted);
 	dispose(inverted); // cannot be async
 	y.push(this_category_counter);
@@ -1567,7 +1583,7 @@ function augment_invert_images(image_tensor, this_category_counter, x, y) {
 function augment_flip_left_right(image_tensor, this_category_counter, x, y) {
 	l(language[lang]["flip_left_right"]);
 	var flipped = flipLeftRight(image_tensor);
-	add_tensor_as_image_to_photos(flipped);
+	add_tensor_as_image_to_photos(flipped, this_category_counter);
 	x = _concat_augmentation_batch(x, flipped);
 	dispose(flipped); // cannot be async
 	y.push(this_category_counter);
@@ -1697,7 +1713,7 @@ function augment_extra_transformations(image_tensor, label, x, y) {
 		if (!augmented || tensor_is_disposed(augmented)) continue;
 
 		l(language[lang][option.log] || option.log);
-		add_tensor_as_image_to_photos(augmented);
+		add_tensor_as_image_to_photos(augmented, label);
 		x = _concat_augmentation_batch(x, augmented);
 		y.push(label);
 		dispose(augmented); // await not possible
@@ -2833,7 +2849,7 @@ function augment_custom_image_data(resized_image, label_nr, divide_by, x, y) {
 			var extra_array = array_sync(extra_tensor);
 			if (Array.isArray(extra_array) && extra_array.length > 0) {
 				l(language[lang][extra.log] || extra.log);
-				add_tensor_as_image_to_photos(extra_tensor);
+				add_tensor_as_image_to_photos(extra_tensor, label_nr);
 				x.push(extra_array);
 				y.push(label_nr);
 			}
@@ -3009,7 +3025,7 @@ function _augment_custom_invert(resized_image, label_nr, divide_by, x, y) {
 			return [x, y];
 		}
 
-		add_tensor_as_image_to_photos(inverted);
+		add_tensor_as_image_to_photos(inverted, label_nr);
 		x.push(inverted_arr);
 		y.push(label_nr);
 
@@ -3052,7 +3068,7 @@ function _augment_custom_invert_from_array(image_arr, label_nr, divide_by, x, y,
 			return [x, y];
 		}
 
-		add_tensor_as_image_to_photos(inverted);
+		add_tensor_as_image_to_photos(inverted, label_nr);
 		x.push(inverted_arr);
 		y.push(label_nr);
 
@@ -3094,7 +3110,7 @@ function _augment_custom_flip_lr(resized_image, label_nr, divide_by, x, y) {
 			// Create a temporary tensor for the photo display
 			try {
 				var display_tensor = tensor(flipped_arr);
-				add_tensor_as_image_to_photos(display_tensor);
+				add_tensor_as_image_to_photos(display_tensor, label_nr);
 				dispose(display_tensor); // await not possible
 			} catch (e) {
 				// Non-critical, just skip photo display

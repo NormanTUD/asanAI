@@ -9,6 +9,40 @@
 var GradientFlowHeatmap = (function () {
 
 	var _SINGLETON_ID = "gradient_flow_singleton";
+	var _METRIC_STORAGE_KEY = "gradient_flow_metric";
+
+	function _readMetricPreference() {
+		try {
+			var stored = localStorage.getItem(_METRIC_STORAGE_KEY);
+			if (stored === "rms" || stored === "mean") return stored;
+		} catch (e) {}
+		return "l2";
+	}
+
+	function _metricValue(layer, metric) {
+		if (!layer) return 0;
+		metric = metric || _state.metric;
+		if (metric === "rms") {
+			if (typeof layer.gradSqSum === "number" && layer.paramCount > 0) {
+				return Math.sqrt(layer.gradSqSum / layer.paramCount);
+			}
+			return layer.gradNorm;
+		}
+		if (metric === "mean") {
+			if (typeof layer.gradAbsSum === "number" && layer.paramCount > 0) {
+				return layer.gradAbsSum / layer.paramCount;
+			}
+			return typeof layer.gradMean === "number" ? layer.gradMean : layer.gradNorm;
+		}
+		return layer.gradNorm;
+	}
+
+	function _metricTipKey(metric) {
+		if (metric === "rms") return "gflow_tip_norm_rms";
+		if (metric === "mean") return "gflow_tip_norm_mean";
+		return "gflow_tip_norm_l2";
+	}
+
 	var _state = {
 		container: null,
 		history: [],
@@ -37,7 +71,8 @@ var GradientFlowHeatmap = (function () {
 		pendingRender: null,
 		frozenDuringCompute: false,
 		lastContainerId: null,  // NEW: remember where we render
-		cellTooltip: null
+		cellTooltip: null,
+		metric: _readMetricPreference()
 	};
 
 	// ============================================================
@@ -64,6 +99,9 @@ var GradientFlowHeatmap = (function () {
 			".gflow_header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }",
 			".gflow_header h2 { margin: 0; font-size: 1.3em; font-weight: 700; }",
 			".gflow_header_meta { font-size: 0.75em; opacity: 0.5; transition: opacity 0.3s ease; }",
+			".gflow_header_tools { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }",
+			".gflow_metric { display: flex; align-items: center; gap: 6px; font-size: 0.75em; opacity: 0.75; }",
+			".gflow_metric select { font-size: 0.95em; padding: 2px 5px; border-radius: 4px; color: inherit; background: rgba(128,128,128,0.08); border: 1px solid rgba(128,128,128,0.25); }",
 			".gflow_subtitle { opacity: 0.55; margin: 0 0 14px 0; font-size: 0.82em; line-height: 1.5; }",
 			".gflow_canvas_wrap { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid rgba(128,128,128,0.15); background: rgba(0,0,0,0.02); margin-bottom: 14px; min-height: 60px; }",
 			".gflow_canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; border-radius: 8px; }",
@@ -166,7 +204,16 @@ var GradientFlowHeatmap = (function () {
 		root.innerHTML = [
 			"<div class='gflow_header'>",
 			"  <h2><span class='TRANSLATEME_gflow_title'></span></h2>",
-			"  <span class='gflow_header_meta' data-gflow='meta'></span>",
+			"  <div class='gflow_header_tools'>",
+			"    <label class='gflow_metric'><span class='TRANSLATEME_gflow_metric'></span>",
+			"      <select data-gflow='metric'>",
+			"        <option value='l2' data-tr-option='gflow_metric_l2'></option>",
+			"        <option value='rms' data-tr-option='gflow_metric_rms'></option>",
+			"        <option value='mean' data-tr-option='gflow_metric_mean'></option>",
+			"      </select>",
+			"    </label>",
+			"    <span class='gflow_header_meta' data-gflow='meta'></span>",
+			"  </div>",
 			"</div>",
 			"<p class='gflow_subtitle'><span class='TRANSLATEME_gflow_subtitle'></span></p>",
 			"<div class='gflow_warning gflow_warning_healthy' data-gflow='warning' style='display:none;'></div>",
@@ -186,6 +233,7 @@ var GradientFlowHeatmap = (function () {
 		container.appendChild(root);
 
 		_renderLegendBar(root);
+		_bindMetricSelector(root);
 
 		// Reset canvas references since we rebuilt
 		_state.heatCanvas = null;
@@ -269,6 +317,36 @@ var GradientFlowHeatmap = (function () {
 			lctx.fillRect(x, 0, 1, 10);
 		}
 		_state.legendCanvas = legendCanvas;
+	}
+
+	function _bindMetricSelector(root) {
+		var select = root.querySelector("[data-gflow='metric']");
+		if (!select) return;
+		select.value = _state.metric;
+		if (select.__gflowMetricBound) return;
+		select.__gflowMetricBound = true;
+		if (typeof $ === "function") {
+			$(select).on("change.gflowMetric", function () {
+				_setMetric(select.value);
+			});
+		} else {
+			select.addEventListener("change", function () {
+				_setMetric(select.value);
+			});
+		}
+	}
+
+	function _setMetric(metric) {
+		if (metric !== "rms" && metric !== "mean") metric = "l2";
+		_state.metric = metric;
+		try { localStorage.setItem(_METRIC_STORAGE_KEY, metric); } catch (e) {}
+		var select = _state.container ? _state.container.querySelector("[data-gflow='metric']") : null;
+		if (select && select.value !== metric) select.value = metric;
+		_state.lastRenderTime = 0;
+		_state.visibilityState = "empty";
+		if (_state.container && _state.container.querySelector("[data-gflow-root]")) {
+			_updateDOM(_state.container);
+		}
 	}
 
 	// ============================================================
@@ -378,6 +456,8 @@ var GradientFlowHeatmap = (function () {
 
 		return {
 			l2Norm: Math.sqrt(l2Norm),
+			l2SqSum: l2Norm,
+			absSum: sum,
 			maxAbs: maxAbs,
 			minAbs: minAbs,
 			meanAbs: gradData.length > 0 ? sum / gradData.length : 0
@@ -407,6 +487,8 @@ var GradientFlowHeatmap = (function () {
 					type: meta.layerType,
 					index: meta.layerIndex,
 					gradNorm: 0,
+					gradSqSum: 0,
+					gradAbsSum: 0,
 					gradMax: 0,
 					gradMin: Infinity,
 					gradMean: 0,
@@ -416,6 +498,8 @@ var GradientFlowHeatmap = (function () {
 			}
 
 			layerGradients[key].gradNorm += stats.l2Norm;
+			layerGradients[key].gradSqSum += stats.l2SqSum;
+			layerGradients[key].gradAbsSum += stats.absSum;
 			layerGradients[key].gradMax = Math.max(layerGradients[key].gradMax, stats.maxAbs);
 			layerGradients[key].gradMin = Math.min(layerGradients[key].gradMin, stats.minAbs);
 			layerGradients[key].gradMean += stats.meanAbs;
@@ -586,21 +670,24 @@ var GradientFlowHeatmap = (function () {
 			return;
 		}
 
+		var layerMetric = _metricValue(layer);
 		var norms = [];
 		for (var i = 0; i < record.layers.length; i++) {
-			norms.push((record.layers[i] && typeof record.layers[i].gradNorm === "number") ? record.layers[i].gradNorm : -Infinity);
+			var metricValue = record.layers[i] ? _metricValue(record.layers[i]) : -Infinity;
+			norms.push(typeof metricValue === "number" ? metricValue : -Infinity);
 		}
 		var sorted = norms.slice().sort(function(a, b) { return b - a; });
-		var rank = sorted.indexOf(layer.gradNorm) + 1;
+		var rank = sorted.indexOf(layerMetric) + 1;
 		if (rank < 1) rank = 1;
 
 		var previous = stepIndex > 0 && history[stepIndex - 1] && history[stepIndex - 1].layers
 			? history[stepIndex - 1].layers[layerIndex]
 			: null;
+		var previousMetric = previous ? _metricValue(previous) : null;
 		var changeText = _t("gflow_tip_no_prev", "no previous step");
 		var changeColor = "rgba(238,242,255,0.72)";
-		if (previous && typeof previous.gradNorm === "number" && previous.gradNorm > 0 && layer.gradNorm > 0) {
-			var ratio = layer.gradNorm / previous.gradNorm;
+		if (previousMetric !== null && previousMetric > 0 && layerMetric > 0) {
+			var ratio = layerMetric / previousMetric;
 			if (ratio > 1.05) {
 				changeText = "↑ " + ratio.toFixed(2) + "× " + _t("gflow_tip_stronger", "stronger");
 				changeColor = "#2ecc71";
@@ -614,19 +701,23 @@ var GradientFlowHeatmap = (function () {
 
 		var healthText;
 		var healthColor;
-		if (!isFinite(layer.gradNorm) || layer.gradNorm === 0 || layer.gradNorm < 1e-30) {
+		if (!isFinite(layerMetric) || layerMetric === 0 || layerMetric < 1e-30) {
 			healthText = _t("gflow_tip_health_dead", "No gradient — this layer is likely dead.");
 			healthColor = "#e74c3c";
-		} else if (layer.gradNorm < 1e-6) {
+		} else if (layerMetric < 1e-6) {
 			healthText = _t("gflow_tip_health_vanishing", "Very weak — possible vanishing gradient.");
 			healthColor = "#f39c12";
-		} else if (layer.gradNorm > 1e3) {
+		} else if (layerMetric > 1e3) {
 			healthText = _t("gflow_tip_health_exploding", "Very large — possible exploding gradient.");
 			healthColor = "#e74c3c";
 		} else {
 			healthText = _t("gflow_tip_health_healthy", "Healthy gradient signal.");
 			healthColor = "#2ecc71";
 		}
+
+		var meanAbs = (typeof layer.gradAbsSum === "number" && layer.paramCount > 0)
+			? layer.gradAbsSum / layer.paramCount
+			: layer.gradMean;
 
 		var timeText = record.timestamp ? new Date(record.timestamp).toLocaleTimeString() : "—";
 		var tip = _gflow_ensure_tooltip();
@@ -636,9 +727,9 @@ var GradientFlowHeatmap = (function () {
 			"<div class='gflow_tip_sub'>" + _t("gflow_tip_step", "Step {i} of {n}").replace("{i}", stepIndex + 1).replace("{n}", history.length) +
 				" · " + _gflow_esc(timeText) + "</div>" +
 			"<div class='gflow_tip_grid'>" +
-				"<span>" + _t("gflow_tip_norm", "Gradient norm (L2)") + "</span><b>" + _gflow_num(layer.gradNorm) + "</b>" +
+				"<span>" + _t(_metricTipKey(_state.metric), "Gradient metric") + "</span><b>" + _gflow_num(layerMetric) + "</b>" +
 				"<span>" + _t("gflow_tip_max_abs", "Max |gradient|") + "</span><b>" + _gflow_num(layer.gradMax) + "</b>" +
-				"<span>" + _t("gflow_tip_mean_abs", "Mean |gradient|") + "</span><b>" + _gflow_num(layer.gradMean) + "</b>" +
+				"<span>" + _t("gflow_tip_mean_abs", "Mean |gradient|") + "</span><b>" + _gflow_num(meanAbs) + "</b>" +
 				"<span>" + _t("gflow_tip_params", "Parameters") + "</span><b>" + (layer.paramCount || 0).toLocaleString() + "</b>" +
 				"<span>" + _t("gflow_tip_rank", "Rank at this step") + "</span><b>" + rank + " / " + numLayers + "</b>" +
 				"<span>" + _t("gflow_tip_change", "Change vs. previous") + "</span><b style='color:" + changeColor + "'>" + _gflow_esc(changeText) + "</b>" +
@@ -682,7 +773,7 @@ var GradientFlowHeatmap = (function () {
 		var allNorms = [];
 		for (var t = 0; t < history.length; t++) {
 			for (var l = 0; l < history[t].layers.length; l++) {
-				var norm = history[t].layers[l].gradNorm;
+				var norm = _metricValue(history[t].layers[l]);
 				if (norm > 0 && isFinite(norm)) allNorms.push(norm);
 			}
 		}
@@ -740,7 +831,7 @@ var GradientFlowHeatmap = (function () {
 			var record = history[t];
 			if (!record || !record.layers) continue;
 			for (var l = 0; l < Math.min(record.layers.length, numLayers); l++) {
-				var norm = record.layers[l].gradNorm;
+				var norm = _metricValue(record.layers[l]);
 				var logNorm = Math.log10(Math.max(norm, 1e-12));
 				var normalized = (logNorm - range.logMin) / range.logRange;
 				normalized = Math.max(0, Math.min(1, normalized));
@@ -799,7 +890,7 @@ var GradientFlowHeatmap = (function () {
 		if (!latestRecord || !latestRecord.layers || latestRecord.layers.length < 2) return null;
 
 		var layers = latestRecord.layers;
-		var norms = layers.map(function (l) { return l.gradNorm; });
+		var norms = layers.map(function (l) { return _metricValue(l); });
 		var totalLayers = norms.length;
 		var positiveNorms = norms.filter(function (n) { return n > 0; });
 		var zeroNorms = norms.filter(function (n) { return n === 0 || n < 1e-30; });
@@ -928,7 +1019,7 @@ var GradientFlowHeatmap = (function () {
 	function _updateStatsCards(statsEl, latest, diagnosis) {
 		if (!statsEl || !latest || !latest.layers || latest.layers.length === 0) return;
 
-		var norms = latest.layers.map(function (l) { return l.gradNorm; });
+		var norms = latest.layers.map(function (l) { return _metricValue(l); });
 		var positiveNorms = norms.filter(function (n) { return n > 0; });
 		var maxN = Math.max.apply(null, norms);
 		var minN = positiveNorms.length > 0 ? Math.min.apply(null, positiveNorms) : 0;
@@ -1045,7 +1136,8 @@ var GradientFlowHeatmap = (function () {
 
 		var layerMaxNorm = 0;
 		for (var i = 0; i < latest.layers.length; i++) {
-			if (latest.layers[i].gradNorm > layerMaxNorm) layerMaxNorm = latest.layers[i].gradNorm;
+			var layerNorm = _metricValue(latest.layers[i]);
+			if (layerNorm > layerMaxNorm) layerMaxNorm = layerNorm;
 		}
 
 		var existingRows = layerBarsEl.querySelectorAll(".gflow_layer_row");
@@ -1054,20 +1146,22 @@ var GradientFlowHeatmap = (function () {
 			layerBarsEl.innerHTML = "";
 			for (var i = 0; i < latest.layers.length; i++) {
 				var layer = latest.layers[i];
-				var pct = layerMaxNorm > 0 ? (layer.gradNorm / layerMaxNorm) * 100 : 0;
+				var layerNorm = _metricValue(layer);
+				var pct = layerMaxNorm > 0 ? (layerNorm / layerMaxNorm) * 100 : 0;
 				var barColor = _viridisColor(pct / 100);
 
 				var row = document.createElement("div");
 				row.className = "gflow_layer_row";
 				row.innerHTML = "<span class='gflow_layer_name' title='" + layer.name + " (" + layer.type + ")'>" + layer.name + "</span>" +
 					"<div class='gflow_layer_bar_outer'><div class='gflow_layer_bar_inner' data-gflow-bar='" + i + "' style='width:" + pct.toFixed(1) + "%;background:" + barColor + ";'></div></div>" +
-					"<span class='gflow_layer_val' data-gflow-val='" + i + "'>" + layer.gradNorm.toExponential(2) + "</span>";
+					"<span class='gflow_layer_val' data-gflow-val='" + i + "'>" + layerNorm.toExponential(2) + "</span>";
 				layerBarsEl.appendChild(row);
 			}
 		} else {
 			for (var i = 0; i < latest.layers.length; i++) {
 				var layer = latest.layers[i];
-				var pct = layerMaxNorm > 0 ? (layer.gradNorm / layerMaxNorm) * 100 : 0;
+				var layerNorm = _metricValue(layer);
+				var pct = layerMaxNorm > 0 ? (layerNorm / layerMaxNorm) * 100 : 0;
 				var barColor = _viridisColor(pct / 100);
 
 				var barEl = layerBarsEl.querySelector("[data-gflow-bar='" + i + "']");
@@ -1078,7 +1172,7 @@ var GradientFlowHeatmap = (function () {
 					barEl.style.backgroundColor = barColor;
 				}
 				if (valEl) {
-					var newText = layer.gradNorm.toExponential(2);
+					var newText = layerNorm.toExponential(2);
 					if (valEl.textContent !== newText) {
 						valEl.textContent = newText;
 					}
@@ -1304,6 +1398,14 @@ var GradientFlowHeatmap = (function () {
 	gradientFlow.getHistory = function () {
 		return _state.history;
 	};
+
+	gradientFlow.getMetric = function () {
+		return _state.metric;
+	};
+
+	gradientFlow.setMetric = _setMetric;
+
+	gradientFlow.metricValue = _metricValue;
 
 	gradientFlow.getState = function () {
 		return _state;

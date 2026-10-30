@@ -4,6 +4,18 @@ var _webcam_start_in_progress = false;
 var auto_predict_webcam_custom_data_interval = null;
 var currently_predicting_webcam_custom_data = false;
 
+// A stopped stream can leave the cam wrapper behind, so `cam` alone is not
+// proof that the camera is usable. Only live video tracks count.
+function _webcam_stream_is_active() {
+	try {
+		if (!cam || !cam.stream) return false;
+		var tracks = cam.stream.getVideoTracks ? cam.stream.getVideoTracks() : [];
+		return tracks.some(function (track) { return track.readyState === "live"; });
+	} catch (e) {
+		return false;
+	}
+}
+
 function _updateWebcamButtonToStopped() {
 	$("#show_webcam_button").html(`
 		<span class="large_button" style="display:inline-block; position:relative; width:64px; height:64px;">
@@ -520,6 +532,7 @@ async function get_data_from_webcam(force_restart = 0, _isRestart = false) {
 		$("#webcam_data").hide().html("");
 		if (cam) {
 			cam.stop();
+			window.cam = null;
 		}
 	}
 
@@ -798,7 +811,7 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 	try {
 		typeassert(elem, object, "elem");
 		if (!inited_webcams) await get_data_from_webcam();
-		if (!cam) { await set_custom_webcam_training_data(); }
+		if (!_webcam_stream_is_active()) { await set_custom_webcam_training_data(); }
 
 		await _captureAndProcessWebcamImage(elem, nol, _enable_train_and_last_layer_shape_warning);
 
@@ -1029,13 +1042,14 @@ async function set_custom_webcam_training_data() {
 	const switched_to_image = $("#data_origin").val() != "image";
 	let early_stream_promise = null;
 
-	if(!cam) {
-		l(language[lang]["starting_webcam"]);
-		_set_webcam_button_translation("disable_webcam");
-		const video_element = _prepareVideoElement($("#webcam_data"));
-		$("#webcam_data").hide();
-		early_stream_promise = _startStreamAndAssignToCam(video_element); // cannot be async
-	}
+	// This entry point explicitly sets up custom-image training data, so it
+	// always starts a fresh stream. Reusing a leftover cam wrapper can keep a
+	// stream whose track still says "live" but no longer delivers frames.
+	l(language[lang]["starting_webcam"]);
+	_set_webcam_button_translation("disable_webcam");
+	const video_element = _prepareVideoElement($("#webcam_data"));
+	$("#webcam_data").hide();
+	early_stream_promise = _startStreamAndAssignToCam(video_element); // cannot be async
 
 	if(switched_to_image) {
 		$("#data_origin").val("image");
@@ -1051,7 +1065,7 @@ async function set_custom_webcam_training_data() {
 		await early_stream_promise;
 	}
 
-	if(cam) {
+	if(_webcam_stream_is_active()) {
 		_show_webcam_data_stream_ui();
 	} else {
 		await get_data_from_webcam_if_possible();

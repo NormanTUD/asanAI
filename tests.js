@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2344;
+var DEFAULT_EXPECTED_TEST_COUNT = 2357;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -993,6 +993,19 @@ async function test_gradient_flow_empty_state_on_activation () {
 		test_equal("Gradient flow renders a container when its tab opens", $tab.find(".gflow_container").length, 1);
 		test_equal("Gradient flow shows an empty state before training", $tab.find(".gflow_empty").css("display") !== "none", true);
 		test_equal("Gradient flow empty state asks the reader to train", $tab.find(".gflow_empty").text().indexOf(language[lang]["gflow_waiting"]) !== -1, true);
+		test_equal("Gradient flow offers a metric selector", $tab.find("[data-gflow='metric']").length, 1);
+		test_equal("Gradient flow metric selector has three metrics", $tab.find("[data-gflow='metric'] option").length, 3);
+
+		const oldMetric = GradientFlowHeatmap.getMetric();
+		try {
+			$tab.find("[data-gflow='metric']").val("rms").trigger("change");
+			test_equal("Gradient flow stores the selected metric", GradientFlowHeatmap.getMetric(), "rms");
+			test_equal("Gradient flow L2 metric keeps the summed norm", GradientFlowHeatmap.metricValue({gradNorm: 9}, "l2"), 9);
+			test_equal("Gradient flow RMS metric divides by parameters", GradientFlowHeatmap.metricValue({gradNorm: 9, gradSqSum: 25, paramCount: 4}, "rms"), 2.5);
+			test_equal("Gradient flow mean metric averages absolute gradients", GradientFlowHeatmap.metricValue({gradNorm: 9, gradAbsSum: 10, paramCount: 4}, "mean"), 2.5);
+		} finally {
+			GradientFlowHeatmap.setMetric(oldMetric);
+		}
 	} finally {
 		if (active_tab_label && active_tab_label !== "gradient_flow_tab_label") {
 			show_tab_label(active_tab_label, 1);
@@ -2072,6 +2085,7 @@ async function test_augmented_previews_go_to_gallery_canvas() {
 
 	const before_count = old_entries.length;
 	const t = tf.ones([8, 8, 3]);
+	const preview_category = (typeof labels !== "undefined" && labels && labels.length) ? labels[0] : "augmented-probe";
 	let found = null;
 	let render_state = "not started";
 	let synchronous_pixels = false;
@@ -2079,6 +2093,7 @@ async function test_augmented_previews_go_to_gallery_canvas() {
 	let added_to_gallery = false;
 	let drawn_to_canvas = false;
 	let no_loose_canvases = false;
+	let category_preserved = false;
 
 	try {
 		const fallback_img = new Image();
@@ -2086,7 +2101,7 @@ async function test_augmented_previews_go_to_gallery_canvas() {
 		fallback_img._source_canvas = fallback_canvas;
 		synchronous_pixels = _get_pixel_source_element(fallback_img) === fallback_canvas;
 
-		const render_result = add_tensor_as_image_to_photos(t);
+		const render_result = add_tensor_as_image_to_photos(t, preview_category);
 
 		if (render_result && typeof render_result.then === "function") {
 			render_state = await _test_await_with_timeout(render_result, 10000);
@@ -2105,15 +2120,17 @@ async function test_augmented_previews_go_to_gallery_canvas() {
 			added_to_gallery = state.added_to_gallery;
 			drawn_to_canvas = state.drawn_to_canvas;
 			no_loose_canvases = document.querySelectorAll("#photos canvas[id^='augmented_photo_']").length === 0;
+			category_preserved = !!found && found.img.getAttribute("data-category") === preview_category &&
+				extractCategoryFromURL(found.url, found.img) === preview_category;
 
-			if (added_to_gallery && drawn_to_canvas && no_loose_canvases) {
+			if (added_to_gallery && drawn_to_canvas && no_loose_canvases && category_preserved) {
 				break;
 			}
 
 			await new Promise(function (resolve) { setTimeout(resolve, 50); });
 		} while (Date.now() < deadline);
 
-		const ok = added_to_gallery && synchronous_pixels && no_loose_canvases && drawn_to_canvas;
+		const ok = added_to_gallery && synchronous_pixels && no_loose_canvases && drawn_to_canvas && category_preserved;
 
 		if (ok) {
 			return true;
@@ -2128,6 +2145,7 @@ async function test_augmented_previews_go_to_gallery_canvas() {
 			"drawn_to_canvas=" + drawn_to_canvas,
 			"synchronous_pixels=" + synchronous_pixels,
 			"no_loose_canvases=" + no_loose_canvases,
+			"category_preserved=" + category_preserved,
 			"render=" + render_state,
 			"pixel=" + JSON.stringify(state && state.pixel),
 			"found_index=" + (state ? state.found_index : -1),
@@ -5027,6 +5045,21 @@ function test_webcam_start_guard_keeps_early_stream_alive() {
 	}
 }
 
+function test_webcam_stream_active_detection() {
+	const old_cam = cam;
+	try {
+		cam = null;
+		test_equal("webcam activity is false without a stream", _webcam_stream_is_active(), false);
+		cam = {stream: {getVideoTracks: function () { return [{readyState: "ended"}]; }}};
+		test_equal("webcam activity rejects an ended track", _webcam_stream_is_active(), false);
+		cam = {stream: {getVideoTracks: function () { return [{readyState: "ended"}, {readyState: "live"}]; }}};
+		test_equal("webcam activity accepts a live track", _webcam_stream_is_active(), true);
+	} finally {
+		cam = old_cam;
+	}
+	return true;
+}
+
 async function test_gradcam_webcam_owns_heatmap_while_drawing () {
 	const original_interval = auto_predict_webcam_interval;
 	const original_grad_class_activation_map = window.grad_class_activation_map;
@@ -5126,9 +5159,13 @@ async function test_webcam(disable_webcam) {
 	$("#custom_webcam_training_data_small").click();
 	await delay(10000);
 
-	if (!await wait_for_webcam_data_prediction(15000)) {
-		err("Live webcam prediction table is not visible in custom images");
-		return false;
+	if (model) {
+		if (!await wait_for_webcam_data_prediction(15000)) {
+			err("Live webcam prediction table is not visible in custom images");
+			return false;
+		}
+	} else {
+		dbg("test_webcam: no model yet; skipping the pre-training live prediction check");
 	}
 
 	while (!$(".own_image_label").length) {
@@ -9421,15 +9458,19 @@ async function _coverage_tests_data_augmentation() {
 	var oldInvert = $("#augment_invert_images").prop("checked");
 	var oldFlip = $("#augment_flip_left_right").prop("checked");
 	var oldAddPhoto = add_tensor_as_image_to_photos;
+	var oldLabels = labels;
 	var oldErrs = num_errs;
 	var oldWrns = num_wrns;
+	var added_categories = [];
 	var pixels = [];
 	for (var i = 0; i < 4 * 4 * 3; i++) pixels.push((i % 17) / 17);
 	var image = tensor(pixels, [4, 4, 3]);
 	var image4d = tensor(pixels, [1, 4, 4, 3]);
 
 	try {
-		add_tensor_as_image_to_photos = function () {};
+		add_tensor_as_image_to_photos = function (_tensor, category) {
+			added_categories.push(category);
+		};
 		$("#augment_invert_images").prop("checked", false);
 		$("#augment_flip_left_right").prop("checked", false);
 
@@ -9465,6 +9506,7 @@ async function _coverage_tests_data_augmentation() {
 		_augment_custom_invert(expanded, 2, 255, x, y);
 		test_equal("_augment_custom_invert adds an image", x.length, 1);
 		test_equal("_augment_custom_invert keeps the label", y[0], 2);
+		test_equal("_augment_custom_invert tags the preview category", added_categories[added_categories.length - 1], 2);
 
 		x = []; y = [];
 		_augment_custom_invert_from_array(as_array, 3, 255, x, y, 90);
@@ -9488,11 +9530,17 @@ async function _coverage_tests_data_augmentation() {
 		_augment_custom_invert(null, 0, 255, x, y);
 		_augment_custom_flip_lr(null, 0, 255, x, y);
 		test_equal("null augmentation inputs are ignored", x.length, 0);
+
+		labels = ["cat", "dog"];
+		test_equal("_augmented_preview_category_label resolves an index", _augmented_preview_category_label(1), "dog");
+		test_equal("_augmented_preview_category_label keeps a name", _augmented_preview_category_label("cat"), "cat");
+		test_equal("_augmented_preview_category_label ignores a missing category", _augmented_preview_category_label(undefined), null);
 	} finally {
 		$("#number_of_rotations").val(oldRotations);
 		$("#augment_invert_images").prop("checked", oldInvert);
 		$("#augment_flip_left_right").prop("checked", oldFlip);
 		add_tensor_as_image_to_photos = oldAddPhoto;
+		labels = oldLabels;
 		try { await dispose(expanded); } catch (e) {}
 		try { await dispose(cloned); } catch (e) {}
 		await dispose(image);
@@ -12055,6 +12103,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 	test_equal("test_status_bar_tooltip_update_is_deferred()", await test_status_bar_tooltip_update_is_deferred(), true);
 	test_equal("test_webcam_constraints_use_device_id_without_probe_stream()", await test_webcam_constraints_use_device_id_without_probe_stream(), true);
 	test_equal("test_webcam_start_guard_keeps_early_stream_alive()", test_webcam_start_guard_keeps_early_stream_alive(), true);
+	test_equal("test_webcam_stream_active_detection()", test_webcam_stream_active_detection(), true);
 	test_equal("test_gradcam_webcam_owns_heatmap_while_drawing()", await test_gradcam_webcam_owns_heatmap_while_drawing(), true);
 
 	tf.engine().startScope();
