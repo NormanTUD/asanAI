@@ -2364,49 +2364,44 @@ function get_canvas_blob(canvas) {
 }
 
 function get_img_blob(img) {
-	return new Promise(function(resolve, reject) {
-		try {
-			var canvas = document.createElement("canvas");
-			var ctx = canvas.getContext("2d");
-			var $img = $(img);
+	return new Promise(function(resolve) {
+		var canvas = document.createElement("canvas");
+		var ctx = canvas.getContext("2d");
+		var settled = false;
+		var timer = setTimeout(function () {
+			finish(null);
+		}, 4000);
 
-			if (img.complete) {
-				canvas.width = $img.width();
-				canvas.height = $img.height();
+		function finish(blob) {
+			if (settled) return;
+			settled = true;
+			clearTimeout(timer);
+			resolve(blob || null);
+		}
 
-				ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+		function render() {
+			try {
+				var width = img.naturalWidth || img.width || $(img).width();
+				var height = img.naturalHeight || img.height || $(img).height();
+				if (!width || !height) {
+					finish(null);
+					return;
+				}
 
-				get_canvas_blob(canvas)
-					.then(function (blob) {
-						resolve(blob);
-					})
-					.catch(function (error) {
-						reject(error);
-					});
-			} else {
-				img.onload = function () {
-					canvas.width = $img.width() * 2;
-					canvas.height = $img.height() * 2;
-
-					ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-					$("body").append(canvas);
-
-					get_canvas_blob(canvas)
-						.then(function (blob) {
-							resolve(blob);
-						})
-						.catch(function (error) {
-							reject(error);
-						});
-				};
+				canvas.width = width;
+				canvas.height = height;
+				ctx.drawImage(img, 0, 0, width, height);
+				get_canvas_blob(canvas).then(finish, function () { finish(null); });
+			} catch (e) {
+				finish(null);
 			}
-		} catch (e) {
-			if(Object.keys(e).includes("message")) {
-				e = e.message;
-			}
+		}
 
-			assert(false, e);
+		if (img.complete) {
+			render();
+		} else {
+			img.addEventListener("load", render, { once: true });
+			img.addEventListener("error", function () { finish(null); }, { once: true });
 		}
 	});
 }
