@@ -24479,6 +24479,7 @@
    "claerbout1992earth"
   ],
   "cited_in": [
+   "untold_history_ii",
    "untold_history_iii"
   ]
  },
@@ -24778,6 +24779,7 @@
    "eia_coal"
   ],
   "cited_in": [
+   "untold_history_ii",
    "untold_history_iii"
   ]
  },
@@ -73712,7 +73714,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 387,
+  "works": 396,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -73855,6 +73857,15 @@
    "micrographia_wiki",
    "celltheory_wiki",
    "neuron_doctrine_wiki",
+   "electricpowerhistorywiki",
+   "steamturbinewiki",
+   "coalpowerwiki",
+   "drakewellwiki",
+   "petroleumhistorywiki",
+   "nuclearpowerwiki",
+   "obninskwiki",
+   "fossilfuelwiki",
+   "energydensitywiki",
    "coaxwiki",
    "twistedpairwiki",
    "faradaycagewiki",

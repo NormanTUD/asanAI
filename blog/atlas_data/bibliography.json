@@ -10938,6 +10938,60 @@
    "year": "1769",
    "url": "https://en.wikipedia.org/wiki/Watt_steam_engine"
   },
+  "electricpowerhistorywiki": {
+   "title": "History of electric power transmission",
+   "author": "Wikipedia contributors",
+   "year": "2026",
+   "url": "https://en.wikipedia.org/wiki/History_of_electric_power_transmission"
+  },
+  "steamturbinewiki": {
+   "title": "Steam turbine",
+   "author": "Wikipedia contributors",
+   "year": "2026",
+   "url": "https://en.wikipedia.org/wiki/Steam_turbine"
+  },
+  "coalpowerwiki": {
+   "title": "Coal-fired power station",
+   "author": "Wikipedia contributors",
+   "year": "2026",
+   "url": "https://en.wikipedia.org/wiki/Coal-fired_power_station"
+  },
+  "drakewellwiki": {
+   "title": "Drake Well",
+   "author": "Wikipedia contributors",
+   "year": "2026",
+   "url": "https://en.wikipedia.org/wiki/Drake_Well"
+  },
+  "petroleumhistorywiki": {
+   "title": "History of the petroleum industry",
+   "author": "Wikipedia contributors",
+   "year": "2026",
+   "url": "https://en.wikipedia.org/wiki/History_of_the_petroleum_industry"
+  },
+  "nuclearpowerwiki": {
+   "title": "Nuclear power",
+   "author": "Wikipedia contributors",
+   "year": "2026",
+   "url": "https://en.wikipedia.org/wiki/Nuclear_power"
+  },
+  "obninskwiki": {
+   "title": "Obninsk Nuclear Power Plant",
+   "author": "Wikipedia contributors",
+   "year": "2026",
+   "url": "https://en.wikipedia.org/wiki/Obninsk_Nuclear_Power_Plant"
+  },
+  "fossilfuelwiki": {
+   "title": "Fossil fuel",
+   "author": "Wikipedia contributors",
+   "year": "2026",
+   "url": "https://en.wikipedia.org/wiki/Fossil_fuel"
+  },
+  "energydensitywiki": {
+   "title": "Energy density",
+   "author": "Wikipedia contributors",
+   "year": "2026",
+   "url": "https://en.wikipedia.org/wiki/Energy_density"
+  },
   "torricellibarometer": {
    "title": "Letter to Michelangelo Ricci (1644, on the vacuum and atmospheric pressure)",
    "author": "Evangelista Torricelli",
@@ -21318,6 +21372,41 @@
   "jeng2022cowos": [
    "untold_history_ii"
   ],
+  "electricpowerhistorywiki": [
+   "untold_history_ii"
+  ],
+  "steamturbinewiki": [
+   "untold_history_ii"
+  ],
+  "eia_coal": [
+   "untold_history_ii",
+   "untold_history_iii"
+  ],
+  "coalpowerwiki": [
+   "untold_history_ii"
+  ],
+  "drakewellwiki": [
+   "untold_history_ii"
+  ],
+  "petroleumhistorywiki": [
+   "untold_history_ii"
+  ],
+  "claerbout1992earth": [
+   "untold_history_ii",
+   "untold_history_iii"
+  ],
+  "nuclearpowerwiki": [
+   "untold_history_ii"
+  ],
+  "obninskwiki": [
+   "untold_history_ii"
+  ],
+  "fossilfuelwiki": [
+   "untold_history_ii"
+  ],
+  "energydensitywiki": [
+   "untold_history_ii"
+  ],
   "iea2026energyai": [
    "untold_history_ii",
    "untold_history_iii"
@@ -27501,9 +27590,6 @@
   "richardson1922weather": [
    "untold_history_iii"
   ],
-  "claerbout1992earth": [
-   "untold_history_iii"
-  ],
   "aswemaythink": [
    "untold_history_iii"
   ],
@@ -27714,9 +27800,6 @@
    "untold_history_iii"
   ],
   "calvin1948photosynthesis": [
-   "untold_history_iii"
-  ],
-  "eia_coal": [
    "untold_history_iii"
   ],
   "haber1920ammonia": [
@@ -30411,7 +30494,7 @@
    ]
   },
   "Wikipedia contributors": {
-   "count": 387,
+   "count": 396,
    "minyear": 2007,
    "maxyear": 2026,
    "keys": [
@@ -30556,6 +30639,15 @@
     "micrographia_wiki",
     "celltheory_wiki",
     "neuron_doctrine_wiki",
+    "electricpowerhistorywiki",
+    "steamturbinewiki",
+    "coalpowerwiki",
+    "drakewellwiki",
+    "petroleumhistorywiki",
+    "nuclearpowerwiki",
+    "obninskwiki",
+    "fossilfuelwiki",
+    "energydensitywiki",
     "coaxwiki",
     "twistedpairwiki",
     "faradaycagewiki",
