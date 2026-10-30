@@ -974,6 +974,10 @@ bash run_tests --no-smoke-tests --no-docker --chromium \
   input shape → `conv2d` model creation fails). Reset defaults synchronously at
   the start of `$(document).ready` instead; `test_pageshow_does_not_reset_app_state`
   guards this.
+- Never call `localStorage.clear()` in the Toolkit. It and the blog share one
+  origin, so it wiped every reader's XP, achievements, learning paths, review
+  deck and lesson progress. `bottom.js` only removes its own
+  `tensorflowjs_models/` keys; `tests/find_local_storage_clear` guards this.
 
 **Blog**
 

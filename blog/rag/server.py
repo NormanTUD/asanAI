@@ -51,6 +51,8 @@ BLOCKED_QUESTION_PATTERNS = [
     ),
 ]
 RERANK_MODEL = os.environ.get("RERANK_MODEL", "Xenova/ms-marco-MiniLM-L-6-v2")
+OLLAMA_RETRIES = int(os.environ.get("OLLAMA_RETRIES", "2"))
+OLLAMA_RETRY_DELAY = float(os.environ.get("OLLAMA_RETRY_DELAY", "1.0"))
 
 MAX_QUEUE = int(os.environ.get("MAX_QUEUE", "20"))
 MAX_QUESTION_CHARS = int(os.environ.get("MAX_QUESTION_CHARS", "2000"))
@@ -264,10 +266,14 @@ class RagEngine:
             for chunk in self.chunks
         ])
 
-        from fastembed import TextEmbedding
+        self.embedder = None
+        try:
+            from fastembed import TextEmbedding
 
-        threads = max(1, os.cpu_count() or 2)
-        self.embedder = TextEmbedding(EMBED_MODEL, threads=threads)
+            threads = max(1, os.cpu_count() or 2)
+            self.embedder = TextEmbedding(EMBED_MODEL, threads=threads)
+        except Exception as exc:
+            print(f"warning: embedding model unavailable: {exc}", file=sys.stderr)
         self.reranker = None
         try:
             from fastembed.rerank.cross_encoder import TextCrossEncoder
@@ -278,11 +284,17 @@ class RagEngine:
             print(f"warning: reranker unavailable: {exc}", file=sys.stderr)
 
     def embed_question(self, text: str):
-        vector = np.asarray(list(self.embedder.query_embed([text]))[0], dtype=np.float32)
-        norm = float(np.linalg.norm(vector))
-        if norm:
-            vector /= norm
-        return vector
+        if self.embedder is None:
+            return None
+        try:
+            vector = np.asarray(list(self.embedder.query_embed([text]))[0], dtype=np.float32)
+            norm = float(np.linalg.norm(vector))
+            if norm:
+                vector /= norm
+            return vector
+        except Exception as exc:
+            print(f"warning: query embedding failed: {exc}", file=sys.stderr)
+            return None
 
     def _with_context(self, index: int, max_chars: int = 1400):
         chunk = dict(self.chunks[index])
@@ -315,8 +327,10 @@ class RagEngine:
 
     def retrieve(self, question: str, limit: int = 5):
         query = self.embed_question(question)
-        dense_scores = (self.vectors @ query) * self.scales
-        dense = list(np.argsort(-dense_scores)[:25])
+        dense = []
+        if query is not None:
+            dense_scores = (self.vectors @ query) * self.scales
+            dense = list(np.argsort(-dense_scores)[:25])
         lexical = self.bm25.search(question, 25)
         candidates = list(dict.fromkeys(dense + lexical))
         if self.reranker and candidates:
@@ -577,14 +591,28 @@ class RagEngine:
             headers={"Content-Type": "application/json"},
             method="POST",
         )
-        try:
-            with request.urlopen(req, timeout=REQUEST_TIMEOUT) as response:
-                data = json.loads(response.read().decode("utf-8"))
-        except error.HTTPError as exc:
-            detail = exc.read().decode("utf-8", "replace")[:300]
-            raise RuntimeError(f"ollama HTTP {exc.code}: {detail}") from exc
-        message = data.get("message") or {}
-        return str(message.get("content") or "")
+        last_error = None
+        for attempt in range(OLLAMA_RETRIES + 1):
+            try:
+                with request.urlopen(req, timeout=REQUEST_TIMEOUT) as response:
+                    data = json.loads(response.read().decode("utf-8"))
+                message = data.get("message") or {}
+                return str(message.get("content") or "")
+            except error.HTTPError as exc:
+                detail = exc.read().decode("utf-8", "replace")[:300]
+                if exc.code < 500 or attempt >= OLLAMA_RETRIES:
+                    raise RuntimeError(f"ollama HTTP {exc.code}: {detail}") from exc
+                last_error = exc
+            except error.URLError as exc:
+                if isinstance(exc.reason, TimeoutError) or attempt >= OLLAMA_RETRIES:
+                    raise RuntimeError(f"ollama unavailable: {exc}") from exc
+                last_error = exc
+            except (ConnectionError, OSError) as exc:
+                if attempt >= OLLAMA_RETRIES:
+                    raise RuntimeError(f"ollama unavailable: {exc}") from exc
+                last_error = exc
+            time.sleep(OLLAMA_RETRY_DELAY * (attempt + 1))
+        raise RuntimeError(f"ollama unavailable: {last_error}")
 
     def _ollama_stream(self, messages, max_tokens: int, temperature: float, on_token) -> str:
         payload = {
@@ -606,37 +634,62 @@ class RagEngine:
             headers={"Content-Type": "application/json"},
             method="POST",
         )
-        pieces = []
-        streaming = False
-        with request.urlopen(req, timeout=REQUEST_TIMEOUT) as response:
-            for raw_line in response:
-                line = raw_line.decode("utf-8", "replace").strip()
-                if not line:
-                    continue
-                try:
-                    data = json.loads(line)
-                except Exception:
-                    continue
-                if data.get("error"):
-                    raise RuntimeError(str(data["error"])[:300])
-                token = str((data.get("message") or {}).get("content") or "")
-                if token:
-                    pieces.append(token)
-                    combined = "".join(pieces)
-                    if NOT_IN_COURSE_RE.search(combined):
+        sent = {"value": False}
+
+        def stream_once():
+            pieces = []
+            streaming = False
+            with request.urlopen(req, timeout=REQUEST_TIMEOUT) as response:
+                for raw_line in response:
+                    line = raw_line.decode("utf-8", "replace").strip()
+                    if not line:
+                        continue
+                    try:
+                        data = json.loads(line)
+                    except Exception:
+                        continue
+                    if data.get("error"):
+                        raise RuntimeError(str(data["error"])[:300])
+                    token = str((data.get("message") or {}).get("content") or "")
+                    if token:
+                        pieces.append(token)
+                        combined = "".join(pieces)
+                        if NOT_IN_COURSE_RE.search(combined):
+                            break
+                        if not streaming:
+                            if len(combined) >= STREAM_BUFFER_CHARS or CITE_RE.search(combined):
+                                streaming = True
+                                sent["value"] = True
+                                on_token(combined)
+                        else:
+                            on_token(token)
+                    if data.get("done"):
                         break
-                    if not streaming:
-                        if len(combined) >= STREAM_BUFFER_CHARS or CITE_RE.search(combined):
-                            streaming = True
-                            on_token(combined)
-                    else:
-                        on_token(token)
-                if data.get("done"):
-                    break
-        final = "".join(pieces)
-        if final and not streaming and not NOT_IN_COURSE_RE.search(final):
-            on_token(final)
-        return final
+            final = "".join(pieces)
+            if final and not streaming and not NOT_IN_COURSE_RE.search(final):
+                sent["value"] = True
+                on_token(final)
+            return final
+
+        last_error = None
+        for attempt in range(OLLAMA_RETRIES + 1):
+            try:
+                return stream_once()
+            except error.HTTPError as exc:
+                detail = exc.read().decode("utf-8", "replace")[:300]
+                if sent["value"] or exc.code < 500 or attempt >= OLLAMA_RETRIES:
+                    raise RuntimeError(f"ollama HTTP {exc.code}: {detail}") from exc
+                last_error = exc
+            except error.URLError as exc:
+                if sent["value"] or isinstance(exc.reason, TimeoutError) or attempt >= OLLAMA_RETRIES:
+                    raise RuntimeError(f"ollama unavailable: {exc}") from exc
+                last_error = exc
+            except (ConnectionError, OSError) as exc:
+                if sent["value"] or attempt >= OLLAMA_RETRIES:
+                    raise RuntimeError(f"ollama unavailable: {exc}") from exc
+                last_error = exc
+            time.sleep(OLLAMA_RETRY_DELAY * (attempt + 1))
+        raise RuntimeError(f"ollama unavailable: {last_error}")
 
 
 class AnswerCache:

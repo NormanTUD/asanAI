@@ -8,6 +8,7 @@
 	var REQUEST_TIMEOUT = 15000;
 	var JOB_TIMEOUT = 200000;
 	var STORAGE_KEY = 'mn_rag_chat_v1';
+	var ACTIVE_KEY = 'mn_rag_chat_job_v1';
 
 	var state = {
 		history: [],
@@ -22,7 +23,8 @@
 		startedAt: 0,
 		eta: null,
 		slow: false,
-		lastPartial: ''
+		lastPartial: '',
+		offline: false
 	};
 	var els = {};
 
@@ -213,6 +215,62 @@
 		}
 	}
 
+	function readActiveJob() {
+		try {
+			var raw = localStorage.getItem(ACTIVE_KEY);
+			if (!raw) return null;
+			var job = JSON.parse(raw);
+			if (!job || !job.id || !job.question) return null;
+			if (Date.now() - (job.startedAt || 0) > JOB_TIMEOUT) {
+				localStorage.removeItem(ACTIVE_KEY);
+				return null;
+			}
+			return job;
+		} catch (error) {
+			return null;
+		}
+	}
+
+	function saveActiveJob(job) {
+		try {
+			localStorage.setItem(ACTIVE_KEY, JSON.stringify(job));
+		} catch (error) {
+			/* ignore */
+		}
+	}
+
+	function clearActiveJob() {
+		try {
+			localStorage.removeItem(ACTIVE_KEY);
+		} catch (error) {
+			/* ignore */
+		}
+	}
+
+	function hasStoredConversation() {
+		try {
+			return !!localStorage.getItem(STORAGE_KEY);
+		} catch (error) {
+			return false;
+		}
+	}
+
+	function resumeActiveJob() {
+		var job = readActiveJob();
+		if (!job || state.busy) return;
+		var seq = ++state.seq;
+		state.lastQuestion = job.question;
+		state.startedAt = job.startedAt || Date.now();
+		state.streamNode = null;
+		state.eta = null;
+		state.slow = false;
+		state.lastPartial = '';
+		setBusy(true);
+		els.status.textContent = 'Reconnecting to your answer…';
+		showTyping();
+		poll(seq, job.question, job.id, { status: 'queued' }, 0);
+	}
+
 	function mount() {
 		if (state.mounted) return;
 		state.mounted = true;
@@ -286,6 +344,17 @@
 		els.welcome = panel.querySelector('.rag-chat-welcome');
 		state.welcome = els.welcome;
 		restoreConversation();
+		window.addEventListener('offline', function() {
+			state.offline = true;
+			if (state.busy) els.status.textContent = 'You are offline. Waiting to reconnect…';
+		});
+		window.addEventListener('online', function() {
+			state.offline = false;
+			if (!state.busy && state.lastQuestion) {
+				els.status.textContent = 'Back online. Tap “Try again”.';
+			}
+		});
+		resumeActiveJob();
 
 		button.addEventListener('click', open);
 		panel.querySelector('.rag-chat-close').addEventListener('click', close);
@@ -396,6 +465,7 @@
 
 	function ask(question, addUser) {
 		if (state.busy || !question) return;
+		clearActiveJob();
 		var seq = ++state.seq;
 		state.lastQuestion = question;
 		state.startedAt = Date.now();
@@ -427,6 +497,11 @@
 				if (data && data.status === 'done') {
 					finish(seq, question, data);
 				} else if (data && data.id) {
+					saveActiveJob({
+						id: data.id,
+						question: question,
+						startedAt: state.startedAt
+					});
 					poll(seq, question, data.id, data, 0);
 				} else {
 					showError(seq, errorText(data));
@@ -522,6 +597,7 @@
 		});
 		state.messages = state.messages.slice(-20);
 		saveConversation();
+		clearActiveJob();
 		state.lastQuestion = '';
 		setBusy(false);
 	}
@@ -529,6 +605,10 @@
 	function showError(seq, message) {
 		if (seq !== state.seq) return;
 		clearTimeout(state.pollTimer);
+		clearActiveJob();
+		if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+			message = 'You are offline. Reconnect and try again.';
+		}
 		state.eta = null;
 		state.slow = false;
 		state.lastPartial = '';
@@ -562,6 +642,7 @@
 		state.eta = null;
 		state.slow = false;
 		state.lastPartial = '';
+		clearActiveJob();
 		try {
 			localStorage.removeItem(STORAGE_KEY);
 		} catch (error) {
@@ -588,6 +669,8 @@
 			fetchJson('ask.php?health=1', { cache: 'no-store' }, 5000)
 				.then(function(data) {
 					if (data && data.ok) {
+						mount();
+					} else if (hasStoredConversation() || readActiveJob()) {
 						mount();
 					} else if (attempt < 2) {
 						attempt++;
