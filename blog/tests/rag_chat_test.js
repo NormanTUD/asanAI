@@ -40,6 +40,14 @@ check(chat.esc('a & b < c "d"') === 'a &amp; b &lt; c &quot;d&quot;', 'escapes e
 var missing = chat.answerHtml('no source here [S9]', sources);
 check(missing.indexOf('[S9]') !== -1, 'unknown citation is left visible');
 
+var bare = chat.answerHtml('See [1].', sources);
+check(bare.indexOf('href="history#the-perceptron"') !== -1, 'bare citation numbers link to sources');
+
+check(chat.errorText({ error: 'unknown_job' }).indexOf('restarted') !== -1,
+	'lost-job error suggests retrying');
+check(chat.errorText({ error: 'rate_limited', retry_after: 7 }).indexOf('7') !== -1,
+	'rate-limit error includes the retry delay');
+
 check(chat.visiblePartial('foo [[NOT_IN_COURSE]] bar') === 'foo  bar',
 	'double-bracket refusal marker is hidden');
 check(chat.visiblePartial('foo [NOT_IN_COURSE] bar') === 'foo  bar',

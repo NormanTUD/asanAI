@@ -13954,3 +13954,175 @@ summary:focus-visible,
 	}
 }
 
+/* ─── RAG chat polish: header, disclaimer, typing, retry ─── */
+#rag-chat-toggle {
+	background: linear-gradient(135deg, var(--mn-accent), color-mix(in srgb, var(--mn-accent) 65%, #7c3aed));
+	border-color: color-mix(in srgb, var(--mn-accent) 55%, #7c3aed);
+	box-shadow: 0 12px 30px color-mix(in srgb, var(--mn-accent) 28%, transparent);
+}
+#rag-chat-panel {
+	border-radius: 20px;
+	background: linear-gradient(180deg, color-mix(in srgb, var(--mn-surface) 94%, var(--mn-accent) 6%), var(--mn-surface));
+}
+.rag-chat-header {
+	padding: 13px 15px;
+	background: linear-gradient(135deg, color-mix(in srgb, var(--mn-accent) 11%, var(--mn-surface)), var(--mn-surface));
+	font-weight: 600;
+}
+.rag-chat-title {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+.rag-chat-title-main {
+	font-size: 0.9rem;
+	font-weight: 800;
+	letter-spacing: -0.01em;
+}
+.rag-chat-title-sub {
+	font-size: 0.67rem;
+	font-weight: 500;
+	color: var(--mn-text-muted);
+}
+.rag-chat-actions {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+}
+.rag-chat-clear {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 5px;
+	border: 0;
+	border-radius: 8px;
+	background: transparent;
+	color: var(--mn-text-muted);
+	cursor: pointer;
+}
+.rag-chat-clear:hover,
+.rag-chat-clear:focus-visible {
+	color: var(--mn-accent);
+	background: color-mix(in srgb, var(--mn-accent) 12%, transparent);
+	outline: none;
+}
+.rag-chat-welcome {
+	display: flex;
+	gap: 10px;
+	padding: 12px;
+	border: 1px solid var(--mn-border-light);
+	border-radius: 14px;
+	background: var(--mn-surface-raised);
+	color: var(--mn-text-secondary);
+	font-size: 0.8rem;
+	line-height: 1.5;
+}
+.rag-chat-welcome-icon {
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 10px;
+	color: var(--mn-accent);
+	background: color-mix(in srgb, var(--mn-accent) 14%, transparent);
+}
+.rag-chat-welcome-text strong {
+	color: var(--mn-heading);
+}
+.rag-chat-ai-note {
+	display: block;
+	margin-top: 6px;
+	color: var(--mn-text-muted);
+	font-size: 0.72rem;
+}
+.rag-chat-disclaimer {
+	padding: 0 16px 5px;
+	color: var(--mn-text-muted);
+	font-size: 0.68rem;
+	line-height: 1.4;
+}
+.rag-chat-status {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+}
+.rag-chat-error-text {
+	color: var(--mn-rose);
+}
+.rag-chat-retry {
+	padding: 2px 10px;
+	border: 1px solid color-mix(in srgb, var(--mn-accent) 45%, var(--mn-border));
+	border-radius: 999px;
+	background: var(--mn-accent-lighter);
+	color: var(--mn-accent);
+	font-size: 0.7rem;
+	font-weight: 700;
+	cursor: pointer;
+}
+.rag-chat-retry:hover {
+	background: var(--mn-accent-light);
+}
+.rag-chat-msg {
+	padding: 10px 13px;
+	border-radius: 14px;
+}
+.rag-chat-msg-user {
+	background: linear-gradient(135deg, var(--mn-accent), color-mix(in srgb, var(--mn-accent) 62%, #7c3aed));
+	box-shadow: 0 4px 12px color-mix(in srgb, var(--mn-accent) 22%, transparent);
+}
+.rag-chat-msg-assistant {
+	background: var(--mn-surface-raised);
+	border-color: var(--mn-border);
+	box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
+}
+.rag-chat-msg-refusal {
+	border-style: dashed;
+}
+.rag-chat-wait {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	color: var(--mn-text-muted);
+}
+.rag-chat-wait-label {
+	font-size: 0.8rem;
+}
+.rag-spinner {
+	width: 15px;
+	height: 15px;
+	flex: none;
+	border: 2px solid var(--mn-border);
+	border-top-color: var(--mn-accent);
+	border-radius: 50%;
+	animation: rag-spin 0.8s linear infinite;
+}
+@keyframes rag-spin {
+	to { transform: rotate(360deg); }
+}
+.rag-sources {
+	padding: 8px 10px;
+	border: 1px solid var(--mn-border-light);
+	border-radius: 10px;
+	background: color-mix(in srgb, var(--mn-accent) 4%, transparent);
+}
+.rag-sources strong {
+	display: block;
+	font-size: 0.68rem;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+.rag-chat-form {
+	background: color-mix(in srgb, var(--mn-surface) 94%, var(--mn-accent) 6%);
+}
+.rag-chat-input {
+	border-radius: 11px;
+	padding: 9px 11px;
+}
+.rag-chat-send {
+	border-radius: 11px;
+}
+

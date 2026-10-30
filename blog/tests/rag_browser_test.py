@@ -91,6 +91,7 @@ MOCK = r"""
 (() => {
 	const realFetch = window.fetch.bind(window);
 	let statusCalls = 0;
+	window.__ragMock = { failStatus: false };
 	const reply = (payload) => Promise.resolve(new Response(JSON.stringify(payload), {
 		status: 200,
 		headers: { 'Content-Type': 'application/json' }
@@ -101,11 +102,11 @@ MOCK = r"""
 			return reply({ ok: true, ready: true, ollama: true, model: 'mock', model_present: true });
 		}
 		if (url.indexOf('ask.php?status=') !== -1) {
-			if (url.indexOf('undefined') !== -1) {
+			if (url.indexOf('undefined') !== -1 || window.__ragMock.failStatus) {
 				return reply({ error: 'unknown_job' });
 			}
 			statusCalls += 1;
-			if (statusCalls <= 3) {
+			if (statusCalls <= 6) {
 				return reply({
 					status: 'running',
 					position: 0,
@@ -172,6 +173,11 @@ def main() -> int:
 		check(browser.execute_script(
 			"return getComputedStyle(document.querySelector('.rag-chat-close')).color"
 		) == "rgb(225, 29, 72)", "the close button is red")
+		check("AI" in browser.find_element(By.CSS_SELECTOR, ".rag-chat-ai-note").text
+			and "mistakes" in browser.find_element(By.CSS_SELECTOR, ".rag-chat-ai-note").text,
+			"the welcome explains that AI answers can be wrong")
+		check("verify" in browser.find_element(By.CSS_SELECTOR, ".rag-chat-disclaimer").text.lower(),
+			"the footer reminds readers to verify")
 
 		browser.execute_script(
 			"const input = document.querySelector('.rag-chat-input');"
@@ -179,6 +185,11 @@ def main() -> int:
 			"input.dispatchEvent(new Event('input', { bubbles: true }));"
 			"document.querySelector('.rag-chat-send').click();"
 		)
+		WebDriverWait(browser, 5).until(
+			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-spinner")) > 0
+		)
+		check(True, "the answer window shows a spinner while waiting")
+
 		WebDriverWait(browser, 5).until(
 			lambda d: "You are #2" in status_text(d)
 		)
@@ -191,11 +202,14 @@ def main() -> int:
 		check("about 10 seconds" in status_text(browser),
 			"running status shows the remaining time", status_text(browser))
 		WebDriverWait(browser, 8).until(
-			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-assistant")) > 0
+			lambda d: "A perceptron is a linear classifier" in
+				d.find_element(By.CSS_SELECTOR, ".rag-chat-msg-assistant").text
 		)
-		check("A perceptron is a linear classifier" in
-			browser.find_element(By.CSS_SELECTOR, ".rag-chat-msg-assistant").text,
-			"partial answer streams while generating")
+		check(True, "partial answer streams while generating")
+		WebDriverWait(browser, 8).until(
+			lambda d: "taking a bit longer" in status_text(d)
+		)
+		check(True, "a repeated ETA shows the slower hint")
 
 		WebDriverWait(browser, 10).until(
 			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-sources")) > 0
@@ -248,6 +262,57 @@ def main() -> int:
 		check(browser.execute_script(
 			"return getComputedStyle(document.querySelector('.rag-chat-msg')).userSelect"
 		) in ("text", "auto"), "chat text is selectable")
+
+		browser.execute_script("document.querySelector('.rag-chat-clear').click()")
+		check(len(browser.find_elements(By.CSS_SELECTOR, ".rag-chat-msg")) == 0,
+			"clear removes the conversation")
+		check(len(browser.find_elements(By.CSS_SELECTOR, ".rag-chat-welcome")) == 1,
+			"clear keeps the welcome card")
+
+		browser.execute_script("window.__ragMock.failStatus = true")
+		browser.execute_script(
+			"const input = document.querySelector('.rag-chat-input');"
+			"input.value = 'What is a derivative?';"
+			"input.dispatchEvent(new Event('input', { bubbles: true }));"
+			"document.querySelector('.rag-chat-send').click();"
+		)
+		WebDriverWait(browser, 10).until(
+			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-chat-retry")) > 0
+		)
+		check("restarted" in status_text(browser), "a lost job offers a clear error",
+			status_text(browser))
+		browser.execute_script("window.__ragMock.failStatus = false")
+		browser.execute_script("document.querySelector('.rag-chat-retry').click()")
+		WebDriverWait(browser, 10).until(
+			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-sources")) > 0
+		)
+		check(len(browser.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")) == 1,
+			"retry does not duplicate the question")
+		check("A perceptron is a linear classifier" in
+			browser.find_element(By.CSS_SELECTOR, ".rag-chat-msg-assistant").text,
+			"retry recovers with an answer")
+
+		browser.execute_script("document.querySelector('.rag-chat-close').click()")
+		browser.execute_script("document.getElementById('rag-chat-toggle').click()")
+		check(len(browser.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")) == 1,
+			"closing and reopening keeps the conversation")
+
+		browser.get(f"http://127.0.0.1:{port}/index.php")
+		WebDriverWait(browser, 60).until(
+			lambda d: d.execute_script(
+				"return !!document.getElementById('rag-chat-toggle')"
+			)
+		)
+		browser.execute_script("document.getElementById('rag-chat-toggle').click()")
+		WebDriverWait(browser, 10).until(
+			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")) > 0
+		)
+		check("What is a derivative?" in
+			browser.find_element(By.CSS_SELECTOR, ".rag-chat-msg-user").text,
+			"the conversation survives a page reload")
+		check("A perceptron is a linear classifier" in
+			browser.find_element(By.CSS_SELECTOR, ".rag-chat-msg-assistant").text,
+			"restored answers keep their text")
 
 		severe = [entry for entry in browser.get_log("browser")
 				  if entry.get("level") == "SEVERE"]

@@ -295,7 +295,7 @@ def main():
             check(status == 200 and first_job.get("status") == "queued",
                   "ask enqueues a job")
             check(first_job.get("position") == 1, "the first job is first in the queue")
-            check(first_job.get("eta_seconds", 0) >= 5, "queued job carries an ETA")
+            check(first_job.get("eta_seconds", 0) >= 40, "queued job includes the 15 s ETA buffer")
 
             status, second_job = post(base, {"question": f"what is a widget {time.time_ns()}", "lang": "en"},
                                       ip="10.0.0.2")
@@ -377,7 +377,7 @@ def main():
             )
             php_base = f"http://127.0.0.1:{php_port}"
             try:
-                time.sleep(0.6)
+                time.sleep(1.0)
                 status, health = get(php_base, "/ask.php?health=1")
                 check(status == 200 and health.get("ok") is False,
                       "PHP proxy forwards health", str(health))

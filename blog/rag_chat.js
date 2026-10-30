@@ -4,12 +4,23 @@
 (function() {
 	'use strict';
 
+	var MAX_QUESTION = 2000;
+	var REQUEST_TIMEOUT = 15000;
+	var JOB_TIMEOUT = 200000;
+	var STORAGE_KEY = 'mn_rag_chat_v1';
+
 	var state = {
 		history: [],
+		messages: [],
 		busy: false,
 		mounted: false,
 		pollTimer: null,
-		streamNode: null
+		streamNode: null,
+		welcome: null,
+		seq: 0,
+		lastQuestion: '',
+		startedAt: 0,
+		eta: null
 	};
 	var els = {};
 
@@ -41,20 +52,49 @@
 		return '';
 	}
 
+	function errorText(data) {
+		var error = data && data.error ? String(data.error) : 'unavailable';
+		if (error === 'queue_full') {
+			return 'The answer queue is full right now. Please try again in a minute.';
+		}
+		if (error === 'rate_limited') {
+			return 'Too many questions. Please try again in ' +
+				Math.max(1, parseInt(data.retry_after, 10) || 10) + ' seconds.';
+		}
+		if (error === 'unknown_job') {
+			return 'The answer service restarted while generating. Please try again.';
+		}
+		if (error === 'timeout') {
+			return 'This is taking longer than expected. Please try again.';
+		}
+		if (error === 'question_too_long') {
+			return 'That question is too long. Please shorten it.';
+		}
+		if (error === 'question_too_short') {
+			return 'Please ask a slightly longer question.';
+		}
+		if (error === 'bad_response' || error === 'invalid_json') {
+			return 'The answer service sent an invalid response. Please try again.';
+		}
+		return 'The answer service is unavailable right now. Please try again.';
+	}
+
 	function answerHtml(answer, sources) {
 		var byId = {};
 		(sources || []).forEach(function(source) {
-			byId[source.id] = source;
+			if (source && source.id) byId[source.id] = source;
 		});
-		var html = esc(answer).replace(/\[S(\d+)\]/g, function(marker, number) {
+		var html = esc(answer).replace(/\[(?:S(\d+)|(\d+))\]/g, function(marker, sourceNumber, bareNumber) {
+			var number = sourceNumber || bareNumber;
 			var source = byId['S' + number];
-			if (!source) return marker;
+			if (!source || !source.url) return marker;
 			return '<a class="rag-cite" href="' + escAttr(source.url) + '">[' + number + ']</a>';
 		});
 		if (sources && sources.length) {
 			html += '<div class="rag-sources"><strong>Sources</strong><ul>';
 			sources.forEach(function(source) {
-				var label = esc(source.title);
+				if (!source || !source.url) return;
+				var label = esc(source.title || source.url);
 				if (source.heading) label += ' — ' + esc(source.heading);
 				html += '<li><a href="' + escAttr(source.url) + '">' + label + '</a></li>';
 			});
@@ -63,9 +103,108 @@
 		return html;
 	}
 
+	function slowNote(data, text) {
+		var raw = data && data.eta_seconds;
+		var eta = raw == null ? null : Math.round(Number(raw));
+		if (eta == null || !isFinite(eta)) {
+			state.eta = null;
+			return text;
+		}
+		if (state.eta && state.eta.value === eta) {
+			state.eta.repeats += 1;
+		} else {
+			state.eta = { value: eta, repeats: 1 };
+		}
+		if (state.eta.repeats >= 4) {
+			return (text ? text + ' ' : '') +
+				'This is taking a bit longer than expected.';
+		}
+		return text;
+	}
+
 	function language() {
 		var lang = (navigator.language || document.documentElement.lang || 'en');
 		return String(lang).slice(0, 2).toLowerCase();
+	}
+
+	function readJson(response) {
+		return response.text().then(function(text) {
+			var data = {};
+			try {
+				data = text ? JSON.parse(text) : {};
+			} catch (error) {
+				data = { error: 'bad_response' };
+			}
+			if (!response.ok && !data.error) {
+				data.error = response.status === 429 ? 'rate_limited' : 'unavailable';
+			}
+			return data;
+		});
+	}
+
+	function fetchJson(url, options, timeout) {
+		var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+		var timer = setTimeout(function() {
+			if (controller) controller.abort();
+		}, timeout || REQUEST_TIMEOUT);
+		options = options || {};
+		if (controller) options.signal = controller.signal;
+		return fetch(url, options)
+			.then(function(response) { return readJson(response); })
+			.then(function(data) {
+				clearTimeout(timer);
+				return data;
+			}, function(error) {
+				clearTimeout(timer);
+				throw error;
+			});
+	}
+
+	function saveConversation() {
+		try {
+			localStorage.setItem(STORAGE_KEY, JSON.stringify({
+				history: state.history.slice(-6),
+				messages: state.messages.slice(-20)
+			}));
+		} catch (error) {
+			/* private mode or quota: the chat still works without persistence */
+		}
+	}
+
+	function restoreConversation() {
+		var raw;
+		try {
+			raw = localStorage.getItem(STORAGE_KEY);
+		} catch (error) {
+			return;
+		}
+		if (!raw) return;
+		var stored;
+		try {
+			stored = JSON.parse(raw);
+		} catch (error) {
+			return;
+		}
+		if (!stored || !Array.isArray(stored.messages)) return;
+		state.history = Array.isArray(stored.history) ? stored.history.slice(-6) : [];
+		state.messages = stored.messages.slice(-20).filter(function(message) {
+			return message && (message.role === 'user' || message.role === 'assistant') &&
+				typeof message.text === 'string';
+		});
+		state.messages.forEach(function(message) {
+			if (message.role === 'user') {
+				addMessage('user', esc(message.text.slice(0, MAX_QUESTION)));
+				return;
+			}
+			var node = addMessage('assistant', answerHtml(
+				message.text.slice(0, 4000),
+				Array.isArray(message.sources) ? message.sources : []
+			));
+			if (message.grounded === false) node.classList.add('rag-chat-msg-refusal');
+		});
+		if (state.messages.length) {
+			els.messages.scrollTop = els.messages.scrollHeight;
+		}
 	}
 
 	function mount() {
@@ -95,17 +234,38 @@
 		panel.hidden = true;
 		panel.innerHTML =
 			'<div class="rag-chat-header">' +
-				'<span>Ask the course</span>' +
-				'<button type="button" class="rag-chat-close" aria-label="Close">&times;</button>' +
+				'<div class="rag-chat-title">' +
+					'<span class="rag-chat-title-main">Ask the course</span>' +
+					'<span class="rag-chat-title-sub">AI answers · verify the cited lessons</span>' +
+				'</div>' +
+				'<div class="rag-chat-actions">' +
+					'<button type="button" class="rag-chat-clear" aria-label="Clear conversation" title="Clear conversation">' +
+						'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+						'<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5M14 11v5"/>' +
+						'</svg>' +
+					'</button>' +
+					'<button type="button" class="rag-chat-close" aria-label="Close">&times;</button>' +
+				'</div>' +
 			'</div>' +
 			'<div class="rag-chat-messages" aria-live="polite">' +
-				'<div class="rag-chat-welcome">Ask about anything in the lessons. ' +
-				'Answers use only course text and cite the pages they come from.</div>' +
+				'<div class="rag-chat-welcome">' +
+					'<div class="rag-chat-welcome-icon" aria-hidden="true">' +
+						'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+						'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>' +
+						'<path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>' +
+						'</svg>' +
+					'</div>' +
+					'<div class="rag-chat-welcome-text">' +
+						'<strong>Ask anything about the course.</strong> Answers come only from the lessons and link their sources. ' +
+						'<span class="rag-chat-ai-note">This is an AI assistant: it can make mistakes even when it sounds confident. Check the cited lesson.</span>' +
+					'</div>' +
+				'</div>' +
 			'</div>' +
 			'<div class="rag-chat-status" aria-live="polite"></div>' +
+			'<div class="rag-chat-disclaimer">AI-generated answers can be wrong. Always verify with the linked lessons.</div>' +
 			'<form class="rag-chat-form">' +
 				'<textarea class="rag-chat-input" rows="2" maxlength="2000" ' +
-				'placeholder="Ask a question…" aria-label="Your question"></textarea>' +
+				'placeholder="Ask a question about the course…" aria-label="Your question"></textarea>' +
 				'<button type="submit" class="rag-chat-send">Send</button>' +
 			'</form>';
 
@@ -117,9 +277,13 @@
 		els.status = panel.querySelector('.rag-chat-status');
 		els.input = panel.querySelector('.rag-chat-input');
 		els.send = panel.querySelector('.rag-chat-send');
+		els.welcome = panel.querySelector('.rag-chat-welcome');
+		state.welcome = els.welcome;
+		restoreConversation();
 
 		button.addEventListener('click', open);
 		panel.querySelector('.rag-chat-close').addEventListener('click', close);
+		panel.querySelector('.rag-chat-clear').addEventListener('click', clearConversation);
 		els.input.addEventListener('keydown', function(event) {
 			if (event.key === 'Enter' && !event.shiftKey) {
 				event.preventDefault();
@@ -177,6 +341,22 @@
 		return node.contains(selection.anchorNode) || node.contains(selection.focusNode);
 	}
 
+	function showTyping() {
+		if (state.streamNode) return;
+		state.streamNode = addMessage(
+			'assistant',
+			'<div class="rag-chat-wait"><span class="rag-spinner" aria-hidden="true"></span>' +
+				'<span class="rag-chat-wait-label">Searching the course…</span></div>',
+			'rag-chat-waiting'
+		);
+	}
+
+	function setWaitLabel(text) {
+		if (!state.streamNode) return;
+		var label = state.streamNode.querySelector('.rag-chat-wait-label');
+		if (label) label.textContent = text;
+	}
+
 	function showPartial(text) {
 		text = visiblePartial(text);
 		if (!text) return;
@@ -194,103 +374,218 @@
 	function submit() {
 		if (state.busy) return;
 		var question = (els.input.value || '').trim();
-		if (question.length < 3) return;
-		addMessage('user', esc(question));
+		if (question.length < 3) {
+			els.status.textContent = 'Please ask a slightly longer question.';
+			return;
+		}
+		if (question.length > MAX_QUESTION) {
+			els.status.textContent = 'Please shorten your question (maximum 2000 characters).';
+			return;
+		}
 		els.input.value = '';
-		els.status.textContent = 'Generating your answer…';
+		ask(question, true);
+	}
+
+	function ask(question, addUser) {
+		if (state.busy || !question) return;
+		var seq = ++state.seq;
+		state.lastQuestion = question;
+		state.startedAt = Date.now();
 		state.streamNode = null;
+		state.eta = null;
+		if (addUser) {
+			addMessage('user', esc(question));
+			state.messages.push({ role: 'user', text: question });
+			saveConversation();
+		}
 		setBusy(true);
+		els.status.textContent = 'Contacting the answer service…';
+		showTyping();
 
 		var payload = {
 			question: question,
 			lang: language(),
 			history: state.history.slice(-6)
 		};
-		fetch('ask.php', {
+		fetchJson('ask.php', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(payload)
-		})
-		.then(function(response) { return response.json(); })
-		.then(function(data) {
-			if (data && data.status === 'done') {
-				finish(question, data);
-			} else if (data && data.id) {
-				poll(question, data.id, data);
-			} else {
-				fail(data);
-			}
-		})
-		.catch(function() { fail(null); });
+		}, 20000)
+			.then(function(data) {
+				if (seq !== state.seq) return;
+				if (data && data.status === 'done') {
+					finish(seq, question, data);
+				} else if (data && data.id) {
+					poll(seq, question, data.id, data, 0);
+				} else {
+					showError(seq, errorText(data));
+				}
+			})
+			.catch(function(error) {
+				if (seq !== state.seq) return;
+				showError(seq, errorText({
+					error: error && error.name === 'AbortError' ? 'timeout' : 'unavailable'
+				}));
+			});
 	}
 
-	function poll(question, id, first) {
-		els.status.textContent = statusText(first);
+	function poll(seq, question, id, first, attempt) {
+		if (seq !== state.seq) return;
+		setWaitLabel(first && first.status === 'queued'
+			? 'Waiting for a free model slot…'
+			: 'Writing the answer…');
+		els.status.textContent = slowNote(first, statusText(first) || 'Waiting for the answer…');
+		if (Date.now() - state.startedAt > JOB_TIMEOUT) {
+			showError(seq, errorText({ error: 'timeout' }));
+			return;
+		}
+		var delay = first && first.status === 'running' ? 400 : 900;
 		state.pollTimer = setTimeout(function() {
-			fetch('ask.php?status=' + encodeURIComponent(id), { cache: 'no-store' })
-				.then(function(response) { return response.json(); })
+			if (seq !== state.seq) return;
+			fetchJson('ask.php?status=' + encodeURIComponent(id), { cache: 'no-store' }, 10000)
 				.then(function(data) {
+					if (seq !== state.seq) return;
 					if (data && data.status === 'done') {
-						finish(question, data);
+						finish(seq, question, data);
 					} else if (data && data.status === 'error') {
-						fail(data);
-					} else {
-						els.status.textContent = statusText(data) ||
-							'Generating your answer…';
+						showError(seq, errorText(data));
+					} else if (data && data.status === 'running') {
+						setWaitLabel('Writing the answer…');
+						els.status.textContent = slowNote(
+							data, statusText(data) || 'Generating your answer…'
+						);
 						showPartial(data.partial || '');
-						poll(question, id, data);
+						poll(seq, question, id, data, 0);
+					} else if (data && data.status === 'queued') {
+						setWaitLabel('Waiting for a free model slot…');
+						els.status.textContent = slowNote(data, statusText(data));
+						poll(seq, question, id, data, 0);
+					} else if (data && data.error) {
+						showError(seq, errorText(data));
+					} else if (attempt < 2) {
+						els.status.textContent = 'Reconnecting…';
+						poll(seq, question, id, first, attempt + 1);
+					} else {
+						showError(seq, errorText({ error: 'bad_response' }));
 					}
 				})
-				.catch(function() { fail(null); });
-		}, 400);
+				.catch(function() {
+					if (seq !== state.seq) return;
+					if (attempt < 2) {
+						els.status.textContent = 'Reconnecting…';
+						poll(seq, question, id, first, attempt + 1);
+					} else {
+						showError(seq, errorText({ error: 'unavailable' }));
+					}
+				});
+		}, delay);
 	}
 
-	function finish(question, data) {
+	function finish(seq, question, data) {
+		if (seq !== state.seq) return;
+		var answer = data && typeof data.answer === 'string' ? data.answer : '';
+		if (!answer.trim()) {
+			showError(seq, 'The service returned an empty answer. Please try again.');
+			return;
+		}
 		clearTimeout(state.pollTimer);
+		state.eta = null;
 		els.status.textContent = '';
+		var sources = Array.isArray(data.sources) ? data.sources : [];
 		var node = state.streamNode;
 		state.streamNode = null;
 		if (!node) node = addMessage('assistant', '');
-		node.classList.remove('rag-chat-streaming');
 		node.className = 'rag-chat-msg rag-chat-msg-assistant' +
 			(data.grounded === false ? ' rag-chat-msg-refusal' : '');
-		node.innerHTML = answerHtml(data.answer, data.sources);
+		node.innerHTML = answerHtml(answer, sources);
 		state.history.push({ role: 'user', content: question });
-		state.history.push({ role: 'assistant', content: data.answer || '' });
+		state.history.push({ role: 'assistant', content: answer });
 		state.history = state.history.slice(-6);
+		state.messages.push({
+			role: 'assistant',
+			text: answer,
+			sources: sources,
+			grounded: data.grounded !== false
+		});
+		state.messages = state.messages.slice(-20);
+		saveConversation();
+		state.lastQuestion = '';
 		setBusy(false);
 	}
 
-	function fail(data) {
+	function showError(seq, message) {
+		if (seq !== state.seq) return;
 		clearTimeout(state.pollTimer);
+		state.eta = null;
 		if (state.streamNode) {
 			state.streamNode.remove();
 			state.streamNode = null;
 		}
-		var message = 'The answer service is unavailable right now.';
-		if (data && data.error === 'queue_full') {
-			message = 'The answer queue is full. Please try again in a minute.';
-		} else if (data && data.error === 'rate_limited') {
-			message = 'Too many questions. Please try again in ' +
-				Math.max(1, parseInt(data.retry_after, 10) || 10) + ' seconds.';
-		} else if (data && data.error === 'question_too_long') {
-			message = 'That question is too long. Please shorten it.';
-		}
-		els.status.textContent = message;
 		setBusy(false);
+		els.status.innerHTML =
+			'<span class="rag-chat-error-text">' + esc(message) + '</span>' +
+			(state.lastQuestion
+				? ' <button type="button" class="rag-chat-retry">Try again</button>'
+				: '');
+		var retryButton = els.status.querySelector('.rag-chat-retry');
+		if (retryButton) retryButton.addEventListener('click', retry);
+	}
+
+	function retry() {
+		if (state.busy || !state.lastQuestion) return;
+		els.status.textContent = '';
+		ask(state.lastQuestion, false);
+	}
+
+	function clearConversation() {
+		state.seq++;
+		clearTimeout(state.pollTimer);
+		state.streamNode = null;
+		state.lastQuestion = '';
+		state.history = [];
+		state.messages = [];
+		state.eta = null;
+		try {
+			localStorage.removeItem(STORAGE_KEY);
+		} catch (error) {
+			/* ignore */
+		}
+		setBusy(false);
+		if (els.status) els.status.textContent = '';
+		if (els.messages) {
+			Array.prototype.slice.call(els.messages.children).forEach(function(child) {
+				if (child !== state.welcome) child.remove();
+			});
+		}
+		if (els.input) {
+			els.input.value = '';
+			els.input.focus();
+		}
 	}
 
 	function start() {
 		if (typeof document === 'undefined' || !document.body) return;
 		if (document.getElementById('rag-chat-toggle')) return;
-		setTimeout(function() {
-			fetch('ask.php?health=1', { cache: 'no-store' })
-				.then(function(response) { return response.json(); })
+		var attempt = 0;
+		function healthCheck() {
+			fetchJson('ask.php?health=1', { cache: 'no-store' }, 5000)
 				.then(function(data) {
-					if (data && data.ok) mount();
+					if (data && data.ok) {
+						mount();
+					} else if (attempt < 2) {
+						attempt++;
+						setTimeout(healthCheck, 2000 * attempt);
+					}
 				})
-				.catch(function() { /* optional feature: stay silent */ });
-		}, 1200);
+				.catch(function() {
+					if (attempt < 2) {
+						attempt++;
+						setTimeout(healthCheck, 2000 * attempt);
+					}
+				});
+		}
+		setTimeout(healthCheck, 1200);
 	}
 
 	if (typeof document !== 'undefined') {
@@ -306,10 +601,13 @@
 			mount: mount,
 			statusText: statusText,
 			answerHtml: answerHtml,
+			clear: clearConversation,
 			_internals: {
 				esc: esc,
 				language: language,
-				setBusy: setBusy
+				setBusy: setBusy,
+				visiblePartial: visiblePartial,
+				errorText: errorText
 			}
 		};
 	}
@@ -319,7 +617,8 @@
 			statusText: statusText,
 			answerHtml: answerHtml,
 			esc: esc,
-			visiblePartial: visiblePartial
+			visiblePartial: visiblePartial,
+			errorText: errorText
 		};
 	}
 })();
