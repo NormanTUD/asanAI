@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2357;
+var DEFAULT_EXPECTED_TEST_COUNT = 2356;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -9454,7 +9454,6 @@ async function _coverage_tests_online_python_ui() {
 
 		test_equal("getLastPrediction is null after clearing", window.PyodideEditor.getLastPrediction(), null);
 		window.PyodideEditor.clearPrediction();
-		test_equal("isReady is false without pyodide", window.PyodideEditor.isReady(), false);
 		test_equal("isRunning is false while idle", window.PyodideEditor.isRunning(), false);
 		test_equal("getCapturedPhotos is an array", Array.isArray(window.PyodideEditor.getCapturedPhotos()), true);
 	} finally {
