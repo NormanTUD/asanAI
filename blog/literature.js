@@ -16764,6 +16764,13 @@ window.bibData = {
 		url: "https://blog.hnf.de/frank-rosenblatt-und-das-perceptron/",
 		alternativetitle: "HNF, Frank Rosenblatt und das Perceptron (2019)"
 	},
+	"hnfmarki2019": {
+		title: "Der erste amerikanische Computer",
+		author: "HNF",
+		year: 2019,
+		url: "https://blog.hnf.de/der-erste-amerikanische-computer/",
+		alternativetitle: "HNF, Der erste amerikanische Computer (2019)"
+	},
 	"hnflernendeautomaten2021": {
 		title: "Lernende Automaten in Karlsruhe",
 		author: "HNF",

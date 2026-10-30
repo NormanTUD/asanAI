@@ -494,11 +494,14 @@ In 1937, a 21-year-old MIT graduate student named Claude Elwood Shannon submitte
 
 <figure>
     <img style="width: 100%" src="aiken_portrait.jpeg" alt="Howard Aiken" />
-    <figcaption class="md">\citealternativetitle{aikenphoto}, officially named as Automatic Sequence Controlled Calculator</figcaption>
+    <figcaption class="md">Howard Aiken. Photo: \citeauthor{aikenphoto}, \citeyear{aikenphoto}. Public domain.</figcaption>
 </figure>
 
-Inspired by Babbage's Analytical Engine, Aiken designed the **ASCC (Mark I)**. While Zuse used binary, Aiken stuck to **decimal** wheels. It was a massive, 50-foot long mechanical beast synchronized by a long rotating shaft.
-* **Significance:** It was the first large-scale automatic digital computer in the USA. He described it first in \citetitle{aiken} in \citeyear{aiken}.
+Inspired by Babbage's Analytical Engine, **Howard Aiken** designed a program-controlled relay calculator that Harvard and IBM agreed to build on 31 March 1939. IBM built it at its Endicott plant and called it the **Automatic Sequence Controlled Calculator (ASCC)**; Harvard called it the **Mark I**. The machine was 16 metres long, weighed 4.3 tonnes, and contained about 3,500 relays and 800 kilometres of wire. Its memory held 72 decimal numbers of 23 digits, plus 60 constants; instructions were punched into paper tape, and output came through punched cards and typewriters. It could do three additions per second; a multiplication took six seconds (\cite[HNF, 2019]{hnfmarki2019}).
+
+The Mark I was formally handed over on **7 August 1944**, and the press coverage was immediate: the *New York Times* ran a two-column story about a machine that would solve in hours problems too long to attempt, and a newsreel showed sailors climbing through the "Giant Calculator" while a woman in Navy uniform operated it — **Grace Hopper**, then a reserve officer and later a rear admiral. The machine stood at Harvard but belonged to the US Navy, and Aiken and Hopper were both reserve officers. Before the public dedication, on 29 March 1944, **John von Neumann** had already used it for calculations for the secret atomic-bomb project; from August it ran mostly weapons problems (\cite[HNF, 2019]{hnfmarki2019}).
+
+Its place in the genealogy is precise. If relay machines count, the Mark I was the first American digital computer; nobody in the United States knew about Zuse's Z3, which had been running in Berlin since 1941. Zuse learned of Aiken's machine during the war from a photograph — the daughter of his accountant worked as a secretary in German intelligence and had seen it — but the photograph showed little more than the words "Sequence Controlled Calculator" (\cite[HNF, 2019]{hnfmarki2019}). The Mark I itself worked into the 1950s and was partly dismantled in 1959; a control unit is now in the Heinz Nixdorf MuseumsForum in Paderborn (\cite[HNF, 2019]{hnfmarki2019}).
 
 ### John von Neumann & The Stored-Program Concept (1945)
 Before von Neumann, computers like the ENIAC had to be physically rewired to change tasks. His \citetitle{vonneumann} proposed the **Von Neumann Architecture**.

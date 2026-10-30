@@ -661,9 +661,11 @@
 		lb.innerHTML = '<button class="cl-lb-x" type="button" aria-label="Close">\u00d7</button>'
 			+ '<button class="cl-lb-prev" type="button" aria-label="Previous image">\u2039</button>'
 			+ '<button class="cl-lb-next" type="button" aria-label="Next image">\u203a</button>'
+			+ '<div class="cl-lb-hint" aria-hidden="true">Scroll to zoom &middot; drag to pan</div>'
 			+ '<img alt=""><figcaption></figcaption>';
 		document.body.appendChild(lb);
 		const img = lb.querySelector('img');
+		img.draggable = false;
 		const cap = lb.querySelector('figcaption');
 		const x = lb.querySelector('.cl-lb-x');
 		const prevBtn = lb.querySelector('.cl-lb-prev');
@@ -672,6 +674,55 @@
 		/* current set of zoomable images + index; rebuilt on every open */
 		let gallery = [];
 		let idx = -1;
+
+		/* Zoom/pan state. The image keeps its fitted layout size; wheel and
+		   pointer gestures only change the CSS transform, so prev/next and
+		   window resize still work on the same box. */
+		const MIN_ZOOM = 1;
+		const MAX_ZOOM = 8;
+		let zoom = 1;
+		let panX = 0;
+		let panY = 0;
+		let baseW = 0;
+		let baseH = 0;
+		let availW = 0;
+		let availH = 0;
+		let drag = null;
+
+		function applyTransform() {
+			img.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + zoom + ')';
+			lb.classList.toggle('is-zoomed', zoom > 1.001);
+		}
+		function clampPan() {
+			const maxX = Math.max(0, (baseW * zoom - availW) / 2);
+			const maxY = Math.max(0, (baseH * zoom - availH) / 2);
+			panX = Math.min(maxX, Math.max(-maxX, panX));
+			panY = Math.min(maxY, Math.max(-maxY, panY));
+		}
+		function resetView() {
+			zoom = 1;
+			panX = 0;
+			panY = 0;
+			drag = null;
+			lb.classList.remove('is-dragging');
+			applyTransform();
+		}
+		function zoomAt(clientX, clientY, factor) {
+			const next = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom * factor));
+			if (Math.abs(next - zoom) < 1e-4) return;
+			const rect = img.getBoundingClientRect();
+			const cx = rect.left + rect.width / 2;
+			const cy = rect.top + rect.height / 2;
+			const baseCx = cx - panX;
+			const baseCy = cy - panY;
+			const px = (clientX - cx) / zoom;
+			const py = (clientY - cy) / zoom;
+			panX = clientX - px * next - baseCx;
+			panY = clientY - py * next - baseCy;
+			zoom = next;
+			clampPan();
+			applyTransform();
+		}
 
 		/* Bulletproof page-scroll lock: overflow:hidden on html AND body,
 		   plus position:fixed on body (covers mobile touch-scroll, where
@@ -699,6 +750,7 @@
 		function loadFromIdx(i) {
 			if (i < 0 || i >= gallery.length) return;
 			idx = i;
+			resetView();
 			const target = gallery[i];
 			const src = target.currentSrc || target.src;
 			img.src = src;
@@ -790,6 +842,12 @@
 			img.style.height = h + 'px';
 			img.style.maxWidth = 'none';
 			img.style.maxHeight = 'none';
+			baseW = w;
+			baseH = h;
+			availW = maxW;
+			availH = maxH;
+			clampPan();
+			applyTransform();
 			/* keep caption in sync with viewport */
 			cap.style.setProperty('bottom', (isMobile ? 16 : 24) + 'px', 'important');
 			cap.style.setProperty('max-height', (isMobile ? 160 : 200) + 'px', 'important');
@@ -838,6 +896,7 @@
 			lockPageScroll();
 		}
 		function close() {
+			resetView();
 			lb.classList.remove('is-visible');
 			setTimeout(function () {
 				lb.hidden = true;
@@ -871,6 +930,59 @@
 			if (ev.key === 'Escape') { close(); return; }
 			if (ev.key === 'ArrowLeft')  { ev.preventDefault(); step(-1); return; }
 			if (ev.key === 'ArrowRight') { ev.preventDefault(); step(1);  return; }
+			if (ev.key === '0') { ev.preventDefault(); resetView(); return; }
+			if (ev.key === '+' || ev.key === '=') {
+				ev.preventDefault();
+				zoomAt(window.innerWidth / 2, window.innerHeight / 2, 1.25);
+				return;
+			}
+			if (ev.key === '-') {
+				ev.preventDefault();
+				zoomAt(window.innerWidth / 2, window.innerHeight / 2, 0.8);
+				return;
+			}
+		});
+
+		/* Wheel-to-zoom, centred on the pointer. */
+		img.addEventListener('wheel', function (ev) {
+			if (lb.hidden) return;
+			ev.preventDefault();
+			zoomAt(ev.clientX, ev.clientY, Math.exp(-ev.deltaY * 0.0015));
+		}, { passive: false });
+
+		/* Click-and-drag to pan once zoomed in. Pointer events cover mouse,
+		   pen and touch; pointer capture keeps the drag alive outside the
+		   image bounds. */
+		img.addEventListener('pointerdown', function (ev) {
+			if (lb.hidden || zoom <= 1.001) return;
+			if (ev.pointerType === 'mouse' && ev.button !== 0) return;
+			ev.preventDefault();
+			drag = { id: ev.pointerId, x: ev.clientX, y: ev.clientY, panX: panX, panY: panY };
+			lb.classList.add('is-dragging');
+			try { img.setPointerCapture(ev.pointerId); } catch (e) { /* older browsers */ }
+		});
+		img.addEventListener('pointermove', function (ev) {
+			if (!drag || ev.pointerId !== drag.id) return;
+			ev.preventDefault();
+			panX = drag.panX + (ev.clientX - drag.x);
+			panY = drag.panY + (ev.clientY - drag.y);
+			clampPan();
+			applyTransform();
+		});
+		function endDrag(ev) {
+			if (!drag || (ev.pointerId !== undefined && ev.pointerId !== drag.id)) return;
+			drag = null;
+			lb.classList.remove('is-dragging');
+			try { img.releasePointerCapture(ev.pointerId); } catch (e) { /* already released */ }
+		}
+		img.addEventListener('pointerup', endDrag);
+		img.addEventListener('pointercancel', endDrag);
+
+		/* Double-click toggles between fit and a 2.2x zoom at the cursor. */
+		img.addEventListener('dblclick', function (ev) {
+			ev.preventDefault();
+			if (zoom > 1.001) resetView();
+			else zoomAt(ev.clientX, ev.clientY, 2.2);
 		});
 
 		/* delegated click — fires for any image, present or future.
