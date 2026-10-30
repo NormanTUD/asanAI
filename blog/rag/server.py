@@ -695,57 +695,76 @@ class RagEngine:
 class AnswerCache:
     def __init__(self, path: Path = CACHE_DB):
         self.path = path
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        with sqlite3.connect(self.path, timeout=5) as db:
-            db.execute(
-                "CREATE TABLE IF NOT EXISTS answers ("
-                "key TEXT PRIMARY KEY, answer TEXT, grounded INTEGER, "
-                "sources TEXT, lang TEXT, query_en TEXT, created INTEGER, "
-                "embedding BLOB, history_hash TEXT)"
-            )
-            columns = {row[1] for row in db.execute("PRAGMA table_info(answers)")}
-            if "embedding" not in columns:
-                db.execute("ALTER TABLE answers ADD COLUMN embedding BLOB")
-            if "history_hash" not in columns:
-                db.execute("ALTER TABLE answers ADD COLUMN history_hash TEXT")
+        try:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            with self._connect() as db:
+                db.execute(
+                    "CREATE TABLE IF NOT EXISTS answers ("
+                    "key TEXT PRIMARY KEY, answer TEXT, grounded INTEGER, "
+                    "sources TEXT, lang TEXT, query_en TEXT, created INTEGER, "
+                    "embedding BLOB, history_hash TEXT)"
+                )
+                columns = {row[1] for row in db.execute("PRAGMA table_info(answers)")}
+                if "embedding" not in columns:
+                    db.execute("ALTER TABLE answers ADD COLUMN embedding BLOB")
+                if "history_hash" not in columns:
+                    db.execute("ALTER TABLE answers ADD COLUMN history_hash TEXT")
+        except Exception as exc:
+            print(f"warning: answer cache unavailable: {exc}", file=sys.stderr)
+
+    def _connect(self):
+        db = sqlite3.connect(self.path, timeout=5)
+        db.execute("PRAGMA busy_timeout=5000")
+        try:
+            db.execute("PRAGMA journal_mode=WAL")
+        except Exception:
+            pass
+        return db
 
     def get(self, key: str):
-        with sqlite3.connect(self.path, timeout=5) as db:
-            row = db.execute(
-                "SELECT answer, grounded, sources, lang, query_en, created "
-                "FROM answers WHERE key = ?",
-                (key,),
-            ).fetchone()
-        if not row or time.time() - row[5] > CACHE_TTL:
+        try:
+            with self._connect() as db:
+                row = db.execute(
+                    "SELECT answer, grounded, sources, lang, query_en, created "
+                    "FROM answers WHERE key = ?",
+                    (key,),
+                ).fetchone()
+            if not row or time.time() - row[5] > CACHE_TTL:
+                return None
+            return {
+                "grounded": bool(row[1]),
+                "answer": row[0],
+                "sources": json.loads(row[2] or "[]"),
+                "query_en": row[4] or "",
+            }
+        except Exception as exc:
+            print(f"warning: answer cache read failed: {exc}", file=sys.stderr)
             return None
-        return {
-            "grounded": bool(row[1]),
-            "answer": row[0],
-            "sources": json.loads(row[2] or "[]"),
-            "query_en": row[4] or "",
-        }
 
     def put(self, key: str, result: dict, lang: str, embedding=None, history_hash: str = ""):
         blob = None
         if embedding is not None:
             blob = np.asarray(embedding, dtype=np.float32).tobytes()
-        with sqlite3.connect(self.path, timeout=5) as db:
-            db.execute(
-                "INSERT OR REPLACE INTO answers "
-                "(key, answer, grounded, sources, lang, query_en, created, embedding, history_hash) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (
-                    key,
-                    result.get("answer", ""),
-                    1 if result.get("grounded") else 0,
-                    json.dumps(result.get("sources", []), ensure_ascii=False),
-                    primary_lang(lang),
-                    result.get("query_en", ""),
-                    int(time.time()),
-                    blob,
-                    history_hash,
-                ),
-            )
+        try:
+            with self._connect() as db:
+                db.execute(
+                    "INSERT OR REPLACE INTO answers "
+                    "(key, answer, grounded, sources, lang, query_en, created, embedding, history_hash) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        key,
+                        result.get("answer", ""),
+                        1 if result.get("grounded") else 0,
+                        json.dumps(result.get("sources", []), ensure_ascii=False),
+                        primary_lang(lang),
+                        result.get("query_en", ""),
+                        int(time.time()),
+                        blob,
+                        history_hash,
+                    ),
+                )
+        except Exception as exc:
+            print(f"warning: answer cache write failed: {exc}", file=sys.stderr)
 
     def get_semantic(self, embedding, lang: str, history_hash: str = ""):
         if embedding is None:
@@ -755,30 +774,34 @@ class AnswerCache:
         if norm == 0:
             return None
         query = query / norm
-        with sqlite3.connect(self.path, timeout=5) as db:
-            rows = db.execute(
-                "SELECT answer, grounded, sources, query_en, created, embedding "
-                "FROM answers WHERE lang = ? AND history_hash = ? "
-                "AND embedding IS NOT NULL AND created >= ?",
-                (primary_lang(lang), history_hash, int(time.time() - CACHE_TTL)),
-            ).fetchall()
-        best = None
-        best_score = CACHE_SEMANTIC_THRESHOLD
-        for answer, grounded, sources, query_en, _created, blob in rows:
-            vector = np.frombuffer(blob, dtype=np.float32)
-            if vector.shape != query.shape:
-                continue
-            score = float(np.dot(query, vector))
-            if score >= best_score:
-                best_score = score
-                best = {
-                    "grounded": bool(grounded),
-                    "answer": answer,
-                    "sources": json.loads(sources or "[]"),
-                    "query_en": query_en or "",
-                    "semantic": True,
-                }
-        return best
+        try:
+            with self._connect() as db:
+                rows = db.execute(
+                    "SELECT answer, grounded, sources, query_en, created, embedding "
+                    "FROM answers WHERE lang = ? AND history_hash = ? "
+                    "AND embedding IS NOT NULL AND created >= ?",
+                    (primary_lang(lang), history_hash, int(time.time() - CACHE_TTL)),
+                ).fetchall()
+            best = None
+            best_score = CACHE_SEMANTIC_THRESHOLD
+            for answer, grounded, sources, query_en, _created, blob in rows:
+                vector = np.frombuffer(blob, dtype=np.float32)
+                if vector.shape != query.shape:
+                    continue
+                score = float(np.dot(query, vector))
+                if score >= best_score:
+                    best_score = score
+                    best = {
+                        "grounded": bool(grounded),
+                        "answer": answer,
+                        "sources": json.loads(sources or "[]"),
+                        "query_en": query_en or "",
+                        "semantic": True,
+                    }
+            return best
+        except Exception as exc:
+            print(f"warning: semantic cache read failed: {exc}", file=sys.stderr)
+            return None
 
 
 class QueryLog:
@@ -792,7 +815,13 @@ class QueryLog:
         self._init()
 
     def _connect(self):
-        return sqlite3.connect(self.path, timeout=3)
+        db = sqlite3.connect(self.path, timeout=3)
+        db.execute("PRAGMA busy_timeout=3000")
+        try:
+            db.execute("PRAGMA journal_mode=WAL")
+        except Exception:
+            pass
+        return db
 
     def _init(self):
         try:
@@ -1010,6 +1039,9 @@ class RagService:
             "model": OLLAMA_MODEL,
             "model_present": model_present,
             "chunks": len(getattr(self.engine, "chunks", [])),
+            "embedder": bool(getattr(self.engine, "embedder", None)),
+            "reranker": bool(getattr(self.engine, "reranker", None)),
+            "query_log": str(getattr(self.query_log, "path", "")),
             "queue": self.queue.qsize(),
             "average_seconds": round(self.average, 1),
         }

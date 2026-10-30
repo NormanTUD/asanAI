@@ -34,6 +34,7 @@ server.Handler.log_message = lambda *args, **kwargs: None
 
 class FakeOllama(BaseHTTPRequestHandler):
     requests = []
+    fail_times = 0
 
     def _json(self, payload):
         body = json.dumps(payload).encode("utf-8")
@@ -53,6 +54,15 @@ class FakeOllama(BaseHTTPRequestHandler):
         length = int(self.headers.get("Content-Length") or 0)
         payload = json.loads(self.rfile.read(length).decode("utf-8"))
         FakeOllama.requests.append(payload)
+        if FakeOllama.fail_times > 0:
+            FakeOllama.fail_times -= 1
+            body = b'{"error":"temporarily unavailable"}'
+            self.send_response(503)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
         if payload.get("stream"):
             lines = [
                 {"message": {"content": "A "}, "done": False},
@@ -148,6 +158,14 @@ class FakeEngine:
 
 
 def main():
+    with tempfile.TemporaryDirectory(prefix="asanai-rag-bad-cache-") as tmp:
+        blocked = Path(tmp) / "not-a-directory"
+        blocked.write_text("x", encoding="utf-8")
+        broken = server.AnswerCache(blocked / "cache.sqlite")
+        check(broken.get("missing") is None, "a broken answer cache reads safely")
+        broken.put("key", {"answer": "a", "grounded": True, "sources": []}, "en")
+        check(True, "a broken answer cache writes safely")
+
     # Pure helpers.
     engine = object.__new__(server.RagEngine)
     chunks = [
@@ -261,8 +279,10 @@ def main():
     server.OLLAMA_MODEL = "test:1b"
     try:
         dummy = object.__new__(server.RagEngine)
+        FakeOllama.fail_times = 1
         content = dummy._ollama([{"role": "user", "content": "hi"}], 10, 0.0)
-        check(content == "answer [S1]", "Ollama client reads the message content")
+        check(content == "answer [S1]", "Ollama client retries a transient 503")
+        check(FakeOllama.fail_times == 0, "Ollama retry consumed the failure")
         check(FakeOllama.requests[-1]["model"] == "test:1b", "Ollama client sends the model")
         check(FakeOllama.requests[-1]["options"]["num_predict"] == 10,
               "Ollama client sends options")
@@ -270,6 +290,7 @@ def main():
               "translate calls Ollama for non-English questions")
         check(dummy.translate("What is a perceptron?", "en") == "What is a perceptron?",
               "translate skips English questions")
+        FakeOllama.fail_times = 1
         tokens = []
         streamed = dummy._ollama_stream([{"role": "user", "content": "hi"}], 10, 0.0,
                                         tokens.append)
@@ -295,6 +316,8 @@ def main():
         service.rate = server.RateLimiter(100, 0)
         health = service.health()
         check("ok" in health and "queue" in health, "health returns a usable payload")
+        check("embedder" in health and "query_log" in health,
+              "health reports optional components")
         httpd = server.ThreadingHTTPServer(("127.0.0.1", 0), server.Handler)
         httpd.daemon_threads = True
         server.Handler.service = service

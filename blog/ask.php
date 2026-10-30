@@ -9,11 +9,33 @@ declare(strict_types=1);
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
+set_time_limit(15);
 
 $service = rtrim(getenv('ASANAI_RAG_URL') ?: 'http://127.0.0.1:8090', '/');
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 function rag_request(string $url, string $method = 'GET', ?string $body = null, array $headers = []): array {
+	if (!function_exists('curl_init')) {
+		$context = stream_context_create([
+			'http' => [
+				'method' => $method,
+				'header' => implode("\r\n", $headers),
+				'content' => $body === null ? '' : $body,
+				'timeout' => 8,
+				'ignore_errors' => true,
+			],
+		]);
+		$raw = @file_get_contents($url, false, $context);
+		if ($raw === false) {
+			return [0, ['ok' => false, 'error' => 'unavailable']];
+		}
+		$code = 0;
+		if (isset($http_response_header[0]) && preg_match('/\s(\d{3})\s/', $http_response_header[0], $match)) {
+			$code = (int)$match[1];
+		}
+		$data = json_decode($raw, true);
+		return [$code, is_array($data) ? $data : ['ok' => false, 'error' => 'bad_response']];
+	}
 	$ch = curl_init($url);
 	$options = [
 		CURLOPT_RETURNTRANSFER => true,

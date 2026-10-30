@@ -185,10 +185,9 @@ def main() -> int:
 			"input.dispatchEvent(new Event('input', { bubbles: true }));"
 			"document.querySelector('.rag-chat-send').click();"
 		)
-		WebDriverWait(browser, 5).until(
-			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-spinner")) > 0
-		)
-		check(True, "the answer window shows a spinner while waiting")
+		check(browser.execute_script(
+			"return document.querySelectorAll('.rag-spinner').length"
+		) == 1, "the answer window shows a spinner while waiting")
 
 		WebDriverWait(browser, 5).until(
 			lambda d: "You are #2" in status_text(d)
@@ -315,6 +314,37 @@ def main() -> int:
 		check("A perceptron is a linear classifier" in
 			browser.find_element(By.CSS_SELECTOR, ".rag-chat-msg-assistant").text,
 			"restored answers keep their text")
+
+		# An in-flight job must survive a reload and resume polling.
+		browser.execute_script("document.querySelector('.rag-chat-clear').click()")
+		browser.execute_script(
+			"const input = document.querySelector('.rag-chat-input');"
+			"input.value = 'What is attention?';"
+			"input.dispatchEvent(new Event('input', { bubbles: true }));"
+			"document.querySelector('.rag-chat-send').click();"
+		)
+		WebDriverWait(browser, 6).until(
+			lambda d: "You are #2" in status_text(d)
+		)
+		browser.get(f"http://127.0.0.1:{port}/index.php")
+		WebDriverWait(browser, 60).until(
+			lambda d: d.execute_script(
+				"return !!document.getElementById('rag-chat-toggle')"
+			)
+		)
+		browser.execute_script("document.getElementById('rag-chat-toggle').click()")
+		WebDriverWait(browser, 10).until(
+			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")) > 0
+		)
+		check("What is attention?" in
+			browser.find_element(By.CSS_SELECTOR, ".rag-chat-msg-user").text,
+			"an in-flight question survives a reload")
+		WebDriverWait(browser, 15).until(
+			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-sources")) > 0
+		)
+		check("A perceptron is a linear classifier" in
+			browser.find_element(By.CSS_SELECTOR, ".rag-chat-msg-assistant").text,
+			"an in-flight answer resumes after a reload")
 
 		severe = [entry for entry in browser.get_log("browser")
 				  if entry.get("level") == "SEVERE"]
