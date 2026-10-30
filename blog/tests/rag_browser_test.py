@@ -90,8 +90,7 @@ def driver() -> webdriver.Chrome:
 MOCK = r"""
 (() => {
 	const realFetch = window.fetch.bind(window);
-	let statusCalls = 0;
-	window.__ragMock = { failStatus: false };
+	window.__ragMock = { failStatus: false, statusCalls: 0 };
 	const reply = (payload) => Promise.resolve(new Response(JSON.stringify(payload), {
 		status: 200,
 		headers: { 'Content-Type': 'application/json' }
@@ -105,8 +104,8 @@ MOCK = r"""
 			if (url.indexOf('undefined') !== -1 || window.__ragMock.failStatus) {
 				return reply({ error: 'unknown_job' });
 			}
-			statusCalls += 1;
-			if (statusCalls <= 25) {
+			window.__ragMock.statusCalls += 1;
+			if (window.__ragMock.statusCalls <= 25) {
 				return reply({
 					status: 'running',
 					position: 0,
@@ -117,7 +116,7 @@ MOCK = r"""
 			return reply({
 				status: 'done',
 				grounded: true,
-				answer: 'A perceptron is a linear classifier [S1].',
+				answer: '**A perceptron** is a *linear* classifier [S1].',
 				sources: [{
 					id: 'S1',
 					title: 'Brief History of AI',
@@ -127,6 +126,7 @@ MOCK = r"""
 			});
 		}
 		if (url.indexOf('ask.php') === 0) {
+			window.__ragMock.statusCalls = 0;
 			return reply({ id: 'test-job', status: 'queued', position: 2, eta_seconds: 20 });
 		}
 		return realFetch(input, init);
@@ -220,9 +220,12 @@ def main() -> int:
 			"the generated answer is rendered", answer[:120])
 		check("Brief History of AI" in answer and "The Perceptron" in answer,
 			"source links are rendered", answer[:200])
-		check("history#the-perceptron" in browser.execute_script(
+		assistant_html = browser.execute_script(
 			"return document.querySelector('.rag-chat-msg-assistant').innerHTML"
-		), "citation points at the lesson")
+		)
+		check("history#the-perceptron" in assistant_html, "citation points at the lesson")
+		check("<strong>" in assistant_html and "<em>" in assistant_html,
+			"markdown bold and italic render in answers")
 
 
 		# Enter sends; Shift+Enter inserts a newline and does not send.
@@ -345,6 +348,26 @@ def main() -> int:
 		check("A perceptron is a linear classifier" in
 			browser.find_element(By.CSS_SELECTOR, ".rag-chat-msg-assistant").text,
 			"an in-flight answer resumes after a reload")
+
+		# Streaming must never yank a reader who scrolled up back to the bottom.
+		browser.execute_script("""
+			const messages = document.querySelector('.rag-chat-messages');
+			const spacer = document.createElement('div');
+			spacer.style.height = '900px';
+			messages.appendChild(spacer);
+			const input = document.querySelector('.rag-chat-input');
+			input.value = 'What is attention?';
+			input.dispatchEvent(new Event('input', { bubbles: true }));
+			document.querySelector('.rag-chat-send').click();
+		""")
+		check(browser.execute_script(
+			"return document.querySelectorAll('.rag-spinner').length"
+		) == 1, "the answer window shows a spinner while waiting")
+		browser.execute_script("document.querySelector('.rag-chat-messages').scrollTop = 0")
+		time.sleep(1)
+		check(browser.execute_script(
+			"return document.querySelector('.rag-chat-messages').scrollTop"
+		) == 0, "streaming does not force-scroll a reader who is reading upwards")
 
 		severe = [entry for entry in browser.get_log("browser")
 				  if entry.get("level") == "SEVERE"]

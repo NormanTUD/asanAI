@@ -27,6 +27,11 @@ browser  ──POST /ask.php──▶  PHP proxy  ──▶  127.0.0.1:8090  (qu
 - **Streaming:** while the model runs, `/status` carries the partial answer;
   the chat polls every 100 ms while generating and renders every new token.
   No SSE and no proxy buffering tricks are needed.
+- **Failure handling:** transient Ollama 5xx/connection errors are retried
+  twice with backoff. An answer that still hits the token budget is cut back to
+  the last complete sentence (with an ellipsis) instead of ending mid-word.
+  Cache/log SQLite uses WAL and busy timeouts; a broken cache never takes the
+  service down.
 - **Safety filter:** obvious hateful/repetition instructions are refused
   immediately without calling the model. The query is stored only as
   `[blocked request]`.
@@ -150,7 +155,7 @@ Edit `/etc/asanai-rag.env` and `systemctl restart asanai-rag`:
 | `OLLAMA_MODEL` | `qwen2.5:1.5b` | Generation model |
 | `RERANK_MODEL` | `Xenova/ms-marco-MiniLM-L-6-v2` | Cross-encoder |
 | `MAX_QUEUE` | `20` | Pending requests before 429 |
-| `MAX_ANSWER_TOKENS` | `220` | Answer length |
+| `MAX_ANSWER_TOKENS` | `512` | Answer budget; if reached, the text is trimmed to a complete sentence |
 | `NUM_CTX` | `4096` | Context window |
 | `RATE_DAY` | `20` | Requests per IP per day |
 | `RATE_SECONDS` | `5` | Minimum gap per IP |

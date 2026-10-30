@@ -43,6 +43,17 @@ check(missing.indexOf('[S9]') !== -1, 'unknown citation is left visible');
 var bare = chat.answerHtml('See [1].', sources);
 check(bare.indexOf('href="history#the-perceptron"') !== -1, 'bare citation numbers link to sources');
 
+var markdown = chat.answerHtml('**bold** and *italic* and `code`', []);
+check(markdown.indexOf('<strong>bold</strong>') !== -1, 'bold markdown renders');
+check(markdown.indexOf('<em>italic</em>') !== -1, 'italic markdown renders');
+check(markdown.indexOf('<code>code</code>') !== -1, 'inline code renders');
+check(chat.answerHtml('`**not bold**`', []).indexOf('<strong>') === -1,
+	'markdown inside code stays literal');
+check(chat.answerHtml('[site](https://example.com)', []).indexOf('href="https://example.com"') !== -1,
+	'safe external links render');
+check(chat.answerHtml('[bad](javascript:alert(1))', []).indexOf('href=') === -1,
+	'unsafe link schemes are not rendered');
+
 check(chat.errorText({ error: 'unknown_job' }).indexOf('restarted') !== -1,
 	'lost-job error suggests retrying');
 check(chat.errorText({ error: 'rate_limited', retry_after: 7 }).indexOf('7') !== -1,

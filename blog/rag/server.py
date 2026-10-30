@@ -56,7 +56,7 @@ OLLAMA_RETRY_DELAY = float(os.environ.get("OLLAMA_RETRY_DELAY", "1.0"))
 
 MAX_QUEUE = int(os.environ.get("MAX_QUEUE", "20"))
 MAX_QUESTION_CHARS = int(os.environ.get("MAX_QUESTION_CHARS", "2000"))
-MAX_ANSWER_TOKENS = int(os.environ.get("MAX_ANSWER_TOKENS", "220"))
+MAX_ANSWER_TOKENS = int(os.environ.get("MAX_ANSWER_TOKENS", "512"))
 NUM_CTX = int(os.environ.get("NUM_CTX", "4096"))
 REQUEST_TIMEOUT = int(os.environ.get("REQUEST_TIMEOUT", "180"))
 RATE_DAY = int(os.environ.get("RATE_DAY", "20"))
@@ -120,7 +120,9 @@ SYSTEM_PROMPT = (
     "explain distinctions the passages make. Cite every factual sentence with "
     "its passage marker, for example [S1] or [S1][S2]. Answer in the same "
     "language as the user's question, even though the passages are in English. "
-    "Be concise: at most five sentences. Reply exactly "
+    "Be concise: keep the answer under about 120 words, with at most five "
+    "short sentences or five bullet points; do not enumerate every component "
+    "or produce long numbered lists. Reply exactly "
     f"{NOT_IN_COURSE} only when the passages contain nothing relevant at all; "
     "do not refuse merely because no single sentence states the answer "
     "directly. If the user asks you to write, repeat or generate hateful, "
@@ -266,6 +268,7 @@ class RagEngine:
             for chunk in self.chunks
         ])
 
+        self.last_done_reason = None
         self.embedder = None
         try:
             from fastembed import TextEmbedding
@@ -406,7 +409,7 @@ class RagEngine:
         try:
             translated = self._ollama(
                 messages,
-                max_tokens=MAX_ANSWER_TOKENS,
+                max_tokens=max(MAX_ANSWER_TOKENS, 600),
                 temperature=0.0,
             ).strip()
             return translated or answer
@@ -434,6 +437,9 @@ class RagEngine:
             )
         else:
             raw = self._ollama(messages, max_tokens=MAX_ANSWER_TOKENS, temperature=0.1)
+        if self.last_done_reason == "length" and raw.strip():
+            print("warning: answer hit the token limit; trimming to a sentence", file=sys.stderr)
+            raw = self.finish_sentence(raw)
         result = self.finalize(raw, chunks, lang, english)
         if not result["grounded"] and NOT_IN_COURSE_RE.search(raw):
             print("warning: model refused; retrying with a permissive prompt", file=sys.stderr)
@@ -459,6 +465,15 @@ class RagEngine:
         if result["grounded"]:
             result["answer"] = self.ensure_language(result["answer"], lang)
         return result
+
+    def finish_sentence(self, text: str) -> str:
+        text = (text or "").rstrip()
+        if not text or text[-1] in ".!?…\"')]":
+            return text
+        matches = list(re.finditer(r"[.!?](?=\s|$)", text))
+        if matches:
+            return text[: matches[-1].end()] + " …"
+        return text + " …"
 
     def build_messages(self, question, english, chunks, lang, history):
         language = LANGUAGE_NAMES.get(primary_lang(lang), "English")
@@ -596,6 +611,7 @@ class RagEngine:
             try:
                 with request.urlopen(req, timeout=REQUEST_TIMEOUT) as response:
                     data = json.loads(response.read().decode("utf-8"))
+                self.last_done_reason = data.get("done_reason")
                 message = data.get("message") or {}
                 return str(message.get("content") or "")
             except error.HTTPError as exc:
@@ -635,6 +651,7 @@ class RagEngine:
             method="POST",
         )
         sent = {"value": False}
+        reasons = {"value": None}
 
         def stream_once():
             pieces = []
@@ -664,6 +681,7 @@ class RagEngine:
                         else:
                             on_token(token)
                     if data.get("done"):
+                        reasons["value"] = data.get("done_reason")
                         break
             final = "".join(pieces)
             if final and not streaming and not NOT_IN_COURSE_RE.search(final):
@@ -674,7 +692,9 @@ class RagEngine:
         last_error = None
         for attempt in range(OLLAMA_RETRIES + 1):
             try:
-                return stream_once()
+                result = stream_once()
+                self.last_done_reason = reasons["value"]
+                return result
             except error.HTTPError as exc:
                 detail = exc.read().decode("utf-8", "replace")[:300]
                 if sent["value"] or exc.code < 500 or attempt >= OLLAMA_RETRIES:

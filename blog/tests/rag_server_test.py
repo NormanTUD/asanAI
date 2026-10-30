@@ -67,7 +67,7 @@ class FakeOllama(BaseHTTPRequestHandler):
             lines = [
                 {"message": {"content": "A "}, "done": False},
                 {"message": {"content": "perceptron"}, "done": False},
-                {"message": {"content": " [S1]."}, "done": True},
+                {"message": {"content": " [S1]."}, "done": True, "done_reason": "stop"},
             ]
             body = "".join(json.dumps(line) + "\n" for line in lines).encode("utf-8")
             self.send_response(200)
@@ -199,6 +199,7 @@ def main():
 
     # A NOT_IN_COURSE response triggers one permissive retry.
     retry_engine = object.__new__(server.RagEngine)
+    retry_engine.last_done_reason = None
     retry_engine.translate = lambda question, lang: question
     retry_engine.retrieve = lambda question, limit=5: chunks
     retry_engine.build_messages = lambda *args: [
@@ -232,6 +233,14 @@ def main():
         ),
         "heading/year boost favors the Transformer 2017 section",
     )
+
+    check(server.MAX_ANSWER_TOKENS >= 400, "answer budget leaves room for complete answers")
+    sentence_engine = object.__new__(server.RagEngine)
+    check(sentence_engine.finish_sentence("A complete answer.")
+          == "A complete answer.", "finish_sentence keeps complete sentences")
+    check(sentence_engine.finish_sentence("This stops in the middle and")
+          == "This stops in the middle and …",
+          "finish_sentence marks an unfinished answer")
 
     lang_engine = object.__new__(server.RagEngine)
     lang_engine._ollama = lambda messages, max_tokens, temperature: "Der Transformer wurde 2017 entwickelt."
@@ -296,6 +305,7 @@ def main():
                                         tokens.append)
         check(streamed == "A perceptron [S1].", "streaming client concatenates tokens")
         check("".join(tokens) == "A perceptron [S1].", "streaming client calls on_token")
+        check(dummy.last_done_reason == "stop", "streaming client records the finish reason")
     finally:
         server.OLLAMA_URL, server.OLLAMA_MODEL = old_url, old_model
         fake.shutdown()

@@ -83,17 +83,50 @@
 		return 'The answer service is unavailable right now. Please try again.';
 	}
 
+	function safeLink(url) {
+		url = String(url || '').trim();
+		if (/^https?:\/\//i.test(url)) return url;
+		if (/^\/(?!\/)/.test(url) || /^#/.test(url)) return url;
+		if (/^[a-zA-Z0-9_-]+(?:[\/#?][a-zA-Z0-9_.\/#?=&%+-]*)?$/.test(url)) return url;
+		return '';
+	}
+
 	function answerHtml(answer, sources) {
 		var byId = {};
 		(sources || []).forEach(function(source) {
 			if (source && source.id) byId[source.id] = source;
 		});
-		var html = esc(answer).replace(/\[(?:S(\d+)|(\d+))\]/g, function(marker, sourceNumber, bareNumber) {
+		var stashed = [];
+		function stash(html) {
+			stashed.push(html);
+			return '\u0000T' + (stashed.length - 1) + '\u0000';
+		}
+
+		var html = esc(answer);
+		html = html.replace(/`([^`\n]+)`/g, function(_, code) {
+			return stash('<code>' + code + '</code>');
+		});
+		html = html.replace(/\[(?:S(\d+)|(\d+))\]/g, function(marker, sourceNumber, bareNumber) {
 			var number = sourceNumber || bareNumber;
 			var source = byId['S' + number];
 			if (!source || !source.url) return marker;
-			return '<a class="rag-cite" href="' + escAttr(source.url) + '">[' + number + ']</a>';
+			return stash('<a class="rag-cite" href="' + escAttr(source.url) + '">[' + number + ']</a>');
 		});
+		html = html.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function(_, label, url) {
+			var safe = safeLink(url);
+			if (!safe) return label;
+			return stash('<a href="' + escAttr(safe) + '" target="_blank" rel="noopener noreferrer">' + label + '</a>');
+		});
+		html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+		html = html.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+		html = html.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+		html = html.replace(/(^|[^_])_([^_\n]+)_/g, '$1<em>$2</em>');
+		html = html.replace(/\n{2,}/g, '</p><p>').replace(/\n/g, '<br>');
+		html = '<p>' + html + '</p>';
+		html = html.replace(/\u0000T(\d+)\u0000/g, function(_, index) {
+			return stashed[Number(index)] || '';
+		});
+
 		if (sources && sources.length) {
 			html += '<div class="rag-sources"><strong>Sources</strong><ul>';
 			sources.forEach(function(source) {
@@ -210,9 +243,7 @@
 			));
 			if (message.grounded === false) node.classList.add('rag-chat-msg-refusal');
 		});
-		if (state.messages.length) {
-			els.messages.scrollTop = els.messages.scrollHeight;
-		}
+		if (state.messages.length) scrollMessages();
 	}
 
 	function readActiveJob() {
@@ -388,12 +419,22 @@
 		if (els.button) els.button.focus();
 	}
 
-	function addMessage(role, html, extraClass) {
+	function isNearBottom() {
+		if (!els.messages) return true;
+		return els.messages.scrollHeight - els.messages.scrollTop - els.messages.clientHeight < 48;
+	}
+
+	function scrollMessages() {
+		if (els.messages) els.messages.scrollTop = els.messages.scrollHeight;
+	}
+
+	function addMessage(role, html, extraClass, forceScroll) {
+		var follow = forceScroll === true || isNearBottom();
 		var node = document.createElement('div');
 		node.className = 'rag-chat-msg rag-chat-msg-' + role + (extraClass ? ' ' + extraClass : '');
 		node.innerHTML = html;
 		els.messages.appendChild(node);
-		els.messages.scrollTop = els.messages.scrollHeight;
+		if (follow) scrollMessages();
 		return node;
 	}
 
@@ -442,10 +483,11 @@
 		// Never replace the node while the reader is selecting its text.
 		if (selectionInside(state.streamNode)) return;
 		if (state.lastPartial === text) return;
+		var follow = isNearBottom();
 		state.lastPartial = text;
 		state.streamNode.innerHTML = answerHtml(text, []) +
 			'<span class="rag-cursor" aria-hidden="true"></span>';
-		els.messages.scrollTop = els.messages.scrollHeight;
+		if (follow) scrollMessages();
 	}
 
 	function submit() {
@@ -474,7 +516,7 @@
 		state.slow = false;
 		state.lastPartial = '';
 		if (addUser) {
-			addMessage('user', esc(question));
+			addMessage('user', esc(question), null, true);
 			state.messages.push({ role: 'user', text: question });
 			saveConversation();
 		}
@@ -582,10 +624,12 @@
 		var sources = Array.isArray(data.sources) ? data.sources : [];
 		var node = state.streamNode;
 		state.streamNode = null;
+		var follow = isNearBottom();
 		if (!node) node = addMessage('assistant', '');
 		node.className = 'rag-chat-msg rag-chat-msg-assistant' +
 			(data.grounded === false ? ' rag-chat-msg-refusal' : '');
 		node.innerHTML = answerHtml(answer, sources);
+		if (follow) scrollMessages();
 		state.history.push({ role: 'user', content: question });
 		state.history.push({ role: 'assistant', content: answer });
 		state.history = state.history.slice(-6);

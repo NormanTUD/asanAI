@@ -611,7 +611,9 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
   service binds to `127.0.0.1`; `ask.php` is the public proxy. Q&A are logged
   to `/var/lib/asanai-rag/queries.sqlite` (no IPs; blocked requests redacted)
   and shown at `/questions`, linked from the stats nav and using the same
-  admin session/password. Tests: `node blog/tests/rag_chat_test.js`,
+  admin session/password. The browser client persists the transcript, resumes
+  an in-flight job after a reload, retries transient failures and never
+  force-scrolls a reader who scrolled up. Tests: `node blog/tests/rag_chat_test.js`,
   `uv run blog/tests/rag_server_test.py`, `uv run blog/tests/rag_index_test.py`.
 - **Read-progress** (`progress_tracker.js`): per-tile 10-segment "where I've
   been" bars, dwell-time based (a band counts as read after ≥3 s). Passive —
