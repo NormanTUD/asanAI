@@ -1536,3 +1536,14 @@ Autor, Lizenz und Quellenlink direkt in der Abbildung.
    Lokal: octopus_eye.jpg (1280x1893, 1280px-Thumbnail der 3384x5005-Vorlage)
    Genutzt in: philosophy.php § "The Evolution of Qualia"
    Status: OK - CC BY 2.0
+
+=== WARREN McCULLOCH, 1948 NEWSPAPER CLIPPING (history.php + people_of_ai.php, Stand: Oktober 2026) ===
+====================================================================
+
+1. afflictor2014mcculloch
+   URL: https://afflictor.com/2014/09/22/old-print-article-warns-machines-may-some-day-take-over-the-world-brooklyn-daily-eagle-1948/
+   Lizenz: nicht angegeben. Der zugrunde liegende Artikel erschien am 22. September 1948 im Brooklyn Daily Eagle (United Press); der Scan wird von Afflictor.com gehostet. Als historisches Zitat für die nichtkommerzielle Lehre verwendet.
+   Autor: Brooklyn Daily Eagle / United Press (Artikel); Scan: Darren D'Addario, Afflictor.com
+   Lokal: warrenmcculloch_afflictor.jpg (499x1343)
+   Genutzt in: history.php § "The formalization of Neurons"; people_of_ai.php § "Warren McCulloch and Walter Pitts"
+   Status: Prüfen - Lizenz unklar
