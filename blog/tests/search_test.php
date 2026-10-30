@@ -117,6 +117,7 @@ title: Macro Cleaning
 </div>
 <div class="md">
 A sentence with a \sidenote{sidenotemarker text with \cite{img_frank_rosenblatt}.} and an \index{indexedterm}.
+Watch this: [youtube]8Wdz1Tj5084[/youtube]
 </div>
 PHP);
 
@@ -304,6 +305,9 @@ check(pagesHave($d, 'macros'), 'macros: sidenote text is searchable');
 
 $d = q('indexedterm');
 check(pagesHave($d, 'macros'), 'macros: index term is searchable');
+
+$d = q('8Wdz1Tj5084');
+check(!pagesHave($d, 'macros'), 'macros: youtube video ids are stripped from search text');
 
 /* ---------- exclusion / limits ---------- */
 
