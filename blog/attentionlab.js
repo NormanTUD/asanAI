@@ -6086,10 +6086,556 @@ function updateLDD() {
     </tr></table>`;
 }
 
+function otPrepareCanvas(canvas) {
+	const rect = canvas.getBoundingClientRect();
+	if (rect.width < 2 || rect.height < 2) return null;
+	const dpr = window.devicePixelRatio || 1;
+	canvas.width = Math.round(rect.width * dpr);
+	canvas.height = Math.round(rect.height * dpr);
+	const ctx = canvas.getContext('2d');
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	return { ctx: ctx, W: rect.width, H: rect.height };
+}
+
+function otPalette() {
+	const dark = isDarkMode();
+	return {
+		ink: themeColor('#1e293b'),
+		dim: themeColor('#475569'),
+		muted: themeColor('#64748b'),
+		faint: themeColor('#94a3b8'),
+		grid: themeColor('#e2e8f0'),
+		teal: dark ? '#5eead4' : '#0f766e',
+		amber: dark ? '#fbbf24' : '#b45309',
+		rose: dark ? '#fb7185' : '#be185d',
+		violet: dark ? '#a78bfa' : '#6d28d9',
+		white: dark ? '#1e293b' : '#ffffff'
+	};
+}
+
+function otAlpha(hex, alpha) {
+	const h = hex.replace('#', '');
+	const n = parseInt(h, 16);
+	return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + alpha + ')';
+}
+
+const AttnOTLab = {
+	budgetKeys: [
+		{ label: 'Katze', score: 2.0 },
+		{ label: 'Tier', score: 1.2 },
+		{ label: 'läuft', score: 0.4 },
+		{ label: 'blau', score: -0.6 },
+		{ label: 'Haus', score: -1.4 }
+	],
+	budgetTemp: 1,
+	budgetPlanName: 'soft',
+
+	optTemp: 1,
+	optA: 1.5,
+	optB: 0.2,
+	optP: 0.5,
+
+	learnUtilities: [1.4, -0.6, 0.8, -1.1, 0.2],
+	learnBaseUtilities: [1.4, -0.6, 0.8, -1.1, 0.2],
+	learnLogits: [0, 0, 0, 0, 0],
+	learnSteps: 0,
+	learnTimer: null,
+	learnEta: 0.9,
+
+	entropy: function (p) {
+		let h = 0;
+		for (let i = 0; i < p.length; i++) {
+			if (p[i] > 1e-12) h -= p[i] * Math.log(p[i]);
+		}
+		return h;
+	},
+
+	budgetPlan: function () {
+		const scores = this.budgetKeys.map(function (k) { return k.score; });
+		if (this.budgetPlanName === 'best') {
+			let best = 0;
+			for (let i = 1; i < scores.length; i++) if (scores[i] > scores[best]) best = i;
+			return scores.map(function (_, i) { return i === best ? 1 : 0; });
+		}
+		if (this.budgetPlanName === 'even') {
+			return scores.map(function () { return 1 / scores.length; });
+		}
+		return softmax(scores.map(function (s) { return s / this.budgetTemp; }, this));
+	},
+
+	syncBudgetButtons: function () {
+		const self = this;
+		document.querySelectorAll('[data-ot-plan]').forEach(function (btn) {
+			btn.classList.toggle('is-active', btn.dataset.otPlan === self.budgetPlanName);
+		});
+	},
+
+	drawBudget: function () {
+		const p = this.budgetPlan();
+		const keys = this.budgetKeys;
+		const sim = p.reduce(function (a, v, i) { return a + v * keys[i].score; }, 0);
+		const spread = this.entropy(p);
+		const bad = -sim - this.budgetTemp * spread;
+
+		const simEl = document.getElementById('attn-ot-budget-sim');
+		const spreadEl = document.getElementById('attn-ot-budget-spread');
+		const badEl = document.getElementById('attn-ot-budget-bad');
+		const tempEl = document.getElementById('attn-ot-temp-val');
+		if (simEl) simEl.textContent = sim.toFixed(2);
+		if (spreadEl) spreadEl.textContent = spread.toFixed(2);
+		if (badEl) badEl.textContent = bad.toFixed(2);
+		if (tempEl) tempEl.textContent = this.budgetTemp.toFixed(2);
+
+		const canvas = document.getElementById('attn-ot-budget-canvas');
+		if (!canvas) return;
+		const prep = otPrepareCanvas(canvas);
+		if (!prep) return;
+		const ctx = prep.ctx;
+		const W = prep.W;
+		const H = prep.H;
+		const P = otPalette();
+		ctx.clearRect(0, 0, W, H);
+
+		drawLabel(ctx, 'one unit of attention', 14, 18, P.muted, 10, 'left', true);
+
+		const top = 50;
+		const bottomPad = 20;
+		const rowH = (H - top - bottomPad) / this.budgetKeys.length;
+		const qx = Math.max(34, W * 0.08);
+		const qy = top + (H - top - bottomPad) / 2;
+		const nodeX = W * 0.33;
+		const labelX = nodeX + 15;
+		const barX = W * 0.55;
+		const barW = Math.max(30, W - barX - 46);
+
+		ctx.beginPath();
+		ctx.arc(qx, qy, 27, 0, Math.PI * 2);
+		ctx.fillStyle = otAlpha(P.teal, 0.12);
+		ctx.fill();
+		ctx.strokeStyle = P.teal;
+		ctx.lineWidth = 2;
+		ctx.stroke();
+		drawLabel(ctx, 'q', qx, qy - 4, P.ink, 18, 'center', true);
+		drawLabel(ctx, '1 unit', qx, qy + 14, P.muted, 9, 'center');
+
+		this.budgetKeys.forEach(function (key, i) {
+			const cy = top + rowH * i + rowH / 2;
+			const share = p[i];
+
+			ctx.beginPath();
+			ctx.moveTo(qx + 27, qy);
+			ctx.bezierCurveTo(qx + (nodeX - qx) * 0.55, qy, nodeX - 34, cy, nodeX, cy);
+			ctx.strokeStyle = otAlpha(P.teal, 0.12 + 0.82 * share);
+			ctx.lineWidth = 1 + 15 * share;
+			ctx.lineCap = 'round';
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.arc(nodeX, cy, 6 + 15 * share, 0, Math.PI * 2);
+			ctx.fillStyle = otAlpha(P.teal, 0.22 + 0.72 * share);
+			ctx.fill();
+			ctx.strokeStyle = P.teal;
+			ctx.lineWidth = 1.5;
+			ctx.stroke();
+
+			drawLabel(ctx, key.label, labelX, cy - 6, P.ink, 12, 'left', true);
+			drawLabel(ctx, 'sim ' + key.score.toFixed(1), labelX, cy + 10, P.muted, 9, 'left');
+
+			ctx.fillStyle = P.grid;
+			ctx.fillRect(barX, cy - 6, barW, 12);
+			ctx.fillStyle = P.teal;
+			ctx.fillRect(barX, cy - 6, barW * share, 12);
+
+			drawLabel(ctx, (share * 100).toFixed(0) + '%', W - 8, cy, P.ink, 11, 'right', true);
+		}, this);
+	},
+
+	optBest: function () {
+		return 1 / (1 + Math.exp(-(this.optA - this.optB) / this.optTemp));
+	},
+
+	optBadness: function (p) {
+		const q = Math.min(1 - 1e-9, Math.max(1e-9, p));
+		const h = -(q * Math.log(q) + (1 - q) * Math.log(1 - q));
+		return -(q * this.optA + (1 - q) * this.optB) - this.optTemp * h;
+	},
+
+	drawOptimizer: function () {
+		const pBest = this.optBest();
+		const pNow = this.optP;
+		const badNow = this.optBadness(pNow);
+		const badBest = this.optBadness(pBest);
+		const gap = Math.abs(pNow - pBest);
+
+		const bestEl = document.getElementById('attn-ot-opt-best');
+		const gapEl = document.getElementById('attn-ot-opt-gap');
+		const badEl = document.getElementById('attn-ot-opt-bad');
+		const pValEl = document.getElementById('attn-ot-opt-pval');
+		const statusEl = document.getElementById('attn-ot-opt-status');
+		const scoresEl = document.getElementById('attn-ot-opt-scores');
+		if (bestEl) bestEl.textContent = pBest.toFixed(2);
+		if (gapEl) gapEl.textContent = gap.toFixed(2);
+		if (badEl) badEl.textContent = badNow.toFixed(2);
+		if (pValEl) pValEl.textContent = pNow.toFixed(2);
+		if (scoresEl) scoresEl.textContent = 'Key A: ' + this.optA.toFixed(1) + ' · Key B: ' + this.optB.toFixed(1);
+		if (statusEl) {
+			statusEl.className = 'attn-ot-status' + (gap < 0.03 ? ' good' : (gap > 0.15 ? ' far' : ''));
+			if (gap < 0.03) statusEl.textContent = 'You found it: this is the softmax plan.';
+			else if (gap < 0.12) statusEl.textContent = 'Very close — follow the curve a little further.';
+			else statusEl.textContent = 'Not at the bottom yet — move toward the lowest point.';
+		}
+
+		const canvas = document.getElementById('attn-ot-opt-canvas');
+		if (!canvas) return;
+		const prep = otPrepareCanvas(canvas);
+		if (!prep) return;
+		const ctx = prep.ctx;
+		const W = prep.W;
+		const H = prep.H;
+		const P = otPalette();
+		ctx.clearRect(0, 0, W, H);
+
+		const samples = [];
+		for (let i = 0; i <= 120; i++) {
+			const q = 0.002 + (0.996 * i) / 120;
+			samples.push({ p: q, j: this.optBadness(q) });
+		}
+		let jMin = Math.min.apply(null, samples.map(function (s) { return s.j; }));
+		let jMax = Math.max.apply(null, samples.map(function (s) { return s.j; }));
+		const pad = (jMax - jMin) * 0.12 || 1;
+		jMin -= pad;
+		jMax += pad;
+
+		const padL = W < 430 ? 42 : 58;
+		const padR = 16;
+		const padT = 38;
+		const padB = 42;
+		const plotW = W - padL - padR;
+		const plotH = H - padT - padB;
+		const xOf = function (p) { return padL + plotW * p; };
+		const yOf = function (j) { return padT + plotH * (1 - (j - jMin) / (jMax - jMin)); };
+
+		ctx.strokeStyle = P.grid;
+		ctx.lineWidth = 1;
+		for (let g = 0; g <= 3; g++) {
+			const y = padT + (plotH * g) / 3;
+			ctx.beginPath();
+			ctx.moveTo(padL, y);
+			ctx.lineTo(W - padR, y);
+			ctx.stroke();
+		}
+
+		ctx.strokeStyle = P.faint;
+		ctx.lineWidth = 1.5;
+		ctx.beginPath();
+		ctx.moveTo(padL, padT);
+		ctx.lineTo(padL, padT + plotH);
+		ctx.lineTo(W - padR, padT + plotH);
+		ctx.stroke();
+
+		drawLabel(ctx, 'total badness J', padL, padT - 22, P.muted, 10, 'left', true);
+		drawLabel(ctx, 'lower is better', padL, padT - 9, P.muted, 9, 'left');
+		drawLabel(ctx, 'Key A: ' + this.optA.toFixed(1) + '  ·  Key B: ' + this.optB.toFixed(1), W - padR, padT - 22, P.muted, 10, 'right', true);
+		drawLabel(ctx, 'star = best plan   dot = you', W - padR, padT - 9, P.muted, 9, 'right');
+
+		ctx.beginPath();
+		samples.forEach(function (s, i) {
+			const x = xOf(s.p);
+			const y = yOf(s.j);
+			if (i === 0) ctx.moveTo(x, y);
+			else ctx.lineTo(x, y);
+		});
+		ctx.strokeStyle = P.teal;
+		ctx.lineWidth = 2.5;
+		ctx.stroke();
+
+		const xNow = xOf(pNow);
+		const yNow = yOf(badNow);
+		const xBest = xOf(pBest);
+		const yBest = yOf(badBest);
+
+		ctx.save();
+		ctx.setLineDash([4, 4]);
+		ctx.strokeStyle = otAlpha(P.amber, 0.6);
+		ctx.lineWidth = 1;
+		ctx.beginPath();
+		ctx.moveTo(xBest, yBest);
+		ctx.lineTo(xBest, padT + plotH);
+		ctx.stroke();
+		ctx.strokeStyle = otAlpha(P.rose, 0.45);
+		ctx.beginPath();
+		ctx.moveTo(xNow, yNow);
+		ctx.lineTo(xNow, padT + plotH);
+		ctx.stroke();
+		ctx.restore();
+
+		drawLabel(ctx, '★', xBest, yBest - 2, P.amber, 18, 'center', true);
+		ctx.beginPath();
+		ctx.arc(xNow, yNow, 6, 0, Math.PI * 2);
+		ctx.fillStyle = P.rose;
+		ctx.fill();
+		ctx.strokeStyle = P.white;
+		ctx.lineWidth = 2;
+		ctx.stroke();
+
+		drawLabel(ctx, '0', padL, padT + plotH + 15, P.faint, 9, 'center');
+		drawLabel(ctx, '0.5', padL + plotW / 2, padT + plotH + 15, P.faint, 9, 'center');
+		drawLabel(ctx, '1', W - padR, padT + plotH + 15, P.faint, 9, 'center');
+		drawLabel(ctx, 'share of attention on key A', W / 2, H - 8, P.muted, 10, 'center');
+	},
+
+	learnPolicy: function () {
+		return softmax(this.learnLogits);
+	},
+
+	learnExpected: function (p) {
+		const u = this.learnUtilities;
+		return p.reduce(function (a, v, i) { return a + v * u[i]; }, 0);
+	},
+
+	learnStep: function () {
+		const p = this.learnPolicy();
+		const exp = this.learnExpected(p);
+		this.learnLogits = this.learnLogits.map(function (s, i) {
+			return s + this.learnEta * p[i] * (this.learnUtilities[i] - exp);
+		}, this);
+		this.learnSteps += 1;
+		this.drawLearning();
+		if (this.learnSteps >= 90) this.stopLearningAuto();
+	},
+
+	stopLearningAuto: function () {
+		if (this.learnTimer) {
+			clearInterval(this.learnTimer);
+			this.learnTimer = null;
+		}
+		const btn = document.getElementById('attn-ot-learn-auto');
+		if (btn) {
+			btn.textContent = 'Auto';
+			btn.classList.remove('is-active');
+		}
+	},
+
+	toggleLearningAuto: function () {
+		if (this.learnTimer) {
+			this.stopLearningAuto();
+			return;
+		}
+		const self = this;
+		this.learnTimer = setInterval(function () { self.learnStep(); }, 200);
+		const btn = document.getElementById('attn-ot-learn-auto');
+		if (btn) {
+			btn.textContent = 'Stop';
+			btn.classList.add('is-active');
+		}
+	},
+
+	drawLearning: function () {
+		const p = this.learnPolicy();
+		const u = this.learnUtilities;
+		const exp = this.learnExpected(p);
+		const advantage = u.map(function (v) { return v - exp; });
+		let best = 0;
+		for (let i = 1; i < u.length; i++) if (u[i] > u[best]) best = i;
+
+		const stepEl = document.getElementById('attn-ot-learn-step');
+		const expEl = document.getElementById('attn-ot-learn-exp');
+		const bestEl = document.getElementById('attn-ot-learn-best');
+		if (stepEl) stepEl.textContent = String(this.learnSteps);
+		if (expEl) expEl.textContent = exp.toFixed(2);
+		if (bestEl) bestEl.textContent = 'Key ' + (best + 1);
+
+		const canvas = document.getElementById('attn-ot-learn-canvas');
+		if (!canvas) return;
+		const prep = otPrepareCanvas(canvas);
+		if (!prep) return;
+		const ctx = prep.ctx;
+		const W = prep.W;
+		const H = prep.H;
+		const P = otPalette();
+		ctx.clearRect(0, 0, W, H);
+
+		const padL = W < 430 ? 74 : 92;
+		const padR = 18;
+		const top = 14;
+		const labelBottom = H - 24;
+		const gap = 10;
+		const rowH = (labelBottom - top - gap * 2) / 3;
+		const r1Bottom = top + rowH;
+		const r2Top = r1Bottom + gap;
+		const r2Center = r2Top + rowH / 2;
+		const r3Top = r2Top + rowH;
+		const r3Center = r3Top + rowH / 2;
+		const colW = (W - padL - padR) / p.length;
+		const barW = Math.max(14, Math.min(34, colW * 0.55));
+		const barH1 = rowH * 0.72;
+		const maxBar2 = rowH * 0.30;
+		const maxU = Math.max.apply(null, u.map(function (v) { return Math.abs(v); }).concat([1]));
+
+		drawLabel(ctx, 'Attention p', 8, top + rowH / 2, P.ink, 10, 'left', true);
+		drawLabel(ctx, 'Reward u', 8, r2Center, P.amber, 10, 'left', true);
+		drawLabel(ctx, 'Advantage', 8, r3Center, P.violet, 10, 'left', true);
+		drawLabel(ctx, 'u − average', 8, r3Center + 12, P.muted, 8, 'left');
+
+		ctx.strokeStyle = P.grid;
+		ctx.lineWidth = 1;
+		ctx.beginPath();
+		ctx.moveTo(padL, r1Bottom);
+		ctx.lineTo(W - padR, r1Bottom);
+		ctx.moveTo(padL, r2Center);
+		ctx.lineTo(W - padR, r2Center);
+		ctx.moveTo(padL, r3Center);
+		ctx.lineTo(W - padR, r3Center);
+		ctx.stroke();
+
+		ctx.save();
+		ctx.setLineDash([4, 4]);
+		ctx.strokeStyle = otAlpha(P.amber, 0.55);
+		ctx.beginPath();
+		const yAvg = r2Center - (exp / maxU) * maxBar2;
+		ctx.moveTo(padL, yAvg);
+		ctx.lineTo(W - padR, yAvg);
+		ctx.stroke();
+		ctx.restore();
+		drawLabel(ctx, 'average', W - padR, yAvg - 7, P.muted, 8, 'right');
+
+		for (let i = 0; i < p.length; i++) {
+			const x = padL + colW * i + colW / 2;
+			const shareHeight = p[i] * barH1;
+
+			ctx.fillStyle = P.grid;
+			ctx.fillRect(x - barW / 2, r1Bottom - barH1, barW, barH1);
+			ctx.fillStyle = P.teal;
+			ctx.fillRect(x - barW / 2, r1Bottom - shareHeight, barW, shareHeight);
+			drawLabel(ctx, (p[i] * 100).toFixed(0) + '%', x, r1Bottom - shareHeight - 7, P.ink, 9, 'center', true);
+
+			const uH = (u[i] / maxU) * maxBar2;
+			ctx.fillStyle = u[i] >= 0 ? P.amber : P.rose;
+			ctx.fillRect(x - barW / 2, r2Center - Math.max(0, uH), barW, Math.abs(uH));
+
+			const aH = (advantage[i] / maxU) * maxBar2;
+			ctx.fillStyle = advantage[i] >= 0 ? P.violet : P.rose;
+			ctx.fillRect(x - barW / 2, r3Center - Math.max(0, aH), barW, Math.abs(aH));
+
+			const label = (i === best ? '★ ' : '') + (i + 1);
+			drawLabel(ctx, label, x, H - 10, i === best ? P.amber : P.muted, 10, 'center', i === best);
+		}
+	},
+
+	drawAll: function () {
+		this.drawBudget();
+		this.drawOptimizer();
+		this.drawLearning();
+	},
+
+	init: function () {
+		if (this._inited) return;
+		const budgetCanvas = document.getElementById('attn-ot-budget-canvas');
+		if (!budgetCanvas) return;
+		this._inited = true;
+		const self = this;
+
+		const tempEl = document.getElementById('attn-ot-temp');
+		if (tempEl) {
+			this.budgetTemp = +tempEl.value / 100;
+			tempEl.addEventListener('input', function () {
+				self.budgetTemp = +tempEl.value / 100;
+				self.budgetPlanName = 'soft';
+				self.syncBudgetButtons();
+				self.drawBudget();
+			});
+		}
+		document.querySelectorAll('[data-ot-plan]').forEach(function (btn) {
+			btn.addEventListener('click', function () {
+				self.budgetPlanName = btn.dataset.otPlan;
+				self.syncBudgetButtons();
+				self.drawBudget();
+			});
+		});
+
+		const optSlider = document.getElementById('attn-ot-opt-slider');
+		if (optSlider) {
+			optSlider.addEventListener('input', function () {
+				self.optP = +optSlider.value / 100;
+				self.drawOptimizer();
+			});
+		}
+		const optBestBtn = document.getElementById('attn-ot-opt-best-btn');
+		if (optBestBtn) {
+			optBestBtn.addEventListener('click', function () {
+				self.optP = self.optBest();
+				if (optSlider) optSlider.value = String(Math.round(self.optP * 100));
+				self.drawOptimizer();
+			});
+		}
+		const optReset = document.getElementById('attn-ot-opt-reset');
+		if (optReset) {
+			optReset.addEventListener('click', function () {
+				self.optP = 0.5;
+				if (optSlider) optSlider.value = '50';
+				self.drawOptimizer();
+			});
+		}
+		const optNew = document.getElementById('attn-ot-opt-new');
+		if (optNew) {
+			optNew.addEventListener('click', function () {
+				self.optB = -0.6 + Math.random() * 0.9;
+				self.optA = 0.9 + Math.random() * 1.4;
+				self.optP = 0.5;
+				if (optSlider) optSlider.value = '50';
+				self.drawOptimizer();
+			});
+		}
+
+		const learnStepBtn = document.getElementById('attn-ot-learn-step-btn');
+		if (learnStepBtn) {
+			learnStepBtn.addEventListener('click', function () { self.learnStep(); });
+		}
+		const learnAuto = document.getElementById('attn-ot-learn-auto');
+		if (learnAuto) {
+			learnAuto.addEventListener('click', function () { self.toggleLearningAuto(); });
+		}
+		const learnReset = document.getElementById('attn-ot-learn-reset');
+		if (learnReset) {
+			learnReset.addEventListener('click', function () {
+				self.stopLearningAuto();
+				self.learnUtilities = self.learnBaseUtilities.slice();
+				self.learnLogits = [0, 0, 0, 0, 0];
+				self.learnSteps = 0;
+				self.drawLearning();
+			});
+		}
+
+		this.syncBudgetButtons();
+		this.drawAll();
+		if (window.__MN_DARK) {
+			window.__MN_DARK.onChange(function () { self.drawAll(); });
+		}
+		window.addEventListener('blogPostLoadComplete', function () { self.drawAll(); });
+		let resizeFrame = null;
+		window.addEventListener('resize', function () {
+			if (resizeFrame) cancelAnimationFrame(resizeFrame);
+			resizeFrame = requestAnimationFrame(function () { self.drawAll(); });
+		});
+		let visibleTries = 0;
+		const drawWhenVisible = function () {
+			const canvas = document.getElementById('attn-ot-budget-canvas');
+			if (canvas && canvas.getBoundingClientRect().width > 2) {
+				self.drawAll();
+				return;
+			}
+			visibleTries += 1;
+			if (visibleTries < 60) setTimeout(drawWhenVisible, 200);
+		};
+		setTimeout(drawWhenVisible, 200);
+	}
+};
+
 // ─────────────────── INITIALIZATION ───────────────────
 
 async function loadAttentionModule() {
 	updateLoadingStatus("Loading section about activation functions...");
+	AttnOTLab.init();
 	SelfAttentionLab.init();
 	initAttentionAnatomy();
 	runUniverse();

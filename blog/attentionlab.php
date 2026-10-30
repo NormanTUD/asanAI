@@ -1646,6 +1646,252 @@ render_gem_tabs($attentioncodetabs, "attention");
 Every row of the printed weights is one token's distribution over the whole sequence, summing to $1$. Watch the causal mask at work: token $0$ attends fully to itself (its row is $[1, 0, 0]$), while the later tokens split their attention across everything they can see — exactly the "weighted average of the values" described above.
 </div>
 
+<style>
+.attn-ot-card {
+	background: var(--mn-surface);
+	border: 1px solid var(--mn-border);
+	border-radius: var(--mn-radius-lg, 16px);
+	padding: 18px 18px 16px;
+	margin: 22px 0;
+	box-shadow: var(--mn-shadow-sm, none);
+}
+.attn-ot-card h3 {
+	margin: 0 0 2px;
+	font-size: 1.02rem;
+	color: var(--mn-heading);
+}
+.attn-ot-card .attn-ot-sub {
+	margin: 0 0 12px;
+	font-size: .87rem;
+	color: var(--mn-text-muted);
+	line-height: 1.5;
+}
+.attn-ot-canvas {
+	display: block;
+	width: 100%;
+	border: 1px solid var(--mn-border);
+	border-radius: var(--mn-radius-md, 12px);
+	background: var(--mn-bg-subtle);
+	touch-action: manipulation;
+}
+.attn-ot-slider-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: 12px;
+	font-size: .86rem;
+	color: var(--mn-text-secondary);
+}
+.attn-ot-slider-row input[type=range] {
+	flex: 1;
+	accent-color: var(--mn-accent);
+}
+.attn-ot-slider-row output {
+	font-family: var(--mn-font-mono);
+	font-weight: 700;
+	color: var(--mn-accent);
+	min-width: 54px;
+	text-align: right;
+}
+.attn-ot-metrics {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+	gap: 8px;
+	margin-top: 12px;
+}
+.attn-ot-metric {
+	background: var(--mn-bg-subtle);
+	border: 1px solid var(--mn-border-light);
+	border-radius: var(--mn-radius-sm, 8px);
+	padding: 8px 10px;
+}
+.attn-ot-metric .k {
+	font-size: .68rem;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+	color: var(--mn-text-muted);
+	line-height: 1.35;
+}
+.attn-ot-metric .v {
+	font-family: var(--mn-font-mono);
+	font-size: 1rem;
+	font-weight: 700;
+	color: var(--mn-accent);
+}
+.attn-ot-btnrow {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 12px;
+}
+.attn-ot-btn {
+	font: inherit;
+	font-size: .82rem;
+	font-weight: 600;
+	padding: 7px 12px;
+	border-radius: var(--mn-radius-sm, 8px);
+	border: 1px solid var(--mn-border);
+	background: var(--mn-surface);
+	color: var(--mn-text);
+	cursor: pointer;
+	transition: background .15s ease, border-color .15s ease, transform .15s ease;
+}
+.attn-ot-btn:hover {
+	background: var(--mn-surface-raised);
+	transform: translateY(-1px);
+}
+.attn-ot-btn.is-active {
+	background: var(--mn-accent);
+	border-color: var(--mn-accent);
+	color: #fff;
+}
+.attn-ot-status {
+	margin-top: 10px;
+	font-size: .86rem;
+	font-weight: 600;
+	color: var(--mn-text-secondary);
+}
+.attn-ot-status.good { color: var(--mn-emerald); }
+.attn-ot-status.far { color: var(--mn-coral); }
+@media (max-width: 560px) {
+	.attn-ot-card { padding: 14px; }
+	.attn-ot-slider-row { flex-wrap: wrap; }
+}
+</style>
+
+<div class="md">
+## A Simple Picture: Attention Is Moving Sand
+
+Imagine you have exactly **one bucket of attention** to hand out. The **keys** are places that can take some of it. Sending attention to a key that is very similar to the query is cheap; sending it to a very different key is expensive. So you naturally want to send the sand where it is cheap.
+
+But there is a catch. If you pour the whole bucket onto the single cheapest key, you commit completely. A tiny difference in similarity then decides everything, and the model stops listening to the other keys. To stay flexible, you also want to spread some sand around. These two wishes pull in opposite directions:
+
+- **Cheap:** put the mass on the most similar key.
+- **Spread out:** do not put all your eggs in one basket.
+
+The paper's central result is that this tug-of-war has **one unique best answer**, and that answer is exactly the softmax that attention already uses (\cite[Litman, 2025]{litman2025sdpaot}). The formula was not invented as a plausible trick; it is the solution to a precise problem.
+</div>
+
+<div class="attn-ot-card" id="attn-ot-budget">
+	<h3>Demo 1 — One bucket, five places</h3>
+	<p class="attn-ot-sub">Each key gets a share of the one unit. A small temperature makes the plan decisive; a large temperature spreads it out. Compare the three plans and watch the total badness.</p>
+	<canvas id="attn-ot-budget-canvas" class="attn-ot-canvas" width="760" height="360" style="height:360px" role="img" aria-label="Attention weights flowing from one query to five keys, with bars for each share"></canvas>
+	<div class="attn-ot-slider-row">
+		<label for="attn-ot-temp">Temperature &tau;: small = decisive, large = even</label>
+		<input type="range" id="attn-ot-temp" min="20" max="400" step="5" value="100">
+		<output id="attn-ot-temp-val">1.00</output>
+	</div>
+	<div class="attn-ot-metrics">
+		<div class="attn-ot-metric"><div class="k">Average similarity</div><div class="v" id="attn-ot-budget-sim">&mdash;</div></div>
+		<div class="attn-ot-metric"><div class="k">Spread H (0&ndash;1.61)</div><div class="v" id="attn-ot-budget-spread">&mdash;</div></div>
+		<div class="attn-ot-metric"><div class="k">Total badness (lower is better)</div><div class="v" id="attn-ot-budget-bad">&mdash;</div></div>
+	</div>
+	<div class="attn-ot-btnrow">
+		<button type="button" class="attn-ot-btn" data-ot-plan="best">All on the best key</button>
+		<button type="button" class="attn-ot-btn" data-ot-plan="even">Evenly spread</button>
+		<button type="button" class="attn-ot-btn is-active" data-ot-plan="soft">Best compromise</button>
+	</div>
+</div>
+
+<div class="md">
+### What just happened?
+
+The three plans are different ways to spend the same bucket. "All on the best key" is the cheapest by similarity alone, but it is brittle. "Evenly spread" is flexible, but it ignores similarity. The **best compromise** uses the similarity scores, but keeps a little mass elsewhere. In the demo, its total badness is the lowest of the three.
+
+The size of the shares is controlled by the **temperature** $\tau$. A small $\tau$ magnifies small score differences, so the plan becomes sharp. A large $\tau$ flattens the differences, so the plan becomes almost even. In a Transformer, the temperature is $\tau=\sqrt{d_k}$, a point we return to below.
+
+If two keys differ by $\Delta$ in score, the better one receives $e^{\Delta/\tau}$ times more weight. The exponential is the natural way to turn a **difference** into a **factor**: adding the same constant to all scores does not change the plan, and the weights stay positive. That is exactly what a probability distribution needs.
+</div>
+
+<div class="md">
+### The two wishes, as one number
+
+A plan gives each key a share $p_j \ge 0$ with $\sum_j p_j = 1$. Its **total badness** is
+
+$$
+\underbrace{
+  \underbrace{\sum_j p_j C_j}_{\text{average cost}}
+  \;-\;
+  \underbrace{\tau\,H(\mathbf p)}_{\text{reward for spreading}}
+}_{\substack{\text{total badness }J(\mathbf p)\text{:}\\ \text{lower is better}}}
+$$
+
+Here $C_j=-s_j$ is the cost of sending attention to key $j$ (high similarity means low cost), $H(\mathbf p)=-\sum_j p_j\log p_j$ measures how spread out the plan is, and $\tau>0$ is the temperature. The first term wants everything on the cheapest key; the second term rewards spreading. The best plan is the unique minimum of $J$.
+
+Solving this problem gives the softmax formula $p_j = e^{s_j/\tau}/\sum_l e^{s_l/\tau}$. You do not have to take that on trust: in the next demo you can find the minimum yourself.
+</div>
+
+<div class="attn-ot-card" id="attn-ot-optimize">
+	<h3>Demo 2 — Find the best plan yourself</h3>
+	<p class="attn-ot-sub">Two keys. Key A is a little more similar than key B. Move the slider: key B always gets the rest. The curve is the total badness. Find its lowest point.</p>
+	<canvas id="attn-ot-opt-canvas" class="attn-ot-canvas" width="760" height="300" style="height:300px" role="img" aria-label="Curve of total badness against the share of attention on key A, with the lowest point marked"></canvas>
+	<div class="attn-ot-slider-row">
+		<label for="attn-ot-opt-slider">Share of attention on key A</label>
+		<input type="range" id="attn-ot-opt-slider" min="0" max="100" step="1" value="50">
+		<output id="attn-ot-opt-pval">0.50</output>
+	</div>
+	<div class="attn-ot-metrics">
+		<div class="attn-ot-metric"><div class="k">Best share on A</div><div class="v" id="attn-ot-opt-best">&mdash;</div></div>
+		<div class="attn-ot-metric"><div class="k">Distance to best</div><div class="v" id="attn-ot-opt-gap">&mdash;</div></div>
+		<div class="attn-ot-metric"><div class="k">Total badness now</div><div class="v" id="attn-ot-opt-bad">&mdash;</div></div>
+	</div>
+	<div class="attn-ot-status" id="attn-ot-opt-status" aria-live="polite">Move the slider and watch the curve.</div>
+	<div class="attn-ot-btnrow">
+		<button type="button" class="attn-ot-btn" id="attn-ot-opt-best-btn">Show the best plan</button>
+		<button type="button" class="attn-ot-btn" id="attn-ot-opt-reset">Reset</button>
+		<button type="button" class="attn-ot-btn" id="attn-ot-opt-new">New scores</button>
+	</div>
+	<p class="attn-ot-sub" style="margin:10px 0 0" id="attn-ot-opt-scores">Key A: 1.5 &middot; Key B: 0.2</p>
+</div>
+
+<div class="md">
+### Why the temperature is $\sqrt{d_k}$
+
+A dot product grows with the number of dimensions. If the components of the query and key vectors are independent and of typical size $1$, their dot product is typically of size $\sqrt{d_k}$. Without scaling, a wider model would automatically have larger scores, the softmax would become sharp, and small differences would turn into near-certain decisions. Dividing the score by $\sqrt{d_k}$ keeps the temperature in a useful range, so the compromise between cheap and spread stays meaningful (\cite[Litman, 2025]{litman2025sdpaot}).
+
+### Where the sand picture comes from
+
+Moving a fixed amount of mass from places of supply to places of demand at minimum cost is an old problem called **optimal transport**. In the classical version there are many sources and many destinations, and both amounts are fixed. Here there is only **one source** — the query, with one unit of attention mass — and the destinations have no required amount. That is the "one-sided" in the paper's title. With only one constraint, the best plan has a direct formula; no iterative algorithm is needed. When both sides are fixed, the usual method is the Sinkhorn iteration (\cite[Cuturi, 2013]{cuturi2013sinkhorn}), which repeats row and column normalizations. Attention fixes only the rows, so it gets the closed form for free.
+</div>
+
+<div class="md">
+### The other half: learning is a reward signal
+
+Training changes the scores. Backpropagation gives each key a **reward** $u_j$: how much would the downstream loss drop if key $j$ received a little more attention? The update that comes out is remarkably simple:
+
+> Increase the score of keys that are **better than the current average**, and decrease the score of keys that are worse.
+
+The average is subtracted automatically by the softmax's geometry. In reinforcement learning this quantity is called the **advantage**, and subtracting the average is a **baseline** that makes learning less noisy. The paper proves that the ordinary backpropagation gradient is exactly this advantage-based update — it is not merely an analogy (\cite[Litman, 2025]{litman2025sdpaot}). The demo makes the idea visible.
+</div>
+
+<div class="attn-ot-card" id="attn-ot-learn">
+	<h3>Demo 3 — How attention learns</h3>
+	<p class="attn-ot-sub">Five keys. The top row is the current attention share, the middle row is the reward of each key, and the bottom row is the advantage: reward minus the current average. One learning step nudges attention toward positive advantage.</p>
+	<canvas id="attn-ot-learn-canvas" class="attn-ot-canvas" width="760" height="360" style="height:360px" role="img" aria-label="Three rows of bars showing attention weights, rewards, and advantages for five keys"></canvas>
+	<div class="attn-ot-metrics">
+		<div class="attn-ot-metric"><div class="k">Learning steps</div><div class="v" id="attn-ot-learn-step">0</div></div>
+		<div class="attn-ot-metric"><div class="k">Expected reward</div><div class="v" id="attn-ot-learn-exp">&mdash;</div></div>
+		<div class="attn-ot-metric"><div class="k">Best key</div><div class="v" id="attn-ot-learn-best">&mdash;</div></div>
+	</div>
+	<div class="attn-ot-btnrow">
+		<button type="button" class="attn-ot-btn" id="attn-ot-learn-step-btn">One learning step</button>
+		<button type="button" class="attn-ot-btn" id="attn-ot-learn-auto">Auto</button>
+		<button type="button" class="attn-ot-btn" id="attn-ot-learn-reset">Reset</button>
+	</div>
+</div>
+
+<div class="md">
+### The whole story in three sentences
+
+The **forward pass** solves a precise problem: spread one unit of attention so that it is cheap and still flexible. Its unique answer is the softmax you already know. The **backward pass** then turns the loss into a reward signal and moves attention toward keys that beat the current average. The same geometry governs both halves, which is why the formula and its learning rule fit together so neatly.
+
+What the paper does **not** claim: it does not add a new attention mechanism, it does not report experiments, and it does not replace softmax with Sinkhorn. It is an explanation of the mechanism we already have. The link between spreading and entropy is classical (\cite[Jaynes, 1957]{jaynes1957maxent}); what is new is the transport framing, the advantage-based reading of the gradient, and the geometric bridge between them.
+</div>
+
+<div class="md">
+If you want the precise mathematical statement behind this picture, the next section states it in the paper's language.
+</div>
+
 <div class="topic-block" data-mathlevel="70">
 <div class="md">
 ## A hidden identity: the softmax is the Sinkhorn iteration
