@@ -26,6 +26,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from selenium import webdriver
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -49,6 +50,27 @@ def check(condition: bool, label: str, detail: str = "") -> None:
 		return
 	failures += 1
 	print(f"FAIL {label}" + (f" — {detail}" if detail else ""))
+
+
+def wait_for_flash(browser: webdriver.Chrome, expected: str) -> str:
+	def texts() -> list[str]:
+		found = []
+		for element in browser.find_elements(By.CSS_SELECTOR, ".flash"):
+			try:
+				found.append(element.text)
+			except StaleElementReferenceException:
+				continue
+		return found
+
+	try:
+		WebDriverWait(browser, 10).until(lambda _: any(expected in text for text in texts()))
+	except TimeoutException:
+		pass
+	current = texts()
+	for text in current:
+		if expected in text:
+			return text
+	return current[0] if current else ""
 
 
 def free_port() -> int:
@@ -365,21 +387,17 @@ def main() -> int:
 				"course questions renders answer images")
 
 			browser.find_element(By.XPATH, "//button[contains(., 'Clear answer cache')]").click()
-			WebDriverWait(browser, 10).until(
-				EC.presence_of_element_located((By.CSS_SELECTOR, ".flash"))
-			)
-			check("Cleared 1 cached answer" in browser.find_element(By.CSS_SELECTOR, ".flash").text,
-				"course questions clears the answer cache")
+			flash = wait_for_flash(browser, "Cleared 1 cached answer")
+			check("Cleared 1 cached answer" in flash,
+				"course questions clears the answer cache", flash)
 			with sqlite3.connect(cache_db) as db:
 				check(db.execute("SELECT COUNT(*) FROM answers").fetchone()[0] == 0,
 					"answer cache is empty after clearing")
 
 			browser.find_element(By.XPATH, "//button[contains(., 'Delete cached log entries')]").click()
-			WebDriverWait(browser, 10).until(
-				EC.presence_of_element_located((By.CSS_SELECTOR, ".flash"))
-			)
-			check("Deleted 1 cached log entry" in browser.find_element(By.CSS_SELECTOR, ".flash").text,
-				"course questions deletes cached log entries")
+			flash = wait_for_flash(browser, "Deleted 1 cached log entry")
+			check("Deleted 1 cached log entry" in flash,
+				"course questions deletes cached log entries", flash)
 			main_text = browser.find_element(By.TAG_NAME, "main").text
 			check("backpropagation" not in main_text and "perceptron" in main_text,
 				"cached log deletion leaves uncached questions")
@@ -387,11 +405,9 @@ def main() -> int:
 			browser.find_element(By.XPATH,
 				"//article[contains(., 'what is a perceptron?')]//button[contains(., 'Delete this question')]"
 			).click()
-			WebDriverWait(browser, 10).until(
-				EC.presence_of_element_located((By.CSS_SELECTOR, ".flash"))
-			)
-			check("Question deleted" in browser.find_element(By.CSS_SELECTOR, ".flash").text,
-				"course questions deletes a single question")
+			flash = wait_for_flash(browser, "Question deleted")
+			check("Question deleted" in flash,
+				"course questions deletes a single question", flash)
 			check("No questions match these filters." in browser.find_element(By.TAG_NAME, "main").text,
 				"question log is empty after deleting the last row")
 
