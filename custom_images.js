@@ -265,7 +265,8 @@ async function create_zip_with_custom_images () {
 		let path = label + "/" + filename + ".png";
 
 		if(!blob) {
-			err(language[lang]["img_blob_could_not_be_found"]);
+			// Broken preview images are skipped instead of aborting the export.
+			dbg(language[lang]["img_blob_could_not_be_found"] + " " + (img.id || ""));
 		} else {
 			let blob_reader = new zip.BlobReader(blob);
 
