@@ -130,7 +130,7 @@ function chose_nearest_color_picker (e) {
 	var $e = $(e);
 
 	if(!$e.length) {
-		err("Cannot find element e: " + e);
+		dbg("Cannot find element e: " + e);
 		return;
 	}
 
