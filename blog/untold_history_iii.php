@@ -55,7 +55,7 @@ The field's very name was a deliberate break with that tradition. When **John Mc
 Created in February 1958 in response to Sputnik, the **Advanced Research Projects Agency** (renamed DARPA in 1972) became the primary funder of American AI research for two decades. Its **Information Processing Techniques Office** (IPTO) financed, among much else:
 
 - **Shakey the Robot** (SRI, 1969–1972) \cite{nilsson1984shakey}, the first mobile robot to reason about its own actions, introducing the A* algorithm and the Hough transform to robotics
-- The **ARPA Speech Understanding Research** program (1971–1976) \cite{klatt1977sur}, which produced CMU's Harpy system and laid groundwork for **Sphinx** \cite{lee1989sphinx}
+- The **ARPA Speech Understanding Research** program (1971–1976) \cite{klatt1977sur}, which produced CMU's Harpy system and Hearsay-II (the first system to use a **blackboard** to combine several knowledge sources) and laid the groundwork for **Sphinx** \cite{lee1989sphinx, crevier1993ai}
 - **Image Understanding** programs that built the modern computer-vision community
 - **ARPANET** (1969), which became the modern Internet
 
