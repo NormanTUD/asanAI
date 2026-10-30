@@ -9,13 +9,75 @@
 <script src="../temml.min.js" defer></script>
 <script src="mp.js" defer></script>
 <script src="mp_1953_past_of_a_delusion.js" defer></script>
+<style>
+  .triad {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .triad .concept { height: 100%; }
+  .triad .concept h3 { font-size: 1.2rem; }
+  .triad .concept p { font-size: 0.94rem; line-height: 1.55; }
+  .ledger {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  .ledger th, .ledger td {
+    padding: 0.72rem 0.2rem;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--line);
+  }
+  .ledger th {
+    width: 38%;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 500;
+  }
+  .ledger td { color: var(--muted); }
+  .ledger tr:last-child th, .ledger tr:last-child td { border-bottom: 0; }
+  .note.warn { border-left-color: #ef6a6a; }
+  .note.warn b { color: #ef8a8a; }
+  .score-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+  .score-strip .cell {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.8rem 0.9rem;
+    background: color-mix(in srgb, var(--bg) 42%, transparent);
+  }
+  .score-strip .cell span {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .score-strip .cell b {
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+  .source-note { font-size: 0.8rem; color: var(--faint); }
+  .formula-card .tex { font-size: clamp(1.1rem, 2vw, 1.45rem); }
+</style>
 </head>
 <body data-accent="crimson">
 <div class="progress"><span></span></div>
 <header class="topbar">
   <a class="brand" href="mp_index.html"><b>MP</b><span class="dot">·</span>Codex</a>
   <div class="topbar-meta">
-    <span class="hide-sm">Companion 03 · 1953</span>
+    <span class="hide-sm">Literary plate 03 · 1953</span>
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
   </div>
 </header>
@@ -25,15 +87,31 @@
 <section class="hero" id="top" data-label="Opening">
   <canvas class="hero-canvas" id="heroDelusion" aria-hidden="true"></canvas>
   <div class="wrap hero-inner">
-    <p class="eyebrow">Chicago Literary Club · 1953 · collected in <i>Embodiments of Mind</i></p>
+    <p class="eyebrow">Chicago Literary Club · 1953 · collected in <i>Embodiments of Mind</i>, 1965</p>
     <h1>The <em>Past</em> of a Delusion</h1>
     <p class="hero-sub">McCulloch's most polemical essay: a psychiatrist's attack on psychoanalysis, written as a mirror for Freud's <i>The Future of an Illusion</i>. Its target is not the patient but the theory — a system that can explain every resistance and therefore risks confirming itself.</p>
     <div class="hero-meta">
       <span><b>Warren S. McCulloch</b></span>
       <span>Chicago Literary Club · 1953</span>
+      <span>pp. 276–306 in <i>Embodiments of Mind</i></span>
       <span>a historical document, not a verdict</span>
     </div>
-    <a class="scroll-cue" href="#thesis"><span class="line"></span> Read the companion</a>
+    <a class="scroll-cue" href="#occasion"><span class="line"></span> Read the plate</a>
+  </div>
+</section>
+
+<section class="section" id="occasion" data-label="The occasion">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The occasion</p>
+      <h2 class="thesis">A psychiatrist attacks the <em>theory</em>, not the patient.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">McCulloch worked at Bellevue Hospital in New York from 1927 to 1934, before he returned to the laboratory. He had spent years with psychotic patients. When he read this paper to the Chicago Literary Club in 1953, he was not a neuroscientist sneering from outside medicine. He was a physician who had watched a theory fail the people it claimed to explain.</p>
+      <p class="lede">The title is a deliberate inversion of Freud's <i>The Future of an Illusion</i> (1927). Where Freud criticized religion as an illusion, McCulloch criticizes psychoanalysis as a delusion — and, in the same breath, accuses it of the religious structure it diagnoses. The essay is angry, witty, and often unfair. It is also an early and vivid statement of the problem of unfalsifiability.</p>
+      <div class="note warn"><b>A note on the date:</b> the essay is from 1953. 1959 is the year of McCulloch's poems, <a href="mp_1959_natural_fit.html">The Natural Fit</a>. Both were Chicago Literary Club publications, which is likely why the dates are easy to conflate.</div>
+      <div class="note" style="margin-top:1rem"><b>Read it historically:</b> this is a primary document of the American reception of psychoanalysis, not a neutral history. Psychoanalysis has its own evidence base, internal disagreements, and clinical traditions. The page presents McCulloch's argument, not an endorsement of its caricature.</div>
+    </div>
   </div>
 </section>
 
@@ -45,8 +123,39 @@
     </div>
     <div class="reveal delay-1">
       <p class="lede">The essay begins with aging brains and the burden of mental illness, then turns on the profession that claims to treat it. McCulloch's charge is epistemological: psychoanalysis, as he presents it, turns the patient's disagreement into further evidence for the theory. The loop is closed. The theory cannot lose.</p>
-      <p class="lede">The title is a deliberate inversion of Freud's <i>The Future of an Illusion</i>. Where Freud criticized religion as an illusion, McCulloch criticizes psychoanalysis as a delusion — and, in the same breath, accuses it of the religious structure it diagnoses. The essay is angry, witty, and often unfair. It is also an early and vivid statement of the problem of unfalsifiability.</p>
-      <div class="note"><b>Read it historically:</b> this is a primary document of the American reception of psychoanalysis, not a neutral history. Psychoanalysis has its own evidence base, internal disagreements, and clinical traditions. The page presents McCulloch's argument, not an endorsement of its caricature.</div>
+      <p class="lede">His sharpest formulation is not about sex or symbols. It is about the relation between data and method. If the analyst's theory selects what counts as data, and the data then confirm the theory, the whole procedure is circular. McCulloch thinks that is not a flaw at the edges of psychoanalysis. It is the structure.</p>
+      <div class="note"><b>The line to remember:</b> “Dependence of the data on the theory separates psychoanalysis from all true sciences. What Freud thought free associations are not free.”</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="argument" data-label="The argument">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The argument</p>
+      <h2>Four moves.</h2>
+    </div>
+    <div class="concept-grid" style="margin-top:2rem">
+      <article class="concept reveal">
+        <span class="num">01 · THE ENTANGLEMENT</span>
+        <h3>Data, method, theory</h3>
+        <p>“Its data, method, theory are indissolubly one.” McCulloch quotes Alexander's admission and turns it into an indictment. In a science, the data must be able to survive a change of theory. In analysis, changing the theory changes the data.</p>
+      </article>
+      <article class="concept reveal delay-1">
+        <span class="num">02 · THE COUPLING</span>
+        <h3>The observer inside the observed</h3>
+        <p>“What we seek to understand is coupled back through us, so that we ourselves change the thing we seek to understand.” This is the cybernetic problem of self-reference, stated in clinical language. The analyst is part of the circuit.</p>
+      </article>
+      <article class="concept reveal delay-2">
+        <span class="num">03 · THE CONFUSION</span>
+        <h3>Meaning is not cause</h3>
+        <p>“Apart from signals that are true, meaning and cause have nothing in common.” McCulloch accuses the Freudians of confusing supposed origins with supposed validity: a story that explains where a belief came from is not thereby evidence that it is true.</p>
+      </article>
+      <article class="concept reveal delay-3">
+        <span class="num">04 · THE MEMORY</span>
+        <h3>The elephant in the head</h3>
+        <p>If we forgot nothing, the brain would have to be about the size of a small elephant. The mean half-life of a memory trace, like that of a protein molecule, is only half a day. We forget because entropy corrupts every record.</p>
+      </article>
     </div>
   </div>
 </section>
@@ -70,15 +179,60 @@
         <canvas id="loopLab" aria-label="Interactive self-reference loop of interpretation and confirmation"></canvas>
       </div>
       <div class="controls">
-        <div class="control"><label for="loopGain">loop gain <output id="gainVal">0.78</output></label><input id="loopGain" type="range" min="0" max="1" step="0.01" value="0.78"></div>
+        <div class="control">
+          <label for="loopGain">loop gain <output id="gainVal">0.78</output></label>
+          <input id="loopGain" type="range" min="0" max="1" step="0.01" value="0.78">
+        </div>
       </div>
       <div class="btn-row" style="margin-top:1rem">
         <button class="btn ghost" id="externalTest">Admit an external test</button>
         <button class="btn ghost" id="resetLoop">Reset</button>
       </div>
-      <div class="readout">
+      <div class="score-strip">
         <div class="cell"><span>loop</span><b class="small-value" id="loopVal">self-sealing</b></div>
-        <div class="cell" style="grid-column:span 2"><span>status</span><b class="small-value" id="loopStatus">the loop confirms itself</b></div>
+        <div class="cell"><span>refutable predictions</span><b class="small-value" id="predVal">0</b></div>
+        <div class="cell"><span>status</span><b class="small-value" id="loopStatus">the loop confirms itself</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="forget" data-label="The forgetting curve">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory · the forgetting curve</p>
+      <h2>The brain is a leaky record.</h2>
+      <p class="lede">McCulloch's memory argument is not a metaphor. If every trace were kept, the head would have to be elephantine. Instead, retention decays exponentially, and what survives is partly reconstructed. The model below is illustrative; the half-life is the one McCulloch reports.</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>Retention over time</h3>
+          <p>Move the half-life. At half a day, the trace is effectively gone within a week. Toggle total recall to see the impossible alternative McCulloch uses as a reductio.</p>
+        </div>
+        <span class="pill"><i></i> model</span>
+      </div>
+      <div class="lab-canvas-wrap wide">
+        <canvas id="forgetLab" aria-label="Forgetting curve with adjustable half-life"></canvas>
+      </div>
+      <div class="controls">
+        <div class="control">
+          <label for="forgetHalf">half-life (days) <output id="halfVal">0.50</output></label>
+          <input id="forgetHalf" type="range" min="0.1" max="5" step="0.1" value="0.5">
+        </div>
+      </div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button class="btn ghost" id="totalRecall">Imagine total recall</button>
+        <button class="btn ghost" id="resetForget">Reset</button>
+      </div>
+      <div class="score-strip">
+        <div class="cell"><span>retention · 1 week</span><b class="small-value" id="weekVal">0.006%</b></div>
+        <div class="cell"><span>retention · 1 year</span><b class="small-value" id="yearVal">&lt;0.001%</b></div>
+        <div class="cell" style="grid-column:span 2"><span>verdict</span><b class="small-value" id="verdictVal">the trace is gone in days</b></div>
+      </div>
+      <div class="formula-card" style="margin-top:1.2rem">
+        <div class="tex" data-tex="R(t) = 2^{-t/h}, \qquad h_{\text{McCulloch}} = \tfrac{1}{2}\ \text{day}" data-display></div>
+        <p class="formula-note"><b>Illustrative model.</b> Exponential decay with half-life <span class="tex-inline" data-tex="h"></span>. Set <span class="tex-inline" data-tex="h\to\infty"></span> and the curve is flat — the total-recall world McCulloch rejects.</p>
       </div>
     </div>
   </div>
@@ -100,19 +254,48 @@
         <footer><b>McCulloch</b> · 1953</footer>
       </figure>
       <figure class="quote reveal delay-1">
-        <p>“…they defined psychoanalysis as that disease of which it fancies itself the cure.”</p>
-        <footer><b>McCulloch</b> · 1953</footer>
+        <p>“Psychoanalysis [is] that disease of which it fancies itself the cure.”</p>
+        <footer><b>McCulloch</b> · crediting Kurt Krauss</footer>
       </figure>
       <figure class="quote reveal delay-2">
-        <p>“Most psychoanalysts are too clever to attempt to help the insane.”</p>
-        <footer><b>McCulloch</b> · 1953</footer>
+        <p>“Change this, and you have changed the method and the data.”</p>
+        <footer><b>McCulloch</b> · on the dependence of data on theory</footer>
       </figure>
       <figure class="quote wide reveal">
-        <p>“The orthodox believer says Freud's method is inapplicable to them, so he handles only neurotics…”</p>
-        <footer><b>McCulloch</b> · 1953</footer>
+        <p>“Science must have data not vitiated by our theory.”</p>
+        <footer><b>McCulloch</b> · the methodological demand</footer>
+      </figure>
+      <figure class="quote wide reveal">
+        <p>“Freud's delusion has no future, but it had a past.”</p>
+        <footer><b>McCulloch</b> · the last word</footer>
       </figure>
     </div>
-    <div class="note reveal" style="margin-top:1.5rem"><b>Context:</b> the essay was written for the Chicago Literary Club and collected in <i>Embodiments of Mind</i>. The Vordenker edition includes a German translation and an editorial note on the title's wordplay. It is a polemic; read it alongside the history of psychoanalysis, not instead of it.</div>
+  </div>
+</section>
+
+<section class="section" id="handles" data-label="What it handles">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The four questions</p>
+      <h2>What it handles, solves, and does.</h2>
+    </div>
+    <div class="triad" style="margin-top:2rem">
+      <article class="concept reveal">
+        <span class="num">WHAT IT HANDLES</span>
+        <h3>The scientific status of psychiatry</h3>
+        <p>How can a practice that listens, interprets, and participates in its own data claim the authority of a science? McCulloch's answer is a demand for data that can survive a change of theory — and a warning about what happens when they cannot.</p>
+      </article>
+      <article class="concept reveal delay-1">
+        <span class="num">WHAT IT SOLVES</span>
+        <h3>It names the loop</h3>
+        <p>It does not cure psychoanalysis. It sharpens the demarcation problem and gives cybernetics a vivid case of the observer inside the observed. The loop is the lesson: a theory that can absorb every failure has stopped making predictions.</p>
+      </article>
+      <article class="concept reveal delay-2">
+        <span class="num">WHAT IT DOES</span>
+        <h3>It holds a mirror to Freud</h3>
+        <p>A thirty-page polemic, read to the Chicago Literary Club and collected in <i>Embodiments of Mind</i>. It turns Freud's critique of religion back on psychoanalysis and asks whether the movement has a canon, an initiation, and a heresy hunt.</p>
+      </article>
+    </div>
   </div>
 </section>
 
@@ -139,6 +322,10 @@
         <figcaption><b>p. 8.</b> The charge of self-reference: psychoanalysis as the disease of which it fancies itself the cure.</figcaption>
       </figure>
     </div>
+    <div class="btn-row" style="margin-top:0.4rem">
+      <a class="btn" href="mp_assets/mcculloch_the_past_of_a_delusion_vordenker.pdf" target="_blank" rel="noopener">Open the local PDF</a>
+      <a class="btn ghost" href="https://www.vordenker.de/ggphilosophy/mcculloch_past_delusion.pdf" target="_blank" rel="noopener">Vordenker edition</a>
+    </div>
   </div>
 </section>
 
@@ -151,21 +338,21 @@
     <div class="reveal delay-1">
       <p class="lede">The essay is a period piece, but its structure is not. Every field has theories that can absorb their own failures: the market is efficient except when it isn't; the model is right except when the data are noisy; the patient resists because the interpretation is true. McCulloch's loop is a warning about all of them.</p>
       <p class="lede">It also shows the other McCulloch: not the calm logician of the 1943 calculus, but the physician who spent years with psychotic patients and had no patience for explanations that did not help. The anger is part of the evidence.</p>
-      <div class="note"><b>Read next:</b> <a href="mp_1955_mysterium.html">Mysterium Iniquitatis</a>, where McCulloch turns the same suspicion on pseudo-explanations in biology and on the limits of mechanistic knowledge.</div>
+      <div class="note"><b>Read next:</b> <a href="mp_1959_natural_fit.html">The Natural Fit</a>, where the same mind writes poems instead of polemics, and <a href="mp_1945_one_word.html">One Word After Another</a>, where the craft of the line is still being learned.</div>
     </div>
   </div>
   <div class="wrap" style="margin-top:2.5rem;display:grid;gap:1rem">
-    <a class="next reveal" href="mp_1955_mysterium.html">
+    <a class="next reveal" href="mp_1959_natural_fit.html">
       <div>
-        <p class="eyebrow">Plate 08 · 1955</p>
-        <h3>Mysterium Iniquitatis of Sinful Man Aspiring into the Place of God</h3>
+        <p class="eyebrow">Literary plate 02 · 1959</p>
+        <h3>The Natural Fit — the poems McCulloch kept</h3>
       </div>
       <span class="arrow">→</span>
     </a>
-    <a class="next reveal" href="mp_index.html">
+    <a class="next reveal" href="mp_1945_one_word.html">
       <div>
-        <p class="eyebrow">All plates &amp; companions</p>
-        <h3>Return to the Codex</h3>
+        <p class="eyebrow">Literary plate 01 · 1945</p>
+        <h3>One Word After Another — a tribute to Edwin Arlington Robinson</h3>
       </div>
       <span class="arrow">→</span>
     </a>
@@ -175,8 +362,8 @@
 
 <footer class="footer">
   <div class="wrap">
-    <span>Companion 03 · <b>The Past of a Delusion</b></span>
-    <span>Source: <a href="https://www.vordenker.de/ggphilosophy/mcculloch_past_delusion.pdf">Vordenker bilingual edition</a></span>
+    <span>Literary plate 03 · <b>The Past of a Delusion</b></span>
+    <span>Source: <a href="https://www.vordenker.de/ggphilosophy/mcculloch_past_delusion.pdf">Vordenker bilingual edition</a> · <a href="mp_assets/mcculloch_the_past_of_a_delusion_vordenker.pdf">local copy</a></span>
   </div>
 </footer>
 
