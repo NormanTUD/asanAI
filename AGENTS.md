@@ -29,7 +29,11 @@ again before reporting done.
   `blog/rag_data/rag_vectors.bin`. They refresh the lexical cache through PHP,
   the browser vectors and the server-side RAG vectors;
   `blog/tests/semantic_index_test.py` and `blog/tests/rag_index_test.py` fail in
-  CI when they are stale.
+  CI when they are stale. The RAG builder is incremental: it reuses the int8
+  vector and scale of every unchanged chunk, skips the build entirely when the
+  source hash is fresh, and stores per-page hashes in `rag_index.json`. Use
+  `--force` only for a model/dimension change or a suspected corrupt index; a
+  first run after a clean checkout (or after `--force`) still embeds everything.
 - Leave it cleaner than you found it. — Code, markup, prose, and structure
   should be better after your change than before. Tidy only what you touch; do
   not start unrelated refactors.
@@ -207,8 +211,10 @@ the target lesson, shows its first content image + title above the link;
 `window.__LKP_FORCE__ = true` bypasses the fine-pointer gate for headless
 tests, where `hover:hover` reports false), `a11y.js` (labels unlabeled form
 controls and chart/canvas containers, keyboard-activates non-native clickables,
-keeps closed overlays inert; `window.__a11yCheck()` is the debug audit).
-A new cross-lesson helper belongs in one of these, not copied into lessons.
+keeps closed overlays inert; `window.__a11yCheck()` is the debug audit),
+`youtube.js` (`[youtube]ID[/youtube]` click-to-load cards — see the macro list
+below). A new cross-lesson helper belongs in one of these, not copied into
+lessons.
 
 **Reader-retention modules** (all state in localStorage, nothing leaves the
 browser): `quests.js` (`MNQuest`: XP, levels, achievements, lesson quests, the
@@ -352,6 +358,12 @@ the cite family):
 - `\sidenote{…}` — marginalia; may contain `\cite`; extracted pre-markdown.
 - `\sideimage[float]{file.jpg}{caption}` — sidebar image.
 - `\index{term}` — glossary index term (registered for search).
+- `[youtube]VIDEO_ID[/youtube]` — a privacy-friendly click-to-load YouTube
+  card. `modules/youtube.js` replaces the marker before marked runs; the card
+  makes no outbound request until the reader presses play, then inserts a
+  `youtube-nocookie.com` iframe. Use the 11-character video id only; invalid
+  ids are left as literal text. `search_lib.php` strips the markers so ids do
+  not enter lexical, semantic or RAG chunks.
 - `[[t:topic]]…[[/t]]` — topic-block markers (currently unused in lessons).
 - **Aurora cluster lanes** `[[c:name]]…[[/c]]` (or `[[cluster:name]]`) in `.md`
   wrap text in a softly glowing color lane; the hue is stable per name. Also
@@ -593,10 +605,13 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
   `uv run blog/tools/build_rag_index.py`, then commit the regenerated
   `.search_cache.json`, `semantic_index.json`, `semantic_vectors.bin` and
   `rag_data/`.** The scripts refresh the lexical cache via PHP, the browser
-  vectors and the server-side RAG vectors. Tests:
+  vectors and the server-side RAG vectors. The semantic builder rebuilds its
+  chunk list and vectors; the RAG builder is incremental and prints
+  `reused N, embedded M`. Tests:
   `node blog/tests/semantic_js_test.js`,
   `uv run blog/tests/semantic_index_test.py`,
-  `uv run blog/tests/rag_index_test.py`; the index tests fail when stale.
+  `uv run blog/tests/rag_index_test.py`,
+  `uv run blog/tests/rag_incremental_test.py`; the index tests fail when stale.
 - **RAG answer chat** (`rag_chat.js` + `ask.php` + `rag/`): optional floating
   “Ask the course” panel. It only appears when `ask.php?health=1` reports a
   healthy local service. `rag/server.py` runs one generation at a time with a
@@ -607,7 +622,12 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
   question's language (with a final language-normalisation pass); section
   titles/page titles feed BM25, reranking and a heading/year boost. Answers must
   cite `[S1]…` or return a localized “not in the course”. Install on a server with `blog/rag/install.sh`; after content
-  changes run `blog/rag/reindex.sh` (or the repo builders above). The Python
+  changes run `blog/rag/reindex.sh` (or the repo builders above). The repo
+  builder is incremental: unchanged chunks keep their existing int8 vector and
+  scale, an unchanged `sourceHash` is a no-op, and `--force` re-embeds
+  everything. It writes `pageHashes` into `rag_index.json`; on the first run
+  after an older index those hashes are absent, so every page is reported as
+  changed even though only changed chunks are embedded. The Python
   service binds to `127.0.0.1`; `ask.php` is the public proxy. Q&A are logged
   to `/var/lib/asanai-rag/queries.sqlite` (no IPs; blocked requests redacted)
   and shown at `/questions`, linked from the stats nav and using the same
