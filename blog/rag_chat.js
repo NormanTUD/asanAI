@@ -6,7 +6,6 @@
 
 	var MAX_QUESTION = 2000;
 	var REQUEST_TIMEOUT = 15000;
-	var JOB_TIMEOUT = 200000;
 	var STORAGE_KEY = 'mn_rag_chat_v1';
 	var ACTIVE_KEY = 'mn_rag_chat_job_v1';
 
@@ -47,11 +46,13 @@
 			var position = Math.max(1, parseInt(data.position, 10) || 1);
 			var wait = Math.max(1, Math.round(Number(data.eta_seconds) || 0));
 			return 'Your answer is being generated. You are #' + position +
-				' in the queue. About ' + wait + ' seconds.';
+				' in the queue. About ' + wait + ' seconds. ' +
+				'You can close this window and come back later.';
 		}
 		if (data.status === 'running') {
 			var remaining = Math.max(1, Math.round(Number(data.eta_seconds) || 0));
-			return 'Generating your answer… about ' + remaining + ' seconds.';
+			return 'Generating your answer… about ' + remaining + ' seconds. ' +
+				'You can close this window and come back later.';
 		}
 		return '';
 	}
@@ -114,6 +115,12 @@
 		return '';
 	}
 
+	function normalizeMathDelimiters(html) {
+		return String(html || '')
+			.replace(/\\\[([\s\S]*?)\\\]/g, function(_, tex) { return '$$' + tex + '$$'; })
+			.replace(/\\\(([\s\S]*?)\\\)/g, function(_, tex) { return '$' + tex + '$'; });
+	}
+
 	function answerHtml(answer, sources) {
 		var byId = Object.create(null);
 		(sources || []).forEach(function(source) {
@@ -128,6 +135,12 @@
 		var html = esc(answer);
 		html = html.replace(/`([^`\n]+)`/g, function(_, code) {
 			return stash('<code>' + code + '</code>');
+		});
+		html = html.replace(/\\\[([\s\S]*?)\\\]/g, function(_, tex) {
+			return stash('$$' + tex + '$$');
+		});
+		html = html.replace(/\\\(([\s\S]*?)\\\)/g, function(_, tex) {
+			return stash('$' + tex + '$');
 		});
 		html = html.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, function(_, alt, rawUrl) {
 			var safe = safeLink(unescapeHtml(rawUrl));
@@ -274,7 +287,7 @@
 		});
 		state.messages.forEach(function(message) {
 			if (message.role === 'user') {
-				addMessage('user', esc(message.text.slice(0, MAX_QUESTION)));
+				addMessage('user', normalizeMathDelimiters(esc(message.text.slice(0, MAX_QUESTION))));
 				return;
 			}
 			var node = addMessage('assistant', answerHtml(
@@ -293,10 +306,6 @@
 			if (!raw) return null;
 			var job = JSON.parse(raw);
 			if (!job || !job.id || !job.question) return null;
-			if (Date.now() - (job.startedAt || 0) > JOB_TIMEOUT) {
-				localStorage.removeItem(ACTIVE_KEY);
-				return null;
-			}
 			return job;
 		} catch (error) {
 			return null;
@@ -578,7 +587,7 @@
 		state.slow = false;
 		state.lastPartial = '';
 		if (addUser) {
-			addMessage('user', esc(question), null, true);
+			addMessage('user', normalizeMathDelimiters(esc(question)), null, true);
 			state.messages.push({ role: 'user', text: question });
 			saveConversation();
 		}
@@ -625,10 +634,6 @@
 			? 'Waiting for a free model slot…'
 			: 'Writing the answer…');
 		els.status.textContent = slowNote(first, statusText(first) || 'Waiting for the answer…');
-		if (Date.now() - state.startedAt > JOB_TIMEOUT) {
-			showError(seq, errorText({ error: 'timeout' }));
-			return;
-		}
 		var delay = first && first.status === 'running' ? 100 : 900;
 		state.pollTimer = setTimeout(function() {
 			if (seq !== state.seq) return;

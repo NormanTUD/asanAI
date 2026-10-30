@@ -27,6 +27,9 @@ browser  ──POST /ask.php──▶  PHP proxy  ──▶  127.0.0.1:8090  (qu
 - **Streaming:** while the model runs, `/status` carries the partial answer;
   the chat polls every 100 ms while generating and renders every new token.
   No SSE and no proxy buffering tricks are needed.
+- **Math:** the chat renders inline and display LaTeX (`$…$`, `$$…$$`,
+  `\(…\)`, `\[…\]`) with the page’s Temml; wide display equations scroll
+  inside the bubble.
 - **Failure handling:** transient Ollama 5xx/connection errors are retried
   twice with backoff. An answer that still hits the token budget is cut back to
   the last complete sentence (with an ellipsis) instead of ending mid-word.

@@ -13,12 +13,14 @@ function check(condition, message) {
 }
 
 check(chat.statusText({ status: 'queued', position: 3, eta_seconds: 30 }) ===
-	'Your answer is being generated. You are #3 in the queue. About 30 seconds.',
-	'queued status shows position and ETA');
+	'Your answer is being generated. You are #3 in the queue. About 30 seconds. ' +
+	'You can close this window and come back later.',
+	'queued status shows position, ETA and leave-and-return hint');
 
 check(chat.statusText({ status: 'running', eta_seconds: 10 }) ===
-	'Generating your answer… about 10 seconds.',
-	'running status shows a remaining time');
+	'Generating your answer… about 10 seconds. ' +
+	'You can close this window and come back later.',
+	'running status shows time and leave-and-return hint');
 
 check(chat.statusText({ status: 'done' }) === '', 'done status has no text');
 
@@ -64,6 +66,10 @@ check(inlineImage.indexOf('<img') !== -1 &&
 	'safe inline markdown images render');
 check(chat.answerHtml('![x](https://evil.example/x.png)', []).indexOf('<img') === -1,
 	'external inline images are blocked');
+check(chat.answerHtml('The equation:\n\\[ a^2 + b^2 = c^2 \\]', []).indexOf('$$ a^2 + b^2 = c^2 $$') !== -1,
+	'display LaTeX delimiters are normalized');
+check(chat.answerHtml('Use \\(x_i\\) here', []).indexOf('$x_i$') !== -1,
+	'inline LaTeX delimiters are normalized');
 var sourceImage = chat.answerHtml('See [S1].', [{
 	id: 'S1', title: 'History', url: 'history#perceptron',
 	img: 'frank_rosenblatt_portrait.jpg', imgCaption: 'Portrait'

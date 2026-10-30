@@ -14255,6 +14255,14 @@ summary:focus-visible,
 .rag-chat-msg p:last-child {
 	margin-bottom: 0;
 }
+.rag-chat-msg .tml-display,
+.rag-chat-msg math[display="block"] {
+	display: block;
+	max-width: 100%;
+	overflow-x: auto;
+	overflow-y: hidden;
+	padding: 2px 0;
+}
 .rag-chat-msg code {
 	display: inline-block;
 	padding: 1px 4px;

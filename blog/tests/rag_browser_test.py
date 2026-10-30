@@ -116,7 +116,7 @@ MOCK = r"""
 			return reply({
 				status: 'done',
 				grounded: true,
-				answer: '**A perceptron** is a *linear* classifier [S1].',
+				answer: '**A perceptron** is a *linear* classifier [S1].\n\n\\[ a^2 + b^2 = c^2 \\]',
 				sources: [{
 					id: 'S1',
 					title: 'Brief History of AI',
@@ -200,12 +200,26 @@ def main() -> int:
 		)
 		check("About 20 seconds" in status_text(browser),
 			"queued status shows the position and ETA", status_text(browser))
+		check("close this window" in status_text(browser).lower(),
+			"queued status explains that the window can be closed", status_text(browser))
+		# A long queue must not trigger the old client-side 200 s deadline.
+		browser.execute_script(
+			"window.__ragRealNow = Date.now;"
+			"Date.now = function() { return window.__ragRealNow() + 600000; };"
+		)
 
 		WebDriverWait(browser, 8).until(
 			lambda d: "Generating your answer" in status_text(d)
 		)
 		check("about 10 seconds" in status_text(browser),
 			"running status shows the remaining time", status_text(browser))
+		check("close this window" in status_text(browser).lower(),
+			"running status explains that the window can be closed", status_text(browser))
+		browser.execute_script("document.querySelector('.rag-chat-close').click()")
+		check(browser.execute_script(
+			"return document.getElementById('rag-chat-panel').hidden"
+		) is True, "a waiting answer can be left in the background")
+		browser.execute_script("document.getElementById('rag-chat-toggle').click()")
 		WebDriverWait(browser, 8).until(
 			lambda d: "A perceptron is a linear classifier" in
 				d.find_element(By.CSS_SELECTOR, ".rag-chat-msg-assistant").text
@@ -232,6 +246,10 @@ def main() -> int:
 		check("history#the-perceptron" in assistant_html, "citation points at the lesson")
 		check("<strong>" in assistant_html and "<em>" in assistant_html,
 			"markdown bold and italic render in answers")
+		WebDriverWait(browser, 5).until(
+			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-assistant math")) >= 1
+		)
+		check(True, "display LaTeX renders in the chat")
 		check(len(browser.find_elements(By.CSS_SELECTOR, ".rag-source-thumb")) == 1,
 			"source figures render as thumbnails")
 		check("frank_rosenblatt_portrait.jpg" in
@@ -322,9 +340,10 @@ def main() -> int:
 		WebDriverWait(browser, 10).until(
 			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")) > 0
 		)
-		check("What is a derivative?" in
-			browser.find_element(By.CSS_SELECTOR, ".rag-chat-msg-user").text,
-			"the conversation survives a page reload")
+		time.sleep(0.4)
+		user_texts = [el.text for el in browser.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")]
+		check(any("What is a derivative?" in text for text in user_texts),
+			"the conversation survives a page reload", str(user_texts))
 		check("A perceptron is a linear classifier" in
 			browser.find_element(By.CSS_SELECTOR, ".rag-chat-msg-assistant").text,
 			"restored answers keep their text")
@@ -350,9 +369,10 @@ def main() -> int:
 		WebDriverWait(browser, 10).until(
 			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")) > 0
 		)
-		check("What is attention?" in
-			browser.find_element(By.CSS_SELECTOR, ".rag-chat-msg-user").text,
-			"an in-flight question survives a reload")
+		time.sleep(0.4)
+		inflight_texts = [el.text for el in browser.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")]
+		check(any("What is attention?" in text for text in inflight_texts),
+			"an in-flight question survives a reload", str(inflight_texts))
 		WebDriverWait(browser, 15).until(
 			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-sources")) > 0
 		)
