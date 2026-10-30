@@ -7352,6 +7352,13 @@ window.bibData = {
 		url: "https://web.archive.org/web/2023/https://ai.stanford.edu/~nilsson/QAI/qai.pdf",
 		alternativetitle: "Nilsson, The Quest for Artificial Intelligence"
 	},
+	"crevier1993ai": {
+		title: "AI: The Tumultuous History of the Search for Artificial Intelligence",
+		author: "Daniel Crevier",
+		year: 1993,
+		url: "https://archive.org/details/aitumultuoushist0000crev",
+		alternativetitle: "Crevier, AI: The Tumultuous History (1993)"
+	},
 	"ronkowitz2017perceptron": {
 		url: "https://ronkowitz.blogspot.com/2017/11/perceptron.html",
 		title: "Perceptron",
