@@ -7359,6 +7359,20 @@ window.bibData = {
 		url: "https://archive.org/details/aitumultuoushist0000crev",
 		alternativetitle: "Crevier, AI: The Tumultuous History (1993)"
 	},
+	"afflictor2014mcculloch": {
+		title: "Old Print Article: “Warns Machines May Some Day Take Over The World,” Brooklyn Daily Eagle (1948)",
+		author: "Darren D’Addario",
+		year: 2014,
+		url: "https://afflictor.com/2014/09/22/old-print-article-warns-machines-may-some-day-take-over-the-world-brooklyn-daily-eagle-1948/",
+		alternativetitle: "Afflictor, the 1948 McCulloch clipping"
+	},
+	"afflictor2015mechanistic": {
+		title: "“They Would Create The First Mechanistic Theory Of The Mind”",
+		author: "Darren D’Addario",
+		year: 2015,
+		url: "https://afflictor.com/2015/02/05/they-would-create-the-first-mechanistic-theory-of-the-mind/",
+		alternativetitle: "Afflictor on McCulloch and Pitts (2015)"
+	},
 	"ronkowitz2017perceptron": {
 		url: "https://ronkowitz.blogspot.com/2017/11/perceptron.html",
 		title: "Perceptron",
