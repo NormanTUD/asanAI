@@ -17754,9 +17754,10 @@
   "city": "Paderborn, Germany",
   "year": 2026.0,
   "conf": 1,
-  "works": 13,
+  "works": 14,
   "keys": [
    "hnfrosenblatt2019",
+   "hnfmarki2019",
    "hnflernendeautomaten2021",
    "hnfki70jahre2026",
    "hnfmccullochpitts2023",
@@ -37246,9 +37247,7 @@
   "keys": [
    "aiken"
   ],
-  "cited_in": [
-   "history"
-  ]
+  "cited_in": []
  },
  {
   "name": "Graham Williams",
@@ -39950,9 +39949,7 @@
   "keys": [
    "aiken"
   ],
-  "cited_in": [
-   "history"
-  ]
+  "cited_in": []
  },
  {
   "name": "Hritik Bansal",

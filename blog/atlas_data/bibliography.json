@@ -13944,6 +13944,12 @@
    "year": "2019",
    "url": "https://blog.hnf.de/frank-rosenblatt-und-das-perceptron/"
   },
+  "hnfmarki2019": {
+   "title": "Der erste amerikanische Computer",
+   "author": "HNF",
+   "year": "2019",
+   "url": "https://blog.hnf.de/der-erste-amerikanische-computer/"
+  },
   "hnflernendeautomaten2021": {
    "title": "Lernende Automaten in Karlsruhe",
    "author": "HNF",
@@ -24958,7 +24964,7 @@
   "aikenphoto": [
    "history"
   ],
-  "aiken": [
+  "hnfmarki2019": [
    "history"
   ],
   "ibm702image": [
@@ -62690,11 +62696,12 @@
    ]
   },
   "HNF": {
-   "count": 13,
+   "count": 14,
    "minyear": 2016,
    "maxyear": 2026,
    "keys": [
     "hnfrosenblatt2019",
+    "hnfmarki2019",
     "hnflernendeautomaten2021",
     "hnfki70jahre2026",
     "hnfmccullochpitts2023",
