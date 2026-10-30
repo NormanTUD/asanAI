@@ -635,6 +635,22 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
   an in-flight job after a reload, retries transient failures and never
   force-scrolls a reader who scrolled up. Tests: `node blog/tests/rag_chat_test.js`,
   `uv run blog/tests/rag_server_test.py`, `uv run blog/tests/rag_index_test.py`.
+
+**Updating the RAG index (incremental).** The normal update is two commands
+from the repository root:
+
+```bash
+uv run blog/tools/build_semantic_index.py
+uv run blog/tools/build_rag_index.py          # incremental; prints reused/embedded
+uv run blog/tools/build_rag_index.py --force  # only for model/dims changes or corruption
+```
+
+The RAG builder reuses the int8 vector and scale of every chunk whose text is
+unchanged, and skips the whole build when `sourceHash` is fresh. On the first
+run after an index built before `pageHashes` existed, every page is reported as
+changed even though only changed chunks are embedded. The write is atomic, so
+an interrupted build leaves the previous index intact.
+
 - **Read-progress** (`progress_tracker.js`): per-tile 10-segment "where I've
   been" bars, dwell-time based (a band counts as read after ≥3 s). Passive —
   nothing to wire up in lessons.
@@ -854,6 +870,7 @@ dependency in a header won't resolve for a few days).
 | `node blog/tests/rag_chat_test.js` | RAG chat status text, citation links, HTML escaping | any failed check | `blog/**` |
 | `uv run blog/tests/semantic_index_test.py` | semantic index freshness vs `.search_cache.json`, vector shape, Python↔JS tokenizer parity, int8 vector fidelity | stale index or any failed check | `blog/**` (semantic-index job) |
 | `uv run blog/tests/rag_index_test.py` | server RAG index freshness vs `.search_cache.json`, vector shape, no redirect/macro chunks | stale index or any failed check | `blog/**` (semantic-index job) |
+| `uv run blog/tests/rag_incremental_test.py` | incremental RAG builder: fresh sourceHash is a no-op, only changed chunks re-embed, reused rows stay byte-identical | any failed check | `blog/**` (semantic-index job) |
 | `uv run blog/tests/rag_server_test.py` | RAG retrieval helpers, grounding/citations, queue position/ETA, answer cache, HTTP API (fake Ollama) | any failed check | `blog/**` (semantic-index job) |
 | `uv run blog/tests/{semantic,rag}_browser_test.py` | headless-Chrome UI: semantic question + AI toggle + fallback; RAG chat health, queue/ETA text, answer and source links | any failed check | `blog/**` (php-render job) |
 | `uv run blog/tests/php_render_validator.py blog/` | headless-Chrome render (PHP built-in server): console error → exit 1; unrendered `$$` (with `_`/`\`) outside a `<div>` → exit 2; width overflow → exit 3 (only with `--check-width`); `--all-lessons --check-width --width-only` sweeps every lesson + the width gate via `window.__layoutGuardrailCheck()` | per exit codes | index.php only (width job currently disabled in CI) |
