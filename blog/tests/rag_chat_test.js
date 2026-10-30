@@ -106,5 +106,14 @@ check(chat.pageSlugFrom({ current: 0, modules: [{ slug: 'index_full' }] }, '') =
 check(chat.pageSlugFrom(null, 'INDEX') === '',
 	'the page-scope slug is normalized and rejected case-insensitively');
 
-console.log('\n' + pass + ' passed, ' + fail + ' failed');
-if (fail > 0) process.exit(1);
+var originalTitle = 'Brief History of AI';
+global.document = { title: originalTitle };
+chat.marqueeTitle('Answer ready', { duration: 80, frame: 10 });
+check(document.title.indexOf('Answer ready') !== -1,
+	'title marquee shows the completion message');
+setTimeout(function() {
+	check(document.title === originalTitle,
+		'title marquee restores the original title');
+	console.log('\n' + pass + ' passed, ' + fail + ' failed');
+	if (fail > 0) process.exit(1);
+}, 200);

@@ -36,6 +36,42 @@
 	};
 	var els = {};
 
+	/* Briefly marquee a message through document.title after an answer
+	   completes, then restore the page's real title. The animation is
+	   deliberately short and self-cancelling so it never becomes a
+	   permanent title change. */
+	var titleTimer = null;
+	var titleOriginal = null;
+	var TITLE_FRAME_MS = 120;
+	var TITLE_DURATION_MS = 4200;
+
+	function marqueeTitle(message, options) {
+		if (typeof document === 'undefined') return function () {};
+		var text = String(message || 'Answer ready — Ask the course');
+		var frame = options && options.frame || TITLE_FRAME_MS;
+		var duration = options && options.duration || TITLE_DURATION_MS;
+		var marquee = '   ' + text + '   \u2022   ' + text + '   \u2022   ';
+		if (titleTimer === null) titleOriginal = document.title;
+		else clearInterval(titleTimer);
+		var offset = 0;
+		var started = Date.now();
+		function restore() {
+			if (titleTimer === null) return;
+			clearInterval(titleTimer);
+			titleTimer = null;
+			document.title = titleOriginal;
+			titleOriginal = null;
+		}
+		function tick() {
+			document.title = marquee.slice(offset) + marquee.slice(0, offset);
+			offset = (offset + 1) % marquee.length;
+			if (Date.now() - started >= duration) restore();
+		}
+		tick();
+		titleTimer = setInterval(tick, frame);
+		return restore;
+	}
+
 	function esc(value) {
 		return String(value == null ? '' : value)
 			.replace(/&/g, '&amp;')
@@ -823,6 +859,7 @@
 		clearActiveJob();
 		state.lastQuestion = '';
 		setBusy(false);
+		marqueeTitle('Answer ready — Ask the course');
 	}
 
 	function showError(seq, message) {
@@ -930,7 +967,8 @@
 				language: language,
 				setBusy: setBusy,
 				visiblePartial: visiblePartial,
-				errorText: errorText
+				errorText: errorText,
+				marqueeTitle: marqueeTitle
 			}
 		};
 	}
@@ -942,7 +980,8 @@
 			esc: esc,
 			visiblePartial: visiblePartial,
 			errorText: errorText,
-			pageSlugFrom: pageSlugFrom
+			pageSlugFrom: pageSlugFrom,
+			marqueeTitle: marqueeTitle
 		};
 	}
 })();
