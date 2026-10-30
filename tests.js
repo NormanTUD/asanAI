@@ -9007,10 +9007,14 @@ async function _coverage_tests_custom_images() {
 			document.body.appendChild(zip_label);
 			document.body.appendChild(zip_input);
 			var errs_before_import = num_errs;
+			var old_err = err;
 			try {
+				err = function () {};
 				await import_zip_and_replace_categories({ files: [new File(["no zip"], "broken.zip", { type: "application/zip" })], value: "" });
+				await delay(100);
 				test_equal("importing an invalid zip restores the upload button", document.getElementById("zip_upload_input").getAttribute("aria-hidden"), "true");
 			} finally {
+				err = old_err;
 				num_errs = errs_before_import;
 				zip_label.remove();
 				zip_input.remove();
