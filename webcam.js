@@ -3,7 +3,6 @@
 var _webcam_start_in_progress = false;
 var auto_predict_webcam_custom_data_interval = null;
 var currently_predicting_webcam_custom_data = false;
-var _webcam_custom_prediction_skip_logged = false;
 
 // A stopped stream can leave the cam wrapper behind, so `cam` alone is not
 // proof that the camera is usable. Only live video tracks count.
@@ -173,7 +172,6 @@ async function _startWebcamDataStream(video_element) {
 }
 
 function _show_webcam_data_stream_ui() {
-	_webcam_custom_prediction_skip_logged = false;
 	$("#webcam_data").show();
 	$(".webcam_data_button").show();
 	webcam_custom_data_started = true;
@@ -186,7 +184,6 @@ function _ensure_webcam_data_prediction_container() {
 	if (!prediction.length) {
 		prediction = $("<div id='webcam_data_prediction' class='webcam_data_prediction'></div>");
 		$("#webcam_data").append(prediction);
-		dbg("[webcam_data] created prediction container; webcam_data=" + $("#webcam_data").length + ", parent=" + (prediction.parent().attr("id") || prediction.parent().attr("class")));
 	}
 
 	return prediction;
@@ -200,14 +197,12 @@ function _start_webcam_custom_data_prediction() {
 	}
 
 	auto_predict_webcam_custom_data_interval = setInterval(predict_webcam_custom_data, 300);
-	dbg("[webcam_data] started custom-data prediction interval");
 }
 
 function _stop_webcam_custom_data_prediction() {
 	if (auto_predict_webcam_custom_data_interval !== null) {
 		clearInterval(auto_predict_webcam_custom_data_interval);
 		auto_predict_webcam_custom_data_interval = null;
-		dbg("[webcam_data] stopped custom-data prediction interval");
 	}
 
 	$("#webcam_data_prediction").hide().html("");
@@ -215,20 +210,12 @@ function _stop_webcam_custom_data_prediction() {
 
 async function predict_webcam_custom_data() {
 	if (currently_predicting_webcam_custom_data || !cam || !webcam_custom_data_started || !model) {
-		if (!_webcam_custom_prediction_skip_logged) {
-			_webcam_custom_prediction_skip_logged = true;
-			dbg("[webcam_data] prediction skipped: predicting=" + currently_predicting_webcam_custom_data + ", cam=" + !!cam + ", started=" + webcam_custom_data_started + ", model=" + !!model);
-		}
 		return;
 	}
 
 	const prediction = $("#webcam_data_prediction");
 
 	if (!prediction.length || !prediction.is(":visible") || !input_shape_is_image()) {
-		if (!_webcam_custom_prediction_skip_logged) {
-			_webcam_custom_prediction_skip_logged = true;
-			dbg("[webcam_data] prediction skipped: exists=" + prediction.length + ", visible=" + prediction.is(":visible") + ", input_image=" + input_shape_is_image());
-		}
 		return;
 	}
 
