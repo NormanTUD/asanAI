@@ -801,11 +801,17 @@ function _feature_map_decorate_controls (canvas) {
 	wrapper.appendChild(canvas);
 
 	const neuron_idx = $(canvas).data("neuron");
+	const layer_idx = $(canvas).data("layer");
 	const caption = document.createElement("span");
 	caption.className = "feature-map-caption";
 
 	if (neuron_idx !== undefined && neuron_idx !== null && neuron_idx !== "") {
-		caption.textContent = "#" + (Number(neuron_idx) + 1);
+		const neuron_number = Number(neuron_idx);
+		const is_last_layer = typeof get_number_of_layers === "function" && get_number_of_layers() - 1 === Number(layer_idx);
+		const has_category_label = is_last_layer &&
+			typeof is_classification !== "undefined" && is_classification &&
+			typeof labels !== "undefined" && labels && labels[neuron_number] !== undefined;
+		caption.textContent = has_category_label ? labels[neuron_number] : "#" + (neuron_number + 1);
 	}
 
 	wrapper.appendChild(caption);

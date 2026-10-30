@@ -32,6 +32,7 @@ function update_image_counters() {
 		var count = $(container).find(".own_image_span").length;
 		$(container).find(".own_images_count").text(count);
 	});
+	update_label_sidebar_counts();
 }
 
 function add_upload_container_html(k) {

@@ -4201,6 +4201,14 @@ function _setup_confusion_matrix_tooltip() {
 		_cm_pointer_client_y = null;
 		_hide_confusion_matrix_tooltip();
 	});
+
+	// Switching tabs hides the table without a mouseleave on the cell, so the
+	// fixed-position tooltip would otherwise stay on screen.
+	$(document).on("tabsactivate", function() {
+		_cm_pointer_client_x = null;
+		_cm_pointer_client_y = null;
+		_hide_confusion_matrix_tooltip();
+	});
 }
 
 function _cm_restore_tooltip_after_render() {

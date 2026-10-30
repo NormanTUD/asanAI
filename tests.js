@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2123;
+var DEFAULT_EXPECTED_TEST_COUNT = 2344;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -737,7 +737,13 @@ async function test_maximally_activated_last_layer() {
 	const expected_status = (typeof model_is_trained !== "undefined" && model_is_trained) ? language[lang]["feature_map_status_trained"] : language[lang]["feature_map_status_untrained"];
 	const row_status = last_group.find(".feature-map-layer-status");
 
-	test_equal("Feature map captions enumerate the neurons in order", group_captions.length > 0 && group_captions.every(function (value, index) { return value === "#" + (index + 1); }), true);
+	const captions_match = group_captions.length > 0 && group_captions.every(function (value, index) {
+		if (typeof is_classification !== "undefined" && is_classification && typeof labels !== "undefined" && labels && labels[index] !== undefined) {
+			return value === String(labels[index]);
+		}
+		return value === "#" + (index + 1);
+	});
+	test_equal("Feature map captions use category labels for the last layer", captions_match, true);
 	test_equal("Each feature map row shows its generation-time training state", row_status.length, 1);
 	test_equal("Feature map row status matches the state at generation time", row_status.text().indexOf(expected_status) !== -1, true);
 
@@ -8256,6 +8262,24 @@ async function _tiny_tests_custom_images_js() {
 		test_equal("insertCanvasIntoCategory stores the category", canvas.dataset.category, "first");
 		test_equal("insertCanvasIntoCategory wraps the canvas", container.querySelectorAll(".own_image_span").length, 1);
 
+		var hadSidebar = !!document.getElementById("labelSidebar");
+		var sidebarLabel = document.createElement("input");
+		sidebarLabel.className = "own_image_label";
+		sidebarLabel.value = "first";
+		container.insertBefore(sidebarLabel, image_div);
+		add_label_sidebar();
+		var sidebarCells = Array.prototype.slice.call(document.querySelectorAll("#labelSidebar td")).filter(function (td) {
+			return td.textContent.indexOf("first (") === 0;
+		});
+		var sidebarCell = sidebarCells[sidebarCells.length - 1];
+		test_equal("label sidebar shows each category's image count", sidebarCell ? sidebarCell.textContent : null, "first (1)");
+		sidebarLabel.remove();
+		add_label_sidebar();
+		if (!hadSidebar) {
+			var createdSidebar = document.getElementById("labelSidebar");
+			if (createdSidebar) createdSidebar.remove();
+		}
+
 		test_equal("get_category_nr finds its container", get_category_nr(trigger) >= 0, true);
 		restore_zip_upload_button(zip_label, zip_input);
 		test_equal("restore_zip_upload_button restores the onchange", zip_input.getAttribute("onchange"), "import_zip_and_replace_categories(this)");
@@ -9230,6 +9254,14 @@ async function _coverage_tests_origami_live() {
 		document.body.appendChild(div);
 		test_equal("init accepts a div", live.init(div) === live, true);
 		await delay(1200);
+		if (!live._state.initialized) {
+			test_equal("init without WebGL reports the renderer failure", typeof live._state.webglError === "string" && live._state.webglError.length > 0, true);
+			test_equal("init without WebGL stays uninitialized", live._state.initialized, false);
+			live.destroy();
+			test_equal("destroy keeps the uninitialized state", live._state.initialized, false);
+			return;
+		}
+		test_equal("init did not report a WebGL failure", live._state.webglError, null);
 		test_equal("init marks the live state initialized", live._state.initialized, true);
 		live.forceUpdate();
 		live.setQuality("low");
@@ -9535,6 +9567,84 @@ async function _coverage_tests_feature_map_color() {
 	}
 }
 
+function _coverage_tests_feature_map_captions() {
+	var oldLabels = labels;
+	var oldClassification = is_classification;
+	var oldErrs = num_errs;
+	var oldWrns = num_wrns;
+	var wrapper = document.createElement("div");
+	document.body.appendChild(wrapper);
+
+	function caption_for(layer, neuron) {
+		var canvas = document.createElement("canvas");
+		$(canvas).data("neuron", neuron);
+		$(canvas).data("layer", layer);
+		wrapper.appendChild(canvas);
+		_feature_map_decorate_controls(canvas);
+		return $(canvas).closest(".feature-map-item").find(".feature-map-caption").text();
+	}
+
+	try {
+		var lastLayer = get_number_of_layers() - 1;
+		labels = ["Alpha", "Beta"];
+		is_classification = true;
+		test_equal("Feature map caption uses the category label", caption_for(lastLayer, 0), "Alpha");
+		test_equal("Feature map caption uses the second category label", caption_for(lastLayer, 1), "Beta");
+		labels = ["Only"];
+		test_equal("Feature map caption falls back when the label is missing", caption_for(lastLayer, 1), "#2");
+		labels = ["Alpha"];
+		is_classification = false;
+		test_equal("Feature map caption keeps neuron numbers without classification", caption_for(lastLayer, 0), "#1");
+		is_classification = true;
+		if (lastLayer > 0) {
+			test_equal("Feature map caption keeps neuron numbers for inner layers", caption_for(lastLayer - 1, 0), "#1");
+		}
+		labels = null;
+		test_equal("Feature map caption keeps neuron numbers without labels", caption_for(lastLayer, 0), "#1");
+	} finally {
+		wrapper.remove();
+		labels = oldLabels;
+		is_classification = oldClassification;
+		num_errs = oldErrs;
+		num_wrns = oldWrns;
+	}
+}
+
+function _coverage_tests_confusion_matrix_tooltip() {
+	var oldErrs = num_errs;
+	var oldWrns = num_wrns;
+	var key = "coverage:0";
+	var table = document.createElement("table");
+	table.className = "confusion_matrix_table";
+	var row = document.createElement("tr");
+	var cell = document.createElement("td");
+	cell.className = "cm-hover";
+	cell.setAttribute("data-cm-idx", key);
+	row.appendChild(cell);
+	table.appendChild(row);
+	document.body.appendChild(table);
+	_confusion_cell_examples[key] = [0];
+
+	try {
+		_setup_confusion_matrix_tooltip();
+		var tooltip = _get_confusion_matrix_tooltip();
+
+		$(cell).trigger($.Event("mouseover", { clientX: 10, clientY: 20 }));
+		test_equal("Confusion matrix tooltip appears on hover", tooltip.style.display, "block");
+		test_equal("Confusion matrix hover remembers the pointer", _cm_pointer_client_x, 10);
+
+		$(document).trigger("tabsactivate");
+		test_equal("Confusion matrix tooltip hides on tab switch", tooltip.style.display, "none");
+		test_equal("Confusion matrix pointer is cleared on tab switch", _cm_pointer_client_x, null);
+	} finally {
+		table.remove();
+		delete _confusion_cell_examples[key];
+		_hide_confusion_matrix_tooltip();
+		num_errs = oldErrs;
+		num_wrns = oldWrns;
+	}
+}
+
 async function _coverage_tests_debug_helpers() {
 	var oldErrs = num_errs;
 	var oldWrns = num_wrns;
@@ -9752,6 +9862,8 @@ async function run_coverage_tests() {
 	await _coverage_tests_online_python_ui();
 	await _coverage_tests_data_augmentation();
 	await _coverage_tests_feature_map_color();
+	_coverage_tests_feature_map_captions();
+	_coverage_tests_confusion_matrix_tooltip();
 	await _coverage_tests_debug_helpers();
 	await _coverage_tests_gui_mobile();
 	await _coverage_tests_model_helpers();

@@ -718,6 +718,28 @@ function create_overview_table_for_custom_image_categories () {
 	return toc;
 }
 
+function _label_sidebar_image_count(label_el) {
+	var container = label_el && label_el.closest ? label_el.closest(".own_image_upload_container") : null;
+	return container ? container.querySelectorAll(".own_images .own_image_span").length : 0;
+}
+
+function _label_sidebar_text(label_el, index) {
+	var name = label_el.value || label_el.textContent || ("label " + (index + 1));
+	return name + " (" + _label_sidebar_image_count(label_el) + ")";
+}
+
+function update_label_sidebar_counts() {
+	var bar = document.getElementById("labelSidebar");
+	if (!bar) return;
+	var rows = bar.querySelectorAll("table tr");
+	var label_els = document.querySelectorAll(".own_image_label");
+	var count = Math.min(rows.length, label_els.length);
+	for (var i = 0; i < count; i++) {
+		var cell = rows[i].querySelector("td");
+		if (cell) cell.textContent = _label_sidebar_text(label_els[i], i);
+	}
+}
+
 function add_label_sidebar() {
 	var LABEL_SIDEBAR_BTN_HTML = $(`<button class="add_category" onclick="add_new_category();">+ <span class="TRANSLATEME_add_category"></span></button>`)[0];
 
@@ -778,7 +800,7 @@ function add_label_sidebar() {
 
 		var row = document.createElement('tr');
 		var cell = document.createElement('td');
-		cell.textContent = (el.value || el.textContent || 'label ' + (i+1));
+		cell.textContent = _label_sidebar_text(el, i);
 		cell.onclick = function(){
 			el.scrollIntoView({behavior:'smooth',block:'center'});
 			el.classList.add('flashHighlight');
