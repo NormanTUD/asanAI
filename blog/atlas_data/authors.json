@@ -8496,6 +8496,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "people_of_ai",
    "symbolic_ai"
   ]
  },
@@ -17943,7 +17944,8 @@
    "gefter2015pitts"
   ],
   "cited_in": [
-   "history"
+   "history",
+   "people_of_ai"
   ]
  },
  {
@@ -32455,6 +32457,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "people_of_ai",
    "promptengineering",
    "symbolic_ai"
   ]
@@ -32491,6 +32494,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "people_of_ai",
    "symbolic_ai"
   ]
  },
@@ -74116,6 +74120,7 @@
    "myths",
    "optimizerlab",
    "origami",
+   "people_of_ai",
    "philosophy",
    "promptengineering",
    "rag",
@@ -81294,8 +81299,29 @@
   ],
   "cited_in": [
    "history",
+   "people_of_ai",
    "symbolic_ai",
    "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Darren D’Addario",
+  "canon": "Darren D’Addario",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2014,
+  "conf": 0,
+  "works": 3,
+  "keys": [
+   "afflictor2014mcculloch",
+   "afflictor2015mechanistic",
+   "afflictor_mcculloch_tag"
+  ],
+  "cited_in": [
+   "history",
+   "people_of_ai"
   ]
  },
  {

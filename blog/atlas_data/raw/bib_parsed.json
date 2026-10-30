@@ -6408,6 +6408,24 @@
    "year": "1993",
    "url": "https://archive.org/details/aitumultuoushist0000crev"
   },
+  "afflictor2014mcculloch": {
+   "title": "Old Print Article: “Warns Machines May Some Day Take Over The World,” Brooklyn Daily Eagle (1948)",
+   "author": "Darren D’Addario",
+   "year": "2014",
+   "url": "https://afflictor.com/2014/09/22/old-print-article-warns-machines-may-some-day-take-over-the-world-brooklyn-daily-eagle-1948/"
+  },
+  "afflictor2015mechanistic": {
+   "title": "“They Would Create The First Mechanistic Theory Of The Mind”",
+   "author": "Darren D’Addario",
+   "year": "2015",
+   "url": "https://afflictor.com/2015/02/05/they-would-create-the-first-mechanistic-theory-of-the-mind/"
+  },
+  "afflictor_mcculloch_tag": {
+   "title": "Warren Sturgis McCulloch — tag archive",
+   "author": "Darren D’Addario",
+   "year": "2014",
+   "url": "https://afflictor.com/tag/warren-sturgis-mcculloch/"
+  },
   "ronkowitz2017perceptron": {
    "title": "Perceptron",
    "author": "Ron Kowitz",
@@ -22089,10 +22107,12 @@
   ],
   "shortliffe1976mycin": [
    "beyond_llms",
+   "people_of_ai",
    "symbolic_ai"
   ],
   "crevier1993ai": [
    "history",
+   "people_of_ai",
    "symbolic_ai",
    "untold_history_iii"
   ],
@@ -22107,6 +22127,7 @@
    "symbolic_ai"
   ],
   "cyc_wiki": [
+   "people_of_ai",
    "symbolic_ai"
   ],
   "berners2001sw": [
@@ -24840,7 +24861,8 @@
    "history"
   ],
   "gefter2015pitts": [
-   "history"
+   "history",
+   "people_of_ai"
   ],
   "smalheiser2000pitts": [
    "history"
@@ -24873,6 +24895,10 @@
    "history"
   ],
   "pitts1947universals": [
+   "history",
+   "people_of_ai"
+  ],
+  "afflictor2014mcculloch": [
    "history",
    "people_of_ai"
   ],
@@ -26281,6 +26307,7 @@
   ],
   "feigenbaum1984expert": [
    "beyond_llms",
+   "people_of_ai",
    "promptengineering"
   ],
   "mcdermott1982r1": [
@@ -27627,6 +27654,12 @@
    "people_of_ai"
   ],
   "img_mcculloch_pitts_neuron": [
+   "people_of_ai"
+  ],
+  "afflictor2015mechanistic": [
+   "people_of_ai"
+  ],
+  "afflictor_mcculloch_tag": [
    "people_of_ai"
   ],
   "img_frank_rosenblatt": [
@@ -46682,6 +46715,16 @@
    "maxyear": 1993,
    "keys": [
     "crevier1993ai"
+   ]
+  },
+  "Darren D’Addario": {
+   "count": 3,
+   "minyear": 2014,
+   "maxyear": 2015,
+   "keys": [
+    "afflictor2014mcculloch",
+    "afflictor2015mechanistic",
+    "afflictor_mcculloch_tag"
    ]
   },
   "Ron Kowitz": {
