@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One Word After Another — McCulloch, 1945</title>
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<link rel="stylesheet" href="mp.css">
+<script src="../temml.min.js" defer></script>
+<script src="mp.js" defer></script>
+<script src="mp_1945_one_word.js" defer></script>
+<style>
+  .cover-frame {
+    margin: 0;
+    padding: clamp(0.8rem, 2vw, 1.2rem);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background:
+      radial-gradient(400px 200px at 20% 0%, var(--accent-glow), transparent 70%),
+      color-mix(in srgb, var(--panel) 88%, transparent);
+    box-shadow: var(--shadow);
+  }
+  .cover-frame img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
+    filter: saturate(0.92) contrast(1.03);
+  }
+  .cover-frame figcaption {
+    margin-top: 0.85rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    line-height: 1.55;
+    color: var(--faint);
+  }
+  .cover-frame figcaption b { color: var(--accent); font-weight: 500; }
+  .ledger {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  .ledger th, .ledger td {
+    padding: 0.72rem 0.2rem;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--line);
+  }
+  .ledger th {
+    width: 38%;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 500;
+  }
+  .ledger td { color: var(--muted); }
+  .ledger tr:last-child th, .ledger tr:last-child td { border-bottom: 0; }
+  .verse-card {
+    position: relative;
+    margin: 0;
+    padding: clamp(1.4rem, 3.5vw, 2.4rem);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--panel) 94%, transparent), color-mix(in srgb, var(--panel-2) 84%, transparent));
+    overflow: hidden;
+  }
+  .verse-card::before {
+    content: "“";
+    position: absolute;
+    top: -0.5rem;
+    left: 0.8rem;
+    font-family: var(--serif);
+    font-size: 6rem;
+    line-height: 1;
+    color: var(--accent);
+    opacity: 0.2;
+  }
+  .verse-card p {
+    position: relative;
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(1.08rem, 1.6vw, 1.3rem);
+    line-height: 1.55;
+    white-space: pre-line;
+  }
+  .verse-card footer {
+    margin-top: 1rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .verse-card footer b { color: var(--accent); font-weight: 500; }
+  .ow-line {
+    min-height: 4.5rem;
+    margin: 1rem 0 0;
+    font-family: var(--serif);
+    font-size: clamp(1.15rem, 2.2vw, 1.7rem);
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    text-align: center;
+    transition: color 0.3s ease;
+  }
+  .ow-line.is-broken { color: var(--faint); }
+  .triad {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .triad .concept { height: 100%; }
+  .triad .concept h3 { font-size: 1.2rem; }
+  .triad .concept p { font-size: 0.94rem; line-height: 1.55; }
+  .score-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+  .score-strip .cell {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.8rem 0.9rem;
+    background: color-mix(in srgb, var(--bg) 42%, transparent);
+  }
+  .score-strip .cell span {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .score-strip .cell b {
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+  .source-note { font-size: 0.8rem; color: var(--faint); }
+</style>
+</head>
+<body data-accent="sky">
+<div class="progress"><span></span></div>
+<header class="topbar">
+  <a class="brand" href="mp_index.html"><b>MP</b><span class="dot">·</span>Codex</a>
+  <div class="topbar-meta">
+    <span class="hide-sm">Literary plate 01 · 1945</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+  </div>
+</header>
+<div class="rail" id="rail" aria-hidden="true"></div>
+
+<main>
+<section class="hero" id="top" data-label="Opening">
+  <canvas class="hero-canvas" id="heroOneWord" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">Chicago Literary Club · Club Papers 48 · 1945</p>
+    <h1>One <em>Word</em> After Another</h1>
+    <p class="hero-sub">A tribute to Edwin Arlington Robinson, read before the Chicago Literary Club on 12 March 1945. Not a paper about neurons — a paper about the other machine McCulloch listened to all his life: the line of verse, where meaning arrives only in order.</p>
+    <div class="hero-meta">
+      <span><b>Warren S. McCulloch</b></span>
+      <span>28 pages · 245 copies</span>
+      <span>read 12 March 1945</span>
+      <span>a literary tribute</span>
+    </div>
+    <a class="scroll-cue" href="#occasion"><span class="line"></span> Read the plate</a>
+  </div>
+</section>
+
+<section class="section" id="occasion" data-label="The occasion">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The occasion</p>
+      <h2 class="thesis">A brain scientist stands up to praise a <em>poet</em>.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">Edwin Arlington Robinson (1869–1935) was the poet of Tilbury Town: a fictional New England village of failures, dreamers, and people who keep their dignity while losing everything else. He won the Pulitzer Prize three times, wrote in plain diction and strict forms, and made ordinary lives sound like the inside of a courtroom.</p>
+      <p class="lede">Ten years after Robinson's death, McCulloch read a tribute before the Chicago Literary Club. The Club printed it as a slim paper: twenty-eight pages, an edition of 245 copies, number 48 in its Club Papers series. It is not a scientific article. It is an act of attention — one writer reading another closely enough to learn how the trick is done.</p>
+      <div class="note"><b>What survives:</b> the occasion, the title, and the subject. The booklet is public domain and fully readable at HathiTrust; this page does not put invented sentences into McCulloch's mouth. It quotes Robinson — the poet being honoured — and reads the title as the thesis.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="thesis" data-label="The thesis">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The thesis</p>
+      <h2 class="thesis">A poem is not a bag of words. It is a <em>sequence</em> that becomes a form.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">The title says it literally. <em>One word after another</em> is how a line is made, how a sentence is parsed, how a poem arrives. Change the order and you have not changed the vocabulary; you have changed the meaning. Put the same words in a different sequence and the line can become nonsense, or a different poem, or a confession.</p>
+      <p class="lede">That is also the problem of the nervous system. A signal is a physical event; it becomes a proposition only in a net, in a sequence, in a context. McCulloch spent his life showing how order turns events into logic. Here, in 1945, he chose the older technology: metre, rhyme, and the line break.</p>
+      <div class="note"><b>The wager:</b> if meaning depends on order, then a poet is an engineer of order — and a reader is a decoder. The rest of this page is a small machine for feeling that fact.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="lab" data-label="The laboratory">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory · the order machine</p>
+      <h2>Same words. Different world.</h2>
+      <p class="lede">Robinson's lines are used here as the material. Drag the sequence from reversed to restored. The words never change; only their order does. Watch the sense score rise as the line becomes itself.</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>Reconstruct the line</h3>
+          <p>The score counts inversions: how many pairs of words are still in the wrong relative order. A line is a small network, and order is its wiring.</p>
+        </div>
+        <span class="pill"><i></i> live</span>
+      </div>
+      <div class="lab-canvas-wrap wide">
+        <canvas id="owLab" aria-label="Interactive word order laboratory"></canvas>
+      </div>
+      <div class="controls">
+        <div class="control">
+          <label for="owOrder">sequence <output id="owOrderVal">0</output></label>
+          <input id="owOrder" type="range" min="0" max="100" step="1" value="0">
+        </div>
+      </div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button class="btn ghost" id="owBreak">Reverse</button>
+        <button class="btn ghost" id="owRestore">Restore order</button>
+        <button class="btn ghost" id="owNext">Another line</button>
+      </div>
+      <p class="ow-line is-broken" id="owLineText" aria-live="polite"></p>
+      <div class="score-strip">
+        <div class="cell"><span>line</span><b class="small-value" id="owLineName">Richard Cory</b></div>
+        <div class="cell"><span>words</span><b class="small-value" id="owWordCount">8</b></div>
+        <div class="cell"><span>sense</span><b class="small-value" id="owSense">0%</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="craft" data-label="The craft">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The craft</p>
+      <h2>Robinson's plain knife.</h2>
+      <p class="lede">Robinson's sentences are almost bare. The pressure comes from what he withholds: the adjective that would explain, the judgement that would console. His people are seen from the pavement, at a distance, in a town that knows them too well. McCulloch's tribute honours a style that trusts the reader to hear the gap.</p>
+    </div>
+    <div class="quote-grid" style="margin-top:2rem">
+      <figure class="verse-card reveal">
+        <p>Whenever Richard Cory went down town,
+We people on the pavement looked at him:
+He was a gentleman from sole to crown,
+Clean favored, and imperially slim.</p>
+        <footer><b>Edwin Arlington Robinson</b> · “Richard Cory” (1897)</footer>
+      </figure>
+      <figure class="verse-card reveal delay-1">
+        <p>Miniver Cheevy, child of scorn,
+  Grew lean while he assailed the seasons;
+He wept that he was ever born,
+  And he had reasons.</p>
+        <footer><b>Edwin Arlington Robinson</b> · “Miniver Cheevy” (1907)</footer>
+      </figure>
+      <figure class="verse-card reveal delay-2">
+        <p>She fears him, and will always ask
+  What fated her to choose him;
+She meets in his engaging mask
+  All reasons to refuse him;</p>
+        <footer><b>Edwin Arlington Robinson</b> · “Eros Turannos” (1914)</footer>
+      </figure>
+      <figure class="verse-card reveal delay-3">
+        <p>And Richard Cory, one calm summer night,
+Went home and put a bullet through his head.</p>
+        <footer><b>Edwin Arlington Robinson</b> · “Richard Cory” (1897)</footer>
+      </figure>
+    </div>
+    <p class="source-note reveal" style="margin-top:1rem">These are Robinson's poems, the subject of McCulloch's tribute, quoted from the public-domain texts. The tribute booklet itself is not quoted here; a full scan is linked below.</p>
+  </div>
+</section>
+
+<section class="section" id="handles" data-label="What it handles">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The four questions</p>
+      <h2>What it handles, solves, and does.</h2>
+    </div>
+    <div class="triad" style="margin-top:2rem">
+      <article class="concept reveal">
+        <span class="num">WHAT IT HANDLES</span>
+        <h3>The debt to a dead poet</h3>
+        <p>How do you praise a style without paraphrasing it away? How do you say what a poem does when the doing is the meaning? The tribute is an attempt to answer by attention rather than by summary.</p>
+      </article>
+      <article class="concept reveal delay-1">
+        <span class="num">WHAT IT SOLVES</span>
+        <h3>Order as a working idea</h3>
+        <p>It turns admiration into a craft lesson: meaning is a relation between successive words, not a property of a word list. That lesson is as true of a logical proposition as of a line of verse.</p>
+      </article>
+      <article class="concept reveal delay-2">
+        <span class="num">WHAT IT DOES</span>
+        <h3>It gives McCulloch a public literary voice</h3>
+        <p>A Club paper, 245 copies, read in 1945. It places the neurophysiologist among readers of poetry — and shows that his interest in sequence, form, and communication was not confined to the laboratory.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="book" data-label="The booklet">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The booklet</p>
+      <h2>A thin blue volume.</h2>
+      <p class="lede">The cover is austere: the title in quotation marks, the author's full name, the Club and the year. No portrait, no ornament, no argument. The book is a talk that became an object — the Club's usual way of keeping a member's words.</p>
+      <table class="ledger" style="margin-top:1.5rem">
+        <tr><th>Author</th><td>Warren Sturgis McCulloch</td></tr>
+        <tr><th>Title</th><td>“One Word After Another”</td></tr>
+        <tr><th>Occasion</th><td>A tribute to Edwin A. Robinson, read before the Club on 12 March 1945</td></tr>
+        <tr><th>Publisher</th><td>Chicago Literary Club · Club Papers 48</td></tr>
+        <tr><th>Extent</th><td>28, [4] pages · 22 cm</td></tr>
+        <tr><th>Edition</th><td>245 copies printed for members</td></tr>
+        <tr><th>Rights</th><td>Public domain (HathiTrust: full view)</td></tr>
+      </table>
+      <div class="btn-row" style="margin-top:1.40rem">
+        <a class="btn" href="https://catalog.hathitrust.org/Record/102670985" target="_blank" rel="noopener">HathiTrust scan</a>
+        <a class="btn ghost" href="https://books.google.com/books?id=-B7MJ2E5xqcC" target="_blank" rel="noopener">Google Books record</a>
+      </div>
+    </div>
+    <div class="reveal delay-1">
+      <figure class="cover-frame">
+        <img src="mp_assets/mcculloch_one_word_after_another_cover.png" alt="Cover of One Word After Another, Chicago Literary Club, 1945" loading="lazy">
+        <figcaption><b>The cover, 1945.</b> “ONE WORD AFTER ANOTHER”, by Warren Sturgis McCulloch. Chicago Literary Club, 1945. Cover image from the Google Books scan; the volume itself is public domain.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why" data-label="Why it matters">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">Why it matters</p>
+      <h2>The scientist as a <em>reader</em>.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">It is easy to remember McCulloch as the man who turned neurons into propositions. It is harder to remember that he thought propositions were made of words, and words of order, and order of time. This little paper is the missing hinge: the same mind that would later write about forgetting, memory, and the logic of nervous nets is here practising the older discipline of the line.</p>
+      <p class="lede">Read it next to <a href="mp_1959_natural_fit.html">The Natural Fit</a>, where the practice becomes a book of poems, and next to <a href="mp_1953_past_of_a_delusion.html">The Past of a Delusion</a>, where the same suspicion of words is turned on a theory that would not let itself be refuted.</p>
+      <div class="note"><b>The thread:</b> all three are Chicago Literary Club papers. One honours a poet, one collects McCulloch's own poems, one attacks a theory. Together they show the literary McCulloch — not a hobby, but a second way of being exact.</div>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:2.5rem;display:grid;gap:1rem">
+    <a class="next reveal" href="mp_1959_natural_fit.html">
+      <div>
+        <p class="eyebrow">Literary plate 02 · 1959</p>
+        <h3>The Natural Fit — the poems McCulloch kept</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+    <a class="next reveal" href="mp_1953_past_of_a_delusion.html">
+      <div>
+        <p class="eyebrow">Literary plate 03 · 1953</p>
+        <h3>The Past of a Delusion — the theory that could not lose</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span>Literary plate 01 · <b>One Word After Another</b></span>
+    <span>Source: <a href="https://catalog.hathitrust.org/Record/102670985">HathiTrust</a> · <a href="https://books.google.com/books?id=-B7MJ2E5xqcC">Google Books</a></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Facsimile viewer"><img alt=""><div class="cap"></div></div>
+</body>
+</html>
