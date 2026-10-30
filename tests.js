@@ -7965,6 +7965,468 @@ function _tiny_tests_gui_extra_js() {
 	attr_el.remove();
 }
 
+function _tiny_tests_neural_organism_js() {
+	var container = document.createElement("div");
+	document.body.appendChild(container);
+	var tensors = [];
+	function layer(cls, config, weights) {
+		return {
+			name: cls.toLowerCase(),
+			getClassName: function () { return cls; },
+			getConfig: function () { return config; },
+			getWeights: function () { return weights || []; }
+		};
+	}
+	var kernel = tf.tensor2d([[0.1, -0.2], [0.3, 0.4]]);
+	var bias = tf.tensor1d([0, 0.1]);
+	var conv = tf.tensor4d(Array.from({ length: 8 }, function (_, i) { return i / 10; }), [2, 2, 2, 1]);
+	tensors.push(kernel, bias, conv);
+	var fake_model = {
+		layers: [
+			layer("InputLayer", { batchInputShape: [null, 2] }),
+			layer("Dense", { units: 2, activation: "relu" }, [kernel, bias]),
+			layer("Conv2D", { filters: 1, kernelSize: [2, 2] }, [conv]),
+			layer("MaxPooling2D", { poolSize: [2, 2] }),
+			layer("Flatten", {}),
+			layer("Dropout", { rate: 0.25 }),
+			layer("BatchNormalization", {}),
+			layer("MysteryLayer", {})
+		]
+	};
+	try {
+		var canvas = visualizeModelOrganism(fake_model, container);
+		test_equal("visualizeModelOrganism returns a canvas", canvas && canvas.tagName, "CANVAS");
+		test_equal("visualizeModelOrganism uses the requested width", canvas.width, 1050);
+		test_equal("visualizeModelOrganism appends the canvas", container.querySelectorAll("canvas").length, 1);
+		var empty_container = document.createElement("div");
+		document.body.appendChild(empty_container);
+		test_equal("visualizeModelOrganism handles empty models", visualizeModelOrganism({ layers: [] }, empty_container), null);
+		test_equal("visualizeModelOrganism explains empty models", empty_container.innerHTML.indexOf("No layers found") !== -1, true);
+		empty_container.remove();
+	} finally {
+		tensors.forEach(function (t) { if (!t.isDisposed) t.dispose(); });
+		container.remove();
+	}
+}
+
+function _tiny_tests_topological_analyzer_js() {
+	var old_xy_data = window.xy_data_global;
+	var old_layer_io = window.layerIOStats;
+	var old_model = window.model;
+	var old_layer_states = window.layer_states_saved;
+	var points = [[0, 0], [1, 0], [0, 1], [1, 1], [2, 2], [2, 3]];
+	var container = document.createElement("div");
+	container.style.position = "fixed";
+	container.style.left = "0";
+	container.style.top = "0";
+	container.style.width = "700px";
+	container.style.height = "500px";
+	container.style.zIndex = "-1";
+	document.body.appendChild(container);
+	try {
+		TopologicalAnalyzer.destroy();
+		TopologicalAnalyzer.hideTooltip();
+		var stale_container = document.getElementById("tda_analyzer_singleton");
+		if (stale_container) stale_container.remove();
+		var persistence = TopologicalAnalyzer.computeRipsPersistence(points, 3, 12);
+		test_equal("TopologicalAnalyzer computes H0 pairs", persistence.h0.length >= points.length - 1, true);
+		test_equal("TopologicalAnalyzer computes H1 pairs", Array.isArray(persistence.h1), true);
+		test_equal("TopologicalAnalyzer computes Betti curves", persistence.bettiCurve0.length > 0, true);
+		test_equal("TopologicalAnalyzer records epsilon values", persistence.epsilonValues.length, persistence.bettiCurve0.length);
+		var summary = TopologicalAnalyzer.computeTopologicalSummary(persistence);
+		test_equal("TopologicalAnalyzer summary counts H0 components", summary.numComponentsH0, persistence.h0.length);
+		test_equal("TopologicalAnalyzer summary exposes finite persistence", summary.totalPersistenceH0 >= 0, true);
+		var landscape = TopologicalAnalyzer.computePersistenceLandscape(persistence.h0, 20, 3);
+		test_equal("TopologicalAnalyzer computes a landscape", landscape.length, 20);
+		test_equal("TopologicalAnalyzer landscape is finite", landscape.every(isFinite), true);
+
+		var weight_topology = TopologicalAnalyzer.analyzeWeightTopology([0.1, -0.2, 0.3, 0.4, 0.5, -0.6, 0.7, 0.8, 0.9], [3, 3]);
+		test_equal("TopologicalAnalyzer analyzes weight topology", weight_topology !== null, true);
+		test_equal("TopologicalAnalyzer weight histogram has bins", weight_topology.histogram.bins.length, 50);
+		test_equal("TopologicalAnalyzer weight summary counts weights", weight_topology.numWeights, 9);
+		test_equal("TopologicalAnalyzer rejects tiny weight data", TopologicalAnalyzer.analyzeWeightTopology([1, 2, 3], [1, 3]), null);
+
+		var activation_topology = TopologicalAnalyzer.analyzeActivationTopology(points);
+		test_equal("TopologicalAnalyzer analyzes activation topology", activation_topology !== null, true);
+		test_equal("TopologicalAnalyzer activation topology keeps points", activation_topology.numPoints, points.length);
+		test_equal("TopologicalAnalyzer activation topology keeps the dimension", activation_topology.dimension, 2);
+		var flat_activation = TopologicalAnalyzer.analyzeActivationTopology([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+		test_equal("TopologicalAnalyzer embeds flat activations", flat_activation !== null, true);
+		test_equal("TopologicalAnalyzer rejects short activations", TopologicalAnalyzer.analyzeActivationTopology([1, 2]), null);
+
+		window.xy_data_global = {
+			x: { dataSync: function () { return Float32Array.from([0, 0, 1, 0, 0, 1, 1, 1, 2, 2, 2, 3]); }, isDisposed: false }
+		};
+		window.model = {
+			inputs: [{ shape: [null, 2] }],
+			layers: [{
+				name: "dense_probe",
+				getClassName: function () { return "Dense"; },
+				getWeights: function () { return [{ isDisposed: false, shape: [2, 2], dataSync: function () { return Float32Array.from([0.1, -0.2, 0.3, 0.4]); } }]; }
+			}]
+		};
+		window.layerIOStats = {
+			records: [{
+				layers: [{ layerName: "dense_probe", layerType: "Dense", input: [0, 1, 0, 1, 1, 0, 1, 0], output: [0, 1, 1, 0, 1, 1, 0, 0], outputShape: [4, 2] }]
+			}]
+		};
+		window.layer_states_saved = null;
+
+		TopologicalAnalyzer.init(container);
+		test_equal("TopologicalAnalyzer init renders", container.querySelectorAll(".tda-section").length >= 1, true);
+		test_equal("TopologicalAnalyzer init renders SVG charts", container.querySelectorAll("svg").length >= 1, true);
+		test_equal("TopologicalAnalyzer exposes configuration", typeof TopologicalAnalyzer.getConfig().maxPoints, "number");
+		TopologicalAnalyzer.setConfig({ maxPoints: 100, showDecisionBoundary: false });
+		test_equal("TopologicalAnalyzer updates configuration", TopologicalAnalyzer.getConfig().maxPoints, 100);
+		TopologicalAnalyzer.update({ showWeightTopology: false });
+		test_equal("TopologicalAnalyzer update applies options", TopologicalAnalyzer.getConfig().showWeightTopology, false);
+
+		var tooltip_target = document.createElement("div");
+		tooltip_target.setAttribute("data-tda-tooltip", "tda_section_weights");
+		container.appendChild(tooltip_target);
+		TopologicalAnalyzer.attachTooltipListeners(container);
+		TopologicalAnalyzer.showTooltip({ clientX: 20, clientY: 20 }, "<b>probe</b>");
+		test_equal("TopologicalAnalyzer shows tooltips", document.querySelectorAll("#tda_tooltip_popup").length, 1);
+		test_equal("TopologicalAnalyzer writes tooltip content", document.getElementById("tda_tooltip_popup").innerHTML.indexOf("probe") !== -1, true);
+		TopologicalAnalyzer.hideTooltip();
+		TopologicalAnalyzer.destroy();
+		test_equal("TopologicalAnalyzer destroys its container", container.querySelectorAll(".tda-section").length, 0);
+	} finally {
+		window.xy_data_global = old_xy_data;
+		window.layerIOStats = old_layer_io;
+		window.model = old_model;
+		window.layer_states_saved = old_layer_states;
+		TopologicalAnalyzer.hideTooltip();
+		container.remove();
+	}
+}
+
+async function _tiny_tests_clipboard_and_download_js() {
+	test_equal("uint16le encodes little endian", JSON.stringify(uint16le(0x1234)), "[52,18]");
+	test_equal("uint32le encodes little endian", JSON.stringify(uint32le(0x12345678)), "[120,86,52,18]");
+	test_equal("computeCRC32 matches the reference CRC", computeCRC32(new TextEncoder().encode("abc")), 891568578);
+	var blob = dataURLToBlob("data:text/plain;base64,QUJD");
+	test_equal("dataURLToBlob keeps the type", blob.type, "text/plain");
+	test_equal("dataURLToBlob keeps the payload", blob.size, 3);
+	var zip_blob = createSimpleZip([{ name: "a.txt", data: new TextEncoder().encode("abc") }]);
+	test_equal("createSimpleZip returns a zip blob", zip_blob.type, "application/zip");
+	var zip_bytes = new Uint8Array(await zip_blob.arrayBuffer());
+	test_equal("createSimpleZip starts with a local header", zip_bytes[0] + "/" + zip_bytes[1] + "/" + zip_bytes[2] + "/" + zip_bytes[3], "80/75/3/4");
+	test_equal("createSimpleZip ends with an EOCD record", zip_bytes.slice(-22, -18).join("/"), "80/75/5/6");
+
+	var old_exec = document.execCommand;
+	var old_create = URL.createObjectURL;
+	var old_revoke = URL.revokeObjectURL;
+	var old_anchor_click = HTMLAnchorElement.prototype.click;
+	var clicked = 0;
+	try {
+		document.execCommand = function () { return true; };
+		URL.createObjectURL = function () { return "blob:probe"; };
+		URL.revokeObjectURL = function () {};
+		HTMLAnchorElement.prototype.click = function () { clicked++; };
+		copy_to_clipboard("probe");
+		save_file("probe.txt", "text/plain", "data");
+		downloadNetworkZip(zip_blob);
+		test_equal("clipboard and download helpers trigger clicks", clicked >= 1, true);
+		test_equal("copy_to_clipboard cleans up its textarea", document.querySelectorAll("textarea[data-copy-probe]").length, 0);
+		show_clipboard_feedback();
+		test_equal("show_clipboard_feedback adds a feedback node", $("body").children().filter(function () { return $(this).text() === "📋"; }).length >= 1, true);
+		await delay(700);
+	} finally {
+		document.execCommand = old_exec;
+		URL.createObjectURL = old_create;
+		URL.revokeObjectURL = old_revoke;
+		HTMLAnchorElement.prototype.click = old_anchor_click;
+	}
+}
+
+function _tiny_tests_multi_activation_js() {
+	var layer = new MultiActivation({ initWeights: { relu: 2, snake: 0.5, elu: 1, sin: 0 }, snakeAlpha: 3, trainable: true });
+	layer.build([null, 2]);
+	var input = tf.tensor2d([[-1, 0], [1, 2]], [2, 2]);
+	try {
+		var output = layer.call(input);
+		test_equal("MultiActivation call keeps the shape", JSON.stringify(output.shape), "[2,2]");
+		test_equal("MultiActivation call produces finite values", Array.from(output.dataSync()).every(isFinite), true);
+		test_equal("MultiActivation getConfig keeps init weights", layer.getConfig().initWeights.relu, 2);
+		test_equal("MultiActivation getConfig keeps snake alpha", layer.getConfig().snakeAlphaVal, 3);
+		test_equal("MultiActivation class name", MultiActivation.className, "MultiActivation");
+		output.dispose();
+	} finally {
+		input.dispose();
+		(layer.weights || []).forEach(function (weight) {
+			if (weight && weight.val && !weight.val.isDisposed) weight.val.dispose();
+		});
+	}
+}
+
+async function _tiny_tests_health_status_popups_js() {
+	var container = document.createElement("div");
+	document.body.appendChild(container);
+	var row_types = ["entropy", "sparsity", "svd", "kurtosis", "ks_test", "correlation", "weight_distribution"];
+	row_types.forEach(function (type) {
+		var row = document.createElement("div");
+		row.setAttribute("data-wa-indicator", type);
+		row.textContent = type;
+		container.appendChild(row);
+	});
+	var input_row = document.createElement("div");
+	input_row.setAttribute("data-wa-indicator", "layer_io_input");
+	input_row.setAttribute("data-layer-index", "0");
+	container.appendChild(input_row);
+	var output_row = document.createElement("div");
+	output_row.setAttribute("data-wa-indicator", "layer_io_output");
+	output_row.setAttribute("data-layer-index", "0");
+	container.appendChild(output_row);
+	var record = { layers: [{ input: [0, 1, -1, 2], output: [0.5, 0.5, 0.5, 0.5] }] };
+	try {
+		window.attachWaTooltips(container, { entropy: 2, entropyMax: 8, sparsity: 0.2, svd: 0.3, kurtosis: 4, ks: 0.1, correlation: 0.5 });
+		window.attachWaTooltipsToPlots(container, record);
+		window.attachWaTooltipsToLayerStats(container, record);
+		var indicator_rows = container.querySelectorAll("[data-wa-indicator]");
+		for (var i = 0; i < indicator_rows.length; i++) {
+			indicator_rows[i].click();
+			test_equal("health popup opens for " + indicator_rows[i].getAttribute("data-wa-indicator"), document.querySelectorAll("#wa_tooltip_popup").length >= 1, true);
+			window._hideWaTooltip();
+			document.querySelectorAll("#wa_tooltip_overlay, #wa_tooltip_popup").forEach(function (el) { el.remove(); });
+		}
+		test_equal("waIndicatorRowHTML builds a row", window.waIndicatorRowHTML("entropy", "wa_entropy", "2.0").indexOf("data-wa-indicator=\"entropy\"") !== -1, true);
+		test_equal("waIndicatorRowHTML keeps the label", window.waIndicatorRowHTML("entropy", "wa_entropy", "2.0").indexOf("TRANSLATEME_wa_entropy") !== -1, true);
+		await delay(300);
+	} finally {
+		window._hideWaTooltip();
+		container.remove();
+	}
+}
+
+function _tiny_tests_my_temml_js() {
+	var all_editables = [];
+	test_equal("_reshape_flat_to_matrix builds rows", JSON.stringify(_reshape_flat_to_matrix([1, 2, 3, 4], [2, 2])), "[[1,2],[3,4]]");
+	test_equal("_conv2d_flat_index maps 4D coordinates", _conv2d_flat_index(1, 0, 0, 1, 2, 2, 3), 13);
+	var kernel_latex = _build_kernel_latex(0, [[1, 2], [3, 4]], 2, 2, 2, all_editables);
+	test_equal("_build_kernel_latex renders a matrix", kernel_latex.indexOf("\\begin{pmatrix}") !== -1, true);
+	test_equal("_build_kernel_latex records editables", all_editables.length, 4);
+	test_equal("_build_kernel_latex includes the shape", kernel_latex.indexOf("2\\times2") !== -1, true);
+	var bias_editables = [];
+	var bias_latex = _build_bias_latex(0, [1, 2], 2, 2, bias_editables);
+	test_equal("_build_bias_latex renders a vector", bias_latex.indexOf("\\text{Bias}") !== -1, true);
+	test_equal("_build_bias_latex records editables", bias_editables.length, 2);
+	test_equal("_build_batchnorm_param_latex rejects empty parameters", _build_batchnorm_param_latex(0, "gamma", [], 2, 2, []), "\\text{N/A}");
+	var param_editables = [];
+	var param_latex = _build_batchnorm_param_latex(0, "gamma", [1, 2], 2, 2, param_editables);
+	test_equal("_build_batchnorm_param_latex renders values", param_latex.indexOf("\\begin{pmatrix}") !== -1, true);
+	test_equal("_build_batchnorm_param_latex records editables", param_editables.length, 2);
+	var conv_latex = _build_conv2d_full_latex(0, [], [1, 2, 3, 4, 5, 6, 7, 8], [2, 2, 1, 2], 2, 2, 1, 2, 2, 1, 2, [], [[1, 2]]);
+	test_equal("_build_conv2d_full_latex names filters", conv_latex.indexOf("Filter") !== -1, true);
+	test_equal("_build_conv2d_full_latex names channels", conv_latex.indexOf("X_{0}") !== -1, true);
+}
+
+async function _tiny_tests_custom_images_js() {
+	var old_labels = labels;
+	var old_cam = cam;
+	var container = document.createElement("div");
+	container.className = "own_image_upload_container";
+	document.body.appendChild(container);
+	var image_div = document.createElement("div");
+	image_div.className = "own_images";
+	container.appendChild(image_div);
+	var trigger = document.createElement("span");
+	container.appendChild(trigger);
+	var zip_label = document.createElement("span");
+	var zip_input = document.createElement("input");
+	document.body.appendChild(zip_label);
+	document.body.appendChild(zip_input);
+	try {
+		labels = ["first"];
+		test_equal("get_label_or_default reads labels", get_label_or_default(0), "first");
+		test_equal("get_label_or_default falls back", get_label_or_default(4), "category 4");
+		create_images_div($(".own_image_upload_container").length - 1);
+		test_equal("create_images_div adds an image container", container.querySelectorAll(".own_images").length >= 1, true);
+		var counter = container.querySelector(".own_images_count");
+		var image_span = document.createElement("span");
+		image_span.className = "own_image_span";
+		container.appendChild(image_span);
+		update_image_counters();
+		test_equal("update_image_counters counts images", counter.textContent, "1");
+		image_span.remove();
+
+		var canvas = insertCanvasIntoCategory(trigger, "first", "probe", 20, 10);
+		test_equal("insertCanvasIntoCategory returns a canvas", canvas.tagName, "CANVAS");
+		test_equal("insertCanvasIntoCategory sets the id", canvas.id, "probe_canvas");
+		test_equal("insertCanvasIntoCategory stores the category", canvas.dataset.category, "first");
+		test_equal("insertCanvasIntoCategory wraps the canvas", container.querySelectorAll(".own_image_span").length, 1);
+
+		test_equal("get_category_nr finds its container", get_category_nr(trigger) >= 0, true);
+		restore_zip_upload_button(zip_label, zip_input);
+		test_equal("restore_zip_upload_button restores the onchange", zip_input.getAttribute("onchange"), "import_zip_and_replace_categories(this)");
+		test_equal("restore_zip_upload_button hides the input", zip_input.getAttribute("aria-hidden"), "true");
+		test_equal("restore_zip_upload_button writes the label", zip_label.innerHTML.indexOf("TRANSLATEME_upload_custom_zip_file") !== -1, true);
+		var data_url = await blob_to_data_url(new Blob(["probe"], { type: "text/plain" }));
+		test_equal("blob_to_data_url produces a data URL", data_url.indexOf("data:text/plain;base64,") === 0, true);
+	} finally {
+		labels = old_labels;
+		cam = old_cam;
+		container.remove();
+		zip_label.remove();
+		zip_input.remove();
+	}
+}
+
+async function _tiny_tests_optimizer_info_popup_js() {
+	var old_new_plot = Plotly.newPlot;
+	var old_react = Plotly.react;
+	var old_purge = Plotly.purge;
+	try {
+		Plotly.newPlot = async function () {};
+		Plotly.react = async function () {};
+		Plotly.purge = function () {};
+		var button = document.getElementById("optimizer-info-btn");
+		test_equal("optimizer info icon is injected", !!button, true);
+		button.click();
+		var overlay = document.getElementById("optimizer_info_popup_overlay");
+		test_equal("optimizer info popup opens", !!overlay, true);
+		test_equal("optimizer info popup names the optimizer", overlay.querySelector("h2").textContent.indexOf(document.getElementById("optimizer").value.toUpperCase()) !== -1, true);
+		var select = document.getElementById("optimizer");
+		var old_value = select.value;
+		select.value = select.options[1] ? select.options[1].value : old_value;
+		select.dispatchEvent(new Event("change", { bubbles: true }));
+		test_equal("optimizer info popup rebuilds on change", !!document.getElementById("optimizer_info_popup_overlay"), true);
+		select.value = old_value;
+		document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+		test_equal("optimizer info popup closes on Escape", !!document.getElementById("optimizer_info_popup_overlay"), false);
+	} finally {
+		Plotly.newPlot = old_new_plot;
+		Plotly.react = old_react;
+		Plotly.purge = old_purge;
+		var stale = document.getElementById("optimizer_info_popup_overlay");
+		if (stale) stale.remove();
+	}
+}
+
+async function _tiny_tests_initializer_info_popup_js() {
+	var old_new_plot = Plotly.newPlot;
+	var old_purge = Plotly.purge;
+	var selects = Array.from(document.querySelectorAll("select[class*='_initializer'], select[class*='_regularizer']"));
+	try {
+		Plotly.newPlot = async function () {};
+		Plotly.purge = function () {};
+		test_equal("initializer selects exist", selects.length > 0, true);
+		var select = null;
+		var icon = null;
+		for (var select_idx = 0; select_idx < selects.length; select_idx++) {
+			var candidate_icon = selects[select_idx].closest("tr") ? selects[select_idx].closest("tr").querySelector('img[src*="info.svg"]') : selects[select_idx].parentElement.querySelector('img[src*="info.svg"]');
+			if (candidate_icon) {
+				select = selects[select_idx];
+				icon = candidate_icon;
+				break;
+			}
+		}
+		test_equal("initializer info icon is injected", !!icon, true);
+		icon.click();
+		var overlay = document.getElementById("initializer_info_popup_overlay");
+		test_equal("initializer info popup opens", !!overlay, true);
+		test_equal("initializer info popup has controls", overlay.querySelectorAll("input, select").length > 0, true);
+		var old_value = select.value;
+		if (select.options.length > 1) select.value = select.options[1].value;
+		select.dispatchEvent(new Event("change", { bubbles: true }));
+		test_equal("initializer info popup rebuilds on change", !!document.getElementById("initializer_info_popup_overlay"), true);
+		select.value = old_value;
+		document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+		test_equal("initializer info popup closes on Escape", !!document.getElementById("initializer_info_popup_overlay"), false);
+	} finally {
+		Plotly.newPlot = old_new_plot;
+		Plotly.purge = old_purge;
+		var stale = document.getElementById("initializer_info_popup_overlay");
+		if (stale) stale.remove();
+	}
+}
+
+async function _tiny_tests_explain_activations_popup_js() {
+	var old_new_plot = Plotly.newPlot;
+	var old_purge = Plotly.purge;
+	var select = document.querySelector("select.input_data.activation, select.input_field.activation");
+	try {
+		Plotly.newPlot = async function () {};
+		Plotly.purge = function () {};
+		test_equal("activation selects exist", !!select, true);
+		var icon = select.closest("tr") ? select.closest("tr").querySelector('td:first-child img[src*="info.svg"]') : select.parentElement.querySelector('img[src*="info.svg"]');
+		test_equal("activation info icon is injected", !!icon, true);
+		icon.click();
+		var overlay = document.getElementById("explain_activation_popup_overlay");
+		test_equal("activation info popup opens", !!overlay, true);
+		test_equal("activation info popup has a plot target", !!document.getElementById("explain_activation_plot"), true);
+		var old_value = select.value;
+		if (select.options.length > 1) select.value = select.options[1].value;
+		select.dispatchEvent(new Event("change", { bubbles: true }));
+		old_value = select.value;
+		document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+		test_equal("activation info popup closes on Escape", !!document.getElementById("explain_activation_popup_overlay"), false);
+	} finally {
+		Plotly.newPlot = old_new_plot;
+		Plotly.purge = old_purge;
+		var stale = document.getElementById("explain_activation_popup_overlay");
+		if (stale) stale.remove();
+	}
+}
+
+async function _tiny_tests_explain_losses_popup_js() {
+	var loss_select = document.getElementById("loss");
+	var metric_select = document.getElementById("metric");
+	try {
+		test_equal("loss select exists", !!loss_select, true);
+		var loss_icon = loss_select.parentElement.querySelector("img");
+		test_equal("loss help icon is injected", !!loss_icon, true);
+		loss_icon.click();
+		var overlay = document.querySelector(".lm-explainer-overlay");
+		test_equal("loss popup opens", !!overlay, true);
+		test_equal("loss popup has content", overlay.querySelectorAll("#lm-popup-content-area").length, 1);
+		overlay.querySelector(".lm-popup-close").click();
+		test_equal("loss popup closes", !!document.querySelector(".lm-explainer-overlay"), false);
+		var metric_icon = metric_select.parentElement.querySelector("img");
+		test_equal("metric help icon is injected", !!metric_icon, true);
+		metric_icon.click();
+		test_equal("metric popup opens", !!document.querySelector(".lm-explainer-overlay"), true);
+		document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+		test_equal("metric popup closes on Escape", !!document.querySelector(".lm-explainer-overlay"), false);
+	} finally {
+		document.querySelectorAll(".lm-explainer-overlay").forEach(function (el) { el.remove(); });
+	}
+}
+
+async function _tiny_tests_explain_constraints_popup_js() {
+	var old_new_plot = Plotly.newPlot;
+	var old_purge = Plotly.purge;
+	var wrapper = document.createElement("div");
+	var select = document.createElement("select");
+	select.className = "input_data kernel_constraint";
+	var option = document.createElement("option");
+	option.value = "maxNorm";
+	option.textContent = "maxNorm";
+	select.appendChild(option);
+	wrapper.appendChild(select);
+	var layers_container = document.getElementById("layers_container") || document.body;
+	layers_container.appendChild(wrapper);
+	try {
+		Plotly.newPlot = async function () {};
+		Plotly.purge = function () {};
+		await delay(120);
+		var icon = wrapper.querySelector("img");
+		test_equal("constraint info icon is injected", !!icon, true);
+		icon.click();
+		var overlay = document.getElementById("explain_constraint_popup_overlay");
+		test_equal("constraint info popup opens", !!overlay, true);
+		test_equal("constraint info popup has a plot target", !!document.getElementById("explain_constraint_plot"), true);
+		document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+		test_equal("constraint info popup closes on Escape", !!document.getElementById("explain_constraint_popup_overlay"), false);
+	} finally {
+		Plotly.newPlot = old_new_plot;
+		Plotly.purge = old_purge;
+		var stale = document.getElementById("explain_constraint_popup_overlay");
+		if (stale) stale.remove();
+		wrapper.remove();
+	}
+}
+
 function _tiny_tests_base_wrappers_async() {
 	var old_labels_backup;
 	return (async function() {
@@ -8015,6 +8477,18 @@ async function new_tiny_tests() {
 	_tiny_tests_predict_js();
 	_tiny_tests_fcnn_js();
 	_tiny_tests_misc();
+	await _tiny_tests_optimizer_info_popup_js();
+	await _tiny_tests_initializer_info_popup_js();
+	await _tiny_tests_explain_activations_popup_js();
+	await _tiny_tests_explain_losses_popup_js();
+	await _tiny_tests_explain_constraints_popup_js();
+	_tiny_tests_neural_organism_js();
+	_tiny_tests_topological_analyzer_js();
+	await _tiny_tests_clipboard_and_download_js();
+	_tiny_tests_multi_activation_js();
+	await _tiny_tests_health_status_popups_js();
+	_tiny_tests_my_temml_js();
+	await _tiny_tests_custom_images_js();
 	_tiny_tests_fcnn_editable_js();
 	_tiny_tests_drawing_js();
 	_tiny_tests_safety_js();

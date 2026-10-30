@@ -1,8 +1,12 @@
 "use strict";
 
 var get_methods = (obj) => Object.getOwnPropertyNames(obj).filter(item => typeof obj[item] === "function");
-var local_store = window.localStorage;
-local_store.clear();
+
+try {
+	Object.keys(localStorage)
+		.filter(function (key) { return key.indexOf("tensorflowjs_models/") === 0; })
+		.forEach(function (key) { localStorage.removeItem(key); });
+} catch (e) { /* storage unavailable */ }
 
 var old_mode = "beginner";
 

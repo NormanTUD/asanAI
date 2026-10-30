@@ -1686,13 +1686,15 @@ function attachTooltipListeners(container) {
 		html += '</div>'; // end tda-section
 
 		if (_state.config.smoothTransition && _state.container.innerHTML !== "") {
-			_state.container.style.transition = "opacity 0.2s ease";
-			_state.container.style.opacity = "0.7";
+			var transition_container = _state.container;
+			transition_container.style.transition = "opacity 0.2s ease";
+			transition_container.style.opacity = "0.7";
 			setTimeout(function () {
-				_state.container.innerHTML = html;
-				_state.container.style.opacity = "1";
+				if (!transition_container.isConnected) return;
+				transition_container.innerHTML = html;
+				transition_container.style.opacity = "1";
 				// Attach tooltip listeners after DOM is updated
-				attachTooltipListeners(_state.container);
+				attachTooltipListeners(transition_container);
 			}, 100);
 		} else {
 			_state.container.innerHTML = html;
