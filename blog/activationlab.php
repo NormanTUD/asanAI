@@ -103,6 +103,12 @@ SoftMax uses the function $e^x$ to transform inputs.
 * **SoftMax thinking:** $e^{0.9}$ (2.46) is only ~2.2x larger than $e^{0.1}$ (1.11).
 The exponential does not simply widen every gap: it converts an additive difference between logits into a multiplicative ratio of probabilities. A logit gap of $1$ becomes a ratio of $e \approx 2.7$, a gap of $2$ becomes $e^2 \approx 7.4$. That is why the sharpness depends on the scale of the logits, not on their raw ratio: for $0.1$ and $0.9$ the ratio falls from $9:1$ to about $2.2:1$, while for $2$ and $4$ it rises from $2:1$ to about $7.4:1$. SoftMax is shift-invariant, and a temperature parameter can soften or sharpen the distribution.
 
+#### Temperature: sharpening and flattening
+
+The formula above is the $\tau=1$ case of a one-parameter family, $\sigma_\tau(z)_i = e^{z_i/\tau}/\sum_j e^{z_j/\tau}$. A small $\tau$ divides the logits by a small number, magnifying their differences and sharpening the distribution; a large $\tau$ flattens it toward uniform.
+
+Temperature appears in two different places in a Transformer. **Attention** uses a fixed temperature $\tau=\sqrt{d_k}$ inside every attention head at every layer: it controls how sharply a query spreads its weight over the keys. The **sampling temperature** you set in a chat API (0.7, 1.2, …) is a second, separate knob applied once to the final vocabulary logits, just before the next token is sampled. Same mathematics, different point in the network.
+
 #### Handling Negative Numbers
 A simple percentage calculation fails if you have negative scores (e.g., -2.0 and 1.0). You cannot have a negative probability. SoftMax solves this because $e^x$ is **always positive**. Even $e^{-5.0}$ results in a tiny, positive number (0.0067).
 

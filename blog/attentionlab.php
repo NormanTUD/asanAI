@@ -1774,10 +1774,10 @@ The paper's central result is that this tug-of-war has **one unique best answer*
 
 <div class="attn-ot-card" id="attn-ot-budget">
 	<h3>Demo 1 — One bucket, five places</h3>
-	<p class="attn-ot-sub">Each key gets a share of the one unit. A small temperature makes the plan decisive; a large temperature spreads it out. Compare the three plans and watch the total badness.</p>
+	<p class="attn-ot-sub">Each key gets a share of the one unit. A small attention temperature makes the plan decisive; a large one spreads it out. Compare the three plans and watch the total badness.</p>
 	<canvas id="attn-ot-budget-canvas" class="attn-ot-canvas" width="760" height="360" style="height:360px" role="img" aria-label="Attention weights flowing from one query to five keys, with bars for each share"></canvas>
 	<div class="attn-ot-slider-row">
-		<label for="attn-ot-temp">Temperature &tau;: small = decisive, large = even</label>
+		<label for="attn-ot-temp">Attention temperature &tau;: small = decisive, large = even</label>
 		<input type="range" id="attn-ot-temp" min="20" max="400" step="5" value="100">
 		<output id="attn-ot-temp-val">1.00</output>
 	</div>
@@ -1798,7 +1798,9 @@ The paper's central result is that this tug-of-war has **one unique best answer*
 
 The three plans are different ways to spend the same bucket. "All on the best key" is the cheapest by similarity alone, but it is brittle. "Evenly spread" is flexible, but it ignores similarity. The **best compromise** uses the similarity scores, but keeps a little mass elsewhere. In the demo, its total badness is the lowest of the three.
 
-The size of the shares is controlled by the **temperature** $\tau$. A small $\tau$ magnifies small score differences, so the plan becomes sharp. A large $\tau$ flattens the differences, so the plan becomes almost even. In a Transformer, the temperature is $\tau=\sqrt{d_k}$, a point we return to below.
+The size of the shares is controlled by the **attention temperature** $\tau$. A small $\tau$ magnifies small score differences, so the plan becomes sharp. A large $\tau$ flattens the differences, so the plan becomes almost even. In a Transformer, the attention softmax uses $\tau=\sqrt{d_k}$, a point we return to below.
+
+**This is not the sampling temperature.** The temperature in a chat API (0.7, 1.2, …) is a different knob: it divides the final vocabulary logits once, just before the next token is sampled. The $\tau$ here is the attention temperature — fixed by the architecture and applied inside every attention head at every layer. Demo 1 shows one head for one query.
 
 If two keys differ by $\Delta$ in score, the better one receives $e^{\Delta/\tau}$ times more weight. The exponential is the natural way to turn a **difference** into a **factor**: adding the same constant to all scores does not change the plan, and the weights stay positive. That is exactly what a probability distribution needs.
 </div>
