@@ -14,7 +14,7 @@ math: 0
 
 
 <div class="md" data-lesson-id="people_of_ai">
-Artificial intelligence has a surprisingly small cast of recurring characters. The same names appear in the history chapters, the mathematics lessons, the interpretability labs, and the frontier surveys — sometimes as the person who proved the key theorem, sometimes as the person whose failed attempt defined the next decade's problem. This chapter is a **who's who**: what each person contributed, why it still matters, and one or two primary sources you can read for yourself.
+Artificial intelligence has a surprisingly small cast of recurring characters. The same names appear in the history chapters, the mathematics lessons, the interpretability labs, and the frontier surveys — sometimes as the person who proved the key theorem, sometimes as the person whose failed attempt defined the next decade's problem. This chapter is a **who's who**: what each person contributed, why it still matters, and one or two primary sources you can read for yourself. Every entry answers the same question in miniature — *what did this person do to AI research?* — and then points to the work where the answer is worked out.
 
 It is deliberately not a ranking. Credit in AI is contested, collaborative, and often late. The person whose name is on the paper is not always the person who had the idea first, and the person who had the idea first is not always the person who made it work. Where the record is disputed, the lesson says so.
 </div>
@@ -101,6 +101,26 @@ Old Lyme was not a retreat from science but another site of it. The farm McCullo
 McCulloch's laboratory life and domestic life were equally unorthodox. He reportedly lived on whisky and ice cream, went to bed around four in the morning, travelled in hobnailed boots, and wore a brown leather jacket under his suit jacket. In early experiments with Elsberg and Pike he injected cats with increasing concentrations of absinthe over two hours and watched the pupils dilate, the muscles twitch, and the eyes dance with nystagmus. With Ladislas Meduna he injected blood from schizophrenic patients into rabbits; in about 60 percent of cases the blood acted as an insulin antagonist, a result that led to the diagnosis of “oneirophrenia” (from Greek *oneiros*, dream). None of this was mere eccentricity: the same willingness to move from poetry to hydraulics to neurochemistry is what made the transdisciplinary programme possible (\cite[Abraham, 2016]{abraham2016rebelgenius}).
 </div>
 
+\marginfig{warrenmcculloch_afflictor.jpg}{The 22 September 1948 *Brooklyn Daily Eagle* report of McCulloch's Caltech talk. Scan: \citealternativetitle{afflictor2014mcculloch}. License not stated by the source.}
+
+At the September 1948 Caltech symposium on cerebral mechanisms, McCulloch gave a United Press reporter a blunter forecast than the one in his papers. The *Brooklyn Daily Eagle* ran it under the headline “Warns Machines May Some Day Take Over the World”: machines with “complex mechanical minds” might explore the planets independently of human direction, and a sufficiently complex machine “may also become neurotic if badgered by frustration in solving problems.” The clipping is a useful corrective to the founder story. The mechanist was not promising a tidy calculator; he was already imagining autonomous, frustrated, potentially dangerous minds — and saying so in the popular press \cite{afflictor2014mcculloch}.
+
+<div class="optional md" data-headline="Watch: McCulloch on film, and the tragedy of Walter Pitts">
+Several uploads preserve the same 1969 Channel 6 Toronto interview with McCulloch; the full programme is embedded first, followed by the long excerpt and the shorter clips. The last video is a short documentary on Walter Pitts.
+
+[youtube]8Wdz1Tj5084[/youtube]
+
+[youtube]ZGxfQN_3BT0[/youtube]
+
+The sad story of the father of AI — Walter Pitts:
+
+[youtube]sCjU0ZoLoGM[/youtube]
+</div>
+
+<div class="optional md" data-headline="Further reading: McCulloch, Pitts, and the first mechanistic theory of the mind">
+Two online sources pair well with the primary literature above: the 1948 *Brooklyn Daily Eagle* clipping is reproduced with a link to the original page image \cite{afflictor2014mcculloch}, and Amanda Gefter's *Nautilus* portrait of McCulloch and Pitts is excerpted here \cite{afflictor2015mechanistic, gefter2015pitts}. Afflictor's McCulloch tag archive collects both pieces in one place \cite{afflictor_mcculloch_tag}.
+</div>
+
 ### Frank Rosenblatt
 
 \marginfig{frank_rosenblatt_commons.jpg}{Frank Rosenblatt. \cite{img_frank_rosenblatt}. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).}
@@ -127,6 +147,16 @@ Minsky grew up in New York, built the SNARC from vacuum tubes and salvaged B-24 
 \marginfig{widrow_adaline.jpg}{Bernard Widrow with the ADALINE. \cite{img_widrow_adaline}. Public domain.}
 
 Widrow's **ADALINE** was a single adaptive linear element with weights implemented as switchable resistor circuits; with his student Ted Hoff he built a **memistor** whose resistance could be electroplated and stripped. Their **least-mean-squares** training rule — the Widrow–Hoff rule — is the direct ancestor of the delta rule and of modern gradient descent on a squared error. The hardware was the argument that adaptive control was real, not a simulation (\cite[Widrow & Hoff, 1960]{widrow1960adaline}).
+</div>
+
+<div class="md">
+## The Knowledge Engineers
+
+The connectionist line was not the only one to leave the laboratory. In the 1970s a second group decided that the bottleneck was not the learning rule but **knowledge** itself, and built systems that encoded a specialist's rules explicitly.
+
+**Edward Feigenbaum** and **Bruce Buchanan** at Stanford turned that conviction into DENDRAL, which inferred molecular structures from mass spectra, and then MYCIN, which diagnosed blood infections from a few hundred IF–THEN rules. MYCIN separated its rule base from its inference engine, so the engine could be reused as the first expert-system shell, EMYCIN, and in a blind clinical test it prescribed antibiotics as well as, or better than, nine human clinicians \cite{crevier1993ai}. Feigenbaum called the activity **knowledge engineering**, and it became the commercial face of AI in the 1980s (\cite[Feigenbaum, 1984]{feigenbaum1984expert}; \cite[Shortliffe & Buchanan, 1976]{shortliffe1976mycin}).
+
+**John McDermott**'s XCON (originally R1) took the recipe to the Digital Equipment Corporation, where it configured VAX machines and grew from about three hundred rules in 1979 to more than three thousand by 1984 \cite{crevier1993ai}. **Douglas Lenat** pushed the same bet further: his AM and Eurisko programs tried to discover mathematical concepts and new heuristics, and when that programme stalled he began **Cyc**, a hand-built common-sense ontology measured in person-centuries of knowledge engineering (\cite[Cyc]{cyc_wiki}; \cite{crevier1993ai}). The lesson of this generation is the one the neural revival would later overturn: intelligence was supposed to live in the rules, and the rules had to be written by hand.
 </div>
 
 <div class="md">
@@ -299,7 +329,7 @@ The 1955 **Dartmouth proposal** named the field and set its first research agend
 
 \marginfig{simon_newell.jpg}{Herbert A. Simon and Allen Newell. \cite{simonnewell_image}. Public domain.}
 
-Simon and Newell built the **Logic Theory Machine**, one of the first programs to prove theorems, and used it to argue that human problem solving is symbol manipulation. Their **physical symbol system hypothesis** — that a physical symbol system has the necessary and sufficient means for general intelligent action — became the philosophical core of classical AI. Simon also won the Nobel Prize in Economics for his work on bounded rationality, a reminder that the study of intelligence has always crossed disciplinary lines (\cite[Newell & Simon, 1956]{newell1956logic}).
+Simon and Newell built the **Logic Theory Machine**, one of the first programs to prove theorems, and used it to argue that human problem solving is symbol manipulation. The program proved 38 of the first 52 theorems in *Principia Mathematica* and found a shorter proof of theorem 2.85 than Russell and Whitehead's; when the authors submitted that proof to the *Journal of Symbolic Logic* with the program listed as a co-author, the editor rejected it because proving a theorem in the outmoded system of *Principia* was no accomplishment \cite{crevier1993ai}. Their **physical symbol system hypothesis** — that a physical symbol system has the necessary and sufficient means for general intelligent action — became the philosophical core of classical AI. Simon also won the Nobel Prize in Economics for his work on bounded rationality, a reminder that the study of intelligence has always crossed disciplinary lines (\cite[Newell & Simon, 1956]{newell1956logic}).
 
 ### W. Ross Ashby and Donald Hebb
 

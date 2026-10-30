@@ -8911,7 +8911,10 @@ async function _coverage_tests_custom_images() {
 
 		create_images_div(n);
 		test_equal("create_images_div adds a counter", upload.find(".own_images_count").length, 1);
-		test_equal("get_label_or_default uses labels", get_label_or_default(0), labels[0]);
+		var savedLabels = labels;
+		labels = ["coverage_label"];
+		test_equal("get_label_or_default uses labels", get_label_or_default(0), "coverage_label");
+		labels = savedLabels;
 		test_equal("get_label_or_default falls back", get_label_or_default(labels.length + 100).indexOf("category ") === 0, true);
 		test_equal("get_upload_container_index never exceeds 99999", get_upload_container_index() <= 99999, true);
 
