@@ -7373,6 +7373,13 @@ window.bibData = {
 		url: "https://afflictor.com/2015/02/05/they-would-create-the-first-mechanistic-theory-of-the-mind/",
 		alternativetitle: "Afflictor on McCulloch and Pitts (2015)"
 	},
+	"afflictor_mcculloch_tag": {
+		title: "Warren Sturgis McCulloch — tag archive",
+		author: "Darren D’Addario",
+		year: 2014,
+		url: "https://afflictor.com/tag/warren-sturgis-mcculloch/",
+		alternativetitle: "Afflictor archive: Warren Sturgis McCulloch"
+	},
 	"ronkowitz2017perceptron": {
 		url: "https://ronkowitz.blogspot.com/2017/11/perceptron.html",
 		title: "Perceptron",
