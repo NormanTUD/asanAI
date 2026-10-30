@@ -14356,12 +14356,14 @@
   "city": "Washington, USA",
   "year": 0.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "pew2016mturk",
    "pew2026ai"
   ],
   "cited_in": [
-   "ai_and_society"
+   "ai_and_society",
+   "untold_history_iii"
   ]
  },
  {
@@ -32656,6 +32658,7 @@
    "jaynes1957maxent"
   ],
   "cited_in": [
+   "attentionlab",
    "beyond_llms"
   ]
  },
@@ -41512,10 +41515,11 @@
   "city": "Cambridge, United States",
   "year": 1960.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "licklider",
-   "licklider1960symbiosis"
+   "licklider1960symbiosis",
+   "licklider1963intergalactic"
   ],
   "cited_in": [
    "agents",
@@ -81087,6 +81091,23 @@
   ]
  },
  {
+  "name": "Tom Standage",
+  "canon": "Tom Standage",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2002,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "standage2002turk"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
   "name": "Mark Riehl",
   "canon": "Mark Riehl",
   "alias": null,
@@ -81101,6 +81122,142 @@
   ],
   "cited_in": [
    "statistics_ii"
+  ]
+ },
+ {
+  "name": "Kotaro Hara",
+  "canon": "Kotaro Hara",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hara2018turkerwages"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Abigail Adams",
+  "canon": "Abigail Adams",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hara2018turkerwages"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Kristy Milland",
+  "canon": "Kristy Milland",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hara2018turkerwages"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Saiph Savage",
+  "canon": "Saiph Savage",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hara2018turkerwages"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Chris Callison-Burch",
+  "canon": "Chris Callison-Burch",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hara2018turkerwages"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Jeffrey P. Bigham",
+  "canon": "Jeffrey P. Bigham",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hara2018turkerwages"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Mary L. Gray",
+  "canon": "Mary L. Gray",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gray2019ghostwork"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Siddharth Suri",
+  "canon": "Siddharth Suri",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gray2019ghostwork"
+  ],
+  "cited_in": [
+   "untold_history_iii"
   ]
  },
  {
@@ -81120,6 +81277,25 @@
    "atlas",
    "history",
    "intro"
+  ]
+ },
+ {
+  "name": "Daniel Crevier",
+  "canon": "Daniel Crevier",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1993,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "crevier1993ai"
+  ],
+  "cited_in": [
+   "history",
+   "symbolic_ai",
+   "untold_history_iii"
   ]
  },
  {
@@ -81219,6 +81395,57 @@
   "works": 1,
   "keys": [
    "img_octopus_eye"
+  ],
+  "cited_in": [
+   "philosophy"
+  ]
+ },
+ {
+  "name": "Stella Lowry",
+  "canon": "Stella Lowry",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1988,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lowry1988blot"
+  ],
+  "cited_in": [
+   "philosophy"
+  ]
+ },
+ {
+  "name": "Gordon Macpherson",
+  "canon": "Gordon Macpherson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1988,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lowry1988blot"
+  ],
+  "cited_in": [
+   "philosophy"
+  ]
+ },
+ {
+  "name": "Commission for Racial Equality",
+  "canon": "Commission for Racial Equality",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1988,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cre1988admissions"
   ],
   "cited_in": [
    "philosophy"

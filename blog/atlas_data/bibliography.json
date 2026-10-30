@@ -4932,6 +4932,12 @@
    "year": "2026",
    "url": "https://en.wikipedia.org/w/index.php?title=Mechanical_Turk"
   },
+  "standage2002turk": {
+   "title": "The Turk: The Life and Times of the Famous Eighteenth-Century Chess-Playing Machine",
+   "author": "Tom Standage",
+   "year": "2002",
+   "url": "https://archive.org/details/turklifetimesoff0000stan"
+  },
   "zhanghengseismoscope": {
    "title": "Zhang Heng - Wikipedia, The Free Encyclopedia",
    "author": "Wikipedia contributors",
@@ -5477,6 +5483,24 @@
    "author": "Jia Deng, Wei Dong, Richard Socher, Li-Jia Li, Kai Li, Li Fei-Fei",
    "year": "2009",
    "url": "https://doi.org/10.1109/cvpr.2009.5206848"
+  },
+  "pew2016mturk": {
+   "title": "What Is Mechanical Turk?",
+   "author": "Pew Research Center",
+   "year": "2016",
+   "url": "https://www.pewresearch.org/internet/2016/07/11/what-is-mechanical-turk/"
+  },
+  "hara2018turkerwages": {
+   "title": "A Data-Driven Analysis of Workers' Earnings on Amazon Mechanical Turk",
+   "author": "Kotaro Hara, Abigail Adams, Kristy Milland, Saiph Savage, Chris Callison-Burch, Jeffrey P. Bigham",
+   "year": "2018",
+   "url": "https://arxiv.org/abs/1712.05796"
+  },
+  "gray2019ghostwork": {
+   "title": "Ghost Work: How to Stop Silicon Valley from Building a New Global Underclass",
+   "author": "Mary L. Gray, Siddharth Suri",
+   "year": "2019",
+   "url": "https://ghostwork.info/"
   },
   "sgd": {
    "title": "A Stochastic Approximation Method",
@@ -6377,6 +6401,12 @@
    "author": "Nils J. Nilsson",
    "year": "2009",
    "url": "https://web.archive.org/web/2023/https://ai.stanford.edu/~nilsson/QAI/qai.pdf"
+  },
+  "crevier1993ai": {
+   "title": "AI: The Tumultuous History of the Search for Artificial Intelligence",
+   "author": "Daniel Crevier",
+   "year": "1993",
+   "url": "https://archive.org/details/aitumultuoushist0000crev"
   },
   "ronkowitz2017perceptron": {
    "title": "Perceptron",
@@ -13818,6 +13848,12 @@
    "year": "1960",
    "url": "https://groups.csail.mit.edu/medg/people/psz/Licklider.html"
   },
+  "licklider1963intergalactic": {
+   "title": "Memorandum for Members and Affiliates of the Intergalactic Computer Network",
+   "author": "J. C. R. Licklider",
+   "year": "1963",
+   "url": "https://archive.org/download/RANDMEMOS.PDFARCHIVE/977.pdf"
+  },
   "maturana1980autopoiesis": {
    "title": "Autopoiesis and Cognition: The Realization of the Living",
    "author": "Humberto R. Maturana, Francisco J. Varela",
@@ -14123,6 +14159,18 @@
    "author": "Wikipedia contributors",
    "year": "2026",
    "url": "https://en.wikipedia.org/wiki/Algorithmic_fairness"
+  },
+  "lowry1988blot": {
+   "title": "A blot on the profession",
+   "author": "Stella Lowry, Gordon Macpherson",
+   "year": "1988",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2545288/"
+  },
+  "cre1988admissions": {
+   "title": "Medical School Admissions: Report of a Formal Investigation into St. George's Hospital Medical School",
+   "author": "Commission for Racial Equality",
+   "year": "1988",
+   "url": "https://wellcomecollection.org/works/t734qeeu"
   },
   "weizenbaum1966eliza": {
    "title": "ELIZA effect",
@@ -22043,6 +22091,11 @@
    "beyond_llms",
    "symbolic_ai"
   ],
+  "crevier1993ai": [
+   "history",
+   "symbolic_ai",
+   "untold_history_iii"
+  ],
   "winograd1972understanding": [
    "agents",
    "history",
@@ -23247,6 +23300,10 @@
   ],
   "cuturi2013sinkhorn": [
    "attentionlab"
+  ],
+  "jaynes1957maxent": [
+   "attentionlab",
+   "beyond_llms"
   ],
   "neuralturingmachines": [
    "attentionlab"
@@ -24845,6 +24902,9 @@
   "mechanicalturk": [
    "history"
   ],
+  "standage2002turk": [
+   "history"
+  ],
   "zusez1": [
    "history",
    "software"
@@ -25523,7 +25583,8 @@
    "production_serving"
   ],
   "licklider1960symbiosis": [
-   "agents"
+   "agents",
+   "untold_history_iii"
   ],
   "alphago_leesedol_image": [
    "agents"
@@ -26473,9 +26534,6 @@
   "shwartz2017opening": [
    "beyond_llms"
   ],
-  "jaynes1957maxent": [
-   "beyond_llms"
-  ],
   "berger1996cpmc": [
    "beyond_llms"
   ],
@@ -27314,6 +27372,9 @@
   "tednelsonhypertext": [
    "untold_history_iii"
   ],
+  "licklider1963intergalactic": [
+   "untold_history_iii"
+  ],
   "arpanet_map": [
    "untold_history_iii"
   ],
@@ -27332,6 +27393,15 @@
   "deng2009imagenet": [
    "computer_vision",
    "people_of_ai",
+   "untold_history_iii"
+  ],
+  "pew2016mturk": [
+   "untold_history_iii"
+  ],
+  "hara2018turkerwages": [
+   "untold_history_iii"
+  ],
+  "gray2019ghostwork": [
    "untold_history_iii"
   ],
   "rajpurkar2016squad": [
@@ -29298,6 +29368,12 @@
    "philosophy"
   ],
   "bansal2025syntheticself": [
+   "philosophy"
+  ],
+  "lowry1988blot": [
+   "philosophy"
+  ],
+  "cre1988admissions": [
    "philosophy"
   ],
   "strubell2019energy": [
@@ -43653,6 +43729,14 @@
     "brownepseudodoxia"
    ]
   },
+  "Tom Standage": {
+   "count": 1,
+   "minyear": 2002,
+   "maxyear": 2002,
+   "keys": [
+    "standage2002turk"
+   ]
+  },
   "Anonymous (English woodblock engraver)": {
    "count": 1,
    "minyear": 1630,
@@ -44533,6 +44617,79 @@
    "maxyear": 2009,
    "keys": [
     "deng2009imagenet"
+   ]
+  },
+  "Pew Research Center": {
+   "count": 2,
+   "minyear": 2016,
+   "maxyear": 2026,
+   "keys": [
+    "pew2016mturk",
+    "pew2026ai"
+   ]
+  },
+  "Kotaro Hara": {
+   "count": 1,
+   "minyear": 2018,
+   "maxyear": 2018,
+   "keys": [
+    "hara2018turkerwages"
+   ]
+  },
+  "Abigail Adams": {
+   "count": 1,
+   "minyear": 2018,
+   "maxyear": 2018,
+   "keys": [
+    "hara2018turkerwages"
+   ]
+  },
+  "Kristy Milland": {
+   "count": 1,
+   "minyear": 2018,
+   "maxyear": 2018,
+   "keys": [
+    "hara2018turkerwages"
+   ]
+  },
+  "Saiph Savage": {
+   "count": 1,
+   "minyear": 2018,
+   "maxyear": 2018,
+   "keys": [
+    "hara2018turkerwages"
+   ]
+  },
+  "Chris Callison-Burch": {
+   "count": 1,
+   "minyear": 2018,
+   "maxyear": 2018,
+   "keys": [
+    "hara2018turkerwages"
+   ]
+  },
+  "Jeffrey P. Bigham": {
+   "count": 1,
+   "minyear": 2018,
+   "maxyear": 2018,
+   "keys": [
+    "hara2018turkerwages"
+   ]
+  },
+  "Mary L. Gray": {
+   "count": 1,
+   "minyear": 2019,
+   "maxyear": 2019,
+   "keys": [
+    "gray2019ghostwork"
+   ]
+  },
+  "Siddharth Suri": {
+   "count": 1,
+   "minyear": 2019,
+   "maxyear": 2019,
+   "keys": [
+    "gray2019ghostwork"
    ]
   },
   "Herbert Robbins": {
@@ -46517,6 +46674,14 @@
    "maxyear": 2021,
    "keys": [
     "toosi2021history"
+   ]
+  },
+  "Daniel Crevier": {
+   "count": 1,
+   "minyear": 1993,
+   "maxyear": 1993,
+   "keys": [
+    "crevier1993ai"
    ]
   },
   "Ron Kowitz": {
@@ -58726,12 +58891,13 @@
    ]
   },
   "J. C. R. Licklider": {
-   "count": 2,
+   "count": 3,
    "minyear": 1960,
-   "maxyear": 1960,
+   "maxyear": 1963,
    "keys": [
     "licklider",
-    "licklider1960symbiosis"
+    "licklider1960symbiosis",
+    "licklider1963intergalactic"
    ]
   },
   "Mohsen Mirtaheri": {
@@ -62631,6 +62797,30 @@
     "aiindex2025"
    ]
   },
+  "Stella Lowry": {
+   "count": 1,
+   "minyear": 1988,
+   "maxyear": 1988,
+   "keys": [
+    "lowry1988blot"
+   ]
+  },
+  "Gordon Macpherson": {
+   "count": 1,
+   "minyear": 1988,
+   "maxyear": 1988,
+   "keys": [
+    "lowry1988blot"
+   ]
+  },
+  "Commission for Racial Equality": {
+   "count": 1,
+   "minyear": 1988,
+   "maxyear": 1988,
+   "keys": [
+    "cre1988admissions"
+   ]
+  },
   "Rolf Wilhelm Brednich": {
    "count": 3,
    "minyear": 1990,
@@ -63762,14 +63952,6 @@
    "maxyear": 2022,
    "keys": [
     "laion2022blog"
-   ]
-  },
-  "Pew Research Center": {
-   "count": 1,
-   "minyear": 2026,
-   "maxyear": 2026,
-   "keys": [
-    "pew2026ai"
    ]
   },
   "Stack Overflow": {
