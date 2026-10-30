@@ -3565,15 +3565,24 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 	// INITIALIZATION ON DOM READY
 	// =========================================================================
 
+	function shouldAutoInitPyodide() {
+		if (pyodideReady || pyodideLoading) return false;
+		var tab = document.getElementById("pyodide_editor_tab");
+		return !!tab && tab.style.display !== "none" && tab.offsetParent !== null;
+	}
+
 	function handleTabMutation(mutation) {
 		if (mutation.type !== "attributes" || mutation.attributeName !== "style") return;
-		var tab = document.getElementById("pyodide_editor_tab");
-		if (!tab || tab.style.display === "none" || pyodideReady || pyodideLoading) return;
+		if (!shouldAutoInitPyodide()) return;
 
 		if (window.requestIdleCallback) {
-			requestIdleCallback(function() { initPyodide(); }, { timeout: 5000 });
+			requestIdleCallback(function() {
+				if (shouldAutoInitPyodide()) initPyodide();
+			}, { timeout: 5000 });
 		} else {
-			setTimeout(function() { initPyodide(); }, 500);
+			setTimeout(function() {
+				if (shouldAutoInitPyodide()) initPyodide();
+			}, 500);
 		}
 	}
 
@@ -3600,11 +3609,15 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 		if (pyodideTab) {
 			_tabObserver.observe(pyodideTab, { attributes: true, attributeFilter: ["style"] });
 
-			if (pyodideTab.style.display !== "none" && pyodideTab.offsetParent !== null) {
+			if (shouldAutoInitPyodide()) {
 				if (window.requestIdleCallback) {
-					requestIdleCallback(function() { initPyodide(); }, { timeout: 2000 });
+					requestIdleCallback(function() {
+						if (shouldAutoInitPyodide()) initPyodide();
+					}, { timeout: 2000 });
 				} else {
-					setTimeout(function() { initPyodide(); }, 100);
+					setTimeout(function() {
+						if (shouldAutoInitPyodide()) initPyodide();
+					}, 100);
 				}
 			}
 		}
