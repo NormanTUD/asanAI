@@ -25816,11 +25816,13 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "bell1881twistedpair",
    "bell1876telephone"
   ],
   "cited_in": [
+   "untold_history_ii",
    "untold_history_iii"
   ]
  },
@@ -73710,7 +73712,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 382,
+  "works": 387,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -73765,6 +73767,8 @@
    "youcom",
    "fibonacciseq",
    "sextanthistory",
+   "senlecqwiki",
+   "telectroscopewiki",
    "matrix_wiki",
    "tensor_wiki",
    "einstein_notation_wiki",
@@ -73851,6 +73855,9 @@
    "micrographia_wiki",
    "celltheory_wiki",
    "neuron_doctrine_wiki",
+   "coaxwiki",
+   "twistedpairwiki",
+   "faradaycagewiki",
    "socraticmethod",
    "rumi",
    "protocell_wiki",
@@ -80292,6 +80299,23 @@
   ]
  },
  {
+  "name": "André Lange",
+  "canon": "André Lange",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lange_senlecq"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
   "name": "Gerhard Schlosser",
   "canon": "Gerhard Schlosser",
   "alias": null,
@@ -81357,6 +81381,40 @@
   ],
   "cited_in": [
    "history"
+  ]
+ },
+ {
+  "name": "Lloyd Espenschied",
+  "canon": "Lloyd Espenschied",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1929,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "espenschied1929coax"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Herman Affel",
+  "canon": "Herman Affel",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1929,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "espenschied1929coax"
+  ],
+  "cited_in": [
+   "untold_history_ii"
   ]
  },
  {

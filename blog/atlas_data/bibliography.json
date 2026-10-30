@@ -2994,6 +2994,24 @@
    "year": "1897",
    "url": "https://www.cdvandt.org/Braun%20CRT.pdf"
   },
+  "senlecqwiki": {
+   "title": "Constantin Senlecq",
+   "author": "Wikipedia contributors",
+   "year": "2025",
+   "url": "https://en.wikipedia.org/wiki/Constantin_Senlecq"
+  },
+  "telectroscopewiki": {
+   "title": "Telectroscope",
+   "author": "Wikipedia contributors",
+   "year": "2026",
+   "url": "https://en.wikipedia.org/wiki/Telectroscope"
+  },
+  "lange_senlecq": {
+   "title": "Constantin Senlecq, pionnier français de la transmission des images à distance",
+   "author": "André Lange",
+   "year": "2026",
+   "url": "https://www.histv.net/senlecq-telectroscope"
+  },
   "bernerslee1989": {
    "title": "Information Management: A Proposal",
    "author": "Tim Berners-Lee",
@@ -11003,6 +11021,36 @@
    "author": "William Fothergill Cooke and Charles Wheatstone",
    "year": "1837",
    "url": "https://en.wikipedia.org/wiki/Cooke_and_Wheatstone_telegraph"
+  },
+  "bell1881twistedpair": {
+   "title": "Telephone-circuit (U.S. Patent 244,426)",
+   "author": "Alexander Graham Bell",
+   "year": "1881",
+   "url": "https://patents.google.com/patent/US244426A/en"
+  },
+  "espenschied1929coax": {
+   "title": "Coaxial conductor system (U.S. Patent 1,835,031)",
+   "author": "Lloyd Espenschied, Herman Affel",
+   "year": "1929",
+   "url": "https://patents.google.com/patent/US1835031A/en"
+  },
+  "coaxwiki": {
+   "title": "Coaxial cable",
+   "author": "Wikipedia contributors",
+   "year": "2026",
+   "url": "https://en.wikipedia.org/wiki/Coaxial_cable"
+  },
+  "twistedpairwiki": {
+   "title": "Twisted pair",
+   "author": "Wikipedia contributors",
+   "year": "2026",
+   "url": "https://en.wikipedia.org/wiki/Twisted_pair"
+  },
+  "faradaycagewiki": {
+   "title": "Faraday cage",
+   "author": "Wikipedia contributors",
+   "year": "2026",
+   "url": "https://en.wikipedia.org/wiki/Faraday_cage"
   },
   "img_caxton_celebration": {
    "title": "The Caxton Celebration: William Caxton showing specimens of his printing to King Edward IV and his Queen",
@@ -20842,6 +20890,21 @@
   "cookewheatstone": [
    "untold_history_ii"
   ],
+  "bell1881twistedpair": [
+   "untold_history_ii"
+  ],
+  "twistedpairwiki": [
+   "untold_history_ii"
+  ],
+  "espenschied1929coax": [
+   "untold_history_ii"
+  ],
+  "coaxwiki": [
+   "untold_history_ii"
+  ],
+  "faradaycagewiki": [
+   "untold_history_ii"
+  ],
   "colladon": [
    "untold_history_ii"
   ],
@@ -20882,6 +20945,15 @@
    "untold_history_ii"
   ],
   "sholes_typewriter": [
+   "untold_history_ii"
+  ],
+  "senlecqwiki": [
+   "untold_history_ii"
+  ],
+  "telectroscopewiki": [
+   "untold_history_ii"
+  ],
+  "lange_senlecq": [
    "untold_history_ii"
   ],
   "braunannalen": [
@@ -30339,7 +30411,7 @@
    ]
   },
   "Wikipedia contributors": {
-   "count": 382,
+   "count": 387,
    "minyear": 2007,
    "maxyear": 2026,
    "keys": [
@@ -30396,6 +30468,8 @@
     "youcom",
     "fibonacciseq",
     "sextanthistory",
+    "senlecqwiki",
+    "telectroscopewiki",
     "matrix_wiki",
     "tensor_wiki",
     "einstein_notation_wiki",
@@ -30482,6 +30556,9 @@
     "micrographia_wiki",
     "celltheory_wiki",
     "neuron_doctrine_wiki",
+    "coaxwiki",
+    "twistedpairwiki",
+    "faradaycagewiki",
     "socraticmethod",
     "rumi",
     "protocell_wiki",
@@ -39465,6 +39542,14 @@
    "maxyear": 1897,
    "keys": [
     "braunannalen"
+   ]
+  },
+  "André Lange": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "lange_senlecq"
    ]
   },
   "Tim Berners-Lee": {
@@ -57854,6 +57939,31 @@
     "cookewheatstone"
    ]
   },
+  "Alexander Graham Bell": {
+   "count": 2,
+   "minyear": 1876,
+   "maxyear": 1881,
+   "keys": [
+    "bell1881twistedpair",
+    "bell1876telephone"
+   ]
+  },
+  "Lloyd Espenschied": {
+   "count": 1,
+   "minyear": 1929,
+   "maxyear": 1929,
+   "keys": [
+    "espenschied1929coax"
+   ]
+  },
+  "Herman Affel": {
+   "count": 1,
+   "minyear": 1929,
+   "maxyear": 1929,
+   "keys": [
+    "espenschied1929coax"
+   ]
+  },
   "William Small (engraver)": {
    "count": 1,
    "minyear": 1877,
@@ -67836,14 +67946,6 @@
    "maxyear": 1930,
    "keys": [
     "shewhart1930quality"
-   ]
-  },
-  "Alexander Graham Bell": {
-   "count": 1,
-   "minyear": 1876,
-   "maxyear": 1876,
-   "keys": [
-    "bell1876telephone"
    ]
   },
   "Almon B. Strowger": {
