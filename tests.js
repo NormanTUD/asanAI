@@ -5159,6 +5159,16 @@ async function test_webcam(disable_webcam) {
 	$("#custom_webcam_training_data_small").click();
 	await delay(10000);
 
+	var webcamPrediction = $("#webcam_data_prediction");
+	dbg("[test_webcam] state before prediction: model=" + !!model +
+		", input_shape=" + (model && model.input ? JSON.stringify(model.input.shape) : "none") +
+		", input_is_image=" + input_shape_is_image() +
+		", origin=" + get_data_origin() +
+		", cam_active=" + _webcam_stream_is_active() +
+		", started=" + webcam_custom_data_started +
+		", pred_exists=" + webcamPrediction.length +
+		", pred_visible=" + webcamPrediction.is(":visible"));
+
 	if (model) {
 		if (!await wait_for_webcam_data_prediction(15000)) {
 			err("Live webcam prediction table is not visible in custom images");

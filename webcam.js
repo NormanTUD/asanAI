@@ -528,6 +528,7 @@ async function get_data_from_webcam(force_restart = 0, _isRestart = false) {
 		}
 	} else {
 		_stop_webcam_custom_data_prediction();
+		webcam_custom_data_started = false;
 		$(".webcam_data_button").hide();
 		$("#webcam_data").hide().html("");
 		if (cam) {
@@ -1075,6 +1076,12 @@ async function set_custom_webcam_training_data() {
 
 	if(!switched_to_image) {
 		await rename_labels();
+	}
+
+	// Tab activation and data-origin updates may have stopped the custom-data
+	// prediction in the meantime; make sure it is running before we return.
+	if (_webcam_stream_is_active()) {
+		_show_webcam_data_stream_ui();
 	}
 
 	dbg("Done setting web for custom training data");
