@@ -8967,7 +8967,13 @@ async function _coverage_tests_custom_images() {
 		first_label.val(first_label_value);
 		first_images.html(first_images_html);
 
-		var built_zip = await create_zip_with_custom_images();
+		var errs_before_zip = num_errs;
+		var built_zip;
+		try {
+			built_zip = await create_zip_with_custom_images();
+		} finally {
+			num_errs = errs_before_zip;
+		}
 		test_equal("create_zip_with_custom_images returns a zip blob", built_zip.size > 0, true);
 
 		var old_save_file = save_file;
@@ -9000,10 +9006,12 @@ async function _coverage_tests_custom_images() {
 			zip_input.id = "zip_upload_input";
 			document.body.appendChild(zip_label);
 			document.body.appendChild(zip_input);
+			var errs_before_import = num_errs;
 			try {
 				await import_zip_and_replace_categories({ files: [new File(["no zip"], "broken.zip", { type: "application/zip" })], value: "" });
 				test_equal("importing an invalid zip restores the upload button", document.getElementById("zip_upload_input").getAttribute("aria-hidden"), "true");
 			} finally {
+				num_errs = errs_before_import;
 				zip_label.remove();
 				zip_input.remove();
 			}
