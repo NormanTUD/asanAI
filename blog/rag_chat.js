@@ -372,7 +372,7 @@
 			'<div class="rag-chat-header">' +
 				'<div class="rag-chat-title">' +
 					'<span class="rag-chat-title-main">Ask the course</span>' +
-					'<span class="rag-chat-title-sub">AI answers · verify the cited lessons</span>' +
+					'<span class="rag-chat-title-sub">AI answers · verify lessons &amp; sources</span>' +
 				'</div>' +
 				'<div class="rag-chat-actions">' +
 					'<button type="button" class="rag-chat-clear" aria-label="Clear conversation" title="Clear conversation">' +
@@ -393,12 +393,12 @@
 					'</div>' +
 					'<div class="rag-chat-welcome-text">' +
 						'<strong>Ask anything about the course.</strong> Answers come only from the lessons and link their sources. ' +
-						'<span class="rag-chat-ai-note">This is an AI assistant: it can make mistakes even when it sounds confident. Check the cited lesson.</span>' +
+						'<span class="rag-chat-ai-note">This is an AI assistant: it can make mistakes even when it sounds confident. Check the cited lesson and its sources.</span>' +
 					'</div>' +
 				'</div>' +
 			'</div>' +
 			'<div class="rag-chat-status" aria-live="polite"></div>' +
-			'<div class="rag-chat-disclaimer">AI-generated answers can be wrong. Always verify with the linked lessons.</div>' +
+			'<div class="rag-chat-disclaimer">AI-generated answers can be wrong. Always verify with the linked lessons, the sources they cite, and other reliable sources.</div>' +
 			'<form class="rag-chat-form">' +
 				'<textarea class="rag-chat-input" rows="2" maxlength="2000" ' +
 				'placeholder="Ask a question about the course…" aria-label="Your question"></textarea>' +

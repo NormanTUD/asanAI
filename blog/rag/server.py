@@ -65,6 +65,10 @@ CACHE_TTL = int(os.environ.get("CACHE_TTL_SECONDS", str(30 * 24 * 3600)))
 INITIAL_ETA = float(os.environ.get("INITIAL_ETA_SECONDS", "45"))
 CACHE_VERSION = "4"
 QUERIES_DB = Path(os.environ.get("ASANAI_RAG_QUERIES_DB", "/var/lib/asanai-rag/queries.sqlite"))
+
+# The blog admin may run as the checkout owner while the service runs as
+# www-data. Group-writable SQLite files let the ACL grant both users access.
+os.umask(0o007)
 QUERY_LOG_RETENTION_DAYS = int(os.environ.get("QUERY_LOG_RETENTION_DAYS", "180"))
 
 MAGIC = 0x4D4E5356
@@ -723,6 +727,15 @@ class RagEngine:
         raise RuntimeError(f"ollama unavailable: {last_error}")
 
 
+def _secure_sqlite(path: Path) -> None:
+    """Keep the database and SQLite sidecars writable by the data group."""
+    for suffix in ("", "-wal", "-shm"):
+        try:
+            os.chmod(str(path) + suffix, 0o660)
+        except OSError:
+            pass
+
+
 class AnswerCache:
     def __init__(self, path: Path = CACHE_DB):
         self.path = path
@@ -740,10 +753,7 @@ class AnswerCache:
                     db.execute("ALTER TABLE answers ADD COLUMN embedding BLOB")
                 if "history_hash" not in columns:
                     db.execute("ALTER TABLE answers ADD COLUMN history_hash TEXT")
-            try:
-                os.chmod(self.path, 0o660)
-            except Exception:
-                pass
+            _secure_sqlite(self.path)
         except Exception as exc:
             print(f"warning: answer cache unavailable: {exc}", file=sys.stderr)
 
@@ -856,6 +866,7 @@ class QueryLog:
             db.execute("PRAGMA journal_mode=WAL")
         except Exception:
             pass
+        _secure_sqlite(self.path)
         return db
 
     def _init(self):
@@ -877,10 +888,7 @@ class QueryLog:
                     "DELETE FROM rag_queries WHERE ts < ?",
                     (int(time.time()) - QUERY_LOG_RETENTION_DAYS * 86400,),
                 )
-            try:
-                os.chmod(self.path, 0o660)
-            except Exception:
-                pass
+            _secure_sqlite(self.path)
         except Exception as exc:
             print(f"warning: query log unavailable: {exc}", file=sys.stderr)
 
@@ -1247,7 +1255,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> int:
-    os.umask(0o027)
+    os.umask(0o007)
     data_dir = RAG_DATA
     if not (data_dir / "rag_index.json").exists():
         print(

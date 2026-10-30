@@ -178,8 +178,10 @@ def main() -> int:
 		check("AI" in browser.find_element(By.CSS_SELECTOR, ".rag-chat-ai-note").text
 			and "mistakes" in browser.find_element(By.CSS_SELECTOR, ".rag-chat-ai-note").text,
 			"the welcome explains that AI answers can be wrong")
-		check("verify" in browser.find_element(By.CSS_SELECTOR, ".rag-chat-disclaimer").text.lower(),
-			"the footer reminds readers to verify")
+		disclaimer_text = browser.find_element(By.CSS_SELECTOR, ".rag-chat-disclaimer").text.lower()
+		check("verify" in disclaimer_text, "the footer reminds readers to verify")
+		check("sources they cite" in disclaimer_text and "other reliable sources" in disclaimer_text,
+			"the footer names lesson sources and other sources")
 
 		browser.execute_script(
 			"const input = document.querySelector('.rag-chat-input');"

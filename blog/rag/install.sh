@@ -80,6 +80,7 @@ if [ "$WEB_USER" != "www-data" ]; then
 	setfacl -R -m "u:$WEB_USER:rwX" "$DATA_DIR"
 	find "$DATA_DIR" -type d -exec setfacl -d -m "u:$WEB_USER:rwX" {} +
 fi
+find "$DATA_DIR" -maxdepth 1 -type f \( -name 'queries.sqlite*' -o -name 'cache.sqlite*' \) -exec chmod 0660 {} +
 install -m 0644 "$SCRIPT_DIR/server.py" "$SCRIPT_DIR/requirements.txt" "$SCRIPT_DIR/README.md" "$SERVICE_DIR/"
 install -m 0755 "$SCRIPT_DIR/reindex.sh" "$SCRIPT_DIR/set-model.sh" "$SERVICE_DIR/"
 python3 -m venv "$SERVICE_DIR/venv"
@@ -172,7 +173,7 @@ install -m 0644 "$SCRIPT_DIR/asanai-rag.service" /etc/systemd/system/asanai-rag.
 systemctl daemon-reload
 systemctl stop asanai-rag 2>/dev/null || true
 # Old answers may have been cached with an older prompt/model; drop them.
-rm -f "$DATA_DIR/cache.sqlite"
+rm -f "$DATA_DIR/cache.sqlite" "$DATA_DIR/cache.sqlite-wal" "$DATA_DIR/cache.sqlite-shm"
 systemctl enable asanai-rag
 systemctl restart asanai-rag
 

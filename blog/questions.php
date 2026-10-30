@@ -141,6 +141,19 @@ function q_markdown(string $text, array $sources = []): string {
 	return $html;
 }
 
+function q_sqlite_writable(string $path): bool {
+	if (!is_writable($path) || !is_writable(dirname($path))) {
+		return false;
+	}
+	foreach (['-wal', '-shm'] as $suffix) {
+		$sidecar = $path . $suffix;
+		if (is_file($sidecar) && !is_writable($sidecar)) {
+			return false;
+		}
+	}
+	return true;
+}
+
 function q_clear_answer_cache(): array {
 	$path = q_cache_path();
 	if (!is_file($path)) {
@@ -328,8 +341,8 @@ if ($pdo && $hasTable) {
 
 $pages = max(1, (int)ceil($total / $perPage));
 $cachePath = q_cache_path();
-$canWriteLog = $pdo && $hasTable && is_writable($dbPath) && is_writable(dirname($dbPath));
-$canWriteCache = !is_file($cachePath) || (is_writable($cachePath) && is_writable(dirname($cachePath)));
+$canWriteLog = $pdo && $hasTable && q_sqlite_writable($dbPath);
+$canWriteCache = !is_file($cachePath) || q_sqlite_writable($cachePath);
 $flash = $_SESSION['questions_flash'] ?? null;
 unset($_SESSION['questions_flash']);
 if (!is_array($flash) || !isset($flash['type'], $flash['text'])) {
