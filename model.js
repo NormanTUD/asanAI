@@ -348,8 +348,15 @@ async function _compile_model_do_compile(new_model_config_hash) {
 	var _compile_wait_start = Date.now();
 	while (create_model_queue.length || !model) {
 		if (Date.now() - _compile_wait_start > 15000) {
-			err("[_compile_model_do_compile] waited 15 s for create_model_queue/model; aborting compile to avoid a permanent stall");
-			return false;
+			if (create_model_queue.length) {
+				dbg("[_compile_model_do_compile] clearing stale create_model_queue after 15 s");
+				create_model_queue = [];
+			}
+			if (!model) {
+				dbg("[_compile_model_do_compile] no model after 15 s; aborting compile");
+				return false;
+			}
+			break;
 		}
 		await delay(10);
 	}
