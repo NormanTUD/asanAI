@@ -516,6 +516,19 @@ The \citealternativetitle{ibm702} (\citeyear{ibm702}) was IBM's first commercial
 </div>
 
 <div class="md">
+### Elektro the Moto-Man: the robot as theatre (1939)
+
+<figure>
+    <img style="width:100%; max-width:520px; display:block; margin:1em auto; border-radius:8px;" src="image.php?f=elektro_sparko.jpg&w=900" alt="Replicas of Elektro the Moto-Man and his robot dog Sparko at the Senator John Heinz History Center" />
+    <figcaption class="md">\citealternativetitle{img_elektro_sparko} (\citeauthor{img_elektro_sparko}, \citeyear{img_elektro_sparko}): replicas of Westinghouse's Elektro and his robot dog Sparko at the Senator John Heinz History Center. \citeauthor{img_elektro_sparko} released the photograph into the public domain.</figcaption>
+</figure>
+
+Before cybernetics gave machines a feedback loop, the robot most of the public had actually seen was a **performer**. **Elektro the Moto-Man** was built by J. M. Barnett, Jack Weeks Sr., Harold Gorsuch and other engineers at Westinghouse's Mansfield, Ohio, plant. It stood 2.1 metres tall, weighed 118 kilograms, and was advertised as having a "brain" of 48 electrical relays. At the 1939 New York World's Fair it performed twenty-six tricks: it appeared to walk, talked, counted, sang, smoked a cigarette, and, after 1941, blew up balloons. Its vocabulary was about 700 words, all prerecorded; its "voice commands" were timed syllabic codes flashed to a photoelectric tube rather than understood speech; and its famous walk was a staged shuffle on wheels along a track, with one knee bent and the other leg dragging (\cite[Marsh, 2018]{marsh2018elektro}).
+
+Elektro is the perfect foil for what comes next. It looked like a thinking machine, but it had no model of the world, no feedback loop and no learning: every gesture was a scripted sequence triggered by a code. Grey Walter's tortoises, a decade later, were far less human and far more interesting — they actually sensed the world and changed their behaviour in response. The contrast is the history of AI in miniature: the convincing body came first, the control loop came second. Elektro also gave the mechanical servant a public face, alongside **Sparko**, the robot dog added to the Westinghouse show in 1940, which could sit, bark, wag its tail and beg (\cite[Marsh, 2018]{marsh2018elektro}).
+</div>
+
+<div class="md">
 ### The Electric Tortoise: Machina speculatrix (1948)
 
 <figure>

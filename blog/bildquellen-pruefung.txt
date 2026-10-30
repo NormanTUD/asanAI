@@ -1547,3 +1547,14 @@ Autor, Lizenz und Quellenlink direkt in der Abbildung.
    Lokal: warrenmcculloch_afflictor.jpg (499x1343)
    Genutzt in: history.php § "The formalization of Neurons"; people_of_ai.php § "Warren McCulloch and Walter Pitts"
    Status: Prüfen - Lizenz unklar
+
+=== ELEKTRO THE MOTO-MAN AND SPARKO (history.php, Stand: Oktober 2026) ===
+====================================================================
+
+1. img_elektro_sparko
+   URL: https://commons.wikimedia.org/wiki/File:Senator_John_Heinz_History_Center_-_IMG_7802.JPG
+   Lizenz: Public domain (PD-self)
+   Autor: Daderot (self-photographed)
+   Lokal: elektro_sparko.jpg (2448x3264; ausgeliefert via image.php w=900)
+   Genutzt in: history.php § "Elektro the Moto-Man: the robot as theatre (1939)"
+   Status: OK - Public domain

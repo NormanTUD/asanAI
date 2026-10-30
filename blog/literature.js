@@ -7359,6 +7359,13 @@ window.bibData = {
 		url: "https://archive.org/details/aitumultuoushist0000crev",
 		alternativetitle: "Crevier, AI: The Tumultuous History (1993)"
 	},
+	"marsh2018elektro": {
+		title: "Elektro the Moto-Man Had the Biggest Brain at the 1939 World's Fair",
+		author: "Allison Marsh",
+		year: 2018,
+		url: "https://spectrum.ieee.org/elektro-the-motoman-had-the-biggest-brain-at-the-1939-worlds-fair",
+		alternativetitle: "Marsh, Elektro the Moto-Man (IEEE Spectrum, 2018)"
+	},
 	"afflictor2014mcculloch": {
 		title: "Old Print Article: “Warns Machines May Some Day Take Over The World,” Brooklyn Daily Eagle (1948)",
 		author: "Darren D’Addario",
@@ -15796,6 +15803,14 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:Guericke_Crater_as_seen_by_Ranger_7.jpg",
 		license: "Public domain",
 		alternativetitle: "Ranger 7, Guericke crater"
+	},
+	"img_elektro_sparko": {
+		title: "Elektro the Moto-Man and his Little Dog Sparko, Senator John Heinz History Center",
+		author: "Daderot",
+		year: 2010,
+		url: "https://commons.wikimedia.org/wiki/File:Senator_John_Heinz_History_Center_-_IMG_7802.JPG",
+		license: "Public domain",
+		alternativetitle: "Elektro and Sparko, Senator John Heinz History Center (photo: Daderot, public domain)"
 	},
 	"img_walter_tortoise": {
 		title: "Cybernetic Tortoise by William Grey Walter c 1950",

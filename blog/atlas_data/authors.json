@@ -2977,9 +2977,10 @@
   "city": "",
   "year": 1920.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "ieeespectrum2023chess"
+   "ieeespectrum2023chess",
+   "marsh2018elektro"
   ],
   "cited_in": [
    "history"
@@ -21039,8 +21040,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 3,
+  "works": 4,
   "keys": [
+   "img_elektro_sparko",
    "theseus_maze_image",
    "img_bessemer_converter",
    "alphafold_protein_img"

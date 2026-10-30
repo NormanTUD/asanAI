@@ -6408,6 +6408,12 @@
    "year": "1993",
    "url": "https://archive.org/details/aitumultuoushist0000crev"
   },
+  "marsh2018elektro": {
+   "title": "Elektro the Moto-Man Had the Biggest Brain at the 1939 World's Fair",
+   "author": "Allison Marsh",
+   "year": "2018",
+   "url": "https://spectrum.ieee.org/elektro-the-motoman-had-the-biggest-brain-at-the-1939-worlds-fair"
+  },
   "afflictor2014mcculloch": {
    "title": "Old Print Article: “Warns Machines May Some Day Take Over The World,” Brooklyn Daily Eagle (1948)",
    "author": "Darren D’Addario",
@@ -13163,6 +13169,12 @@
    "author": "NASA / JPL-Caltech",
    "year": "1964",
    "url": "https://commons.wikimedia.org/wiki/File:Guericke_Crater_as_seen_by_Ranger_7.jpg"
+  },
+  "img_elektro_sparko": {
+   "title": "Elektro the Moto-Man and his Little Dog Sparko, Senator John Heinz History Center",
+   "author": "Daderot",
+   "year": "2010",
+   "url": "https://commons.wikimedia.org/wiki/File:Senator_John_Heinz_History_Center_-_IMG_7802.JPG"
   },
   "img_walter_tortoise": {
    "title": "Cybernetic Tortoise by William Grey Walter c 1950",
@@ -24955,6 +24967,12 @@
   "ibm702": [
    "history"
   ],
+  "img_elektro_sparko": [
+   "history"
+  ],
+  "marsh2018elektro": [
+   "history"
+  ],
   "img_walter_tortoise": [
    "history"
   ],
@@ -34589,11 +34607,12 @@
    ]
   },
   "Allison Marsh": {
-   "count": 1,
-   "minyear": 2023,
+   "count": 2,
+   "minyear": 2018,
    "maxyear": 2023,
    "keys": [
-    "ieeespectrum2023chess"
+    "ieeespectrum2023chess",
+    "marsh2018elektro"
    ]
   },
   "Charles Xavier Thomas de Colmar": {
@@ -60914,6 +60933,14 @@
    "maxyear": 1964,
    "keys": [
     "img_ranger7_impact"
+   ]
+  },
+  "Daderot": {
+   "count": 1,
+   "minyear": 2010,
+   "maxyear": 2010,
+   "keys": [
+    "img_elektro_sparko"
    ]
   },
   "Ank Kumar": {
