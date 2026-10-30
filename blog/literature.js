@@ -3567,6 +3567,27 @@ window.bibData = {
 		year: 1897,
 		url: "https://www.cdvandt.org/Braun%20CRT.pdf"
 	},
+	"senlecqwiki": {
+		title: "Constantin Senlecq",
+		author: "Wikipedia contributors",
+		year: 2025,
+		url: "https://en.wikipedia.org/wiki/Constantin_Senlecq",
+		alternativetitle: "Constantin Senlecq (Wikipedia)"
+	},
+	"telectroscopewiki": {
+		title: "Telectroscope",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Telectroscope",
+		alternativetitle: "Telectroscope (Wikipedia)"
+	},
+	"lange_senlecq": {
+		title: "Constantin Senlecq, pionnier français de la transmission des images à distance",
+		author: "André Lange",
+		year: 2026,
+		url: "https://www.histv.net/senlecq-telectroscope",
+		alternativetitle: "André Lange, Histoire de la télévision: Constantin Senlecq"
+	},
 	"bernerslee1989": {
 		url: "https://www.w3.org/History/1989/proposal.html",
 		title: "Information Management: A Proposal",
@@ -12950,6 +12971,41 @@ window.bibData = {
 		year: 1837,
 		url: "https://en.wikipedia.org/wiki/Cooke_and_Wheatstone_telegraph",
 		alternativetitle: "Cooke-Wheatstone Telegraph"
+	},
+	"bell1881twistedpair": {
+		title: "Telephone-circuit (U.S. Patent 244,426)",
+		author: "Alexander Graham Bell",
+		year: 1881,
+		url: "https://patents.google.com/patent/US244426A/en",
+		alternativetitle: "Bell's 1881 twisted-pair telephone patent"
+	},
+	"espenschied1929coax": {
+		title: "Coaxial conductor system (U.S. Patent 1,835,031)",
+		author: "Lloyd Espenschied, Herman Affel",
+		year: 1929,
+		url: "https://patents.google.com/patent/US1835031A/en",
+		alternativetitle: "Espenschied & Affel's 1929 coaxial-cable patent"
+	},
+	"coaxwiki": {
+		title: "Coaxial cable",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Coaxial_cable",
+		alternativetitle: "Coaxial cable (Wikipedia)"
+	},
+	"twistedpairwiki": {
+		title: "Twisted pair",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Twisted_pair",
+		alternativetitle: "Twisted pair (Wikipedia)"
+	},
+	"faradaycagewiki": {
+		title: "Faraday cage",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Faraday_cage",
+		alternativetitle: "Faraday cage (Wikipedia)"
 	},
 
 	// ═══════════════════════════════════════════════

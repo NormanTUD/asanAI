@@ -453,6 +453,18 @@ The laser is a device for generating or amplifying coherent light. Maiman's pate
 </div>
 
 <div class="md" data-depth="20">
+#### Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire
+
+Early telegraphy ran on single wires with an earth return, and early telephony reused those circuits. That worked until electric trams and power lines began to induce noise into them. The first fix was the **balanced circuit**: two wires carrying equal and opposite currents, so that interference picked up by both wires cancelled at the receiver. In the 1880s telephone engineers added **wire transposition** — swapping the two wires every few poles, the ancestor of twisting — and Alexander Graham Bell patented the **twisted pair** in 1881. Twisting does not block interference; it makes the interference common to both wires, so it cancels when the receiver takes the difference. It is still the basis of every Ethernet cable and telephone line (\cite{bell1881twistedpair}; \cite{twistedpairwiki}).
+
+The second fix was **shielding**. Michael Faraday showed in 1836 that a closed conducting shell keeps external electric fields out of its interior; the Faraday cage is the principle behind every shielded cable. At high frequencies the shield can be thin, because the **skin effect** confines the current to its surface, but any hole, braid gap or bad connector leaks. The limiting case is the **coaxial cable**: a single inner conductor surrounded by a concentric outer conductor, with the electromagnetic field confined to the dielectric between them. Oliver Heaviside patented the idea in 1880 and showed that it eliminated interference between parallel cables; Siemens & Halske patented a German version in 1884, and Lloyd Espenschied and Herman Affel of Bell Labs patented the first modern coaxial cable in 1929 (\cite{espenschied1929coax}; \cite{coaxwiki}; \cite{faradaycagewiki}).
+
+Coax then became the high-bandwidth copper pipe of the 20th century. In 1936 it carried the first closed-circuit television pictures from the Berlin Olympics to Leipzig, and an experimental AT&T link between New York and Philadelphia carried 240 telephone calls; the first commercial US system (1941) carried one TV channel or 480 calls. In 1956 the **TAT-1** cable became the first transatlantic telephone coaxial cable, and by the 1960s coax was carrying thousands of calls and television between cities. It later became the physical medium of cable television and of early Ethernet (10BASE5 and 10BASE2), and it still carries broadband internet into many homes (\cite{coaxwiki}).
+
+For AI, the lesson is the same as for the telegraph: the model is only as global as the cable underneath it. Coax was the copper bridge between the telephone network and the data network — the medium that carried the first transatlantic telephone traffic, the first cable TV, and the first local-area networks. Fiber now carries the long haul, but the shielded pair and the coaxial line are still the last mile.
+</div>
+
+<div class="md" data-depth="20">
 #### Fiber Optics and Submarine Cables: The Physical Internet
 
 The “digital ocean” of training data does not exist in an abstract cloud; it flows through **physical infrastructure** that has its own displaced history:
@@ -511,6 +523,8 @@ Today, a user's fingers follow a key arrangement dictated by 1870s typebar physi
 #### Cathode Rays and Glowing Phosphors: The Screen That Gave AI a Face
 
 A machine that cannot *show* its output is, for all practical purposes, mute. The visual display has its origins not in computing, but in 19th-century experimental physics.
+
+The first television proposals were older than the CRT, and they were closer to the fax machine than to the screen. In 1877–1881 the French notary **Constantin Senlecq** proposed a **telectroscope**: a selenium point scanned an image formed on the ground glass of a camera obscura, its light-dependent resistance modulated a telegraph current, and a synchronised receiver drove a pencil across paper. It was a still-image facsimile, not moving television, but it established the two core ideas — turn light into electricity with selenium, and serialise the image by scanning. The word "telectroscope" itself was popularised by Moigno and Figuier from a *New York Sun* hoax about an "electroscope"; none of the 19th-century telectroscopes was a working television system. Senlecq patented a refined version in 1907, by which time Nipkow's scanning disk had become the standard mechanical route; he died blind in 1934, before television became a public medium (\cite{senlecqwiki}; \cite{telectroscopewiki}; \cite{lange_senlecq}).
 
 In 1897, **Karl Ferdinand Braun** invented the **cathode ray tube (CRT)** at the University of Strasbourg, described in \citetitle{braunannalen}. It was a laboratory instrument for visualizing alternating-current waveforms, a tool for physicists, not communicators. By directing an electron beam onto a phosphorescent surface, Braun rendered invisible electrical phenomena as visible, glowing traces.
 
