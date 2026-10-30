@@ -150,6 +150,7 @@ var OrigamiLive = (function (global) {
 		// Lifecycle
 		initialized:  false,
 		destroyed:    false,
+		webglError:   null,
 		visible:      false,
 		pendingRender: false,
 		dirty:        true,
@@ -5716,6 +5717,7 @@ var OrigamiLive = (function (global) {
 				powerPreference: "high-performance"
 			});
 		} catch (e) {
+			_state.webglError = String(e);
 			_err("WebGLRenderer konnte nicht erstellt werden: " + e);
 			return false;
 		}
@@ -5810,6 +5812,7 @@ var OrigamiLive = (function (global) {
 		// Qualität initial setzen (sane default = Stufe 2 "Hoch")
 		_applyQuality(_state.qualityLevel);
 
+		_state.webglError = null;
 		if (!_setupThree()) {
 			_err("three.js-Setup fehlgeschlagen.");
 			return API;
