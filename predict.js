@@ -1,5 +1,14 @@
 "use strict";
 
+var _recent_predict_dedup_messages = [];
+
+function _predict_dbg_dedup(message) {
+	if (_recent_predict_dedup_messages.includes(message)) return;
+	_recent_predict_dedup_messages.push(message);
+	if (_recent_predict_dedup_messages.length > 50) _recent_predict_dedup_messages.shift();
+	dbg(message);
+}
+
 function _label_input_td(label, label_index) {
 	var safe_label = label ? ("" + label).replaceAll(/'/g, "") : "";
 	return `<td class='label_element'><input class='label_input_element' type='text' value='${safe_label}' onchange='update_label_by_nr(this, ${label_index})'></td>`;
@@ -157,9 +166,9 @@ async function handle_predict_internal_errors (e, data, __model, recursion) {
 		if(!__model || Object.keys(__model).includes("input")) {
 			var mis = __model?.input?.shape?.join(", ");
 
-			dbg(sprintf(language[lang]["wrong_input_shape_for_prediction_data_x_model_y"], dis, mis));
+			_predict_dbg_dedup(sprintf(language[lang]["wrong_input_shape_for_prediction_data_x_model_y"], dis, mis));
 		} else {
-			dbg(sprintf(language[lang]["wrong_input_shape_for_prediction_data_x_model_y"], dis, "not determinable"));
+			_predict_dbg_dedup(sprintf(language[lang]["wrong_input_shape_for_prediction_data_x_model_y"], dis, "not determinable"));
 		}
 
 		await dispose(data);
@@ -176,7 +185,7 @@ async function handle_predict_internal_errors (e, data, __model, recursion) {
 		if(warn_if_tensor_is_disposed(data)) {
 			return await __predict(data, model, recursion + 1);
 		} else {
-			dbg(language[lang]["cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed"]);
+			_predict_dbg_dedup(language[lang]["cannot_predict_since_the_data_about_to_be_predicted_is_already_disposed"]);
 			await dispose(data);
 			return true;
 		}
@@ -907,7 +916,7 @@ async function get_predict_data_or_warn_in_case_of_error(predict_data, item) {
 	}
 
 	if (!predict_data || predict_data.isDisposed) {
-		dbg("[should_abort_predict] [predict] predict_data is null or undefined");
+		_predict_dbg_dedup("[predict] skipping prediction: predict_data is null or already disposed");
 		return null;
 	}
 
@@ -990,7 +999,7 @@ function reset_predict_error_and_predict_tab (pred_tab) {
 
 function check_predict_data_and_model(predict_data) {
 	if(predict_data["isDisposedInternal"]) {
-		dbg("[predict] predict_data is already disposed!");
+		_predict_dbg_dedup("[predict] skipping prediction: predict_data is null or already disposed");
 		return true;
 	}
 
@@ -1051,7 +1060,7 @@ function is_disposed(obj) {
 
 function should_abort_predict(predict_data) {
 	if (is_null_or_undefined(predict_data)) {
-		dbg("[predict] predict_data is null or undefined");
+		_predict_dbg_dedup("[predict] skipping prediction: predict_data is null or already disposed");
 		return true;
 	}
 	if (!has_disposed_flag(predict_data)) {
@@ -1059,7 +1068,7 @@ function should_abort_predict(predict_data) {
 		return false;
 	}
 	if (is_disposed(predict_data)) {
-		dbg("[predict] predict_data is already disposed");
+		_predict_dbg_dedup("[predict] skipping prediction: predict_data is null or already disposed");
 		return true;
 	}
 	return false;
@@ -1082,7 +1091,7 @@ async function _predict_validate_and_get_data(item, pred_tab) {
 	}
 
 	if (should_abort_predict(predict_data)) {
-		dbg("[predict] predict_data is already disposed!");
+		_predict_dbg_dedup("[predict] skipping prediction: predict_data is null or already disposed");
 		try { await dispose(predict_data); } catch (e) {}
 		hide_predict_spinner("#" + pred_tab);
 		return {aborted: true};
