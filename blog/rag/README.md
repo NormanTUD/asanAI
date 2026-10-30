@@ -68,12 +68,20 @@ If the blog is somewhere else:
 sudo ASANAI_BLOG_DIR=/srv/asanai/blog ./install.sh
 ```
 
+If Apache runs as a different user than the blog checkout owner, tell the
+installer explicitly (it grants that user ACL write access to the RAG data
+directory):
+
+```bash
+sudo ASANAI_WEB_USER=www-data ./install.sh
+```
+
 The installer is idempotent. It uses the bge-small index committed in the
 repository when its source hash matches the lessons; otherwise it rebuilds it
 (on two CPU cores that one-time build can take around 25 minutes). It does the
 following:
 
-1. installs Python, PHP CLI/cURL, curl and certificates;
+1. installs Python, PHP CLI/cURL, curl, certificates and ACL tools;
 2. installs Ollama if missing;
 3. creates `/opt/asanai-rag` and a virtualenv (numpy + fastembed);
 4. installs the Ollama memory/CPU limits and the `asanai-rag` systemd unit;

@@ -741,7 +741,7 @@ class AnswerCache:
                 if "history_hash" not in columns:
                     db.execute("ALTER TABLE answers ADD COLUMN history_hash TEXT")
             try:
-                os.chmod(self.path, 0o640)
+                os.chmod(self.path, 0o660)
             except Exception:
                 pass
         except Exception as exc:
@@ -878,7 +878,7 @@ class QueryLog:
                     (int(time.time()) - QUERY_LOG_RETENTION_DAYS * 86400,),
                 )
             try:
-                os.chmod(self.path, 0o640)
+                os.chmod(self.path, 0o660)
             except Exception:
                 pass
         except Exception as exc:

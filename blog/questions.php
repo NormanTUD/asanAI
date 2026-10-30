@@ -160,7 +160,8 @@ function q_clear_answer_cache(): array {
 		$deleted = (int)$db->exec('DELETE FROM answers');
 		return [$deleted, 'Cleared ' . $deleted . ' cached answer' . ($deleted === 1 ? '' : 's') . '.'];
 	} catch (Throwable $e) {
-		return [0, 'The answer cache could not be cleared.'];
+		error_log('questions.php: answer cache clear failed: ' . $e->getMessage());
+		return [0, 'The answer cache could not be cleared. Check that the web server can write the RAG cache (rerun rag/install.sh).'];
 	}
 }
 
@@ -271,7 +272,8 @@ if ($isPost) {
 				q_flash($deleted ? 'ok' : 'warn',
 					$deleted ? 'Question deleted.' : 'That question was already gone.');
 			} catch (Throwable $e) {
-				q_flash('error', 'That question could not be deleted.');
+				error_log('questions.php: question delete failed: ' . $e->getMessage());
+				q_flash('error', 'That question could not be deleted. Check that the web server can write the RAG database (rerun rag/install.sh).');
 			}
 		}
 	} elseif ($action === 'delete_cached') {
@@ -289,7 +291,8 @@ if ($isPost) {
 						? 'Deleted ' . $deleted . ' cached log entr' . ($deleted === 1 ? 'y' : 'ies') . '.'
 						: 'No cached log entries match these filters.');
 			} catch (Throwable $e) {
-				q_flash('error', 'The cached log entries could not be deleted.');
+				error_log('questions.php: cached log delete failed: ' . $e->getMessage());
+				q_flash('error', 'The cached log entries could not be deleted. Check that the web server can write the RAG database (rerun rag/install.sh).');
 			}
 		}
 	} elseif ($action === 'clear_cache') {
@@ -324,6 +327,9 @@ if ($pdo && $hasTable) {
 }
 
 $pages = max(1, (int)ceil($total / $perPage));
+$cachePath = q_cache_path();
+$canWriteLog = $pdo && $hasTable && is_writable($dbPath) && is_writable(dirname($dbPath));
+$canWriteCache = !is_file($cachePath) || (is_writable($cachePath) && is_writable(dirname($cachePath)));
 $flash = $_SESSION['questions_flash'] ?? null;
 unset($_SESSION['questions_flash']);
 if (!is_array($flash) || !isset($flash['type'], $flash['text'])) {
@@ -434,6 +440,10 @@ button{background:var(--accent);color:#101425;font-weight:800;cursor:pointer;bor
 		<button type="submit">Filter</button>
 		<a href="<?php echo q_h(q_action()); ?>" class="sub" style="margin-left:4px">Reset</a>
 	</form>
+
+	<?php if (!$canWriteLog || !$canWriteCache): ?>
+		<div class="flash warn">The web server cannot write the RAG log or cache. Run <code>sudo bash blog/rag/install.sh</code> again, or grant the web-server user write access to <code><?php echo q_h(dirname($dbPath)); ?></code>.</div>
+	<?php endif; ?>
 
 	<div class="bulk">
 		<form method="post" action="<?php echo q_h(q_action()); ?>?<?php echo q_h(q_query()); ?>">

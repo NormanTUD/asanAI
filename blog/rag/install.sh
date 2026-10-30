@@ -18,6 +18,7 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BLOG_DIR="${ASANAI_BLOG_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 BLOG_OWNER="$(stat -c '%U' "$BLOG_DIR")"
+WEB_USER="${ASANAI_WEB_USER:-$BLOG_OWNER}"
 SERVICE_DIR="/opt/asanai-rag"
 DATA_DIR="/var/lib/asanai-rag"
 RAG_DATA="$DATA_DIR/data"
@@ -49,6 +50,7 @@ echo "== asanAI RAG installer =="
 echo "blog:      $BLOG_DIR"
 echo "service:   $SERVICE_DIR"
 echo "data:      $DATA_DIR"
+echo "web user:  $WEB_USER"
 echo "model:     $MODEL"
 echo "reranker:  $RERANK_MODEL"
 echo
@@ -58,7 +60,7 @@ apt-get update
 apt-get install -y \
 	python3 python3-venv python3-pip \
 	php-cli php-curl \
-	curl ca-certificates
+	curl ca-certificates acl
 
 echo "[2/8] Installing Ollama"
 if ! command -v ollama >/dev/null 2>&1; then
@@ -72,6 +74,12 @@ install -d -m 0755 "$SERVICE_DIR"
 install -d -m 0755 -o www-data -g www-data "$DATA_DIR" "$RAG_DATA"
 install -d -m 0755 -o www-data -g www-data "$DATA_DIR/hf" "$DATA_DIR/fastembed"
 chown -R www-data:www-data "$DATA_DIR"
+if [ "$WEB_USER" != "www-data" ]; then
+	# The blog may run as the checkout owner (common on a local Apache) while
+	# the answer service runs as www-data. Let both write the log and cache.
+	setfacl -R -m "u:$WEB_USER:rwX" "$DATA_DIR"
+	find "$DATA_DIR" -type d -exec setfacl -d -m "u:$WEB_USER:rwX" {} +
+fi
 install -m 0644 "$SCRIPT_DIR/server.py" "$SCRIPT_DIR/requirements.txt" "$SCRIPT_DIR/README.md" "$SERVICE_DIR/"
 install -m 0755 "$SCRIPT_DIR/reindex.sh" "$SCRIPT_DIR/set-model.sh" "$SERVICE_DIR/"
 python3 -m venv "$SERVICE_DIR/venv"
