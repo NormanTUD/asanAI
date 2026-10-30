@@ -2399,6 +2399,78 @@ html.dark .kp-block {
 }
 
 /* ════════════════════════════════════════════════════════════
+   YOUTUBE EMBEDS — [youtube]VIDEO_ID[/youtube]
+   A click-to-load card: no request leaves the browser until the
+   reader presses play. The iframe then uses youtube-nocookie.
+   ════════════════════════════════════════════════════════════ */
+.mn-youtube {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	margin: var(--mn-space-m) 0;
+	overflow: hidden;
+	border: 1px solid var(--mn-border);
+	border-radius: var(--mn-radius-md);
+	background:
+		radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--mn-accent) 18%, transparent), transparent 58%),
+		var(--mn-surface);
+}
+.mn-youtube iframe {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	border: 0;
+}
+.mn-youtube-play {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: .7rem;
+	width: 100%;
+	height: 100%;
+	padding: var(--mn-space-m);
+	border: 0;
+	background: transparent;
+	color: var(--mn-text);
+	font: inherit;
+	cursor: pointer;
+}
+.mn-youtube-play:hover .mn-youtube-icon,
+.mn-youtube-play:focus-visible .mn-youtube-icon {
+	background: var(--mn-accent);
+	color: var(--mn-bg);
+	transform: scale(1.06);
+}
+.mn-youtube-play:focus-visible {
+	outline: 2px solid var(--mn-accent);
+	outline-offset: 2px;
+}
+.mn-youtube-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 3.1rem;
+	height: 3.1rem;
+	border-radius: 999px;
+	background: var(--mn-accent-light);
+	color: var(--mn-accent-dark);
+	font-size: 1.2rem;
+	transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+html.dark .mn-youtube-icon {
+	background: var(--mn-surface-raised);
+	color: var(--mn-accent-light);
+}
+.mn-youtube-label {
+	font-size: .84rem;
+	font-weight: 600;
+	letter-spacing: .02em;
+	text-transform: uppercase;
+	color: var(--mn-text-secondary);
+}
+
+/* ════════════════════════════════════════════════════════════
    READING FLOW — four devices that keep a long lesson moving.
    They are deliberately a small family: same radius, same
    kicker typography, one accent colour each, so a reader learns
