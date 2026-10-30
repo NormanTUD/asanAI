@@ -10992,6 +10992,54 @@
    "year": "2026",
    "url": "https://en.wikipedia.org/wiki/Energy_density"
   },
+  "siemens1867dynamo": {
+   "title": "Ueber die Umwandlung von Arbeitskraft in elektrischen Strom ohne Anwendung permanenter Magnete",
+   "author": "Werner Siemens",
+   "year": "1867",
+   "url": "https://doi.org/10.1002/andp.18672060113"
+  },
+  "parsons1911steamturbine": {
+   "title": "The Steam Turbine: The Rede Lecture 1911",
+   "author": "Charles A. Parsons",
+   "year": "1911",
+   "url": "https://archive.org/details/steamturbinerede00parsrich"
+  },
+  "rankine1859": {
+   "title": "A Manual of the Steam Engine and Other Prime Movers",
+   "author": "William John Macquorn Rankine",
+   "year": "1859",
+   "url": "https://archive.org/details/amanualsteameng00rankgoog"
+  },
+  "hahnstrassmann1939fission": {
+   "title": "Über den Nachweis und das Verhalten der bei der Bestrahlung des Urans mittels Neutronen entstehenden Erdalkalimetalle",
+   "author": "Otto Hahn, Fritz Strassmann",
+   "year": "1939",
+   "url": "https://doi.org/10.1007/BF01488241"
+  },
+  "meitnerfrisch1939fission": {
+   "title": "Disintegration of Uranium by Neutrons: a New Type of Nuclear Reaction",
+   "author": "Lise Meitner, Otto Robert Frisch",
+   "year": "1939",
+   "url": "https://doi.org/10.1038/143239a0"
+  },
+  "eia_oil": {
+   "title": "Oil and petroleum products explained",
+   "author": "U.S. Energy Information Administration",
+   "year": "2026",
+   "url": "https://www.eia.gov/energyexplained/oil-and-petroleum-products/"
+  },
+  "drakewellmuseum": {
+   "title": "Drake Well Museum and Park",
+   "author": "Pennsylvania Historical and Museum Commission",
+   "year": "2026",
+   "url": "https://www.drakewell.org/"
+  },
+  "worldnuclear": {
+   "title": "Nuclear Power Reactors",
+   "author": "World Nuclear Association",
+   "year": "2026",
+   "url": "https://www.world-nuclear.org/information-library/nuclear-fuel-cycle/nuclear-power-reactors/nuclear-power-reactors.aspx"
+  },
   "torricellibarometer": {
    "title": "Letter to Michelangelo Ricci (1644, on the vacuum and atmospheric pressure)",
    "author": "Evangelista Torricelli",
@@ -21372,10 +21420,16 @@
   "jeng2022cowos": [
    "untold_history_ii"
   ],
+  "siemens1867dynamo": [
+   "untold_history_ii"
+  ],
+  "parsons1911steamturbine": [
+   "untold_history_ii"
+  ],
   "electricpowerhistorywiki": [
    "untold_history_ii"
   ],
-  "steamturbinewiki": [
+  "rankine1859": [
    "untold_history_ii"
   ],
   "eia_coal": [
@@ -21385,20 +21439,29 @@
   "coalpowerwiki": [
    "untold_history_ii"
   ],
-  "drakewellwiki": [
+  "drakewellmuseum": [
    "untold_history_ii"
   ],
-  "petroleumhistorywiki": [
+  "eia_oil": [
    "untold_history_ii"
   ],
   "claerbout1992earth": [
    "untold_history_ii",
    "untold_history_iii"
   ],
+  "hahnstrassmann1939fission": [
+   "untold_history_ii"
+  ],
+  "meitnerfrisch1939fission": [
+   "untold_history_ii"
+  ],
   "nuclearpowerwiki": [
    "untold_history_ii"
   ],
   "obninskwiki": [
+   "untold_history_ii"
+  ],
+  "worldnuclear": [
    "untold_history_ii"
   ],
   "fossilfuelwiki": [
@@ -57927,6 +57990,87 @@
     "wattpatent"
    ]
   },
+  "Werner Siemens": {
+   "count": 1,
+   "minyear": 1867,
+   "maxyear": 1867,
+   "keys": [
+    "siemens1867dynamo"
+   ]
+  },
+  "Charles A. Parsons": {
+   "count": 1,
+   "minyear": 1911,
+   "maxyear": 1911,
+   "keys": [
+    "parsons1911steamturbine"
+   ]
+  },
+  "William John Macquorn Rankine": {
+   "count": 1,
+   "minyear": 1859,
+   "maxyear": 1859,
+   "keys": [
+    "rankine1859"
+   ]
+  },
+  "Otto Hahn": {
+   "count": 1,
+   "minyear": 1939,
+   "maxyear": 1939,
+   "keys": [
+    "hahnstrassmann1939fission"
+   ]
+  },
+  "Fritz Strassmann": {
+   "count": 1,
+   "minyear": 1939,
+   "maxyear": 1939,
+   "keys": [
+    "hahnstrassmann1939fission"
+   ]
+  },
+  "Lise Meitner": {
+   "count": 1,
+   "minyear": 1939,
+   "maxyear": 1939,
+   "keys": [
+    "meitnerfrisch1939fission"
+   ]
+  },
+  "Otto Robert Frisch": {
+   "count": 1,
+   "minyear": 1939,
+   "maxyear": 1939,
+   "keys": [
+    "meitnerfrisch1939fission"
+   ]
+  },
+  "U.S. Energy Information Administration": {
+   "count": 2,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "eia_oil",
+    "eia_coal"
+   ]
+  },
+  "Pennsylvania Historical and Museum Commission": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "drakewellmuseum"
+   ]
+  },
+  "World Nuclear Association": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "worldnuclear"
+   ]
+  },
   "Evangelista Torricelli": {
    "count": 1,
    "minyear": 1644,
@@ -67556,14 +67700,6 @@
    "maxyear": 1948,
    "keys": [
     "calvin1948photosynthesis"
-   ]
-  },
-  "U.S. Energy Information Administration": {
-   "count": 1,
-   "minyear": 2026,
-   "maxyear": 2026,
-   "keys": [
-    "eia_coal"
    ]
   },
   "Fritz Haber": {

@@ -24774,8 +24774,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "eia_oil",
    "eia_coal"
   ],
   "cited_in": [
@@ -81392,6 +81393,159 @@
   ],
   "cited_in": [
    "history"
+  ]
+ },
+ {
+  "name": "Werner Siemens",
+  "canon": "Werner Siemens",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1867,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "siemens1867dynamo"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Charles A. Parsons",
+  "canon": "Charles A. Parsons",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1911,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "parsons1911steamturbine"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "William John Macquorn Rankine",
+  "canon": "William John Macquorn Rankine",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1859,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rankine1859"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Otto Hahn",
+  "canon": "Otto Hahn",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1939,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hahnstrassmann1939fission"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Fritz Strassmann",
+  "canon": "Fritz Strassmann",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1939,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hahnstrassmann1939fission"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Lise Meitner",
+  "canon": "Lise Meitner",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1939,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "meitnerfrisch1939fission"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Otto Robert Frisch",
+  "canon": "Otto Robert Frisch",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1939,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "meitnerfrisch1939fission"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Pennsylvania Historical and Museum Commission",
+  "canon": "Pennsylvania Historical and Museum Commission",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "drakewellmuseum"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "World Nuclear Association",
+  "canon": "World Nuclear Association",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "worldnuclear"
+  ],
+  "cited_in": [
+   "untold_history_ii"
   ]
  },
  {
