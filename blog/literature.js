@@ -12874,6 +12874,129 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Watt_steam_engine",
 		alternativetitle: "Watt Patent 913"
 	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Energy and power generation (untold_history_ii.php):
+	 *  electricity, coal, oil, nuclear, fuels and energy density.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"electricpowerhistorywiki": {
+		title: "History of electric power transmission",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/History_of_electric_power_transmission",
+		alternativetitle: "History of electric power transmission (Wikipedia)"
+	},
+	"steamturbinewiki": {
+		title: "Steam turbine",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Steam_turbine",
+		alternativetitle: "Steam turbine (Wikipedia)"
+	},
+	"coalpowerwiki": {
+		title: "Coal-fired power station",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Coal-fired_power_station",
+		alternativetitle: "Coal-fired power station (Wikipedia)"
+	},
+	"drakewellwiki": {
+		title: "Drake Well",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Drake_Well",
+		alternativetitle: "Drake Well (Wikipedia)"
+	},
+	"petroleumhistorywiki": {
+		title: "History of the petroleum industry",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/History_of_the_petroleum_industry",
+		alternativetitle: "History of the petroleum industry (Wikipedia)"
+	},
+	"nuclearpowerwiki": {
+		title: "Nuclear power",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Nuclear_power",
+		alternativetitle: "Nuclear power (Wikipedia)"
+	},
+	"obninskwiki": {
+		title: "Obninsk Nuclear Power Plant",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Obninsk_Nuclear_Power_Plant",
+		alternativetitle: "Obninsk Nuclear Power Plant (Wikipedia)"
+	},
+	"fossilfuelwiki": {
+		title: "Fossil fuel",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Fossil_fuel",
+		alternativetitle: "Fossil fuel (Wikipedia)"
+	},
+	"energydensitywiki": {
+		title: "Energy density",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Energy_density",
+		alternativetitle: "Energy density (Wikipedia)"
+	},
+	"siemens1867dynamo": {
+		title: "Ueber die Umwandlung von Arbeitskraft in elektrischen Strom ohne Anwendung permanenter Magnete",
+		author: "Werner Siemens",
+		year: 1867,
+		url: "https://doi.org/10.1002/andp.18672060113",
+		alternativetitle: "Siemens, dynamo-electric principle (Annalen der Physik, 1867)"
+	},
+	"parsons1911steamturbine": {
+		title: "The Steam Turbine: The Rede Lecture 1911",
+		author: "Charles A. Parsons",
+		year: 1911,
+		url: "https://archive.org/details/steamturbinerede00parsrich",
+		alternativetitle: "Parsons, The Steam Turbine (Rede Lecture, 1911)"
+	},
+	"rankine1859": {
+		title: "A Manual of the Steam Engine and Other Prime Movers",
+		author: "William John Macquorn Rankine",
+		year: 1859,
+		url: "https://archive.org/details/amanualsteameng00rankgoog",
+		alternativetitle: "Rankine, A Manual of the Steam Engine (1859)"
+	},
+	"hahnstrassmann1939fission": {
+		title: "Über den Nachweis und das Verhalten der bei der Bestrahlung des Urans mittels Neutronen entstehenden Erdalkalimetalle",
+		author: "Otto Hahn, Fritz Strassmann",
+		year: 1939,
+		url: "https://doi.org/10.1007/BF01488241",
+		alternativetitle: "Hahn & Strassmann, the barium result (1939)"
+	},
+	"meitnerfrisch1939fission": {
+		title: "Disintegration of Uranium by Neutrons: a New Type of Nuclear Reaction",
+		author: "Lise Meitner, Otto Robert Frisch",
+		year: 1939,
+		url: "https://doi.org/10.1038/143239a0",
+		alternativetitle: "Meitner & Frisch, nuclear fission (Nature, 1939)"
+	},
+	"eia_oil": {
+		title: "Oil and petroleum products explained",
+		author: "U.S. Energy Information Administration",
+		year: 2026,
+		url: "https://www.eia.gov/energyexplained/oil-and-petroleum-products/",
+		alternativetitle: "EIA, Oil and petroleum products explained"
+	},
+	"drakewellmuseum": {
+		title: "Drake Well Museum and Park",
+		author: "Pennsylvania Historical and Museum Commission",
+		year: 2026,
+		url: "https://www.drakewell.org/",
+		alternativetitle: "Drake Well Museum and Park"
+	},
+	"worldnuclear": {
+		title: "Nuclear Power Reactors",
+		author: "World Nuclear Association",
+		year: 2026,
+		url: "https://www.world-nuclear.org/information-library/nuclear-fuel-cycle/nuclear-power-reactors/nuclear-power-reactors.aspx",
+		alternativetitle: "World Nuclear Association, Nuclear Power Reactors"
+	},
 	"torricellibarometer": {
 		title: "Letter to Michelangelo Ricci (1644, on the vacuum and atmospheric pressure)",
 		author: "Evangelista Torricelli",

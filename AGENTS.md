@@ -67,6 +67,13 @@ again before reporting done.
   messages, and docs must be clear, precise, and pleasant to read. Re-read
   them before sending, cut filler, fix ambiguity and rhythm, and verify every
   claim; a text is not done on the first draft.
+- Read the primary source before writing about it. — For every historical or
+  scientific claim, locate the original paper, patent, book, or report, read at
+  least the relevant passage, and cite that work directly. Use secondary
+  sources to find the primary work or for uncontroversial context; do not cite
+  a secondary source for a claim the primary source makes. If the original is
+  inaccessible, say so and cite the best available source; never invent a
+  citation, a quotation, or a result.
 
 **WORKING DISCIPLINE**
 - Test everything, automatically. — Every behavior change needs automated
