@@ -8088,6 +8088,11 @@ span.cl-eq {
 #cl-top:hover {
 	color: var(--mn-accent);
 }
+/* The RAG assistant launcher owns the bottom-right corner; when it is
+   present, the back-to-top link sits to its left instead of underneath. */
+body:has(#rag-chat-toggle) #cl-top {
+	right: 96px;
+}
 @media (max-width: 600px) { #cl-top { display: none; } }
 
 /* ── 7b. Mini-TOC — the current section, once the real TOC is off-screen ──
