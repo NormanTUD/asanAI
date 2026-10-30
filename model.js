@@ -138,7 +138,7 @@ async function _create_model () {
 	var _wait_start = Date.now();
 	while (create_model_queue.length) {
 		if (Date.now() - _wait_start > 15000) {
-			err("[_create_model] create_model_queue did not drain within 15 s; clearing it to avoid a permanent stall");
+			dbg("[_create_model] create_model_queue did not drain within 15 s; clearing it to avoid a permanent stall");
 			create_model_queue = [];
 			break;
 		}
