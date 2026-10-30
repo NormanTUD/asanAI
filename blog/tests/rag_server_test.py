@@ -139,7 +139,7 @@ class BlockingEngine:
     release = threading.Event()
     questions = []
 
-    def answer(self, question, lang, history, on_token=None):
+    def answer(self, question, lang, history, on_token=None, page=None):
         BlockingEngine.started.set()
         BlockingEngine.release.wait(2)
         BlockingEngine.questions.append(question)
@@ -157,12 +157,14 @@ class FakeEngine:
     chunks = [{"u": "history#x", "pt": "History", "h": "X", "x": "A perceptron."}]
     embedder = FakeEmbedder()
     calls = 0
+    pages = []
 
     def embed_question(self, text):
         return self.embedder.embed(text)
 
-    def answer(self, question, lang, history, on_token=None):
+    def answer(self, question, lang, history, on_token=None, page=None):
         FakeEngine.calls += 1
+        FakeEngine.pages.append(page)
         if "explode" in question:
             raise RuntimeError("internal detail that must not leak")
         time.sleep(0.35)
@@ -266,7 +268,7 @@ def main():
     retry_engine = object.__new__(server.RagEngine)
     retry_engine.last_done_reason = None
     retry_engine.translate = lambda question, lang: question
-    retry_engine.retrieve = lambda question, limit=5: chunks
+    retry_engine.retrieve = lambda question, limit=5, page=None: chunks
     retry_engine.build_messages = lambda *args: [
         {"role": "system", "content": "system"},
         {"role": "user", "content": "user"},
@@ -326,6 +328,33 @@ def main():
     check("one" in ctx["context"] and "two" in ctx["context"],
           "retrieval context expands to neighbouring chunks in the same section")
     check("three" not in ctx["context"], "retrieval context stays inside the section")
+
+    page_engine = object.__new__(server.RagEngine)
+    page_engine.chunks = [
+        {"p": "alpha", "h": "One", "u": "alpha#one", "pt": "Alpha", "x": "perceptron alpha"},
+        {"p": "beta", "h": "Two", "u": "beta#two", "pt": "Beta", "x": "perceptron beta"},
+        {"p": "alpha", "h": "Three", "u": "alpha#three", "pt": "Alpha", "x": "more alpha"},
+    ]
+    page_engine.vectors = np.array([[1.0, 0.0], [1.0, 0.0], [1.0, 0.0]], dtype=np.float32)
+    page_engine.scales = np.ones(3, dtype=np.float32)
+    page_engine.sections = {
+        ("alpha", "One"): [0],
+        ("beta", "Two"): [1],
+        ("alpha", "Three"): [2],
+    }
+    page_engine.reranker = None
+    page_engine.embed_question = lambda text: np.array([1.0, 0.0], dtype=np.float32)
+    page_engine.bm25 = server.BM25([chunk["x"] for chunk in page_engine.chunks])
+    scoped = page_engine.retrieve("perceptron", 5, page="beta")
+    check([chunk["p"] for chunk in scoped] == ["beta"],
+          "page-scoped retrieval keeps only the requested lesson", str(scoped))
+    unscoped = page_engine.retrieve("perceptron", 5)
+    check(len(unscoped) == 3, "unscoped retrieval still sees every lesson")
+    scoped_key = server.cache_key("what is a perceptron", "en", [], "beta")
+    check(scoped_key != server.cache_key("what is a perceptron", "en", [], "alpha"),
+          "cache keys keep page-scoped answers separate")
+    check(scoped_key != server.cache_key("what is a perceptron", "en", []),
+          "page-scoped cache keys differ from course-wide keys")
 
     bm25 = server.BM25(["a perceptron is linear", "the history of rome"])
     check(bm25.search("perceptron")[0] == 0, "BM25 finds an exact term")
@@ -488,6 +517,43 @@ def main():
                     time.sleep(0.1)
                 check(result and result.get("status") == "done",
                       "hostile text still completes normally", hostile)
+
+            status, scoped_job = post(
+                base,
+                {"question": f"what is a perceptron {time.time_ns()}", "lang": "en",
+                 "page": "history"},
+                ip="10.0.0.11",
+            )
+            check(status == 200 and scoped_job.get("id"),
+                  "a page-scoped question is queued", str(scoped_job))
+            deadline = time.time() + 5
+            scoped_result = None
+            while time.time() < deadline:
+                status, scoped_result = get(base, "/status?id=" + scoped_job["id"])
+                if scoped_result.get("status") in ("done", "error"):
+                    break
+                time.sleep(0.1)
+            check(scoped_result and scoped_result.get("status") == "done",
+                  "the page-scoped job finishes", str(scoped_result))
+            check(FakeEngine.pages and FakeEngine.pages[-1] == "history",
+                  "the page scope reaches the engine", str(FakeEngine.pages[-1:]))
+
+            status, cleaned_job = post(
+                base,
+                {"question": f"what is a widget {time.time_ns()}", "lang": "en",
+                 "page": "../../etc/passwd"},
+                ip="10.0.0.12",
+            )
+            check(status == 200 and cleaned_job.get("id"),
+                  "a hostile page scope is accepted as a slug", str(cleaned_job))
+            deadline = time.time() + 5
+            while time.time() < deadline:
+                status, cleaned_result = get(base, "/status?id=" + cleaned_job["id"])
+                if cleaned_result.get("status") in ("done", "error"):
+                    break
+                time.sleep(0.1)
+            check(FakeEngine.pages and FakeEngine.pages[-1] == "etcpasswd",
+                  "the page scope is reduced to a safe slug", str(FakeEngine.pages[-1:]))
             try:
                 post(base, {"question": "x" * 3000, "lang": "en"}, ip="10.0.0.8")
                 check(False, "oversized question is rejected")
@@ -584,6 +650,26 @@ def main():
                     time.sleep(0.1)
                 check(final and final.get("status") == "done",
                       "PHP proxy returns the finished answer", str(final))
+                status, job = post(
+                    php_base,
+                    {"question": f"what is a widget {time.time_ns()}", "lang": "en",
+                     "page": "history#x"},
+                    ip="10.0.0.3",
+                    path="/ask.php",
+                )
+                check(status == 200 and job.get("id"),
+                      "PHP proxy forwards a page scope", str(job))
+                deadline = time.time() + 5
+                while time.time() < deadline:
+                    status, final = get(php_base, "/ask.php?status=" + job["id"])
+                    if final.get("status") == "done":
+                        break
+                    time.sleep(0.1)
+                check(final and final.get("status") == "done",
+                      "PHP proxy finishes a page-scoped answer", str(final))
+                check(FakeEngine.pages and FakeEngine.pages[-1] == "historyx",
+                      "PHP proxy strips URL fragments from the page scope",
+                      str(FakeEngine.pages[-1:]))
             finally:
                 php.terminate()
                 try:

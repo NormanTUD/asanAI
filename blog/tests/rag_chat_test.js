@@ -94,5 +94,17 @@ check(chat.visiblePartial('foo [[NOT_IN_COURSE]] bar') === 'foo  bar',
 check(chat.visiblePartial('foo [NOT_IN_COURSE] bar') === 'foo  bar',
 	'single-bracket refusal marker is hidden');
 
+check(chat.pageSlugFrom({ current: 3, modules: [{ slug: 'a' }, { slug: 'b' },
+	{ slug: 'c' }, { slug: 'minimalneuron' }] }, '') === 'minimalneuron',
+	'the current course module supplies the page-scope slug');
+check(chat.pageSlugFrom({ current: -1, modules: [] }, 'history') === 'history',
+	'the lesson block supplies the page-scope slug when nav is absent');
+check(chat.pageSlugFrom({ current: -1, modules: [] }, '') === '',
+	'the course index has no page scope');
+check(chat.pageSlugFrom({ current: 0, modules: [{ slug: 'index_full' }] }, '') === '',
+	'index pages are never offered as a page scope');
+check(chat.pageSlugFrom(null, 'INDEX') === '',
+	'the page-scope slug is normalized and rejected case-insensitively');
+
 console.log('\n' + pass + ' passed, ' + fail + ' failed');
 if (fail > 0) process.exit(1);

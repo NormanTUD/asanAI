@@ -13971,6 +13971,9 @@ summary:focus-visible,
 	justify-content: center;
 	width: 58px;
 	height: 58px;
+	padding: 0;
+	gap: 0;
+	box-sizing: border-box;
 	border: 1px solid color-mix(in srgb, var(--mn-accent) 40%, var(--mn-border));
 	border-radius: 50%;
 	background:
@@ -13994,7 +13997,7 @@ summary:focus-visible,
 	transition: inset 0.2s ease, opacity 0.2s ease;
 }
 #rag-chat-toggle:hover {
-	transform: translateY(-3px) scale(1.04);
+	transform: translateY(-3px);
 	box-shadow:
 		0 18px 44px color-mix(in srgb, var(--mn-accent) 38%, transparent),
 		0 5px 14px rgba(15, 23, 42, 0.24);
@@ -14204,6 +14207,23 @@ summary:focus-visible,
 	padding: 0 17px 7px;
 	color: var(--mn-text-muted);
 	font-size: 0.74rem;
+}
+.rag-chat-scope {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 0 17px 8px;
+	color: var(--mn-text-muted);
+	font-size: 0.72rem;
+	cursor: pointer;
+	user-select: none;
+}
+.rag-chat-scope[hidden] {
+	display: none;
+}
+.rag-chat-scope input {
+	margin: 0;
+	accent-color: var(--mn-accent);
 }
 .rag-chat-error-text {
 	color: var(--mn-rose);

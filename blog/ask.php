@@ -111,6 +111,17 @@ if (!is_array($payload) || !isset($payload['question']) || !is_string($payload['
 if (mb_strlen($payload['question'], 'UTF-8') > 2000) {
 	rag_reply(400, ['error' => 'question_too_long']);
 }
+/* Optional page scope: only the lesson slug survives, never a URL or path. */
+if (isset($payload['page'])) {
+	$page = is_string($payload['page'])
+		? substr(preg_replace('/[^a-z0-9_-]/', '', strtolower($payload['page'])), 0, 80)
+		: '';
+	if ($page === '') {
+		unset($payload['page']);
+	} else {
+		$payload['page'] = $page;
+	}
+}
 $payload['lang'] = is_string($payload['lang'] ?? null) ? substr($payload['lang'], 0, 8) : 'en';
 $history = [];
 foreach (array_slice(is_array($payload['history'] ?? null) ? $payload['history'] : [], -6) as $turn) {

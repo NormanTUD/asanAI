@@ -129,6 +129,11 @@ MOCK = r"""
 		}
 		if (url.indexOf('ask.php') === 0) {
 			window.__ragMock.statusCalls = 0;
+			try {
+				window.__ragMock.lastAsk = init && init.body ? JSON.parse(init.body) : null;
+			} catch (error) {
+				window.__ragMock.lastAsk = null;
+			}
 			return reply({ id: 'test-job', status: 'queued', position: 2, eta_seconds: 20 });
 		}
 		return realFetch(input, init);
@@ -168,6 +173,17 @@ def main() -> int:
 			lambda d: not d.find_element(By.ID, "rag-chat-panel").get_attribute("hidden")
 		)
 		check(True, "the chat panel opens")
+		check(not browser.find_element(By.CSS_SELECTOR, ".rag-chat-scope").is_displayed(),
+			"the course index does not offer a page scope")
+		browser.execute_script("document.getElementById('rag-chat-toggle').click()")
+		check(browser.execute_script(
+			"return document.getElementById('rag-chat-panel').hidden"
+		) is True, "clicking the launcher again closes the panel")
+		browser.execute_script("document.getElementById('rag-chat-toggle').click()")
+		WebDriverWait(browser, 10).until(
+			lambda d: not d.find_element(By.ID, "rag-chat-panel").get_attribute("hidden")
+		)
+		check(True, "clicking the launcher reopens the panel")
 		check(browser.execute_script(
 			"return document.querySelectorAll('#rag-chat-toggle svg path, "
 			"#rag-chat-toggle svg circle').length"
@@ -399,6 +415,42 @@ def main() -> int:
 		check(browser.execute_script(
 			"return document.querySelector('.rag-chat-messages').scrollTop"
 		) == 0, "streaming does not force-scroll a reader who is reading upwards")
+
+		# A lesson page offers the page-scoped search.
+		browser.get(f"http://127.0.0.1:{port}/minimalneuron.php")
+		WebDriverWait(browser, 60).until(
+			lambda d: d.execute_script(
+				"return !!document.getElementById('rag-chat-toggle')"
+			)
+		)
+		browser.execute_script("document.getElementById('rag-chat-toggle').click()")
+		WebDriverWait(browser, 10).until(
+			lambda d: d.find_element(By.CSS_SELECTOR, ".rag-chat-scope").is_displayed()
+		)
+		check(True, "a lesson page offers the page scope")
+		WebDriverWait(browser, 15).until(
+			lambda d: not d.find_element(By.CSS_SELECTOR, ".rag-chat-send").get_attribute("disabled")
+		)
+		browser.execute_script(
+			"const box = document.querySelector('.rag-chat-scope-input');"
+			"box.checked = true;"
+			"box.dispatchEvent(new Event('change', { bubbles: true }));"
+			"const input = document.querySelector('.rag-chat-input');"
+			"input.value = 'What does this lesson say about neurons?';"
+			"input.dispatchEvent(new Event('input', { bubbles: true }));"
+			"document.querySelector('.rag-chat-send').click();"
+		)
+		WebDriverWait(browser, 10).until(
+			lambda d: d.execute_script(
+				"return !!(window.__ragMock.lastAsk && window.__ragMock.lastAsk.page)"
+			)
+		)
+		check(browser.execute_script(
+			"return window.__ragMock.lastAsk.page"
+		) == "minimalneuron", "the page scope is sent with the question")
+		check(browser.execute_script(
+			"return document.querySelector('.rag-chat-input').getAttribute('placeholder')"
+		) == "Ask about this lesson…", "the prompt names the lesson scope")
 
 		severe = [entry for entry in browser.get_log("browser")
 				  if entry.get("level") == "SEVERE"]

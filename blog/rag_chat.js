@@ -8,6 +8,14 @@
 	var REQUEST_TIMEOUT = 15000;
 	var STORAGE_KEY = 'mn_rag_chat_v1';
 	var ACTIVE_KEY = 'mn_rag_chat_job_v1';
+	var SCOPE_KEY = 'mn_rag_scope_page';
+	var NON_LESSON_PAGES = {
+		index: true,
+		index_full: true,
+		graph: true,
+		functions: true,
+		asanai_blog_proxy: true
+	};
 
 	var state = {
 		history: [],
@@ -23,7 +31,8 @@
 		eta: null,
 		slow: false,
 		lastPartial: '',
-		offline: false
+		offline: false,
+		pageSlug: ''
 	};
 	var els = {};
 
@@ -38,6 +47,69 @@
 
 	function escAttr(value) {
 		return esc(value);
+	}
+
+	/* The scoped mode asks the backend to search only this lesson. The page
+	   slug comes from the course nav (authoritative, absent on the index) or
+	   from the first lesson block on the page. */
+	function pageSlugFrom(nav, lessonId) {
+		var slug = '';
+		if (nav && typeof nav.current === 'number' && nav.current >= 0 &&
+				Array.isArray(nav.modules) && nav.modules[nav.current]) {
+			slug = String(nav.modules[nav.current].slug || '');
+		}
+		if (!slug && lessonId) slug = String(lessonId);
+		slug = slug.toLowerCase();
+		return NON_LESSON_PAGES[slug] ? '' : slug;
+	}
+
+	function currentPageSlug() {
+		if (typeof document === 'undefined') return '';
+		var lesson = document.querySelector('[data-lesson-id]');
+		return pageSlugFrom(
+			typeof window !== 'undefined' ? window.__moduleNavData : null,
+			lesson ? lesson.getAttribute('data-lesson-id') : ''
+		);
+	}
+
+	function readScopePref() {
+		try {
+			return localStorage.getItem(SCOPE_KEY) === '1';
+		} catch (error) {
+			return false;
+		}
+	}
+
+	function saveScopePref(enabled) {
+		try {
+			localStorage.setItem(SCOPE_KEY, enabled ? '1' : '0');
+		} catch (error) {
+			/* private mode: the setting simply does not persist */
+		}
+	}
+
+	function scopedPage() {
+		if (!els.scope || els.scope.hidden || !els.scopeInput || !els.scopeInput.checked) {
+			return '';
+		}
+		return state.pageSlug;
+	}
+
+	function updateScopePlaceholder() {
+		if (!els.input) return;
+		els.input.setAttribute(
+			'placeholder',
+			scopedPage() ? 'Ask about this lesson…' : 'Ask a question about the course…'
+		);
+	}
+
+	function syncScope() {
+		state.pageSlug = currentPageSlug();
+		if (!els.scope) return;
+		var available = !!state.pageSlug;
+		els.scope.hidden = !available;
+		els.scopeInput.checked = available && readScopePref();
+		updateScopePlaceholder();
 	}
 
 	function statusText(data) {
@@ -361,6 +433,8 @@
 		button.type = 'button';
 		button.setAttribute('aria-label', 'Ask the course');
 		button.setAttribute('title', 'Ask the course');
+		button.setAttribute('aria-expanded', 'false');
+		button.setAttribute('aria-controls', 'rag-chat-panel');
 		button.innerHTML =
 			'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" ' +
 			'stroke="currentColor" stroke-width="2" stroke-linecap="round" ' +
@@ -412,6 +486,10 @@
 				'</div>' +
 			'</div>' +
 			'<div class="rag-chat-status" aria-live="polite"></div>' +
+			'<label class="rag-chat-scope" hidden>' +
+				'<input type="checkbox" class="rag-chat-scope-input">' +
+				'<span>Only this page</span>' +
+			'</label>' +
 			'<div class="rag-chat-disclaimer">AI-generated answers can be wrong. Always verify with the linked lessons, the sources they cite, and other reliable sources.</div>' +
 			'<form class="rag-chat-form">' +
 				'<textarea class="rag-chat-input" rows="2" maxlength="2000" ' +
@@ -432,7 +510,10 @@
 		els.input = panel.querySelector('.rag-chat-input');
 		els.send = panel.querySelector('.rag-chat-send');
 		els.welcome = panel.querySelector('.rag-chat-welcome');
+		els.scope = panel.querySelector('.rag-chat-scope');
+		els.scopeInput = panel.querySelector('.rag-chat-scope-input');
 		state.welcome = els.welcome;
+		syncScope();
 		restoreConversation();
 		window.addEventListener('offline', function() {
 			state.offline = true;
@@ -446,9 +527,16 @@
 		});
 		resumeActiveJob();
 
-		button.addEventListener('click', open);
+		button.addEventListener('click', toggle);
 		panel.querySelector('.rag-chat-close').addEventListener('click', close);
 		panel.querySelector('.rag-chat-clear').addEventListener('click', clearConversation);
+		els.scopeInput.addEventListener('change', function() {
+			saveScopePref(els.scopeInput.checked);
+			updateScopePlaceholder();
+			if (els.scopeInput.checked) {
+				els.status.textContent = 'Answers will use only this lesson.';
+			}
+		});
 		els.input.addEventListener('keydown', function(event) {
 			if (event.key === 'Enter' && !event.shiftKey) {
 				event.preventDefault();
@@ -464,10 +552,17 @@
 		});
 	}
 
+	function toggle() {
+		if (!els.panel) return;
+		if (els.panel.hidden) open();
+		else close();
+	}
+
 	function open() {
 		if (!els.panel) return;
 		els.panel.hidden = false;
 		els.panel.setAttribute('aria-hidden', 'false');
+		if (els.button) els.button.setAttribute('aria-expanded', 'true');
 		setTimeout(function() { els.input.focus(); }, 50);
 	}
 
@@ -475,7 +570,10 @@
 		if (!els.panel) return;
 		els.panel.hidden = true;
 		els.panel.setAttribute('aria-hidden', 'true');
-		if (els.button) els.button.focus();
+		if (els.button) {
+			els.button.setAttribute('aria-expanded', 'false');
+			els.button.focus();
+		}
 	}
 
 	function isNearBottom() {
@@ -600,6 +698,8 @@
 			lang: language(),
 			history: state.history.slice(-6)
 		};
+		var page = scopedPage();
+		if (page) payload.page = page;
 		fetchJson('ask.php', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -824,6 +924,7 @@
 			statusText: statusText,
 			answerHtml: answerHtml,
 			clear: clearConversation,
+			pageSlugFrom: pageSlugFrom,
 			_internals: {
 				esc: esc,
 				language: language,
@@ -840,7 +941,8 @@
 			answerHtml: answerHtml,
 			esc: esc,
 			visiblePartial: visiblePartial,
-			errorText: errorText
+			errorText: errorText,
+			pageSlugFrom: pageSlugFrom
 		};
 	}
 })();

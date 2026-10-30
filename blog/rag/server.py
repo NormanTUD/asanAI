@@ -207,13 +207,14 @@ def cache_history_hash(history: list) -> str:
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
-def cache_key(question: str, lang: str, history: list) -> str:
+def cache_key(question: str, lang: str, history: list, page: str = "") -> str:
     normalized = " ".join(question.lower().split())
     tail = history[-4:] if history else []
-    payload = json.dumps(
-        [CACHE_VERSION, primary_lang(lang), normalized, tail], ensure_ascii=False
+    raw = json.dumps(
+        [CACHE_VERSION, primary_lang(lang), normalized, tail, (page or "").strip()],
+        ensure_ascii=False,
     )
-    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
 
 class BM25:
@@ -354,13 +355,35 @@ class RagEngine:
         chunk["context"] = " ".join(self.chunks[i]["x"] for i in sorted(selected))
         return chunk
 
-    def retrieve(self, question: str, limit: int = 5):
+    def retrieve(self, question: str, limit: int = 5, page: str | None = None):
+        page = (page or "").strip()
+        in_scope = (
+            (lambda index: self.chunks[index].get("p") == page)
+            if page
+            else (lambda index: True)
+        )
         query = self.embed_question(question)
         dense = []
         if query is not None:
             dense_scores = (self.vectors @ query) * self.scales
-            dense = list(np.argsort(-dense_scores)[:25])
-        lexical = self.bm25.search(question, 25)
+            if page:
+                # Rank inside the page rather than globally: a small lesson
+                # rarely wins the top 25 of the whole course.
+                scoped = np.where(
+                    np.array([chunk.get("p") == page for chunk in self.chunks]),
+                    dense_scores,
+                    -np.inf,
+                )
+                dense = [int(index) for index in np.argsort(-scoped)[:25] if in_scope(index)]
+            else:
+                dense = list(np.argsort(-dense_scores)[:25])
+        lexical = [
+            index
+            for index in self.bm25.search(
+                question, len(self.chunks) if page else 25
+            )
+            if in_scope(index)
+        ][:25]
         candidates = list(dict.fromkeys(dense + lexical))
         if self.reranker and candidates:
             documents = [
@@ -475,9 +498,13 @@ class RagEngine:
                 unique.append(part)
         return " ".join(unique)[:700]
 
-    def answer(self, question: str, lang: str, history: list, on_token=None) -> dict:
+    def answer(self, question: str, lang: str, history: list, on_token=None,
+               page: str | None = None) -> dict:
         english = self.translate(question, lang)
-        chunks = self.retrieve(self.retrieval_query(english, history), 4)
+        page = (page or "").strip()
+        chunks = self.retrieve(
+            self.retrieval_query(english, history), 5 if page else 4, page=page or None
+        )
         if not chunks:
             return {
                 "grounded": False,
@@ -485,7 +512,7 @@ class RagEngine:
                 "sources": [],
                 "query_en": english,
             }
-        messages = self.build_messages(question, english, chunks, lang, history)
+        messages = self.build_messages(question, english, chunks, lang, history, page or None)
         if on_token:
             raw = self._ollama_stream(
                 messages,
@@ -533,7 +560,7 @@ class RagEngine:
             return text[: matches[-1].end()] + " …"
         return text + " …"
 
-    def build_messages(self, question, english, chunks, lang, history):
+    def build_messages(self, question, english, chunks, lang, history, page=None):
         language = LANGUAGE_NAMES.get(primary_lang(lang), "English")
         passages = []
         for index, chunk in enumerate(chunks, 1):
@@ -560,8 +587,14 @@ class RagEngine:
                     + "\n".join(lines)
                     + "\n\n"
                 )
+        scope = ""
+        if page:
+            scope = (
+                "Scope: the current lesson only. Use only the passages below and "
+                "prefer the most specific one.\n\n"
+            )
         user = (
-            f"{previous}Question (answer in {language}): {question}\n"
+            f"{previous}{scope}Question (answer in {language}): {question}\n"
             f"English retrieval query: {english}\n"
             f"IMPORTANT: Write the final answer in {language} only.\n\n"
             "Passages:\n\n" + "\n\n".join(passages)
@@ -1016,6 +1049,7 @@ class Job:
     question: str
     lang: str
     history: list
+    page: str = ""
     status: str = "queued"
     created: float = field(default_factory=time.time)
     started: float | None = None
@@ -1040,7 +1074,7 @@ class RagService:
         self.ready = True
         threading.Thread(target=self._work, daemon=True).start()
 
-    def submit(self, question: str, lang: str, history: list, ip: str):
+    def submit(self, question: str, lang: str, history: list, ip: str, page: str = ""):
         if not isinstance(question, str):
             return 400, {"error": "invalid_question"}
         question = question.strip()
@@ -1064,11 +1098,12 @@ class RagService:
             return 200, {"status": "done", **blocked}
 
         history = history[-6:] if isinstance(history, list) else []
+        page = (page or "").strip()
         history_hash = cache_history_hash(history)
-        key = cache_key(question, lang, history)
+        key = cache_key(question, lang, history, page)
         cached = self.cache.get(key)
         embedding = None
-        if not cached and not history and primary_lang(lang) == "en":
+        if not cached and not history and not page and primary_lang(lang) == "en":
             embed_question = getattr(self.engine, "embed_question", None)
             if embed_question is not None:
                 embedding = embed_question(question)
@@ -1092,6 +1127,7 @@ class RagService:
             question=question,
             lang=lang,
             history=history,
+            page=page,
             embedding=embedding,
             history_hash=history_hash,
         )
@@ -1193,12 +1229,15 @@ class RagService:
                     job.partial += token
 
             try:
+                answer_kwargs = {"on_token": on_token}
+                if job.page:
+                    answer_kwargs["page"] = job.page
                 result = self.engine.answer(
-                    job.question, job.lang, job.history, on_token=on_token
+                    job.question, job.lang, job.history, **answer_kwargs
                 )
                 elapsed = time.time() - started
                 self.cache.put(
-                    cache_key(job.question, job.lang, job.history),
+                    cache_key(job.question, job.lang, job.history, job.page),
                     result,
                     job.lang,
                     embedding=job.embedding,
@@ -1314,8 +1353,10 @@ class Handler(BaseHTTPRequestHandler):
                     "query_en": query_en,
                     "sources": sources,
                 })
+        page = payload.get("page")
+        page = re.sub(r"[^a-z0-9_-]", "", page.lower())[:80] if isinstance(page, str) else ""
         ip = self.headers.get("X-Client-IP") or self.client_address[0]
-        code, result = self.service.submit(question, lang, history, ip)
+        code, result = self.service.submit(question, lang, history, ip, page)
         self._json(code, result)
 
     def log_message(self, fmt, *args):
