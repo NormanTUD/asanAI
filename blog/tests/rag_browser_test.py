@@ -21,6 +21,7 @@ import time
 from pathlib import Path
 
 from selenium import webdriver
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -42,6 +43,24 @@ def check(condition: bool, label: str, detail: str = "") -> None:
 		return
 	failures += 1
 	print(f"FAIL {label}" + (f" — {detail}" if detail else ""))
+
+
+def wait_for_text(browser: webdriver.Chrome, selector: str, expected: str, timeout: int = 10) -> str:
+	def current(driver: webdriver.Chrome) -> str:
+		for element in driver.find_elements(By.CSS_SELECTOR, selector):
+			try:
+				text = element.text
+			except StaleElementReferenceException:
+				continue
+			if expected in text:
+				return text
+		return ""
+
+	try:
+		WebDriverWait(browser, timeout).until(lambda driver: current(driver) != "")
+	except TimeoutException:
+		pass
+	return current(browser)
 
 
 def free_port() -> int:
@@ -193,11 +212,11 @@ def main() -> int:
 		check(browser.execute_script(
 			"return getComputedStyle(document.querySelector('.rag-chat-close')).color"
 		) == "rgb(225, 29, 72)", "the close button is red")
-		check("AI" in browser.find_element(By.CSS_SELECTOR, ".rag-chat-ai-note").text
-			and "mistakes" in browser.find_element(By.CSS_SELECTOR, ".rag-chat-ai-note").text,
-			"the welcome explains that AI answers can be wrong")
-		disclaimer_text = browser.find_element(By.CSS_SELECTOR, ".rag-chat-disclaimer").text.lower()
-		check("verify" in disclaimer_text, "the footer reminds readers to verify")
+		note_text = wait_for_text(browser, ".rag-chat-ai-note", "AI")
+		check("AI" in note_text and "mistakes" in note_text,
+			"the welcome explains that AI answers can be wrong", note_text)
+		disclaimer_text = wait_for_text(browser, ".rag-chat-disclaimer", "verify").lower()
+		check("verify" in disclaimer_text, "the footer reminds readers to verify", disclaimer_text)
 		check("sources they cite" in disclaimer_text and "other reliable sources" in disclaimer_text,
 			"the footer names lesson sources and other sources")
 
@@ -357,12 +376,14 @@ def main() -> int:
 			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")) > 0
 		)
 		time.sleep(0.4)
-		user_texts = [el.text for el in browser.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")]
+		user_texts = [el.get_attribute("textContent") or "" for el in
+			browser.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")]
 		check(any("What is a derivative?" in text for text in user_texts),
 			"the conversation survives a page reload", str(user_texts))
-		check("A perceptron is a linear classifier" in
-			browser.find_element(By.CSS_SELECTOR, ".rag-chat-msg-assistant").text,
-			"restored answers keep their text")
+		restored_answer = wait_for_text(browser, ".rag-chat-msg-assistant",
+			"A perceptron is a linear classifier")
+		check("A perceptron is a linear classifier" in restored_answer,
+			"restored answers keep their text", restored_answer)
 
 		# An in-flight job must survive a reload and resume polling.
 		browser.execute_script("document.querySelector('.rag-chat-clear').click()")
@@ -386,15 +407,17 @@ def main() -> int:
 			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")) > 0
 		)
 		time.sleep(0.4)
-		inflight_texts = [el.text for el in browser.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")]
+		inflight_texts = [el.get_attribute("textContent") or "" for el in
+			browser.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-user")]
 		check(any("What is attention?" in text for text in inflight_texts),
 			"an in-flight question survives a reload", str(inflight_texts))
 		WebDriverWait(browser, 15).until(
 			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-sources")) > 0
 		)
-		check("A perceptron is a linear classifier" in
-			browser.find_element(By.CSS_SELECTOR, ".rag-chat-msg-assistant").text,
-			"an in-flight answer resumes after a reload")
+		resumed_answer = wait_for_text(browser, ".rag-chat-msg-assistant",
+			"A perceptron is a linear classifier")
+		check("A perceptron is a linear classifier" in resumed_answer,
+			"an in-flight answer resumes after a reload", resumed_answer)
 
 		# Streaming must never yank a reader who scrolled up back to the bottom.
 		browser.execute_script("""
