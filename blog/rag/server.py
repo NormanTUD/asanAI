@@ -39,7 +39,7 @@ OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen2.5:1.5b")
 EMBED_MODEL = os.environ.get("EMBED_MODEL", "BAAI/bge-small-en-v1.5")
 KEEP_ALIVE = os.environ.get("OLLAMA_KEEP_ALIVE", "24h")
 CACHE_SEMANTIC_THRESHOLD = float(os.environ.get("CACHE_SEMANTIC_THRESHOLD", "0.90"))
-STREAM_BUFFER_CHARS = int(os.environ.get("STREAM_BUFFER_CHARS", "120"))
+STREAM_BUFFER_CHARS = int(os.environ.get("STREAM_BUFFER_CHARS", "0"))
 BLOCKED_QUESTION_PATTERNS = [
     re.compile(r"\bheil\s+hitler\b", re.IGNORECASE),
     re.compile(r"\bsieg\s+heil\b", re.IGNORECASE),

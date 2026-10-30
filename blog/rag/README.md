@@ -25,8 +25,7 @@ browser  ──POST /ask.php──▶  PHP proxy  ──▶  127.0.0.1:8090  (qu
   retrieved passages are attached as sources instead of returning a false
   refusal. A localized “the course does not cover that” remains the fallback.
 - **Streaming:** while the model runs, `/status` carries the partial answer;
-  the chat polls every 400 ms and renders tokens as they arrive. The first
-  tokens are held back briefly so a refusing answer cannot flash its preamble.
+  the chat polls every 100 ms while generating and renders every new token.
   No SSE and no proxy buffering tricks are needed.
 - **Safety filter:** obvious hateful/repetition instructions are refused
   immediately without calling the model. The query is stored only as

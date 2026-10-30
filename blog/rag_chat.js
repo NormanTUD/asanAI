@@ -21,7 +21,8 @@
 		lastQuestion: '',
 		startedAt: 0,
 		eta: null,
-		slow: false
+		slow: false,
+		lastPartial: ''
 	};
 	var els = {};
 
@@ -371,6 +372,8 @@
 		}
 		// Never replace the node while the reader is selecting its text.
 		if (selectionInside(state.streamNode)) return;
+		if (state.lastPartial === text) return;
+		state.lastPartial = text;
 		state.streamNode.innerHTML = answerHtml(text, []) +
 			'<span class="rag-cursor" aria-hidden="true"></span>';
 		els.messages.scrollTop = els.messages.scrollHeight;
@@ -399,6 +402,7 @@
 		state.streamNode = null;
 		state.eta = null;
 		state.slow = false;
+		state.lastPartial = '';
 		if (addUser) {
 			addMessage('user', esc(question));
 			state.messages.push({ role: 'user', text: question });
@@ -446,7 +450,7 @@
 			showError(seq, errorText({ error: 'timeout' }));
 			return;
 		}
-		var delay = first && first.status === 'running' ? 400 : 900;
+		var delay = first && first.status === 'running' ? 100 : 900;
 		state.pollTimer = setTimeout(function() {
 			if (seq !== state.seq) return;
 			fetchJson('ask.php?status=' + encodeURIComponent(id), { cache: 'no-store' }, 10000)
@@ -498,6 +502,7 @@
 		clearTimeout(state.pollTimer);
 		state.eta = null;
 		state.slow = false;
+		state.lastPartial = '';
 		els.status.textContent = '';
 		var sources = Array.isArray(data.sources) ? data.sources : [];
 		var node = state.streamNode;
@@ -526,6 +531,7 @@
 		clearTimeout(state.pollTimer);
 		state.eta = null;
 		state.slow = false;
+		state.lastPartial = '';
 		if (state.streamNode) {
 			state.streamNode.remove();
 			state.streamNode = null;
@@ -555,6 +561,7 @@
 		state.messages = [];
 		state.eta = null;
 		state.slow = false;
+		state.lastPartial = '';
 		try {
 			localStorage.removeItem(STORAGE_KEY);
 		} catch (error) {

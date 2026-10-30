@@ -106,7 +106,7 @@ MOCK = r"""
 				return reply({ error: 'unknown_job' });
 			}
 			statusCalls += 1;
-			if (statusCalls <= 6) {
+			if (statusCalls <= 25) {
 				return reply({
 					status: 'running',
 					position: 0,
