@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Natural Fit — McCulloch, 1959</title>
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<link rel="stylesheet" href="mp.css">
+<script src="../temml.min.js" defer></script>
+<script src="mp.js" defer></script>
+<script src="mp_1959_natural_fit.js" defer></script>
+<style>
+  .cover-frame {
+    margin: 0;
+    padding: clamp(0.8rem, 2vw, 1.2rem);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background:
+      radial-gradient(400px 200px at 20% 0%, var(--accent-glow), transparent 70%),
+      color-mix(in srgb, var(--panel) 88%, transparent);
+    box-shadow: var(--shadow);
+  }
+  .cover-frame img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
+    filter: saturate(0.92) contrast(1.03);
+  }
+  .cover-frame figcaption {
+    margin-top: 0.85rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    line-height: 1.55;
+    color: var(--faint);
+  }
+  .cover-frame figcaption b { color: var(--accent); font-weight: 500; }
+  .ledger {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  .ledger th, .ledger td {
+    padding: 0.72rem 0.2rem;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--line);
+  }
+  .ledger th {
+    width: 38%;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 500;
+  }
+  .ledger td { color: var(--muted); }
+  .ledger tr:last-child th, .ledger tr:last-child td { border-bottom: 0; }
+  .verse-card {
+    position: relative;
+    margin: 0;
+    padding: clamp(1.4rem, 3.5vw, 2.4rem);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--panel) 94%, transparent), color-mix(in srgb, var(--panel-2) 84%, transparent));
+    overflow: hidden;
+  }
+  .verse-card::before {
+    content: "“";
+    position: absolute;
+    top: -0.5rem;
+    left: 0.8rem;
+    font-family: var(--serif);
+    font-size: 6rem;
+    line-height: 1;
+    color: var(--accent);
+    opacity: 0.2;
+  }
+  .verse-card p {
+    position: relative;
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(1.05rem, 1.5vw, 1.24rem);
+    line-height: 1.55;
+    white-space: pre-line;
+  }
+  .verse-card footer {
+    margin-top: 1rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .verse-card footer b { color: var(--accent); font-weight: 500; }
+  .poem {
+    margin: 1.2rem 0 0;
+    padding: clamp(1.1rem, 3vw, 1.8rem);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--bg) 42%, transparent);
+    font-family: var(--serif);
+    font-size: clamp(0.98rem, 1.45vw, 1.14rem);
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  .poem-line {
+    display: block;
+    padding: 0.08rem 0.4rem;
+    border-left: 2px solid transparent;
+    transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+    cursor: pointer;
+  }
+  .poem-line:hover { color: var(--ink); }
+  .poem-line.is-current {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: var(--accent-glow);
+  }
+  .poem-line .msg { color: var(--faint); font-style: italic; }
+  .fits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1rem;
+    margin-top: 1.6rem;
+  }
+  .fit-card {
+    padding: 1.2rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--panel) 70%, transparent);
+  }
+  .fit-card .roman {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    color: var(--accent);
+  }
+  .fit-card h3 { font-size: 1.16rem; margin: 0.45rem 0 0.4rem; }
+  .fit-card p { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+  .triad {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .triad .concept { height: 100%; }
+  .triad .concept h3 { font-size: 1.2rem; }
+  .triad .concept p { font-size: 0.94rem; line-height: 1.55; }
+  .score-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+  .score-strip .cell {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.8rem 0.9rem;
+    background: color-mix(in srgb, var(--bg) 42%, transparent);
+  }
+  .score-strip .cell span {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .score-strip .cell b {
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+  .source-note { font-size: 0.8rem; color: var(--faint); }
+</style>
+</head>
+<body data-accent="rose">
+<div class="progress"><span></span></div>
+<header class="topbar">
+  <a class="brand" href="mp_index.html"><b>MP</b><span class="dot">·</span>Codex</a>
+  <div class="topbar-meta">
+    <span class="hide-sm">Literary plate 02 · 1959</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+  </div>
+</header>
+<div class="rail" id="rail" aria-hidden="true"></div>
+
+<main>
+<section class="hero" id="top" data-label="Opening">
+  <canvas class="hero-canvas" id="heroNaturalFit" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">Chicago Literary Club · 1959 · poems read 2 December 1957</p>
+    <h1>The <em>Natural</em> Fit</h1>
+    <p class="hero-sub">Three fits, one voice. McCulloch's only collection of poems — sonnets, songs, jokes, and a love sequence — printed for the Chicago Literary Club in an edition of 600. It is a poetical autobiography, and the clearest evidence that the logician of the neuron wrote to be moved.</p>
+    <div class="hero-meta">
+      <span><b>Warren S. McCulloch</b></span>
+      <span>44 pages · 600 copies</span>
+      <span>read 2 December 1957</span>
+      <span>printed October 1959</span>
+    </div>
+    <a class="scroll-cue" href="#occasion"><span class="line"></span> Read the plate</a>
+  </div>
+</section>
+
+<section class="section" id="occasion" data-label="The occasion">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The occasion</p>
+      <h2 class="thesis">A scientist sends his friends a book of <em>poems</em> for Christmas.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">In December 1957 McCulloch read a selection of his poems, mostly sonnets, to the Chicago Literary Club. The Club printed them in October 1959 as <em>The Natural Fit</em>: forty-four pages, six hundred copies, sent to friends at Christmas. It was his only published collection.</p>
+      <p class="lede">The reception was delight and surprise. Heinrich Klüver wrote that he was glad at last to meet “Warren #2” — the other McCulloch, the one who had been writing poems all along. John F. Fulton called the book a “poetical autobiography.” The phrase is exact: the poems are arranged roughly chronologically, and they trace a life through love, war, ageing, friendship, and the stubborn hope of making one world out of many.</p>
+      <div class="note"><b>The source of the text:</b> <em>The Natural Fit</em> was collected in <em>Embodiments of Mind</em> (MIT Press, 1965), pp. 319–358. The quotations on this page are from that printing. The 1959 pamphlet itself is search-only at HathiTrust.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="title" data-label="The title">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The title</p>
+      <h2 class="thesis">A fit is a section of a poem, a seizure of inspiration, and a <em>good join</em>.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">The title has three doors. In Middle English a <em>fit</em> (or <em>fytte</em>) is a part or section of a poem. In medicine a fit is a paroxysm, a sudden seizure. And in ordinary speech a fit is a good join — a thing that sits well in its place.</p>
+      <p class="lede">McCulloch's introduction makes the pun explicit. He divides the book into three fits: <em>The Sophomoric Fit</em>, <em>The Outlandish Fit</em>, and <em>The Natural Fit</em>. The first is named for Boethius, the second for Chaucer, the third for Samuel Johnson. The last section takes its epigraph from <em>Rasselas</em>, where Imlac, the poet, has just finished explaining how difficult it is to be a poet:</p>
+      <div class="verse-card" style="margin-top:1.2rem">
+        <p>“Imlac now felt the enthusiastic fit, and was proceeding to aggrandise his own profession, when the Prince cried out: ‘Enough! thou hast convinced me that no human being can ever be a poet.’”</p>
+        <footer><b>Samuel Johnson</b> · <em>Rasselas</em>, ch. XI (1759)</footer>
+      </div>
+      <p class="lede" style="margin-top:1.2rem">McCulloch adds: “The form of the sonnet is difficult, but the required compression of his enthusiasm was natural to his way of thinking.” The fit is not a mood that passes. It is a discipline that lets the mood become a form.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="form" data-label="The form">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The form</p>
+      <h2>Fourteen lines, one breath.</h2>
+      <p class="lede">The book moves from short imagist “hokus” to love lyrics, drinking songs, a war poem, a sequence on communication, and a final sonnet written in a single sentence. The formal centre is the sonnet: fourteen lines that force a thought to turn. McCulloch's sonnets are not smooth. They are compressed, knotty, sometimes deliberately ugly — the sound of a mind trying to fit a large idea into a small room.</p>
+    </div>
+    <div class="split" style="margin-top:2rem">
+      <div class="reveal">
+        <div class="verse-card">
+          <p>We build our castles in the air,
+And from the air they tumble down,
+Unless we carry them up there
+Until they crack the pate they crown.
+And we must lug them everywhere,
+From garden walk to crowded town;
+We build our castles in the air,
+And from the air they tumble down.</p>
+          <footer><b>McCulloch</b> · <em>The Natural Fit</em> (1959), “The Natural Fit” section</footer>
+        </div>
+        <p class="source-note" style="margin-top:0.8rem">The poem is a rondeau: the refrain returns, and the return is the point. A castle in the air is only a castle if you carry it up there.</p>
+      </div>
+      <div class="reveal delay-1">
+        <div class="verse-card">
+          <p>Sweet Language, child of human Loneliness
+Engendered in the ravished soul of Sound,
+Long keeper of the keys of paradise,
+Open it quickly to the dumb heart of man.</p>
+          <footer><b>McCulloch</b> · the “Communication” / “Communion” sonnet sequence</footer>
+        </div>
+        <p class="source-note" style="margin-top:0.8rem">The sequence tries to do in verse what McCulloch's neuroscience tried to do in theory: show how a private signal becomes a shared world.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="lab" data-label="The laboratory">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory · the sonnet forge</p>
+      <h2>Put the form under your hand.</h2>
+      <p class="lede">This is a model of the sonnet template, not a scan of McCulloch's own lines. Choose a rhyme scheme, loosen the metre, and watch the fourteen lines either lock into a grid or begin to breathe. Then read the last poem in the book, line by line.</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>The fourteen-line grid</h3>
+          <p>Five iambic feet per line: ten positions, alternating light and heavy. The rhyme letters sit in the margin. At high regularity the grid is a machine; at low regularity it becomes a body.</p>
+        </div>
+        <span class="pill"><i></i> live</span>
+      </div>
+      <div class="lab-canvas-wrap wide">
+        <canvas id="nfLab" aria-label="Interactive sonnet grid with stress and rhyme"></canvas>
+      </div>
+      <div class="controls">
+        <div class="control">
+          <label for="nfRegularity">metrical regularity <output id="nfRegVal">72</output></label>
+          <input id="nfRegularity" type="range" min="0" max="100" step="1" value="72">
+        </div>
+      </div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button class="btn is-active" id="nfShake">Shakespearean</button>
+        <button class="btn" id="nfPetrarch">Petrarchan</button>
+        <button class="btn ghost" id="nfRead">Read the last poem</button>
+        <button class="btn ghost" id="nfStop">Stop</button>
+      </div>
+      <div class="score-strip">
+        <div class="cell"><span>lines</span><b class="small-value">14</b></div>
+        <div class="cell"><span>feet</span><b class="small-value">5</b></div>
+        <div class="cell"><span>rhyme</span><b class="small-value" id="nfScheme">ABAB CDCD EFEF GG</b></div>
+        <div class="cell"><span>regularity</span><b class="small-value" id="nfRegRead">72%</b></div>
+      </div>
+      <div class="split tight" style="margin-top:1.5rem;align-items:start">
+        <div>
+          <p class="tiny" style="margin-bottom:0.5rem">the last poem · click a line</p>
+          <div class="poem" id="nfPoem">
+            <span class="poem-line" data-line="0">farewell sweet morrows hopes deferred and all</span>
+            <span class="poem-line" data-line="1">crisp years fat earnest in defect of youth</span>
+            <span class="poem-line" data-line="2">indian summers quicken to keen fall</span>
+            <span class="poem-line" data-line="3">as brisk october blazons times no ruth</span>
+            <span class="poem-line" data-line="4">i cry no quarter of my age and call</span>
+            <span class="poem-line" data-line="5">on coming wits to prove the truth</span>
+            <span class="poem-line" data-line="6">of my stark venture into fates cold hall</span>
+            <span class="poem-line" data-line="7">where thoughts at hazard cast the die for sooth</span>
+            <span class="poem-line" data-line="8">from me great days are gone and after none</span>
+            <span class="poem-line" data-line="9">array the ardour that i scarce compress</span>
+            <span class="poem-line" data-line="10">in temperance terrible charged i abide</span>
+            <span class="poem-line" data-line="11">the desperate victor of my last race run</span>
+            <span class="poem-line" data-line="12">wanting bold challenge to lifes dread excess</span>
+            <span class="poem-line" data-line="13">to fire that frenzy i must else wise hide</span>
+          </div>
+          <p class="source-note" style="margin-top:0.7rem">The closing poem of <em>The Natural Fit</em>, as printed in <em>Embodiments of Mind</em> (1965), p. 358. The printed text breaks “in temperance terrible / charged i abide”; it is rejoined here to show the fourteen-line shape.</p>
+        </div>
+        <div>
+          <p class="lede" style="font-size:1rem">“He had thought this character was dead, but the other day I found this on my desk, unpunctuated and the ink wet.” That is McCulloch's note before the poem. The “character” is the second of the three men who wore the carcass — the poet he thought he had lost.</p>
+          <div class="note"><b>What to notice:</b> the poem is not a smooth sonnet. It is a late poem about late work: the ardour is still there, but it has to be compressed, hidden, fired or else wise hid. The form is the temperance that makes the frenzy bearable.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="handles" data-label="What it handles">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The four questions</p>
+      <h2>What it handles, solves, and does.</h2>
+    </div>
+    <div class="triad" style="margin-top:2rem">
+      <article class="concept reveal">
+        <span class="num">WHAT IT HANDLES</span>
+        <h3>The compression of a life</h3>
+        <p>Love, war, ageing, friendship, the death of friends, the fear of having finished one's work. The poems handle what a scientific paper cannot say without becoming a different kind of paper.</p>
+      </article>
+      <article class="concept reveal delay-1">
+        <span class="num">WHAT IT SOLVES</span>
+        <h3>Two voices, one person</h3>
+        <p>It solves the false choice between exactness and feeling. The sonnet's constraint is a technology for making feeling precise; the scientist's patience is a technology for making precision human.</p>
+      </article>
+      <article class="concept reveal delay-2">
+        <span class="num">WHAT IT DOES</span>
+        <h3>It gives us “Warren #2”</h3>
+        <p>44 pages, 600 copies, a Christmas gift. It turns the neurophysiologist into a poet in public — not as a hobby, but as another identity through which the same mind could be exact.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="book" data-label="The book">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The book</p>
+      <h2>A Christmas book with a <em>pulse</em>.</h2>
+      <p class="lede">The cover is as plain as the 1945 tribute: title, author, Club, year. Inside, the three fits are separated by introductions and title pages; the poems are arranged roughly chronologically; the last section ends with the unpunctuated poem McCulloch found on his desk.</p>
+      <table class="ledger" style="margin-top:1.5rem">
+        <tr><th>Author</th><td>Warren S. McCulloch</td></tr>
+        <tr><th>Title</th><td>The Natural Fit</td></tr>
+        <tr><th>Occasion</th><td>Poems read before the Chicago Literary Club, 2 December 1957</td></tr>
+        <tr><th>Publisher</th><td>Chicago Literary Club · printed October 1959</td></tr>
+        <tr><th>Extent</th><td>44 pages · edition of 600 copies</td></tr>
+        <tr><th>Collected in</th><td><em>Embodiments of Mind</em> (MIT Press, 1965), pp. 319–358</td></tr>
+        <tr><th>Rights</th><td>1959 pamphlet: search-only at HathiTrust</td></tr>
+      </table>
+      <div class="btn-row" style="margin-top:1.40rem">
+        <a class="btn" href="https://catalog.hathitrust.org/Record/102670940" target="_blank" rel="noopener">HathiTrust record</a>
+        <a class="btn ghost" href="https://books.google.com/books?id=_1ujXiECRXwC" target="_blank" rel="noopener">Google Books record</a>
+      </div>
+    </div>
+    <div class="reveal delay-1">
+      <figure class="cover-frame">
+        <img src="mp_assets/mcculloch_the_natural_fit_cover.png" alt="Cover of The Natural Fit, Chicago Literary Club, 1959" loading="lazy">
+        <figcaption><b>The cover, 1959.</b> “THE NATURAL FIT”, by Warren S. McCulloch. Chicago Literary Club, 1959. Cover image from the Google Books scan.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why" data-label="Why it matters">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">Why it matters</p>
+      <h2>The whole person, in <em>metre</em>.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">It is tempting to treat <em>The Natural Fit</em> as a curiosity: the great cybernetician also wrote sonnets. That is the wrong lesson. The poems are not an interruption of the science; they are the same project in another medium. McCulloch wanted to know how signals become meanings, how a private event becomes a shared world. A poem is that problem made audible.</p>
+      <p class="lede">Read it next to <a href="mp_1945_one_word.html">One Word After Another</a>, the 1945 tribute to Robinson where the craft is still being learned, and next to <a href="mp_1953_past_of_a_delusion.html">The Past of a Delusion</a>, where McCulloch turns the same suspicion of words on a theory that would not let itself be refuted.</p>
+      <div class="note"><b>The thread:</b> all three are Chicago Literary Club papers. One honours a poet, one collects McCulloch's own poems, one attacks a theory. Together they show the literary McCulloch — not a hobby, but a second way of being exact.</div>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:2.5rem;display:grid;gap:1rem">
+    <a class="next reveal" href="mp_1953_past_of_a_delusion.html">
+      <div>
+        <p class="eyebrow">Literary plate 03 · 1953</p>
+        <h3>The Past of a Delusion — the theory that could not lose</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+    <a class="next reveal" href="mp_1945_one_word.html">
+      <div>
+        <p class="eyebrow">Literary plate 01 · 1945</p>
+        <h3>One Word After Another — a tribute to Edwin Arlington Robinson</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span>Literary plate 02 · <b>The Natural Fit</b></span>
+    <span>Source: <a href="https://catalog.hathitrust.org/Record/102670940">HathiTrust</a> · <a href="https://books.google.com/books?id=_1ujXiECRXwC">Google Books</a> · <a href="https://mitpress.mit.edu/9780262631143/embodiments-of-mind/">Embodiments of Mind</a></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Facsimile viewer"><img alt=""><div class="cap"></div></div>
+</body>
+</html>
