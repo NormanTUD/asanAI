@@ -974,12 +974,15 @@ Each edge is `{id, from, to, kind, qualifiers, quote, citation_keys}`;
 Canonical kinds: `influenced`/`influenced_by`, `before`/`after`/
 `preceded_by`/`followed_by`, `caused`/`caused_by`, `authored_by`/`wrote`,
 `part_of`, `same_as`/`alias_of`, `derived_from`, `located_in`, `uses`/
-`used_by`, `supports`, `contradicts`, `cites`, `related_to`. The checker
+`used_by`, `supports`, `contradicts`, `cites`, `related_to`, `mentioned_in`.
+`mentioned_in` is the provenance backbone (entity → lesson); it is added by
+`link_provenance.py` and guarantees every fact entry is reachable in traces. The checker
 normalises inverse pairs, rejects missing endpoints and self-loops, requires
 `before`/`part_of`/`caused` to be acyclic, closes `same_as` transitively and
 then re-checks claim agreement, and rejects temporal contradictions
 (`before`/`influenced`/`caused`/`derived_from` with source year > target
-year). Render paths with
+year). Every non-metadata subject must have at least one relation;
+`--strict-relations` enforces it. Render paths with
 `uv run blog/tools/factcheck/trace_facts.py blog/ --from <id> --to <id>`;
 `--neighbors`, `--dot`, `--undirected` and `--json` are also available.
 
