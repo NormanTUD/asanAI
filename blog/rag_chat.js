@@ -229,18 +229,174 @@
 			.replace(/\\\(([\s\S]*?)\\\)/g, function(_, tex) { return '$' + tex + '$'; });
 	}
 
+	function splitTableRow(line) {
+		var row = String(line).trim();
+		if (row.charAt(0) === '|') row = row.slice(1);
+		if (row.charAt(row.length - 1) === '|') row = row.slice(0, -1);
+		return row.split('|').map(function(cell) { return cell.trim(); });
+	}
+
+	function tableAlignments(line) {
+		var cells = splitTableRow(line);
+		if (!cells.length) return null;
+		var alignments = [];
+		for (var i = 0; i < cells.length; i++) {
+			if (!/^:?-+:?$/.test(cells[i])) return null;
+			var left = cells[i].charAt(0) === ':';
+			var right = cells[i].charAt(cells[i].length - 1) === ':';
+			alignments.push(left && right ? 'center' : right ? 'right' : left ? 'left' : '');
+		}
+		return alignments;
+	}
+
+	function tableCellAttr(alignment) {
+		if (alignment === 'center') return ' class="rag-tbl-center"';
+		if (alignment === 'right') return ' class="rag-tbl-right"';
+		if (alignment === 'left') return ' class="rag-tbl-left"';
+		return '';
+	}
+
+	function detectTable(lines, start) {
+		var header = lines[start];
+		var delimiter = lines[start + 1];
+		if (header.indexOf('|') === -1 || delimiter == null ||
+				delimiter.indexOf('|') === -1) {
+			return null;
+		}
+		var alignments = tableAlignments(delimiter);
+		if (!alignments) return null;
+		var headerCells = splitTableRow(header);
+		if (headerCells.length !== alignments.length) return null;
+		var rows = [];
+		var index = start + 2;
+		while (index < lines.length) {
+			var line = lines[index];
+			if (!line.trim() || line.indexOf('|') === -1) break;
+			var cells = splitTableRow(line);
+			if (cells.length !== headerCells.length) break;
+			rows.push(cells);
+			index++;
+		}
+		return {
+			header: headerCells,
+			alignments: alignments,
+			rows: rows,
+			next: index
+		};
+	}
+
+	function renderTable(table) {
+		function cell(tag, content, alignment) {
+			return '<' + tag + tableCellAttr(alignment) + '>' +
+				(content == null ? '' : content) + '</' + tag + '>';
+		}
+		var html = '<div class="rag-table-wrap"><table class="rag-table"><thead><tr>';
+		table.header.forEach(function(content, index) {
+			html += cell('th', content, table.alignments[index]);
+		});
+		html += '</tr></thead>';
+		if (table.rows.length) {
+			html += '<tbody>';
+			table.rows.forEach(function(row) {
+				html += '<tr>';
+				row.forEach(function(content, index) {
+					html += cell('td', content, table.alignments[index]);
+				});
+				html += '</tr>';
+			});
+			html += '</tbody>';
+		}
+		return html + '</table></div>';
+	}
+
+	function extractFences(text, stash) {
+		var lines = String(text).split('\n');
+		var out = [];
+		var open = null;
+		var code = [];
+		function flush() {
+			var langClass = open.language ? ' class="language-' + open.language + '"' : '';
+			out.push(stash(
+				'<pre class="rag-code"><code' + langClass + '>' +
+					code.join('\n') + '</code></pre>',
+				'F'
+			));
+			open = null;
+			code = [];
+		}
+		for (var index = 0; index < lines.length; index++) {
+			var line = lines[index];
+			if (open) {
+				var closing = /^[ \t]*(`{3,}|~{3,})[ \t]*$/.exec(line);
+				if (closing && closing[1].charAt(0) === open.marker &&
+						closing[1].length >= open.fence.length) {
+					flush();
+					continue;
+				}
+				code.push(line);
+				continue;
+			}
+			var opening = /^[ \t]*(`{3,}|~{3,})[ \t]*([^\s`]*)/.exec(line);
+			if (opening) {
+				var language = (opening[2] || '').toLowerCase();
+				open = {
+					marker: opening[1].charAt(0),
+					fence: opening[1],
+					language: /^[a-z0-9_+#.-]+$/.test(language) ? language : ''
+				};
+				continue;
+			}
+			out.push(line);
+		}
+		if (open) flush();
+		return out.join('\n');
+	}
+
+	function renderBlocks(text) {
+		var lines = String(text).split('\n');
+		var out = [];
+		var paragraph = [];
+		function flushParagraph() {
+			if (!paragraph.length) return;
+			var block = paragraph.join('\n').replace(/^\n+|\n+$/g, '');
+			paragraph = [];
+			if (!block.trim()) return;
+			block = block.replace(/\n{2,}/g, '</p><p>').replace(/\n/g, '<br>');
+			out.push('<p>' + block + '</p>');
+		}
+		for (var index = 0; index < lines.length; index++) {
+			var line = lines[index].trim();
+			if (/^\u0000F\d+\u0000$/.test(line)) {
+				flushParagraph();
+				out.push(line);
+				continue;
+			}
+			var table = detectTable(lines, index);
+			if (table) {
+				flushParagraph();
+				out.push(renderTable(table));
+				index = table.next - 1;
+				continue;
+			}
+			paragraph.push(lines[index]);
+		}
+		flushParagraph();
+		return out.join('');
+	}
+
 	function answerHtml(answer, sources) {
 		var byId = Object.create(null);
 		(sources || []).forEach(function(source) {
 			if (source && source.id) byId[source.id] = source;
 		});
 		var stashed = [];
-		function stash(html) {
+		function stash(html, kind) {
 			stashed.push(html);
-			return '\u0000T' + (stashed.length - 1) + '\u0000';
+			return '\u0000' + (kind || 'T') + (stashed.length - 1) + '\u0000';
 		}
 
 		var html = esc(answer);
+		html = extractFences(html, stash);
 		html = html.replace(/`([^`\n]+)`/g, function(_, code) {
 			return stash('<code>' + code + '</code>');
 		});
@@ -272,9 +428,8 @@
 		html = html.replace(/__([^_]+)__/g, '<strong>$1</strong>');
 		html = html.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
 		html = html.replace(/(^|[^_])_([^_\n]+)_/g, '$1<em>$2</em>');
-		html = html.replace(/\n{2,}/g, '</p><p>').replace(/\n/g, '<br>');
-		html = '<p>' + html + '</p>';
-		html = html.replace(/\u0000T(\d+)\u0000/g, function(_, index) {
+		html = renderBlocks(html);
+		html = html.replace(/\u0000([TF])(\d+)\u0000/g, function(_, kind, index) {
 			return stashed[Number(index)] || '';
 		});
 
@@ -626,9 +781,25 @@
 		var node = document.createElement('div');
 		node.className = 'rag-chat-msg rag-chat-msg-' + role + (extraClass ? ' ' + extraClass : '');
 		node.innerHTML = html;
+		highlightCode(node);
 		els.messages.appendChild(node);
 		if (follow) scrollMessages();
 		return node;
+	}
+
+	function highlightCode(root) {
+		if (!root || typeof window === 'undefined' || !window.Prism ||
+				typeof window.Prism.highlightElement !== 'function') {
+			return;
+		}
+		root.querySelectorAll('pre.rag-code code').forEach(function(code) {
+			if (code.hasAttribute('data-highlighted')) return;
+			try {
+				window.Prism.highlightElement(code);
+			} catch (error) {
+				/* highlighting is cosmetic: the code stays readable without it */
+			}
+		});
 	}
 
 	function pruneBrokenImages(root) {
@@ -691,6 +862,7 @@
 		state.lastPartial = text;
 		state.streamNode.innerHTML = answerHtml(text, []) +
 			'<span class="rag-cursor" aria-hidden="true"></span>';
+		highlightCode(state.streamNode);
 		pruneBrokenImages(state.streamNode);
 		if (follow) scrollMessages();
 	}
@@ -832,6 +1004,7 @@
 		node.className = 'rag-chat-msg rag-chat-msg-assistant' +
 			(data.grounded === false ? ' rag-chat-msg-refusal' : '');
 		node.innerHTML = answerHtml(answer, sources);
+		highlightCode(node);
 		pruneBrokenImages(node);
 		if (follow) scrollMessages();
 		state.history.push({ role: 'user', content: question });

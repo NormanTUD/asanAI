@@ -14374,6 +14374,57 @@ summary:focus-visible,
 	background: color-mix(in srgb, var(--mn-accent) 9%, transparent);
 	font-size: 0.82em;
 }
+.rag-table-wrap {
+	max-width: 100%;
+	margin: 8px 0;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+.rag-chat-msg .rag-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.78rem;
+	line-height: 1.4;
+}
+.rag-chat-msg .rag-table th,
+.rag-chat-msg .rag-table td {
+	padding: 5px 8px;
+	border: 1px solid var(--mn-border-light);
+	vertical-align: top;
+	text-align: left;
+}
+.rag-chat-msg .rag-table th {
+	background: color-mix(in srgb, var(--mn-accent) 9%, transparent);
+	font-weight: 700;
+}
+.rag-chat-msg .rag-table tbody tr:nth-child(even) td {
+	background: color-mix(in srgb, var(--mn-accent) 3%, transparent);
+}
+.rag-chat-msg .rag-table .rag-tbl-center {
+	text-align: center;
+}
+.rag-chat-msg .rag-table .rag-tbl-right {
+	text-align: right;
+}
+.rag-chat-msg pre.rag-code {
+	max-width: 100%;
+	margin: 8px 0;
+	padding: 9px 11px;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	border: 1px solid var(--mn-border-light);
+	border-radius: 10px;
+	background: color-mix(in srgb, var(--mn-text) 6%, transparent);
+	font-size: 0.78rem;
+	line-height: 1.5;
+}
+.rag-chat-msg pre.rag-code code {
+	display: block;
+	padding: 0;
+	background: none;
+	font-size: inherit;
+	white-space: pre;
+}
 .rag-chat-msg .rag-cite {
 	color: var(--mn-accent);
 	font-weight: 700;

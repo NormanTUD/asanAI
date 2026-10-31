@@ -82,6 +82,60 @@ check(chat.answerHtml('[query](image.php?f=x&w=2)', []).indexOf('src=') === -1 &
 	chat.answerHtml('[query](image.php?f=x&w=2)', []).indexOf('href="image.php?f=x&amp;w=2"') !== -1,
 	'URL query ampersands survive escaping');
 
+var table = chat.answerHtml([
+	'| Model Type | Description | Layers |',
+	'| --- | --- | --- |',
+	'| Transformer | A type of neural network architecture | N × |',
+	'| GPT-3 | A specific type of LLM | 96 |'
+].join('\n'), []);
+check(table.indexOf('<table class="rag-table">') !== -1, 'pipe tables render as HTML tables');
+check(table.indexOf('<th>Model Type</th>') !== -1, 'table header cells render');
+check(table.indexOf('<td>Transformer</td>') !== -1, 'table body cells render');
+check(table.indexOf('<p>') === -1, 'a lone table is not wrapped in a paragraph');
+check(chat.answerHtml('a | b is not a table', []).indexOf('<table') === -1,
+	'pipes in ordinary prose do not create a table');
+var mixedTable = chat.answerHtml('Intro\n\n| A | B |\n| --- | --- |\n| 1 | 2 |\n\nOutro', []);
+check(mixedTable.indexOf('<p>Intro</p>') !== -1 && mixedTable.indexOf('<p>Outro</p>') !== -1,
+	'text around a table stays in separate paragraphs');
+var alignedTable = chat.answerHtml('| L | C | R |\n| :--- | :---: | ---: |\n| a | b | c |', []);
+check(alignedTable.indexOf('rag-tbl-left') !== -1 &&
+	alignedTable.indexOf('rag-tbl-center') !== -1 &&
+	alignedTable.indexOf('rag-tbl-right') !== -1, 'table alignment from the delimiter row renders');
+var tableWithMarkup = chat.answerHtml(
+	'| A | B |\n| --- | --- |\n| <img src=x onerror=alert(1)> | **bold** |', []);
+check(tableWithMarkup.indexOf('<img') === -1 && tableWithMarkup.indexOf('&lt;img') !== -1,
+	'table cell HTML is escaped');
+check(tableWithMarkup.indexOf('<strong>bold</strong>') !== -1,
+	'inline markdown renders inside table cells');
+check(chat.answerHtml('| A |\n| --- |\n| [S1] |', sources)
+	.indexOf('href="history#the-perceptron"') !== -1,
+	'citations inside table cells link to their sources');
+check(chat.answerHtml('| A | B |\n| --- | --- |', []).indexOf('<table') !== -1,
+	'a partial table still renders its header while streaming');
+
+var pythonBlock = chat.answerHtml('```python\nprint("hi")\n```', []);
+check(pythonBlock.indexOf('<pre class="rag-code">') !== -1, 'fenced code blocks render as pre/code');
+check(pythonBlock.indexOf('class="language-python"') !== -1, 'the fence language becomes a Prism class');
+check(pythonBlock.indexOf('```') === -1, 'code fence markers are consumed');
+check(pythonBlock.indexOf('<p>') === -1, 'a lone code block is not wrapped in a paragraph');
+check(pythonBlock.indexOf('print') !== -1 && pythonBlock.indexOf('&lt;') === -1,
+	'code content is preserved');
+var literalCode = chat.answerHtml('```\n**bold** [link](history) [S1]\n```', sources);
+var literalBody = literalCode.slice(literalCode.indexOf('<code'),
+	literalCode.indexOf('</code>'));
+check(literalBody.indexOf('<strong>') === -1 && literalBody.indexOf('href=') === -1,
+	'markdown inside code stays literal');
+check(chat.answerHtml('```python\nprint(1)', []).indexOf('rag-code') !== -1,
+	'an unclosed fence still renders while streaming');
+check(chat.answerHtml('~~~js\nlet a = 1;\n~~~', []).indexOf('language-js') !== -1,
+	'tilde fences render too');
+check(chat.answerHtml('```"><script>\nx\n```', []).indexOf('language-') === -1,
+	'unsafe fence info strings are dropped');
+var codeAndTable = chat.answerHtml(
+	'```python\nx = 1\n```\n\n| A | B |\n| --- | --- |\n| 1 | 2 |', []);
+check(codeAndTable.indexOf('rag-code') !== -1 && codeAndTable.indexOf('rag-table') !== -1,
+	'a code block and a table can live in the same answer');
+
 check(chat.errorText({ error: 'unknown_job' }).indexOf('restarted') !== -1,
 	'lost-job error suggests retrying');
 check(chat.errorText({ error: 'rate_limited', retry_after: 7 }).indexOf('7') !== -1,
