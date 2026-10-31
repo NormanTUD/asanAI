@@ -31,7 +31,7 @@ uv run blog/tests/literature_dup_keys.py blog/
 
 echo "== fact ledger (unit tests + cross-lesson check)"
 uv run blog/tests/fact_ledger_test.py
-uv run blog/tools/factcheck/check_facts.py blog/
+uv run blog/tools/factcheck/check_facts.py blog/ --strict-relations
 
 echo "== node unit tests"
 for test in topics math_alt keypoint search_js semantic_js rag_chat; do

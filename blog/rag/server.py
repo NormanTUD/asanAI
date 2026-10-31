@@ -437,18 +437,30 @@ class RagEngine:
         selected.sort()
         chunk["context"] = " ".join(chunks[i]["x"] for i in selected)
         chunk["small"] = True
+        chunk["_anchor"] = index
         return chunk
 
     @staticmethod
     def _distinct_windows(windows: list, limit: int) -> list:
         result = []
         seen = []
+        anchors = []
         for window in windows:
+            anchor = window.get("_anchor")
+            if any(
+                isinstance(anchor, int)
+                and isinstance(other, int)
+                and abs(anchor - other) <= 2
+                for other in anchors
+            ):
+                continue
             text = window.get("context", "")
             if any(text in other or other in text for other in seen):
                 continue
             result.append(window)
             seen.append(text)
+            if isinstance(anchor, int):
+                anchors.append(anchor)
             if len(result) >= limit:
                 break
         return result

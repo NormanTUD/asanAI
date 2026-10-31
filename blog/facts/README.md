@@ -285,6 +285,12 @@ enthalten:
 | `located_in` | Ort | Ding → Ort |
 | `uses` / `used_by` | Verwendung | Nutzer → Werkzeug |
 | `supports`, `contradicts`, `cites`, `related_to` | Evidenz/Assoziation | frei |
+| `mentioned_in` | Provenienz: Entität kommt in dieser Lektion vor | Entität → Lektion |
+
+`mentioned_in` ist die **Provenienz-Rückgrat**-Kante: Sie behauptet keine
+inhaltliche Beeinflussung, sondern verbindet jeden Fakt-Eintrag mit seiner
+Lektion. Dadurch ist jeder Knoten in Traces erreichbar; semantische Kanten
+bleiben separat.
 
 Der Checker normalisiert inverse Paare (`influenced_by` → `influenced`,
 `after` → `before`, `authored_by` → `wrote`, `used_by` → `uses`) und prüft:
@@ -294,6 +300,8 @@ Der Checker normalisiert inverse Paare (`influenced_by` → `influenced`,
 - `before`, `part_of`, `caused` sind azyklisch,
 - `same_as` wird transitiv geschlossen; danach müssen die Claims der
   verschmolzenen Subjekte übereinstimmen,
+- jeder nicht-metadatenhafte Subject hat mindestens eine Relation
+  (`--strict-relations` macht daraus einen Fehler),
 - zeitliche Kompatibilität: bei `before`/`influenced`/`caused`/`derived_from`
   darf die Quelle nicht später datiert sein als das Ziel (wenn beide ein
   `year`-Claim haben).
@@ -314,6 +322,10 @@ uv run blog/tools/factcheck/trace_facts.py blog/ --dot > facts.dot
 # Ungerichtete Pfade (für „wie hängt das zusammen?“)
 uv run blog/tools/factcheck/trace_facts.py blog/ \
   --from prompt-injection --to llm-security --undirected
+
+# Nur semantische Kanten, ohne mentioned_in-Provenienz
+uv run blog/tools/factcheck/trace_facts.py blog/ \
+  --from chain-rule --to backproplab-demo --no-provenance
 ```
 
 Ein Trace zeigt jede Kante mit `kind`, Quote und `file:line`. So ist eine

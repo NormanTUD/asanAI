@@ -49,9 +49,11 @@ def load_graph(blog: Path):
     return nodes, edges
 
 
-def build_adjacency(edges, undirected: bool):
+def build_adjacency(edges, undirected: bool, include_provenance: bool = True):
     graph = defaultdict(list)
     for rel in edges:
+        if not include_provenance and rel["kind"] == "mentioned_in":
+            continue
         graph[rel["from"]].append((rel["to"], rel["kind"], rel, False))
         if undirected:
             graph[rel["to"]].append((rel["from"], rel["kind"], rel, True))
@@ -65,8 +67,9 @@ def inbound(edges, node: str):
     return [(rel["from"], rel["kind"], rel, True) for rel in edges if rel["to"] == node]
 
 
-def shortest_path(edges, start: str, goal: str, max_depth: int, undirected: bool):
-    graph = build_adjacency(edges, undirected)
+def shortest_path(edges, start: str, goal: str, max_depth: int, undirected: bool,
+                  include_provenance: bool = True):
+    graph = build_adjacency(edges, undirected, include_provenance)
     queue = deque([(start, [])])
     seen = {start}
     while queue:
@@ -103,6 +106,8 @@ def main() -> None:
     parser.add_argument("--neighbors", metavar="NODE")
     parser.add_argument("--max-depth", type=int, default=8)
     parser.add_argument("--undirected", action="store_true")
+    parser.add_argument("--no-provenance", action="store_true",
+                        help="hide mentioned_in provenance edges from traces")
     parser.add_argument("--dot", action="store_true")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
@@ -137,7 +142,8 @@ def main() -> None:
 
     if not args.start or not args.goal:
         parser.error("--from and --to are required (or use --neighbors/--dot)")
-    path = shortest_path(edges, args.start, args.goal, args.max_depth, args.undirected)
+    path = shortest_path(edges, args.start, args.goal, args.max_depth,
+                         args.undirected, include_provenance=not args.no_provenance)
     if args.json:
         print(json.dumps([
             {"from": src, "kind": kind, "to": dst, "reverse": rev,
