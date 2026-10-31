@@ -139,13 +139,23 @@
     updateReadout();
   });
   poemLines.forEach(function (el, i) {
-    el.addEventListener("click", function () {
+    el.setAttribute("tabindex", "0");
+    el.setAttribute("role", "button");
+    el.setAttribute("aria-label", "Read line " + (i + 1));
+    function choose() {
       st.playing = false;
       st.selected = i;
       st.current = i;
       st.lastCurrent = -1;
       paintPoem(i);
       updateReadout();
+    }
+    el.addEventListener("click", choose);
+    el.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        choose();
+      }
     });
   });
 
