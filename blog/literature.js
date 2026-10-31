@@ -19122,6 +19122,13 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Isidore_of_Seville",
 		alternativetitle: "Isidore of Seville"
 	},
+	"wired2002isidore": {
+		title: "Searchin' for the Surfer's Saint",
+		author: "Noah Shachtman",
+		year: 2002,
+		url: "https://www.wired.com/2002/01/searchin-for-the-surfers-saint/",
+		alternativetitle: "Wired (2002) — the campaign for an internet patron saint"
+	},
 	"paulotlet": {
 		title: "Paul Otlet",
 		author: "Wikipedia contributors",
@@ -20656,6 +20663,13 @@ window.bibData = {
 		author: "OpenAI",
 		year: 2023,
 		alternativetitle: "GPT-4"
+	},
+	"semianalysis2023gpt4": {
+		title: "GPT-4 Architecture, Infrastructure, Training Dataset, Costs, Vision, MoE",
+		author: "Dylan Patel, Gerald Wong",
+		year: 2023,
+		url: "https://www.semianalysis.com/p/gpt-4-architecture-infrastructure",
+		alternativetitle: "SemiAnalysis (2023) — unconfirmed GPT-4 architecture estimate"
 	},
 	"kimi2025k2": {
 		url: "https://arxiv.org/abs/2507.20534",
