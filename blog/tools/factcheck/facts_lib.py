@@ -226,7 +226,13 @@ def normalize_value(value: Any, unit: str | None = None) -> tuple[Any, str]:
     if isinstance(value, bool):
         return value, "bool"
     if isinstance(value, (int, float)):
-        return float(value), canon_unit(unit)
+        unit_c = canon_unit(unit)
+        # A scale unit ("1e9") normally means the number is in billions
+        # (175 + 1e9).  But generators sometimes write 175e9 + 1e9.  Treat a
+        # number that is already at/above the scale as already scaled.
+        if unit_c in UNIT_SCALE and abs(float(value)) >= UNIT_SCALE[unit_c]:
+            return float(value), "count"
+        return float(value), unit_c
     if isinstance(value, list):
         return json.dumps(value, sort_keys=True, ensure_ascii=False), "json"
 
@@ -234,10 +240,13 @@ def normalize_value(value: Any, unit: str | None = None) -> tuple[Any, str]:
     number, suffix = _parse_scalar_number(text)
     if number is not None:
         chosen = suffix or unit
-        scale = UNIT_SCALE.get(canon_unit(chosen))
-        if scale is not None and canon_unit(chosen) in {"1e3", "1e6", "1e9", "1e12"}:
-            number *= scale
-            return number, canon_unit(unit) if unit else "count"
+        scale_unit = canon_unit(chosen)
+        scale = UNIT_SCALE.get(scale_unit)
+        if scale is not None and scale_unit in {"1e3", "1e6", "1e9", "1e12"}:
+            # Already-scaled generators sometimes write 175e9 + "1e9".
+            if abs(number) >= scale:
+                return number, "count"
+            return number * scale, "count"
         return number, canon_unit(chosen or unit)
     return re.sub(r"\s+", " ", text.lower()).strip(), canon_unit(unit)
 
@@ -325,7 +334,6 @@ def claim_normalized(claim: dict[str, Any]) -> dict[str, Any] | None:
         "unit": unit,
         "qualifiers": clean_qualifiers,
         "quote": pick(claim, FIELD_ALIASES["quote"], ""),
-        "line": pick(claim, FIELD_ALIASES["line"], ""),
         "citation_keys": pick(claim, FIELD_ALIASES["citation_keys"], []),
         "source_url": pick(claim, FIELD_ALIASES["source_url"], ""),
         "confidence": pick(claim, FIELD_ALIASES["confidence"], "stated"),
@@ -361,3 +369,176 @@ def fact_files(blog: Path) -> dict[str, Path]:
 def save_json(path: Path, data: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=2, ensure_ascii=False, sort_keys=False) + "\n", encoding="utf-8")
+
+# ---------------------------------------------------------------------------
+# Relations between facts / entities.  A relation is a typed edge in the
+# fact graph; the checker validates endpoints, cycles and temporal
+# compatibility, and trace_facts.py renders paths.
+# ---------------------------------------------------------------------------
+
+RELATION_ALIASES = {
+    "from": ("from", "source", "subject", "a", "start", "parent", "left"),
+    "to": ("to", "target", "object", "b", "end", "child", "right"),
+    "kind": ("kind", "type", "relation", "predicate", "label", "edge"),
+}
+
+RELATION_KIND_ALIASES = {
+    "influenced_by": "influenced_by",
+    "influenced": "influenced",
+    "followed_by": "followed_by",
+    "preceded_by": "preceded_by",
+    "after": "after",
+    "before": "before",
+    "caused_by": "caused_by",
+    "caused": "caused",
+    "authored_by": "authored_by",
+    "wrote": "wrote",
+    "alias_of": "same_as",
+    "same_as": "same_as",
+    "part_of": "part_of",
+    "instance_of": "instance_of",
+    "located_in": "located_in",
+    "derived_from": "derived_from",
+    "related_to": "related_to",
+    "supports": "supports",
+    "contradicts": "contradicts",
+    "cites": "cites",
+    "uses": "uses",
+    "used_by": "used_by",
+    "discovered": "discovered",
+    "invented": "invented",
+    "founded": "founded",
+}
+
+# Reverse an edge so that all ordering/influence/authorship edges point in a
+# canonical direction.
+REVERSE_KINDS = {
+    "influenced_by": "influenced",
+    "followed_by": "preceded_by",
+    "after": "before",
+    "caused_by": "caused",
+    "authored_by": "wrote",
+    "used_by": "uses",
+}
+
+# Kinds that must form a DAG.  Mutual influence is allowed (people influence
+# each other); causation, part-of and temporal order are not.
+ACYCLIC_KINDS = {"before", "part_of", "caused"}
+
+
+def canon_ref(raw: Any) -> str:
+    if isinstance(raw, dict):
+        for key in ("id", "fact_id", "subject", "entity", "name"):
+            if key in raw:
+                return canon_ref(raw[key])
+        return ""
+    text = str(raw).strip()
+    text = re.sub(r"\s+", "-", text)
+    text = re.sub(r"[^A-Za-z0-9_.+\-/]+", "", text).lower()
+    return text.strip("-")
+
+
+def iter_relations(document: Any) -> list[dict[str, Any]]:
+    if not isinstance(document, dict):
+        return []
+    raw = None
+    for key in ("relations", "links", "edges", "connections", "graph"):
+        if key in document:
+            raw = document[key]
+            break
+    if raw is None:
+        normalised = {normalize_key(str(k)): v for k, v in document.items()}
+        for key in ("relations", "links", "edges", "connections", "graph"):
+            if key in normalised:
+                raw = normalised[key]
+                break
+    if isinstance(raw, dict):
+        out = []
+        for key, value in raw.items():
+            if isinstance(value, dict):
+                value = dict(value)
+                value.setdefault("id", key)
+                out.append(value)
+        return out
+    if isinstance(raw, list):
+        return [item for item in raw if isinstance(item, dict)]
+    return []
+
+
+def relation_normalized(relation: dict[str, Any]) -> dict[str, Any] | None:
+    src = canon_ref(pick(relation, RELATION_ALIASES["from"]))
+    dst = canon_ref(pick(relation, RELATION_ALIASES["to"]))
+    kind = normalize_key(str(pick(relation, RELATION_ALIASES["kind"], "")))
+    kind = RELATION_KIND_ALIASES.get(kind, kind)
+    if not src or not dst or not kind:
+        return None
+    if kind == "preceded_by":
+        # A preceded_by B  =>  B before A
+        src, dst = dst, src
+        kind = "before"
+    elif kind == "followed_by":
+        # A followed_by B  =>  A before B
+        kind = "before"
+    elif kind == "after":
+        # A after B  =>  B before A
+        src, dst = dst, src
+        kind = "before"
+    elif kind in REVERSE_KINDS:
+        src, dst = dst, src
+        kind = REVERSE_KINDS[kind]
+    elif kind == "alias_of":
+        kind = "same_as"
+    qualifiers = pick(relation, FIELD_ALIASES["qualifiers"], {}) or {}
+    if not isinstance(qualifiers, dict):
+        qualifiers = {"scope": qualifiers}
+    clean_qualifiers = {
+        normalize_key(str(k)): str(v).strip().lower()
+        for k, v in qualifiers.items()
+        if normalize_key(str(k)) not in NON_SCOPE_KEYS
+    }
+    return {
+        "id": pick(relation, FIELD_ALIASES["id"], ""),
+        "from": src,
+        "to": dst,
+        "kind": kind,
+        "qualifiers": clean_qualifiers,
+        "quote": pick(relation, FIELD_ALIASES["quote"], ""),
+        "citation_keys": pick(relation, FIELD_ALIASES["citation_keys"], []),
+    }
+
+# Predicates that are single-valued for a given (subject, qualifiers).  All
+# other predicates are associative/multi-valued: an entity may have many
+# works, statements, assumptions or quotes without those being contradictions.
+FUNCTIONAL_PREDICATES = {
+    "parameters", "layers", "context_window", "training_tokens", "year",
+    "memory", "tflops", "d_model", "heads", "accuracy", "price", "range",
+    "title", "part", "order",
+}
+
+
+def is_functional(claim: dict[str, Any]) -> bool:
+    predicate = claim.get("predicate")
+    if predicate not in FUNCTIONAL_PREDICATES:
+        return False
+    value = claim.get("value")
+    # Count-like predicates are only single-valued when they actually carry a
+    # number.  A string under `layers` is a description, not a layer count.
+    if predicate in {
+        "parameters", "layers", "context_window", "training_tokens", "year",
+        "memory", "tflops", "d_model", "heads", "accuracy", "price",
+    } and not isinstance(value, (int, float)):
+        return False
+    # A bare `year` is ambiguous (born/died/founded/published).  Only treat it
+    # as single-valued when an event/definition qualifier makes it specific.
+    if predicate == "year":
+        qualifiers = claim.get("qualifiers") or {}
+        return bool({"event", "definition"} & set(qualifiers))
+    return True
+
+KNOWN_RELATION_KINDS = {
+    "influenced", "before", "caused", "wrote", "part_of", "same_as",
+    "derived_from", "located_in", "uses", "supports", "contradicts",
+    "cites", "related_to", "instance_of", "discovered", "invented",
+    "founded",
+}
+

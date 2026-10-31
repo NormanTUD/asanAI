@@ -215,10 +215,10 @@ class Embedder:
 # Chunking
 # ---------------------------------------------------------------------------
 
-def split_text(text: str, max_chars: int):
+def split_text(text: str, max_chars: int, min_chars: int = 40):
     text = " ".join(text.split())
     if len(text) <= max_chars:
-        return [text] if len(text) >= 40 else []
+        return [text] if len(text) >= min_chars else []
 
     pieces = []
     buffer = ""
@@ -245,7 +245,16 @@ def split_text(text: str, max_chars: int):
             merged[-1] = merged[-1] + " " + piece
         else:
             merged.append(piece)
-    return [piece for piece in merged if len(piece) >= 40]
+    return [piece for piece in merged if len(piece) >= min_chars]
+
+
+def _clip(text: str, max_chars: int):
+    """Trim a summary chunk at a word boundary so it honours max_chars."""
+    text = " ".join(text.split())
+    if len(text) <= max_chars:
+        return text
+    cut = text.rfind(" ", 0, max_chars)
+    return (text[:cut] if cut > 0 else text[:max_chars]).rstrip()
 
 
 def _split_sentences(text: str):
@@ -261,15 +270,27 @@ def _split_sentences(text: str):
     return sentences or [text]
 
 
-def iter_chunks(page, max_chars: int):
+def iter_chunks(page, max_chars: int, *, min_chars: int = 40, strict: bool = False):
+    """Yield search chunks for one page.
+
+    ``strict`` keeps every chunk within ``max_chars`` (summary and heading
+    chunks included) and lowers the drop floor to ``min_chars``. It is used for
+    the tiny detail index; the default keeps the historical 900-char layout.
+    """
     name = page["name"]
     title = page.get("title") or name
     blocks = page.get("blocks") or []
 
-    intro = next(
-        (block["text"][:320] for block in blocks if block["type"] == "text" and len(block["text"]) >= 40),
+    intro_min = min_chars if strict else 40
+    intro_source = next(
+        (
+            block["text"]
+            for block in blocks
+            if block["type"] == "text" and len(block["text"]) >= intro_min
+        ),
         "",
     )
+    intro = _clip(intro_source, max_chars) if strict else intro_source[:320]
     if intro:
         yield {
             "t": "page",
@@ -297,12 +318,13 @@ def iter_chunks(page, max_chars: int):
                 ),
                 "",
             )
+            heading_text = f"{heading} — {next_text}" if next_text else heading
             yield {
                 "t": "heading",
                 "p": name,
                 "pt": title,
                 "h": heading,
-                "x": f"{heading} — {next_text}" if next_text else heading,
+                "x": _clip(heading_text, max_chars) if strict else heading_text,
                 "u": name + (f"#{heading_slug}" if heading_slug else ""),
                 "i": "",
                 "e": f"{title}. {heading}",
@@ -310,7 +332,7 @@ def iter_chunks(page, max_chars: int):
         elif kind == "text":
             context = heading or title
             url = name + (f"#{heading_slug}" if heading_slug else "")
-            for piece in split_text(block["text"], max_chars):
+            for piece in split_text(block["text"], max_chars, min_chars):
                 yield {
                     "t": "content",
                     "p": name,
@@ -324,15 +346,16 @@ def iter_chunks(page, max_chars: int):
         elif kind == "caption":
             context = heading or title
             url = name + (f"#{heading_slug}" if heading_slug else "")
+            caption = _clip(block["text"], max_chars) if strict else block["text"]
             yield {
                 "t": "caption",
                 "p": name,
                 "pt": title,
                 "h": heading,
-                "x": block["text"],
+                "x": caption,
                 "u": url,
                 "i": block.get("img", ""),
-                "e": f"{context}. {block['text']}",
+                "e": f"{context}. {caption}",
             }
 
 

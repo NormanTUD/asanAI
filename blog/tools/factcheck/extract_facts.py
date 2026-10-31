@@ -122,14 +122,13 @@ def add_claim(claims, seen, subject, predicate, value, unit, line_no, quote, qua
         return
     seen.add(key)
     claims.append({
-        "id": f"auto-{subject}-{predicate}-{line_no}-{len(claims) + 1}",
+        "id": f"auto-{subject}-{predicate}-{len(claims) + 1}",
         "subject": subject,
         "predicate": predicate,
         "value": value,
         "unit": unit,
         "qualifiers": qualifiers or {},
         "quote": quote[:300],
-        "line": line_no,
         "citation_keys": [],
         "confidence": "extracted",
     })
@@ -233,6 +232,7 @@ def extract(path: Path) -> dict:
         "generated_by": "extract_facts.py",
         "citations": citations,
         "claims": claims,
+        "relations": [],
     }
 
 
