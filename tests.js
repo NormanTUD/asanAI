@@ -216,7 +216,6 @@ function show_num_tests_overlay(name) {
 	_test_record_progress_duration();
 
 	name = "Test-name: " + name;
-	console.log(`%c${_test_progress_text()}%c -> ${name}`, "color:#94a3b8", "background:#004d40; color:#1de9b6");
 
 	remove_num_tests_overlay();
 
