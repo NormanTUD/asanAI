@@ -231,7 +231,7 @@ def build(
     kind: str = "large",
     parallel: int | None = None,
 ):
-    json_name, vectors_name = INDEX_FILES.get(kind, INDEX_FILES["large"])
+    json_name, vectors_name = INDEX_FILES[kind]
     payload = load_blocks(blog_dir)
     chunks = []
     texts = []

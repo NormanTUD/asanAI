@@ -7,7 +7,7 @@ from the blog, reranks them, and lets a small CPU-only language model answer
 ```
 browser  ──POST /ask.php──▶  PHP proxy  ──▶  127.0.0.1:8090  (queue + retrieval)
                                                     │
-                                                    ├── rag_data/ (bge-small vectors)
+                                                    ├── rag_data/ (bge-small + model2vec vectors)
                                                     ├── fastembed reranker (MiniLM)
                                                     └── 127.0.0.1:11434 (Ollama, Qwen2.5)
 ```
@@ -87,10 +87,10 @@ directory):
 sudo ASANAI_WEB_USER=www-data ./install.sh
 ```
 
-The installer is idempotent. It uses the bge-small index committed in the
-repository when its source hash matches the lessons; otherwise it rebuilds it
-(on two CPU cores that one-time build can take around 25 minutes). It does the
-following:
+The installer is idempotent. It uses the indexes committed in the repository
+when their source hashes match the lessons; otherwise it rebuilds them (the
+large bge-small index can take around 25 minutes on two CPU cores, the detail
+index under a minute). It does the following:
 
 1. installs Python, PHP CLI/cURL, curl, certificates and ACL tools;
 2. installs Ollama if missing;
@@ -157,6 +157,52 @@ into `/var/lib/asanai-rag/data/`. Both builds are incremental. Use
 
 If you only changed CSS or JavaScript, no reindex is needed.
 
+## Two indexes
+
+The service reads two indexes from the same data directory:
+
+| File | Chunk size | Embedding model | Role |
+|---|---|---|---|
+| `rag_index.json` + `rag_vectors.bin` | 900 characters | `BAAI/bge-small-en-v1.5` | context and overview |
+| `rag_index_small.json` + `rag_vectors_small.bin` | 50 characters | `potion-base-8M` (packed model2vec) | precise detail anchors |
+
+The large index is unchanged from earlier versions. The detail index is split
+into sentence-sized pieces (at most 50 characters, including heading and
+caption chunks) and embedded with the same packed model the browser search
+uses, so it builds in under a minute instead of hours. It contains about 79k
+rows and costs roughly 19 MB of JSON plus 21 MB of int8 vectors on disk.
+
+For each question the service keeps the large-index passages and adds the best
+`SMALL_CHUNKS` anchors (default 3). Every anchor is sent together with the chunk
+before and after it, so the model sees the exact phrase and its surrounding
+sentence. Adjacent anchors collapse, so the same passage is not sent twice. A
+short prompt hint tells the model to use the small windows for details and the
+long passages for context.
+
+Disable the detail index without rebuilding anything:
+
+```bash
+# /etc/asanai-rag.env
+SMALL_INDEX=0
+SMALL_CHUNKS=3
+```
+
+Then `sudo systemctl restart asanai-rag`. With `SMALL_INDEX=0` the service does
+not even load the small files and behaves exactly like the large-index-only
+version. If the small files are missing, the service also falls back silently;
+a warning appears only when an existing file is corrupt.
+
+Rebuild only the detail index, or skip it:
+
+```bash
+uv run blog/tools/build_rag_index.py --only small
+uv run blog/tools/build_rag_index.py --no-small
+uv run blog/tools/build_rag_index.py --only small --probe-small "When was the transformer invented?"
+```
+
+`--probe-small` prints the anchor with its two neighbours. `install.sh` and
+`reindex.sh` install both index pairs; the builder is incremental for both.
+
 ## Switch models
 
 ```bash
@@ -208,8 +254,8 @@ directly. It uses the same administrator password and `mnstats` session as
 CI never downloads the Ollama model or the reranker:
 
 - `node blog/tests/rag_chat_test.js` — status text, citations and escaping only;
-- `uv run blog/tests/rag_index_test.py` — reads the committed index;
-- `uv run blog/tests/rag_server_test.py` — fake engine, fake Ollama HTTP server,
+- `uv run blog/tests/rag_index_test.py` — reads the committed indexes;
+- `uv run blog/tests/rag_server_test.py` — detail windows, fake engine, fake Ollama HTTP server,
   queue/ETA/cache/proxy checks;
 - `uv run blog/tests/rag_browser_test.py` — mocks the `ask.php` replies in the
   page, checks the chat UI without a backend.

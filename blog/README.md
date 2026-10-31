@@ -165,13 +165,20 @@ curl http://127.0.0.1:8090/health
 journalctl -u asanai-rag -f
 ```
 
-After lesson edits, rebuild the browser indexes and the server index:
+After lesson edits, rebuild the browser indexes and the server indexes:
 
 ```bash
 uv run blog/tools/build_semantic_index.py
 uv run blog/tools/build_rag_index.py          # commits blog/rag_data/
 sudo /opt/asanai-rag/reindex.sh               # on the server
 ```
+
+The RAG service uses two indexes: 900-character context chunks (bge-small) and
+50-character detail anchors (packed `potion-base-8M`, the browser search model).
+Each answer keeps the large passages and adds the best three tiny anchors with
+the chunk before and after them. Set `SMALL_INDEX=0` in
+`/etc/asanai-rag.env` and restart the service to return to large-index-only
+retrieval; `SMALL_CHUNKS` (1–5) tunes the anchor count.
 
 Switch models with `sudo /opt/asanai-rag/set-model.sh qwen2.5:0.5b`; tune queue,
 rate limits and context in `/etc/asanai-rag.env`; CPU/memory caps live in the

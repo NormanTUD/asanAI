@@ -395,6 +395,43 @@ def main():
     check("short verbatim windows" not in plain_messages[1]["content"],
           "the detail hint stays off without small windows")
 
+    wiring = object.__new__(server.RagEngine)
+    wiring.last_done_reason = None
+    wiring.translate = lambda question, lang: question
+    wiring.retrieval_query = lambda question, history: question
+    large_passages = [
+        {"u": "history#x", "pt": "History", "h": "X", "x": "A perceptron."}
+    ]
+    small_passages = [
+        {
+            "u": "history#x",
+            "pt": "History",
+            "h": "X",
+            "x": "A tiny anchor.",
+            "context": "before A tiny anchor. after",
+            "small": True,
+        }
+    ]
+    wiring.retrieve = lambda question, limit=5, page=None: list(large_passages)
+    wiring.retrieve_small = lambda question, limit=3, page=None: list(small_passages)
+    captured = {}
+    wiring.build_messages = lambda question, english, passages, lang, history, page=None: (
+        captured.update(passages=list(passages))
+        or [
+            {"role": "system", "content": "system"},
+            {"role": "user", "content": "user"},
+        ]
+    )
+    wiring._ollama = lambda messages, max_tokens, temperature: "A perceptron [S1]."
+    wiring.finalize = server.RagEngine.finalize.__get__(wiring)
+    wiring.ensure_language = lambda answer, lang: answer
+    wired = wiring.answer("what is a perceptron?", "en", [])
+    check(len(captured.get("passages", [])) == 2,
+          "answer combines large and small passages")
+    check(captured["passages"][1].get("small") is True,
+          "answer appends the small detail window")
+    check(wired["grounded"] is True, "answer with a detail window stays grounded")
+
     bm25 = server.BM25(["a perceptron is linear", "the history of rome"])
     check(bm25.search("perceptron")[0] == 0, "BM25 finds an exact term")
     check(bm25.search("perceptron") != bm25.search("rome"), "BM25 ranks different terms")

@@ -25,15 +25,21 @@ again before reporting done.
   chunker, run `uv run blog/tools/build_semantic_index.py` **and**
   `uv run blog/tools/build_rag_index.py` from the repository root, then commit
   the regenerated `.search_cache.json`, `semantic_index.json`,
-  `semantic_vectors.bin`, `blog/rag_data/rag_index.json` and
-  `blog/rag_data/rag_vectors.bin`. They refresh the lexical cache through PHP,
-  the browser vectors and the server-side RAG vectors;
+  `semantic_vectors.bin`, `blog/rag_data/rag_index.json`,
+  `blog/rag_data/rag_vectors.bin`, `blog/rag_data/rag_index_small.json` and
+  `blog/rag_data/rag_vectors_small.bin`. They refresh the lexical cache through
+  PHP, the browser vectors and the two server-side RAG vectors;
   `blog/tests/semantic_index_test.py` and `blog/tests/rag_index_test.py` fail in
-  CI when they are stale. The RAG builder is incremental: it reuses the int8
-  vector and scale of every unchanged chunk, skips the build entirely when the
-  source hash is fresh, and stores per-page hashes in `rag_index.json`. Use
-  `--force` only for a model/dimension change or a suspected corrupt index; a
-  first run after a clean checkout (or after `--force`) still embeds everything.
+  CI when they are stale. The RAG builder is incremental for both indexes: it
+  reuses the int8 vector and scale of every unchanged chunk, skips the build
+  entirely when the source hash is fresh, and stores per-page hashes in each
+  index. The large index keeps 900-character context chunks and bge-small; the
+  small detail index keeps 50-character anchors and uses the packed model2vec
+  model (`potion-base-8M`) that also powers browser search, so it rebuilds in
+  seconds. Use `--force` only for a model/dimension change or a suspected
+  corrupt index; a first run after a clean checkout (or after `--force`) still
+  embeds everything. `--no-small` skips the detail index, `--only small`
+  rebuilds just it, and `--probe-small "…"` shows anchors with their neighbours.
 - Leave it cleaner than you found it. — Code, markup, prose, and structure
   should be better after your change than before. Tidy only what you touch; do
   not start unrelated refactors.
@@ -148,7 +154,7 @@ tags.**
 | `blog/test/` | One-off HTML experiments/scratch — not part of the course |
 | `blog/py/` | Python snippets inlined into lessons via `get_string_of_file_or_die()` |
 | `blog/rag/` | Optional server-side RAG answer service (Ollama + queue + installer); not web-served |
-| `blog/rag_data/` | Generated server-side RAG index (full chunks + int8 vectors), web-denied |
+| `blog/rag_data/` | Generated server-side RAG indexes (900-char context + 50-char detail chunks + int8 vectors), web-denied |
 | `blog/lndw*/`, `blog/coq/`, `blog/nanoGPT/`, `blog/llm_interpretability_papers/` | Research/working material, not served |
 | `cosmo*/`, `taurus/`, `presentation/` | Kiosk/exhibition variants (standalone, don't refactor for the main site). **`cosmo_ok/` is gitignored** — local only, never commit |
 | `manual/`, `manual.html`, `screens/`, `documentation/` | Toolkit docs & assets |
@@ -623,18 +629,26 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
   “Ask the course” panel. It only appears when `ask.php?health=1` reports a
   healthy local service. `rag/server.py` runs one generation at a time with a
   queue, per-IP rate limits and an answer cache; it retrieves with the packed
-  bge-small-en-v1.5 vectors in `rag_data/`, reranks the top candidates, and
+  bge-small-en-v1.5 vectors from the 900-character context index, appends the
+  best three 50-character anchors from the model2vec detail index (each with
+  the chunk before and after), reranks the candidates, and
   answers with a small CPU-only Ollama model (default Qwen2.5-1.5B). Non-English
   questions are translated to English for retrieval and answered in the
   question's language (with a final language-normalisation pass); section
   titles/page titles feed BM25, reranking and a heading/year boost. Answers must
-  cite `[S1]…` or return a localized “not in the course”. Install on a server with `blog/rag/install.sh`; after content
+  cite `[S1]…` or return a localized “not in the course”. Set `SMALL_INDEX=0`
+  in `/etc/asanai-rag.env` to disable the detail index and restore the old
+  large-index-only behavior; `SMALL_CHUNKS` (default 3) controls the number of
+  anchors. Install on a server with `blog/rag/install.sh`; after content
   changes run `blog/rag/reindex.sh` (or the repo builders above). The repo
   builder is incremental: unchanged chunks keep their existing int8 vector and
   scale, an unchanged `sourceHash` is a no-op, and `--force` re-embeds
-  everything. It writes `pageHashes` into `rag_index.json`; on the first run
-  after an older index those hashes are absent, so every page is reported as
-  changed even though only changed chunks are embedded. The Python
+  everything. It writes `rag_index.json`/`rag_vectors.bin` (context) and
+  `rag_index_small.json`/`rag_vectors_small.bin` (detail), with `pageHashes`
+  in both; `--no-small` skips the detail index, `--only small` rebuilds just
+  it, and `--probe-small "…"` shows anchors with their neighbours. On the
+  first run after an older index those hashes are absent, so every page is
+  reported as changed even though only changed chunks are embedded. The Python
   service binds to `127.0.0.1`; `ask.php` is the public proxy. Q&A are logged
   to `/var/lib/asanai-rag/queries.sqlite` (no IPs; blocked requests redacted)
   and shown at `/questions`, linked from the stats nav and using the same
@@ -649,14 +663,17 @@ from the repository root:
 ```bash
 uv run blog/tools/build_semantic_index.py
 uv run blog/tools/build_rag_index.py          # incremental; prints reused/embedded
+uv run blog/tools/build_rag_index.py --only small --probe-small "…"
 uv run blog/tools/build_rag_index.py --force  # only for model/dims changes or corruption
 ```
 
 The RAG builder reuses the int8 vector and scale of every chunk whose text is
-unchanged, and skips the whole build when `sourceHash` is fresh. On the first
+unchanged, and skips a whole index when `sourceHash` is fresh. On the first
 run after an index built before `pageHashes` existed, every page is reported as
 changed even though only changed chunks are embedded. The write is atomic, so
-an interrupted build leaves the previous index intact.
+an interrupted build leaves the previous index intact. The small detail index
+uses model2vec and is cheap to rebuild; `--no-small` skips it and `--only
+small` rebuilds it alone.
 
 - **Read-progress** (`progress_tracker.js`): per-tile 10-segment "where I've
   been" bars, dwell-time based (a band counts as read after ≥3 s). Passive —
@@ -1017,9 +1034,9 @@ dependency in a header won't resolve for a few days).
 | `node blog/tests/{topics,math_alt,keypoint,search_js,semantic_js}_test.js` | DOM-stubbed unit tests of BlogTopics (interests, math dial, learned), math-alts, keypoints, search, semantic ranking | any failed check | `blog/**` |
 | `node blog/tests/rag_chat_test.js` | RAG chat status text, citation links, HTML escaping | any failed check | `blog/**` |
 | `uv run blog/tests/semantic_index_test.py` | semantic index freshness vs `.search_cache.json`, vector shape, Python↔JS tokenizer parity, int8 vector fidelity | stale index or any failed check | `blog/**` (semantic-index job) |
-| `uv run blog/tests/rag_index_test.py` | server RAG index freshness vs `.search_cache.json`, vector shape, no redirect/macro chunks | stale index or any failed check | `blog/**` (semantic-index job) |
-| `uv run blog/tests/rag_incremental_test.py` | incremental RAG builder: fresh sourceHash is a no-op, only changed chunks re-embed, reused rows stay byte-identical | any failed check | `blog/**` (semantic-index job) |
-| `uv run blog/tests/rag_server_test.py` | RAG retrieval helpers, grounding/citations, queue position/ETA, answer cache, HTTP API (fake Ollama) | any failed check | `blog/**` (semantic-index job) |
+| `uv run blog/tests/rag_index_test.py` | server RAG index freshness vs `.search_cache.json`, vector shape, large + 50-char detail indexes, no redirect/macro chunks | stale index or any failed check | `blog/**` (semantic-index job) |
+| `uv run blog/tests/rag_incremental_test.py` | incremental RAG builder: fresh sourceHash is a no-op, only changed chunks re-embed, reused rows stay byte-identical, small index files written | any failed check | `blog/**` (semantic-index job) |
+| `uv run blog/tests/rag_server_test.py` | RAG retrieval helpers, detail windows (anchor ± neighbours), grounding/citations, queue position/ETA, answer cache, HTTP API (fake Ollama) | any failed check | `blog/**` (semantic-index job) |
 | `uv run blog/tests/{semantic,rag}_browser_test.py` | headless-Chrome UI: semantic question + AI toggle + fallback; RAG chat health, queue/ETA text, answer and source links | any failed check | `blog/**` (php-render job) |
 | `uv run blog/tests/php_render_validator.py blog/` | headless-Chrome render (PHP built-in server): console error → exit 1; unrendered `$$` (with `_`/`\`) outside a `<div>` → exit 2; width overflow → exit 3 (only with `--check-width`); `--all-lessons --check-width --width-only` sweeps every lesson + the width gate via `window.__layoutGuardrailCheck()` | per exit codes | index.php only (width job currently disabled in CI) |
 | `uv run blog/tests/typo_checker.py blog/` | spell-checks lesson prose; whitelist `blog/tests/typo_whitelist.txt` (one word/line, case-insensitive, append to add) | typos | **local only** |

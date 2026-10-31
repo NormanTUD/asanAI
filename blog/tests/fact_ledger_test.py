@@ -49,7 +49,7 @@ def write_facts(root: Path, slug: str, document) -> None:
     path.write_text(json.dumps(document), encoding="utf-8")
 
 
-def claim(subject="x", predicate="p", value=1, unit="count", **extra):
+def claim(subject="x", predicate="parameters", value=1, unit="count", **extra):
     data = {"subject": subject, "predicate": predicate, "value": value, "unit": unit}
     data.update(extra)
     return data
