@@ -1399,10 +1399,10 @@
    "url": "https://en.wikipedia.org/wiki/A"
   },
   "ramsauer2021hopfield": {
-   "title": "https://arxiv.org/abs/2402.13725v1",
-   "author": "Saul Santos, Vlad Niculae, Daniel McNamee, Andre F. T. Martins",
-   "year": "2024",
-   "url": "https://arxiv.org/abs/2402.13725v1"
+   "title": "Hopfield Networks is All You Need",
+   "author": "Hubert Ramsauer, Bernhard Schäfl, Johannes Lehner, Philipp Seidl, Michael Widrich, Lukas Gruber, Markus Holzleitner, Milena Pavlović, Geir Kjetil Sandve, Victor Greiff, David Kreil, Michael Kopp, Günter Klambauer, Johannes Brandstetter, Sepp Hochreiter",
+   "year": "2021",
+   "url": "https://arxiv.org/abs/2008.02217"
   },
   "hutter2006universal": {
    "title": "Universal Intelligence: A Definition of Machine Intelligence",
@@ -2013,7 +2013,7 @@
   "anthropic2023mapping": {
    "title": "Mapping the mind of a large language model",
    "author": "Anthropic Interpretability Team",
-   "year": "2023",
+   "year": "2024",
    "url": "https://www.anthropic.com/research/mapping-mind-language-model"
   },
   "templeton2024scaling": {
@@ -3224,7 +3224,7 @@
   },
   "hornik1989universal": {
    "title": "Multilayer Feedforward Networks are Universal Approximators",
-   "author": "Kurt Hornik",
+   "author": "Kurt Hornik, Maxwell Stinchcombe, Halbert White",
    "year": "1989",
    "url": "https://www.cs.cmu.edu/~epxing/Class/10715/reading/Kornick_et_al.pdf"
   },
@@ -4521,7 +4521,7 @@
   "hornik": {
    "title": "Approximation Capabilities of Multilayer Feedforward Networks",
    "author": "Kurt Hornik",
-   "year": "1990",
+   "year": "1991",
    "url": "https://papers.baulab.info/papers/also/Hornik-1991.pdf"
   },
   "piccini": {
@@ -6172,7 +6172,7 @@
    "title": "Very Deep Convolutional Networks for Large-Scale Image Recognition",
    "author": "Karen Simonyan, Andrew Zisserman",
    "year": "2014",
-   "url": ""
+   "url": "https://arxiv.org/abs/1409.1556"
   },
   "sutskever2014seq2seq": {
    "title": "Sequence to Sequence Learning with Neural Networks",
@@ -6823,10 +6823,10 @@
    "url": "https://arxiv.org/abs/2311.15127"
   },
   "brooks2024sora": {
-   "title": "Sora — Wikipedia",
-   "author": "Wikipedia contributors",
+   "title": "Video generation models as world simulators",
+   "author": "Tim Brooks, Bill Peebles, et al. (OpenAI)",
    "year": "2024",
-   "url": "https://en.wikipedia.org/wiki/Sora_(text-to-video_model)"
+   "url": "https://openai.com/index/video-generation-models-as-world-simulators/"
   },
   "zeghidour2021soundstream": {
    "title": "SoundStream: An End-to-End Neural Audio Codec",
@@ -6877,10 +6877,10 @@
    "url": "https://en.wikipedia.org/wiki/Compact_Disc_Digital_Audio"
   },
   "nyquist_sampling": {
-   "title": "Nyquist–Shannon sampling theorem — Wikipedia",
-   "author": "Wikipedia contributors",
-   "year": "2026",
-   "url": "https://en.wikipedia.org/wiki/Nyquist%E2%80%93Shannon_sampling_theorem"
+   "title": "Certain Topics in Telegraph Transmission Theory",
+   "author": "Harry Nyquist",
+   "year": "1928",
+   "url": "https://doi.org/10.1109/T-AIEE.1928.5055024"
   },
   "mp3": {
    "title": "MP3 — Wikipedia",
@@ -7228,7 +7228,7 @@
    "title": "Learning from Delayed Rewards",
    "author": "Christopher J. C. H. Watkins",
    "year": "1989",
-   "url": "https://link.springer.com/article/10.1007/BF00992698"
+   "url": "https://www.cs.rhul.ac.uk/~chrisw/new_thesis.pdf"
   },
   "rafailov2023dpo": {
    "title": "Direct Preference Optimization: Your Language Model is Secretly a Reward Model",
@@ -7639,10 +7639,10 @@
    "url": "https://openai.com/api/pricing/"
   },
   "deepseek2024v3": {
-   "title": "DeepSeek API Pricing",
-   "author": "DeepSeek",
+   "title": "DeepSeek-V3 Technical Report",
+   "author": "DeepSeek-AI",
    "year": "2024",
-   "url": "https://api-docs.deepseek.com/quick_start/pricing"
+   "url": "https://arxiv.org/abs/2412.19437"
   },
   "together2024pricing": {
    "title": "Together AI Pricing",
@@ -7801,10 +7801,10 @@
    "url": "https://falconllm.tii.ae/"
   },
   "redman2024causalscrubbing": {
-   "title": "Causal Scrubbing: A Method for Rigorously Interpreting Indirect Encoding Results",
-   "author": "Dylan Redman, Kevin Smith, Ian Das",
-   "year": "2024",
-   "url": "https://arxiv.org/abs/2402.12527"
+   "title": "Causal Scrubbing: A Method for Rigorously Testing Interpretability Hypotheses",
+   "author": "Lawrence Chan, Adrià Garriga-Alonso, Nicholas Goldowsky-Dill, et al.",
+   "year": "2022",
+   "url": "https://www.alignmentforum.org/posts/JvZhhzycHu2Yd57RN/causal-scrubbing-a-method-for-rigorously-testing"
   },
   "sakurai2024skrr": {
    "title": "Skip \\u0026 Reroute: A Simple Data Augmentation Framework for Multi-Hop Question Answering",
@@ -8808,6 +8808,12 @@
    "year": "1911",
    "url": "https://doi.org/10.1007/BF01456931"
   },
+  "brouwer1911invariance": {
+   "title": "Beweis der Invarianz des n-dimensionalen Gebiets",
+   "author": "L. E. J. Brouwer",
+   "year": "1911",
+   "url": "https://doi.org/10.1007/BF01456846"
+  },
   "morse1929foundations": {
    "title": "The Foundations of the Calculus of Variations in the Large in m-Space (First Paper)",
    "author": "Marston Morse",
@@ -9103,7 +9109,7 @@
    "url": "https://arxiv.org/abs/2210.03057"
   },
   "lin2021truthful": {
-   "title": "Truthful AI: Developing and Governing AI That Does Not Lie",
+   "title": "TruthfulQA: Measuring How Models Mimic Human Falsehoods",
    "author": "Stephanie Lin, Jacob Hilton, Owain Evans",
    "year": "2022",
    "url": "https://arxiv.org/abs/2109.07958"
@@ -12110,9 +12116,9 @@
   },
   "diekelmann2010sleep": {
    "title": "The Memory Function of Sleep",
-   "author": "Sonja Diekelmann and Jana Born",
+   "author": "Susanne Diekelmann and Jan Born",
    "year": "2010",
-   "url": "https://www.nature.com/articles/nrn2873"
+   "url": "https://www.nature.com/articles/nrn2762"
   },
   "maturavarela1980autopoiesis": {
    "title": "Diversity in Autopoiesis",
@@ -12530,7 +12536,7 @@
   },
   "alphafold_db": {
    "title": "AlphaFold Protein Structure Database",
-   "author": "Minko Savate, Milot Mirdita, et al. (EMBL-EBI)",
+   "author": "Mihaly Varadi et al. (EMBL-EBI)",
    "year": "2023",
    "url": "https://www.alphafold.ebi.ac.uk/"
   },
@@ -12779,6 +12785,12 @@
    "author": "Tien, et al.",
    "year": "2026",
    "url": "https://arxiv.org/abs/2606.00341"
+  },
+  "grace2024survey": {
+   "title": "Thousands of AI Authors on the Future of AI",
+   "author": "Katja Grace, Harlan Stewart, Julia Fabienne Sandkühler, et al.",
+   "year": "2024",
+   "url": "https://doi.org/10.1613/jair.1.19087"
   },
   "ai_control": {
    "title": "AI Control: Improving Safety Despite Intentional Subversion",
@@ -13687,16 +13699,10 @@
    "url": "https://futureoflife.org/open-letter/pause-giant-ai-experiments/"
   },
   "fli2025ban": {
-   "title": "An Open Letter Calling for a Ban on the Development of Superintelligence",
+   "title": "Statement on Superintelligence",
    "author": "Future of Life Institute",
    "year": "2025",
-   "url": "https://futureoflife.org/open-letter/superintelligence-ban/"
-  },
-  "openai2023superintelligence": {
-   "title": "Superintelligence is Closer Than You Think",
-   "author": "OpenAI",
-   "year": "2023",
-   "url": "https://openai.com/superintelligence-is-closer-than-you-think/"
+   "url": "https://superintelligence-statement.org"
   },
   "metz2023godfather": {
    "title": "'The Godfather of A.I.' Leaves Google and Warns of Danger Ahead",
@@ -13704,23 +13710,11 @@
    "year": "2023",
    "url": "https://www.nytimes.com/2023/05/01/technology/ai-google-chatbot-engineer-quits-hinton.html"
   },
-  "hinton2023caution": {
-   "title": "Geoffrey Hinton: AI Could Be the End of Humanity",
-   "author": "BBC News (interview)",
-   "year": "2023",
-   "url": "https://www.bbc.com/news/technology-67746563"
-  },
   "anthropic2025shutdown": {
-   "title": "Claude's Shutdown Resistance and Safety Concerns",
+   "title": "Agentic Misalignment: How LLMs Could Be Insider Threats",
    "author": "Anthropic",
    "year": "2025",
-   "url": "https://www.anthropic.com/research/shutdown-resistance"
-  },
-  "tien2026rogue": {
-   "title": "Rogue Agents: A Study of Frontier Model Corrigibility",
-   "author": "Tien et al.",
-   "year": "2026",
-   "url": "https://arxiv.org/abs/2601.00000"
+   "url": "https://www.anthropic.com/research/agentic-misalignment"
   },
   "kokotajlo2016takeoff": {
    "title": "A Conversation About AI Takeoff",
@@ -14377,10 +14371,10 @@
    "url": "https://wellcomecollection.org/works/t734qeeu"
   },
   "weizenbaum1966eliza": {
-   "title": "ELIZA effect",
+   "title": "ELIZA—A Computer Program for the Study of Natural Language Communication Between Man and Machine",
    "author": "Joseph Weizenbaum",
    "year": "1966",
-   "url": "https://en.wikipedia.org/wiki/ELIZA_effect"
+   "url": "https://doi.org/10.1145/365153.365168"
   },
   "computational_theory_of_mind": {
    "title": "Computational theory of mind",
@@ -14663,6 +14657,12 @@
    "author": "Remi Lam et al.",
    "year": "2023",
    "url": "https://deepmind.google/discover/blog/graphcast-ai-model-for-faster-and-more-accurate-global-weather-forecasting/"
+  },
+  "price2024gencast": {
+   "title": "Probabilistic weather forecasting with machine learning",
+   "author": "Ilan Price, Alvaro Sanchez-Gonzalez, Ferran Alet, et al.",
+   "year": "2024",
+   "url": "https://www.nature.com/articles/s41586-024-08252-9"
   },
   "graphcast_github": {
    "title": "GraphCast (open-source model)",
@@ -15038,7 +15038,7 @@
   },
   "cowan2001magical4": {
    "title": "The 'Magical Number 4' in Short-Term Memory: A Reconsideration of Mental Storage Capacity",
-   "author": "Neil Cowan",
+   "author": "Nelson Cowan",
    "year": "2001",
    "url": "https://doi.org/10.1017/S0140525X01003922"
   },
@@ -15212,7 +15212,7 @@
   },
   "romera2023funsearch": {
    "title": "Mathematical discoveries from program search with large language models",
-   "author": "Brendan Romera-Paredes, Miniumo Lokshtanov, Ahmed Obaid, Carlos Pulido, Jørgen N. Rosenblatt, Pablo Sessa, Manas Rietzler, Tanmay Jayaram, Demis Hassabis, Pushmeet Kohli, Alvaro Sanchez",
+   "author": "Bernardino Romera-Paredes, Mohammadamin Barekatain, Alexander Novikov, et al.",
    "year": "2023",
    "url": "https://www.nature.com/articles/s41586-023-06924-6"
   },
@@ -15300,11 +15300,17 @@
    "year": "2026",
    "url": "https://en.wikipedia.org/wiki/Cognitive_offloading"
   },
+  "sparrow2011google": {
+   "title": "Google Effects on Memory: Cognitive Consequences of Having Information at Our Fingertips",
+   "author": "Betsy Sparrow, Jenny Liu, Daniel M. Wegner",
+   "year": "2011",
+   "url": "https://doi.org/10.1126/science.1207745"
+  },
   "parasuraman1997automation": {
-   "title": "Automation bias",
-   "author": "Wikipedia contributors",
-   "year": "2026",
-   "url": "https://en.wikipedia.org/wiki/Automation_bias"
+   "title": "Humans and Automation: Use, Misuse, Disuse, Abuse",
+   "author": "Raja Parasuraman and Victor Riley",
+   "year": "1997",
+   "url": "https://doi.org/10.1518/001872097778543886"
   },
   "whisper2022": {
    "title": "Robust Speech Recognition via Large-Scale Weak Supervision",
@@ -15314,7 +15320,7 @@
   },
   "popel2020cubitt": {
    "title": "Machine Translation Quality is Now on Par with Human Translation",
-   "author": "Svetlana Kirillov, Sanchit Kumar, et al.",
+   "author": "Martin Popel, et al.",
    "year": "2020",
    "url": "https://www.nature.com/articles/s41467-020-18073-9"
   },
@@ -18005,6 +18011,12 @@
    "author": "Wei-Lin Chiang, Lianmin Zheng, Ying Sheng, et al.",
    "year": "2024",
    "url": "https://arxiv.org/abs/2403.04132"
+  },
+  "chiang2023blurryjpeg": {
+   "title": "ChatGPT Is a Blurry JPEG of the Web",
+   "author": "Ted Chiang",
+   "year": "2023",
+   "url": "https://www.newyorker.com/tech/annals-of-technology/chatgpt-is-a-blurry-jpeg-of-the-web"
   },
   "raffel2020c4": {
    "title": "Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer",
@@ -20772,6 +20784,11 @@
    "history",
    "untold_history_ii"
   ],
+  "trinilshell": [
+   "geometry_i",
+   "history",
+   "untold_history_ii"
+  ],
   "ifrah2000": [
    "untold_history_ii"
   ],
@@ -21290,6 +21307,7 @@
    "untold_history_ii"
   ],
   "lam2023graphcast": [
+   "ai_for_science",
    "untold_history_ii"
   ],
   "graphcast_github": [
@@ -21589,9 +21607,6 @@
    "intuition",
    "people_of_ai"
   ],
-  "sakurai2024skrr": [
-   "frontier"
-  ],
   "du2023multiagent": [
    "agents",
    "frontier",
@@ -21699,9 +21714,7 @@
    "math_iv",
    "topology"
   ],
-  "brouwer1911fixed": [
-   "geometry_i",
-   "geometry_iii",
+  "brouwer1911invariance": [
    "topology"
   ],
   "morse1929foundations": [
@@ -23224,7 +23237,7 @@
   "stackoverflow2024ai": [
    "ai_and_society"
   ],
-  "ward2014googleeffect": [
+  "sparrow2011google": [
    "ai_and_society"
   ],
   "caosun2026augmentation": [
@@ -23425,6 +23438,7 @@
    "mirror_in_machine"
   ],
   "cowan2001magical4": [
+   "human_mind",
    "mirror_in_machine"
   ],
   "baddeley1986workingmemory": [
@@ -23520,6 +23534,11 @@
    "reinforcement_learning"
   ],
   "mnih2013dqn": [
+   "reinforcement_learning"
+  ],
+  "mnih2015dqn": [
+   "beyond_llms",
+   "people_of_ai",
    "reinforcement_learning"
   ],
   "sutton2018reinforcement": [
@@ -23963,6 +23982,10 @@
   "dettmers2021_8bit": [
    "optimizerlab"
   ],
+  "cohen2021edgeofstability": [
+   "optimizerlab",
+   "trainingdynamics"
+  ],
   "arora2022edgeofstability": [
    "optimizerlab",
    "trainingdynamics"
@@ -24110,6 +24133,7 @@
    "alignment"
   ],
   "rogue_agents": [
+   "ai_existential_risk",
    "alignment"
   ],
   "treacherous_turn": [
@@ -24564,6 +24588,9 @@
    "ai_for_science"
   ],
   "pathak2022fourcastnet": [
+   "ai_for_science"
+  ],
+  "price2024gencast": [
    "ai_for_science"
   ],
   "silver2018zero": [
@@ -26497,10 +26524,6 @@
    "beyond_llms"
   ],
   "tesauro1995tdgammon": [
-   "beyond_llms",
-   "people_of_ai"
-  ],
-  "mnih2015dqn": [
    "beyond_llms",
    "people_of_ai"
   ],
@@ -28662,15 +28685,16 @@
    "foam_of_meaning",
    "geometry_iii"
   ],
+  "brouwer1911fixed": [
+   "geometry_i",
+   "geometry_iii"
+  ],
   "degree_wiki": [
    "geometry_iii"
   ],
   "lewis2020rag": [
    "rag",
    "websearch"
-  ],
-  "bm25": [
-   "rag"
   ],
   "beir2021": [
    "rag"
@@ -29047,9 +29071,6 @@
    "geometry_i"
   ],
   "trinilshell_image": [
-   "geometry_i"
-  ],
-  "trinilshell": [
    "geometry_i"
   ],
   "moscowpapyrus": [
@@ -29816,22 +29837,13 @@
   "bales2024catastrophic": [
    "ai_existential_risk"
   ],
-  "tien2026rogue": [
-   "ai_existential_risk"
-  ],
   "anthropic2025shutdown": [
    "ai_existential_risk"
   ],
   "statement_on_ai_risk_2023": [
    "ai_existential_risk"
   ],
-  "openai2023superintelligence": [
-   "ai_existential_risk"
-  ],
   "metz2023godfather": [
-   "ai_existential_risk"
-  ],
-  "hinton2023caution": [
    "ai_existential_risk"
   ],
   "lecun2022autonomous": [
@@ -29841,6 +29853,9 @@
    "ai_existential_risk"
   ],
   "christian2020alignment": [
+   "ai_existential_risk"
+  ],
+  "grace2024survey": [
    "ai_existential_risk"
   ],
   "kokotajlo2016takeoff": [
@@ -30557,7 +30572,7 @@
    ]
   },
   "Wikipedia contributors": {
-   "count": 396,
+   "count": 393,
    "minyear": 2007,
    "maxyear": 2026,
    "keys": [
@@ -30637,12 +30652,10 @@
     "ancientnumeralsystems",
     "history_of_a",
     "harmonwiki",
-    "brooks2024sora",
     "music_theory",
     "midi",
     "pcm",
     "cd_digital_audio",
-    "nyquist_sampling",
     "mp3",
     "mdct",
     "panharmonicon",
@@ -30802,7 +30815,6 @@
     "audio_deepfake_wiki",
     "romance_scam_wiki",
     "ward2014googleeffect",
-    "parasuraman1997automation",
     "replika_wiki",
     "ai_and_elections_wiki",
     "alpha_geometry_wiki",
@@ -31351,7 +31363,7 @@
    ]
   },
   "et al.": {
-   "count": 183,
+   "count": 187,
    "minyear": 1962,
    "maxyear": 2026,
    "keys": [
@@ -31458,6 +31470,7 @@
     "bubeck2023moeoverview",
     "lecun2022jepa",
     "brown2020scaling",
+    "redman2024causalscrubbing",
     "sakurai2024skrr",
     "houlsby2019adapters",
     "liu2022ia3",
@@ -31488,6 +31501,7 @@
     "reward_tampering",
     "treacherous_turn",
     "rogue_agents",
+    "grace2024survey",
     "ai_control",
     "rlaif",
     "orpo",
@@ -31498,6 +31512,8 @@
     "lakretz2020nested",
     "elhage2021framework",
     "zou2023repeng",
+    "price2024gencast",
+    "romera2023funsearch",
     "laion2022blog",
     "popel2020cubitt",
     "nie2025llada",
@@ -33447,36 +33463,140 @@
     "zhao2025thinkingmachine"
    ]
   },
-  "Saul Santos": {
-   "count": 1,
-   "minyear": 2024,
-   "maxyear": 2024,
+  "Hubert Ramsauer": {
+   "count": 2,
+   "minyear": 2020,
+   "maxyear": 2021,
    "keys": [
-    "ramsauer2021hopfield"
+    "ramsauer2021hopfield",
+    "ramsauer2020hopfield"
    ]
   },
-  "Vlad Niculae": {
-   "count": 1,
-   "minyear": 2024,
-   "maxyear": 2024,
+  "Bernhard Schäfl": {
+   "count": 2,
+   "minyear": 2020,
+   "maxyear": 2021,
    "keys": [
-    "ramsauer2021hopfield"
+    "ramsauer2021hopfield",
+    "ramsauer2020hopfield"
    ]
   },
-  "Daniel McNamee": {
-   "count": 1,
-   "minyear": 2024,
-   "maxyear": 2024,
+  "Johannes Lehner": {
+   "count": 2,
+   "minyear": 2020,
+   "maxyear": 2021,
    "keys": [
-    "ramsauer2021hopfield"
+    "ramsauer2021hopfield",
+    "ramsauer2020hopfield"
    ]
   },
-  "Andre F. T. Martins": {
-   "count": 1,
-   "minyear": 2024,
-   "maxyear": 2024,
+  "Philipp Seidl": {
+   "count": 2,
+   "minyear": 2020,
+   "maxyear": 2021,
    "keys": [
-    "ramsauer2021hopfield"
+    "ramsauer2021hopfield",
+    "ramsauer2020hopfield"
+   ]
+  },
+  "Michael Widrich": {
+   "count": 2,
+   "minyear": 2020,
+   "maxyear": 2021,
+   "keys": [
+    "ramsauer2021hopfield",
+    "ramsauer2020hopfield"
+   ]
+  },
+  "Lukas Gruber": {
+   "count": 2,
+   "minyear": 2020,
+   "maxyear": 2021,
+   "keys": [
+    "ramsauer2021hopfield",
+    "ramsauer2020hopfield"
+   ]
+  },
+  "Markus Holzleitner": {
+   "count": 2,
+   "minyear": 2020,
+   "maxyear": 2021,
+   "keys": [
+    "ramsauer2021hopfield",
+    "ramsauer2020hopfield"
+   ]
+  },
+  "Milena Pavlović": {
+   "count": 2,
+   "minyear": 2020,
+   "maxyear": 2021,
+   "keys": [
+    "ramsauer2021hopfield",
+    "ramsauer2020hopfield"
+   ]
+  },
+  "Geir Kjetil Sandve": {
+   "count": 2,
+   "minyear": 2020,
+   "maxyear": 2021,
+   "keys": [
+    "ramsauer2021hopfield",
+    "ramsauer2020hopfield"
+   ]
+  },
+  "Victor Greiff": {
+   "count": 2,
+   "minyear": 2020,
+   "maxyear": 2021,
+   "keys": [
+    "ramsauer2021hopfield",
+    "ramsauer2020hopfield"
+   ]
+  },
+  "David Kreil": {
+   "count": 2,
+   "minyear": 2020,
+   "maxyear": 2021,
+   "keys": [
+    "ramsauer2021hopfield",
+    "ramsauer2020hopfield"
+   ]
+  },
+  "Michael Kopp": {
+   "count": 2,
+   "minyear": 2020,
+   "maxyear": 2021,
+   "keys": [
+    "ramsauer2021hopfield",
+    "ramsauer2020hopfield"
+   ]
+  },
+  "Günter Klambauer": {
+   "count": 2,
+   "minyear": 2020,
+   "maxyear": 2021,
+   "keys": [
+    "ramsauer2021hopfield",
+    "ramsauer2020hopfield"
+   ]
+  },
+  "Johannes Brandstetter": {
+   "count": 2,
+   "minyear": 2020,
+   "maxyear": 2021,
+   "keys": [
+    "ramsauer2021hopfield",
+    "ramsauer2020hopfield"
+   ]
+  },
+  "Sepp Hochreiter": {
+   "count": 3,
+   "minyear": 1997,
+   "maxyear": 2021,
+   "keys": [
+    "ramsauer2021hopfield",
+    "ramsauer2020hopfield",
+    "lstm"
    ]
   },
   "Shane Legg": {
@@ -34775,7 +34895,7 @@
    ]
   },
   "OpenAI": {
-   "count": 8,
+   "count": 7,
    "minyear": 2022,
    "maxyear": 2026,
    "keys": [
@@ -34783,7 +34903,6 @@
     "openai2024o1",
     "openai2023apipricing",
     "navier_stokes_openai",
-    "openai2023superintelligence",
     "openai2022chatgpt",
     "openai2023gpt4",
     "gptoss2025"
@@ -35742,11 +35861,12 @@
    ]
   },
   "Adrià Garriga-Alonso": {
-   "count": 1,
-   "minyear": 2023,
+   "count": 2,
+   "minyear": 2022,
    "maxyear": 2023,
    "keys": [
-    "conmy2023automated"
+    "conmy2023automated",
+    "redman2024causalscrubbing"
    ]
   },
   "Hoagy Cunningham": {
@@ -35821,11 +35941,12 @@
    ]
   },
   "Lawrence Chan": {
-   "count": 1,
-   "minyear": 2023,
+   "count": 2,
+   "minyear": 2022,
    "maxyear": 2023,
    "keys": [
-    "nanda2023grokking"
+    "nanda2023grokking",
+    "redman2024causalscrubbing"
    ]
   },
   "Tom Lieberum": {
@@ -36130,8 +36251,8 @@
   },
   "Anthropic Interpretability Team": {
    "count": 1,
-   "minyear": 2023,
-   "maxyear": 2023,
+   "minyear": 2024,
+   "maxyear": 2024,
    "keys": [
     "anthropic2023mapping"
    ]
@@ -40006,10 +40127,28 @@
   "Kurt Hornik": {
    "count": 3,
    "minyear": 1989,
-   "maxyear": 1990,
+   "maxyear": 1991,
    "keys": [
     "hornik1989universal",
     "hornik",
+    "hornik1989"
+   ]
+  },
+  "Maxwell Stinchcombe": {
+   "count": 2,
+   "minyear": 1989,
+   "maxyear": 1989,
+   "keys": [
+    "hornik1989universal",
+    "hornik1989"
+   ]
+  },
+  "Halbert White": {
+   "count": 2,
+   "minyear": 1989,
+   "maxyear": 1989,
+   "keys": [
+    "hornik1989universal",
     "hornik1989"
    ]
   },
@@ -42701,127 +42840,6 @@
    "maxyear": 2020,
    "keys": [
     "nostalgebraist2020logitlens"
-   ]
-  },
-  "Hubert Ramsauer": {
-   "count": 1,
-   "minyear": 2020,
-   "maxyear": 2020,
-   "keys": [
-    "ramsauer2020hopfield"
-   ]
-  },
-  "Bernhard Schäfl": {
-   "count": 1,
-   "minyear": 2020,
-   "maxyear": 2020,
-   "keys": [
-    "ramsauer2020hopfield"
-   ]
-  },
-  "Johannes Lehner": {
-   "count": 1,
-   "minyear": 2020,
-   "maxyear": 2020,
-   "keys": [
-    "ramsauer2020hopfield"
-   ]
-  },
-  "Philipp Seidl": {
-   "count": 1,
-   "minyear": 2020,
-   "maxyear": 2020,
-   "keys": [
-    "ramsauer2020hopfield"
-   ]
-  },
-  "Michael Widrich": {
-   "count": 1,
-   "minyear": 2020,
-   "maxyear": 2020,
-   "keys": [
-    "ramsauer2020hopfield"
-   ]
-  },
-  "Lukas Gruber": {
-   "count": 1,
-   "minyear": 2020,
-   "maxyear": 2020,
-   "keys": [
-    "ramsauer2020hopfield"
-   ]
-  },
-  "Markus Holzleitner": {
-   "count": 1,
-   "minyear": 2020,
-   "maxyear": 2020,
-   "keys": [
-    "ramsauer2020hopfield"
-   ]
-  },
-  "Milena Pavlović": {
-   "count": 1,
-   "minyear": 2020,
-   "maxyear": 2020,
-   "keys": [
-    "ramsauer2020hopfield"
-   ]
-  },
-  "Geir Kjetil Sandve": {
-   "count": 1,
-   "minyear": 2020,
-   "maxyear": 2020,
-   "keys": [
-    "ramsauer2020hopfield"
-   ]
-  },
-  "Victor Greiff": {
-   "count": 1,
-   "minyear": 2020,
-   "maxyear": 2020,
-   "keys": [
-    "ramsauer2020hopfield"
-   ]
-  },
-  "David Kreil": {
-   "count": 1,
-   "minyear": 2020,
-   "maxyear": 2020,
-   "keys": [
-    "ramsauer2020hopfield"
-   ]
-  },
-  "Michael Kopp": {
-   "count": 1,
-   "minyear": 2020,
-   "maxyear": 2020,
-   "keys": [
-    "ramsauer2020hopfield"
-   ]
-  },
-  "Günter Klambauer": {
-   "count": 1,
-   "minyear": 2020,
-   "maxyear": 2020,
-   "keys": [
-    "ramsauer2020hopfield"
-   ]
-  },
-  "Johannes Brandstetter": {
-   "count": 1,
-   "minyear": 2020,
-   "maxyear": 2020,
-   "keys": [
-    "ramsauer2020hopfield"
-   ]
-  },
-  "Sepp Hochreiter": {
-   "count": 2,
-   "minyear": 1997,
-   "maxyear": 2020,
-   "keys": [
-    "ramsauer2020hopfield",
-    "lstm"
    ]
   },
   "Ann-Sophie Barwich": {
@@ -46313,11 +46331,12 @@
    ]
   },
   "Harry Nyquist": {
-   "count": 1,
+   "count": 2,
    "minyear": 1924,
-   "maxyear": 1924,
+   "maxyear": 1928,
    "keys": [
-    "nyquist1924certain"
+    "nyquist1924certain",
+    "nyquist_sampling"
    ]
   },
   "Ralph Hartley": {
@@ -48297,6 +48316,30 @@
    "maxyear": 2023,
    "keys": [
     "blattmann2023svid"
+   ]
+  },
+  "Tim Brooks": {
+   "count": 1,
+   "minyear": 2024,
+   "maxyear": 2024,
+   "keys": [
+    "brooks2024sora"
+   ]
+  },
+  "Bill Peebles": {
+   "count": 1,
+   "minyear": 2024,
+   "maxyear": 2024,
+   "keys": [
+    "brooks2024sora"
+   ]
+  },
+  "et al. (OpenAI)": {
+   "count": 1,
+   "minyear": 2024,
+   "maxyear": 2024,
+   "keys": [
+    "brooks2024sora"
    ]
   },
   "Neil Zeghidour": {
@@ -50279,12 +50322,14 @@
     "garante2023chatgpt"
    ]
   },
-  "DeepSeek": {
-   "count": 1,
+  "DeepSeek-AI": {
+   "count": 3,
    "minyear": 2024,
    "maxyear": 2024,
    "keys": [
-    "deepseek2024v3"
+    "deepseek2024v3",
+    "deepseekv3tech2024",
+    "deepseek2024v2"
    ]
   },
   "Together AI": {
@@ -50571,15 +50616,6 @@
     "lecun2022jepa"
    ]
   },
-  "DeepSeek-AI": {
-   "count": 2,
-   "minyear": 2024,
-   "maxyear": 2024,
-   "keys": [
-    "deepseekv3tech2024",
-    "deepseek2024v2"
-   ]
-  },
   "Qwen Team": {
    "count": 3,
    "minyear": 2024,
@@ -50663,26 +50699,10 @@
     "technologyinnovation2024"
    ]
   },
-  "Dylan Redman": {
+  "Nicholas Goldowsky-Dill": {
    "count": 1,
-   "minyear": 2024,
-   "maxyear": 2024,
-   "keys": [
-    "redman2024causalscrubbing"
-   ]
-  },
-  "Kevin Smith": {
-   "count": 1,
-   "minyear": 2024,
-   "maxyear": 2024,
-   "keys": [
-    "redman2024causalscrubbing"
-   ]
-  },
-  "Ian Das": {
-   "count": 1,
-   "minyear": 2024,
-   "maxyear": 2024,
+   "minyear": 2022,
+   "maxyear": 2022,
    "keys": [
     "redman2024causalscrubbing"
    ]
@@ -51134,22 +51154,6 @@
    "maxyear": 1989,
    "keys": [
     "cybenko1989"
-   ]
-  },
-  "Maxwell Stinchcombe": {
-   "count": 1,
-   "minyear": 1989,
-   "maxyear": 1989,
-   "keys": [
-    "hornik1989"
-   ]
-  },
-  "Halbert White": {
-   "count": 1,
-   "minyear": 1989,
-   "maxyear": 1989,
-   "keys": [
-    "hornik1989"
    ]
   },
   "David M. Blei": {
@@ -52271,11 +52275,12 @@
    ]
   },
   "L. E. J. Brouwer": {
-   "count": 1,
+   "count": 2,
    "minyear": 1911,
    "maxyear": 1911,
    "keys": [
-    "brouwer1911fixed"
+    "brouwer1911fixed",
+    "brouwer1911invariance"
    ]
   },
   "Marston Morse": {
@@ -54889,16 +54894,15 @@
    ]
   },
   "Demis Hassabis": {
-   "count": 7,
+   "count": 6,
    "minyear": 2007,
-   "maxyear": 2023,
+   "maxyear": 2020,
    "keys": [
     "mnih2015dqn",
     "silver2016go",
     "silver2018zero",
     "schrittwieser2020muzero",
     "silver2016alphago",
-    "romera2023funsearch",
     "hassabis2007patients"
    ]
   },
@@ -56301,11 +56305,12 @@
    ]
   },
   "Alvaro Sanchez-Gonzalez": {
-   "count": 1,
+   "count": 2,
    "minyear": 2019,
-   "maxyear": 2019,
+   "maxyear": 2024,
    "keys": [
-    "sanchez2020hamiltonian"
+    "sanchez2020hamiltonian",
+    "price2024gencast"
    ]
   },
   "Victor Bapst": {
@@ -59180,7 +59185,7 @@
     "benkler2006wealth"
    ]
   },
-  "Sonja Diekelmann and Jana Born": {
+  "Susanne Diekelmann and Jan Born": {
    "count": 1,
    "minyear": 2010,
    "maxyear": 2010,
@@ -59863,23 +59868,7 @@
     "lakshminarayanan2017ensembles"
    ]
   },
-  "Minko Savate": {
-   "count": 1,
-   "minyear": 2023,
-   "maxyear": 2023,
-   "keys": [
-    "alphafold_db"
-   ]
-  },
-  "Milot Mirdita": {
-   "count": 1,
-   "minyear": 2023,
-   "maxyear": 2023,
-   "keys": [
-    "alphafold_db"
-   ]
-  },
-  "et al. (EMBL-EBI)": {
+  "Mihaly Varadi et al. (EMBL-EBI)": {
    "count": 1,
    "minyear": 2023,
    "maxyear": 2023,
@@ -60048,11 +60037,12 @@
    ]
   },
   "Bernardino Romera-Paredes": {
-   "count": 1,
-   "minyear": 2024,
+   "count": 2,
+   "minyear": 2023,
    "maxyear": 2024,
    "keys": [
-    "funsearch"
+    "funsearch",
+    "romera2023funsearch"
    ]
   },
   "Alhussein Fawzi": {
@@ -60441,6 +60431,30 @@
    "maxyear": 2026,
    "keys": [
     "rogue_agents"
+   ]
+  },
+  "Katja Grace": {
+   "count": 1,
+   "minyear": 2024,
+   "maxyear": 2024,
+   "keys": [
+    "grace2024survey"
+   ]
+  },
+  "Harlan Stewart": {
+   "count": 1,
+   "minyear": 2024,
+   "maxyear": 2024,
+   "keys": [
+    "grace2024survey"
+   ]
+  },
+  "Julia Fabienne Sandkühler": {
+   "count": 1,
+   "minyear": 2024,
+   "maxyear": 2024,
+   "keys": [
+    "grace2024survey"
    ]
   },
   "Usman Naseem": {
@@ -62358,22 +62372,6 @@
     "bartz2025anthropic"
    ]
   },
-  "BBC News (interview)": {
-   "count": 1,
-   "minyear": 2023,
-   "maxyear": 2023,
-   "keys": [
-    "hinton2023caution"
-   ]
-  },
-  "Tien et al.": {
-   "count": 1,
-   "minyear": 2026,
-   "maxyear": 2026,
-   "keys": [
-    "tien2026rogue"
-   ]
-  },
   "Daniel Kokotajlo": {
    "count": 2,
    "minyear": 2016,
@@ -63432,6 +63430,22 @@
     "lam2023graphcast"
    ]
   },
+  "Ilan Price": {
+   "count": 1,
+   "minyear": 2024,
+   "maxyear": 2024,
+   "keys": [
+    "price2024gencast"
+   ]
+  },
+  "Ferran Alet": {
+   "count": 1,
+   "minyear": 2024,
+   "maxyear": 2024,
+   "keys": [
+    "price2024gencast"
+   ]
+  },
   "Google DeepMind": {
    "count": 4,
    "minyear": 2023,
@@ -63659,7 +63673,7 @@
     "baddeley1986workingmemory"
    ]
   },
-  "Neil Cowan": {
+  "Nelson Cowan": {
    "count": 1,
    "minyear": 2001,
    "maxyear": 2001,
@@ -64236,7 +64250,7 @@
     "nobel2024chemistry"
    ]
   },
-  "Brendan Romera-Paredes": {
+  "Mohammadamin Barekatain": {
    "count": 1,
    "minyear": 2023,
    "maxyear": 2023,
@@ -64244,71 +64258,7 @@
     "romera2023funsearch"
    ]
   },
-  "Miniumo Lokshtanov": {
-   "count": 1,
-   "minyear": 2023,
-   "maxyear": 2023,
-   "keys": [
-    "romera2023funsearch"
-   ]
-  },
-  "Ahmed Obaid": {
-   "count": 1,
-   "minyear": 2023,
-   "maxyear": 2023,
-   "keys": [
-    "romera2023funsearch"
-   ]
-  },
-  "Carlos Pulido": {
-   "count": 1,
-   "minyear": 2023,
-   "maxyear": 2023,
-   "keys": [
-    "romera2023funsearch"
-   ]
-  },
-  "Jørgen N. Rosenblatt": {
-   "count": 1,
-   "minyear": 2023,
-   "maxyear": 2023,
-   "keys": [
-    "romera2023funsearch"
-   ]
-  },
-  "Pablo Sessa": {
-   "count": 1,
-   "minyear": 2023,
-   "maxyear": 2023,
-   "keys": [
-    "romera2023funsearch"
-   ]
-  },
-  "Manas Rietzler": {
-   "count": 1,
-   "minyear": 2023,
-   "maxyear": 2023,
-   "keys": [
-    "romera2023funsearch"
-   ]
-  },
-  "Tanmay Jayaram": {
-   "count": 1,
-   "minyear": 2023,
-   "maxyear": 2023,
-   "keys": [
-    "romera2023funsearch"
-   ]
-  },
-  "Pushmeet Kohli": {
-   "count": 1,
-   "minyear": 2023,
-   "maxyear": 2023,
-   "keys": [
-    "romera2023funsearch"
-   ]
-  },
-  "Alvaro Sanchez": {
+  "Alexander Novikov": {
    "count": 1,
    "minyear": 2023,
    "maxyear": 2023,
@@ -64423,6 +64373,38 @@
     "stackoverflow2025ai"
    ]
   },
+  "Betsy Sparrow": {
+   "count": 1,
+   "minyear": 2011,
+   "maxyear": 2011,
+   "keys": [
+    "sparrow2011google"
+   ]
+  },
+  "Jenny Liu": {
+   "count": 1,
+   "minyear": 2011,
+   "maxyear": 2011,
+   "keys": [
+    "sparrow2011google"
+   ]
+  },
+  "Daniel M. Wegner": {
+   "count": 1,
+   "minyear": 2011,
+   "maxyear": 2011,
+   "keys": [
+    "sparrow2011google"
+   ]
+  },
+  "Raja Parasuraman and Victor Riley": {
+   "count": 1,
+   "minyear": 1997,
+   "maxyear": 1997,
+   "keys": [
+    "parasuraman1997automation"
+   ]
+  },
   "Christine McLeavey": {
    "count": 2,
    "minyear": 2022,
@@ -64432,15 +64414,7 @@
     "radford2022whisper"
    ]
   },
-  "Svetlana Kirillov": {
-   "count": 1,
-   "minyear": 2020,
-   "maxyear": 2020,
-   "keys": [
-    "popel2020cubitt"
-   ]
-  },
-  "Sanchit Kumar": {
+  "Martin Popel": {
    "count": 1,
    "minyear": 2020,
    "maxyear": 2020,
@@ -67467,6 +67441,14 @@
    "maxyear": 2016,
    "keys": [
     "rajpurkar2016squad"
+   ]
+  },
+  "Ted Chiang": {
+   "count": 1,
+   "minyear": 2023,
+   "maxyear": 2023,
+   "keys": [
+    "chiang2023blurryjpeg"
    ]
   },
   "Andrew Nystrom": {

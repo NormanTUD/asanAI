@@ -224,7 +224,7 @@ This pipeline takes weeks of engineering and significant compute. The result is 
 <div class="md">
 ### Why Data Is Half the Secret
 
-A famous result from the **DataComp-LM** benchmark: at fixed compute, model quality scales linearly with the **quality-adjusted token count**. Doubling the data quality is equivalent to doubling model size.
+A famous result from the **DataComp-LM** benchmark: at fixed compute, model quality improves strongly with the **quality-adjusted token count**. The paper reports large gains from better filtering; the slogan that doubling data quality is equivalent to doubling model size is a rough summary, not an exact law.
 
 The implication: data work has higher ROI than architecture work for most practitioners. A 1B model on FineWeb-Edu often beats a 3B model on Common Crawl. Frontier labs spend **half their training-team headcount on data**, not on algorithms.
 </div>

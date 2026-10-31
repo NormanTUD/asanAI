@@ -164,6 +164,14 @@ must_not_contain("ai_existential_risk.php", ["October 2025, a broader letter", "
 must_not_contain("philosophy.php", ["under every major scientific theory", "nothing it is like to be them", "surpass the Turing Test regularly"])
 must_not_contain("myths.php", ["lawsuit that became a settlement"])
 must_not_contain("atlas.php", ["that appears anywhere in this course is a dot"])
+must_not_contain("reinforcement_learning.php", ["the first open-weight model to exhibit"])
+must_not_contain("normalizationlab.php", ["empirically wins on every high-resolution image benchmark"])
+must_not_contain("reasoning.php", ["(used in o1,"])
+must_not_contain("finetuninglab.php", ["A 70B QLoRA fine-tune fits on a single 48 GB GPU"])
+must_not_contain("running_locally.php", ["Fits a 70B fine-tune on a single 48 GB GPU"])
+must_not_contain("production_serving.php", ["trained on Phi-3-medium's outputs"])
+must_not_contain("training_data.php", ["model quality scales linearly with the **quality-adjusted token count**"])
+must_not_contain("resnetlab.php", ["special case of a Highway Network"])
 
 # ---------------------------------------------------------------------------
 # Report

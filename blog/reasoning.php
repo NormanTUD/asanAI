@@ -124,7 +124,7 @@ Training a PRM:
 2. Have humans label each step as correct / incorrect.
 3. Train a classifier on (state, step) → score.
 
-At inference, beam search guided by the PRM dramatically improves accuracy on math (used in o1, Qwen-QwQ, and many open-source replicas). The cost is labelling data; synthetic PRMs (auto-labelling using a stronger model) are now competitive.
+At inference, beam search guided by the PRM dramatically improves accuracy on math (used in systems such as Qwen-QwQ and many open-source replicas; OpenAI has not published o1's exact method). The cost is labelling data; synthetic PRMs (auto-labelling using a stronger model) are now competitive.
 
 The Math-Shepherd method (\cite[Zhang et al., 2024]{zhang2024mathshepherd}) auto-labels step correctness by checking whether later steps can reach the correct final answer from this point, eliminating the need for human step labels.
 </div>

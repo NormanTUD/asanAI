@@ -54,7 +54,7 @@ The L1 penalty forces only a few features to be active for any input. Anthropic'
 * Features for **code bugs**, **refusal**, **deception** could be identified.
 * Anthropic reported these features in Claude 3 Sonnet; whether they are **universal** across model families is still an open question.
 
-The “**Golden Gate Claude**” demonstration (\cite[Templeton et al., 2024]{anthropic2024goldengate}) amplified a single feature to make the model obsessed with the Golden Gate Bridge. This is the first direct evidence that specific, semantically meaningful features can be **causally manipulated** at inference time.
+The “**Golden Gate Claude**” demonstration (\cite[Templeton et al., 2024]{anthropic2024goldengate}) amplified a single feature to make the model obsessed with the Golden Gate Bridge. This is direct evidence that specific, semantically meaningful features can be **causally manipulated** at inference time.
 </div>
 
 <div class="md">

@@ -603,7 +603,7 @@ so the *change* across the block is just $F_\ell(h_\ell)$, the small adjustment 
 
 ### Wide networks have flatter landscapes
 
-In the same paper, doubling only the number of filters per layer of ResNet-56 ($k=1 \to 2 \to 4 \to 8$, Wide-ResNet) makes the basin flatter and the test error drop monotonically ($5.89\% \to 5.07\% \to 4.34\% \to 3.93\%$ on CIFAR-10). \citeauthor{choromanska2015loss} (\citeyear{choromanska2015loss}) gave a statistical-physics argument for this: in a deep random network, the loss behaves like a disordered physical system in high dimension, and the number of bad local minima drops exponentially with width while the number of good ones barely changes. \citeauthor{nguyen2017loss} (\citeyear{nguyen2017loss}) proved a related result: if one hidden layer is wider than the number of training points and the layers above it are pyramidal, then *almost all* local minima are global minima.
+In the same paper, doubling only the number of filters per layer of ResNet-56 ($k=1 \to 2 \to 4 \to 8$, Wide-ResNet) makes the basin flatter and the test error drop monotonically ($5.89\% \to 5.07\% \to 4.34\% \to 3.93\%$ on CIFAR-10). \citeauthor{choromanska2015loss} (\citeyear{choromanska2015loss}) gave a statistical-physics argument for this: in a deep random network, the loss behaves like a disordered physical system in high dimension, and the number of bad local minima drops exponentially with the size of the network while the number of good ones barely changes. \citeauthor{nguyen2017loss} (\citeyear{nguyen2017loss}) proved a related result: if one hidden layer is wider than the number of training points and the layers above it are pyramidal, then *almost all* local minima are global minima.
 
 </div>
 

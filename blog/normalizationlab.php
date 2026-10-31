@@ -373,7 +373,7 @@ $$
 
 * **Affine $\gamma_c, \beta_c$.** Two learnable vectors of length $C$. They let the network *undo* the normalization if it wants, the layer starts as pure centering + unit-variance and learns to deviate only if useful.
 
-**Why this is the diffusion default.** BatchNorm fails at batch size 1. LayerNorm discards all channel relationships, treating every channel identically. GroupNorm keeps a knob ($G$) that lets you trade those two extremes against each other, and the answer it picks ($G = 32$) empirically wins on every high-resolution image benchmark. Notice that no term in the equations depends on $N$, the batch can be any size, including 1.
+**Why this is the diffusion default.** BatchNorm fails at batch size 1. LayerNorm discards all channel relationships, treating every channel identically. GroupNorm keeps a knob ($G$) that lets you trade those two extremes against each other, and the answer it picks ($G = 32$) works well across the high-resolution image benchmarks studied in the paper. Notice that no term in the equations depends on $N$, the batch can be any size, including 1.
 
 </div>
 </details>

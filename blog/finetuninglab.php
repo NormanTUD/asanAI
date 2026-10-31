@@ -244,7 +244,7 @@ With $r = 16$ on a 4096×4096 weight matrix, LoRA adds ~131K parameters (0.78% o
 <div class="md">
 ### QLoRA
 
-Combines 4-bit quantization of the base model with LoRA adapters in fp16 (\cite[Dettmers et al., 2023]{dettmers2023qlora}). A 70B QLoRA fine-tune fits on a single 48 GB GPU.
+Combines 4-bit quantization of the base model with LoRA adapters in fp16 (\cite[Dettmers et al., 2023]{dettmers2023qlora}). The paper's headline result is a 65B QLoRA fine-tune on a single 48 GB GPU; 70B is an extrapolation, not a demonstrated headline result.
 
 ### Other PEFT Methods
 

@@ -999,11 +999,13 @@
   "city": "San Francisco, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "conmy2023automated"
+   "conmy2023automated",
+   "redman2024causalscrubbing"
   ],
   "cited_in": [
+   "frontier",
    "mechanistic_interpretability"
   ]
  },
@@ -2003,6 +2005,7 @@
    "history",
    "music_video_generation",
    "people_of_ai",
+   "reinforcement_learning",
    "transformer"
   ]
  },
@@ -3101,11 +3104,13 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "sanchez2020hamiltonian"
+   "sanchez2020hamiltonian",
+   "price2024gencast"
   ],
   "cited_in": [
+   "ai_for_science",
    "beyond_llms"
   ]
  },
@@ -3252,7 +3257,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "people_of_ai"
+   "people_of_ai",
+   "reinforcement_learning"
   ]
  },
  {
@@ -3638,13 +3644,9 @@
   "city": "Cambridge, USA",
   "year": 2024.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "ramsauer2021hopfield"
-  ],
-  "cited_in": [
-   "attentionlab"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Andrea Bottino",
@@ -3732,7 +3734,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "people_of_ai"
+   "people_of_ai",
+   "reinforcement_learning"
   ]
  },
  {
@@ -3803,7 +3806,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "people_of_ai"
+   "people_of_ai",
+   "reinforcement_learning"
   ]
  },
  {
@@ -6893,16 +6897,14 @@
   "variants": [
    "interview"
   ],
-  "works": 4,
+  "works": 3,
   "keys": [
    "edroberts_bbc",
    "bbc2023heart",
-   "collins2025woty",
-   "hinton2023caution"
+   "collins2025woty"
   ],
   "cited_in": [
    "ai_and_society",
-   "ai_existential_risk",
    "history",
    "vibe_coding"
   ]
@@ -7344,11 +7346,13 @@
   "city": "London, United Kingdom",
   "year": 2024.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "funsearch"
+   "funsearch",
+   "romera2023funsearch"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science"
   ]
  },
@@ -7510,11 +7514,13 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "ramsauer2021hopfield",
    "ramsauer2020hopfield"
   ],
   "cited_in": [
+   "attentionlab",
    "fact_lookup"
   ]
  },
@@ -9570,7 +9576,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "people_of_ai"
+   "people_of_ai",
+   "reinforcement_learning"
   ]
  },
  {
@@ -12146,7 +12153,10 @@
   "keys": [
    "cohen2021edgeofstability"
   ],
-  "cited_in": []
+  "cited_in": [
+   "optimizerlab",
+   "trainingdynamics"
+  ]
  },
  {
   "name": "Simran Kaur",
@@ -12161,7 +12171,10 @@
   "keys": [
    "cohen2021edgeofstability"
   ],
-  "cited_in": []
+  "cited_in": [
+   "optimizerlab",
+   "trainingdynamics"
+  ]
  },
  {
   "name": "Andrej Risteski",
@@ -12176,7 +12189,10 @@
   "keys": [
    "cohen2021edgeofstability"
   ],
-  "cited_in": []
+  "cited_in": [
+   "optimizerlab",
+   "trainingdynamics"
+  ]
  },
  {
   "name": "Pratik Chaudhari",
@@ -12759,13 +12775,9 @@
   "city": "San Diego, USA",
   "year": 2001.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "cowan2001magical4"
-  ],
-  "cited_in": [
-   "mirror_in_machine"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Gustav Theodor Fechner",
@@ -13982,13 +13994,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "romera2023funsearch"
-  ],
-  "cited_in": [
-   "ai_and_society"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Miniumo Lokshtanov",
@@ -13999,13 +14007,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "romera2023funsearch"
-  ],
-  "cited_in": [
-   "ai_and_society"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Ahmed Obaid",
@@ -14016,13 +14020,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "romera2023funsearch"
-  ],
-  "cited_in": [
-   "ai_and_society"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Carlos Pulido",
@@ -14033,13 +14033,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "romera2023funsearch"
-  ],
-  "cited_in": [
-   "ai_and_society"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Jørgen N. Rosenblatt",
@@ -14050,13 +14046,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "romera2023funsearch"
-  ],
-  "cited_in": [
-   "ai_and_society"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Pablo Sessa",
@@ -14067,13 +14059,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "romera2023funsearch"
-  ],
-  "cited_in": [
-   "ai_and_society"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Manas Rietzler",
@@ -14084,13 +14072,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "romera2023funsearch"
-  ],
-  "cited_in": [
-   "ai_and_society"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Tanmay Jayaram",
@@ -14101,13 +14085,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "romera2023funsearch"
-  ],
-  "cited_in": [
-   "ai_and_society"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Pushmeet Kohli",
@@ -14118,13 +14098,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "romera2023funsearch"
-  ],
-  "cited_in": [
-   "ai_and_society"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Alvaro Sanchez",
@@ -14135,13 +14111,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "romera2023funsearch"
-  ],
-  "cited_in": [
-   "ai_and_society"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Kang Bi",
@@ -14435,13 +14407,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "popel2020cubitt"
-  ],
-  "cited_in": [
-   "ai_and_society"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Sanchit Kumar",
@@ -14452,13 +14420,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "popel2020cubitt"
-  ],
-  "cited_in": [
-   "ai_and_society"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Be My Eyes",
@@ -28590,7 +28554,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "people_of_ai"
+   "people_of_ai",
+   "reinforcement_learning"
   ]
  },
  {
@@ -29070,13 +29035,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "ramsauer2021hopfield"
-  ],
-  "cited_in": [
-   "attentionlab"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Daniel Y. Fu",
@@ -30177,11 +30138,13 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "ramsauer2021hopfield",
    "ramsauer2020hopfield"
   ],
   "cited_in": [
+   "attentionlab",
    "fact_lookup"
   ]
  },
@@ -30815,14 +30778,9 @@
   "city": "Hangzhou, China",
   "year": 2024.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "deepseek2024v3"
-  ],
-  "cited_in": [
-   "frontier",
-   "global_ai_ecosystem"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "DeepSeek-AI",
@@ -30833,8 +30791,9 @@
   "city": "Hangzhou, China",
   "year": 2024.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
+   "deepseek2024v3",
    "deepseekv3tech2024",
    "deepseek2024v2"
   ],
@@ -30894,14 +30853,13 @@
   "city": "London, United Kingdom",
   "year": 2016.0,
   "conf": 1,
-  "works": 7,
+  "works": 6,
   "keys": [
    "mnih2015dqn",
    "silver2016go",
    "silver2018zero",
    "schrittwieser2020muzero",
    "silver2016alphago",
-   "romera2023funsearch",
    "hassabis2007patients"
   ],
   "cited_in": [
@@ -30910,6 +30868,7 @@
    "algorithms",
    "beyond_llms",
    "people_of_ai",
+   "reinforcement_learning",
    "untold_history_iii"
   ]
  },
@@ -31199,7 +31158,8 @@
   "cited_in": [
    "ai_for_science",
    "beyond_llms",
-   "people_of_ai"
+   "people_of_ai",
+   "reinforcement_learning"
   ]
  },
  {
@@ -32081,13 +32041,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "redman2024causalscrubbing"
-  ],
-  "cited_in": [
-   "frontier"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Dzmitry Bahdanau",
@@ -32159,7 +32115,9 @@
    "trinilshell"
   ],
   "cited_in": [
-   "geometry_i"
+   "geometry_i",
+   "history",
+   "untold_history_ii"
   ]
  },
  {
@@ -32176,7 +32134,9 @@
    "trinilshell"
   ],
   "cited_in": [
-   "geometry_i"
+   "geometry_i",
+   "history",
+   "untold_history_ii"
   ]
  },
  {
@@ -33706,15 +33666,9 @@
   "city": "Cambridge, United Kingdom",
   "year": 2021.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "alphafold_db"
-  ],
-  "cited_in": [
-   "ai_and_society",
-   "ai_for_science",
-   "untold_history_ii"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Etai Littwin",
@@ -34004,7 +33958,9 @@
    "trinilshell"
   ],
   "cited_in": [
-   "geometry_i"
+   "geometry_i",
+   "history",
+   "untold_history_ii"
   ]
  },
  {
@@ -35993,11 +35949,13 @@
   "city": "Oslo, Norway",
   "year": 2020.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "ramsauer2021hopfield",
    "ramsauer2020hopfield"
   ],
   "cited_in": [
+   "attentionlab",
    "fact_lookup"
   ]
  },
@@ -36266,7 +36224,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "people_of_ai"
+   "people_of_ai",
+   "reinforcement_learning"
   ]
  },
  {
@@ -38017,11 +37976,13 @@
   "city": "Linz, Austria",
   "year": 2020.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "ramsauer2021hopfield",
    "ramsauer2020hopfield"
   ],
   "cited_in": [
+   "attentionlab",
    "fact_lookup"
   ]
  },
@@ -38273,12 +38234,16 @@
   "city": "Berkeley, United States",
   "year": 1989.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "hornik1989universal",
    "hornik1989"
   ],
   "cited_in": [
-   "math_iii"
+   "deeplearninglab",
+   "math_iii",
+   "origami",
+   "overandunderfittinglab"
   ]
  },
  {
@@ -38851,11 +38816,15 @@
   "city": "New York, United States",
   "year": 1924.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "nyquist1924certain"
+   "nyquist1924certain",
+   "nyquist_sampling"
   ],
-  "cited_in": []
+  "cited_in": [
+   "music_video_generation",
+   "statistics_ii"
+  ]
  },
  {
   "name": "Harsh Kohli",
@@ -39155,7 +39124,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "people_of_ai"
+   "people_of_ai",
+   "reinforcement_learning"
   ]
  },
  {
@@ -39597,9 +39567,7 @@
   "keys": [
    "sakurai2024skrr"
   ],
-  "cited_in": [
-   "frontier"
-  ]
+  "cited_in": []
  },
  {
   "name": "Hilary Putnam",
@@ -40051,11 +40019,13 @@
   "city": "Linz, Austria",
   "year": 2020.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "ramsauer2021hopfield",
    "ramsauer2020hopfield"
   ],
   "cited_in": [
+   "attentionlab",
    "fact_lookup"
   ]
  },
@@ -40426,13 +40396,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "redman2024causalscrubbing"
-  ],
-  "cited_in": [
-   "frontier"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Ian Hacking",
@@ -41004,6 +40970,7 @@
    "algorithms",
    "beyond_llms",
    "people_of_ai",
+   "reinforcement_learning",
    "untold_history_iii"
   ]
  },
@@ -41494,7 +41461,9 @@
    "trinilshell"
   ],
   "cited_in": [
-   "geometry_i"
+   "geometry_i",
+   "history",
+   "untold_history_ii"
   ]
  },
  {
@@ -41583,7 +41552,9 @@
    "trinilshell"
   ],
   "cited_in": [
-   "geometry_i"
+   "geometry_i",
+   "history",
+   "untold_history_ii"
   ]
  },
  {
@@ -41828,7 +41799,9 @@
   "cited_in": [
    "beyond_llms",
    "inference_optimization",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "optimizerlab",
+   "trainingdynamics"
   ]
  },
  {
@@ -44965,7 +44938,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "people_of_ai"
+   "people_of_ai",
+   "reinforcement_learning"
   ]
  },
  {
@@ -45012,11 +44986,13 @@
   "city": "Linz, Austria",
   "year": 2020.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "ramsauer2021hopfield",
    "ramsauer2020hopfield"
   ],
   "cited_in": [
+   "attentionlab",
    "fact_lookup"
   ]
  },
@@ -45101,11 +45077,13 @@
   "city": "Linz, Austria",
   "year": 2020.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "ramsauer2021hopfield",
    "ramsauer2020hopfield"
   ],
   "cited_in": [
+   "attentionlab",
    "fact_lookup"
   ]
  },
@@ -47657,7 +47635,9 @@
    "trinilshell"
   ],
   "cited_in": [
-   "geometry_i"
+   "geometry_i",
+   "history",
+   "untold_history_ii"
   ]
  },
  {
@@ -48837,13 +48817,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "redman2024causalscrubbing"
-  ],
-  "cited_in": [
-   "frontier"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Kevin Swersky",
@@ -49499,9 +49475,10 @@
   "city": "Amsterdam, Netherlands",
   "year": 1911.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "brouwer1911fixed"
+   "brouwer1911fixed",
+   "brouwer1911invariance"
   ],
   "cited_in": [
    "geometry_i",
@@ -49789,13 +49766,15 @@
   "city": "San Francisco, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "nanda2023grokking"
+   "nanda2023grokking",
+   "redman2024causalscrubbing"
   ],
   "cited_in": [
    "algorithms",
    "deeplearninglab",
+   "frontier",
    "mechanistic_interpretability"
   ]
  },
@@ -51383,11 +51362,13 @@
   "city": "Innsbruck, Austria",
   "year": 2020.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "ramsauer2021hopfield",
    "ramsauer2020hopfield"
   ],
   "cited_in": [
+   "attentionlab",
    "fact_lookup"
   ]
  },
@@ -51570,7 +51551,9 @@
    "trinilshell"
   ],
   "cited_in": [
-   "geometry_i"
+   "geometry_i",
+   "history",
+   "untold_history_ii"
   ]
  },
  {
@@ -52086,7 +52069,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "people_of_ai"
+   "people_of_ai",
+   "reinforcement_learning"
   ]
  },
  {
@@ -52862,11 +52846,13 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "ramsauer2021hopfield",
    "ramsauer2020hopfield"
   ],
   "cited_in": [
+   "attentionlab",
    "fact_lookup"
   ]
  },
@@ -53154,7 +53140,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "people_of_ai"
+   "people_of_ai",
+   "reinforcement_learning"
   ]
  },
  {
@@ -54063,12 +54050,16 @@
   "city": "Chicago, USA",
   "year": 1989.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "hornik1989universal",
    "hornik1989"
   ],
   "cited_in": [
-   "math_iii"
+   "deeplearninglab",
+   "math_iii",
+   "origami",
+   "overandunderfittinglab"
   ]
  },
  {
@@ -54602,11 +54593,13 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "ramsauer2021hopfield",
    "ramsauer2020hopfield"
   ],
   "cited_in": [
+   "attentionlab",
    "fact_lookup"
   ]
  },
@@ -54954,11 +54947,13 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "ramsauer2021hopfield",
    "ramsauer2020hopfield"
   ],
   "cited_in": [
+   "attentionlab",
    "fact_lookup"
   ]
  },
@@ -55392,11 +55387,13 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "ramsauer2021hopfield",
    "ramsauer2020hopfield"
   ],
   "cited_in": [
+   "attentionlab",
    "fact_lookup"
   ]
  },
@@ -55446,15 +55443,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "alphafold_db"
-  ],
-  "cited_in": [
-   "ai_and_society",
-   "ai_for_science",
-   "untold_history_ii"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Min Lin",
@@ -55554,15 +55545,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "alphafold_db"
-  ],
-  "cited_in": [
-   "ai_and_society",
-   "ai_for_science",
-   "untold_history_ii"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Minyoung Huh",
@@ -58535,19 +58520,17 @@
   "city": "San Francisco, USA",
   "year": 2024.0,
   "conf": 1,
-  "works": 8,
+  "works": 7,
   "keys": [
    "openai2023functioncalling",
    "openai2024o1",
    "openai2023apipricing",
    "navier_stokes_openai",
-   "openai2023superintelligence",
    "openai2022chatgpt",
    "openai2023gpt4",
    "gptoss2025"
   ],
   "cited_in": [
-   "ai_existential_risk",
    "ai_for_science",
    "frontier",
    "global_ai_ecosystem",
@@ -60267,11 +60250,13 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "ramsauer2021hopfield",
    "ramsauer2020hopfield"
   ],
   "cited_in": [
+   "attentionlab",
    "fact_lookup"
   ]
  },
@@ -64549,9 +64534,7 @@
   "keys": [
    "sakurai2024skrr"
   ],
-  "cited_in": [
-   "frontier"
-  ]
+  "cited_in": []
  },
  {
   "name": "Réjean Ducharme",
@@ -64734,7 +64717,9 @@
    "trinilshell"
   ],
   "cited_in": [
-   "geometry_i"
+   "geometry_i",
+   "history",
+   "untold_history_ii"
   ]
  },
  {
@@ -65649,13 +65634,9 @@
   "city": "",
   "year": 2024.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "ramsauer2021hopfield"
-  ],
-  "cited_in": [
-   "attentionlab"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Saunders Mac Lane",
@@ -66054,13 +66035,15 @@
   "city": "Munich, Germany",
   "year": 1997.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
+   "ramsauer2021hopfield",
    "ramsauer2020hopfield",
    "lstm"
   ],
   "cited_in": [
    "alternative_architectures",
+   "attentionlab",
    "fact_lookup",
    "history",
    "people_of_ai",
@@ -66335,7 +66318,8 @@
    "alignment",
    "beyond_llms",
    "history",
-   "people_of_ai"
+   "people_of_ai",
+   "reinforcement_learning"
   ]
  },
  {
@@ -67788,14 +67772,9 @@
   "city": "",
   "year": 2010.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "diekelmann2010sleep"
-  ],
-  "cited_in": [
-   "human_mind",
-   "mirror_in_machine"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Soonho Kong",
@@ -68737,7 +68716,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "people_of_ai"
+   "people_of_ai",
+   "reinforcement_learning"
   ]
  },
  {
@@ -70651,10 +70631,9 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 2,
+  "works": 1,
   "keys": [
-   "rogue_agents",
-   "tien2026rogue"
+   "rogue_agents"
   ],
   "cited_in": [
    "ai_existential_risk",
@@ -72350,11 +72329,13 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "ramsauer2021hopfield",
    "ramsauer2020hopfield"
   ],
   "cited_in": [
+   "attentionlab",
    "fact_lookup"
   ]
  },
@@ -72748,13 +72729,9 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "ramsauer2021hopfield"
-  ],
-  "cited_in": [
-   "attentionlab"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Vladimir Karpukhin",
@@ -72961,7 +72938,9 @@
    "trinilshell"
   ],
   "cited_in": [
-   "geometry_i"
+   "geometry_i",
+   "history",
+   "untold_history_ii"
   ]
  },
  {
@@ -73715,7 +73694,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 396,
+  "works": 393,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -73793,12 +73772,10 @@
    "ancientnumeralsystems",
    "history_of_a",
    "harmonwiki",
-   "brooks2024sora",
    "music_theory",
    "midi",
    "pcm",
    "cd_digital_audio",
-   "nyquist_sampling",
    "mp3",
    "mdct",
    "panharmonicon",
@@ -73958,7 +73935,6 @@
    "audio_deepfake_wiki",
    "romance_scam_wiki",
    "ward2014googleeffect",
-   "parasuraman1997automation",
    "replika_wiki",
    "ai_and_elections_wiki",
    "alpha_geometry_wiki",
@@ -74142,7 +74118,6 @@
    "people_of_ai",
    "philosophy",
    "promptengineering",
-   "rag",
    "statistics_i",
    "statistics_ii",
    "symbolic_ai",
@@ -76230,9 +76205,7 @@
   "keys": [
    "sakurai2024skrr"
   ],
-  "cited_in": [
-   "frontier"
-  ]
+  "cited_in": []
  },
  {
   "name": "Yasuomi Tsuchiya",
@@ -77406,6 +77379,8 @@
    "cohen2021edgeofstability"
   ],
   "cited_in": [
+   "optimizerlab",
+   "trainingdynamics",
    "unexpected_capabilities"
   ]
  },
@@ -79199,6 +79174,7 @@
    "lam2023graphcast"
   ],
   "cited_in": [
+   "ai_for_science",
    "untold_history_ii"
   ]
  },
@@ -81379,6 +81355,74 @@
   ]
  },
  {
+  "name": "Tim Brooks",
+  "canon": "Tim Brooks",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "brooks2024sora"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Bill Peebles",
+  "canon": "Bill Peebles",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "brooks2024sora"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "et al. (OpenAI)",
+  "canon": "(OpenAI",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "brooks2024sora"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Nicholas Goldowsky-Dill",
+  "canon": "Nicholas Goldowsky-Dill",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "redman2024causalscrubbing"
+  ],
+  "cited_in": [
+   "frontier"
+  ]
+ },
+ {
   "name": "James the photographer",
   "canon": "James the photographer",
   "alias": null,
@@ -81583,6 +81627,94 @@
   ]
  },
  {
+  "name": "Susanne Diekelmann and Jan Born",
+  "canon": "Susanne Diekelmann and Jan Born",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2010,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "diekelmann2010sleep"
+  ],
+  "cited_in": [
+   "human_mind",
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Mihaly Varadi et al. (EMBL-EBI)",
+  "canon": "Mihaly Varadi",
+  "alias": "EMBL-EBI",
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "alphafold_db"
+  ],
+  "cited_in": [
+   "ai_and_society",
+   "ai_for_science",
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Katja Grace",
+  "canon": "Katja Grace",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "grace2024survey"
+  ],
+  "cited_in": [
+   "ai_existential_risk"
+  ]
+ },
+ {
+  "name": "Harlan Stewart",
+  "canon": "Harlan Stewart",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "grace2024survey"
+  ],
+  "cited_in": [
+   "ai_existential_risk"
+  ]
+ },
+ {
+  "name": "Julia Fabienne Sandkühler",
+  "canon": "Julia Fabienne Sandkühler",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "grace2024survey"
+  ],
+  "cited_in": [
+   "ai_existential_risk"
+  ]
+ },
+ {
   "name": "Jessica Utrup",
   "canon": "Jessica Utrup",
   "alias": null,
@@ -81719,6 +81851,177 @@
   ]
  },
  {
+  "name": "Ilan Price",
+  "canon": "Ilan Price",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "price2024gencast"
+  ],
+  "cited_in": [
+   "ai_for_science"
+  ]
+ },
+ {
+  "name": "Ferran Alet",
+  "canon": "Ferran Alet",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "price2024gencast"
+  ],
+  "cited_in": [
+   "ai_for_science"
+  ]
+ },
+ {
+  "name": "Nelson Cowan",
+  "canon": "Nelson Cowan",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2001,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cowan2001magical4"
+  ],
+  "cited_in": [
+   "human_mind",
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Mohammadamin Barekatain",
+  "canon": "Mohammadamin Barekatain",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "romera2023funsearch"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Alexander Novikov",
+  "canon": "Alexander Novikov",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "romera2023funsearch"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Betsy Sparrow",
+  "canon": "Betsy Sparrow",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2011,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "sparrow2011google"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Jenny Liu",
+  "canon": "Jenny Liu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2011,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "sparrow2011google"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Daniel M. Wegner",
+  "canon": "Daniel M. Wegner",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2011,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "sparrow2011google"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Raja Parasuraman and Victor Riley",
+  "canon": "Raja Parasuraman and Victor Riley",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1997,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "parasuraman1997automation"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Martin Popel",
+  "canon": "Martin Popel",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "popel2020cubitt"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
   "name": "Meta AI",
   "canon": "Meta AI",
   "alias": null,
@@ -81734,6 +82037,21 @@
   "cited_in": [
    "frontier"
   ]
+ },
+ {
+  "name": "Ted Chiang",
+  "canon": "Ted Chiang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "chiang2023blurryjpeg"
+  ],
+  "cited_in": []
  },
  {
   "name": "J. J. O'Connor and E. F. Robertson",

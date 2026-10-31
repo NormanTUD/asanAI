@@ -144,7 +144,7 @@ Modern distilled families:
 
 * **DeepSeek-V3 → DeepSeek-R1-Distill** (2025): 1.5B–70B student models trained on R1 outputs.
 * **Llama 3.1-Instruct (2024)**: the smaller instruct models use SFT data that is partly synthesized by the Llama 3.1-405B.
-* **Phi-3-mini** (3.8B) → trained on Phi-3-medium's outputs.
+* **Phi-3-mini** (3.8B) → trained on about 3.3T tokens; the larger Phi-3 models were then trained with additional data and alignment.
 
 Distilled models can match the teacher on specific benchmarks within 5–10% of its quality, at $10\times$ lower inference cost.
 </div>

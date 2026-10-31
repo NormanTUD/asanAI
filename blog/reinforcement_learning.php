@@ -229,7 +229,7 @@ This is the response-level form; the actual DeepSeekMath objective is per-token,
 </div>
 
 <div class="optional md" data-headline="Where this shows up">
-GRPO is the algorithm behind **DeepSeek-R1** (January 2025), the first open-weight model to exhibit emergent long chain-of-thought reasoning. See the <a href="reasoning">Reasoning chapter</a> § o1/R1 paradigm for the *result*; the math here is the *cause*.
+GRPO is the algorithm behind **DeepSeek-R1** (January 2025), a widely used open-weight model with emergent long chain-of-thought reasoning. See the <a href="reasoning">Reasoning chapter</a> § o1/R1 paradigm for the *result*; the math here is the *cause*.
 </div>
 
 <div class="md">
