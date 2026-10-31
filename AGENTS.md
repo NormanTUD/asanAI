@@ -878,6 +878,12 @@ uv run blog/tools/factcheck/extract_facts.py blog/ --force
 # Validate coverage, schema and cross-lesson conflicts.
 uv run blog/tools/factcheck/check_facts.py blog/
 
+# Add the provenance backbone (entity -> lesson) after adding claims.
+uv run blog/tools/factcheck/link_provenance.py blog/
+
+# Derive additional edges from explicit claim predicates.
+uv run blog/tools/factcheck/derive_relations.py blog/
+
 # Unit tests for the ledger itself (aliases, units, conflict detection).
 uv run blog/tests/fact_ledger_test.py
 ```

@@ -136,7 +136,7 @@ explizite Qualifier und ein Report statt stiller Annahmen.
   Einheitenumrechnung, Formel-AST-Vergleich.
 - Optional Z3 für harte Constraint-Systeme (Datumsordnungen, Budgets,
   FLOPs).
-- Output: `fact_report.md` mit `file:line`, Claim, Widerspruch,
+- Output: `fact_report.md` mit `file`, Claim, Widerspruch,
   Schweregrad.
 
 **Tier 2 — Quellenprüfung, weekly**
@@ -154,7 +154,7 @@ explizite Qualifier und ein Report statt stiller Annahmen.
 ### Datenmodell (JSONL / SQLite)
 
 ```
-claim_id, lesson, file, line, span, quote,
+claim_id, lesson, file, quote,
 subject_id, predicate, value, unit, time, qualifiers,
 citation_keys[], source_urls[], source_evidence{quote,page},
 status, severity, detector, confidence
@@ -252,7 +252,7 @@ Widerspruch einführen.
   - Jahre/Daten (`2012`, `November 2022`, `ca. 100 kya`),
   - Modellnamen (`GPT-3`, `Llama-2 70B`, `H100`, `ResNet-152`),
   - Formeln (`$...$`, `$$...$$`) als LaTeX-String.
-- Jeder extrahierte Wert bekommt `file:line`, `quote` und `citation_keys`.
+- Jeder extrahierte Wert bekommt `file`, `quote` und `citation_keys`.
 
 **2. Kanonisieren (ohne ML)**
 
@@ -339,7 +339,7 @@ Für die letzteren Fälle gilt: **nicht automatisch freigeben.** Sie bleiben
   Werte überein — oder die Scopes sind explizit disjunkt.
 - Ein Widerspruch ist eine Obstruktion: eine Zusammenhangskomponente mit
   mehr als einem kompatiblen Wert. Der Report listet den „Kocykel“:
-  welche Lektionen, welche Zeilen, welche Werte.
+  welche Lektionen, welche Quotes, welche Werte.
 
 ### Mutationstests: den Prüfer selbst prüfen
 
@@ -356,8 +356,8 @@ Ein Prüfer, der nie anschlägt, ist wertlos. Deshalb:
 
 1. `registry.yaml` mit 30–50 Kernentitäten (GPT-2/3/4, Transformer,
    Chinchilla, Llama 2/3, AlexNet, ResNet, H100, AlphaFold, …).
-2. `extract.py` + `normalize.py`: Claims als JSONL, inklusive `file:line`
-   und `quote`.
+2. `extract.py` + `normalize.py`: Claims als JSONL, inklusive `file` und
+   `quote`.
 3. `check.py`: Gruppierung, Toleranzen, Konflikt-Report, `baseline.json`.
 4. CI: `--fast` prüft nur geänderte Lektionen gegen das volle Registry;
    neue unregistrierte Claims oder neue Konflikte → Exit 1.

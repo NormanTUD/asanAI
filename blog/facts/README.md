@@ -25,6 +25,12 @@ uv run blog/tools/factcheck/extract_facts.py blog/ --force
 # Alle Dateien gegeneinander prüfen.
 uv run blog/tools/factcheck/check_facts.py blog/
 
+# Provenienz-Rückgrat (Entität -> Lektion) nach neuen Claims.
+uv run blog/tools/factcheck/link_provenance.py blog/
+
+# Zusätzliche Kanten aus expliziten Claim-Prädikaten ableiten.
+uv run blog/tools/factcheck/derive_relations.py blog/
+
 # Unit-Tests des Ledgers.
 uv run blog/tests/fact_ledger_test.py
 ```
@@ -107,7 +113,7 @@ oder ältere Dateien nicht sofort brechen:
 | `value` | `val`, `amount`, `number`, `reading`, `data` |
 | `qualifiers` | `qualifier`, `scope`, `context`, `version`, `conditions` |
 | `quote` | `evidence`, `text`, `source_text`, `excerpt`, `sentence` |
-| `line` | `lineno`, `line_number`, `line_no` |
+| `line` | Legacy (`lineno`, `line_number`, `line_no`): wird gelesen, aber nicht erzeugt |
 | `citation_keys` | `citations`, `cites`, `bibkeys`, `keys`, `references` |
 | `source_url` | `url`, `source`, `link` |
 
@@ -156,7 +162,7 @@ Vorschlag:
 - `extract_candidates.py` extrahiert aus jeder **geänderten** Lektion alle
   Kandidaten (Zahl + Einheit, Jahr, Modellname, Formel).
 - Für jeden Kandidaten: Gibt es einen passenden Claim im Fact-File?
-- Nein → CI-Fehler `unregistered claim at file:line: quote`.
+- Nein → CI-Fehler `unregistered claim in file: quote`.
 - Ausnahmen (Beispiel, Schätzung, Quiz-Antwort) müssen explizit markiert
   werden, z. B. `qualifiers: {"example": true}` oder ein Makro
   `<!-- fact-example -->`.
@@ -169,8 +175,8 @@ Vorschlag:
   und schlägt fehl, wenn ein nicht-kuratiertes Fact-File vom Generator
   abweicht. So kann niemand vergessen, nach einer Textänderung zu
   regenerieren.
-- `check_facts.py` prüft, ob `quote` noch in der PHP-Datei vorkommt (nahe
-  `line`). Das findet veraltete Facts nach Umbauten.
+- `check_facts.py` prüft, ob `quote` noch in der PHP-Datei vorkommt. Das
+  findet veraltete Facts nach Umbauten.
 
 ### P1 — Datengetriebene Registry
 
@@ -328,6 +334,6 @@ uv run blog/tools/factcheck/trace_facts.py blog/ \
   --from chain-rule --to backproplab-demo --no-provenance
 ```
 
-Ein Trace zeigt jede Kante mit `kind`, Quote und `file:line`. So ist eine
+Ein Trace zeigt jede Kante mit `kind`, Quote und `file`. So ist eine
 Aussagekette nachvollziehbar: `chain-rule → backpropagation →
 backproplab-demo`.
