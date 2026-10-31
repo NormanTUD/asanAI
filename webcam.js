@@ -3,6 +3,7 @@
 var _webcam_start_in_progress = false;
 var auto_predict_webcam_custom_data_interval = null;
 var currently_predicting_webcam_custom_data = false;
+var _shared_webcam_video = null;
 
 // A stopped stream can leave the cam wrapper behind, so `cam` alone is not
 // proof that the camera is usable. Only live video tracks count.
@@ -122,7 +123,47 @@ async function _refresh_camera_list_after_permission() {
 	}
 }
 
+function _get_shared_webcam_video() {
+	if (_shared_webcam_video && _shared_webcam_video.parentNode) {
+		return _shared_webcam_video;
+	}
+
+	var video = document.createElement("video");
+	video.id = "webcam_shared_stream_video";
+	video.autoplay = true;
+	video.muted = true;
+	video.setAttribute("playsinline", "");
+	video.style.cssText = "position:fixed;left:-9999px;top:-9999px;width:2px;height:2px;opacity:0.01;pointer-events:none;";
+	document.body.appendChild(video);
+	_shared_webcam_video = video;
+	return video;
+}
+
+function _attachStreamToVideo(video, stream) {
+	if (!video || !stream) return;
+
+	if (video.srcObject && video.srcObject !== stream) {
+		try {
+			video.srcObject.getTracks().forEach(function (track) { track.stop(); });
+		} catch (e) {}
+	}
+
+	video.srcObject = stream;
+	video.muted = true;
+	video.setAttribute("playsinline", "");
+	video.play().catch(function () {});
+}
+
 async function _startStreamAndAssignToCam(video_element) {
+	// Reuse the active stream so both previews (predict tab and custom images)
+	// can stay alive at the same time. Historically starting one preview
+	// stopped the other, which left the previously visible preview black.
+	if (cam && cam.stream && _webcam_stream_is_active()) {
+		_attachStreamToVideo(video_element, cam.stream);
+		await waitForMetadataOrTimeout(cam.video || video_element, 2000);
+		return cam;
+	}
+
 	force_stop_all_webcam_streams(video_element);
 	if (cam) stop_webcam();
 
@@ -131,23 +172,27 @@ async function _startStreamAndAssignToCam(video_element) {
 	let stream = null;
 	try {
 		stream = await navigator.mediaDevices.getUserMedia(constraints);
+		const shared_video = _get_shared_webcam_video();
 
 		const camWrapper = {
 			stream: stream,
-			video: video_element,
+			video: shared_video,
 			stop: function() {
-				this.stream.getTracks().forEach(t => t.stop());
-				this.video.srcObject = null;
+				try { this.stream.getTracks().forEach(t => t.stop()); } catch (e) {}
+				$("video").each(function () {
+					if (this.srcObject === stream) this.srcObject = null;
+				});
+				if (shared_video.srcObject === stream) shared_video.srcObject = null;
 			},
 			capture: async function() {
 				return await captureTensorViaTempVideo(this.stream, 4000);
 			}
 		};
 
-		video_element.srcObject = stream;
-		video_element.play();
+		_attachStreamToVideo(shared_video, stream);
+		_attachStreamToVideo(video_element, stream);
 
-		await waitForMetadataOrTimeout(video_element, 2000);
+		await waitForMetadataOrTimeout(shared_video, 2000);
 		await _refresh_camera_list_after_permission();
 
 		window.cam = camWrapper;
@@ -168,6 +213,10 @@ async function _startWebcamPredictionStream() {
 
 	if (window.cam) {
 		webcam.show();
+		if (auto_predict_webcam_interval !== null) {
+			clearInterval(auto_predict_webcam_interval);
+			auto_predict_webcam_interval = null;
+		}
 		auto_predict_webcam_interval = setInterval(predict_webcam, 200);
 		$(".only_when_webcam_on").show();
 		return 0;
@@ -499,7 +548,7 @@ async function _captureAndProcessWebcamImage(elem, nol, _enable_train_and_last_l
 	got_images_from_webcam = true;
 }
 
-async function show_webcam(force_restart = 0, _isRestart = false) {
+async function show_webcam(force_restart = 0, _isRestart = false, force_start = false) {
 	if (force_restart && !_isRestart) {
 		stop_webcam();
 	}
@@ -510,7 +559,7 @@ async function show_webcam(force_restart = 0, _isRestart = false) {
 		let stopped = 0;
 
 		if (input_shape_is_image()) {
-			if (cam) {
+			if (!force_start && cam && auto_predict_webcam_interval !== null) {
 				_updateWebcamButtonToStopped();
 				stopped = _stopWebcamPredictionStream();
 			} else {
@@ -631,7 +680,7 @@ async function get_data_from_webcam(force_restart = 0, _isRestart = false) {
 
 	if (input_shape_is_image(1)) {
 		$("#show_webcam_button_data").html("Stop webcam");
-		if (cam) {
+		if (cam && webcam_custom_data_started) {
 			stopped = _stopWebcamDataStream();
 		} else {
 			const webcam = $("#webcam_data");

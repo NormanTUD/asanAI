@@ -563,11 +563,7 @@ async function _train_neural_network_start () {
 	}
 
 	if(got_images_from_webcam) {
-		if(cam && !cam.isClosed) {
-			await show_webcam();
-		}
-
-		await show_webcam();
+		await show_webcam(0, false, true);
 	}
 
 	started_training = false;

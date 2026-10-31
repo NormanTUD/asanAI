@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2359;
+var DEFAULT_EXPECTED_TEST_COUNT = 2361;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -5050,6 +5050,32 @@ function test_webcam_start_guard_keeps_early_stream_alive() {
 		_webcam_start_in_progress = false;
 		window.stop_webcam_if_cam = original_stop;
 	}
+}
+
+async function test_webcam_shared_stream_reuse() {
+	const old_cam = cam;
+	const old_active = _webcam_stream_is_active;
+	try {
+		const fake_stream = { getTracks: function () { return []; } };
+		const fake_video = {
+			srcObject: null,
+			muted: false,
+			readyState: 4,
+			play: function () { return Promise.resolve(); },
+			setAttribute: function () {}
+		};
+		const fake_cam = { stream: fake_stream, video: fake_video };
+		cam = fake_cam;
+		_webcam_stream_is_active = function () { return true; };
+
+		const reused = await _startStreamAndAssignToCam(fake_video);
+		test_equal("webcam reuses the active stream", reused, fake_cam);
+		test_equal("webcam attaches the shared stream to the new preview", fake_video.srcObject, fake_stream);
+	} finally {
+		cam = old_cam;
+		_webcam_stream_is_active = old_active;
+	}
+	return true;
 }
 
 function test_webcam_stream_active_detection() {
@@ -12094,6 +12120,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 	test_equal("test_webcam_constraints_use_device_id_without_probe_stream()", await test_webcam_constraints_use_device_id_without_probe_stream(), true);
 	test_equal("test_webcam_start_guard_keeps_early_stream_alive()", test_webcam_start_guard_keeps_early_stream_alive(), true);
 	test_equal("test_webcam_stream_active_detection()", test_webcam_stream_active_detection(), true);
+	test_equal("test_webcam_shared_stream_reuse()", await test_webcam_shared_stream_reuse(), true);
 	test_equal("test_gradcam_webcam_owns_heatmap_while_drawing()", await test_gradcam_webcam_owns_heatmap_while_drawing(), true);
 
 	tf.engine().startScope();
