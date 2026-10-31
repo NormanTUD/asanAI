@@ -266,7 +266,7 @@ where $y$ is the one-hot true label (the “true distribution” for a single ex
 
 The “aha-moment”: training an LLM is equivalent to building the world's best text compression algorithm. Every time the model computes cross-entropy loss, it is measuring how many extra bits it would need to encode the training text using its current beliefs. Reducing the loss means finding a shorter description of the data. This is why scaling works: more parameters allow more compression (finding more patterns in the data), which requires more accurate world models (because the best compression of natural language requires modeling physics, psychology, and causality), which produces more “intelligent” behavior.
 
-Intelligence, from this perspective, is not a separate objective, it is a side effect of optimal compression. The connection to the Hutter Prize (\cite{hutterprize}) — Marcus Hutter's 2006 competition for compressing a 1 GB text file — and the “intelligence is compression” thesis is direct: a model that achieves the minimal possible cross-entropy on human text has implicitly learned the causal structure of the world that generates that text.
+Intelligence, from this perspective, is not a separate objective, it is a side effect of optimal compression. The connection to the Hutter Prize (\cite{hutterprize}) — Marcus Hutter's compression prize, launched in 2006 on a 100 MB corpus and expanded in 2020 to a 1 GB text file — and the “intelligence is compression” thesis is direct: a model that achieves the minimal possible cross-entropy on human text has implicitly learned the causal structure of the world that generates that text.
 
 ### Why Cross-Entropy Pairs Perfectly with Softmax
 

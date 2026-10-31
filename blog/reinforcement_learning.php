@@ -87,7 +87,7 @@ $$
 
 where $\alpha$ is the learning rate and $r + \gamma \max_{a'} Q(s', a')$ is the **TD target**. The agent samples actions by $\epsilon$-greedy: with probability $\epsilon$ take a random action (exploration), otherwise $\arg\max_a Q(s, a)$ (exploitation).
 
-Deep Q-Networks (\cite[Mnih et al., 2015]{mnih2013dqn}) replaced the table with a neural network $Q_\theta(s, a)$; the 2013 paper added **experience replay**, and the 2015 *Nature* follow-up added a separate **target network** to stabilize training. This enabled RL on high-dimensional inputs (Atari).
+Deep Q-Networks replaced the table with a neural network $Q_\theta(s, a)$; the 2013 paper (\cite[Mnih et al., 2013]{mnih2013dqn}) added **experience replay**, and the 2015 *Nature* follow-up (\cite[Mnih et al., 2015]{mnih2015dqn}) added a separate **target network** to stabilize training. This enabled RL on high-dimensional inputs (Atari).
 </div>
 
 <div class="md">
@@ -225,7 +225,7 @@ $$
 L_{\text{GRPO}}(\theta) = -\frac{1}{G}\sum_{i=1}^{G} \min\!\left(\frac{\pi_\theta(y^{(i)})}{\pi_{\theta_{\text{old}}}(y^{(i)})} A_i,\; \text{clip}(\cdot, 1-\epsilon, 1+\epsilon)\, A_i\right) + \beta\, \text{KL}(\pi_\theta \,\|\, \pi_{\text{ref}})
 $$
 
-By using the group mean as the baseline, GRPO eliminates the need for a separate value network. This made it possible to RL-train on **verifiable rewards** (math correctness, code test passage) at scale, producing emergent long-CoT reasoning.
+This is the response-level form; the actual DeepSeekMath objective is per-token, with the ratio and KL term inside a sum over tokens. By using the group mean as the baseline, GRPO eliminates the need for a separate value network. This made it possible to RL-train on **verifiable rewards** (math correctness, code test passage) at scale, producing emergent long-CoT reasoning.
 </div>
 
 <div class="optional md" data-headline="Where this shows up">
@@ -270,7 +270,7 @@ Defenses:
 
 * **Sample efficiency**: PPO needs millions of environment steps. RL for LLMs needs millions of rollouts. Both are expensive.
 * **Reward modeling**: the reward model is a bottleneck; it inherits human biases and is gamed.
-* **Distributional shift**: PPO's old policy drifts from $\pi_{\text{ref}}$; offline-correction methods (DPO, etc.) sidestep this but lose online improvement.
+* **Distributional shift**: PPO's current policy drifts from the sampling policy $\pi_{\text{old}}$ over the update epochs (the KL term additionally anchors it to $\pi_{\text{ref}}$); offline-correction methods (DPO, etc.) sidestep this but lose online improvement.
 * **Credit assignment over long horizons**: a 1000-token reasoning chain has sparse final reward. Process rewards help but are expensive.
 
 RL is the engine of modern alignment and reasoning, but it remains one of the most sample-inefficient and brittlest components of the LLM stack.

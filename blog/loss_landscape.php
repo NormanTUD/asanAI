@@ -62,7 +62,7 @@ $$\hat{y} \;=\; \sigma(\mathbf{W}\,x + b),$$
 
 fitted to 1-D data. There is one weight $\mathbf{W} \in \mathbb{R}$ and one bias $b \in \mathbb{R}$, so $\mathcal{L}(w, b)$ is a genuine 2-D surface and fits in a 3-D plot. The line drawn on the surface is the optimizer's *trajectory*, batch by batch.
 
-Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum are pre-selected), press **Start**, and watch. The point of the widget is to *feel* each claim above:
+Pick a target (try **Parabola**), tick one or two optimizers (SGD and Adam are pre-selected), press **Start**, and watch. The point of the widget is to *feel* each claim above:
 
 * **Non-convexity comes from non-linearities.** Switch the activation from `Linear` to `ReLU` and the same $(w, b)$ grid suddenly has flat plateaus, saddles, and sharp ridges.
 * **Saddles outnumber minima.** With `ReLU` and a low learning rate, the SGD line stalls for many epochs on a flat plateau before a stochastic step kicks it downhill. Adam escapes faster.
@@ -555,10 +555,10 @@ So where does the non-convexity of real networks come from? From the activation 
 
 For a long time, the worry was that local minima would trap gradient descent. \citeauthor{dauphin2014saddle} (\citeyear{dauphin2014saddle}) showed this worry is mostly backwards. In a high-dimensional non-convex function:
 
-* local minima are exponentially rare (proportional to $e^{-c\,d}$),
-* saddles (curving up in some directions, down in others) are exponentially common (proportional to $e^{+c\,d}$).
+* the **ratio** of saddle points to local minima grows exponentially with dimension,
+* so saddles dominate the landscape more and more as $d$ increases.
 
-A "stuck plateau" is almost never a valley floor. It is a saddle whose gradient happens to be tiny. Newton-class methods slow down at saddles too, which is why classical second-order optimizers struggle on deep nets. \citeauthor{dauphin2014saddle}'s **Saddle-Free Newton** escapes them by ignoring the negative eigenvalues of the Hessian. Plain SGD escapes them for free, because the stochastic noise of mini-batches is exactly the kick needed to dislodge the ball off a saddle along its descending direction. That is the modern view of deep-net optimization.
+A "stuck plateau" is almost never a valley floor. It is a saddle whose gradient happens to be tiny. Newton-class methods slow down at saddles too, which is why classical second-order optimizers struggle on deep nets. \citeauthor{dauphin2014saddle}'s **Saddle-Free Newton** escapes them by replacing the Hessian $H$ with $|H|$ — rescaling each eigen-direction by $1/|\lambda_i|$ while preserving the gradient's sign — so negative-curvature directions repel instead of attract. Plain SGD escapes them for free, because the stochastic noise of mini-batches is exactly the kick needed to dislodge the ball off a saddle along its descending direction. That is the modern view of deep-net optimization.
 
 The mini-batch noise does more than kick the ball off saddles. Each mini-batch gives a slightly different gradient, so the surface SGD effectively optimizes is the true loss convolved with the noise distribution. This smoothed surface has fewer saddles, fewer sharp minima, flatter basins. \citeauthor{smithle2018bayesian} (\citeyear{smithle2018bayesian}) and \citeauthor{mandt2017variational} (\citeyear{mandt2017variational}) made this precise: small-batch SGD is approximately sampling from a Boltzmann-like distribution $p(\theta) \propto e^{-\mathcal{L}(\theta)/T}$ where the temperature $T$ is set by the learning rate and batch size. Higher temperature (smaller batch, larger learning rate) flattens the effective surface and biases the trajectory toward wide basins. This is the deepest reason mini-batch noise is a feature, not a bug.
 
@@ -603,7 +603,7 @@ so the *change* across the block is just $F_\ell(h_\ell)$, the small adjustment 
 
 ### Wide networks have flatter landscapes
 
-In the same paper, doubling only the number of filters per layer of ResNet-56 ($k=1 \to 2 \to 4 \to 8$, Wide-ResNet) makes the basin flatter and the test error drop monotonically ($5.89\% \to 5.07\% \to 4.34\% \to 3.93\%$ on CIFAR-10). \citeauthor{choromanska2015loss} (\citeyear{choromanska2015loss}) gave a statistical-physics argument for this: in a deep random network, the loss behaves like a disordered physical system in high dimension, and the number of bad local minima drops exponentially with width while the number of good ones barely changes. \citeauthor{nguyen2017loss} (\citeyear{nguyen2017loss}) proved a related result: a deep network with enough width has no bad local minima at all.
+In the same paper, doubling only the number of filters per layer of ResNet-56 ($k=1 \to 2 \to 4 \to 8$, Wide-ResNet) makes the basin flatter and the test error drop monotonically ($5.89\% \to 5.07\% \to 4.34\% \to 3.93\%$ on CIFAR-10). \citeauthor{choromanska2015loss} (\citeyear{choromanska2015loss}) gave a statistical-physics argument for this: in a deep random network, the loss behaves like a disordered physical system in high dimension, and the number of bad local minima drops exponentially with width while the number of good ones barely changes. \citeauthor{nguyen2017loss} (\citeyear{nguyen2017loss}) proved a related result: if one hidden layer is wider than the number of training points and the layers above it are pyramidal, then *almost all* local minima are global minima.
 
 </div>
 
@@ -627,7 +627,7 @@ This shows two things about the landscape. First, the same initialization sits i
 
 The "one big valley" claim needs a caveat. Swap two neurons in any hidden layer and the network computes exactly the same function, but its position in weight space changes by a large distance. This permutation symmetry means every "true" minimum corresponds to an astronomical number of equivalent positions in raw weight space. A 50-layer net with 256 neurons per layer has roughly $(256!)^{50}$ equivalent positions for each minimum, more than the number of atoms in the observable universe. The landscape is full of copies of the same minimum, scattered across weight space like reflections in a hall of mirrors.
 
-This is why \citeauthor{garipov2018mode} (\citeyear{garipov2018mode}) had to align the neurons of the two networks before drawing the line between their minima. Without alignment, the line passes through garbage (random mismatches between equivalent copies), not through the low-loss valley. The "one connected valley" claim is true in the symmetry-reduced parameter space, where equivalent copies are identified as the same point. In raw parameter space the same statement is false; the same minimum has many disconnected copies. \citeauthor{amit1989modeling} (\citeyear{amit1989modeling}) reviews the broader symmetry structure of neural-network landscapes.
+This is why a raw straight-line interpolation between two independently trained networks is high-loss: without accounting for the copies, the line passes through garbage (random mismatches between equivalent copies), not through the low-loss valley. \citeauthor{garipov2018mode} (\citeyear{garipov2018mode}) sidestepped this by searching for a low-loss *curved* path between the two minima; aligning permutations is a later technique for testing *linear* mode connectivity. The "one connected valley" claim is true in the symmetry-reduced parameter space, where equivalent copies are identified as the same point. In raw parameter space the same statement is false; the same minimum has many disconnected copies. \citeauthor{amit1989modeling} (\citeyear{amit1989modeling}) reviews the broader symmetry structure of neural-network landscapes.
 
 </div>
 
@@ -635,7 +635,7 @@ This is why \citeauthor{garipov2018mode} (\citeyear{garipov2018mode}) had to ali
 
 ### SGD travels in an almost one-dimensional subspace
 
-To plot an optimizer's trajectory, you would naturally project it onto a 2-D plane of random directions. \citeauthor{li2018losslandscape}'s section 7 shows this fails almost completely: the trajectory sits in a subspace that random directions do not span. Two random Gaussian vectors in $d$ dimensions are nearly orthogonal; the expected *magnitude* of their cosine similarity is $\sqrt{2/(\pi d)}$, roughly $10^{-4}$ for a 10-million-parameter model. Projecting onto them collapses the trajectory to a single dot.
+To plot an optimizer's trajectory, you would naturally project it onto a 2-D plane of random directions. \citeauthor{li2018losslandscape}'s section 7 shows this fails almost completely: the trajectory sits in a subspace that random directions do not span. Two random Gaussian vectors in $d$ dimensions are nearly orthogonal; the expected *magnitude* of their cosine similarity is $\sqrt{2/(\pi d)}$, roughly $2.5 \times 10^{-4}$ for a 10-million-parameter model. Projecting onto them collapses the trajectory to a single dot.
 
 PCA on the iterates $\theta_0, \theta_1, \ldots, \theta_T$ recovers what is actually happening. For both SGD and Adam on VGG-9, the first **two** PCA directions capture between **40% and 90%** of the variation in the descent path; the remaining directions are nearly silent. Gradient descent is effectively low-dimensional.
 

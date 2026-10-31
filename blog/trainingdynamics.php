@@ -22,21 +22,21 @@ This lesson makes that a thing you can touch. The interactive below is a **train
 
 ### The shape of a training run: the power law
 
-Strip a run down to its skeleton and it is a power law. \cite[Kaplan et al. (2020)]{kaplan2020scaling} fit the held-out loss of a family of language models and found it is, to a striking approximation, a sum of two power laws in the number of parameters $N$ and the number of training tokens $D$, plus an irreducible floor:
+Strip a run down to its skeleton and it is a power law. \cite[Kaplan et al. (2020)]{kaplan2020scaling} fit the held-out loss of a family of language models and found a power-law trade-off between parameters $N$ and training tokens $D$. \cite[Hoffmann et al. (2022)]{hoffmann2022chinchilla} redid the fit at much larger scale with the additive form
 
 <div>
-$$L_{\min}(N, D) \;=\; E \;+\; A\, N^{-\alpha_N} \;+\; B\, D^{-\alpha_D}$$
+$$L(N, D) \;=\; E \;+\; A\, N^{-\alpha} \;+\; B\, D^{-\beta},$$
 </div>
 
-Each term is a power law with a *small* exponent ($\alpha_N \approx 0.076$, $\alpha_D \approx 0.09$ in the original fit): double the parameters and the loss drops by a fixed, modest factor; double the data and you get the same story again. The constant $E$ is the floor you cannot get below — the entropy in the data itself, the loss you would pay even with a *perfect* model of the distribution.
+and measured $\alpha \approx 0.34$, $\beta \approx 0.28$ (Kaplan's original joint fit used a multiplicative form, not this additive one). The constant $E$ is the irreducible floor — the entropy in the data itself, the loss you would pay even with a *perfect* model. What matters for budgeting, though, is not these loss exponents but the **compute-allocation** exponents: with $C \approx 6ND$ fixed, Hoffmann et al. found that parameters and tokens should grow in equal proportion ($a \approx b \approx 0.5$).
 
-\cite[Hoffmann et al. (2022)]{hoffmann2022chinchilla} then redid the fit on a much larger scale and found the two exponents are essentially *equal*, which changes the answer to a question the whole field was asking wrong. Compute cost is $C \approx 6ND$ — it is the *product* $N \times D$ that is fixed, so you can trade parameters against data. When the two exponents are equal, the trade has a single optimum, and it sits at
+Compute cost is $C \approx 6ND$ — it is the *product* $N \times D$ that is fixed, so you can trade parameters against data. When the two allocation exponents are equal, the trade has a single optimum, and it sits at
 
 <div>
 $$N \;\approx\; \frac{D}{20} \qquad\text{(roughly 20 tokens per parameter)}$$
 </div>
 
-That is the **Chinchilla** result, and it is the reason the field moved, in the space of a few papers, from small over-trained models (\cite[Brown et al. (2020)]{brown2020gpt3}) to large under-trained ones: for a given budget, spend it on a *smaller* model trained on *far more* data. Turn the $N$ and $D$ sliders in the simulator and you will see the floor drop, and the readout will tell you whether your choice is under-trained, optimal, or over-trained.
+That is the **Chinchilla** result, and it is the reason the field moved, in the space of a few papers, from large under-trained models such as GPT-3 (\cite[Brown et al. (2020)]{brown2020gpt3}) toward *smaller* models trained on *far more* data: for a given budget, that is where the optimum sits. The simulator below is stylized; its constants are illustrative, not the paper's fitted values. Turn the $N$ and $D$ sliders in the simulator and you will see the floor drop, and the readout will tell you whether your choice is under-trained, optimal, or over-trained.
 </div>
 
 <div style="display: flex; flex-direction: column; gap: 20px; background: var(--mn-bg-subtle, #f1f5f9); padding: 20px; border-radius: 12px; border: 1px solid var(--mn-border, #cbd5e1);">
@@ -145,7 +145,7 @@ Training runs are *flaky* in a specific way, and you are expected to recognize t
 
 **Divergence.** If the learning rate is truly too high, the recovery never comes: the loss jumps and *stays* up, or climbs without bound, and the run is dead. Toggle "Diverge (LR too high)" to see the non-recovering case — this is the shape you must learn to read, because it is the difference between a recoverable hiccup and a lost run.
 
-**The edge of stability.** Somewhere between "settles comfortably" and "diverges" is a sharp, studied regime. At a high learning rate gradient descent does *not* blow up — it **locks onto the rim of a sharp region and oscillates there** while the loss still drifts down, as \cite[Arora et al. (2022)]{arora2022edgeofstability} showed. So a loss that *oscillates but trends down* is not a bug to fix; it is the network running at the edge, and it is one of the reasons people run at the largest learning rate that "just barely" holds. **Gradient clipping** — capping the magnitude of each gradient before the update — is the standard tool that keeps a high-LR run on the edge instead of past it.
+**The edge of stability.** Somewhere between "settles comfortably" and "diverges" is a sharp, studied regime. At a high learning rate gradient descent does *not* blow up — it **locks onto the rim of a sharp region and oscillates there** while the loss still drifts down, as \cite[Cohen et al. (2021)]{cohen2021edgeofstability} and \cite[Arora et al. (2022)]{arora2022edgeofstability} showed. So a loss that *oscillates but trends down* is not a bug to fix; it is the network running at the edge, and it is one of the reasons people run at the largest learning rate that "just barely" holds. **Gradient clipping** — capping the magnitude of each gradient before the update — is the standard tool that keeps a high-LR run on the edge instead of past it.
 </div>
 
 <div class="md" data-mathlevel="65">

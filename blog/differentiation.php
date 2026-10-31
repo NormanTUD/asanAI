@@ -257,7 +257,7 @@ This is exactly what **backpropagation** computes, the chain rule applied layer 
 
 Derivatives are not just an abstract mathematical concept, they are the **engine** that drives all of modern machine learning. Here is why:
 
-1. **Gradient Descent**: To train a neural network, we need to minimize a **loss function** that measures how wrong the model's predictions are. The derivative (or **gradient**, in multiple dimensions) tells us which direction to adjust the weights to reduce the loss. This is the algorithm called **Gradient Descent**, first described by \citeauthor{cauchy1847} in \citeyear{cauchy1847}.
+1. **Gradient Descent**: To train a neural network, we need to minimize a **loss function** that measures how wrong the model's predictions are. The derivative (or **gradient**, in multiple dimensions) tells us which direction to adjust the weights to reduce the loss. This is the algorithm called **Gradient Descent**, first described for least-squares problems by \citeauthor{cauchy1847} in \citeyear{cauchy1847} (his note solves simultaneous equations by minimising a sum of squares; general nonlinear descent came later).
 
 2. **Backpropagation**: As we saw, the **chain rule** allows us to compute the gradient of the loss with respect to every single weight in a deep network, no matter how many layers it has. This algorithm, popularized by \citeauthor{rumelhart1986} in \citeyear{rumelhart1986}, is what makes deep learning possible.
 

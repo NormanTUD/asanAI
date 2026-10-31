@@ -154,7 +154,7 @@ This division is the key insight: parameters with large, consistent gradients ge
 
 Two consequences of these equations are worth seeing directly.
 
-* **The first step is always exactly the learning rate.** With both moments starting at zero, bias correction makes $\hat{m}_1 = g_1$ and $\sqrt{\hat{v}_1} = |g_1|$, so the update is $\eta\, g_1 / |g_1| = \pm\eta$ — no matter how large the first gradient is. Adam cannot take a giant first step, however steep the loss.
+* **The first step is essentially the learning rate.** With both moments starting at zero, bias correction makes $\hat{m}_1 = g_1$ and $\sqrt{\hat{v}_1} = |g_1|$, so the update is $\eta\, g_1 / (|g_1| + \epsilon) \approx \pm\eta$ — exactly $\pm\eta$ only in the $\epsilon \to 0$ limit, and $0$ when $g_1 = 0$. Adam cannot take a giant first step, however steep the loss.
 * **The scale of the loss does not matter.** Multiply the loss by any positive constant and $m_t$ and $\sqrt{\hat{v}_t}$ both scale by the same factor, leaving the update unchanged. Adam reacts to the *shape* of the gradient history, not its absolute size — one reason the same defaults transfer across models whose losses differ by orders of magnitude.
 
 The ratio $\hat{m}_t / \sqrt{\hat{v}_t}$ also has a clean reading: it is a **signal-to-noise statistic**, near $\pm1$ when a coordinate's gradient has kept its sign and near $0$ when it is mostly noise. Adam's step therefore measures how *trustworthy* a gradient has been, not how large it happens to be.
@@ -238,7 +238,7 @@ The worked example below uses the paper's defaults ($\beta_1 = 0.9$, $\beta_2 = 
 </div>
 
 <div class="md" data-mathlevel="65">
-After the first full-sized step, the smaller gradient $g_2 = 0.5$ shrinks the second step to roughly a third of $\eta$; the renewed large gradient $g_3 = 1.5$ raises it by about half again, to roughly $0.05$, but not back to $\eta$, because the second moment has grown and decays only slowly. The running averages smooth the direction; they do not make every step equal. Set all three gradients equal and the steps become identical — a constant gradient reduces Adam to a sign-like step of exactly $\eta$. Make them wildly different instead and watch $\hat{m}_t/\sqrt{\hat{v}_t}$ fall toward zero, the optimizer's way of saying *I do not trust this direction yet*.
+After the first full-sized step, the smaller gradient $g_2 = 0.5$ barely changes the next step: it is about $0.093\,\eta$, not a third of $\eta$; the renewed large gradient $g_3 = 1.5$ brings it back only to about $0.094\,\eta$. Because $\beta_2 = 0.999$, the second moment has a long memory and a single smaller gradient hardly moves it — Adam is deliberately insensitive to one-off changes. The running averages smooth the direction; they do not make every step equal. Set all three gradients equal and the steps become identical — a constant gradient reduces Adam to a sign-like step of exactly $\eta$. Make them wildly different instead and watch $\hat{m}_t/\sqrt{\hat{v}_t}$ fall toward zero, the optimizer's way of saying *I do not trust this direction yet*.
 </div>
 
 <div class="md">
@@ -391,7 +391,7 @@ Adam has a quiet problem with weight decay. In the original paper, $L_2$ regular
 
 $$\theta_{t+1} = \theta_t - \eta\!\left( \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon} + \lambda\, \theta_t \right)$$
 
-It's a one-line change, but it makes weight decay behave the way every other optimizer's weight decay does, and it decouples the optimal $\lambda$ from the learning rate. **AdamW is now the default optimizer for training transformers** in practice — Llama and Stable Diffusion use it, while the original BERT and GPT-3 recipes still used Adam; BERT's recipe applied weight decay through the loss.
+It's a one-line change, but it makes weight decay behave the way every other optimizer's weight decay does, and it decouples weight decay from the adaptive gradient update. **AdamW is now the default optimizer for training transformers** in practice — Llama and Stable Diffusion use it, while the original BERT and GPT-3 recipes still used Adam; BERT's recipe applied weight decay through the loss.
 
 Adam was posted in December 2014 and published at ICLR 2015 \cite{adam}; AdamW followed as a 2017 preprint and an ICLR 2019 paper \cite{loshchilov2019adamw}. The gap matters: for three years the default recipe was “Adam with L2”, and the decoupled version spread as transformers made weight decay a first-class knob. The pair is a good example of how optimizer history actually runs — a fix can be mathematically small, sit in public for two years, and still change practice only when the surrounding models make its advantage visible.
 
@@ -426,7 +426,7 @@ In \citeyear{sgd}, **Herbert Robbins** and **Sutton Monro** published their pape
 
 Robbins and Monro found a root of a noisy function. A year later, \cite[Kiefer & Wolfowitz (1952)]{kiefer1952stochastic} turned the idea into a search for a maximum: observe the regression function at two nearby points, form a finite-difference estimate of the slope, and step along it with a shrinking step size. This is stochastic gradient ascent in all but name, and it made the noisy-optimization framework usable when the gradient itself cannot be observed, the situation that motivates derivative-free optimization.
 
-The modern **SGD** update rule is a direct application of their iterative formula:
+Stochastic approximation is the ancestor of SGD: the same root-finding recursion becomes the SGD update when the function is the loss gradient and the root is its zero. Their iterative formula reads
 
 $$x_{n+1} = x_n + a_n(\alpha - y_n)$$
 
@@ -467,7 +467,7 @@ Two costs sit outside the table. Adam keeps **two optimizer states per parameter
 
 ### The Edge of Stability: why the best learning rate sits on a knife-edge
 
-You may have seen the advice that the *best* learning rate is the largest one that "just barely" doesn't diverge. That is not folklore; it names a sharp, studied regime called the **edge of stability**. When the learning rate $\eta$ is large enough that a single step would overshoot a sharp region, gradient descent does **not** blow up. Instead it **locks** onto that sharp region and *oscillates* at its rim, with the largest curvature (the sharpness, the top Hessian eigenvalue) settling right around $\lambda_{\max} \approx 2/\eta$ while the loss still drifts downward (\cite[Arora et al., 2022]{arora2022edgeofstability}). The optimizer is balancing on the knife-edge of a sharp minimum, and — surprisingly — it *prefers* those edges over the flat bottoms it would otherwise settle into.
+You may have seen the advice that the *best* learning rate is the largest one that "just barely" doesn't diverge. That is not folklore; it names a sharp, studied regime called the **edge of stability**. When the learning rate $\eta$ is large enough that a single step would overshoot a sharp region, gradient descent does **not** blow up. Instead it **locks** onto that sharp region and *oscillates* at its rim, with the largest curvature (the sharpness, the top Hessian eigenvalue) settling right around $\lambda_{\max} \approx 2/\eta$ while the loss still drifts downward (\cite[Cohen et al., 2021]{cohen2021edgeofstability}; \cite[Arora et al., 2022]{arora2022edgeofstability}). The optimizer is balancing on the knife-edge of a sharp minimum, and — surprisingly — it *prefers* those edges over the flat bottoms it would otherwise settle into.
 
 This reframes the "learning rate too high" row in the table above. A high $\eta$ that makes the loss *oscillate but keep falling* is not a bug to fix — it is the network running at the edge of stability, a regime many modern training curves actually live in. The practical read: if your loss oscillates but trends steadily down, you are on the edge, and you can often stay there or push a little further rather than immediately dialing the learning rate back.
 </div>

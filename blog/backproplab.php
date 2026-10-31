@@ -68,7 +68,7 @@ $$
 E \;=\; \sum_i \tfrac{1}{2}\,(t_i - o_i)^2
 $$
 
-The $\tfrac{1}{2}$ is a convenience — it cancels when we differentiate. (The standard **MSE** used elsewhere in the course is the same shape, just averaged over the batch.)
+The $\tfrac{1}{2}$ is a convenience — it cancels when we differentiate. (The standard **MSE** used elsewhere in the course is the same squared-error shape, averaged with $1/N$ instead of $\tfrac12$.)
 
 </div>
 

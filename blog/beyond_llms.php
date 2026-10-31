@@ -828,7 +828,7 @@ A summary, with the year of the foundational paper and the most common use case:
 | NEAT | 2002 | Evolutionary | Neuroevolution |
 | Bayesian optimisation | 1978 | Evolutionary | Hyperparameter search |
 | Value/Policy iteration | 1957/60 | RL | Tabular MDP |
-| Q-learning | 1992 | RL | Off-policy TD |
+| Q-learning | 1989 / 1992 | RL | Off-policy TD (thesis / journal paper) |
 | SARSA | 1996 | RL | On-policy TD |
 | REINFORCE | 1992 | RL | Policy gradient |
 | PPO | 2017 | RL | Stable policy gradient |

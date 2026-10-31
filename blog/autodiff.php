@@ -207,7 +207,7 @@ In practice, automatic differentiation is used to compute the gradient $\nabla L
 
 $$\mathbf{w}^{(t+1)} = \mathbf{w}^{(t)} - \eta \cdot \nabla L(\mathbf{w}^{(t)})$$
 
-where $\eta$ is the learning rate. This is **gradient descent**, first described by \citeauthor{cauchy1847} in \citeyear{cauchy1847} in \citetitle{cauchy1847}.
+where $\eta$ is the learning rate. This is **gradient descent**, first described for least-squares problems by \citeauthor{cauchy1847} in \citeyear{cauchy1847} in \citetitle{cauchy1847} (general nonlinear descent came later).
 
 The interactive demo below shows gradient descent on a simple 2D loss landscape $L(w_1, w_2) = w_1^2 + w_2^2$ (a paraboloid). The gradient at any point $(w_1, w_2)$ is $\nabla L = (2w_1, 2w_2)$, which always points directly away from the minimum at the origin, in the direction of steepest ascent. Gradient descent moves against it, along $-\nabla L$, which is what carries the weights back toward the origin. You can adjust the learning rate and starting position to see how the optimizer converges.
 </div>
