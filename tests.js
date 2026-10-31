@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2356;
+var DEFAULT_EXPECTED_TEST_COUNT = 2357;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -6492,7 +6492,9 @@ function _tiny_tests_debug_js() {
 	info("__asanai_info__");
 	test_equal("info stores one entry", _full_debug_log.length, info_length + 1);
 	var old_last_dbg_msg = last_dbg_msg;
+	var old_recent_dbg_msgs = _recent_dbg_msgs.slice();
 	last_dbg_msg = "";
+	_recent_dbg_msgs = [];
 	var dbg_length = _full_debug_log.length;
 	dbg("__asanai_dbg__");
 	var dbg_after_first = _full_debug_log.length;
@@ -6500,7 +6502,12 @@ function _tiny_tests_debug_js() {
 	var dbg_after_second = _full_debug_log.length;
 	test_equal("dbg stores an entry", dbg_after_first > dbg_length, true);
 	test_equal("dbg suppresses consecutive duplicates", dbg_after_second, dbg_after_first);
+	dbg("__asanai_dbg_other__");
+	var dbg_after_interleaved = _full_debug_log.length;
+	dbg("__asanai_dbg__");
+	test_equal("dbg suppresses recent duplicates across other messages", _full_debug_log.length, dbg_after_interleaved);
 	last_dbg_msg = old_last_dbg_msg;
+	_recent_dbg_msgs = old_recent_dbg_msgs;
 
 	test_equal("get_mem exposes tensor memory", typeof get_mem().numTensors, "number");
 }

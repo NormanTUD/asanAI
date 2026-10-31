@@ -158,6 +158,7 @@ function wrn (...args) {
 }
 
 var last_dbg_msg = "";
+var _recent_dbg_msgs = [];
 
 function dbg(...args) {
 	var function_name = get_latest_caller(get_stack_trace(1));
@@ -167,7 +168,15 @@ function dbg(...args) {
 
 	var is_debug = checkCurrentUrlParams();
 
-	if (!is_debug && msg === last_dbg_msg) return;
+	if (!is_debug) {
+		if (msg === last_dbg_msg) return;
+		if (_recent_dbg_msgs.includes(msg)) {
+			last_dbg_msg = msg;
+			return;
+		}
+		_recent_dbg_msgs.push(msg);
+		if (_recent_dbg_msgs.length > 200) _recent_dbg_msgs.shift();
+	}
 	last_dbg_msg = msg;
 
 	console.debug(function_name + msg);
