@@ -209,7 +209,7 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
         return fact_ids[ref]["subject"] if ref in fact_ids else ref
 
     seen_relation_ids: set[str] = set()
-    seen_edges: set[tuple[str, str, str]] = set()
+    edge_sources: dict[tuple[str, str, str], set[str]] = defaultdict(set)
     relation_warnings: list[str] = []
     for rel in relations:
         if not rel["id"]:
@@ -219,12 +219,11 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
         else:
             seen_relation_ids.add(rel["id"])
         edge = (rel["from"], rel["to"], rel["kind"])
-        if edge in seen_edges:
+        if rel["source"] in edge_sources[edge]:
             relation_warnings.append(
                 f"{rel['source']}: duplicate relation edge {rel['from']} -[{rel['kind']}]-> {rel['to']}"
             )
-        else:
-            seen_edges.add(edge)
+        edge_sources[edge].add(rel["source"])
         if rel["kind"] not in KNOWN_RELATION_KINDS:
             errors.append(
                 f"{rel['source']}: unknown relation kind {rel['kind']!r} "

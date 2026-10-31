@@ -539,6 +539,6 @@ KNOWN_RELATION_KINDS = {
     "influenced", "before", "caused", "wrote", "part_of", "same_as",
     "derived_from", "located_in", "uses", "supports", "contradicts",
     "cites", "related_to", "instance_of", "discovered", "invented",
-    "founded",
+    "founded", "mentioned_in",
 }
 

@@ -31,6 +31,7 @@ sys.path.insert(0, str(ROOT / "tools" / "factcheck"))
 
 import check_facts  # noqa: E402
 import facts_lib  # noqa: E402
+import trace_facts  # noqa: E402
 
 
 def write_lesson(root: Path, slug: str, part: int = 1, order: int = 1) -> None:
@@ -133,6 +134,63 @@ class CheckerTests(unittest.TestCase):
             write_facts(root, "a", {"claims": [claim()]})
             self.assertEqual(self.run_check(root), 1)
 
+    def test_relation_cycle_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            write_lesson(root, "a")
+            write_lesson(root, "b", order=2)
+            write_facts(root, "a", {"source": "a.php", "claims": [claim(subject="a")],
+                                    "relations": [{"from": "a", "to": "b", "kind": "before"}]})
+            write_facts(root, "b", {"source": "b.php", "claims": [claim(subject="b")],
+                                    "relations": [{"from": "b", "to": "a", "kind": "before"}]})
+            self.assertEqual(self.run_check(root), 1)
+
+    def test_relation_temporal_conflict_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            write_lesson(root, "a")
+            write_lesson(root, "b", order=2)
+            write_facts(root, "a", {"source": "a.php", "claims": [
+                claim(subject="a", predicate="year", value=2000, unit="year")],
+                "relations": [{"from": "a", "to": "b", "kind": "before"}]})
+            write_facts(root, "b", {"source": "b.php", "claims": [
+                claim(subject="b", predicate="year", value=1990, unit="year")]})
+            self.assertEqual(self.run_check(root), 1)
+
+    def test_same_as_merges_and_detects_value_conflict(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            write_lesson(root, "a")
+            write_lesson(root, "b", order=2)
+            write_facts(root, "a", {"source": "a.php", "claims": [claim(subject="a", value=1)],
+                                    "relations": [{"from": "a", "to": "b", "kind": "same_as"}]})
+            write_facts(root, "b", {"source": "b.php", "claims": [claim(subject="b", value=2)]})
+            self.assertEqual(self.run_check(root), 1)
+
+    def test_relation_missing_endpoint_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            write_lesson(root, "a")
+            write_lesson(root, "b", order=2)
+            write_facts(root, "a", {"source": "a.php", "claims": [claim(subject="a")],
+                                    "relations": [{"from": "a", "to": "does-not-exist", "kind": "related_to"}]})
+            write_facts(root, "b", {"source": "b.php", "claims": [claim(subject="b")]})
+            self.assertEqual(self.run_check(root), 1)
+
+    def test_trace_finds_path(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            write_lesson(root, "a")
+            write_lesson(root, "b", order=2)
+            write_facts(root, "a", {"source": "a.php", "claims": [claim(subject="a")],
+                                    "relations": [{"from": "a", "to": "b", "kind": "related_to"}]})
+            write_facts(root, "b", {"source": "b.php", "claims": [claim(subject="b")]})
+            _, edges = trace_facts.load_graph(root)
+            path = trace_facts.shortest_path(edges, "a", "b", 5, False)
+            self.assertIsNotNone(path)
+            self.assertEqual(path[0][0], "a")
+            self.assertEqual(path[0][2], "b")
+
     def test_example_lessons_cross_check(self):
         """The two curated examples pass; a mutated claim in one is caught."""
         real = ROOT / "facts"
@@ -155,7 +213,6 @@ class CheckerTests(unittest.TestCase):
                 "unit": "interval",
                 "qualifiers": {},
                 "quote": "mutated for the test",
-                "line": 999,
             })
             path.write_text(json.dumps(document), encoding="utf-8")
             self.assertEqual(self.run_check(root), 1)

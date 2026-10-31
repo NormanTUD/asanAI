@@ -356,6 +356,45 @@ def main():
     check(scoped_key != server.cache_key("what is a perceptron", "en", []),
           "page-scoped cache keys differ from course-wide keys")
 
+    small_engine = object.__new__(server.RagEngine)
+    small_engine.small_chunks = [
+        {"p": "a", "h": "H", "u": "a#h", "pt": "Alpha", "x": "zero"},
+        {"p": "a", "h": "H", "u": "a#h", "pt": "Alpha", "x": "one"},
+        {"p": "a", "h": "H", "u": "a#h", "pt": "Alpha", "x": "two"},
+        {"p": "a", "h": "H", "u": "a#h", "pt": "Alpha", "x": "three"},
+        {"p": "b", "h": "H2", "u": "b#h2", "pt": "Beta", "x": "other"},
+    ]
+    small_engine.small_vectors = np.array([[1.0, 0.0]] * 5, dtype=np.float32)
+    small_engine.small_scales = np.ones(5, dtype=np.float32)
+    small_engine.small_bm25 = server.BM25(
+        [chunk["x"] for chunk in small_engine.small_chunks]
+    )
+    small_engine.reranker = None
+    small_engine.embed_question = lambda text: np.array([1.0, 0.0], dtype=np.float32)
+    windows = small_engine.retrieve_small("two", 2)
+    check(windows and windows[0]["x"] == "two",
+          "small retrieval picks the matching anchor")
+    check(windows[0]["context"] == "one two three",
+          "small window includes the chunks before and after")
+    check(windows[0].get("small") is True, "small window is marked as a detail")
+    scoped_small = small_engine.retrieve_small("other", 1, page="b")
+    check(len(scoped_small) == 1 and scoped_small[0]["p"] == "b",
+          "page-scoped small retrieval stays in the lesson")
+    check(scoped_small[0]["context"] == "other",
+          "page scope drops neighbours from another lesson")
+    missing_small = object.__new__(server.RagEngine)
+    check(missing_small.retrieve_small("anything") == [],
+          "a missing small index is ignored")
+
+    detail_messages = small_engine.build_messages("q", "q", windows[:1], "en", [])
+    check("one two three" in detail_messages[1]["content"],
+          "detail window reaches the prompt")
+    check("short verbatim windows" in detail_messages[1]["content"],
+          "detail windows add their prompt hint")
+    plain_messages = small_engine.build_messages("q", "q", chunks[:1], "en", [])
+    check("short verbatim windows" not in plain_messages[1]["content"],
+          "the detail hint stays off without small windows")
+
     bm25 = server.BM25(["a perceptron is linear", "the history of rome"])
     check(bm25.search("perceptron")[0] == 0, "BM25 finds an exact term")
     check(bm25.search("perceptron") != bm25.search("rome"), "BM25 ranks different terms")
@@ -409,6 +448,18 @@ def main():
     check(real_vectors.shape[0] == len(real_meta["chunks"]), "RAG index shapes agree")
     check(real_vectors.shape[1] == real_meta["dims"], "RAG index dimensions agree")
     check(len(real_scales) == len(real_meta["chunks"]), "RAG index scales agree")
+
+    small_meta, small_vectors, small_scales = server.load_index(
+        ROOT / "rag_data", "rag_index_small.json", "rag_vectors_small.bin"
+    )
+    check(small_vectors.shape[0] == len(small_meta["chunks"]),
+          "small RAG index shapes agree")
+    check(small_vectors.shape[1] == small_meta["dims"],
+          "small RAG index dimensions agree")
+    check(len(small_scales) == len(small_meta["chunks"]),
+          "small RAG index scales agree")
+    check(all(len(chunk["x"]) <= 50 for chunk in small_meta["chunks"]),
+          "small RAG chunks stay within 50 characters")
 
     with tempfile.TemporaryDirectory(prefix="asanai-rag-test-") as tmp:
         cache = server.AnswerCache(Path(tmp) / "cache.sqlite")

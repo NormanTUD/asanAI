@@ -146,6 +146,66 @@ def main():
             check(loaded["count"] == meta3["count"], "index count matches meta")
             check(loaded["sourceHash"] == "v2", "index records the new sourceHash")
 
+            small_meta, small_vectors, small_scales, small_stats = rag.build(
+                Path(tmp),
+                out,
+                "fake-model",
+                50,
+                8,
+                embed_fn=fake_embed,
+                min_chars=10,
+                strict=True,
+                kind="small",
+            )
+            check(
+                (out / "rag_index_small.json").exists()
+                and (out / "rag_vectors_small.bin").exists(),
+                "small index files were written",
+            )
+            check(
+                small_stats["embedded"] == small_meta["count"],
+                "first small build embeds every chunk",
+            )
+            check(
+                all(0 < len(chunk["x"]) <= 50 for chunk in small_meta["chunks"]),
+                "small chunks stay within 50 characters",
+            )
+            check(
+                all(
+                    len(chunk["x"]) >= 10
+                    for chunk in small_meta["chunks"]
+                    if chunk["t"] == "content"
+                ),
+                "small content chunks keep the 10-character floor",
+            )
+            check(
+                small_meta.get("kind") == "small"
+                and small_meta.get("maxChars") == 50
+                and small_meta.get("minChars") == 10
+                and small_meta.get("strict") is True,
+                "small index records its granularity",
+            )
+            small_meta2, small_vectors2, _, small_stats2 = rag.build(
+                Path(tmp),
+                out,
+                "fake-model",
+                50,
+                8,
+                embed_fn=fail_embed,
+                min_chars=10,
+                strict=True,
+                kind="small",
+            )
+            check(small_stats2["fresh"] is True, "fresh small index is a no-op")
+            check(
+                np.array_equal(small_vectors2, small_vectors),
+                "fresh small build keeps its vectors",
+            )
+            check(
+                small_meta2["sourceHash"] == "v2",
+                "small index records the source hash",
+            )
+
             (out / "rag_vectors.bin").write_bytes(b"broken")
             check(rag.load_existing(out, "fake-model") is None, "corrupt vectors are rejected")
     finally:

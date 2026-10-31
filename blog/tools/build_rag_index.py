@@ -435,11 +435,11 @@ def main() -> int:
     if "large" in results:
         meta, quantized, scales, _ = results["large"]
         for query in args.probe:
-            probe(query, meta, quantized, scales, args.model)
+            probe(query, meta, quantized, scales, meta["model"])
     if "small" in results:
         meta, quantized, scales, _ = results["small"]
         for query in args.probe_small:
-            probe(query, meta, quantized, scales, args.model, window=True)
+            probe(query, meta, quantized, scales, meta["model"], window=True)
     return 0
 
 
