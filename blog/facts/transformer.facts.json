@@ -68,7 +68,7 @@
   ],
   "claims": [
     {
-      "id": "auto-transformer-title-0-1",
+      "id": "auto-transformer-1",
       "subject": "transformer",
       "predicate": "title",
       "value": "The Architecture of Meaning: A Deep Dive into Transformers",
@@ -81,7 +81,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-transformer-part-0-2",
+      "id": "auto-transformer-2",
       "subject": "transformer",
       "predicate": "part",
       "value": 4,
@@ -94,7 +94,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-transformer-order-0-3",
+      "id": "auto-transformer-3",
       "subject": "transformer",
       "predicate": "order",
       "value": 9,
@@ -107,7 +107,18 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-gpt-3-parameters-676-4",
+      "id": "auto-transformer-4",
+      "subject": "quantization",
+      "predicate": "layers",
+      "value": 32,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**The parameter budget is mostly FFN.** For a LLaMA-class layer with $d_{\\text{model}} = 4096$ and $d_{\\text{ff}} = 11008$, the three SwiGLU matrices hold $3 \\times 4096 \\times 11008 \\approx 1.35 \\times 10^{8}$ parameters. Across 32 layers that is roughly $4.3 \\times 10^{9}$ of the model's $6.7 \\tim",
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-transformer-5",
       "subject": "gpt-3",
       "predicate": "parameters",
       "value": "175",
@@ -120,22 +131,32 @@
   ],
   "relations": [
     {
-      "id": "prov-transformer-gpt-3",
-      "from": "gpt-3",
-      "to": "transformer",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "Scaling became a science in 2020. \\cite[Kaplan et al. (2020)]{kaplan2020scaling} measured how language-model loss falls as parameters, data and compute grow, and found smooth power laws across several orders of magnitude (\\cite[Kaplan et al., 2020]{kaplan2020scaling}). That turned “make it bigger” f",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "prov-transformer-part",
       "from": "transformer",
       "to": "part-4",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-quantization",
+      "from": "quantization",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**The parameter budget is mostly FFN.** For a LLaMA-class layer with $d_{\\text{model}} = 4096$ and $d_{\\text{ff}} = 11008$, the three SwiGLU matrices hold $3 \\times 4096 \\times 11008 \\approx 1.35 \\times 10^{8}$ parameters. Across 32 layers that is roughly $4.3 \\times 10^{9}$ of the model's $6.7 \\tim",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-gpt-3",
+      "from": "gpt-3",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Scaling became a science in 2020. \\cite[Kaplan et al. (2020)]{kaplan2020scaling} measured how language-model loss falls as parameters, data and compute grow, and found smooth power laws across several orders of magnitude (\\cite[Kaplan et al., 2020]{kaplan2020scaling}). That turned “make it bigger” f",
       "citation_keys": [],
       "confidence": "provenance"
     }

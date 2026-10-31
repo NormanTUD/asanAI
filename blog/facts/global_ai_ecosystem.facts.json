@@ -37,7 +37,7 @@
   ],
   "claims": [
     {
-      "id": "auto-global_ai_ecosystem-title-0-1",
+      "id": "auto-global_ai_ecosystem-1",
       "subject": "global_ai_ecosystem",
       "predicate": "title",
       "value": "The Global AI Ecosystem",
@@ -50,7 +50,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-global_ai_ecosystem-part-0-2",
+      "id": "auto-global_ai_ecosystem-2",
       "subject": "global_ai_ecosystem",
       "predicate": "part",
       "value": 6,
@@ -63,7 +63,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-global_ai_ecosystem-order-0-3",
+      "id": "auto-global_ai_ecosystem-3",
       "subject": "global_ai_ecosystem",
       "predicate": "order",
       "value": 1,
@@ -72,6 +72,17 @@
         "lesson": "global_ai_ecosystem"
       },
       "quote": "order: 1",
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-global_ai_ecosystem-4",
+      "subject": "longcat-flash",
+      "predicate": "parameters",
+      "value": "27",
+      "unit": "B",
+      "qualifiers": {},
+      "quote": "* **Meituan / LongCat**: **LongCat-Flash**, a 560B-parameter mixture-of-experts model with roughly 27B active parameters that was reported as trained on Chinese-made accelerators (\\cite[LongCat Team, 2025]{longcat2025}).",
       "citation_keys": [],
       "confidence": "extracted"
     }
@@ -84,6 +95,16 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 6",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-longcat-flash",
+      "from": "longcat-flash",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **Meituan / LongCat**: **LongCat-Flash**, a 560B-parameter mixture-of-experts model with roughly 27B active parameters that was reported as trained on Chinese-made accelerators (\\cite[LongCat Team, 2025]{longcat2025}).",
       "citation_keys": [],
       "confidence": "provenance"
     }

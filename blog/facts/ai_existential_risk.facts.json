@@ -87,5 +87,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-ai_existential_risk-part",
+      "from": "ai-existential-risk",
+      "to": "part-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 6",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

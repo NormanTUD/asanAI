@@ -82,5 +82,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-alignment-part",
+      "from": "alignment",
+      "to": "part-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 6",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

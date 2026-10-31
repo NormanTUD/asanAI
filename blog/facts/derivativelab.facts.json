@@ -63,5 +63,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-derivativelab-part",
+      "from": "derivativelab",
+      "to": "part-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 2",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

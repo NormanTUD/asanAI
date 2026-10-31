@@ -96,7 +96,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-gpt-3-parameters-4",
+      "id": "embeddinglab--auto-gpt-3-parameters-4",
       "subject": "gpt-3",
       "predicate": "parameters",
       "value": "175",
@@ -107,5 +107,26 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-embeddinglab-part",
+      "from": "embeddinglab",
+      "to": "part-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-gpt-3",
+      "from": "gpt-3",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "points requires $N \\gg P$ to avoid overfitting. GPT-3 has **175 billion parameters**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

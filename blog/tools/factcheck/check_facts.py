@@ -30,6 +30,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from facts_lib import (  # noqa: E402
     ACYCLIC_KINDS,
     KNOWN_RELATION_KINDS,
+    canon_subject,
     claim_normalized,
     fact_files,
     is_functional,
@@ -130,7 +131,8 @@ def _normalize_source(text: str) -> str:
 
 def check(blog: Path, coverage: bool = True, verbose: bool = False,
           strict_relations: bool = False, strict_temporal: bool = False,
-          strict_quotes: bool = False):
+          strict_quotes: bool = False, require_claims: bool = False,
+          strict_unregistered: bool = False):
     errors: list[str] = []
     conflicts: list[str] = []
 
@@ -148,7 +150,6 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
     literature_keys = set()
     literature_path = blog / "literature.js"
     if literature_path.exists():
-        import re
         literature_keys = set(re.findall(
             r'^\s*"?([A-Za-z0-9_\-]+)"?\s*:\s*\{',
             literature_path.read_text(encoding="utf-8"),
@@ -159,6 +160,9 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
     all_claims: list[dict] = []
     relations: list[dict] = []
     quote_warnings: list[str] = []
+    documents: dict[str, dict] = {}
+    files_without_claims: list[str] = []
+    unregistered: list[str] = []
     seen_claim_ids: set[str] = set()
     source_cache: dict[str, tuple[str, str]] = {}
     for slug, path in sorted(facts.items()):
@@ -194,6 +198,7 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
             raw_source, norm_source = source_cache.get(slug, ("", ""))
             return quote in raw_source or _normalize_source(quote) in norm_source
 
+        documents[slug] = document if isinstance(document, dict) else {}
         for raw_rel in iter_relations(document):
             if "line" in raw_rel:
                 errors.append(f"{path}: relation {raw_rel.get('id', '?')} has a line field; use quote only")
@@ -207,6 +212,14 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
             relations.append(rel)
         if not claims and verbose:
             print(f"[info] {path}: no claims")
+        lesson_subject = canon_subject(slug)
+        nonmeta = [
+            c for c in claims
+            if not (c["subject"] == lesson_subject and c["predicate"] in {"title", "part", "order"})
+        ]
+        if not nonmeta and not slug.startswith("_"):
+            files_without_claims.append(slug)
+
         for raw in iter_claims(document):
             if "line" in raw:
                 errors.append(f"{path}: claim {raw.get('id', '?')} has a line field; use quote only")
@@ -233,6 +246,26 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
             all_claims.append(claim)
             if is_functional(claim):
                 groups[(claim["subject"], claim["predicate"], scope_key(claim))].append(claim)
+
+    # Cheap unregistered-fact check: 4-digit years in lesson prose must be
+    # represented by a claim value or a claim quote in that lesson's file.
+    for slug, (_, norm_source) in source_cache.items():
+        if not norm_source:
+            continue
+        if not documents.get(slug, {}).get("curated"):
+            continue  # unregistered-year scan is a gate for curated ledgers
+        known_years = set()
+        for claim in all_claims:
+            if claim.get("source") != f"{slug}.facts.json":
+                continue
+            if isinstance(claim["value"], (int, float)):
+                known_years.add(str(int(claim["value"])))
+            for match in re.finditer(r"\b(1[0-9]{3}|20[0-2][0-9])\b", claim.get("quote", "")):
+                known_years.add(match.group(1))
+        for match in re.finditer(r"\b(1[0-9]{3}|20[0-2][0-9])\b", norm_source):
+            year = match.group(1)
+            if year not in known_years:
+                unregistered.append(f"{slug}.php: year {year} is not represented in {slug}.facts.json")
 
     for (subject, predicate, scope), claim_group in sorted(groups.items()):
         clusters = _clusters(claim_group)
@@ -397,6 +430,24 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
             else:
                 conflicts.append(message)
 
+    if unregistered:
+        print(f"[unregistered] {len(unregistered)} year(s) in prose have no matching fact:")
+        for item in unregistered[:40]:
+            print(f"  ? {item}")
+        if len(unregistered) > 40:
+            print(f"  … and {len(unregistered) - 40} more")
+        if strict_unregistered:
+            errors.extend(unregistered)
+
+    if files_without_claims:
+        print(f"[claims] {len(files_without_claims)} lesson(s) have only metadata, no checkable fact:")
+        for slug in files_without_claims[:40]:
+            print(f"  - {slug}")
+        if len(files_without_claims) > 40:
+            print(f"  … and {len(files_without_claims) - 40} more")
+        if require_claims:
+            errors.append(f"{len(files_without_claims)} lesson(s) have no non-metadata claim")
+
     if quote_warnings:
         print("=" * 72)
         print("QUOTE WARNINGS (non-blocking unless --strict-quotes)")
@@ -438,7 +489,8 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
     print(
         f"[{'FAIL' if (errors or conflicts) else 'PASS'}] "
         f"{len(facts)} fact files, {len(all_claims)} claims, {len(relations)} relations, "
-        f"{len(isolated)} isolated subject(s), {len(quote_warnings)} quote warning(s), "
+        f"{len(isolated)} isolated subject(s), {len(files_without_claims)} metadata-only lesson(s), "
+        f"{len(unregistered)} unregistered year(s), {len(quote_warnings)} quote warning(s), "
         f"{len(conflicts)} conflict(s), {len(errors)} error(s)"
     )
     return 1 if (errors or conflicts) else 0
@@ -455,10 +507,16 @@ def main() -> None:
                         help="promote temporal warnings to errors")
     parser.add_argument("--strict-quotes", action="store_true",
                         help="promote quote-freshness warnings to errors")
+    parser.add_argument("--require-claims", action="store_true",
+                        help="fail if a lesson has no non-metadata claim")
+    parser.add_argument("--strict-unregistered", action="store_true",
+                        help="fail on years in prose that have no matching fact")
     args = parser.parse_args()
     sys.exit(check(Path(args.blog), coverage=not args.no_coverage,
                    verbose=args.verbose, strict_relations=args.strict_relations,
-                   strict_temporal=args.strict_temporal, strict_quotes=args.strict_quotes))
+                   strict_temporal=args.strict_temporal, strict_quotes=args.strict_quotes,
+                   require_claims=args.require_claims,
+                   strict_unregistered=args.strict_unregistered))
 
 
 if __name__ == "__main__":

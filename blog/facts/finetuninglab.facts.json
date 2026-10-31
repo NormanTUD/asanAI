@@ -89,5 +89,36 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-finetuninglab-part",
+      "from": "finetuninglab",
+      "to": "part-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 5",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-lora",
+      "from": "lora",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "With $r = 16$ on a 4096×4096 weight matrix, LoRA adds ~131K parameters (0.78% of the original).",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-qlora",
+      "from": "qlora",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "For a 7B–13B model with QLoRA on a single consumer GPU (24 GB):",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

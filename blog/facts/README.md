@@ -22,8 +22,11 @@ uv run blog/tools/factcheck/extract_facts.py blog/
 # Alle nicht-kuratierten Dateien neu erzeugen.
 uv run blog/tools/factcheck/extract_facts.py blog/ --force
 
-# Alle Dateien gegeneinander prüfen.
-uv run blog/tools/factcheck/check_facts.py blog/
+# Alle Dateien gegeneinander prüfen (strenge Gates).
+uv run blog/tools/factcheck/check_facts.py blog/ --strict-relations --strict-quotes
+
+# Optional: fehlende Fakten/Jahre als Fehler behandeln.
+uv run blog/tools/factcheck/check_facts.py blog/ --require-claims --strict-unregistered
 
 # Provenienz-Rückgrat (Entität -> Lektion) nach neuen Claims.
 uv run blog/tools/factcheck/link_provenance.py blog/

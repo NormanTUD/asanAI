@@ -50,7 +50,8 @@ def write_facts(root: Path, slug: str, document) -> None:
 
 
 def claim(subject="x", predicate="parameters", value=1, unit="count", **extra):
-    data = {"subject": subject, "predicate": predicate, "value": value, "unit": unit}
+    data = {"subject": subject, "predicate": predicate, "value": value, "unit": unit,
+            "quote": "test quote"}
     data.update(extra)
     return data
 
@@ -109,11 +110,11 @@ class CheckerTests(unittest.TestCase):
             write_lesson(root, "b", order=2)
             write_facts(root, "a", {"items": [{
                 "entity": "gpt-3", "property": "parameter_count",
-                "val": "175 billion", "context": {}, "evidence": "quote", "line": 1,
+                "val": "175 billion", "context": {}, "evidence": "quote",
             }]})
             write_facts(root, "b", {"claims": [{
                 "subject": "GPT3", "predicate": "parameters",
-                "value": 175_000_000_000, "unit": "count",
+                "value": 175_000_000_000, "unit": "count", "quote": "quote",
             }]})
             self.assertEqual(self.run_check(root), 0)
 

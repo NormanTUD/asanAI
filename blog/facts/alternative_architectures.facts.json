@@ -63,5 +63,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-alternative_architectures-part",
+      "from": "alternative-architectures",
+      "to": "part-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

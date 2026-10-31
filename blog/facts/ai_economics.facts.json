@@ -92,5 +92,36 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-ai_economics-part",
+      "from": "ai-economics",
+      "to": "part-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 5",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_economics-a100",
+      "from": "a100",
+      "to": "ai-economics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A100 (~312 TFLOP/s BF16)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_economics-h100",
+      "from": "h100",
+      "to": "ai-economics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "H100 (~495 TFLOP/s TF32)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

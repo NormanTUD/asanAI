@@ -22,7 +22,7 @@
   ],
   "claims": [
     {
-      "id": "auto-mixture_of_experts-title-0-1",
+      "id": "auto-mixture_of_experts-1",
       "subject": "mixture_of_experts",
       "predicate": "title",
       "value": "Mixture of Experts",
@@ -35,7 +35,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-mixture_of_experts-part-0-2",
+      "id": "auto-mixture_of_experts-2",
       "subject": "mixture_of_experts",
       "predicate": "part",
       "value": 4,
@@ -48,7 +48,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-mixture_of_experts-order-0-3",
+      "id": "auto-mixture_of_experts-3",
       "subject": "mixture_of_experts",
       "predicate": "order",
       "value": 18,
@@ -61,7 +61,29 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-deepseek-v3-parameters-108-4",
+      "id": "auto-mixture_of_experts-4",
+      "subject": "gshard",
+      "predicate": "parameters",
+      "value": "600",
+      "unit": "billion",
+      "qualifiers": {},
+      "quote": "GShard (\\cite[Lepikhin et al., 2021]{lepikhin2021gshard}; arXiv 2020) is the bridge between the 2017 layer and the trillion-parameter runs. It scaled a sparse MoE to 600 billion parameters for multilingual translation, used top-2 gating with a hard **expert capacity** — a limit on how many tokens ea",
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-mixture_of_experts-5",
+      "subject": "gshard",
+      "predicate": "layers",
+      "value": 2017,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "GShard (\\cite[Lepikhin et al., 2021]{lepikhin2021gshard}; arXiv 2020) is the bridge between the 2017 layer and the trillion-parameter runs. It scaled a sparse MoE to 600 billion parameters for multilingual translation, used top-2 gating with a hard **expert capacity** — a limit on how many tokens ea",
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-mixture_of_experts-6",
       "subject": "deepseek-v3",
       "predicate": "parameters",
       "value": "671",
@@ -70,19 +92,20 @@
       "quote": "A cleaner decomposition arrived with DeepSeekMoE (\\cite[DeepSeekMoE, 2024]{deepseekmoe2024}) and was carried into DeepSeek-V3 (\\cite[DeepSeek-V3, 2024]{deepseekv3tech2024}); the design is now the reference. The first is a **shared expert**: one expert is *dense* — every token goes through it — while",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "auto-mixture_of_experts-7",
+      "subject": "mixtral",
+      "predicate": "parameters",
+      "value": "47",
+      "unit": "billion",
+      "qualifiers": {},
+      "quote": "Mixtral made the arithmetic public. Each layer has eight experts and routes each token to two of them, so the model stores 47 billion parameters but computes with about 13 billion per token (\\cite[Jiang et al., 2024]{mixtral2024}). The saving is real but narrower than the name suggests: every expert",
+      "citation_keys": [],
+      "confidence": "extracted"
     }
   ],
   "relations": [
-    {
-      "id": "prov-mixture_of_experts-deepseek-v3",
-      "from": "deepseek-v3",
-      "to": "mixture_of_experts",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "A cleaner decomposition arrived with DeepSeekMoE (\\cite[DeepSeekMoE, 2024]{deepseekmoe2024}) and was carried into DeepSeek-V3 (\\cite[DeepSeek-V3, 2024]{deepseekv3tech2024}); the design is now the reference. The first is a **shared expert**: one expert is *dense* — every token goes through it — while",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-mixture_of_experts-part",
       "from": "mixture-of-experts",
@@ -90,6 +113,36 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mixture_of_experts-gshard",
+      "from": "gshard",
+      "to": "mixture-of-experts",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "GShard (\\cite[Lepikhin et al., 2021]{lepikhin2021gshard}; arXiv 2020) is the bridge between the 2017 layer and the trillion-parameter runs. It scaled a sparse MoE to 600 billion parameters for multilingual translation, used top-2 gating with a hard **expert capacity** — a limit on how many tokens ea",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mixture_of_experts-deepseek-v3",
+      "from": "deepseek-v3",
+      "to": "mixture-of-experts",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A cleaner decomposition arrived with DeepSeekMoE (\\cite[DeepSeekMoE, 2024]{deepseekmoe2024}) and was carried into DeepSeek-V3 (\\cite[DeepSeek-V3, 2024]{deepseekv3tech2024}); the design is now the reference. The first is a **shared expert**: one expert is *dense* — every token goes through it — while",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mixture_of_experts-mixtral",
+      "from": "mixtral",
+      "to": "mixture-of-experts",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Mixtral made the arithmetic public. Each layer has eight experts and routes each token to two of them, so the model stores 47 billion parameters but computes with about 13 billion per token (\\cite[Jiang et al., 2024]{mixtral2024}). The saving is real but narrower than the name suggests: every expert",
       "citation_keys": [],
       "confidence": "provenance"
     }
