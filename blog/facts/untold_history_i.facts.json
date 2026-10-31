@@ -6700,6 +6700,5584 @@
         "alkhwarizmi820algebra"
       ],
       "confidence": "inferred"
+    },
+    {
+      "id": "rel-untold-i-hydrogen-from-bbn",
+      "from": "hydrogen",
+      "to": "big-bang-nucleosynthesis",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "nearly all the hydrogen in every atom on Earth, including the hydrogen in your body and in every drop of water, was made not inside any star but in those first twenty minutes",
+      "citation_keys": [
+        "weinberg1977first"
+      ]
+    },
+    {
+      "id": "rel-untold-i-cmb-supports-big-bang",
+      "from": "cosmic-microwave-background",
+      "to": "big-bang",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "The discovery of the cosmic microwave background radiation provided strong empirical support for this model",
+      "citation_keys": [
+        "penzias1965measurement"
+      ]
+    },
+    {
+      "id": "rel-untold-i-weizsacker-before-cno",
+      "from": "cno-cycle-weizsacker",
+      "to": "cno-cycle",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "Carl Friedrich von Weizsäcker had already derived independently the year before, in 1938",
+      "citation_keys": [
+        "bethe1939energy"
+      ]
+    },
+    {
+      "id": "rel-untold-i-kilonova-from-gw170817",
+      "from": "kilonova",
+      "to": "gw170817",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "recorded the inspiral and merger of two neutron stars, the event GW170817, and within seconds a short gamma-ray burst was seen, and within days a glowing debris cloud, a **kilonova**, bloomed and faded in a distant galaxy",
+      "citation_keys": [
+        "gw170817multimessenger"
+      ]
+    },
+    {
+      "id": "rel-untold-i-kasen-supports-rprocess",
+      "from": "kasen-2017-analysis",
+      "to": "gold-platinum-uranium",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "analysis concluded that such mergers are a dominant cosmic factory for the r-process elements",
+      "citation_keys": [
+        "kasen2017kilonova"
+      ]
+    },
+    {
+      "id": "rel-untold-i-rprocess-from-neutron-stars",
+      "from": "gold-platinum-uranium",
+      "to": "neutron-star",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "the gold in a ring, the platinum in a catalytic converter, and the uranium in the Earth's crust were all forged in the violent collisions of collapsing neutron stars",
+      "citation_keys": [
+        "kasen2017kilonova"
+      ]
+    },
+    {
+      "id": "rel-untold-i-pulsar-instance-neutron-star",
+      "from": "pulsar",
+      "to": "neutron-star",
+      "kind": "instance_of",
+      "qualifiers": {},
+      "quote": "When such a neutron star spins and sweeps a beam of radiation across us, its emission arrives as a steady, clocklike pulse, and it was precisely this that \\citeauthorlastnameand{hewish1968pulsar} reported in 1968 when they detected the first **pulsar**",
+      "citation_keys": [
+        "hewish1968pulsar"
+      ]
+    },
+    {
+      "id": "rel-untold-i-population-iii-part-of-first-stars",
+      "from": "population-iii-stars",
+      "to": "first-stars-and-galaxies",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "the very first stars, the **Population III** generation, which ignited within a few hundred million years of the Big Bang",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-kant-invented-nebular",
+      "from": "kant-immanuel",
+      "to": "nebular-hypothesis",
+      "kind": "invented",
+      "qualifiers": {},
+      "quote": "first proposed that the Solar System had formed by the gravitational settling of a nebula",
+      "citation_keys": [
+        "kant1755heavens"
+      ]
+    },
+    {
+      "id": "rel-untold-i-solar-system-from-molecular-cloud",
+      "from": "solar-system",
+      "to": "giant-molecular-cloud",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "began when a fragment of a giant molecular cloud collapsed roughly **4.57 billion years ago** to make a protostar, the Sun",
+      "citation_keys": [
+        "amelin2010solarsystem"
+      ]
+    },
+    {
+      "id": "rel-untold-i-theia-part-of-giant-impact",
+      "from": "theia",
+      "to": "giant-impact-hypothesis",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "a Mars-sized protoplanet, conventionally named **Theia**, struck the proto-Earth",
+      "citation_keys": [
+        "hartmann1975satellite"
+      ]
+    },
+    {
+      "id": "rel-untold-i-nice-supports-lhb",
+      "from": "nice-model",
+      "to": "late-heavy-bombardment",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "is associated in the Nice model with the final migration of the giant planets",
+      "citation_keys": [
+        "gomes2005nice"
+      ]
+    },
+    {
+      "id": "rel-untold-i-gilbert-invented-electricus",
+      "from": "gilbert-william",
+      "to": "electricus",
+      "kind": "invented",
+      "qualifiers": {},
+      "quote": "gave us the Neo-Latin *electricus* (from the Greek word for amber)",
+      "citation_keys": [
+        "gilbert1600magnete"
+      ]
+    },
+    {
+      "id": "rel-untold-i-halley-invented-chart",
+      "from": "halley-edmond",
+      "to": "halley-magnetic-variation-chart",
+      "kind": "invented",
+      "qualifiers": {},
+      "quote": "produced the first *chart of magnetic variation*",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-mars-dynamo-before-atmosphere",
+      "from": "mars-dynamo",
+      "to": "mars-atmosphere",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "its dynamo shut down about four billion years ago, after which the solar wind stripped the planet's atmosphere",
+      "citation_keys": [
+        "magnetosphere_wiki"
+      ]
+    },
+    {
+      "id": "rel-untold-i-primordial-before-second-atmosphere",
+      "from": "earth-primordial-atmosphere",
+      "to": "earth-second-atmosphere",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "The *second* atmosphere, the one that stayed, was outgassed from the rock",
+      "citation_keys": [
+        "atmosphere_wiki"
+      ]
+    },
+    {
+      "id": "rel-untold-i-photosynthesis-research-before-air-components",
+      "from": "photosynthesis-research",
+      "to": "air-components",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "more than a century before the gas itself was identified",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-cyanobacteria-caused-goe",
+      "from": "cyanobacteria",
+      "to": "great-oxidation-event",
+      "kind": "caused",
+      "qualifiers": {},
+      "quote": "Cyanobacteria evolved chlorophyll-based photosynthesis — the only known process that splits water and releases free oxygen (O₂) as a waste product — and the oxygen they pumped out, once the ocean's dissolved iron and sulfur were saturated, began to accumulate in the air around 2.4 billion years ago in the **Great Oxidation Event**",
+      "citation_keys": [
+        "goe_wiki"
+      ]
+    },
+    {
+      "id": "rel-untold-i-early-atmosphere-contradicts-miller",
+      "from": "early-earth-atmosphere",
+      "to": "miller-urey-experiment",
+      "kind": "contradicts",
+      "qualifiers": {},
+      "quote": "early Earth was probably CO₂- and N₂-rich, not the CH₄–NH₃ of the 1953 flask",
+      "citation_keys": [
+        "cleaves2012prebiotic"
+      ]
+    },
+    {
+      "id": "rel-untold-i-cech-caused-nobel",
+      "from": "cech-self-splicing-rna",
+      "to": "nobel-prize-chemistry-1989",
+      "kind": "caused",
+      "qualifiers": {},
+      "quote": "For this \"discovery of the catalytic properties of RNA,\" Cech and Altman shared the \\citeyear{nobel1989cechantman} Nobel Prize in Chemistry",
+      "citation_keys": [
+        "nobel1989cechantman"
+      ]
+    },
+    {
+      "id": "rel-untold-i-cech-supports-rna-world",
+      "from": "cech-self-splicing-rna",
+      "to": "rna-world-hypothesis",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "reported that the intervening RNA sequence simply cut itself out — no protein in the mixture",
+      "citation_keys": [
+        "kruger1982selfsplicing"
+      ]
+    },
+    {
+      "id": "rel-untold-i-rnasep-supports-rna-world",
+      "from": "rnase-p",
+      "to": "rna-world-hypothesis",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "showed that the \"enzyme\" RNase P was in fact catalysed by its own RNA subunit",
+      "citation_keys": [
+        "altman1976rnasep"
+      ]
+    },
+    {
+      "id": "rel-untold-i-orgel-supports-murchison",
+      "from": "orgel-parris-1979",
+      "to": "murchison-meteorite",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "reported that the Murchison meteorite, which fell in Australia in 1969, carried a rich, partly extraterrestrial suite of amino acids",
+      "citation_keys": [
+        "orgelparris1979murchison"
+      ]
+    },
+    {
+      "id": "rel-untold-i-sutherland-supports-rna-world",
+      "from": "sutherland-prebiotic-pyrimidines",
+      "to": "rna-world-hypothesis",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "Sutherland's Manchester group built the pyrimidine nucleotides cytidine and uridine from small two- and three-carbon fragments",
+      "citation_keys": [
+        "sutherland2009pyrimidine"
+      ]
+    },
+    {
+      "id": "rel-untold-i-polymerase-supports-rna-world",
+      "from": "24-3-polymerase-ribozyme",
+      "to": "rna-world-hypothesis",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "in-vitro evolution produced the 24-3 polymerase ribozyme, an RNA enzyme that copies a wide range of RNA templates",
+      "citation_keys": [
+        "horning2016rpr"
+      ]
+    },
+    {
+      "id": "rel-untold-i-dresser-stromatolites-located",
+      "from": "dresser-formation-stromatolites",
+      "to": "dresser-formation",
+      "kind": "located_in",
+      "qualifiers": {},
+      "quote": "reported stromatolites 3,400–3,500 million years old from the North Pole area of the Dresser Formation",
+      "citation_keys": [
+        "walter1986stromatolites"
+      ]
+    },
+    {
+      "id": "rel-untold-i-dresser-microfossils-located",
+      "from": "dresser-formation-microfossils",
+      "to": "dresser-formation",
+      "kind": "located_in",
+      "qualifiers": {},
+      "quote": "described 3,700-million-year-old filamentous microfossils and spheroidal cells from the Dresser Formation",
+      "citation_keys": [
+        "vankranendonk2016microbial"
+      ]
+    },
+    {
+      "id": "rel-untold-i-three-domain-from-woese",
+      "from": "three-domain-system",
+      "to": "woese-1977",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "revealing three primary kingdoms rather than two; \\citeauthorlastnameand{woese1990domains} formalized the three-domain system (Archaea, Bacteria, Eucarya)",
+      "citation_keys": [
+        "woese1977phylogenetic",
+        "woese1990domains"
+      ]
+    },
+    {
+      "id": "rel-untold-i-weiss-supports-luca",
+      "from": "weiss-2016",
+      "to": "luca",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "reconstructed approximately 355 gene families that LUCA must have possessed",
+      "citation_keys": [
+        "weiss2016luca"
+      ]
+    },
+    {
+      "id": "rel-untold-i-frei-supports-pulses",
+      "from": "frei-2009",
+      "to": "pre-goe-oxygen-pulses",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "that chromium isotope ratios in banded iron formations record pre-GOE oxygen pulses as early as 3.5 Ga",
+      "citation_keys": [
+        "frei2009chromium"
+      ]
+    },
+    {
+      "id": "rel-untold-i-goe-caused-aerobic",
+      "from": "great-oxidation-event",
+      "to": "aerobic-respiration",
+      "kind": "caused",
+      "qualifiers": {},
+      "quote": "but it also unlocked the energy yields of aerobic respiration, roughly eighteen times more efficient than anaerobic metabolism",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-euk-multicell-before-cambrian",
+      "from": "eukaryotic-multicellularity",
+      "to": "cambrian-explosion",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "preceded the Cambrian Explosion by over a billion years",
+      "citation_keys": [
+        "zhu2016multicellular"
+      ]
+    },
+    {
+      "id": "rel-untold-i-dickinsonia-before-cambrian",
+      "from": "dickinsonia",
+      "to": "cambrian-explosion",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "predating the Cambrian Explosion by more than 20 million years",
+      "citation_keys": [
+        "bobrovskiy2018dickinsonia"
+      ]
+    },
+    {
+      "id": "rel-untold-i-brain-supports-otavia",
+      "from": "brain-2012",
+      "to": "otavia-antiqua",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "was reported by \\citeauthorlastnameand{brain2012otavia} in \\citeyear{brain2012otavia} as the oldest known animal",
+      "citation_keys": [
+        "brain2012otavia"
+      ]
+    },
+    {
+      "id": "rel-untold-i-antcliffe-contradicts-otavia",
+      "from": "antcliffe-2014",
+      "to": "otavia-antiqua",
+      "kind": "contradicts",
+      "qualifiers": {},
+      "quote": "argued that the structures are non-biological concretions",
+      "citation_keys": [
+        "antcliffe2014otavia"
+      ]
+    },
+    {
+      "id": "rel-untold-i-brocks-supports-animal-emergence",
+      "from": "brocks-2017",
+      "to": "animal-emergence",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "indicates that the rise of eukaryotic algae and the emergence of animals were coupled, with animals appearing in the Ediacaran",
+      "citation_keys": [
+        "brocks2017rise"
+      ]
+    },
+    {
+      "id": "rel-untold-i-whittington-supports-burgess-locality",
+      "from": "whittington-1979",
+      "to": "burgess-shale",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "established the Burgess Shale as the type locality for the Cambrian Explosion",
+      "citation_keys": [
+        "whittington1979burgess"
+      ]
+    },
+    {
+      "id": "rel-untold-i-dinosaur-dominance-part-of-mesozoic",
+      "from": "dinosaur-dominance",
+      "to": "mesozoic",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "The next 165 million years, the **Mesozoic** (252–66 Ma), belonged to the reptiles.",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-buckland-discovered-megalosaurus",
+      "from": "buckland-william",
+      "to": "megalosaurus",
+      "kind": "discovered",
+      "qualifiers": {},
+      "quote": "described a lower jaw from the Jurassic of Stonesfield, England, and named it *Megalosaurus*",
+      "citation_keys": [
+        "buckland1824megalosaurus"
+      ]
+    },
+    {
+      "id": "rel-untold-i-mantell-discovered-hylaeosaurus",
+      "from": "mantell-gideon",
+      "to": "hylaeosaurus",
+      "kind": "discovered",
+      "qualifiers": {},
+      "quote": "Mantell added *Hylaeosaurus* in the 1830s",
+      "citation_keys": [
+        "paleontology_history_wiki"
+      ]
+    },
+    {
+      "id": "rel-untold-i-owen-founded-dinosauria",
+      "from": "owen-richard",
+      "to": "dinosauria",
+      "kind": "founded",
+      "qualifiers": {},
+      "quote": "carved them out into a new order, the **Dinosauria**",
+      "citation_keys": [
+        "owen1842dinosauria"
+      ]
+    },
+    {
+      "id": "rel-untold-i-megalosaurus-part-of-dinosauria",
+      "from": "megalosaurus",
+      "to": "dinosauria",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "he noticed that *Megalosaurus*, *Iguanodon*, and *Hylaeosaurus* shared a suite of hip and jaw features that no living reptile had, and carved them out into a new order, the **Dinosauria**",
+      "citation_keys": [
+        "owen1842dinosauria"
+      ]
+    },
+    {
+      "id": "rel-untold-i-hylaeosaurus-part-of-dinosauria",
+      "from": "hylaeosaurus",
+      "to": "dinosauria",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "he noticed that *Megalosaurus*, *Iguanodon*, and *Hylaeosaurus* shared a suite of hip and jaw features that no living reptile had, and carved them out into a new order, the **Dinosauria**",
+      "citation_keys": [
+        "owen1842dinosauria"
+      ]
+    },
+    {
+      "id": "rel-untold-i-steno-founded-stratigraphy",
+      "from": "steno-nicolaus",
+      "to": "stratigraphy",
+      "kind": "founded",
+      "qualifiers": {},
+      "quote": "laid down the **laws of stratigraphy** (superposition, horizontality)",
+      "citation_keys": [
+        "steno1669solido"
+      ]
+    },
+    {
+      "id": "rel-untold-i-xenophanes-before-ancient-chinese",
+      "from": "xenophanes",
+      "to": "ancient-chinese",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "a millennium later the ancient Chinese read the same kind of stone as **dragon bones**",
+      "citation_keys": [
+        "paleontology_history_wiki"
+      ]
+    },
+    {
+      "id": "rel-untold-i-ortelius-influenced-wegener",
+      "from": "ortelius-abraham",
+      "to": "wegener-alfred",
+      "kind": "influenced",
+      "qualifiers": {},
+      "quote": "The suspicion goes back to the cartographer Abraham Ortelius in 1596, who saw that the coasts of the Americas looked \"torn away\" from Europe and Africa",
+      "citation_keys": [
+        "continental_drift_wiki"
+      ]
+    },
+    {
+      "id": "rel-untold-i-wegener-supports-pangaea",
+      "from": "wegener-alfred",
+      "to": "pangaea",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "assembled the evidence into a theory: the continents had once formed a single **Pangaea** and drifted apart",
+      "citation_keys": [
+        "wegener1915origin"
+      ]
+    },
+    {
+      "id": "rel-untold-i-vine-supports-hess",
+      "from": "vine-matthews-1963",
+      "to": "hess-harry",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "showed the ocean floor carries mirror-symmetric bands of reversed magnetism, the \"conveyor belt\" explicable only if new crust is continually born at the ridge",
+      "citation_keys": [
+        "vinematthews1963magnetic"
+      ]
+    },
+    {
+      "id": "rel-untold-i-alvarez-discovered-iridium",
+      "from": "alvarez-1980",
+      "to": "iridium-anomaly",
+      "kind": "discovered",
+      "qualifiers": {},
+      "quote": "measured the element **iridium** in the thin clay that marks the K–Pg boundary at Gubbio, Italy, and found it running about a hundred and sixty times above background",
+      "citation_keys": [
+        "alvarez1980extinction"
+      ]
+    },
+    {
+      "id": "rel-untold-i-iridium-located-in-kpg",
+      "from": "iridium-anomaly",
+      "to": "cretaceous-paleogene-boundary",
+      "kind": "located_in",
+      "qualifiers": {},
+      "quote": "in the thin clay that marks the K–Pg boundary at Gubbio, Italy",
+      "citation_keys": [
+        "alvarez1980extinction"
+      ]
+    },
+    {
+      "id": "rel-untold-i-smit-supports-iridium",
+      "from": "smit-hertogen-1980",
+      "to": "iridium-anomaly",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "Jan Smit and Jan Hertogen reported the same boundary spike from Spain",
+      "citation_keys": [
+        "smit1980boundary"
+      ]
+    },
+    {
+      "id": "rel-untold-i-impactor-caused-crater",
+      "from": "chicxulub-impactor",
+      "to": "chicxulub-crater",
+      "kind": "caused",
+      "qualifiers": {},
+      "quote": "the scar of a ten-kilometre asteroid striking at about twenty kilometres per second",
+      "citation_keys": [
+        "chicxulub1991crater"
+      ]
+    },
+    {
+      "id": "rel-untold-i-crater-caused-extinction",
+      "from": "chicxulub-crater",
+      "to": "cretaceous-paleogene-extinction",
+      "kind": "caused",
+      "qualifiers": {},
+      "quote": "The impact vaporized sulfur-rich rock, choked the sky with dust and sulfate for years, halted photosynthesis, and collapsed the food chain; the climate disruption, not the blast, is what finished the dinosaurs",
+      "citation_keys": [
+        "chicxulub_wiki"
+      ]
+    },
+    {
+      "id": "rel-untold-i-survivors-caused-primates",
+      "from": "kpg-mammal-survivors",
+      "to": "primates",
+      "kind": "caused",
+      "qualifiers": {},
+      "quote": "the radiation of mammals into the emptied niches is the one that led, over the following tens of millions of years, to the primates",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-mesozoic-mammals-before-survivors",
+      "from": "mesozoic-mammals",
+      "to": "kpg-mammal-survivors",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "The small, mostly nocturnal, warm-blooded mammals that had lived in the shadow of the dinosaurs for well over a hundred million years were spared",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-primates-before-catarrhine",
+      "from": "primates",
+      "to": "cercopithecoidea-hominoidea-split",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "The order Primates diverged from other mammals approximately 65–80 million years ago, and the lineage leading to Old World monkeys (Cercopithecoidea) split from the lineage leading to apes (Hominoidea) roughly 25–30 million years ago",
+      "citation_keys": [
+        "begun2003planet"
+      ]
+    },
+    {
+      "id": "rel-untold-i-catarrhine-before-hominini",
+      "from": "cercopithecoidea-hominoidea-split",
+      "to": "hominini-pan-split",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "the human lineage (Hominini) diverged from the lineage leading to chimpanzees and bonobos between approximately 6 and 8 million years ago",
+      "citation_keys": [
+        "begun2003planet"
+      ]
+    },
+    {
+      "id": "rel-untold-i-sahel-before-ardipithecus",
+      "from": "sahelanthropus-tchadensis",
+      "to": "ardipithecus-ramidus",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "Early hominins such as *Sahelanthropus tchadensis* (approximately 7 million years ago) and *Ardipithecus ramidus* (approximately 4.4 million years ago)",
+      "citation_keys": [
+        "white2009ardipithecus"
+      ]
+    },
+    {
+      "id": "rel-untold-i-knapping-before-homo",
+      "from": "stone-tool-knapping",
+      "to": "homo",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "Stone-tool knapping, however, **predates** the genus *Homo*",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-homo-before-erectus",
+      "from": "homo",
+      "to": "homo-erectus",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "The emergence of the genus *Homo* around 2.8 million years ago was associated with increasing brain size and the more systematic **\\citealternativetitle{oldowan}** tool industry, the first technology unambiguously tied to *Homo habilis*. *Homo erectus* (approximately 1.9 million years ago)",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-dunsworth-contradicts-obstetrical",
+      "from": "dunsworth-2012",
+      "to": "obstetrical-dilemma",
+      "kind": "contradicts",
+      "qualifiers": {},
+      "quote": "argue that limits to maternal metabolism, not the pelvis, are the primary constraint on gestation length and fetal growth",
+      "citation_keys": [
+        "dunsworth2012altriciality"
+      ]
+    },
+    {
+      "id": "rel-untold-i-warrener-contradicts-obstetrical",
+      "from": "warrener-2015",
+      "to": "obstetrical-dilemma",
+      "kind": "contradicts",
+      "qualifiers": {},
+      "quote": "found that a wider pelvis does not raise the metabolic cost of walking or running, removing one of the assumed locomotor costs of a roomier birth canal",
+      "citation_keys": [
+        "warrener2015pelvis"
+      ]
+    },
+    {
+      "id": "rel-untold-i-xu-supports-birth-canal-dimensions",
+      "from": "xu-2025-pelvis-study",
+      "to": "birth-canal-dimensions",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "found that birth-canal dimensions are highly heritable",
+      "citation_keys": [
+        "xu2025pelvis"
+      ]
+    },
+    {
+      "id": "rel-untold-i-xu-supports-birth-canal-width",
+      "from": "xu-2025-pelvis-study",
+      "to": "birth-canal-width",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "birth-canal width is genetically correlated with head width",
+      "citation_keys": [
+        "xu2025pelvis"
+      ]
+    },
+    {
+      "id": "rel-untold-i-xu-supports-wide-birth-canal",
+      "from": "xu-2025-pelvis-study",
+      "to": "wide-birth-canal",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "wider birth canals were associated with slower walking and higher hip-osteoarthritis risk",
+      "citation_keys": [
+        "xu2025pelvis"
+      ]
+    },
+    {
+      "id": "rel-untold-i-darwin-supports-camera-eye",
+      "from": "darwin-origin-of-species",
+      "to": "camera-eye-evolution",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "if the eye can vary in every generation, and if every small improvement helps, then a camera eye can be built by natural selection from a simple light-sensitive spot",
+      "citation_keys": [
+        "darwin1859origin"
+      ]
+    },
+    {
+      "id": "rel-untold-i-hard-problem-from-nagel",
+      "from": "hard-problem-of-consciousness",
+      "to": "nagel-thomas",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "building on the question Thomas Nagel posed in \\cite[What Is It Like to Be a Bat?]{nagel1974bat}",
+      "citation_keys": [
+        "chalmers1995hard",
+        "nagel1974bat"
+      ]
+    },
+    {
+      "id": "rel-untold-i-goe-caused-eukaryotes",
+      "from": "great-oxidation-event",
+      "to": "first-eukaryotes",
+      "kind": "caused",
+      "qualifiers": {},
+      "quote": "no oxygen, no eukaryotes; no eukaryotes, no multicellularity",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-eukaryotes-caused-multicell",
+      "from": "first-eukaryotes",
+      "to": "first-multicellular-organisms",
+      "kind": "caused",
+      "qualifiers": {},
+      "quote": "no oxygen, no eukaryotes; no eukaryotes, no multicellularity",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-primates-caused-human-brain",
+      "from": "primates",
+      "to": "human-brain",
+      "kind": "caused",
+      "qualifiers": {},
+      "quote": "no primates, no brain",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-wonderwerk-stratum-in-cave",
+      "from": "wonderwerk-stratum-10",
+      "to": "wonderwerk-cave",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "At \\cite[Wonderwerk Cave]{wonderwerk}\nin South Africa, micromorphological analysis and Fourier\ntransform infrared microspectroscopy of intact sediments from the\nEarly Acheulean Stratum 10",
+      "citation_keys": [
+        "wonderwerk"
+      ]
+    },
+    {
+      "id": "rel-untold-i-shell-beads-fire-drill",
+      "from": "pierced-shell-beads",
+      "to": "fire-drill",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "pierced shell beads indicate knowledge of twine or cord,\nwhich would have been necessary for operating a fire drill",
+      "citation_keys": [
+        "controlleduseoffire"
+      ]
+    },
+    {
+      "id": "rel-untold-i-archaic-modern-divergence",
+      "from": "archaic-humans",
+      "to": "homo-sapiens",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "Archaic humans including Neanderthals and Denisovans diverged from the lineage leading to modern humans",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-agriculture-before-civilisations",
+      "from": "agriculture",
+      "to": "early-civilisations",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "The development of agriculture approximately 10,000–12,000 years ago and the subsequent rise of civilizations",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-great-chain-from-aristotle",
+      "from": "great-chain-of-being",
+      "to": "aristotle",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "The medieval synthesis of Aristotelian biology and Christian theology produced the **Great Chain of Being**",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-aquinas-integrated-chain",
+      "from": "summa-theologica",
+      "to": "great-chain-of-being",
+      "kind": "uses",
+      "qualifiers": {},
+      "quote": "integrated this hierarchy into Christian doctrine",
+      "citation_keys": [
+        "thomas1274summa"
+      ]
+    },
+    {
+      "id": "rel-untold-i-linnaeus-chain-logic",
+      "from": "systema-naturae",
+      "to": "great-chain-of-being",
+      "kind": "uses",
+      "qualifiers": {},
+      "quote": "he was still working within the chain's logic",
+      "citation_keys": [
+        "linnaeus1758systema"
+      ]
+    },
+    {
+      "id": "rel-untold-i-darwin-replaced-chain",
+      "from": "origin-of-species",
+      "to": "great-chain-of-being",
+      "kind": "contradicts",
+      "qualifiers": {},
+      "quote": "the ladder was replaced by a **branching tree**",
+      "citation_keys": [
+        "darwin1859origin"
+      ]
+    },
+    {
+      "id": "rel-untold-i-aristotelian-cosmology-blocked-revolution",
+      "from": "meteorologica",
+      "to": "scientific-revolution",
+      "kind": "contradicts",
+      "qualifiers": {},
+      "quote": "This cosmology blocked the scientific revolution for two millennia",
+      "citation_keys": [
+        "aristotle1685meteorologica"
+      ]
+    },
+    {
+      "id": "rel-untold-i-aristotle-created-syllogistic-logic",
+      "from": "aristotle",
+      "to": "syllogistic-logic",
+      "kind": "invented",
+      "qualifiers": {},
+      "quote": "But Aristotle also created the other tool: **syllogistic logic**",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-syllogistic-logic-before-boolean-algebra",
+      "from": "syllogistic-logic",
+      "to": "boolean-algebra",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "without formal logic, there is no Boolean algebra",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-alkhwarizmi-wrote-algebra",
+      "from": "al-khwarizmi",
+      "to": "al-khwarizmi-algebra",
+      "kind": "wrote",
+      "qualifiers": {},
+      "quote": "**Muhammad ibn Musa al-Khwarizmi** (c. 780–850 CE) wrote the \\citetitle{alkhwarizmi820algebra}",
+      "citation_keys": [
+        "alkhwarizmi820algebra"
+      ]
+    },
+    {
+      "id": "rel-untold-i-algebra-name-from-aljabr",
+      "from": "algebra",
+      "to": "al-khwarizmi-algebra",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "a work that gave the discipline its name (al-jabr, \"the reunion of broken parts\")",
+      "citation_keys": [
+        "alkhwarizmi820algebra"
+      ]
+    },
+    {
+      "id": "rel-untold-i-algorithm-name-from-alkhwarizmi",
+      "from": "algorithm",
+      "to": "al-khwarizmi",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "(a Latinization of al-Khwarizmi's name)",
+      "citation_keys": [
+        "alkhwarizmi820algebra"
+      ]
+    },
+    {
+      "id": "rel-untold-i-ibnalhaytham-wrote-optics",
+      "from": "ibn-al-haytham",
+      "to": "optics-ibn-al-haytham",
+      "kind": "wrote",
+      "qualifiers": {},
+      "quote": "**Ibn al-Haytham (Alhazen)** (965–1040 CE) wrote the \\citetitle{ibnalhaytham1021optics}",
+      "citation_keys": [
+        "ibnalhaytham1021optics"
+      ]
+    },
+    {
+      "id": "rel-untold-i-ibnalhaytham-method-royal-society",
+      "from": "ibn-al-haytham",
+      "to": "royal-society",
+      "kind": "influenced",
+      "qualifiers": {},
+      "quote": "is the method that the Royal Society would formalize three centuries later",
+      "citation_keys": [
+        "ibnalhaytham1021optics"
+      ]
+    },
+    {
+      "id": "rel-untold-i-copernicus-wrote-de-revolutionibus",
+      "from": "copernicus",
+      "to": "de-revolutionibus",
+      "kind": "wrote",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{copernicus1543revolutionibus}'s \\citetitle{copernicus1543revolutionibus}",
+      "citation_keys": [
+        "copernicus1543revolutionibus"
+      ]
+    },
+    {
+      "id": "rel-untold-i-de-revolutionibus-broke-chain",
+      "from": "de-revolutionibus",
+      "to": "great-chain-of-being",
+      "kind": "contradicts",
+      "qualifiers": {},
+      "quote": "the Great Chain of Being, which had placed humanity at the navel of creation, is broken",
+      "citation_keys": [
+        "copernicus1543revolutionibus"
+      ]
+    },
+    {
+      "id": "rel-untold-i-kepler-used-tycho-observations",
+      "from": "kepler",
+      "to": "tycho-brahe",
+      "kind": "uses",
+      "qualifiers": {},
+      "quote": "spent seventeen years analysing the observations of the Danish astronomer Tycho Brahe",
+      "citation_keys": [
+        "keplerastronomianova"
+      ]
+    },
+    {
+      "id": "rel-untold-i-kepler-announced-first-two-laws",
+      "from": "kepler",
+      "to": "kepler-first-two-laws",
+      "kind": "discovered",
+      "qualifiers": {},
+      "quote": "he announced his first two laws",
+      "citation_keys": [
+        "keplerastronomianova"
+      ]
+    },
+    {
+      "id": "rel-untold-i-kepler-announced-third-law",
+      "from": "kepler",
+      "to": "kepler-third-law",
+      "kind": "discovered",
+      "qualifiers": {},
+      "quote": "he announced the third law",
+      "citation_keys": [
+        "kepler1619harmonices"
+      ]
+    },
+    {
+      "id": "rel-untold-i-galileo-wrote-sidereus-nuncius",
+      "from": "galileo",
+      "to": "sidereus-nuncius",
+      "kind": "wrote",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{galileosidereus}'s \\citetitle{galileosidereus} (\\citeyear{galileosidereus}), published in Venice in March 1610",
+      "citation_keys": [
+        "galileosidereus"
+      ]
+    },
+    {
+      "id": "rel-untold-i-galileo-dialogue-copernican-system",
+      "from": "galileo-dialogue",
+      "to": "copernicus",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "Galileo argued for the Copernican system",
+      "citation_keys": [
+        "galileodialogo"
+      ]
+    },
+    {
+      "id": "rel-untold-i-galileo-dialogue-against-aristotle",
+      "from": "galileo-dialogue",
+      "to": "aristotle",
+      "kind": "contradicts",
+      "qualifiers": {},
+      "quote": "against the Aristotelian physics of natural places and uniform circular motion",
+      "citation_keys": [
+        "galileodialogo"
+      ]
+    },
+    {
+      "id": "rel-untold-i-bacon-ideal-royal-society",
+      "from": "novum-organum",
+      "to": "royal-society",
+      "kind": "influenced",
+      "qualifiers": {},
+      "quote": "an ideal that the Royal Society, founded in 1660, was created to institutionalize",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-la-geometrie-part-of-discourse",
+      "from": "la-geometrie",
+      "to": "descartes-discourse",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "The second part of the work, \\citetitle{descartesgeometrie}, introduced the **analytic geometry**",
+      "citation_keys": [
+        "descartesgeometrie"
+      ]
+    },
+    {
+      "id": "rel-untold-i-mcculloch-pitts-body-machine-step",
+      "from": "mcculloch-pitts",
+      "to": "descartes-le-monde",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "The step from \"the body is a machine\" to \"the brain is a computer\" was taken, in mathematics, by \\citeauthorlastnameand{mccullochpitts1943}",
+      "citation_keys": [
+        "mccullochpitts1943"
+      ]
+    },
+    {
+      "id": "rel-untold-i-kepler-first-two-laws-from-principia",
+      "from": "kepler-first-two-laws",
+      "to": "principia",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "Kepler's empirical laws became *consequences* of a deeper principle.",
+      "citation_keys": [
+        "newtonprincipia"
+      ]
+    },
+    {
+      "id": "rel-untold-i-kepler-third-law-from-principia",
+      "from": "kepler-third-law",
+      "to": "principia",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "Kepler's empirical laws became *consequences* of a deeper principle.",
+      "citation_keys": [
+        "newtonprincipia"
+      ]
+    },
+    {
+      "id": "rel-untold-i-laplace-demon-in-essai",
+      "from": "laplace-demon",
+      "to": "laplace-essai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "The demon passage appears in Laplace's \\citetitle{laplace1814essai}",
+      "citation_keys": [
+        "laplace1814essai"
+      ]
+    },
+    {
+      "id": "rel-untold-i-principia-calculus-independent-leibniz",
+      "from": "principia",
+      "to": "leibniz",
+      "kind": "related_to",
+      "qualifiers": {
+        "independent": true
+      },
+      "quote": "the first rigorous formulation of **calculus** (independent of Leibniz's)",
+      "citation_keys": [
+        "newtonprincipia"
+      ]
+    },
+    {
+      "id": "rel-untold-i-leibniz-before-principia",
+      "from": "leibniz",
+      "to": "principia",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "in 1684, three years before Newton's *Principia*",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-mere-question-pascal-fermat",
+      "from": "chevalier-de-mere",
+      "to": "pascal-fermat-correspondence",
+      "kind": "caused",
+      "qualifiers": {},
+      "quote": "posed a question to \\citeauthorlastnameand{pascalfirmat1654}: how should the stakes in an interrupted game of dice be fairly divided? The correspondence that followed, between Pascal and Fermat",
+      "citation_keys": [
+        "pascalfirmat1654"
+      ]
+    },
+    {
+      "id": "rel-untold-i-bayes-wrote-essay",
+      "from": "bayes",
+      "to": "bayes-essay",
+      "kind": "wrote",
+      "qualifiers": {},
+      "quote": "leaving behind a manuscript, \"An Essay towards Solving a Problem in the Doctrine of Chances,\"",
+      "citation_keys": [
+        "bayes1763essay"
+      ]
+    },
+    {
+      "id": "rel-untold-i-laplace-generalized-bayes",
+      "from": "laplace-1812",
+      "to": "bayes-essay",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "independently derived and generalized Bayes's result",
+      "citation_keys": [
+        "laplace1812analytic"
+      ]
+    },
+    {
+      "id": "rel-untold-i-central-limit-theorem-in-essai",
+      "from": "central-limit-theorem",
+      "to": "laplace-essai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "added the **Laplace demon** and the **central limit theorem**",
+      "citation_keys": [
+        "laplace1814essai"
+      ]
+    },
+    {
+      "id": "rel-untold-i-shannon-thesis-boolean-algebra",
+      "from": "shannon-1938-thesis",
+      "to": "boolean-algebra",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "Shannon showed that Boole's algebra is **isomorphic** to the algebra of two-state electrical circuits",
+      "citation_keys": [
+        "shannon1938relay"
+      ]
+    },
+    {
+      "id": "rel-untold-i-neolithic-revolution-from-childe",
+      "from": "neolithic-revolution",
+      "to": "v-gordon-childe",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "comes from **V. Gordon Childe**",
+      "citation_keys": [
+        "childe1936man"
+      ]
+    },
+    {
+      "id": "rel-untold-i-childe-neolithic-revolution",
+      "from": "childe",
+      "to": "neolithic-revolution",
+      "kind": "invented",
+      "qualifiers": {},
+      "quote": "He later labelled two of those kinks the **Neolithic Revolution** and the **Urban Revolution**",
+      "citation_keys": [
+        "childe1950urban"
+      ]
+    },
+    {
+      "id": "rel-untold-i-childe-urban-revolution",
+      "from": "childe",
+      "to": "urban-revolution",
+      "kind": "invented",
+      "qualifiers": {},
+      "quote": "He later labelled two of those kinks the **Neolithic Revolution** and the **Urban Revolution**",
+      "citation_keys": [
+        "childe1950urban"
+      ]
+    },
+    {
+      "id": "rel-untold-i-sedentarisation-before-agriculture",
+      "from": "sedentarisation",
+      "to": "agriculture",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "Sedentarisation preceded agriculture, not the other way around.",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-jericho-before-cereal-domestication",
+      "from": "jericho",
+      "to": "domesticated-emmer-einkorn",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "earlier than full cereal domestication",
+      "citation_keys": [
+        "kenyon1957digging"
+      ]
+    },
+    {
+      "id": "rel-untold-i-jericho-tower-part-of-jericho",
+      "from": "jericho-tower",
+      "to": "jericho",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "Its Neolithic tower (c. 8000 BCE, ~8.5 m tall) is one of the oldest stone monuments on Earth",
+      "citation_keys": [
+        "kenyon1957digging"
+      ]
+    },
+    {
+      "id": "rel-untold-i-jericho-wall-part-of-jericho",
+      "from": "jericho-wall",
+      "to": "jericho",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "its surrounding wall and ditch are the earliest known example of **fortification**",
+      "citation_keys": [
+        "kenyon1957digging"
+      ]
+    },
+    {
+      "id": "rel-untold-i-younger-dryas-before-holocene",
+      "from": "younger-dryas",
+      "to": "holocene",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "the **Younger Dryas**, ~10,900–9,700 BCE) and then settled into the long, warm, stable interval we still inhabit, the **Holocene**",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-founder-crops-in-fertile-crescent",
+      "from": "neolithic-founder-crops",
+      "to": "fertile-crescent",
+      "kind": "located_in",
+      "qualifiers": {},
+      "quote": "What made the **Fertile Crescent** special was not a single miracle crop but a *package* of eight wild species — the **Neolithic founder crops**",
+      "citation_keys": [
+        "zoharyhopf2000domestication"
+      ]
+    },
+    {
+      "id": "rel-untold-i-emmer-einkorn-in-fertile-crescent",
+      "from": "domesticated-emmer-einkorn",
+      "to": "fertile-crescent",
+      "kind": "located_in",
+      "qualifiers": {},
+      "quote": "comes from sites in the Fertile Crescent at roughly 9500 BCE",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-emmer-einkorn-part-of-founder-crops",
+      "from": "domesticated-emmer-einkorn",
+      "to": "neolithic-founder-crops",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "the cereals emmer, einkorn, and barley",
+      "citation_keys": [
+        "zoharyhopf2000domestication"
+      ]
+    },
+    {
+      "id": "rel-untold-i-cereals-before-domesticated-animals",
+      "from": "domesticated-emmer-einkorn",
+      "to": "domesticated-animals",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "Sheep, goats, cattle, and pigs followed",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-uruk-period-instance-urban-revolution",
+      "from": "uruk-period",
+      "to": "urban-revolution",
+      "kind": "instance_of",
+      "qualifiers": {},
+      "quote": "the small farming villages of the Uruk period coalesced into cities",
+      "citation_keys": [
+        "childe1950urban"
+      ]
+    },
+    {
+      "id": "rel-untold-i-childe-wrote-1950-paper",
+      "from": "childe",
+      "to": "childe-1950",
+      "kind": "wrote",
+      "qualifiers": {},
+      "quote": "In a 1950 *Town Planning Review* paper, Childe listed ten diagnostic features of the first cities",
+      "citation_keys": [
+        "childe1950urban"
+      ]
+    },
+    {
+      "id": "rel-untold-i-bronze-before-iron",
+      "from": "bronze-age",
+      "to": "iron",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "**Iron**, which began to displace bronze around 1200 BCE",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-writing-part-of-urban-revolution",
+      "from": "writing",
+      "to": "urban-revolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "The single most consequential innovation of the Urban Revolution for this lesson is **writing**.",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-clay-tokens-before-writing",
+      "from": "clay-tokens",
+      "to": "writing",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "Long before the Sumerians invented writing, accounts in western Asia were kept with clay tokens",
+      "citation_keys": [
+        "schmandtbesserat1978"
+      ]
+    },
+    {
+      "id": "rel-untold-i-clay-tokens-in-bullae",
+      "from": "clay-tokens",
+      "to": "bullae",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "Tokens sealed inside clay *bullae* were marked on the outside with their own shapes",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-uruk-iv-tablet-before-cuneiform",
+      "from": "uruk-iv-tablet",
+      "to": "cuneiform",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "Around 3300 BCE, in Uruk IV, the envelope was dropped for a flat tablet on which the token shapes were impressed directly; by 2600 BCE the picture-shapes had been replaced by the wedge-shaped marks we call **cuneiform**",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-cuneiform-before-hieroglyphs",
+      "from": "cuneiform",
+      "to": "egyptian-hieroglyphs",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "Cuneiform was the first of five independent inventions of writing",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-cuneiform-before-indus-script",
+      "from": "cuneiform",
+      "to": "indus-script",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "Cuneiform was the first of five independent inventions of writing",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-cuneiform-before-oracle-bone",
+      "from": "cuneiform",
+      "to": "oracle-bone-script",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "Cuneiform was the first of five independent inventions of writing",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-cuneiform-before-maya",
+      "from": "cuneiform",
+      "to": "maya-writing",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "Cuneiform was the first of five independent inventions of writing",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-library-from-writing",
+      "from": "library-of-alexandria",
+      "to": "writing",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "because they were inside the libraries that writing built",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-library-from-agriculture",
+      "from": "library-of-alexandria",
+      "to": "agriculture",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "that agriculture made possible",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-untold-i-library-sustained-by-urban-revolution",
+      "from": "urban-revolution",
+      "to": "library-of-alexandria",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "that the cities of the first urban revolution sustained",
+      "citation_keys": []
+    },
+    {
+      "id": "prov-untold_history_i-leibniz-characteristica-universalis",
+      "from": "leibniz-characteristica-universalis",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "his long-running *Characteristica Universalis* project (1679–1690)",
+      "citation_keys": [
+        "leibniz1686calculus",
+        "leibniz1666combinatoria"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-leibniz-generales-inquisitiones",
+      "from": "leibniz-generales-inquisitiones",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the 1686 treatise \\cite[Generales Inquisitiones]{leibniz1686calculus}",
+      "citation_keys": [
+        "leibniz1686calculus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-leibniz-dissertatio-de-arte-combinatoria",
+      "from": "leibniz-dissertatio-de-arte-combinatoria",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "his earlier \\cite[*Dissertio de Arte Combinatoria*]{leibniz1666combinatoria} (1666)",
+      "citation_keys": [
+        "leibniz1666combinatoria"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-heidegger-martin",
+      "from": "heidegger-martin",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "calling *“Why are there beings at all, and not rather nothing?”* the fundamental question of philosophy itself",
+      "citation_keys": [
+        "heidegger1935metaphysics"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-big-bang",
+      "from": "big-bang",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the universe began approximately 13.8 billion years ago in an event commonly known as the Big Bang",
+      "citation_keys": [
+        "weinberg1977first"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-big-bang-nucleosynthesis",
+      "from": "big-bang-nucleosynthesis",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Within the first few minutes, nucleosynthesis produced the lightest elements, primarily hydrogen and helium.",
+      "citation_keys": [
+        "weinberg1977first"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-first-stars-and-galaxies",
+      "from": "first-stars-and-galaxies",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Over hundreds of millions of years, gravity drew matter together to form the first stars and galaxies.",
+      "citation_keys": [
+        "weinberg1977first"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-cosmic-microwave-background",
+      "from": "cosmic-microwave-background",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The discovery of the cosmic microwave background radiation provided strong empirical support for this model",
+      "citation_keys": [
+        "penzias1965measurement"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-budassi-universe-image",
+      "from": "budassi-universe-image",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The \\citealternativetitle{budassi_universe_image} (CC BY-SA 3.0)",
+      "citation_keys": [
+        "budassi_universe_image"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-alpher-bethe-gamow-paper",
+      "from": "alpher-bethe-gamow-paper",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The landmark 1948 calculation of \\citeauthorlastnameand{alperbethegamow1948}",
+      "citation_keys": [
+        "alperbethegamow1948"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-hydrogen",
+      "from": "hydrogen",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "was made not inside any star but in those first twenty minutes",
+      "citation_keys": [
+        "weinberg1977first"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-nuclear-mass-gap",
+      "from": "nuclear-mass-gap",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "There is no stable nucleus with five or eight nucleons, a \"mass gap\" that stalls any chain of fusion beyond helium",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-cno-cycle",
+      "from": "cno-cycle",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1939, \\citeauthor{bethe1939energy} worked out",
+      "citation_keys": [
+        "bethe1939energy"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-cno-cycle-weizsacker",
+      "from": "cno-cycle-weizsacker",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Carl Friedrich von Weizsäcker had already derived independently the year before, in 1938",
+      "citation_keys": [
+        "bethe1939energy"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-proton-proton-chain",
+      "from": "proton-proton-chain",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "was worked out by Bethe and Charles Critchfield in that same year",
+      "citation_keys": [
+        "bethe1939energy"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-eddington-arthur",
+      "from": "eddington-arthur",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a decade earlier, \\citeauthorlastnameand{eddington1926stars} had already argued",
+      "citation_keys": [
+        "eddington1926stars"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-hoyle-state",
+      "from": "hoyle-state",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hoyle calculated this requirement in 1954",
+      "citation_keys": [
+        "b2fh1957"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-iron-fusion",
+      "from": "iron-fusion",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Fusing nuclei up to iron *releases* energy; fusing iron *consumes* it, so an iron core cannot power a star.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-iron",
+      "from": "iron",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This is why the cosmic abundance of the elements has its deepest peak at iron",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-b2fh-review",
+      "from": "b2fh-review",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In the 1957 review that became the founding document of modern nucleosynthesis",
+      "citation_keys": [
+        "b2fh1957"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-cameron-nucleogenesis",
+      "from": "cameron-nucleogenesis",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a framework first sketched the same year by \\citeauthor{cameron1957nucleogenesis}",
+      "citation_keys": [
+        "cameron1957nucleogenesis"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-gw170817",
+      "from": "gw170817",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "until \\citeyear{gw170817multimessenger}. On 17 August of that year",
+      "citation_keys": [
+        "gw170817multimessenger"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-kilonova",
+      "from": "kilonova",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a **kilonova**, bloomed and faded in a distant galaxy",
+      "citation_keys": [
+        "gw170817multimessenger"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-kasen-2017-analysis",
+      "from": "kasen-2017-analysis",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the \\citeyear{kasen2017kilonova} analysis concluded that such mergers are a dominant cosmic factory for the r-process elements",
+      "citation_keys": [
+        "kasen2017kilonova"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-gold-platinum-uranium",
+      "from": "gold-platinum-uranium",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the gold in a ring, the platinum in a catalytic converter, and the uranium in the Earth's crust were all forged in the violent collisions of collapsing neutron stars",
+      "citation_keys": [
+        "kasen2017kilonova"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-iron-in-blood",
+      "from": "iron-in-blood",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The iron in your blood was forged in the core of a massive star and scattered by its supernova",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-jeans-mass",
+      "from": "jeans-mass",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The criterion for this was worked out by \\citeauthor{jeans1902nebula} in 1902",
+      "citation_keys": [
+        "jeans1902nebula"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-giant-molecular-cloud",
+      "from": "giant-molecular-cloud",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a vast structure of molecular hydrogen and dust at temperatures near ten kelvin",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-protostar",
+      "from": "protostar",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "after a few hundred thousand years, its core reaches a temperature at which hydrogen fusion ignites",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-sun",
+      "from": "sun",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A star like the Sun fuses about **six hundred billion kilograms of hydrogen every second**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-white-dwarf",
+      "from": "white-dwarf",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "leaving behind a **white dwarf**: an Earth-sized ember of carbon and oxygen so dense that a single teaspoon of it would weigh several tonnes",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-chandrasekhar-limit",
+      "from": "chandrasekhar-limit",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **Chandrasekhar limit** of about 1.4 solar masses",
+      "citation_keys": [
+        "chandrasekhar1935structure"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-chandrasekhar-subrahmanyan",
+      "from": "chandrasekhar-subrahmanyan",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "derived in the early 1930s and developed in his 1935 monograph",
+      "citation_keys": [
+        "chandrasekhar1935structure"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-neutron-star-progenitor",
+      "from": "neutron-star-progenitor",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A star massive enough, roughly eight solar masses or more, never settles for a white dwarf.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-neutron-star",
+      "from": "neutron-star",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Its core collapses all the way to a **neutron star**, an object about the size of a city yet a full solar mass in weight, so dense that a single cubic centimetre of it weighs billions of tonnes.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-pulsar",
+      "from": "pulsar",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{hewish1968pulsar} reported in 1968 when they detected the first **pulsar**",
+      "citation_keys": [
+        "hewish1968pulsar"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-stellar-mass-black-hole",
+      "from": "stellar-mass-black-hole",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "regions bounded by an event horizon whose radius for a stellar mass is only a few kilometres",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-population-iii-stars",
+      "from": "population-iii-stars",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "which ignited within a few hundred million years of the Big Bang out of pristine hydrogen and helium",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-kant-immanuel",
+      "from": "kant-immanuel",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in his 1755 \\citealternativetitle{kant1755heavens}, first proposed that the Solar System had formed by the gravitational settling of a nebula",
+      "citation_keys": [
+        "kant1755heavens"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-nebular-hypothesis",
+      "from": "nebular-hypothesis",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it was not until the early 1980s, when disks of gas were directly imaged around young stars, that the **nebular hypothesis** was confirmed",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-solar-system",
+      "from": "solar-system",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "collapsed roughly **4.57 billion years ago** to make a protostar, the Sun",
+      "citation_keys": [
+        "amelin2010solarsystem"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-calcium-aluminium-rich-inclusions",
+      "from": "calcium-aluminium-rich-inclusions",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "fix the clock at about 4.57 billion years",
+      "citation_keys": [
+        "amelin2010solarsystem"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-frost-line",
+      "from": "frost-line",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "inside the **frost line**, a few astronomical units from the young Sun",
+      "citation_keys": [
+        "amelin2010solarsystem"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-jupiter-core",
+      "from": "jupiter-core",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a core could grow to about ten Earth masses and then grab a giant envelope of gas",
+      "citation_keys": [
+        "amelin2010solarsystem"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-earth",
+      "from": "earth",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Earth, our own, is dated to roughly 4.5 billion years",
+      "citation_keys": [
+        "allegre1995age"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-nice-model",
+      "from": "nice-model",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a late dynamical instability that scattered planetesimals inward and stirred the outer disk",
+      "citation_keys": [
+        "gomes2005nice"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-theia",
+      "from": "theia",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a Mars-sized protoplanet, conventionally named **Theia**, struck the proto-Earth",
+      "citation_keys": [
+        "hartmann1975satellite"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-giant-impact-hypothesis",
+      "from": "giant-impact-hypothesis",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A high-energy \"giant-impact\" version of this scenario",
+      "citation_keys": [
+        "canupasphaug2001moon"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-late-heavy-bombardment",
+      "from": "late-heavy-bombardment",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **Late Heavy Bombardment**, a sustained wave of impacts ending roughly 3.8 billion years ago",
+      "citation_keys": [
+        "gomes2005nice"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-gilbert-william",
+      "from": "gilbert-william",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in his 1600 \\citealternativetitle{gilbert1600magnete}, spent eighteen years cutting spherical lodestones",
+      "citation_keys": [
+        "gilbert1600magnete"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-electricus",
+      "from": "electricus",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "gave us the Neo-Latin *electricus* (from the Greek word for amber)",
+      "citation_keys": [
+        "gilbert1600magnete"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-browne-thomas",
+      "from": "browne-thomas",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in 1646, Thomas Browne's *electricity*",
+      "citation_keys": [
+        "gilbert1600magnete"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-halley-edmond",
+      "from": "halley-edmond",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "commanding the Royal Navy pink *Paramour* across two scientific voyages (1698–1700)",
+      "citation_keys": [
+        "halley1692magnetic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-halley-magnetic-variation-chart",
+      "from": "halley-magnetic-variation-chart",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "produced the first *chart of magnetic variation*",
+      "citation_keys": [
+        "halley1692magnetic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-halley-1692-paper",
+      "from": "halley-1692-paper",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "His 1692 paper, which proposed concentric shells inside the Earth carrying their own magnetic poles",
+      "citation_keys": [
+        "halley1692magnetic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-geodynamo",
+      "from": "geodynamo",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "was not identified as the mechanism until the twentieth century",
+      "citation_keys": [
+        "magnetic_field_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-solar-wind",
+      "from": "solar-wind",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the stream of charged particles flowing outward from the Sun at roughly a million miles an hour",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-mars-dynamo",
+      "from": "mars-dynamo",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "its dynamo shut down about four billion years ago",
+      "citation_keys": [
+        "magnetosphere_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-mars-atmosphere",
+      "from": "mars-atmosphere",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the solar wind stripped the planet's atmosphere within a few hundred million years",
+      "citation_keys": [
+        "magnetosphere_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-earth-primordial-atmosphere",
+      "from": "earth-primordial-atmosphere",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "captured from the solar nebula as the planet accreted, was a thin envelope of hydrogen and helium",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-earth-second-atmosphere",
+      "from": "earth-second-atmosphere",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "water vapor (H₂O), carbon dioxide (CO₂), nitrogen (N₂), and sulfur dioxide (SO₂) belched from volcanoes over hundreds of millions of years",
+      "citation_keys": [
+        "atmosphere_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-faint-young-sun",
+      "from": "faint-young-sun",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **faint young Sun**, which was then only about seventy percent as luminous as today",
+      "citation_keys": [
+        "atmosphere_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-cyanobacteria",
+      "from": "cyanobacteria",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Cyanobacteria evolved chlorophyll-based photosynthesis — the only known process that splits water and releases free oxygen (O₂) as a waste product",
+      "citation_keys": [
+        "goe_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-great-oxidation-event",
+      "from": "great-oxidation-event",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "began to accumulate in the air around 2.4 billion years ago in the **Great Oxidation Event**",
+      "citation_keys": [
+        "goe_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-sulfur-mass-independent-fractionation",
+      "from": "sulfur-mass-independent-fractionation",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The geological fingerprint of that transition is the disappearance of *mass-independent sulfur fractionation*",
+      "citation_keys": [
+        "goe_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-air-components",
+      "from": "air-components",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The components of air themselves were isolated and named in the late eighteenth century",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-photosynthesis-research",
+      "from": "photosynthesis-research",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "more than a century before the gas itself was identified",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-van-helmont-ortus",
+      "from": "van-helmont-ortus",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "whose \\citealternativetitle{helmont1648ortus} was published posthumously in 1648",
+      "citation_keys": [
+        "helmont1648ortus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-van-helmont-willow",
+      "from": "van-helmont-willow",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Van Helmont weighed a two-hundred-pound willow shoot",
+      "citation_keys": [
+        "helmont1648ortus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-van-helmont-soil",
+      "from": "van-helmont-soil",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "At the end the willow weighed one hundred and sixty-four pounds more, the soil had lost only two ounces",
+      "citation_keys": [
+        "helmont1648ortus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-van-helmont-jan-baptista",
+      "from": "van-helmont-jan-baptista",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "He had also coined the word *gas* (from the Greek *chaos*)",
+      "citation_keys": [
+        "helmont1648ortus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-carbon-dioxide",
+      "from": "carbon-dioxide",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the first identification of carbon dioxide",
+      "citation_keys": [
+        "helmont1648ortus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-hales-stephen",
+      "from": "hales-stephen",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "whose 1727 \\citealternativetitle{hales1727vegetable} introduced the *pneumatic trough*",
+      "citation_keys": [
+        "hales1727vegetable"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-black-joseph",
+      "from": "black-joseph",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{black1756fixedair} identified *fixed air* (CO₂) in 1756",
+      "citation_keys": [
+        "black1756fixedair"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-priestley-joseph",
+      "from": "priestley-joseph",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "isolated *dephlogisticated air* (O₂) on 1 August 1774 by focusing sunlight on mercuric oxide",
+      "citation_keys": [
+        "priestley1771airs"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-scheele-carl-wilhelm",
+      "from": "scheele-carl-wilhelm",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "had isolated the same gas by 1771 but did not publish until 1777",
+      "citation_keys": [
+        "scheele1777airfire"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-lavoisier-antoine",
+      "from": "lavoisier-antoine",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The name *oxygen* was coined in 1777 by \\citeauthor{lavoisier1789traite}",
+      "citation_keys": [
+        "lavoisier1789traite"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-ingenhousz-experiments",
+      "from": "ingenhousz-experiments",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "who in 1779 ran more than five hundred experiments in a rented house at Southall Green",
+      "citation_keys": [
+        "ingenhousz1779experiments"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-ingenhousz-photosynthesis",
+      "from": "ingenhousz-photosynthesis",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "that only the *green* parts of the plant produce the gas, that light is *required*, and that the plant emits CO₂ rather than O₂ in the dark",
+      "citation_keys": [
+        "ingenhousz1779experiments"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-senebier-jean",
+      "from": "senebier-jean",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in his 1783 *Recherches sur l'influence de la lumière solaire*, demonstrated that the plant *consumes* CO₂",
+      "citation_keys": [
+        "senebier1783recherches"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-de-saussure-nicolas-theodore",
+      "from": "de-saussure-nicolas-theodore",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "whose 1804 *Recherches chimiques sur la végétation* showed that the carbon fixed into plant dry mass comes from atmospheric CO₂, not from water",
+      "citation_keys": [
+        "desaussure1804recherches"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-photosynthesis",
+      "from": "photosynthesis",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "that the ratio of CO₂ consumed to O₂ released is approximately one to one",
+      "citation_keys": [
+        "desaussure1804recherches"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-carbon-cycle",
+      "from": "carbon-cycle",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a loop that has been running for at least three and a half billion years",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-life-to-human-brain",
+      "from": "life-to-human-brain",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "spans roughly 4 billion years",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-orgel-leslie",
+      "from": "orgel-leslie",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "as \\citeauthorlastnameand{orgel1973molecularevolution} set it out in \\citeyear{orgel1973molecularevolution}",
+      "citation_keys": [
+        "orgel1973molecularevolution"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-dna-rna-protein",
+      "from": "dna-rna-protein",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "every modern cell runs on three mutually interdependent macromolecules, DNA, RNA, and protein",
+      "citation_keys": [
+        "orgel1973molecularevolution"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-darwin-charles",
+      "from": "darwin-charles",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In an 1871 letter to Joseph Dalton Hooker",
+      "citation_keys": [
+        "darwin1871warmpond"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-oparin-origin-of-life",
+      "from": "oparin-origin-of-life",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in \\citealternativetitle{oparin1936origin} (\\citeyear{oparin1936origin})",
+      "citation_keys": [
+        "oparin1936origin"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-haldane-origin-of-life",
+      "from": "haldane-origin-of-life",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in his \\citeyear{haldane1929origin} essay \"The Origin of Life\" in *The Rationalist Annual*",
+      "citation_keys": [
+        "haldane1929origin"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-miller-urey-experiment",
+      "from": "miller-urey-experiment",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in \\citeyear{miller1953aminoacids}, a graduate student named \\citeauthorlastnameand{miller1953aminoacids}, working under Nobel laureate Harold Urey",
+      "citation_keys": [
+        "miller1953aminoacids"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-prebiotic-chemistry",
+      "from": "prebiotic-chemistry",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "HCN plus an aldehyde then ran a non-enzymatic **Strecker synthesis** to yield amino acids, while formaldehyde condensed through a **formose** reaction toward the sugar ribose",
+      "citation_keys": [
+        "cleaves2012prebiotic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-oro-adenine-synthesis",
+      "from": "oro-adenine-synthesis",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citeyear{oro1961adenine}, \\citeauthorlastnameand{oro1961adenine} cooked concentrated HCN in water and pulled the nucleobase **adenine** out of the resulting slurry, a pentamer of hydrogen cyanide",
+      "citation_keys": [
+        "oro1961adenine"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-murchison-meteorite",
+      "from": "murchison-meteorite",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Murchison meteorite, which fell in Australia in 1969",
+      "citation_keys": [
+        "orgelparris1979murchison"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-orgel-parris-1979",
+      "from": "orgel-parris-1979",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in \\citeyear{orgelparris1979murchison}, \\citeauthorlastnameand{orgelparris1979murchison} reported that the Murchison meteorite",
+      "citation_keys": [
+        "orgelparris1979murchison"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-early-earth-atmosphere",
+      "from": "early-earth-atmosphere",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "early Earth was probably CO₂- and N₂-rich, not the CH₄–NH₃ of the 1953 flask",
+      "citation_keys": [
+        "cleaves2012prebiotic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-rna-world-hypothesis",
+      "from": "rna-world-hypothesis",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "first articulated by Alexander Rich in 1962",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-cech-self-splicing-rna",
+      "from": "cech-self-splicing-rna",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1982, Thomas Cech's group",
+      "citation_keys": [
+        "kruger1982selfsplicing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-tetrahymena-ribosomal-rna",
+      "from": "tetrahymena-ribosomal-rna",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "reported that the intervening RNA sequence simply cut itself out — no protein in the mixture",
+      "citation_keys": [
+        "kruger1982selfsplicing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-rnase-p",
+      "from": "rnase-p",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "catalysed by its own RNA subunit",
+      "citation_keys": [
+        "altman1976rnasep"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-nobel-prize-chemistry-1989",
+      "from": "nobel-prize-chemistry-1989",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "shared the \\citeyear{nobel1989cechantman} Nobel Prize in Chemistry",
+      "citation_keys": [
+        "nobel1989cechantman"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-sutherland-prebiotic-pyrimidines",
+      "from": "sutherland-prebiotic-pyrimidines",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citeyear{sutherland2009pyrimidine}, Sutherland's Manchester group built the pyrimidine nucleotides cytidine and uridine",
+      "citation_keys": [
+        "sutherland2009pyrimidine"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-24-3-polymerase-ribozyme",
+      "from": "24-3-polymerase-ribozyme",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in \\citeyear{horning2016rpr}, in-vitro evolution produced the 24-3 polymerase ribozyme",
+      "citation_keys": [
+        "horning2016rpr"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-wachtershauser-iron-sulfur-world",
+      "from": "wachtershauser-iron-sulfur-world",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{wachtershauser1988} took the opposite tack",
+      "citation_keys": [
+        "wachtershauser1988"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-error-threshold",
+      "from": "error-threshold",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "an **error threshold** that \\citeauthorlastnameand{eigen1971selforganization} quantified in \\citeyear{eigen1971selforganization}",
+      "citation_keys": [
+        "eigen1971selforganization"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-hypercycle",
+      "from": "hypercycle",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{eigen1978hypercycle} argued that a *single* molecule cannot reliably cross that threshold",
+      "citation_keys": [
+        "eigen1978hypercycle"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-chemoton",
+      "from": "chemoton",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{ganti2000chemoton} formalised the minimal self-sustaining unit, the **chemoton**",
+      "citation_keys": [
+        "ganti2000chemoton"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-coacervate-protocell",
+      "from": "coacervate-protocell",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in \\citeyear{smith2010coacervate} \\citeauthorlastnameand{smith2010coacervate} showed that coacervate droplets can concentrate reactants",
+      "citation_keys": [
+        "smith2010coacervate"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-frozen-accident-hypothesis",
+      "from": "frozen-accident-hypothesis",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{crick1968code} argued in \\citeyear{crick1968code} that the code's present, near-universal, degenerate form is a **frozen accident**",
+      "citation_keys": [
+        "crick1968code"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-dresser-formation-stromatolites",
+      "from": "dresser-formation-stromatolites",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1980, \\citeauthorlastnameand{walter1986stromatolites} reported stromatolites 3,400–3,500 million years old",
+      "citation_keys": [
+        "walter1986stromatolites"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-dresser-formation",
+      "from": "dresser-formation",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "from the North Pole area of the Dresser Formation in the Pilbara craton, Western Australia",
+      "citation_keys": [
+        "walter1986stromatolites"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-cloud-preston",
+      "from": "cloud-preston",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{cloud1973isotope} argued in \\citeyear{cloud1973isotope} that carbon-isotope fractionation in 3,800-million-year-old graphite from the Isua supracrustal belt in Greenland",
+      "citation_keys": [
+        "cloud1973isotope"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-isua-graphite",
+      "from": "isua-graphite",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "carbon-isotope fractionation in 3,800-million-year-old graphite from the Isua supracrustal belt in Greenland",
+      "citation_keys": [
+        "cloud1973isotope"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-earliest-life",
+      "from": "earliest-life",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "that life was present on Earth by at least 3.5 Ga, is now secure",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-vankranendonk-2016",
+      "from": "vankranendonk-2016",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citeyear{vankranendonk2016microbial}, \\citeauthorlastnameand{vankranendonk2016microbial} described 3,700-million-year-old filamentous microfossils and spheroidal cells from the Dresser Formation",
+      "citation_keys": [
+        "vankranendonk2016microbial"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-dresser-formation-microfossils",
+      "from": "dresser-formation-microfossils",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "described 3,700-million-year-old filamentous microfossils and spheroidal cells from the Dresser Formation",
+      "citation_keys": [
+        "vankranendonk2016microbial"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-fossil-record",
+      "from": "fossil-record",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "pushing the secure morphological record back a further 200 million years",
+      "citation_keys": [
+        "vankranendonk2016microbial"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-stromatolites",
+      "from": "stromatolites",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in their 3.5-billion-year-old fossil descendants, provide the oldest secure evidence of life on Earth",
+      "citation_keys": [
+        "img_stromatolite_sharkbay"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-prokaryote",
+      "from": "prokaryote",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "They were prokaryotes, single-celled organisms without a membrane-bound nucleus",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-woese-1977",
+      "from": "woese-1977",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{woese1977phylogenetic} in \\citeyear{woese1977phylogenetic} used 16S ribosomal RNA sequences to root the tree of life, revealing three primary kingdoms rather than two",
+      "citation_keys": [
+        "woese1977phylogenetic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-three-domain-system",
+      "from": "three-domain-system",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{woese1990domains} formalized the three-domain system (Archaea, Bacteria, Eucarya) in \\citeyear{woese1990domains}",
+      "citation_keys": [
+        "woese1990domains"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-weiss-2016",
+      "from": "weiss-2016",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citeyear{weiss2016luca}, \\citeauthorlastnameand{weiss2016luca} and colleagues reconstructed approximately 355 gene families",
+      "citation_keys": [
+        "weiss2016luca"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-luca",
+      "from": "luca",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "reconstructed approximately 355 gene families that LUCA must have possessed",
+      "citation_keys": [
+        "weiss2016luca"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-frei-2009",
+      "from": "frei-2009",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{frei2009chromium} showed in \\citeyear{frei2009chromium} that chromium isotope ratios in banded iron formations record pre-GOE oxygen pulses as early as 3.5 Ga",
+      "citation_keys": [
+        "frei2009chromium"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-pre-goe-oxygen-pulses",
+      "from": "pre-goe-oxygen-pulses",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "record pre-GOE oxygen pulses as early as 3.5 Ga",
+      "citation_keys": [
+        "frei2009chromium"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-canfield-ferruginous-ocean",
+      "from": "canfield-ferruginous-ocean",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{canfield2011ferruginous} argued that the dominant ocean state from 3.5 to 1.8 Ga was not anoxic but **ferruginous**",
+      "citation_keys": [
+        "canfield2011ferruginous"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-aerobic-respiration",
+      "from": "aerobic-respiration",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "roughly eighteen times more efficient than anaerobic metabolism",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-first-eukaryotes",
+      "from": "first-eukaryotes",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**The First Eukaryotes: about 2.0–1.0 Billion Years Ago.**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-butterfield-2000",
+      "from": "butterfield-2000",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "described by \\citeauthorlastnameand{butterfield2000bangiomorpha} in \\citeyear{butterfield2000bangiomorpha}",
+      "citation_keys": [
+        "butterfield2000bangiomorpha"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-bangiomorpha-pubescens",
+      "from": "bangiomorpha-pubescens",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Bangiomorpha pubescens*, a 1.05-billion-year-old red alga",
+      "citation_keys": [
+        "butterfield2000bangiomorpha"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-eukaryote-origin",
+      "from": "eukaryote-origin",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Biomarker evidence (24-methylcholestane, a sterol found only in eukaryotes) pushes the origin of eukaryotes back to at least 2.2 Ga.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-first-multicellular-organisms",
+      "from": "first-multicellular-organisms",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**The First Multicellular Organisms: about 2.1–1.56 Billion Years Ago.**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-el-albani-2010",
+      "from": "el-albani-2010",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citeyear{elalbani2010gabon}, \\citeauthorlastnameand{elalbani2010gabon} described large colonial filaments",
+      "citation_keys": [
+        "elalbani2010gabon"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-francevillian-biota",
+      "from": "francevillian-biota",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "from the 2.1-billion-year-old Francevillian Group in Gabon",
+      "citation_keys": [
+        "elalbani2010gabon"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-zhu-2016",
+      "from": "zhu-2016",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citeyear{zhu2016multicellular}, \\citeauthorlastnameand{zhu2016multicellular} reported decimetre-scale multicellular eukaryotic fossils",
+      "citation_keys": [
+        "zhu2016multicellular"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-gaoyuzhuang-fossils",
+      "from": "gaoyuzhuang-fossils",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "from the 1.56-billion-year-old Gaoyuzhuang Formation in North China",
+      "citation_keys": [
+        "zhu2016multicellular"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-eukaryotic-multicellularity",
+      "from": "eukaryotic-multicellularity",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "preceded the Cambrian Explosion by over a billion years",
+      "citation_keys": [
+        "zhu2016multicellular"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-ediacaran-fauna",
+      "from": "ediacaran-fauna",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**The Ediacaran Fauna: 571–538 Million Years Ago.**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-sprigg-1947",
+      "from": "sprigg-1947",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{sprigg1947ediacara} in \\citeyear{sprigg1947ediacara} first described the Ediacara fauna from the Ediacara Hills of South Australia",
+      "citation_keys": [
+        "sprigg1947ediacara"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-charnia-masoni",
+      "from": "charnia-masoni",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a frond-like Ediacaran organism from the 560-million-year-old Holbrook Limestone of Charnwood Forest, England",
+      "citation_keys": [
+        "img_charnia_masoni"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-kimberella",
+      "from": "kimberella",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "proposed by Fedonkin and Waggoner (\\citeyear{fedonkin1997kimberella}) to be one of the earliest bilaterians",
+      "citation_keys": [
+        "fedonkin1997kimberella"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-dickinsonia",
+      "from": "dickinsonia",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a flat, bilaterally symmetric, ribbed organism up to 40 centimetres long, found on four continents",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-bobrovskiy-2018",
+      "from": "bobrovskiy-2018",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citeyear{bobrovskiy2018dickinsonia}, \\citeauthorlastnameand{bobrovskiy2018dickinsonia} analysed cholesteroid lipids",
+      "citation_keys": [
+        "bobrovskiy2018dickinsonia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-otavia-antiqua",
+      "from": "otavia-antiqua",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Otavia antiqua*, a sponge-like organism from 760-million-year-old Namibian rocks",
+      "citation_keys": [
+        "brain2012otavia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-brain-2012",
+      "from": "brain-2012",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "was reported by \\citeauthorlastnameand{brain2012otavia} in \\citeyear{brain2012otavia} as the oldest known animal",
+      "citation_keys": [
+        "brain2012otavia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-antcliffe-2014",
+      "from": "antcliffe-2014",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{antcliffe2014otavia} argued that the structures are non-biological concretions",
+      "citation_keys": [
+        "antcliffe2014otavia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-brocks-2017",
+      "from": "brocks-2017",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{brocks2017rise} provided the broader context in \\citeyear{brocks2017rise}",
+      "citation_keys": [
+        "brocks2017rise"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-animal-emergence",
+      "from": "animal-emergence",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "with animals appearing in the Ediacaran, roughly 635–539 Ma",
+      "citation_keys": [
+        "brocks2017rise"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-cambrian-explosion",
+      "from": "cambrian-explosion",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**The Cambrian Explosion: about 538 Million Years Ago.**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-walcott-1911",
+      "from": "walcott-1911",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The original description of the best-preserved Cambrian fauna came from \\citeauthorlastnameand{walcott1911burgess} in \\citeyear{walcott1911burgess}",
+      "citation_keys": [
+        "walcott1911burgess"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-burgess-shale",
+      "from": "burgess-shale",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "who excavated the **Burgess Shale** in the Canadian Rockies and described over 70 species",
+      "citation_keys": [
+        "walcott1911burgess"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-whittington-1979",
+      "from": "whittington-1979",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citeyear{whittington1979burgess}, \\citeauthorlastnameand{whittington1979burgess} re-examined the fossils",
+      "citation_keys": [
+        "whittington1979burgess"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-land-plants",
+      "from": "land-plants",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "plants colonized land (about 470 Ma)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-tetrapods",
+      "from": "tetrapods",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "tetrapods walked on it (about 375 Ma)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-insects",
+      "from": "insects",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "insects took to the air (about 400 Ma)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-mesozoic",
+      "from": "mesozoic",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **Mesozoic** (252–66 Ma)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-dinosaur-dominance",
+      "from": "dinosaur-dominance",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The next 165 million years, the **Mesozoic** (252–66 Ma), belonged to the reptiles.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-cephalization",
+      "from": "cephalization",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The first major step toward a brain was **cephalization** -- the concentration of sensory and nervous tissue at the front end of a bilaterally symmetrical animal",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-sponge-and-jellyfish",
+      "from": "sponge-and-jellyfish",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A sponge has no neurons at all; a jellyfish has a nerve net",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-ma-2012",
+      "from": "ma-2012",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 2012, \\cite[Ma et al. (2012)]{ma2012fuxianhuia} described *Fuxianhuia protensa*",
+      "citation_keys": [
+        "ma2012fuxianhuia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-fuxianhuia-protensa",
+      "from": "fuxianhuia-protensa",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a 520-million-year-old arthropod from Chengjiang",
+      "citation_keys": [
+        "ma2012fuxianhuia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-moroz-2014",
+      "from": "moroz-2014",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Moroz et al. (2014)]{moroz2014ctenophore} found that ctenophores lack many of the genes that build the neurons of other animals",
+      "citation_keys": [
+        "moroz2014ctenophore"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-ctenophora",
+      "from": "ctenophora",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "ctenophores lack many of the genes that build the neurons of other animals",
+      "citation_keys": [
+        "moroz2014ctenophore"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-nervous-system-origin",
+      "from": "nervous-system-origin",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "did the nervous system evolve once, in the common ancestor of all animals, or more than once",
+      "citation_keys": [
+        "moroz2014ctenophore"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-vertebrate-brain",
+      "from": "vertebrate-brain",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In vertebrates the brain is a tripartite organ -- hindbrain, midbrain, forebrain",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-human-brain",
+      "from": "human-brain",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "about 86 billion neurons",
+      "citation_keys": [
+        "herculano2012brain"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-opsin",
+      "from": "opsin",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The protein that catches light, **opsin**, is ancient and widely shared",
+      "citation_keys": [
+        "schlosser2018senses"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-light-sensitive-proteins",
+      "from": "light-sensitive-proteins",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "even single-celled organisms have light-sensitive proteins",
+      "citation_keys": [
+        "schlosser2018senses"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-eyespots",
+      "from": "eyespots",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The first eyes were probably simple **eyespots**, patches of light-sensitive cells that told an animal which way was up or where the light came from.",
+      "citation_keys": [
+        "schlosser2018senses"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-anomalocaris-compound-eye",
+      "from": "anomalocaris-compound-eye",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Cambrian fossil record shows how far the process had gone by 515 million years ago.",
+      "citation_keys": [
+        "paterson2011anomalocaris"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-vertebrate-retina",
+      "from": "vertebrate-retina",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The vertebrate retina is **inverted**: the photoreceptors point away from the light",
+      "citation_keys": [
+        "nilsson1994eye"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-cephalopod-retina",
+      "from": "cephalopod-retina",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The cephalopod retina is everted, with the photoreceptors facing the light and no blind spot",
+      "citation_keys": [
+        "nilsson1994eye"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-camera-eye",
+      "from": "camera-eye",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "two lineages built a camera eye independently, with a lens, an iris, and a retina",
+      "citation_keys": [
+        "nilsson1994eye"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-darwin-origin-of-species",
+      "from": "darwin-origin-of-species",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Darwin (1859)]{darwin1859origin} already saw the difficulty and the way out",
+      "citation_keys": [
+        "darwin1859origin"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-camera-eye-evolution",
+      "from": "camera-eye-evolution",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "they estimated that a camera eye could evolve in only a few hundred thousand years",
+      "citation_keys": [
+        "nilsson1994eye"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-hard-problem-of-consciousness",
+      "from": "hard-problem-of-consciousness",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it was stated most sharply by \\cite[Chalmers (1995)]{chalmers1995hard}",
+      "citation_keys": [
+        "chalmers1995hard"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-nagel-thomas",
+      "from": "nagel-thomas",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "building on the question Thomas Nagel posed in \\cite[What Is It Like to Be a Bat?]{nagel1974bat}",
+      "citation_keys": [
+        "nagel1974bat"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-predictive-processing",
+      "from": "predictive-processing",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "on the predictive-processing view, a brain is a model that minimizes the mismatch between expectation and input",
+      "citation_keys": [
+        "seth2021pp"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-self-model-theory",
+      "from": "self-model-theory",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a self-model, may be the threshold at which experience becomes possible",
+      "citation_keys": [
+        "metzinger2003being"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-xenophanes",
+      "from": "xenophanes",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "As early as the 6th century BC the Greek thinker Xenophanes (570–480 BC) recognized that fossil seashells were the remains of real sea creatures",
+      "citation_keys": [
+        "paleontology_history_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-ancient-chinese",
+      "from": "ancient-chinese",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a millennium later the ancient Chinese read the same kind of stone as **dragon bones**",
+      "citation_keys": [
+        "paleontology_history_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-steno-nicolaus",
+      "from": "steno-nicolaus",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "who in \\citeyear{steno1669solido} compared the fossil",
+      "citation_keys": [
+        "steno1669solido"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-stratigraphy",
+      "from": "stratigraphy",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "laid down the **laws of stratigraphy** (superposition, horizontality)",
+      "citation_keys": [
+        "steno1669solido"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-fossil-interpretation",
+      "from": "fossil-interpretation",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "For over a thousand years the dominant explanation was that fossils were accidents of nature",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-dinosaur-paleontology",
+      "from": "dinosaur-paleontology",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "It took until the 1820s for a fossil to be recognized as a genuinely new, giant, land-dwelling reptile.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-buckland-william",
+      "from": "buckland-william",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citeyear{buckland1824megalosaurus} \\citeauthorlastnameand{buckland1824megalosaurus} described a lower jaw from the Jurassic of Stonesfield, England",
+      "citation_keys": [
+        "buckland1824megalosaurus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-megalosaurus",
+      "from": "megalosaurus",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "named it *Megalosaurus*, the \"great lizard,\" the first dinosaur to receive a scientific name",
+      "citation_keys": [
+        "buckland1824megalosaurus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-mantell-gideon",
+      "from": "mantell-gideon",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The following year \\citeauthorlastnameand{mantell1825iguanodon}, a country doctor, named a second giant reptile from Cretaceous teeth that resembled an iguana's: *Iguanodon*",
+      "citation_keys": [
+        "mantell1825iguanodon"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-hylaeosaurus",
+      "from": "hylaeosaurus",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Mantell added *Hylaeosaurus* in the 1830s",
+      "citation_keys": [
+        "paleontology_history_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-mantell-age-of-reptiles",
+      "from": "mantell-age-of-reptiles",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "and, in 1831, published his synthesis, *The Age of Reptiles*",
+      "citation_keys": [
+        "paleontology_history_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-owen-richard",
+      "from": "owen-richard",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citeyear{owen1842dinosauria} the comparative anatomist \\citeauthorlastnameand{owen1842dinosauria} did something none of them had done",
+      "citation_keys": [
+        "owen1842dinosauria"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-dinosauria",
+      "from": "dinosauria",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "carved them out into a new order, the **Dinosauria**, the \"terrible lizards\"",
+      "citation_keys": [
+        "owen1842dinosauria"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-paleontology",
+      "from": "paleontology",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The word *paleontology* itself was coined only a few years earlier, in 1822.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-archaeopteryx",
+      "from": "archaeopteryx",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1861 a Bavarian quarry yielded *Archaeopteryx*",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-hadrosaurus",
+      "from": "hadrosaurus",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in 1858 Joseph Leidy described *Hadrosaurus*, the first North American dinosaur known from good remains",
+      "citation_keys": [
+        "paleontology_history_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-tyrannosaurus-rex",
+      "from": "tyrannosaurus-rex",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the iconic apex predator of the Late Cretaceous, the age the dinosaurs dominated for 165 million years",
+      "citation_keys": [
+        "img_tyrannosaurus_rex_mount"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-ortelius-abraham",
+      "from": "ortelius-abraham",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The suspicion goes back to the cartographer Abraham Ortelius in 1596",
+      "citation_keys": [
+        "continental_drift_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-suess-eduard",
+      "from": "suess-eduard",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Austrian geologist Eduard Suess named the southern landmasses **Gondwana** in 1885",
+      "citation_keys": [
+        "continental_drift_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-wegener-alfred",
+      "from": "wegener-alfred",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "But it was the meteorologist \\citeauthorlastnameand{wegener1915origin} who, in \\citeyear{wegener1915origin}, assembled the evidence into a theory",
+      "citation_keys": [
+        "wegener1915origin"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-pangaea",
+      "from": "pangaea",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the continents had once formed a single **Pangaea** and drifted apart",
+      "citation_keys": [
+        "wegener1915origin"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-holmes-arthur",
+      "from": "holmes-arthur",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{holmes1931convection} proposed it in \\citeyear{holmes1931convection}: **mantle convection**",
+      "citation_keys": [
+        "holmes1931convection"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-hess-harry",
+      "from": "hess-harry",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{hess1962seafloor} showed the sea floor is young, born at mid-ocean ridges and recycled at subduction zones — **seafloor spreading**",
+      "citation_keys": [
+        "hess1962seafloor"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-vine-matthews-1963",
+      "from": "vine-matthews-1963",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in \\citeyear{vinematthews1963magnetic} \\citeauthorlastnameand{vinematthews1963magnetic} showed the ocean floor carries mirror-symmetric bands of reversed magnetism",
+      "citation_keys": [
+        "vinematthews1963magnetic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-cretaceous-paleogene-boundary",
+      "from": "cretaceous-paleogene-boundary",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "about 66 million years ago: the non-avian dinosaurs, the pterosaurs, the ammonites, and roughly three-quarters of all plant and animal species vanished in a geologic instant",
+      "citation_keys": [
+        "chicxulub_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-cretaceous-paleogene-extinction",
+      "from": "cretaceous-paleogene-extinction",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "roughly three-quarters of all plant and animal species vanished in a geologic instant",
+      "citation_keys": [
+        "chicxulub_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-alvarez-1980",
+      "from": "alvarez-1980",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citeyear{alvarez1980extinction} a team led by the Nobel laureate Luis Alvarez, together with his son the geologist Walter Alvarez, measured the element **iridium**",
+      "citation_keys": [
+        "alvarez1980extinction"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-iridium-anomaly",
+      "from": "iridium-anomaly",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "found it running about a hundred and sixty times above background",
+      "citation_keys": [
+        "alvarez1980extinction"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-smit-hertogen-1980",
+      "from": "smit-hertogen-1980",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Almost simultaneously, Jan Smit and Jan Hertogen reported the same boundary spike from Spain",
+      "citation_keys": [
+        "smit1980boundary"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-chicxulub-crater",
+      "from": "chicxulub-crater",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The site of the blow was found in \\citeyear{chicxulub1991crater}: buried under the Yucatán Peninsula in Mexico",
+      "citation_keys": [
+        "chicxulub1991crater"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-chicxulub-impactor",
+      "from": "chicxulub-impactor",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the scar of a ten-kilometre asteroid striking at about twenty kilometres per second",
+      "citation_keys": [
+        "chicxulub1991crater"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-mesozoic-mammals",
+      "from": "mesozoic-mammals",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The small, mostly nocturnal, warm-blooded mammals that had lived in the shadow of the dinosaurs for well over a hundred million years",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-kpg-mammal-survivors",
+      "from": "kpg-mammal-survivors",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the K–Pg survivors also became whales, bats, elephants, and mice, none of which build anything",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-primates",
+      "from": "primates",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The order Primates diverged from other mammals approximately 65–80 million years ago",
+      "citation_keys": [
+        "begun2003planet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-cercopithecoidea-hominoidea-split",
+      "from": "cercopithecoidea-hominoidea-split",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the lineage leading to Old World monkeys (Cercopithecoidea) split from the lineage leading to apes (Hominoidea) roughly 25–30 million years ago",
+      "citation_keys": [
+        "begun2003planet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-hominini-pan-split",
+      "from": "hominini-pan-split",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the human lineage (Hominini) diverged from the lineage leading to chimpanzees and bonobos between approximately 6 and 8 million years ago",
+      "citation_keys": [
+        "begun2003planet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-sahelanthropus-tchadensis",
+      "from": "sahelanthropus-tchadensis",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Sahelanthropus tchadensis* (approximately 7 million years ago)",
+      "citation_keys": [
+        "white2009ardipithecus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-ardipithecus-ramidus",
+      "from": "ardipithecus-ramidus",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Ardipithecus ramidus* (approximately 4.4 million years ago)",
+      "citation_keys": [
+        "white2009ardipithecus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-australopithecus",
+      "from": "australopithecus",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The genus *Australopithecus* (approximately 4–2 million years ago) exhibited habitual bipedalism",
+      "citation_keys": [
+        "white2009ardipithecus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-lomekwi",
+      "from": "lomekwi",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the \\citealternativetitle{lomekwi} from approximately 3.3 million years ago, attributed to late australopithecines, is the oldest known assemblage",
+      "citation_keys": [
+        "lomekwi"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-stone-tool-knapping",
+      "from": "stone-tool-knapping",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Stone-tool knapping, however, **predates** the genus *Homo*",
+      "citation_keys": [
+        "lomekwi"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-homo",
+      "from": "homo",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The emergence of the genus *Homo* around 2.8 million years ago",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-oldowan",
+      "from": "oldowan",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the more systematic **\\citealternativetitle{oldowan}** tool industry, the first technology unambiguously tied to *Homo habilis*",
+      "citation_keys": [
+        "oldowan"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-homo-erectus",
+      "from": "homo-erectus",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Homo erectus* (approximately 1.9 million years ago) was the first hominin to spread beyond Africa",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-wonderwerk-cave",
+      "from": "wonderwerk-cave",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The earliest *secure* archaeological evidence for the controlled use of fire comes from Wonderwerk Cave in South Africa, dated to approximately one million years ago",
+      "citation_keys": [
+        "wonderwerk"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-australopithecus-bipedalism",
+      "from": "australopithecus-bipedalism",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it is well established in *Australopithecus* by about 4–3 million years ago, while brain size remained close to that of a chimpanzee",
+      "citation_keys": [
+        "gruss2015pelvis"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-homo-sapiens-pelvis",
+      "from": "homo-sapiens-pelvis",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the modern human pelvis is narrower, not wider, than that of earlier bipedal hominins",
+      "citation_keys": [
+        "gruss2015pelvis"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-senevirathne-2025",
+      "from": "senevirathne-2025",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A 2025 study of the developmental genetics of the human pelvis identified two shifts unique to our lineage",
+      "citation_keys": [
+        "senevirathne2025bipedalism"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-xu-2025-pelvis-study",
+      "from": "xu-2025-pelvis-study",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A 2025 genomic study of 31,115 dual-energy X-ray scans",
+      "citation_keys": [
+        "xu2025pelvis"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-birth-canal-dimensions",
+      "from": "birth-canal-dimensions",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "found that birth-canal dimensions are highly heritable",
+      "citation_keys": [
+        "xu2025pelvis"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-birth-canal-width",
+      "from": "birth-canal-width",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "birth-canal width is genetically correlated with head width",
+      "citation_keys": [
+        "xu2025pelvis"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-wide-birth-canal",
+      "from": "wide-birth-canal",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "wider birth canals were associated with slower walking and higher hip-osteoarthritis risk",
+      "citation_keys": [
+        "xu2025pelvis"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-obstetrical-dilemma",
+      "from": "obstetrical-dilemma",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The classical explanation, developed by Rosenberg and Trevathan, is the *obstetrical dilemma*",
+      "citation_keys": [
+        "rosenberg1995obstetrical"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-dunsworth-2012",
+      "from": "dunsworth-2012",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Dunsworth et al. (2012)]{dunsworth2012altriciality} argue that limits to maternal metabolism, not the pelvis, are the primary constraint on gestation length and fetal growth",
+      "citation_keys": [
+        "dunsworth2012altriciality"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-warrener-2015",
+      "from": "warrener-2015",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a dynamic biomechanical study by \\cite[Warrener et al. (2015)]{warrener2015pelvis} found that a wider pelvis does not raise the metabolic cost of walking or running",
+      "citation_keys": [
+        "warrener2015pelvis"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-human-infant",
+      "from": "human-infant",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Humans do give birth to proportionately large infants — about 6% of maternal body mass, versus about 3% in chimpanzees",
+      "citation_keys": [
+        "desilva2011infants"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-chimpanzee-infant",
+      "from": "chimpanzee-infant",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "about 6% of maternal body mass, versus about 3% in chimpanzees",
+      "citation_keys": [
+        "desilva2011infants"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-fire-ash-deposits",
+      "from": "fire-ash-deposits",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "from sites dating to the past 400,000 years are well documented",
+      "citation_keys": [
+        "wonderwerk"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-wonderwerk-stratum-10",
+      "from": "wonderwerk-stratum-10",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "dated to approximately one Million Years Ago",
+      "citation_keys": [
+        "wonderwerk"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-fire-awareness",
+      "from": "fire-awareness",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Fire awareness among hominins, however, almost certainly predates such",
+      "citation_keys": [
+        "controlleduseoffire"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-early-hominins",
+      "from": "early-hominins",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "as savanna-dwelling primates exposed to frequent",
+      "citation_keys": [
+        "controlleduseoffire"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-fire-drill",
+      "from": "fire-drill",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The simplest ignition technique, rubbing a stick in a groove in a wooden “hearth”",
+      "citation_keys": [
+        "controlleduseoffire"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-pierced-shell-beads",
+      "from": "pierced-shell-beads",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "By 120,000 years ago",
+      "citation_keys": [
+        "controlleduseoffire"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-cooking-hypothesis",
+      "from": "cooking-hypothesis",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "cooking hypothesis",
+      "citation_keys": [
+        "wrangham2009catching"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-cooking",
+      "from": "cooking",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "dramatically improved nutrient absorption",
+      "citation_keys": [
+        "wrangham2009catching"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-archaic-humans",
+      "from": "archaic-humans",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "roughly 500,000–700,000 years ago",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-homo-sapiens",
+      "from": "homo-sapiens",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "appeared in Africa approximately 300,000 years ago",
+      "citation_keys": [
+        "hublin2017jebel"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-language-cognitive-prerequisites",
+      "from": "language-cognitive-prerequisites",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "present by about 135,000 years ago",
+      "citation_keys": [
+        "earlylanguage"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-symbolic-language",
+      "from": "symbolic-language",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "no direct archaeological evidence for symbolic language of that age survives",
+      "citation_keys": [
+        "earlylanguage"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-symbolic-behaviour",
+      "from": "symbolic-behaviour",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the earliest undisputed evidence for fully symbolic behaviour dates to roughly 100,000 years ago",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-modern-human-behaviour",
+      "from": "modern-human-behaviour",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "attested from at least 100,000 years ago",
+      "citation_keys": [
+        "emergenceofmodernhumanbehaviour"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-agriculture",
+      "from": "agriculture",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "approximately 10,000–12,000 years ago",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-early-civilisations",
+      "from": "early-civilisations",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Mesopotamia, Egypt, the Indus Valley, and China",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-aurignacian-figurines",
+      "from": "aurignacian-figurines",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Earliest Figures: 40,000–35,000 Years Ago.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-venus-hohle-fels",
+      "from": "venus-hohle-fels",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a six-centimetre carving of mammoth ivory",
+      "citation_keys": [
+        "conard2009hohlefels"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-venus-galgenberg",
+      "from": "venus-galgenberg",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a serpentine statuette from the Stratzing excavation in Austria",
+      "citation_keys": [
+        "neugebauer1989galgenberg"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-figurative-art",
+      "from": "figurative-art",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "From a Body to a Face: 26,000–14,000 Years Ago.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-dolni-vestonice-head",
+      "from": "dolni-vestonice-head",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(Czech Republic, about 26,000 years old)",
+      "citation_keys": [
+        "dolnivestonice"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-la-marche",
+      "from": "la-marche",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the engraved slabs of **La Marche** (France, Magdalenian, about 14,000–15,000 years ago)",
+      "citation_keys": [
+        "lamarchecave"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-theogony",
+      "from": "theogony",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hesiod's *Theogony* (c. 700 BCE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-greek-mythology",
+      "from": "greek-mythology",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "inherited from the Hittites and Mesopotamians",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-great-chain-of-being",
+      "from": "great-chain-of-being",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a fixed, ranked hierarchy of all creation",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-summa-theologica",
+      "from": "summa-theologica",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(c. 1265–1274)",
+      "citation_keys": [
+        "thomas1274summa"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-systema-naturae",
+      "from": "systema-naturae",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the 10th edition",
+      "citation_keys": [
+        "linnaeus1758systema"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-origin-of-species",
+      "from": "origin-of-species",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the ladder was replaced by a **branching tree**",
+      "citation_keys": [
+        "darwin1859origin"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-great-chain-of-being-1579",
+      "from": "great-chain-of-being-1579",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a 1579 woodcut from Diego de Valadés' Rhetorica Christiana",
+      "citation_keys": [
+        "img_great_chain_of_being_1579"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-precision-clocks",
+      "from": "precision-clocks",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The development of precision clocks in the 17th century, driven by the longitude problem",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-logos",
+      "from": "logos",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "began in the Greek city-states of Ionia in the 6th century BCE",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-thales",
+      "from": "thales",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Thales of Miletus** (c. 624–546 BCE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-anaximander",
+      "from": "anaximander",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Anaximander** (c. 610–546 BCE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-anaximenes",
+      "from": "anaximenes",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Anaximenes** (c. 586–526 BCE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-democritus",
+      "from": "democritus",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Democritus of Abdera** (c. 460–370 BCE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-aristotle",
+      "from": "aristotle",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Aristotle of Stagira** (384–322 BCE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-history-of-animals",
+      "from": "history-of-animals",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(c. 350 BCE)",
+      "citation_keys": [
+        "aristotle1685history"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-meteorologica",
+      "from": "meteorologica",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "established the sublunary/celestial cosmology",
+      "citation_keys": [
+        "aristotle1685meteorologica"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-syllogistic-logic",
+      "from": "syllogistic-logic",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the first formal system of deductive reasoning",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-archimedes",
+      "from": "archimedes",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Archimedes of Syracuse** (c. 287–212 BCE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-archimedes-method",
+      "from": "archimedes-method",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(c. 250 BCE, reconstructed from the 10th-century Archimedes Palimpsest)",
+      "citation_keys": [
+        "archimedes250method"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-abbasid-caliphate",
+      "from": "abbasid-caliphate",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Abbasid Caliphate** (750–1258 CE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-al-khwarizmi",
+      "from": "al-khwarizmi",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Muhammad ibn Musa al-Khwarizmi** (c. 780–850 CE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-algebra",
+      "from": "algebra",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the reunion of broken parts",
+      "citation_keys": [
+        "alkhwarizmi820algebra"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-algorithm",
+      "from": "algorithm",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a Latinization of al-Khwarizmi's name",
+      "citation_keys": [
+        "alkhwarizmi820algebra"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-al-khwarizmi-algebra",
+      "from": "al-khwarizmi-algebra",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The book solved linear and quadratic equations by geometric and arithmetic methods",
+      "citation_keys": [
+        "alkhwarizmi820algebra"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-ibn-al-haytham",
+      "from": "ibn-al-haytham",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Ibn al-Haytham (Alhazen)** (965–1040 CE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-optics-ibn-al-haytham",
+      "from": "optics-ibn-al-haytham",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a seven-volume work",
+      "citation_keys": [
+        "ibnalhaytham1021optics"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-royal-society",
+      "from": "royal-society",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Royal Society would formalize three centuries later",
+      "citation_keys": [
+        "ibnalhaytham1021optics"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-scientific-revolution",
+      "from": "scientific-revolution",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Scientific Revolution: 1543–1687",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-de-revolutionibus",
+      "from": "de-revolutionibus",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "published in Nuremberg by Johannes Petreius",
+      "citation_keys": [
+        "copernicus1543revolutionibus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-copernicus",
+      "from": "copernicus",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "moved the Earth from the centre of the cosmos to a planet orbiting the Sun",
+      "citation_keys": [
+        "copernicus1543revolutionibus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-kepler",
+      "from": "kepler",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "spent seventeen years analysing the observations of the Danish astronomer Tycho Brahe",
+      "citation_keys": [
+        "keplerastronomianova"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-tycho-brahe",
+      "from": "tycho-brahe",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the most precise naked-eye measurements ever made",
+      "citation_keys": [
+        "keplerastronomianova"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-kepler-first-two-laws",
+      "from": "kepler-first-two-laws",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "he announced his first two laws",
+      "citation_keys": [
+        "keplerastronomianova"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-kepler-third-law",
+      "from": "kepler-third-law",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "published in Linz, he announced the third law",
+      "citation_keys": [
+        "kepler1619harmonices"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-sidereus-nuncius",
+      "from": "sidereus-nuncius",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "published in Venice in March 1610",
+      "citation_keys": [
+        "galileosidereus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-galileo",
+      "from": "galileo",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "reported the first telescopic observations of the night sky",
+      "citation_keys": [
+        "galileosidereus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-galileo-dialogue",
+      "from": "galileo-dialogue",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "published in Florence in Italian (not Latin)",
+      "citation_keys": [
+        "galileodialogo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-novum-organum",
+      "from": "novum-organum",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "proposed an inductive method for the advancement of learning",
+      "citation_keys": [
+        "bacon1620novumorganum"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-descartes-discourse",
+      "from": "descartes-discourse",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "began with a method of systematic doubt",
+      "citation_keys": [
+        "descartes1637discours"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-la-geometrie",
+      "from": "la-geometrie",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "introduced the **analytic geometry** that unites algebra and geometry",
+      "citation_keys": [
+        "descartesgeometrie"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-le-monde",
+      "from": "le-monde",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "published posthumously, that contained the deeper displacement",
+      "citation_keys": [
+        "descartes1664lemonde"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-descartes-le-monde",
+      "from": "descartes-le-monde",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Descartes proposed that the physical world, including the human body, is a **machine** (*horologium*)",
+      "citation_keys": [
+        "descartes1664lemonde"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-mcculloch-pitts",
+      "from": "mcculloch-pitts",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "mccullochpitts1943",
+      "citation_keys": [
+        "mccullochpitts1943"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-principia",
+      "from": "principia",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "published for the Royal Society in London with the imprimatur of Samuel Pepys and financed and edited by Edmond Halley",
+      "citation_keys": [
+        "newtonprincipia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-newton",
+      "from": "newton",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **law of universal gravitation**",
+      "citation_keys": [
+        "newtonprincipia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-laplace-demon",
+      "from": "laplace-demon",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The demon passage appears in Laplace's",
+      "citation_keys": [
+        "laplace1814essai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-leibniz",
+      "from": "leibniz",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a **universal characteristic** (*Characteristica Universalis*)",
+      "citation_keys": [
+        "leibniz1686calculus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-leibniz-combinatoria",
+      "from": "leibniz-combinatoria",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "If disputes should arise between scholars",
+      "citation_keys": [
+        "leibniz1666combinatoria"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-chevalier-de-mere",
+      "from": "chevalier-de-mere",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1654, the Chevalier de Méré, a professional gambler, posed a question",
+      "citation_keys": [
+        "pascalfirmat1654"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-pascal-fermat-correspondence",
+      "from": "pascal-fermat-correspondence",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "is the founding document of **probability theory**",
+      "citation_keys": [
+        "pascalfirmat1654"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-huygens-1657",
+      "from": "huygens-1657",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the first book on probability, introduced **expected value** as the central concept",
+      "citation_keys": [
+        "huygens1657ratiociniis"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-bayes",
+      "from": "bayes",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "died in 1761",
+      "citation_keys": [
+        "bayes1763essay"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-bayes-essay",
+      "from": "bayes-essay",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "published in the *Philosophical Transactions of the Royal Society*",
+      "citation_keys": [
+        "bayes1763essay"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-laplace-1812",
+      "from": "laplace-1812",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "independently derived and generalized Bayes's result, unified probability with the theory of errors, and applied it to astronomical prediction",
+      "citation_keys": [
+        "laplace1812analytic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-laplace-essai",
+      "from": "laplace-essai",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "added the **Laplace demon** and the **central limit theorem**",
+      "citation_keys": [
+        "laplace1814essai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-central-limit-theorem",
+      "from": "central-limit-theorem",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the sum of a large number of independent random variables tends toward a Gaussian distribution",
+      "citation_keys": [
+        "laplace1814essai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-boole-1847",
+      "from": "boole-1847",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1847,",
+      "citation_keys": [
+        "boole1847analysis"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-boolean-algebra",
+      "from": "boolean-algebra",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "logic *is* an algebra of 0/1 quantities",
+      "citation_keys": [
+        "boole1854laws"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-shannon-1938-thesis",
+      "from": "shannon-1938-thesis",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in his MIT master's thesis",
+      "citation_keys": [
+        "shannon1938relay"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-shannon-1948-paper",
+      "from": "shannon-1948-paper",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A Mathematical Theory of Communication",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-information-theory",
+      "from": "information-theory",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The unit is the **bit**.",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-entropy",
+      "from": "entropy",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Entropy** measures the average information in a message.",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-channel-capacity",
+      "from": "channel-capacity",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Channel capacity** is the maximum rate at which information can be transmitted reliably over a noisy channel.",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-channel-coding-theorem",
+      "from": "channel-coding-theorem",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **channel coding theorem** guarantees that reliable communication is possible up to a fundamental limit.",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-convergence",
+      "from": "convergence",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **convergence of five independent intellectual revolutions**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-classification-revolution",
+      "from": "classification-revolution",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Classification** (Aristotle → Linnaeus → Darwin)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-mechanism-revolution",
+      "from": "mechanism-revolution",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Mechanism** (Descartes → Newton → Laplace)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-probability-revolution",
+      "from": "probability-revolution",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Probability** (Pascal/Fermat → Bayes → Laplace)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-logic-algebra-revolution",
+      "from": "logic-algebra-revolution",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Boole, De Morgan, Peirce, Shannon",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-information-revolution",
+      "from": "information-revolution",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Morse, Shannon",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-neolithic-revolution",
+      "from": "neolithic-revolution",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "beginning around 11,700 years ago",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-v-gordon-childe",
+      "from": "v-gordon-childe",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "who argued in his 1936 *Man Makes Himself*",
+      "citation_keys": [
+        "childe1936man"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-british-population-curve",
+      "from": "british-population-curve",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the British population curve between 1750 and 1800",
+      "citation_keys": [
+        "childe1936man_txt"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-childe",
+      "from": "childe",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "He later labelled two of those kinks the **Neolithic Revolution** and the **Urban Revolution**",
+      "citation_keys": [
+        "childe1950urban"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-sedentarisation",
+      "from": "sedentarisation",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**sedentarisation** (*Sesshaftwerdung*)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-australian-aboriginal-oral-traditions",
+      "from": "australian-aboriginal-oral-traditions",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "sustained extraordinarily detailed oral traditions for at least 65,000 years",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-younger-dryas",
+      "from": "younger-dryas",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(the **Younger Dryas**, ~10,900–9,700 BCE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-holocene",
+      "from": "holocene",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "settled into the long, warm, stable interval we still inhabit, the **Holocene**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-fertile-crescent",
+      "from": "fertile-crescent",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a *package* of eight wild species",
+      "citation_keys": [
+        "zoharyhopf2000domestication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-neolithic-founder-crops",
+      "from": "neolithic-founder-crops",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "identified by **Daniel Zohary** with Maria Hopf and later Ehud Weiss",
+      "citation_keys": [
+        "zoharyhopf2000domestication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-domesticated-emmer-einkorn",
+      "from": "domesticated-emmer-einkorn",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "comes from sites in the Fertile Crescent at roughly 9500 BCE",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-domesticated-animals",
+      "from": "domesticated-animals",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Sheep, goats, cattle, and pigs followed",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-jericho",
+      "from": "jericho",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in the West Bank near a perennial spring",
+      "citation_keys": [
+        "kenyon1957digging"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-jericho-tower",
+      "from": "jericho-tower",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Its Neolithic tower (c. 8000 BCE, ~8.5 m tall)",
+      "citation_keys": [
+        "kenyon1957digging"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-jericho-wall",
+      "from": "jericho-wall",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "its surrounding wall and ditch are the earliest known example of **fortification**",
+      "citation_keys": [
+        "kenyon1957digging"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-catalhoyuk",
+      "from": "catalhoyuk",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in the Konya plain",
+      "citation_keys": [
+        "mellaart1967catal"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-ian-hodder-catalhoyuk-excavation",
+      "from": "ian-hodder-catalhoyuk-excavation",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "second, much longer campaign under **Ian Hodder** (1993–2018)",
+      "citation_keys": [
+        "hodder2006leopard"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-catalhoyuk-figurines",
+      "from": "catalhoyuk-figurines",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "only one of ~2,000 figurines matched the Mother Goddess style",
+      "citation_keys": [
+        "hodder2006leopard"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-urban-revolution",
+      "from": "urban-revolution",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "names what happened around 4000 BCE in southern Mesopotamia",
+      "citation_keys": [
+        "childe1950urban"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-uruk-period",
+      "from": "uruk-period",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the small farming villages of the Uruk period coalesced into cities",
+      "citation_keys": [
+        "childe1950urban"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-uruk",
+      "from": "uruk",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Uruk** itself grew to perhaps 50,000 inhabitants by 3100 BCE",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-childe-1950",
+      "from": "childe-1950",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In a 1950 *Town Planning Review* paper, Childe listed ten diagnostic features of the first cities",
+      "citation_keys": [
+        "childe1950urban"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-bronze-age",
+      "from": "bronze-age",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Near East c. 3300–1200 BCE",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-iron-age",
+      "from": "iron-age",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **Iron Age** accordingly democratised the tools bronze had reserved for elites",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-writing",
+      "from": "writing",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "It emerged not from literary ambition but from bookkeeping.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-clay-tokens",
+      "from": "clay-tokens",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "small shaped clay **tokens** — cones, spheres, disks, cylinders",
+      "citation_keys": [
+        "schmandtbesserat1978"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-schmandt-besserat-thesis",
+      "from": "schmandt-besserat-thesis",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the tokens gave rise to the Sumerian ideographs",
+      "citation_keys": [
+        "schmandtbesserat1978",
+        "schmandtbesserat1992",
+        "schmandtbesserat1996"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-bullae",
+      "from": "bullae",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the first case of a physical record carrying its own verification",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-uruk-iv-tablet",
+      "from": "uruk-iv-tablet",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Around 3300 BCE, in Uruk IV, the envelope was dropped for a flat tablet on which the token shapes were impressed directly",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-cuneiform",
+      "from": "cuneiform",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "by 2600 BCE the picture-shapes had been replaced by the wedge-shaped marks we call **cuneiform**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-egyptian-hieroglyphs",
+      "from": "egyptian-hieroglyphs",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Egyptian **hieroglyphs** (c. 3200 BCE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-indus-script",
+      "from": "indus-script",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "undeciphered Indus script (c. 2600 BCE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-oracle-bone-script",
+      "from": "oracle-bone-script",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Shang Chinese oracle-bone characters (c. 1250 BCE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-maya-writing",
+      "from": "maya-writing",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Mesoamerican **Maya** (c. 300 BCE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-code-of-hammurabi",
+      "from": "code-of-hammurabi",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the earliest preserved answer",
+      "citation_keys": [
+        "roth1997lawcollections",
+        "scheil1902code"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-library-of-alexandria",
+      "from": "library-of-alexandria",
+      "to": "untold_history_i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "founded under the Ptolemies",
+      "citation_keys": [
+        "elabbadi1990life",
+        "canfora1990vanished"
+      ],
+      "confidence": "provenance"
     }
   ]
 }

@@ -51,7 +51,6 @@ uv run blog/tests/fact_ledger_test.py
       "unit": "count",
       "qualifiers": {},
       "quote": "the demo below runs a 4-layer network",
-      "line": 29,
       "citation_keys": [],
       "source_url": "",
       "confidence": "stated"
@@ -62,7 +61,8 @@ uv run blog/tests/fact_ledger_test.py
 
 ### Pflichtfelder pro Claim
 
-`subject`, `predicate`, `value`, `unit`, `quote`, `line`.
+`subject`, `predicate`, `value`, `unit`, `quote`. **Keine Zeilennummern**:
+der `quote` ist der Anker, Zeilen driften zu schnell.
 
 ### Kanonische Namen
 
@@ -91,8 +91,8 @@ uv run blog/tests/fact_ledger_test.py
 - Strings nur für Namen/Formeln/Intervalle:
   `"value": "half-sum-of-squares"`, `"value": "(0,1)"`.
 - Näherungen: `"qualifiers": {"approx": true}`.
-- `quote` ist der exakte Substring aus der Lektion, `line` die 1-basierte
-  Zeile in der PHP-Datei.
+- `quote` ist der exakte Substring aus der Lektion und der einzige Anker.
+  `line` wird nicht gespeichert (Legacy-Eingaben werden toleriert).
 
 ## Alias-Toleranz
 
@@ -262,7 +262,6 @@ enthalten:
       "kind": "part_of",
       "qualifiers": {},
       "quote": "Prompt injection occurs when an attacker embeds instructions",
-      "line": 21,
       "citation_keys": ["greshake2023injection"]
     }
   ]

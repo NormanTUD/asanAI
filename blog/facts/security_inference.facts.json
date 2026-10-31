@@ -14,6 +14,19 @@
   ],
   "claims": [
     {
+      "id": "security_inference-title",
+      "subject": "security_inference",
+      "predicate": "title",
+      "value": "Security & Adversarial Attacks",
+      "unit": "name",
+      "qualifiers": {
+        "lesson": "security_inference"
+      },
+      "quote": "Security & Adversarial Attacks",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
       "id": "prompt-injection-described",
       "subject": "prompt-injection",
       "predicate": "year",
@@ -156,6 +169,72 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "Prompt injection and jailbreaking are related attack surfaces"
+    },
+    {
+      "id": "prov-security_inference-prompt-injection",
+      "from": "prompt-injection",
+      "to": "security_inference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Prompt injection occurs when an attacker embeds instructions inside user-supplied data",
+      "citation_keys": [
+        "greshake2023injection"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-security_inference-jailbreaking",
+      "from": "jailbreaking",
+      "to": "security_inference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Jailbreaking manipulates the model into bypassing its safety training",
+      "citation_keys": [
+        "wei2024jailbroken"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-security_inference-data-poisoning",
+      "from": "data-poisoning",
+      "to": "security_inference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "An attacker injects malicious examples into the training or fine-tuning data",
+      "citation_keys": [
+        "hubinger2024sleeperagents"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-security_inference-trojan-horse-painting",
+      "from": "trojan-horse-painting",
+      "to": "security_inference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "painted by Giovanni Domenico Tiepolo in 1773",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-security_inference-model-7b",
+      "from": "model-7b",
+      "to": "security_inference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Running a 7B-parameter model in 32-bit precision needs ~28 GB of memory",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-security_inference-llm-security",
+      "from": "llm-security",
+      "to": "security_inference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "LLMs are powerful but fragile under adversarial pressure",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ]
 }

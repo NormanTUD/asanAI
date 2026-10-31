@@ -126,5 +126,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-mechanistic_interpretability-transformer",
+      "from": "transformer",
+      "to": "mechanistic_interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Giannou et al. (2023)]{giannou2023looped} demonstrate that a **constant-depth** Transformer (≤13 layers), when placed in a loop, can emulate a **general-purpose computer**. This result has profound implications for understanding what Transformers *can* compute and how they might implement algo",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

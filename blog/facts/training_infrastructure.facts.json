@@ -68,5 +68,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-training_infrastructure-h100",
+      "from": "h100",
+      "to": "training_infrastructure",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "For a 70B model: $W + G + O + M = 140 + 140 + 560 + 280 = 1120$ GB just for bf16 parameters, bf16 gradients, Adam's fp32 moments and the fp32 master weights. An H100 has 80 GB. The model literally does not fit.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

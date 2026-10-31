@@ -75,5 +75,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-production_serving-h100",
+      "from": "h100",
+      "to": "production_serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "LLM decoding is **memory-bound**, not compute-bound. Each token requires reading all model weights once. A 70B model in bf16 cannot fit on a single 80 GB H100 at all; split across two H100s it tops out near ~40 tokens/s, and in FP8 on one H100 near the same order, regardless of FLOPs.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

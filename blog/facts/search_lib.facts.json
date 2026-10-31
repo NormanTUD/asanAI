@@ -8,6 +8,20 @@
   "curated": false,
   "generated_by": "extract_facts.py",
   "citations": [],
-  "claims": [],
+  "claims": [
+    {
+      "id": "search_lib-title",
+      "subject": "search_lib",
+      "predicate": "title",
+      "value": "search_lib",
+      "unit": "name",
+      "qualifiers": {
+        "lesson": "search_lib"
+      },
+      "quote": "search_lib",
+      "citation_keys": [],
+      "confidence": "stated"
+    }
+  ],
   "relations": []
 }

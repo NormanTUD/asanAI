@@ -9793,17 +9793,6 @@
       ]
     },
     {
-      "id": "rel-untold-ii-hollerith-census-storage",
-      "from": "storage",
-      "to": "census-taking",
-      "kind": "derived_from",
-      "qualifiers": {},
-      "quote": "Hollerith, 1890",
-      "citation_keys": [
-        "hollerith1890"
-      ]
-    },
-    {
       "id": "rel-untold-ii-ramac-first-random-access",
       "from": "ibm-305-ramac",
       "to": "storage",
@@ -10166,6 +10155,4888 @@
         "radiationlosses"
       ],
       "confidence": "inferred"
+    },
+    {
+      "id": "prov-untold_history_ii-glass",
+      "from": "glass",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Glass was made in Mesopotamia and Egypt as early as 3500 BCE",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-murano-cristallo",
+      "from": "murano-cristallo",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Venetian glassmakers of Murano developed *cristallo*, a clear soda-lime glass, in the 15th century",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-sidereus-nuncius",
+      "from": "sidereus-nuncius",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeyear{galileosidereus} \\citetitle{galileosidereus} turned such a lens skyward",
+      "citation_keys": [
+        "galileosidereus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-galileo-galilei",
+      "from": "galileo-galilei",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "discovering Jupiter's moons and confirming Copernican astronomy",
+      "citation_keys": [
+        "galileosidereus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-leeuwenhoek",
+      "from": "leeuwenhoek",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a draper in Delft named **\\citeauthor{leeuwenhoekletters}** saw who lived in it",
+      "citation_keys": [
+        "leeuwenhoekletters"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-leeuwenhoek-microscope",
+      "from": "leeuwenhoek-microscope",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Grinding his own single-lens microscopes to magnifications well beyond 200×",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-huygens-aerial-telescope",
+      "from": "huygens-aerial-telescope",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the tubeless aerial telescope of Christiaan Huygens, 1684",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-micrographia",
+      "from": "micrographia",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{micrographia}'s \\citeyear{micrographia} \\citetitle{micrographia} was the first major publication",
+      "citation_keys": [
+        "micrographia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-samuel-pepys",
+      "from": "samuel-pepys",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Samuel Pepys called it “the most ingenious book that ever I read in my life”",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-hooke-microscope",
+      "from": "hooke-microscope",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "built for him in London by the optician Christopher Cock",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-robert-hooke",
+      "from": "robert-hooke",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "He named them *cells*, after the small rooms of a monastery",
+      "citation_keys": [
+        "hookecork"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-cork-slice",
+      "from": "cork-slice",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "no thicker than the 400th part of an inch",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-schleiden-1838",
+      "from": "schleiden-1838",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citeyear{schleiden1838} \\citeauthor{schleiden1838} argued that all plant tissues are built of cells",
+      "citation_keys": [
+        "schleiden1838"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-schwann-1839",
+      "from": "schwann-1839",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in \\citeyear{schwann1839} \\citeauthor{schwann1839} extended the claim to animals",
+      "citation_keys": [
+        "schwann1839"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-cell-theory",
+      "from": "cell-theory",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "For the first time, a single unit, visible only through a lens, was declared sufficient to explain the structure of every living thing.",
+      "citation_keys": [
+        "celltheory_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-virchow-1858",
+      "from": "virchow-1858",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{virchow1858} later closed the triad with *omnis cellula e cellula*",
+      "citation_keys": [
+        "virchow1858"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-reticular-theory",
+      "from": "reticular-theory",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "brain tissue appeared as a continuous mesh, a net without individual parts, the **reticular theory**",
+      "citation_keys": [
+        "neuron_doctrine_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-golgi-stain",
+      "from": "golgi-stain",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citeyear{golgi1873}, **Camillo Golgi** invented a silver-impregnation method",
+      "citation_keys": [
+        "golgi1873"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-camillo-golgi",
+      "from": "camillo-golgi",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "invented a silver-impregnation method he called *la reazione nera*, the black reaction",
+      "citation_keys": [
+        "golgi1873"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-cajal-neuron-report",
+      "from": "cajal-neuron-report",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Starting in 1887, he applied Golgi's method with unmatched skill",
+      "citation_keys": [
+        "cajal1888"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-neuron-doctrine",
+      "from": "neuron-doctrine",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the nervous system is not a net but a vast society of individual cells",
+      "citation_keys": [
+        "neuron_doctrine_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-waldeyer-1891",
+      "from": "waldeyer-1891",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{waldeyer1891} named the unit *neuron* in \\citeyear{waldeyer1891}",
+      "citation_keys": [
+        "waldeyer1891"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-cajaltextura",
+      "from": "cajaltextura",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citetitle{cajaltextura} (\\citeyear{cajaltextura})",
+      "citation_keys": [
+        "cajaltextura"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-golgi-cajal-nobel-prize",
+      "from": "golgi-cajal-nobel-prize",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Golgi and Cajal shared the 1906 Nobel Prize in Physiology or Medicine",
+      "citation_keys": [
+        "neuron_doctrine_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-synapse",
+      "from": "synapse",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "settled only in the 1950s, when electron microscopy revealed the physical gap at the **synapse**",
+      "citation_keys": [
+        "neuron_doctrine_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-mcculloch-pitts-1943",
+      "from": "mcculloch-pitts-1943",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "turned in \\citeyear{mccullochpitts1943} into a mathematical model",
+      "citation_keys": [
+        "mccullochpitts1943"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-hebb-1949",
+      "from": "hebb-1949",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{hebb1949organizationofbehaviour}'s \\citeyear{hebb1949organizationofbehaviour} rule",
+      "citation_keys": [
+        "hebb1949organizationofbehaviour"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-perceptron",
+      "from": "perceptron",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{rosenblatt1958perceptron}'s \\citeyear{rosenblatt1958perceptron} Perceptron",
+      "citation_keys": [
+        "rosenblatt1958perceptron"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-olaha-zoom-in",
+      "from": "olaha-zoom-in",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "their \\citeyear{olaha2020zoomin} essay",
+      "citation_keys": [
+        "olaha2020zoomin"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-circuits-programme",
+      "from": "circuits-programme",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**circuits**: meaningful algorithms inside the weights",
+      "citation_keys": [
+        "olaha2020zoomin"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-electron-microscope",
+      "from": "electron-microscope",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "is indispensable to semiconductor fabrication",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-thales-amber",
+      "from": "thales-amber",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Around 600 BCE, **Thales of Miletus** noticed",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-amber",
+      "from": "amber",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(*ἤλεκτρον*, *elektron* in Greek)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-laertius",
+      "from": "laertius",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "later catalogued by \\citeauthor{laertius} in \\citetitle{laertius} (Book I, §15)",
+      "citation_keys": [
+        "laertius"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-voltaic-pile",
+      "from": "voltaic-pile",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Alessandro Volta** (1800) created the first true battery (the *voltaic pile*)",
+      "citation_keys": [
+        "volta"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-electromagnetic-induction",
+      "from": "electromagnetic-induction",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Michael Faraday** (1831) discovered **electromagnetic induction**",
+      "citation_keys": [
+        "faraday"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-alternating-current",
+      "from": "alternating-current",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Nikola Tesla** and **George Westinghouse** (1880s–1890s) championed **alternating current (AC)**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-tesla-ac-patents",
+      "from": "tesla-ac-patents",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Tesla's foundational polyphase AC patents (U.S. Patents \\cite[381,968]{teslaelectricmotor}–\\cite[382,282]{teslacurrent}, filed 1887, granted 1888)",
+      "citation_keys": [
+        "teslaelectricmotor",
+        "teslacurrent"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-tesla-ac-lecture",
+      "from": "tesla-ac-lecture",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "“A New System of Alternate Current Motors and Transformers” (delivered before the American Institute of Electrical Engineers, May 1888)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-llm-training-run",
+      "from": "llm-training-run",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A modern LLM training run can consume **gigawatt-hours** of electricity",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-faraday-disk",
+      "from": "faraday-disk",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Faraday's disk, the first electromagnetic generator",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-theophrastus-on-stones",
+      "from": "theophrastus-on-stones",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{theophrastusstones}**'s \\citeyear{theophrastusstones} treatise",
+      "citation_keys": [
+        "theophrastusstones"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-pliny-natural-history",
+      "from": "pliny-natural-history",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{plinynaturalhistory}**'s \\citeyear{plinynaturalhistory} \\citetitle{plinynaturalhistory}",
+      "citation_keys": [
+        "plinynaturalhistory"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-de-re-metallica",
+      "from": "de-re-metallica",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The leap from art to science came in \\citeyear{deremetallica}",
+      "citation_keys": [
+        "deremetallica"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-edvac",
+      "from": "edvac",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a \"Store\" (memory) and a \"Mill\" (CPU) are named after the architecture of ore processing",
+      "citation_keys": [
+        "deremetallica"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-bessemer-process",
+      "from": "bessemer-process",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "completed in \\citeyear{bessemerpatent}, when **\\citeauthor{bessemerpatent}** patented",
+      "citation_keys": [
+        "bessemerpatent"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-iron-pillar-delhi",
+      "from": "iron-pillar-delhi",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "erected under Chandragupta II (c. 375–415 CE)",
+      "citation_keys": [
+        "ironpillardelhi"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-iron-pillar-analysis",
+      "from": "iron-pillar-analysis",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{ironpillardelhi}**'s \\citeyear{ironpillardelhi} analysis",
+      "citation_keys": [
+        "ironpillardelhi"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-czochralski-process",
+      "from": "czochralski-process",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{czochralski1918}'s \\citeyear{czochralski1918} process",
+      "citation_keys": [
+        "czochralski1918"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-point-contact-transistor",
+      "from": "point-contact-transistor",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "etched the first point-contact transistor in \\citeyear{semiconductor}",
+      "citation_keys": [
+        "semiconductor"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-eniac",
+      "from": "eniac",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Tungsten filaments lit the vacuum tubes of ENIAC",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-licoo2-cathode",
+      "from": "licoo2-cathode",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "lithium cobalt oxide cathodes, discovered by \\citeauthor{goodenough1980licoo2} in \\citeyear{goodenough1980licoo2}",
+      "citation_keys": [
+        "goodenough1980licoo2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-li-ion-battery",
+      "from": "li-ion-battery",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "industrialized by \\citeauthor{yoshino1985liion} in \\citeyear{yoshino1985liion}",
+      "citation_keys": [
+        "yoshino1985liion"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-periodic-table",
+      "from": "periodic-table",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Dmitri Mendeleev's 1869 periodic table organized the elements by atomic weight and predicted the existence of undiscovered elements",
+      "citation_keys": [
+        "mendeleev1869"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-silicon",
+      "from": "silicon",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "silicon (Si, 14)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-copper",
+      "from": "copper",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "copper (Cu, 29)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-gold",
+      "from": "gold",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "gold (Au, 79)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-tantalum",
+      "from": "tantalum",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "tantalum (Ta, 73)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-gallium",
+      "from": "gallium",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "gallium (Ga, 31)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-arsenic",
+      "from": "arsenic",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "arsenic (As, 33)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-erbium",
+      "from": "erbium",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "erbium (Er, 68)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-neodymium",
+      "from": "neodymium",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "neodymium (Nd, 60)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-lebombo-bone",
+      "from": "lebombo-bone",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **Lebombo bone**, a baboon fibula with 29 notches from Border Cave",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-dolni-vestonice-bone",
+      "from": "dolni-vestonice-bone",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "with 55 notches in two groups (30 and 25) on an 18 cm bone",
+      "citation_keys": [
+        "wolfbone"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ishango-bone",
+      "from": "ishango-bone",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **Ishango bone** (c. 18,000 BCE, with columns of marks read as a base-12 counting aid)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-apollo-11-rockshelter-bone",
+      "from": "apollo-11-rockshelter-bone",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "older notched bones (up to ca. 80,000 years old, e.g., Apollo 11 Rockshelter, Namibia",
+      "citation_keys": [
+        "vogelsang2010apollo11"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-blombos-cave-drawing",
+      "from": "blombos-cave-drawing",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the oldest known drawing by our species is a hatched flake from Blombos Cave (ca. 71,000–73,000 years ago",
+      "citation_keys": [
+        "henshilwood2018blombos"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-trinil-shell",
+      "from": "trinil-shell",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Trinil shell shows (ca. 540,000–430,000 years ago",
+      "citation_keys": [
+        "trinilshell"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-clay-tokens",
+      "from": "clay-tokens",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "since at least the **9th millennium BCE**",
+      "citation_keys": [
+        "ifrah2000",
+        "schmandtbesserat1992"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-bulla",
+      "from": "bulla",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the tokens were sealed inside a hollow clay envelope — a **bulla** — and the shapes were impressed on the outside",
+      "citation_keys": [
+        "ifrah2000"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-proto-cuneiform",
+      "from": "proto-cuneiform",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Around **3300 BCE**, at Uruk, the envelope was dropped and the message was written directly on a flat tablet",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-sexagesimal-system",
+      "from": "sexagesimal-system",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "By c. 2000 BCE the system had abstracted into something recognisably numeric",
+      "citation_keys": [
+        "chrisomalis2010"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-roman-numerals",
+      "from": "roman-numerals",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The seven glyphs **I, V, X, L, C, D, M** descend from **Etruscan** numerals",
+      "citation_keys": [
+        "chrisomalis2010",
+        "ifrah2000"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-uncia",
+      "from": "uncia",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the *as* was divided into twelve *unciae*, written as dots — the source of the English words \"ounce\" and \"inch\"",
+      "citation_keys": [
+        "ifrah2000"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-brahmi-numerals",
+      "from": "brahmi-numerals",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Their ancestors are the **Brahmi** numerals already visible on the edicts of Ashoka (3rd century BCE)",
+      "citation_keys": [
+        "chrisomalis2010"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-indian-positional-numerals",
+      "from": "indian-positional-numerals",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Around **600 CE** the writing of numbers in India shifted to *positional* notation",
+      "citation_keys": [
+        "chrisomalis2010"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-bakhshali-manuscript",
+      "from": "bakhshali-manuscript",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **Bakhshali manuscript**, radiocarbon-dated to the 3rd–4th century CE, already shows that placeholder in use",
+      "citation_keys": [
+        "chrisomalis2010"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-brahmagupta-628",
+      "from": "brahmagupta-628",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Brahmagupta's 628 CE treatise made zero a *number* with rules for arithmetic",
+      "citation_keys": [
+        "brahmagupta628"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-gwalior-zero-inscription",
+      "from": "gwalior-zero-inscription",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "an inscription at **Gwalior** dated **876 CE** is the oldest dated, undisputed zero symbol",
+      "citation_keys": [
+        "chrisomalis2010"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-hindu-arabic-numerals",
+      "from": "hindu-arabic-numerals",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The system crossed into the Islamic world in the 8th–9th centuries",
+      "citation_keys": [
+        "smithkarpinski1911"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-al-khwarizmi-arithmetic",
+      "from": "al-khwarizmi-arithmetic",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "by **al-Khwārizmī** (c. 825) and **al-Kindī** (c. 830)",
+      "citation_keys": [
+        "smithkarpinski1911"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-al-kindi-arithmetic",
+      "from": "al-kindi-arithmetic",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "by **al-Khwārizmī** (c. 825) and **al-Kindī** (c. 830)",
+      "citation_keys": [
+        "smithkarpinski1911"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-al-uqlidisi",
+      "from": "al-uqlidisi",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the 10th-century **al-Uqlīḍīsī** was the first to extend it to decimal fractions",
+      "citation_keys": [
+        "smithkarpinski1911"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-codex-vigilanus",
+      "from": "codex-vigilanus",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Christian Europe first met the digits in the Spanish *Codex Vigilanus* of 976",
+      "citation_keys": [
+        "smithkarpinski1911"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-liber-abaci",
+      "from": "liber-abaci",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Fibonacci**'s 1202 *Liber Abaci* made them a tool of commerce",
+      "citation_keys": [
+        "fibonacciliber"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-fibonacci-sequence",
+      "from": "fibonacci-sequence",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$$F_0 = 0,\\quad F_1 = 1,\\quad F_n = F_{n-1} + F_{n-2}$$",
+      "citation_keys": [
+        "fibonacciseq"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-maya-zero",
+      "from": "maya-zero",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **Maya** independently developed a zero (a shell glyph) for their vigesimal positional system in the Classic period",
+      "citation_keys": [
+        "ifrah2000"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-chinese-counting-rods",
+      "from": "chinese-counting-rods",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "China had already been computing positionally in **base 10 on counting rods** for two millennia before the Indian system arrived",
+      "citation_keys": [
+        "ifrah2000"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-qin-jiushao-1247",
+      "from": "qin-jiushao-1247",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the oldest surviving use of that character for zero is in **Qin Jiushao**'s 1247 treatise",
+      "citation_keys": [
+        "ifrah2000"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-sumerian-clay-tablets",
+      "from": "sumerian-clay-tablets",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Sumerian clay tablets (c. 3400 BCE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-cai-lun-memorial",
+      "from": "cai-lun-memorial",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a court memorial of 105 CE describing how to refine a sheet from mulberry bark, hemp, rags, and fishnets",
+      "citation_keys": [
+        "cai_lun_paper"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-battle-of-talas",
+      "from": "battle-of-talas",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The technique spread westward after the Battle of Talas (751 CE), where Chinese papermakers were captured",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-fabriano-paper-mill",
+      "from": "fabriano-paper-mill",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the first European paper mill was established in Fabriano, Italy, around 1276",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-fabriano",
+      "from": "fabriano",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "established in Fabriano, Italy, around 1276",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-hollerith-punch-card",
+      "from": "hollerith-punch-card",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hollerith's 1890 census used punched card stock",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-gutenberg-press",
+      "from": "gutenberg-press",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{gutenbergpress}**'s printing press, developed around 1440 in Mainz",
+      "citation_keys": [
+        "gutenbergpress"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-scientific-revolution",
+      "from": "scientific-revolution",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The press made the scientific revolution possible",
+      "citation_keys": [
+        "gutenbergpress"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-encyclopedie",
+      "from": "encyclopedie",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "enabled the *Encyclopédie*",
+      "citation_keys": [
+        "gutenbergpress"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-summa-de-arithmetica",
+      "from": "summa-de-arithmetica",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{paciolisumma}**'s \\citeyear{paciolisumma} \\citetitle{paciolisumma}",
+      "citation_keys": [
+        "paciolisumma"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-double-entry-bookkeeping",
+      "from": "double-entry-bookkeeping",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "which had been practised in Italian merchant cities for at least two centuries",
+      "citation_keys": [
+        "paciolisumma"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-joint-stock-company",
+      "from": "joint-stock-company",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "by providing an auditable record of assets and liabilities, it allowed strangers to pool capital",
+      "citation_keys": [
+        "paciolisumma"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-card-catalog",
+      "from": "card-catalog",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "By the 1880s the card catalog was being described as the greatest library invention",
+      "citation_keys": [
+        "librarybureau1890catalog"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-dewey-classification",
+      "from": "dewey-classification",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Dewey's 1876 *A Classification and Subject Index* was devised for cataloguing and indexing",
+      "citation_keys": [
+        "dewey1876classification"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-dewey-card-rules",
+      "from": "dewey-card-rules",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Dewey's 1890 card-catalog rules then standardised the card itself",
+      "citation_keys": [
+        "cardcatalogrules1890"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-halley-mortality-table",
+      "from": "halley-mortality-table",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Halley's 1693 paper used the bills of mortality from Breslaw to construct a table of ages and deaths",
+      "citation_keys": [
+        "halley1693mortality"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-actuarial-science",
+      "from": "actuarial-science",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Actuarial science is therefore an early example of the full pipeline that later becomes machine learning: collect records, estimate a distribution, and use it to make decisions under uncertainty.",
+      "citation_keys": [
+        "halley1693mortality"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-longitude-problem",
+      "from": "longitude-problem",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The \"longitude problem\", determining one's east-west position at sea, was the great scientific challenge of the 18th century",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-mercator-projection",
+      "from": "mercator-projection",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{mercator1569}**'s \\citeyear{mercator1569} map projection",
+      "citation_keys": [
+        "mercator1569"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-board-of-longitude",
+      "from": "board-of-longitude",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The British Board of Longitude, established in 1714 with a prize of £20,000",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-harrison-h4",
+      "from": "harrison-h4",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{harrisonh4}**'s \\citeyear{harrisonh4} chronometer finally solved the timekeeping problem",
+      "citation_keys": [
+        "harrisonh4"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-torricelli-barometer",
+      "from": "torricelli-barometer",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{torricellibarometer}**'s \\citeyear{torricellibarometer} barometer",
+      "citation_keys": [
+        "torricellibarometer"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-magdeburg-hemispheres",
+      "from": "magdeburg-hemispheres",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{vonguericke}**'s \\citeyear{vonguericke} \\citealternativetitle{vonguericke} (1654) made the point dramatically",
+      "citation_keys": [
+        "vonguericke"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-geissler-tube",
+      "from": "geissler-tube",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{geisslertube}**'s \\citeyear{geisslertube} \\citealternativetitle{geisslertube} (1857) showed that electric current through low-pressure gas produces coloured light",
+      "citation_keys": [
+        "geisslertube"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-edison-effect",
+      "from": "edison-effect",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Thomas Edison observed in 1883 that electrons flow from a heated filament to a metal plate inside a vacuum, the \"Edison effect.\"",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-fleming-diode",
+      "from": "fleming-diode",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{flemingdiode}**'s \\citeyear{flemingdiode} \\citealternativetitle{flemingdiode} used this effect to build the first electronic rectifier",
+      "citation_keys": [
+        "flemingdiode"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-deforest-audion",
+      "from": "deforest-audion",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{deforestaudion}**'s \\citeyear{deforestaudion} \\citealternativetitle{deforestaudion} (1906) added a third electrode to create the first electronic amplifier",
+      "citation_keys": [
+        "deforestaudion"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-huygens-pendulum-clock",
+      "from": "huygens-pendulum-clock",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{huygenspendulum}**'s \\citeyear{huygenspendulum} \\citetitle{huygenspendulum} built the first pendulum clock in 1656",
+      "citation_keys": [
+        "huygenspendulum"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-escapement",
+      "from": "escapement",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a device that converts the continuous swing of a pendulum into discrete, uniform ticks",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-quartz-clock",
+      "from": "quartz-clock",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the quartz crystal oscillator (first used in a clock by Warren Marrison at Bell Labs in 1927)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-horologium-oscillatorium",
+      "from": "horologium-oscillatorium",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Horologium Oscillatorium (1673), the foundational treatise on the pendulum clock",
+      "citation_keys": [
+        "img_huygens_horologium"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-international-meridian-conference",
+      "from": "international-meridian-conference",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The 1884 International Meridian Conference proposed a single prime meridian for all nations, adopted the meridian of Greenwich",
+      "citation_keys": [
+        "meridian1884proceedings"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-greenwich-meridian",
+      "from": "greenwich-meridian",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "adopted the meridian of Greenwich as the initial meridian for longitude",
+      "citation_keys": [
+        "meridian1884proceedings"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-network-time-protocol",
+      "from": "network-time-protocol",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "RFC 5905 describes a protocol that synchronises computer clocks across the Internet",
+      "citation_keys": [
+        "rfc5905"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-barcode",
+      "from": "barcode",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Woodland and Silver's 1952 patent, \"Classifying apparatus and method,\"",
+      "citation_keys": [
+        "woodland1952barcode"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-qr-code",
+      "from": "qr-code",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "DENSO WAVE released it in 1994 with high data capacity, Kanji and Kana support, error correction and 360-degree reading",
+      "citation_keys": [
+        "denso_qr_history"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-newcomen-engine",
+      "from": "newcomen-engine",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{newcomenengine}**'s \\citeyear{newcomenengine} atmospheric steam engine was the first practical device for converting thermal energy into mechanical work",
+      "citation_keys": [
+        "newcomenengine"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-watt-engine",
+      "from": "watt-engine",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{wattpatent}**'s \\citeyear{wattpatent} separate-condenser patent",
+      "citation_keys": [
+        "wattpatent"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-eisweiher",
+      "from": "eisweiher",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a small, shallow, wind-sheltered body of water, often an artificial pond or a specially dammed millpond",
+      "citation_keys": [
+        "eisschlagen_traunsee"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-eisgalgen",
+      "from": "eisgalgen",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "At temperatures below about −3 °C, well or spring water was sprayed from nozzles over the rig",
+      "citation_keys": [
+        "eisgalgen_mittenwald"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-cullen-refrigeration",
+      "from": "cullen-refrigeration",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**William Cullen**, who demonstrated artificial refrigeration by evaporating ethyl ether in a partial vacuum at the University of Glasgow",
+      "citation_keys": [
+        "cullencold"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-linde-refrigerator",
+      "from": "linde-refrigerator",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Carl von Linde**, whose ammonia-compression refrigerator (\\cite[German Patent DE 1250]{patent1250}, 1877)",
+      "citation_keys": [
+        "patent1250"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-carrier-air-conditioning",
+      "from": "carrier-air-conditioning",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Willis Carrier** (1902), who designed the first modern air-conditioning system",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-carrier-psychrometric",
+      "from": "carrier-psychrometric",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "later formalized in his paper \\citetitle{psychrometric} (presented to the American Society of Mechanical Engineers, 1911)",
+      "citation_keys": [
+        "psychrometric"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-jacquard-loom",
+      "from": "jacquard-loom",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1804, **Joseph Marie Jacquard** perfected a loom attachment that used **punched cards** to automate the weaving of complex textile patterns",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-analytical-engine",
+      "from": "analytical-engine",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Charles Babbage** explicitly borrowed the mechanism for his **Analytical Engine** (c. 1837)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ada-lovelace",
+      "from": "ada-lovelace",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Engine “weaves algebraic patterns just as the Jacquard-loom weaves flowers and leaves”",
+      "citation_keys": [
+        "lovelacequote"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-hollerith-tabulating",
+      "from": "hollerith-tabulating",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Herman Hollerith** later adapted punched cards for the **1890 US Census**, founding the company that became **IBM**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ibm",
+      "from": "ibm",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "founding the company that became **IBM**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-punched-cards",
+      "from": "punched-cards",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Punched cards remained the dominant computer input medium into the 1970s",
+      "citation_keys": [
+        "taocp3"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-banu-musa-flute",
+      "from": "banu-musa-flute",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In ninth-century Baghdad the Banū Mūsā brothers described an **automatic flute player**",
+      "citation_keys": [
+        "koetsier2001programmable"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-al-jazari-drum-machine",
+      "from": "al-jazari-drum-machine",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the engineer **al-Jazari** (1206) built automata, including a programmable drum machine",
+      "citation_keys": [
+        "sharkey2007jazari"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-leibniz-stepped-reckoner",
+      "from": "leibniz-stepped-reckoner",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Leibniz's Stepped Reckoner proved that mechanical calculation was possible, it remained a fragile prototype, prone to jamming",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-arithmometer",
+      "from": "arithmometer",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citeyear{thomasdcolmar1820}, Thomas de Colmar patented the **Arithmometer**",
+      "citation_keys": [
+        "thomasdcolmar1820"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-niepce-heliograph",
+      "from": "niepce-heliograph",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "was made by **Joseph Nicéphore Niépce** around 1826–1827 at his estate in Saint-Loup-de-Varennes",
+      "citation_keys": [
+        "niepce_le_gras"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-daguerreotype",
+      "from": "daguerreotype",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Louis Daguerre's *daguerreotype* (publicly announced in 1839) brought exposure times down from hours to minutes",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-calotype",
+      "from": "calotype",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "William Henry Fox Talbot's *calotype* introduced the paper negative, the basis of modern film",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-muybridge-horse-motion",
+      "from": "muybridge-horse-motion",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1878, the industrialist **Leland Stanford** commissioned **Eadweard Muybridge** to settle the question",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-animal-locomotion",
+      "from": "animal-locomotion",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the University of Pennsylvania commissioned Muybridge between 1884 and 1887",
+      "citation_keys": [
+        "muybridge1887catalogue"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-animal-locomotion-plate-626",
+      "from": "animal-locomotion-plate-626",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it is *“Gallop; thoroughbred bay mare, Annie G.”*",
+      "citation_keys": [
+        "muybridge1887catalogue"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-zoopraxiscope",
+      "from": "zoopraxiscope",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "He built the **zoöpraxiscope**, a projection device that replayed his sequences as cyclical animations",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-solnit-motion-study",
+      "from": "solnit-motion-study",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Muybridge's *“invention was not the photograph, but the sequence”*",
+      "citation_keys": [
+        "solnit2003motion"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-gordon-indecent",
+      "from": "gordon-indecent",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a hierarchy from nude human males down to chickens, ordered by a 19th-century logic of the *scala naturae*",
+      "citation_keys": [
+        "gordon2015indecent"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-kirsch-scan",
+      "from": "kirsch-scan",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1957, at the National Bureau of Standards, **Russell Kirsch** built a **drum scanner**",
+      "citation_keys": [
+        "nilsson1984qai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-seac",
+      "from": "seac",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "processed on the bureau's SEAC computer",
+      "citation_keys": [
+        "nilsson1984qai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-jpl-space-image-processing",
+      "from": "jpl-space-image-processing",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The first large-scale *space* image processing came seven years later, at NASA's Jet Propulsion Laboratory",
+      "citation_keys": [
+        "tomayko1988spaceflight"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-robert-nathan",
+      "from": "robert-nathan",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Robert Nathan** at JPL pioneered **digital image processing** to enhance the images from the Ranger, Surveyor and Mariner probes",
+      "citation_keys": [
+        "tomayko1988spaceflight"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-vicar",
+      "from": "vicar",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Nathan's team wrote **VICAR** (Video Information Communication and Retrieval), a language that let a user *chain* image-processing operations together",
+      "citation_keys": [
+        "tomayko1988spaceflight"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-nathan-vlsi-chip",
+      "from": "nathan-vlsi-chip",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "wiring up a 35×35 array of parallel multipliers to accelerate a computation by a factor of **1,225**",
+      "citation_keys": [
+        "tomayko1988spaceflight"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ranger-7",
+      "from": "ranger-7",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A lunar surface image from NASA's Ranger 7 probe, 1964",
+      "citation_keys": [
+        "img_ranger7_moon"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ranger-7-guericke-image",
+      "from": "ranger-7-guericke-image",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "taken 8.5 minutes before the spacecraft struck the Moon",
+      "citation_keys": [
+        "img_ranger7_guericke"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-erma",
+      "from": "erma",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in 1956 the Bank of America announced General Electric as its production builder",
+      "citation_keys": [
+        "nilsson1984qai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-micr",
+      "from": "micr",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "SRI International's **MICR** (magnetic ink character recognition) system",
+      "citation_keys": [
+        "nilsson1984qai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ocr-symposium-1962",
+      "from": "ocr-symposium-1962",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "By the time a symposium on optical character recognition met in Washington, DC, in January 1962",
+      "citation_keys": [
+        "nilsson1984qai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-j-rabinow",
+      "from": "j-rabinow",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\"We think, in our company, that we can read anything that is printed, and we can even read some things that are written. The only catch is, 'how many bucks do you have to spend?'\"",
+      "citation_keys": [
+        "nilsson1984qai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-kirsch-diebenkorn-program",
+      "from": "kirsch-diebenkorn-program",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "used it in a program that could \"create lines and patterns in the style of\" the Bay Area artist **Richard Diebenkorn**",
+      "citation_keys": [
+        "nilsson1984qai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-zhu-stochastic-grammars",
+      "from": "zhu-stochastic-grammars",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Song-Chun Zhu's \"stochastic grammars of images\", which decompose an image into its component parts, parse-tree style",
+      "citation_keys": [
+        "nilsson1984qai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-shannon-sampling-theorem",
+      "from": "shannon-sampling-theorem",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a function limited to a band of W cycles per second is completely determined by its ordinates at discrete points spaced 1/(2W) seconds apart",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-adc",
+      "from": "adc",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "below about two million samples per second resolution is limited by thermal noise",
+      "citation_keys": [
+        "walden1999adc"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-image-sensor",
+      "from": "image-sensor",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The image sensor is a silicon chip that converts photons into charge and then into numbers.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ccd",
+      "from": "ccd",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Boyle and Smith's charge-coupled device stores charge in potential wells at the surface of a semiconductor",
+      "citation_keys": [
+        "boyle1970ccd"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-cmos-image-sensor",
+      "from": "cmos-image-sensor",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Fossum describes them as competitive with CCD technology while offering on-chip functionality, lower system power, lower cost and miniaturisation, including on-chip analog-to-digital conversion",
+      "citation_keys": [
+        "fossum1997cmos"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-dft",
+      "from": "dft",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The discrete Fourier transform turns a signal into its frequency components, but the naive sum is expensive.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-cooley-tukey-fft",
+      "from": "cooley-tukey-fft",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Cooley-Tukey algorithm computes the same transform with a recursive factorisation that made Fourier analysis practical on a machine",
+      "citation_keys": [
+        "cooley1965fft"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-laser",
+      "from": "laser",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The laser is a device for generating or amplifying coherent light.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ruby-laser",
+      "from": "ruby-laser",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Maiman's patent describes a ruby laser system and the principle of pumping a solid medium to produce coherent emission",
+      "citation_keys": [
+        "maiman1967laserpatent"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-maser",
+      "from": "maser",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "following the maser idea proposed by Schawlow and Townes",
+      "citation_keys": [
+        "maiman1967laserpatent"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-morse-telegraph-key",
+      "from": "morse-telegraph-key",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A Morse telegraph key: the first practical interface for digital electronic communication.",
+      "citation_keys": [
+        "img_morse_telegraph"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-morse-code",
+      "from": "morse-code",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Morse code, a variable-length binary encoding using short signals (dots) and long signals (dashes), was the first digital communication protocol.",
+      "citation_keys": [
+        "img_morse_telegraph"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-morse-telegraph",
+      "from": "morse-telegraph",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "were the first practical technologies for transmitting information faster than a horse could ride",
+      "citation_keys": [
+        "morsetelegraph"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-transatlantic-telegraph-cable",
+      "from": "transatlantic-telegraph-cable",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "By 1866, a transatlantic cable linked Europe and North America",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-telegraph-network",
+      "from": "telegraph-network",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "by 1900, over two million miles of telegraph wire encircled the globe",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-balanced-circuit",
+      "from": "balanced-circuit",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "two wires carrying equal and opposite currents, so that interference picked up by both wires cancelled at the receiver",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-wire-transposition",
+      "from": "wire-transposition",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In the 1880s telephone engineers added **wire transposition** — swapping the two wires every few poles, the ancestor of twisting",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-twisted-pair",
+      "from": "twisted-pair",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Alexander Graham Bell patented the **twisted pair** in 1881",
+      "citation_keys": [
+        "bell1881twistedpair"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-faraday-cage",
+      "from": "faraday-cage",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Michael Faraday showed in 1836 that a closed conducting shell keeps external electric fields out of its interior",
+      "citation_keys": [
+        "faradaycagewiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-skin-effect",
+      "from": "skin-effect",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **skin effect** confines the current to its surface",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-coaxial-cable",
+      "from": "coaxial-cable",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a single inner conductor surrounded by a concentric outer conductor, with the electromagnetic field confined to the dielectric between them",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-at-t-coax-link",
+      "from": "at-t-coax-link",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "an experimental AT&T link between New York and Philadelphia carried 240 telephone calls",
+      "citation_keys": [
+        "coaxwiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-us-commercial-coax",
+      "from": "us-commercial-coax",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the first commercial US system (1941) carried one TV channel or 480 calls",
+      "citation_keys": [
+        "coaxwiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-tat-1",
+      "from": "tat-1",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1956 the **TAT-1** cable became the first transatlantic telephone coaxial cable",
+      "citation_keys": [
+        "coaxwiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-total-internal-reflection",
+      "from": "total-internal-reflection",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Total Internal Reflection** (1842): **Jean-Daniel Colladon** demonstrated that light could be guided along curved paths through a jet of water",
+      "citation_keys": [
+        "colladon"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-john-tyndall",
+      "from": "john-tyndall",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**John Tyndall** independently popularized the same principle through his Royal Institution lectures in London during the 1850s and 1870s",
+      "citation_keys": [
+        "notesonlight"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-fiber-optic-communication",
+      "from": "fiber-optic-communication",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Fiber Optic Communication** (1966): **Charles K. Kao** and **George A. Hockham** theorized that glass fibers could transmit data over long distances if impurities were reduced below a critical threshold",
+      "citation_keys": [
+        "fibreoptics"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-charles-kao",
+      "from": "charles-kao",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This earned Kao the Nobel Prize in Physics in 2009.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-corning-glass-works",
+      "from": "corning-glass-works",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The subsequent development of ultra-pure glass fibers by researchers at Corning Glass Works",
+      "citation_keys": [
+        "radiationlosses"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-submarine-fiber-cables",
+      "from": "submarine-fiber-cables",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Over 95% of intercontinental data traffic travels through undersea fiber optic cables",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-gutta-percha",
+      "from": "gutta-percha",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a *Palaquium* of the Malay archipelago",
+      "citation_keys": [
+        "guttapercha"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-goodyear-vulcanization",
+      "from": "goodyear-vulcanization",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "patent (U.S. Patent 3,633) hardened natural rubber with sulfur and heat",
+      "citation_keys": [
+        "goodyearvulcanization"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-bakelite",
+      "from": "bakelite",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "patent (U.S. Patent 942,699) for \"hard, insoluble and infusible condensation products of phenols and formaldehyde\" gave the world **Bakelite**, the first fully synthetic plastic",
+      "citation_keys": [
+        "baekelandpatent"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-polyethylene",
+      "from": "polyethylene",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The ICI team of Eric Fawcett and Reginald Gibson, working in 1933 at several hundred atmospheres pressure in Northwich, England, accidentally produced a white waxy substance they called polyethylene",
+      "citation_keys": [
+        "polyethylenehistory"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-magnet-wire-enamel",
+      "from": "magnet-wire-enamel",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a thin shell of polyimide or polyurethane whose molecular structure was engineered for a thermal class invented for the 1960s space program",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-typewriter",
+      "from": "typewriter",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1868, **Christopher Latham Sholes**, Carlos Glidden, and Samuel W. Soule patented an early typewriter",
+      "citation_keys": [
+        "typewriterpatent"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-sholes-glidden-typewriter",
+      "from": "sholes-glidden-typewriter",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "By 1874, **E. Remington and Sons** began mass-producing the **Sholes & Glidden Type-Writer**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-qwerty",
+      "from": "qwerty",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "featuring the **QWERTY** layout, an arrangement designed to separate commonly paired letters and prevent adjacent typebars from colliding",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-teletype",
+      "from": "teletype",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Teletypes** in the early 20th century adapted the typewriter keyboard for electrical communication, encoding keystrokes as signals over telegraph lines.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-video-terminal",
+      "from": "video-terminal",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "When **video terminals** replaced teletypes in the 1970s, the QWERTY keyboard carried over unchanged.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-computer-keyboard",
+      "from": "computer-keyboard",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The computer keyboard is, in every functional sense, a typewriter with its mechanical linkage replaced by an electrical switch matrix.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-telectroscope",
+      "from": "telectroscope",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1877–1881 the French notary **Constantin Senlecq** proposed a **telectroscope**",
+      "citation_keys": [
+        "senlecqwiki",
+        "telectroscopewiki",
+        "lange_senlecq"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-constantin-senlecq",
+      "from": "constantin-senlecq",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Senlecq patented a refined version in 1907",
+      "citation_keys": [
+        "senlecqwiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-nipkow-scanning-disk",
+      "from": "nipkow-scanning-disk",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "by which time Nipkow's scanning disk had become the standard mechanical route",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-cathode-ray-tube",
+      "from": "cathode-ray-tube",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1897, **Karl Ferdinand Braun** invented the **cathode ray tube (CRT)** at the University of Strasbourg",
+      "citation_keys": [
+        "braunannalen"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-electronic-television",
+      "from": "electronic-television",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Philo Farnsworth** demonstrated fully electronic television in 1927, adapting the CRT for broadcast entertainment",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-radar-display",
+      "from": "radar-display",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "During WWII, CRTs were repurposed for **radar displays**, the first use as an interactive, real-time information screen",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-whirlwind",
+      "from": "whirlwind",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **Whirlwind** computer (early 1950s) used a CRT for real-time output",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-sketchpad",
+      "from": "sketchpad",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "proved a screen could be a medium for direct graphical interaction with a computer.",
+      "citation_keys": [
+        "sketchpad"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-electric-waves",
+      "from": "electric-waves",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hertz's *Electric Waves* collects the researches in which he generated rapid electric oscillations with sparks and Leyden jars and detected their propagation through space",
+      "citation_keys": [
+        "hertz1893electricwaves"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-marconi-radio-patent",
+      "from": "marconi-radio-patent",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Marconi's 1897 patent, \"Transmitting electrical signals,\" turned the laboratory effect into a signalling system",
+      "citation_keys": [
+        "marconi1897patent"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-radio",
+      "from": "radio",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Radio then became the first network without wires: broadcast, radar, navigation and, eventually, mobile data.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-cellular-network",
+      "from": "cellular-network",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "MacDonald's 1979 paper shows how a cellular system within a limited block of frequency spectrum can serve large-scale mobile telephony by frequency reuse and cell splitting, with hexagonal geometry and the AMPS system as the practical realisation",
+      "citation_keys": [
+        "macdonald1979cellular"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ieee-802-11",
+      "from": "ieee-802-11",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the IEEE 802.11 standard of 1997 specified a wireless LAN medium-access control and physical layer, creating the technical basis for Wi-Fi",
+      "citation_keys": [
+        "ieee80211_1997"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-iphone",
+      "from": "iphone",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Apple's 2007 launch described the iPhone as three products in one, a mobile phone, a widescreen iPod and an Internet communications device, with a large multi-touch display, a two-megapixel camera, desktop-class email, web browsing, searching and maps",
+      "citation_keys": [
+        "apple2007iphone"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-arm-architecture",
+      "from": "arm-architecture",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Acorn RISC Machine was designed as a complete system architecture for optimal implementation on silicon, aimed at the low-cost personal-computer market",
+      "citation_keys": [
+        "furber1987arm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-3gpp",
+      "from": "3gpp",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The cellular standards that carry the data are specified by 3GPP",
+      "citation_keys": [
+        "threegpp_specs"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-smartphone",
+      "from": "smartphone",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The smartphone is the point where radio, low-power computing, a camera and a touchscreen became one device.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-silicon-dioxide",
+      "from": "silicon-dioxide",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Silicon dioxide (common sand) is one of the most abundant compounds on Earth.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-max-planck",
+      "from": "max-planck",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Max Planck** introduced the quantum of energy in \\citetitle{planck}.",
+      "citation_keys": [
+        "planck"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-niels-bohr",
+      "from": "niels-bohr",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Niels Bohr** proposed the quantized atom in \\citetitle{bohr}.",
+      "citation_keys": [
+        "bohr"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-werner-heisenberg",
+      "from": "werner-heisenberg",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Werner Heisenberg** formulated matrix mechanics in \\citetitle{quanten}",
+      "citation_keys": [
+        "quanten"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-erwin-schrodinger",
+      "from": "erwin-schrodinger",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Erwin Schrödinger** developed wave mechanics in \\citetitle{schroedinger}.",
+      "citation_keys": [
+        "schroedinger"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-quantum-mechanics",
+      "from": "quantum-mechanics",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "they revealed that matter at the atomic scale behaves according to probabilistic wave functions, not classical Newtonian mechanics",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-band-theory",
+      "from": "band-theory",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Band Theory of Solids** (1929–1931)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-felix-bloch",
+      "from": "felix-bloch",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Felix Bloch** applied quantum mechanics to electrons in crystal lattices in \\citetitle{bloch}.",
+      "citation_keys": [
+        "bloch"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-alan-herries-wilson",
+      "from": "alan-herries-wilson",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Alan Herries Wilson** then used Bloch's framework to explain semiconductors specifically in \\citetitle{wilsonsemiconductors}",
+      "citation_keys": [
+        "wilsonsemiconductors"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-transistor",
+      "from": "transistor",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a solid-state device that could amplify and switch electrical signals",
+      "citation_keys": [
+        "semiconductor"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-junction-transistor",
+      "from": "junction-transistor",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**William Shockley** followed with the superior junction transistor, described in \\citetitle{shockley}.",
+      "citation_keys": [
+        "shockley"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-alchemy",
+      "from": "alchemy",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Arabic *al-kīmiyā* Europe borrowed was a loan from Late Greek *khēmeía* (*Khemeu* in the third-century papyri), traced in turn to the Egyptian *khem*, the \"black earth\" of the Nile",
+      "citation_keys": [
+        "alchemy_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-smelting-copper",
+      "from": "smelting-copper",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "people were smelting copper (c. 5500 BCE)",
+      "citation_keys": [
+        "alchemy_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-bronze-casting",
+      "from": "bronze-casting",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "casting bronze by 3500 BCE",
+      "citation_keys": [
+        "alchemy_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-iron-working",
+      "from": "iron-working",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in the late Bronze Age — working iron",
+      "citation_keys": [
+        "alchemy_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-empedocles",
+      "from": "empedocles",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Empedocles** (c. 490–430 BCE) held all matter to be a mixture of four elements — earth, water, air, fire — combined and separated by Love and Strife",
+      "citation_keys": [
+        "empedocles"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-democritus",
+      "from": "democritus",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Democritus** (c. 460–370 BCE) went further, making matter of indivisible *atoms* in the void, the first claim that the world is built from a finite set of discrete parts",
+      "citation_keys": [
+        "democritus",
+        "atomism"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-four-elements",
+      "from": "four-elements",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The four elements would govern chemical thinking for two thousand years",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-stockholm-papyrus",
+      "from": "stockholm-papyrus",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **Stockholm Papyrus** and **Leyden Papyrus X** (both copied c. 300 CE) list instructions for dyeing cloth, making artificial gemstones, and — tellingly — *imitating* gold and silver",
+      "citation_keys": [
+        "stockholm_papyrus",
+        "leyden_papyrus_x"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-diocletian",
+      "from": "diocletian",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Diocletian** is said to have ordered the alchemical books burned in AD 292",
+      "citation_keys": [
+        "alchemy_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-zosimos-of-panopolis",
+      "from": "zosimos-of-panopolis",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The oldest substantial alchemical texts come from third-century Roman Egypt, above all **Zosimos of Panopolis**",
+      "citation_keys": [
+        "zosimos_panopolis"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-hermes-trismegistus",
+      "from": "hermes-trismegistus",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Hermes Trismegistus**, the \"Thrice-Great\", said to have authored the **Emerald Tablet** (*Tabula Smaragdina*)",
+      "citation_keys": [
+        "hermes_trismegistus",
+        "tabula_smaragdina"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-emerald-tablet",
+      "from": "emerald-tablet",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Tablet is a dozen lines long",
+      "citation_keys": [
+        "tabula_smaragdina"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-jabir-ibn-hayyan",
+      "from": "jabir-ibn-hayyan",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Jabir ibn Hayyan** (the Latin *Geber*), to whom a large corpus of eighth- and ninth-century treatises is attributed; he is often called the father of early chemistry",
+      "citation_keys": [
+        "jabir_ibn_hayyan"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-jabirian-corpus",
+      "from": "jabirian-corpus",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*calcination, sublimation, crystallization, distillation, filtration* as repeatable operations",
+      "citation_keys": [
+        "jabir_ibn_hayyan"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-aqua-regia",
+      "from": "aqua-regia",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the one mixture that dissolves even gold",
+      "citation_keys": [
+        "aqua_regia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-al-razi",
+      "from": "al-razi",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the physicians **al-Razi** (Rhazes) and **Avicenna** (Ibn Sina) subjected transmutation to the sceptical scrutiny they brought to medicine",
+      "citation_keys": [
+        "al_razi",
+        "avicenna"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-maria-the-jewess",
+      "from": "maria-the-jewess",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Maria the Jewess**, working in Alexandria in the early centuries CE, is credited with the *bain-marie* (gentle, indirect heating) and the distillation vessels *tribikos* and *kerotakis*",
+      "citation_keys": [
+        "maria_jewess"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-andreas-libavius",
+      "from": "andreas-libavius",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Andreas Libavius** catalogued the whole apparatus in his *Alchymia* (1597)",
+      "citation_keys": [
+        "libavius"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-alchemical-vessels",
+      "from": "alchemical-vessels",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "is the direct ancestor of the modern laboratory's glassware",
+      "citation_keys": [
+        "athanor"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-chinese-alchemy",
+      "from": "chinese-alchemy",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In **China**, alchemy grew up inside **Taoism** in two forms: *waidan*, the \"external\" alchemy of elixirs, and *neidan*, the \"internal\" alchemy of cultivating the body's own substances",
+      "citation_keys": [
+        "chinese_alchemy"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-cinnabar",
+      "from": "cinnabar",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The external elixir was typically based on **cinnabar** (mercury sulfide), reduced to mercury and mixed with other metals in the search for immortality",
+      "citation_keys": [
+        "chinese_alchemy"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ge-hong",
+      "from": "ge-hong",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The fourth-century Taoist **Ge Hong** systematised it in his *Baopuzi*, the classic of the Chinese tradition",
+      "citation_keys": [
+        "ge_hong"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-rasayana",
+      "from": "rasayana",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**rasayana** (later *rasashastra*, \"the knowledge of mercury\"), treated mercury and its compounds as the active principle of transformation",
+      "citation_keys": [
+        "rasayana"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-nagarjuna",
+      "from": "nagarjuna",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "codified by the alchemist-philosopher **Nagarjuna** in his *Rasendramangalam* and by **Nityanatha** in the *Rasaratnakara*",
+      "citation_keys": [
+        "nagarjuna_metallurgist"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-robert-of-chester",
+      "from": "robert-of-chester",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The first major translation, **Robert of Chester's** *Liber de compositione alchemiae* (1144), opened the Western tradition",
+      "citation_keys": [
+        "robert_of_chester",
+        "liber_de_compositione"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-turba-philosophorum",
+      "from": "turba-philosophorum",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the *Turba Philosophorum*, a dramatized debate among the \"philosophers\", became one of the most widely copied alchemical texts",
+      "citation_keys": [
+        "turba_philosophorum"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-albertus-magnus",
+      "from": "albertus-magnus",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The thirteenth-century natural philosophers **Albertus Magnus** and **Roger Bacon** took the experimental program seriously even as they remained bound to the older elemental theory",
+      "citation_keys": [
+        "albertus_magnus",
+        "roger_bacon"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-paracelsus",
+      "from": "paracelsus",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Paracelsus** (Theophrastus von Hohenheim, 1493–1541)",
+      "citation_keys": [
+        "paracelsus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-michael-sendivogius",
+      "from": "michael-sendivogius",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Michael Sendivogius** (1566–1636), a Polish alchemist, is credited with distilling and recognising, around 1600, a gas that supports both flame and breath — what we now call **oxygen** — two and a half centuries before Lavoisier named it",
+      "citation_keys": [
+        "sendivogius"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-john-dee",
+      "from": "john-dee",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The English mathematician **John Dee** built an entire symbolic system, the *Monas Hieroglyphica* (1564)",
+      "citation_keys": [
+        "alchemy_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-isaac-newton",
+      "from": "isaac-newton",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "who wrote more on alchemy than on physics or mathematics and spent his later years in a private, coded investigation of transmutation",
+      "citation_keys": [
+        "newton_alchemy"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-robert-boyle",
+      "from": "robert-boyle",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Robert Boyle** (1627–1691)",
+      "citation_keys": [
+        "sceptical_chymist"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-antoine-lavoisier",
+      "from": "antoine-lavoisier",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Antoine Lavoisier**'s careful weighing in the 1770s and 1780s showed that combustion was not the release of a mysterious *phlogiston*",
+      "citation_keys": [
+        "lavoisier",
+        "phlogiston"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-philosophers-stone",
+      "from": "philosophers-stone",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **philosopher's stone**, that legendary agent that would transmute any base matter into gold",
+      "citation_keys": [
+        "philosophers_stone"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-catalyst",
+      "from": "catalyst",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a substance that drives a transformation while remaining unchanged — is the definition of a **catalyst**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-great-work",
+      "from": "great-work",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a long iterative cycle of transformations (blackening, whitening, yellowing, reddening)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-alphafold2",
+      "from": "alphafold2",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 2021, DeepMind's **AlphaFold2** predicted the three-dimensional structure of essentially every known protein — around two hundred million of them — and released them to the public",
+      "citation_keys": [
+        "jumper2021alphafold",
+        "alphafold_db",
+        "alphafold_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-gnome",
+      "from": "gnome",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 2023, **GNoME** used a neural network to predict the stability of crystalline materials at scale",
+      "citation_keys": [
+        "merchant2023gnome"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-siemens-process",
+      "from": "siemens-process",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Siemens process, developed in the 1950s, reduces silicon dioxide with carbon at high temperatures, then purifies it through reaction with hydrogen chloride to form trichlorosilane (SiHCl₃)",
+      "citation_keys": [
+        "semiconductor"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-polycrystalline-silicon",
+      "from": "polycrystalline-silicon",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "polycrystalline silicon of 99.9999999% purity (nine nines)",
+      "citation_keys": [
+        "semiconductor"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-semiconductor",
+      "from": "semiconductor",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "impurity concentrations of even a few parts per billion alter semiconductor behavior catastrophically",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-doping",
+      "from": "doping",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "What makes it useful is the deliberate introduction of specific impurities, a process called **doping**.",
+      "citation_keys": [
+        "shockley"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-n-type-silicon",
+      "from": "n-type-silicon",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Adding phosphorus atoms (Group V) creates n-type silicon with excess electrons",
+      "citation_keys": [
+        "shockley"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-p-type-silicon",
+      "from": "p-type-silicon",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "adding boron atoms (Group III) creates p-type silicon with electron “holes.”",
+      "citation_keys": [
+        "shockley"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-pn-junction",
+      "from": "pn-junction",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The p-n junction formed at their interface is the basis of every diode and transistor",
+      "citation_keys": [
+        "shockley"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-photolithography",
+      "from": "photolithography",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**photolithography**, a process that is essentially chemistry performed with light",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-photoresist",
+      "from": "photoresist",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A silicon wafer is coated with a light-sensitive chemical called a **photoresist**.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-lithium-ion-battery",
+      "from": "lithium-ion-battery",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "John B. Goodenough's identification of lithium cobalt oxide (LiCoO₂) as a cathode material (1980)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-hard-disk-drive",
+      "from": "hard-disk-drive",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The hard disk drives that store training datasets rely on **neodymium-iron-boron (Nd₂Fe₁₄B) permanent magnets** and **cobalt-platinum alloy** recording media",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-liquid-immersion-cooling",
+      "from": "liquid-immersion-cooling",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "data centers increasingly turn to **liquid immersion cooling** using engineered dielectric fluids, synthetic fluorocarbon compounds (such as 3M's Fluorinert and Novec series)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-cpu",
+      "from": "cpu",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The CPU descends from wartime code-breaking.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ram",
+      "from": "ram",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "RAM evolved from radar.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-gpu",
+      "from": "gpu",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The GPU was forged by video games.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-networking",
+      "from": "networking",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Networking grew from military resilience planning.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-storage",
+      "from": "storage",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Storage was driven by census-taking.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-nasa",
+      "from": "nasa",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "NASA never pushed the state of the art",
+      "citation_keys": [
+        "tomayko1988spaceflight"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-spaceflight-computing",
+      "from": "spaceflight-computing",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Real-time scheduling, redundant voting sets, distributed flight computers and software-first design all migrated from orbit into the terrestrial stack",
+      "citation_keys": [
+        "tomayko1988spaceflight"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ice-core",
+      "from": "ice-core",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "An ice core is a column of fallen snow compressed to ice, each year's air sealed in its bubbles.",
+      "citation_keys": [
+        "icecorewiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-vostok-core",
+      "from": "vostok-core",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Soviet Vostok core, nearly 3,700 m deep and holding 420,000 years",
+      "citation_keys": [
+        "icecorewiki",
+        "vostokstation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-epica-dome-c",
+      "from": "epica-dome-c",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the EPICA Dome C core with 800,000 years of CO₂ and temperature",
+      "citation_keys": [
+        "icecorewiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-jule-charney",
+      "from": "jule-charney",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Jule Charney, at the Institute for Advanced Study with von Neumann, worked out the theory of upper-air \"long waves\"",
+      "citation_keys": [
+        "charney1947longwaves"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-first-numerical-weather-forecast",
+      "from": "first-numerical-weather-forecast",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in 1950 his team ran the **first numerical weather forecast on the ENIAC**",
+      "citation_keys": [
+        "charney1950nwp"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ecmwf",
+      "from": "ecmwf",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Weather and climate models remain among the largest supercomputing workloads, run at gold-standard centres such as ECMWF",
+      "citation_keys": [
+        "ecmwf"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-vostok-station",
+      "from": "vostok-station",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Vostok has recorded −89 °C, the coldest reliably measured on Earth",
+      "citation_keys": [
+        "vostokstation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-kamerlingh-onnes",
+      "from": "kamerlingh-onnes",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Kamerlingh Onnes liquefied helium and found superconductivity (1911; Nobel 1913)",
+      "citation_keys": [
+        "onnes1913nobel"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-dilution-refrigerator",
+      "from": "dilution-refrigerator",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the dilution refrigerator (1964) pushed to 2 mK",
+      "citation_keys": [
+        "dilutionfridge"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-superconducting-qubit",
+      "from": "superconducting-qubit",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**superconducting qubits now run below 15 mK** in IBM and Google processors",
+      "citation_keys": [
+        "superconductingqubit"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-graphcast",
+      "from": "graphcast",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 2023 DeepMind's **GraphCast**, a graph network trained on four decades of global reanalysis, forecast ten days of weather in under a minute on one TPU, beating ECMWF's model on over 90% of measured variables",
+      "citation_keys": [
+        "lam2023graphcast",
+        "graphcast_github"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-zuse-z3",
+      "from": "zuse-z3",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "relay-based processors like Zuse's Z3 (1941) and the vacuum-tube ENIAC (1946)",
+      "citation_keys": [
+        "eniac1946"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-integrated-circuit",
+      "from": "integrated-circuit",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **integrated circuit**, independently conceived by **Jack Kilby** (1958)",
+      "citation_keys": [
+        "kilbyic",
+        "noyceic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-jack-kilby",
+      "from": "jack-kilby",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Jack Kilby** (1958)",
+      "citation_keys": [
+        "kilbyic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-robert-noyce",
+      "from": "robert-noyce",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Robert Noyce** (1959)",
+      "citation_keys": [
+        "noyceic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-intel-4004",
+      "from": "intel-4004",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The leap to the **microprocessor** arrived in 1971",
+      "citation_keys": [
+        "intel4004"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ibm-system-360",
+      "from": "ibm-system-360",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**pipelining** (IBM System/360, 1964)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ibm-system-360-model-91",
+      "from": "ibm-system-360-model-91",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "first in the IBM System/360 Model 91",
+      "citation_keys": [
+        "tomasulo1967"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-superscalar",
+      "from": "superscalar",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**superscalar architectures** (1990s)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ibm-power4",
+      "from": "ibm-power4",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**multi-core processors** (IBM POWER4, 2001)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-edsac",
+      "from": "edsac",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "first implemented in the \\cite[EDSAC]{edsac1949} (1949)",
+      "citation_keys": [
+        "edsac1949"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-williams-tube",
+      "from": "williams-tube",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **Williams tube** (1947), developed by \\cite[Freddie Williams and Tom Kilburn]{williamstube} at the University of Manchester",
+      "citation_keys": [
+        "williamstube"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-manchester-baby",
+      "from": "manchester-baby",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "It was used in the Manchester Baby (1948), the world's first stored-program computer to run a program",
+      "citation_keys": [
+        "williamstube"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-magnetic-core-memory",
+      "from": "magnetic-core-memory",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**magnetic-core memory**, developed by \\cite[An Wang]{wangcore} (1949) and Jay Forrester at MIT",
+      "citation_keys": [
+        "wangcore"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-dram",
+      "from": "dram",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "when \\cite[Robert Dennard]{dennard1968} at IBM invented **DRAM** (1966), storing each bit as a charge in a capacitor",
+      "citation_keys": [
+        "dennard1968"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-intel-1103",
+      "from": "intel-1103",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The \\cite[Intel 1103]{intel1103} (1970), holding 1 kilobit, rapidly displaced core memory.",
+      "citation_keys": [
+        "intel1103"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ddr5",
+      "from": "ddr5",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "modern DDR5 modules offering 64 GB per DIMM at bandwidths exceeding 50 GB/s",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-high-bandwidth-memory",
+      "from": "high-bandwidth-memory",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**High Bandwidth Memory (HBM)**, developed by \\cite[AMD and SK Hynix]{hbm2013}",
+      "citation_keys": [
+        "hbm2013"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-motherboard",
+      "from": "motherboard",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The modern form traces to the **IBM PC** (1981), which established standardized expansion slots.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-isa-bus",
+      "from": "isa-bus",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "from ISA (1981) to PCI (1992) to \\cite[PCI Express]{pciespec} (2003)",
+      "citation_keys": [
+        "pciespec"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-nvlink",
+      "from": "nvlink",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "proprietary interconnects like \\cite[NVLink]{nvlink} provide up to 900 GB/s between GPUs",
+      "citation_keys": [
+        "nvlink"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-packet-switching",
+      "from": "packet-switching",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The digital networking revolution began with **packet switching**, independently conceived by \\cite[Paul Baran]{baran1964} (1964) and Donald Davies (1965).",
+      "citation_keys": [
+        "baran1964"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-paul-baran",
+      "from": "paul-baran",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Paul Baran]{baran1964} (1964)",
+      "citation_keys": [
+        "baran1964"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-donald-davies",
+      "from": "donald-davies",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Donald Davies (1965)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-arpanet",
+      "from": "arpanet",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This was realized in \\cite[ARPANET]{rfc1} (1969) and universalized through \\cite[TCP/IP]{cerfkahn} (1974).",
+      "citation_keys": [
+        "rfc1"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-tcp-ip",
+      "from": "tcp-ip",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "universalized through \\cite[TCP/IP]{cerfkahn} (1974)",
+      "citation_keys": [
+        "cerfkahn"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ethernet",
+      "from": "ethernet",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Ethernet** (1973, \\cite[Robert Metcalfe]{metcalfe1976}): now operating at 800 Gbps in data centers.",
+      "citation_keys": [
+        "metcalfe1976"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-infiniband",
+      "from": "infiniband",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**InfiniBand** (\\cite[first specified in 2000]{infiniband2000}): the backbone of most GPU training clusters, offering latencies under 1 μs and bandwidths exceeding 400 Gbps.",
+      "citation_keys": [
+        "infiniband2000"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-rdma",
+      "from": "rdma",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**RDMA (Remote Direct Memory Access)**, formalized in the \\cite[Virtual Interface Architecture]{via1998} and built natively into InfiniBand",
+      "citation_keys": [
+        "via1998"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-horovod",
+      "from": "horovod",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "critical for gradient synchronization in distributed training frameworks like \\cite[Horovod]{horovod2018}",
+      "citation_keys": [
+        "horovod2018"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-frontier-llm-training",
+      "from": "frontier-llm-training",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Training a frontier LLM may involve thousands of GPUs synchronizing gradients every few hundred milliseconds.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-punched-card",
+      "from": "punched-card",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **Punched Cards** (\\cite[Jacquard, 1804]{jacquard1804}; \\cite[Hollerith, 1890]{hollerith1890}): the first machine-readable medium.",
+      "citation_keys": [
+        "jacquard1804",
+        "hollerith1890"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-magnetic-tape",
+      "from": "magnetic-tape",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **Magnetic Tape** (1951, \\cite[UNIVAC I]{univac1951}): sequential-access, still used for archival.",
+      "citation_keys": [
+        "univac1951"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ibm-305-ramac",
+      "from": "ibm-305-ramac",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **Hard Disk Drives** (1956, \\cite[IBM 305 RAMAC]{ibmramac}): the first random-access magnetic storage, originally 5 MB across fifty 24-inch platters",
+      "citation_keys": [
+        "ibmramac"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-solid-state-drive",
+      "from": "solid-state-drive",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **Solid-State Drives** (commercially viable about 2008, based on \\cite[NAND flash memory]{masuoka1987})",
+      "citation_keys": [
+        "masuoka1987"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-nand-flash",
+      "from": "nand-flash",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "based on \\cite[NAND flash memory]{masuoka1987}",
+      "citation_keys": [
+        "masuoka1987"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ibm-professional-graphics-controller",
+      "from": "ibm-professional-graphics-controller",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The first dedicated graphics chips (e.g., the \\cite[IBM Professional Graphics Controller]{ibmpgc}, 1984) were fixed-function pipelines.",
+      "citation_keys": [
+        "ibmpgc"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-geforce-3",
+      "from": "geforce-3",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Programmable shaders (NVIDIA GeForce 3, 2001) made GPUs flexible",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-cuda",
+      "from": "cuda",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[CUDA]{cuda} (2006) provided the software bridge",
+      "citation_keys": [
+        "cuda"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-nvidia-tesla",
+      "from": "nvidia-tesla",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **NVIDIA Tesla (2007)**: first GPU marketed for general-purpose computing.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-nvidia-volta",
+      "from": "nvidia-volta",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **NVIDIA Volta / V100 (2017)**: introduced **Tensor Cores** for mixed-precision matrix operations.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-nvidia-a100",
+      "from": "nvidia-a100",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **NVIDIA A100 (2020)**: third-generation Tensor Cores, sparsity-aware computation, Multi-Instance GPU.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-nvidia-h100",
+      "from": "nvidia-h100",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **NVIDIA H100 (2022)** and **B200 (2024)**: Transformer Engine, FP8 support, NVLink 4.0.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-nvidia-b200",
+      "from": "nvidia-b200",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**B200 (2024)**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-tpu",
+      "from": "tpu",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Google's **TPUs**, custom ASICs for neural network workloads \\cite[first deployed in 2015]{jouppi2017tpu}",
+      "citation_keys": [
+        "jouppi2017tpu"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-training-node",
+      "from": "training-node",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a full training node may consume 5–10 kW.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-switched-mode-power-supply",
+      "from": "switched-mode-power-supply",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The evolution from linear regulators to high-efficiency **switched-mode power supplies** (1960s–70s) made dense computing viable.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-80-plus",
+      "from": "80-plus",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The 80 PLUS certification program (2004) drove PSU efficiency above 90%",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-quartz-crystal-oscillator",
+      "from": "quartz-crystal-oscillator",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The quartz crystal oscillator, developed by \\cite[Walter Cady]{cady1922} in 1921 for radio, was adopted for computing",
+      "citation_keys": [
+        "cady1922"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-tsmc",
+      "from": "tsmc",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "TSMC was founded in 1987 as a joint venture and incorporated as a dedicated foundry: it manufactures semiconductors using its customers' proprietary integrated-circuit designs rather than selling chips under its own brand",
+      "citation_keys": [
+        "tsmc2025annualreport"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-fab",
+      "from": "fab",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "TSMC's own filing describes fabs as \"largely fixed cost assets\" whose economics improve as utilization rises",
+      "citation_keys": [
+        "tsmc2025annualreport"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-euv-lithography",
+      "from": "euv-lithography",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "ASML describes extreme ultraviolet (EUV) lithography as using light with a wavelength of 13.5 nm, the cutting edge of lithography and the highest resolution available, and states that it is currently the world's only manufacturer of EUV systems",
+      "citation_keys": [
+        "asml2025annualreport"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-asml",
+      "from": "asml",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it is currently the world's only manufacturer of EUV systems",
+      "citation_keys": [
+        "asml2025annualreport"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-soft-x-ray-reduction-lithography",
+      "from": "soft-x-ray-reduction-lithography",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Soft X-ray reduction lithography with multilayer mirrors was demonstrated in the late 1980s, with experiments on a synchrotron beamline and demagnified patterns below 0.5 micrometres",
+      "citation_keys": [
+        "kinoshita1989euv"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-cleanroom",
+      "from": "cleanroom",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "measuring ultrafine particles of 0.1 micrometres or less in real time requires instruments such as the differential mobility analyzer and the diffusion battery",
+      "citation_keys": [
+        "donovan1985cleanroom"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ultrafiltration",
+      "from": "ultrafiltration",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "ultrafiltration removes particles, colloids and large macromolecules from ultrapure water, and leak detection in membrane modules is a prerequisite for defect-free manufacturing",
+      "citation_keys": [
+        "ruth2016ultrapure"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-cowos-r",
+      "from": "cowos-r",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "CoWoS-R uses an organic interposer to integrate heterogeneous and chiplet components, with low-RC interconnect, signal isolation and design scalability",
+      "citation_keys": [
+        "jeng2022cowos"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-michael-faraday",
+      "from": "michael-faraday",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Faraday's 1831 induction experiment turned motion into current",
+      "citation_keys": [
+        "faraday"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-siemens-dynamo",
+      "from": "siemens-dynamo",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Siemens's 1867 dynamo paper and Gramme's ring armature made that current steady and cheap",
+      "citation_keys": [
+        "siemens1867dynamo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-gramme-ring-armature",
+      "from": "gramme-ring-armature",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Gramme's ring armature made that current steady and cheap",
+      "citation_keys": [
+        "siemens1867dynamo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-parsons-steam-turbine",
+      "from": "parsons-steam-turbine",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Parsons's 1884 compound steam turbine made it fast and compact",
+      "citation_keys": [
+        "parsons1911steamturbine"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-pearl-street-station",
+      "from": "pearl-street-station",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Edison's Pearl Street station (1882) showed that a central plant could light a district",
+      "citation_keys": [
+        "electricpowerhistorywiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-westinghouse-tesla-ac-system",
+      "from": "westinghouse-tesla-ac-system",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Westinghouse–Tesla AC system, with transformers and high-voltage lines, made the grid regional",
+      "citation_keys": [
+        "electricpowerhistorywiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-coal",
+      "from": "coal",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Coal** was the first fuel of the grid.",
+      "citation_keys": [
+        "eia_coal"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-rankine-cycle",
+      "from": "rankine-cycle",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Rankine cycle sets the thermodynamic limit",
+      "citation_keys": [
+        "rankine1859"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-drake-well",
+      "from": "drake-well",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Drake's 1859 well in Pennsylvania turned petroleum into an industry",
+      "citation_keys": [
+        "drakewellmuseum",
+        "eia_oil"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-oil",
+      "from": "oil",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "refining separated kerosene for lamps, then gasoline and diesel for the internal-combustion engine",
+      "citation_keys": [
+        "eia_oil"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-oil-exploration",
+      "from": "oil-exploration",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "seismic exploration for oil was one of the first customers for large-scale numerical computing",
+      "citation_keys": [
+        "claerbout1992earth"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-otto-hahn",
+      "from": "otto-hahn",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1938 Otto Hahn and Fritz Strassmann bombarded uranium with neutrons and found that the radioactive alkaline-earth fraction behaved chemically like barium",
+      "citation_keys": [
+        "hahnstrassmann1939fission"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-fritz-strassmann",
+      "from": "fritz-strassmann",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the radioactive alkaline-earth fraction behaved chemically like barium",
+      "citation_keys": [
+        "hahnstrassmann1939fission"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-lise-meitner",
+      "from": "lise-meitner",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Lise Meitner and Otto Frisch read the result as the splitting of the uranium nucleus, called the process **fission**, and explained its energy release",
+      "citation_keys": [
+        "meitnerfrisch1939fission"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-chicago-pile-1",
+      "from": "chicago-pile-1",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Chicago Pile-1 went critical in 1942",
+      "citation_keys": [
+        "nuclearpowerwiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-obninsk",
+      "from": "obninsk",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Obninsk (1954) was the first grid-connected nuclear plant",
+      "citation_keys": [
+        "obninskwiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-shippingport",
+      "from": "shippingport",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Shippingport (1957) the first in the United States",
+      "citation_keys": [
+        "worldnuclear"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-fusion-power",
+      "from": "fusion-power",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Fusion — the sun's reaction — remains experimental; no fusion plant has ever sold electricity",
+      "citation_keys": [
+        "nuclearpowerwiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-fossil-fuel",
+      "from": "fossil-fuel",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Coal, oil and gas are fossil fuels: chemical energy stored by ancient photosynthesis.",
+      "citation_keys": [
+        "fossilfuelwiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-uranium",
+      "from": "uranium",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Uranium is a nuclear fuel: energy stored in atomic nuclei.",
+      "citation_keys": [
+        "energydensitywiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-tesla-polyphase-ac-patents",
+      "from": "tesla-polyphase-ac-patents",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Tesla's polyphase AC patents of the 1880s made long-distance distribution practical",
+      "citation_keys": [
+        "teslaelectricmotor",
+        "teslacurrent"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-data-centre",
+      "from": "data-centre",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "data-centre electricity consumption roughly doubling from 485 TWh in 2025 to 950 TWh in 2030",
+      "citation_keys": [
+        "iea2026energyai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ai-data-centre",
+      "from": "ai-data-centre",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "consumption from AI-focused data centres grew by 50% in 2025",
+      "citation_keys": [
+        "iea2026energyai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-amazon-s3",
+      "from": "amazon-s3",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Amazon S3, launched on 14 March 2006, offered an application programming interface for highly scalable, reliable, low-latency storage at very low cost",
+      "citation_keys": [
+        "amazons3_2006"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-amazon-ec2",
+      "from": "amazon-ec2",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Amazon EC2 entered limited beta on 25 August 2006",
+      "citation_keys": [
+        "amazonec2_2006"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-kubernetes",
+      "from": "kubernetes",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Kubernetes, open-sourced by Google in 2014, added a portable, extensible, open-source platform for managing containerized workloads",
+      "citation_keys": [
+        "kubernetes_overview"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-warehouse-scale-computer",
+      "from": "warehouse-scale-computer",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Barroso, Clidaras and Hoelzle describe the modern data center as one massive warehouse-scale computer",
+      "citation_keys": [
+        "barroso2013datacenter"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-data-center",
+      "from": "data-center",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "AI is pushing data-center power density to the limits of today's technologies",
+      "citation_keys": [
+        "iea2026energyai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-heinrich-hertz",
+      "from": "heinrich-hertz",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hertz's *Electric Waves* collects the researches",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-wifi",
+      "from": "wifi",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "creating the technical basis for Wi-Fi",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-john-bardeen",
+      "from": "john-bardeen",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**John Bardeen** and **Walter Brattain** at Bell Labs built the first point-contact transistor",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-walter-brattain",
+      "from": "walter-brattain",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**John Bardeen** and **Walter Brattain** at Bell Labs built the first point-contact transistor",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-william-shockley",
+      "from": "william-shockley",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**William Shockley** followed with the superior junction transistor",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-moores-law",
+      "from": "moores-law",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Without the transistor, Moore's Law is inconceivable",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-llm",
+      "from": "llm",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "without Moore's Law, LLMs are computationally impossible",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-chemistry",
+      "from": "chemistry",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Chemistry* descends from *alchemy*",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-atomism",
+      "from": "atomism",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "making matter of indivisible *atoms* in the void",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-pseudo-democritus",
+      "from": "pseudo-democritus",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Attributed to the mythical **Pseudo-Democritus**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-bolus-of-mendes",
+      "from": "bolus-of-mendes",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the craftsman **Bolus of Mendes**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-book-of-secrets",
+      "from": "book-of-secrets",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "al-Razi's *Book of Secrets* models the new empirical temper",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-bain-marie",
+      "from": "bain-marie",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "is credited with the *bain-marie* (gentle, indirect heating)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-alchymia",
+      "from": "alchymia",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Andreas Libavius** catalogued the whole apparatus in his *Alchymia* (1597)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-baopuzi",
+      "from": "baopuzi",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The fourth-century Taoist **Ge Hong** systematised it in his *Baopuzi*",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-rasendramangalam",
+      "from": "rasendramangalam",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Nagarjuna** in his *Rasendramangalam*",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-nityanatha",
+      "from": "nityanatha",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Nityanatha** in the *Rasaratnakara*",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-rasaratnakara",
+      "from": "rasaratnakara",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Nityanatha** in the *Rasaratnakara*",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-liber-de-compositione-alchemiae",
+      "from": "liber-de-compositione-alchemiae",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Robert of Chester's** *Liber de compositione alchemiae* (1144)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-iatrochemistry",
+      "from": "iatrochemistry",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "founded **iatrochemistry**, the chemical treatment of the body",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-oxygen",
+      "from": "oxygen",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "what we now call **oxygen**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-monas-hieroglyphica",
+      "from": "monas-hieroglyphica",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the *Monas Hieroglyphica* (1564)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-the-sceptical-chymist",
+      "from": "the-sceptical-chymist",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In *The Sceptical Chymist* (1661)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-deepmind",
+      "from": "deepmind",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "DeepMind's **AlphaFold2**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-crystalline-materials",
+      "from": "crystalline-materials",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "predict the stability of crystalline materials at scale",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-licoo2",
+      "from": "licoo2",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "lithium cobalt oxide (LiCoO₂) as a cathode material",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-yoshino",
+      "from": "yoshino",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Akira Yoshino's development of the first commercially viable lithium-ion cell",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-codebreaking",
+      "from": "codebreaking",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The CPU descends from wartime code-breaking.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-radar",
+      "from": "radar",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "RAM evolved from radar.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-video-games",
+      "from": "video-games",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The GPU was forged by video games.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-military-resilience-planning",
+      "from": "military-resilience-planning",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Networking grew from military resilience planning.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-census-taking",
+      "from": "census-taking",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Storage was driven by census-taking.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-climate-model",
+      "from": "climate-model",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Weather and climate models remain among the largest supercomputing workloads",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-superconductivity",
+      "from": "superconductivity",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "found superconductivity (1911; Nobel 1913)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-robert-metcalfe",
+      "from": "robert-metcalfe",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Ethernet** (1973, \\cite[Robert Metcalfe]{metcalfe1976})",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-walter-cady",
+      "from": "walter-cady",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "developed by \\cite[Walter Cady]{cady1922} in 1921",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-electric-grid",
+      "from": "electric-grid",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The electric grid is a machine for moving power, not just generating it.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-nuclear-fission",
+      "from": "nuclear-fission",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "called the process **fission**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-otto-frisch",
+      "from": "otto-frisch",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Lise Meitner and Otto Frisch read the result",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-nuclear-power",
+      "from": "nuclear-power",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Nuclear** power is the other way to boil water.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-cloud-computing",
+      "from": "cloud-computing",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The cloud turned computing into something that could be rented by the hour.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-phlogiston",
+      "from": "phlogiston",
+      "to": "untold_history_ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "combustion was not the release of a mysterious *phlogiston*",
+      "citation_keys": [
+        "phlogiston"
+      ],
+      "confidence": "provenance"
     }
   ]
 }

@@ -8,6 +8,20 @@
   "curated": false,
   "generated_by": "extract_facts.py",
   "citations": [],
-  "claims": [],
+  "claims": [
+    {
+      "id": "knowledge_map-title",
+      "subject": "knowledge_map",
+      "predicate": "title",
+      "value": "knowledge_map",
+      "unit": "name",
+      "qualifiers": {
+        "lesson": "knowledge_map"
+      },
+      "quote": "knowledge_map",
+      "citation_keys": [],
+      "confidence": "stated"
+    }
+  ],
   "relations": []
 }

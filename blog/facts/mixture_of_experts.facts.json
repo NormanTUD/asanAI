@@ -72,5 +72,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-mixture_of_experts-deepseek-v3",
+      "from": "deepseek-v3",
+      "to": "mixture_of_experts",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A cleaner decomposition arrived with DeepSeekMoE (\\cite[DeepSeekMoE, 2024]{deepseekmoe2024}) and was carried into DeepSeek-V3 (\\cite[DeepSeek-V3, 2024]{deepseekv3tech2024}); the design is now the reference. The first is a **shared expert**: one expert is *dense* — every token goes through it — while",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

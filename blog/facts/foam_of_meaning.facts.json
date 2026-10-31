@@ -83,5 +83,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-foam_of_meaning-gpt-2",
+      "from": "gpt-2",
+      "to": "foam_of_meaning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "- **The gap grows linearly.** For a semantic manifold of intrinsic dimension $k$, the *normalized* expressibility gap $\\eta(\\varepsilon)$ — the fraction of semantic space lying within $\\varepsilon$ of a boundary — satisfies $\\eta(\\varepsilon) = c\\,\\varepsilon + O(\\varepsilon^{2})$ for small $\\vareps",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

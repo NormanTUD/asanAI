@@ -11,6 +11,19 @@
   ],
   "claims": [
     {
+      "id": "backproplab-title",
+      "subject": "backproplab",
+      "predicate": "title",
+      "value": "Backpropagation: How a Neural Network Learns From Its Mistakes",
+      "unit": "name",
+      "qualifiers": {
+        "lesson": "backproplab"
+      },
+      "quote": "Backpropagation: How a Neural Network Learns From Its Mistakes",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
       "id": "backpropagation-year",
       "subject": "backpropagation",
       "predicate": "year",
@@ -123,6 +136,48 @@
       "kind": "used_by",
       "qualifiers": {},
       "quote": "The sigmoid squashes any real number"
+    },
+    {
+      "id": "prov-backproplab-backpropagation",
+      "from": "backpropagation",
+      "to": "backproplab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Backpropagation, introduced to the field of AI in 1986",
+      "citation_keys": [
+        "rumelhart1986"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-backproplab-backproplab-demo",
+      "from": "backproplab-demo",
+      "to": "backproplab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the demo below runs a 4-layer network",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-backproplab-sigmoid",
+      "from": "sigmoid",
+      "to": "backproplab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The sigmoid squashes any real number into (0, 1)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-backproplab-chain-rule",
+      "from": "chain-rule",
+      "to": "backproplab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Chain Rule Is All You Need",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ]
 }

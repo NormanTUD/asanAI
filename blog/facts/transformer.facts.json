@@ -118,5 +118,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-transformer-gpt-3",
+      "from": "gpt-3",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Scaling became a science in 2020. \\cite[Kaplan et al. (2020)]{kaplan2020scaling} measured how language-model loss falls as parameters, data and compute grow, and found smooth power laws across several orders of magnitude (\\cite[Kaplan et al., 2020]{kaplan2020scaling}). That turned “make it bigger” f",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }
