@@ -270,7 +270,7 @@ For a 70B model on 8x H100:
 | + Speculative decoding | 25,000 | 50× |
 | + Multi-node | 100,000+ | 200× |
 
-Combined, a single 8-GPU node can serve ~100 concurrent users generating at 30+ tokens/sec each. A 100-node cluster serves **10,000 concurrent users**.
+Combined, a single 8-GPU node can serve roughly 800 concurrent users generating at 30+ tokens/sec each; a 100-node cluster can serve **tens of thousands** of concurrent users, depending on context length and batching.
 </div>
 
 <div class="md">

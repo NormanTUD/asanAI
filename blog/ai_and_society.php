@@ -325,7 +325,7 @@ The honest state of play in 2026: AI in education is a **genuine good for access
 
 By 2024–2025, the volume of AI-generated content on the internet had reached a scale that broke existing verification infrastructure. The term **"AI slop"** — low-value, AI-generated content (text, image, video) flooding social feeds — entered common usage.
 
-The **Pew Research Center** published a data essay in **August 2026** — \citetitle{pew2026ai} — the first authoritative, large-scale measurement of the share of new web text that is AI-generated (\cite[Pew Research, 2026]{pew2026ai}). The precise percentage is contested and methodology-dependent, but the trend is unambiguous: the share is rising rapidly, and the *economic incentive* to produce AI-generated content (near-zero marginal cost, SEO value, ad revenue) ensures it will continue to rise.
+The **Pew Research Center** published a data essay in **August 2026** — \citetitle{pew2026ai} — a large-scale measurement of the share of new web text that is AI-generated (\cite[Pew Research, 2026]{pew2026ai}). The precise percentage is contested and methodology-dependent, but the trend is unambiguous: the share is rising rapidly, and the *economic incentive* to produce AI-generated content (near-zero marginal cost, SEO value, ad revenue) ensures it will continue to rise.
 
 The cultural effects are cumulative:
 
@@ -478,7 +478,7 @@ This is not a problem with a technical fix. It is a question about human need, l
 
 What, then, is the cultural impact of AI? There is no single answer. There are, at minimum, **seven simultaneous cultural processes** underway:
 
-1. **The collapse of the cost of deception.** A 500-dollar robocall can reach 20,000 voters with the voice of a president. A 30-dollar/month subscription can generate 6,700 sexually suggestive or nudified images per hour. The "liar's dividend" is a permanent feature of the information environment.
+1. **The collapse of the cost of deception.** A 500-dollar robocall can reach thousands of voters with the voice of a president. A 30-dollar/month subscription can generate 6,700 sexually suggestive or nudified images per hour. The "liar's dividend" is a permanent feature of the information environment.
 
 2. **The theft-and-licensing transition.** The "free web scrape" era is ending. The work of millions of artists, writers, and musicians was taken without consent. The legal system is, slowly and unevenly, building a licensing regime. The artists who were taken from have not yet been compensated. The question of whether they will be — and whether the models trained on their work will be modified or destroyed — is still open.
 
