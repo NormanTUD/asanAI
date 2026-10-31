@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "source": "myths.php",
+  "lesson": "myths",
+  "title": "Common Myths and Misconceptions About AI",
+  "part": 6,
+  "order": 17,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "rozenblit2002ioed",
+    "weizenbaum1966eliza",
+    "aiindex2025",
+    "brednich1990spinne",
+    "brednich1991maus",
+    "brednich1993huhn",
+    "brednich_wiki",
+    "urbanlegends_wiki",
+    "turing1950computing",
+    "septruringtest",
+    "computational_theory_of_mind",
+    "clark2013surfing",
+    "predictive_coding_wiki",
+    "vinge1993singularity",
+    "kurzweil2005singularity",
+    "golem_wiki",
+    "bostrom2014superintelligence",
+    "bostrom2012orthogonal",
+    "luddite_wiki",
+    "brynjolfsson2014secondmachine",
+    "techunemployment_wiki",
+    "ioed_wiki",
+    "sutton2019bitterlesson",
+    "algofairness_wiki",
+    "gfactor_wiki",
+    "heidegger1927beingandtime",
+    "korzybski_mapterritory",
+    "box1976allmodels",
+    "cnn2024deepfake",
+    "aiincident634",
+    "mataavianca_wiki",
+    "hallucination_ai_wiki",
+    "theatreopera_wiki",
+    "midjourney_wiki",
+    "ai_music_wiki",
+    "deathschatbots_wiki",
+    "guardian2024sewell",
+    "aislop_wiki",
+    "deadinternet_wiki",
+    "agi_wiki",
+    "aiwinter_wiki"
+  ],
+  "claims": [
+    {
+      "id": "auto-myths-title-0-1",
+      "subject": "myths",
+      "predicate": "title",
+      "value": "Common Myths and Misconceptions About AI",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "myths"
+      },
+      "quote": "title: Common Myths and Misconceptions About AI",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-myths-part-0-2",
+      "subject": "myths",
+      "predicate": "part",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "myths"
+      },
+      "quote": "part: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-myths-order-0-3",
+      "subject": "myths",
+      "predicate": "order",
+      "value": 17,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "myths"
+      },
+      "quote": "order: 17",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

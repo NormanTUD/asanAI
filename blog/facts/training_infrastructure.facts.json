@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "source": "training_infrastructure.php",
+  "lesson": "training_infrastructure",
+  "title": "Training Infrastructure",
+  "part": 5,
+  "order": 13,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "rajbhandari2019zero",
+    "shoeybi2019megatron",
+    "huang2018gpipe",
+    "liu2023ring",
+    "bubeck2023moeoverview"
+  ],
+  "claims": [
+    {
+      "id": "auto-training_infrastructure-title-0-1",
+      "subject": "training_infrastructure",
+      "predicate": "title",
+      "value": "Training Infrastructure",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "training_infrastructure"
+      },
+      "quote": "title: Training Infrastructure",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-training_infrastructure-part-0-2",
+      "subject": "training_infrastructure",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "training_infrastructure"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-training_infrastructure-order-0-3",
+      "subject": "training_infrastructure",
+      "predicate": "order",
+      "value": 13,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "training_infrastructure"
+      },
+      "quote": "order: 13",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-h100-memory-34-4",
+      "subject": "h100",
+      "predicate": "memory",
+      "value": "80",
+      "unit": "GB",
+      "qualifiers": {
+        "precision": "bf16"
+      },
+      "quote": "For a 70B model: $W + G + O + M = 140 + 140 + 560 + 280 = 1120$ GB just for bf16 parameters, bf16 gradients, Adam's fp32 moments and the fp32 master weights. An H100 has 80 GB. The model literally does not fit.",
+      "line": 34,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "source": "optimizerlab.php",
+  "lesson": "optimizerlab",
+  "title": "The Optimizer: Navigating the Loss Landscape",
+  "part": 2,
+  "order": 7,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "sgd",
+    "momentum",
+    "adam",
+    "ruder2016overview",
+    "nesterov1983method",
+    "nesterov2004introductory",
+    "duchi2011adagrad",
+    "hinton2012rmsprop",
+    "zeiler2012adadelta",
+    "dozat2016nadam",
+    "reddi2018amsgrad",
+    "loshchilov2019adamw",
+    "goyal2017largebatch",
+    "loshchilov2016sgdr",
+    "jordan2024muon",
+    "kimi2025k2",
+    "kiefer1952stochastic",
+    "cauchy1847",
+    "hadamard1908",
+    "werbos1974",
+    "rumelhart1986",
+    "zipf1949human",
+    "shazeer2018adafactor",
+    "dettmers2021_8bit",
+    "brown2020gpt3",
+    "cohen2021edgeofstability",
+    "arora2022edgeofstability"
+  ],
+  "claims": [
+    {
+      "id": "auto-optimizerlab-title-0-1",
+      "subject": "optimizerlab",
+      "predicate": "title",
+      "value": "The Optimizer: Navigating the Loss Landscape",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "optimizerlab"
+      },
+      "quote": "title: The Optimizer: Navigating the Loss Landscape",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-optimizerlab-part-0-2",
+      "subject": "optimizerlab",
+      "predicate": "part",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "optimizerlab"
+      },
+      "quote": "part: 2",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-optimizerlab-order-0-3",
+      "subject": "optimizerlab",
+      "predicate": "order",
+      "value": 7,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "optimizerlab"
+      },
+      "quote": "order: 7",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

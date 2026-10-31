@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "source": "fact_lookup.php",
+  "lesson": "fact_lookup",
+  "title": "Where 'Paris' Lives — How an LLM Retrieves a Fact",
+  "part": 4,
+  "order": 11,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "elhage2021mathematical",
+    "elhage2023privileged",
+    "vaswani2017attention",
+    "olsson2022induction",
+    "keyvalmem",
+    "dai2022knowledgeneurons",
+    "meng2022locating",
+    "meng2022memit",
+    "merullo2024talkingheads",
+    "park2024linear",
+    "todd2024functionvectors",
+    "templeton2024scaling",
+    "nostalgebraist2020logitlens",
+    "belrose2023tunedlens",
+    "ramsauer2020hopfield",
+    "hopfield1982",
+    "elhage2022superposition",
+    "cunningham2023sparse",
+    "bricken2023monosemanticity",
+    "elhage2022solu",
+    "lindsey2025biology",
+    "ameisen2025circuit",
+    "li2022othello_iclr",
+    "wang2022interpretability",
+    "kohli2026loop",
+    "lakretz2020nested",
+    "lasri2022agree",
+    "hahn2020limitations",
+    "anthropic2023mapping"
+  ],
+  "claims": [
+    {
+      "id": "auto-fact_lookup-title-0-1",
+      "subject": "fact_lookup",
+      "predicate": "title",
+      "value": "Where 'Paris' Lives — How an LLM Retrieves a Fact",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "fact_lookup"
+      },
+      "quote": "title: Where 'Paris' Lives — How an LLM Retrieves a Fact",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-fact_lookup-part-0-2",
+      "subject": "fact_lookup",
+      "predicate": "part",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "fact_lookup"
+      },
+      "quote": "part: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-fact_lookup-order-0-3",
+      "subject": "fact_lookup",
+      "predicate": "order",
+      "value": 11,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "fact_lookup"
+      },
+      "quote": "order: 11",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

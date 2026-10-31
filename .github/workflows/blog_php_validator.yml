@@ -68,6 +68,18 @@ jobs:
         run: |
           uv run blog/tests/lesson_guard.py blog/
 
+      - name: Run Fact Ledger Tests
+        # Deterministic unit tests for the fact ledger (aliases, units,
+        # conflict detection, coverage). No LLM, no network.
+        run: |
+          uv run blog/tests/fact_ledger_test.py
+
+      - name: Check Blog Fact Ledger
+        # One fact file per lesson, schema validation, and cross-lesson
+        # numeric/date/unit/model-spec conflicts.
+        run: |
+          uv run blog/tools/factcheck/check_facts.py blog/
+
       - name: Run Literature Link Checker
         run: |
           mkdir -p link-report

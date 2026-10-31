@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "source": "vectorsearch.php",
+  "lesson": "vectorsearch",
+  "title": "Semantic Search & Vector Databases: Finding Needles in Haystacks",
+  "part": 5,
+  "order": 6,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "robertson2009bm25",
+    "malkov2018hnsw",
+    "jegou2011pq",
+    "johnson2017faiss",
+    "kusupati2022matryoshka",
+    "khattab2020colbert"
+  ],
+  "claims": [
+    {
+      "id": "auto-vectorsearch-title-0-1",
+      "subject": "vectorsearch",
+      "predicate": "title",
+      "value": "Semantic Search & Vector Databases: Finding Needles in Haystacks",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "vectorsearch"
+      },
+      "quote": "title: Semantic Search & Vector Databases: Finding Needles in Haystacks",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-vectorsearch-part-0-2",
+      "subject": "vectorsearch",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "vectorsearch"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-vectorsearch-order-0-3",
+      "subject": "vectorsearch",
+      "predicate": "order",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "vectorsearch"
+      },
+      "quote": "order: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "source": "reliability.php",
+  "lesson": "reliability",
+  "title": "Reliability — Calibration & Knowing When to Stop",
+  "part": 5,
+  "order": 17,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "guo2017calibration",
+    "kadavath2022selfknowledge",
+    "kendall2017uncertainties",
+    "lakshminarayanan2017ensembles",
+    "angelopoulos2021conformal",
+    "platt1999probabilistic",
+    "geifman2017selective",
+    "vovk2005algorithmic",
+    "quach2023conformal",
+    "perez2022redteaming",
+    "wei2024jailbroken",
+    "mazeika2024harmbench",
+    "weidinger2023sociotechnical"
+  ],
+  "claims": [
+    {
+      "id": "auto-reliability-title-0-1",
+      "subject": "reliability",
+      "predicate": "title",
+      "value": "Reliability — Calibration & Knowing When to Stop",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "reliability"
+      },
+      "quote": "title: Reliability — Calibration & Knowing When to Stop",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-reliability-part-0-2",
+      "subject": "reliability",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "reliability"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-reliability-order-0-3",
+      "subject": "reliability",
+      "predicate": "order",
+      "value": 17,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "reliability"
+      },
+      "quote": "order: 17",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

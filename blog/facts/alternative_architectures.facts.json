@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "source": "alternative_architectures.php",
+  "lesson": "alternative_architectures",
+  "title": "Beyond Transformers (Mamba, RWKV, RetNet)",
+  "part": 4,
+  "order": 17,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "colah2015types",
+    "colah2015lstm",
+    "lstm",
+    "gu2021s4",
+    "gu2023mamba",
+    "dao2024mamba2",
+    "choromanski2021performer",
+    "peng2023rwkv",
+    "austin2021d3pm",
+    "nie2025llada",
+    "poli2023hyena",
+    "ma2022mega",
+    "raposo2024mod"
+  ],
+  "claims": [
+    {
+      "id": "auto-alternative_architectures-title-0-1",
+      "subject": "alternative_architectures",
+      "predicate": "title",
+      "value": "Beyond Transformers (Mamba, RWKV, RetNet)",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "alternative_architectures"
+      },
+      "quote": "title: Beyond Transformers (Mamba, RWKV, RetNet)",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-alternative_architectures-part-0-2",
+      "subject": "alternative_architectures",
+      "predicate": "part",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "alternative_architectures"
+      },
+      "quote": "part: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-alternative_architectures-order-0-3",
+      "subject": "alternative_architectures",
+      "predicate": "order",
+      "value": 17,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "alternative_architectures"
+      },
+      "quote": "order: 17",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

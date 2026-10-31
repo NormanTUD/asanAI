@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "source": "tokenizerlab.php",
+  "lesson": "tokenizerlab",
+  "title": "Tokenization: How Words become Numbers",
+  "part": 4,
+  "order": 1,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "zipf1949human",
+    "markov1913ngram",
+    "shannon1948communication",
+    "shannon1951communication",
+    "sutskever2011generating",
+    "gage1994bpe",
+    "sennrich2016subword",
+    "kudo2018unigram",
+    "gpt2",
+    "tokenbias2025",
+    "rumbelow2023solidgold",
+    "land2024fishing",
+    "glitchtokens",
+    "glitchprober2024",
+    "geh2025adversarialtokenization",
+    "tokenbreak2025",
+    "byt52022",
+    "singh2024tokenizationcounts",
+    "zheng2025brokentokens",
+    "unicodeuax15"
+  ],
+  "claims": [
+    {
+      "id": "auto-tokenizerlab-title-0-1",
+      "subject": "tokenizerlab",
+      "predicate": "title",
+      "value": "Tokenization: How Words become Numbers",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "tokenizerlab"
+      },
+      "quote": "title: Tokenization: How Words become Numbers",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-tokenizerlab-part-0-2",
+      "subject": "tokenizerlab",
+      "predicate": "part",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "tokenizerlab"
+      },
+      "quote": "part: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-tokenizerlab-order-0-3",
+      "subject": "tokenizerlab",
+      "predicate": "order",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "tokenizerlab"
+      },
+      "quote": "order: 1",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

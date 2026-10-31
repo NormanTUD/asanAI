@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "source": "promptengineering.php",
+  "lesson": "promptengineering",
+  "title": "Prompt Engineering: How to talk to LLMs",
+  "part": 5,
+  "order": 18,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "emergentmind_latent_space_steering",
+    "emergentmind_steering_vectors",
+    "emergentmind_representation_steering",
+    "wei2022cot",
+    "yao2023tot",
+    "yao2023react",
+    "wang2023planandexecute",
+    "madaan2023selfrefine",
+    "shinn2023reflexion",
+    "emergentmind_latent_steering",
+    "coherent_difference_chapter",
+    "spencerbrown1969form",
+    "topology_wiki",
+    "sheaf_mathematics",
+    "feigenbaum1984expert",
+    "park2024linear",
+    "marks2023geometry",
+    "bricken2023monosemanticity"
+  ],
+  "claims": [
+    {
+      "id": "auto-promptengineering-title-0-1",
+      "subject": "promptengineering",
+      "predicate": "title",
+      "value": "Prompt Engineering: How to talk to LLMs",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "promptengineering"
+      },
+      "quote": "title: Prompt Engineering: How to talk to LLMs",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-promptengineering-part-0-2",
+      "subject": "promptengineering",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "promptengineering"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-promptengineering-order-0-3",
+      "subject": "promptengineering",
+      "predicate": "order",
+      "value": 18,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "promptengineering"
+      },
+      "quote": "order: 18",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

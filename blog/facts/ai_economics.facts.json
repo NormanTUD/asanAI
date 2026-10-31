@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "source": "ai_economics.php",
+  "lesson": "ai_economics",
+  "title": "The Economic Layer",
+  "part": 5,
+  "order": 21,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "hoffmann2022chinchilla",
+    "kaplan2020scaling",
+    "promptcaching"
+  ],
+  "claims": [
+    {
+      "id": "auto-ai_economics-title-0-1",
+      "subject": "ai_economics",
+      "predicate": "title",
+      "value": "The Economic Layer",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "ai_economics"
+      },
+      "quote": "title: The Economic Layer",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-ai_economics-part-0-2",
+      "subject": "ai_economics",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "ai_economics"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-ai_economics-order-0-3",
+      "subject": "ai_economics",
+      "predicate": "order",
+      "value": 21,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "ai_economics"
+      },
+      "quote": "order: 21",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-a100-tflops-54-4",
+      "subject": "a100",
+      "predicate": "tflops",
+      "value": "312",
+      "unit": "TFLOPS",
+      "qualifiers": {
+        "precision": "bf16"
+      },
+      "quote": "A100 (~312 TFLOP/s BF16)",
+      "line": 54,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-h100-tflops-55-5",
+      "subject": "h100",
+      "predicate": "tflops",
+      "value": "495",
+      "unit": "TFLOPS",
+      "qualifiers": {
+        "precision": "tf32"
+      },
+      "quote": "H100 (~495 TFLOP/s TF32)",
+      "line": 55,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-h100-tflops-56-6",
+      "subject": "h100",
+      "predicate": "tflops",
+      "value": "989",
+      "unit": "TFLOPS",
+      "qualifiers": {
+        "precision": "bf16"
+      },
+      "quote": "H100 BF16 (~989 TFLOP/s)",
+      "line": 56,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

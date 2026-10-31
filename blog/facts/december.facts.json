@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "source": "december.php",
+  "lesson": "december",
+  "title": "The December Calendar",
+  "part": "",
+  "order": "",
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [],
+  "claims": [
+    {
+      "id": "auto-december-title-0-1",
+      "subject": "december",
+      "predicate": "title",
+      "value": "The December Calendar",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "december"
+      },
+      "quote": "title: The December Calendar",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "source": "activationlab.php",
+  "lesson": "activationlab",
+  "title": "Activation Functions: The Neural Decision Makers",
+  "part": 2,
+  "order": 10,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "rosenblatt1958perceptron",
+    "relufirst",
+    "relupaper",
+    "petersen2024mathdl",
+    "boltzmann_distribution_wiki",
+    "luce1959individualchoice",
+    "bridle1990softmax",
+    "verhulst1838logistic",
+    "berkson1944logistic",
+    "cox1958logistic",
+    "lecun1989backpropagation",
+    "lecun1998gradientbased",
+    "hochreiter1991vanishing",
+    "bengio1994learning",
+    "glorot2011deep",
+    "krizhevsky2012imagenet",
+    "frankle2019lottery",
+    "hendrycks2016gelu",
+    "vaswani2017attention",
+    "elfwing2017silu",
+    "ramachandran2017swish",
+    "rombach2022ldm"
+  ],
+  "claims": [
+    {
+      "id": "auto-activationlab-title-0-1",
+      "subject": "activationlab",
+      "predicate": "title",
+      "value": "Activation Functions: The Neural Decision Makers",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "activationlab"
+      },
+      "quote": "title: Activation Functions: The Neural Decision Makers",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-activationlab-part-0-2",
+      "subject": "activationlab",
+      "predicate": "part",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "activationlab"
+      },
+      "quote": "part: 2",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-activationlab-order-0-3",
+      "subject": "activationlab",
+      "predicate": "order",
+      "value": 10,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "activationlab"
+      },
+      "quote": "order: 10",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

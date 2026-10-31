@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "source": "running_locally.php",
+  "lesson": "running_locally",
+  "title": "Running Models Locally",
+  "part": 5,
+  "order": 10,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "gerganov2023llamacpp",
+    "ollama2024",
+    "lmstudio2024",
+    "dettmers2023qlora",
+    "hu2021lora",
+    "liu2024dora"
+  ],
+  "claims": [
+    {
+      "id": "auto-running_locally-title-0-1",
+      "subject": "running_locally",
+      "predicate": "title",
+      "value": "Running Models Locally",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "running_locally"
+      },
+      "quote": "title: Running Models Locally",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-running_locally-part-0-2",
+      "subject": "running_locally",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "running_locally"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-running_locally-order-0-3",
+      "subject": "running_locally",
+      "predicate": "order",
+      "value": 10,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "running_locally"
+      },
+      "quote": "order: 10",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

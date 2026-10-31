@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "source": "unexpected_capabilities.php",
+  "lesson": "unexpected_capabilities",
+  "title": "Unexpected Capabilities of LLMs",
+  "part": 6,
+  "order": 13,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "brown2020gpt3",
+    "min2022rethinking",
+    "garg2022incontext",
+    "olsson2022induction",
+    "zhou2022algorithmic",
+    "chung2022flan",
+    "nye2021scratchpad",
+    "wei2022chainofthought",
+    "kojima2022zeroshot",
+    "wang2022selfconsistency",
+    "yao2023tot",
+    "press2022compositionality",
+    "lake2018scan",
+    "kim2020cogs",
+    "chollet2019measure",
+    "berglund2023reversal",
+    "power2022grokking",
+    "schaeffer2023mirage",
+    "chen2021humaneval",
+    "udrescu2020aifeynman",
+    "li2022othello_iclr",
+    "huh2024platonic",
+    "shi2023cottransfer",
+    "burns2022ccs",
+    "kadavath2022selfknowledge",
+    "elhage2022superposition",
+    "monosemanticity",
+    "kosinski2023tom",
+    "schick2023toolformer",
+    "yao2023react",
+    "madaan2023selfrefine",
+    "huang2022selfimprove",
+    "bai2022constitutional",
+    "lin2021truthful",
+    "carlini2021extracting",
+    "mckenzie2023inverse",
+    "bubeck2023sparks"
+  ],
+  "claims": [
+    {
+      "id": "auto-unexpected_capabilities-title-0-1",
+      "subject": "unexpected_capabilities",
+      "predicate": "title",
+      "value": "Unexpected Capabilities of LLMs",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "unexpected_capabilities"
+      },
+      "quote": "title: Unexpected Capabilities of LLMs",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-unexpected_capabilities-part-0-2",
+      "subject": "unexpected_capabilities",
+      "predicate": "part",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "unexpected_capabilities"
+      },
+      "quote": "part: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-unexpected_capabilities-order-0-3",
+      "subject": "unexpected_capabilities",
+      "predicate": "order",
+      "value": 13,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "unexpected_capabilities"
+      },
+      "quote": "order: 13",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

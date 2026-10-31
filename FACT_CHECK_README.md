@@ -59,6 +59,29 @@ CI. Ein künstliches Duplikat erzeugt:
 
 ---
 
+## 1b. Implementiertes Fact-Ledger (`blog/facts/`)
+
+Das deterministische System ist bereits angelegt:
+
+- `blog/facts/<slug>.facts.json` — eine Datei pro Lektion.
+- `blog/tools/factcheck/extract_facts.py` — legt fehlende Dateien an,
+  überschreibt kuratierte Dateien nie.
+- `blog/tools/factcheck/check_facts.py` — prüft Coverage, Schema und
+  Cross-Lesson-Konflikte (Alias-tolerant, ohne LLM).
+- `blog/tests/fact_ledger_test.py` — Unit-Tests für Aliase, Einheiten,
+  Konflikterkennung und Coverage.
+- Ausführliche Regeln: `blog/facts/README.md` und `AGENTS.md`.
+
+Beispiele: `blog/facts/backproplab.facts.json` und
+`blog/facts/security_inference.facts.json`.
+
+```bash
+uv run blog/tools/factcheck/check_facts.py blog/
+uv run blog/tests/fact_ledger_test.py
+```
+
+---
+
 ## 2. Vorschlag: Claim-Ledger mit Gluing-Checks
 
 ### Grundidee

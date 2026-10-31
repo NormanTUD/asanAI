@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "source": "inference_optimization.php",
+  "lesson": "inference_optimization",
+  "title": "Inference Optimization",
+  "part": 5,
+  "order": 9,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "frantar2022gptq",
+    "lin2023awq",
+    "xiao2022smoothquant",
+    "dettmers2022llmint8",
+    "ma2024bitnet",
+    "che2024quip",
+    "shazeer2019mqa",
+    "ainslie2023gqa",
+    "deepseek2024v2",
+    "beltagy2020longformer",
+    "xiao2023streaming",
+    "sun2024massive",
+    "dao2022flashattention",
+    "kwon2023vllm",
+    "leviathan2023speculative",
+    "cai2024medusa",
+    "li2024eagle",
+    "guo2025deepseekr1"
+  ],
+  "claims": [
+    {
+      "id": "auto-inference_optimization-title-0-1",
+      "subject": "inference_optimization",
+      "predicate": "title",
+      "value": "Inference Optimization",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "inference_optimization"
+      },
+      "quote": "title: Inference Optimization",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-inference_optimization-part-0-2",
+      "subject": "inference_optimization",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "inference_optimization"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-inference_optimization-order-0-3",
+      "subject": "inference_optimization",
+      "predicate": "order",
+      "value": 9,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "inference_optimization"
+      },
+      "quote": "order: 9",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "source": "geometry_ii.php",
+  "lesson": "geometry_ii",
+  "title": "The Shape of the Machine — A Working Geometry for AI",
+  "part": 1,
+  "order": 8,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "scholkopf2002learning",
+    "svd_wiki",
+    "cauchy1847",
+    "fourier1822",
+    "cooley1965fft",
+    "zaheer2017deepsets",
+    "boyd2018appliedlinearalgebra",
+    "mikolov2013word2vec",
+    "grassmann1844ausdehnungslehre",
+    "hamilton1853lectures",
+    "hamilton1865letter",
+    "gibbs_wilson1901",
+    "heaviside1893electromagnetic",
+    "crowe1967vectoranalysis",
+    "axler2024linearalgebra",
+    "mercerno1909",
+    "gram1883",
+    "legendre1805",
+    "gauss1809",
+    "stewart1993svd",
+    "schmidt1907",
+    "weyl1912singular",
+    "jacobi1842",
+    "jacobi1846",
+    "eckartyoung1936",
+    "golubreinsch1970",
+    "hu2021lora",
+    "merullo2024talkingheads",
+    "hadamard1908",
+    "rosen1960",
+    "toeplitz1911",
+    "dalembert1747",
+    "fft_history_wiki",
+    "klein1872erlangen",
+    "noether1918",
+    "weyl1939classicalgroups",
+    "bronstein2021geometric",
+    "vaswani2017attention"
+  ],
+  "claims": [
+    {
+      "id": "auto-geometry_ii-title-0-1",
+      "subject": "geometry_ii",
+      "predicate": "title",
+      "value": "The Shape of the Machine — A Working Geometry for AI",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "geometry_ii"
+      },
+      "quote": "title: The Shape of the Machine — A Working Geometry for AI",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-geometry_ii-part-0-2",
+      "subject": "geometry_ii",
+      "predicate": "part",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "geometry_ii"
+      },
+      "quote": "part: 1",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-geometry_ii-order-0-3",
+      "subject": "geometry_ii",
+      "predicate": "order",
+      "value": 8,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "geometry_ii"
+      },
+      "quote": "order: 8",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

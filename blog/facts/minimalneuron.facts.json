@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "source": "minimalneuron.php",
+  "lesson": "minimalneuron",
+  "title": "Smallest possible neural network",
+  "part": 2,
+  "order": 9,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "mccullochpitts1943",
+    "rosenblatt1958perceptron",
+    "hebb1949organizationofbehaviour",
+    "rosenblattperceptron",
+    "rosenblatt1962neurodynamics",
+    "newyorktimesperceptron",
+    "widrow1960adaline",
+    "minskyperceptrons",
+    "werbos1974",
+    "rumelhart1986",
+    "rumelhart1986pdp",
+    "legendre1805",
+    "gauss1809",
+    "galton",
+    "conantashby1970",
+    "ashbyintrocybernetics1956"
+  ],
+  "claims": [
+    {
+      "id": "auto-minimalneuron-title-0-1",
+      "subject": "minimalneuron",
+      "predicate": "title",
+      "value": "Smallest possible neural network",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "minimalneuron"
+      },
+      "quote": "title: Smallest possible neural network",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-minimalneuron-part-0-2",
+      "subject": "minimalneuron",
+      "predicate": "part",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "minimalneuron"
+      },
+      "quote": "part: 2",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-minimalneuron-order-0-3",
+      "subject": "minimalneuron",
+      "predicate": "order",
+      "value": 9,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "minimalneuron"
+      },
+      "quote": "order: 9",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

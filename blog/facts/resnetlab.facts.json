@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "source": "resnetlab.php",
+  "lesson": "resnetlab",
+  "title": "Deep Learning Mechanics: ResNets & Vanishing Gradients",
+  "part": 3,
+  "order": 4,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "hochreiter1991vanishing",
+    "bengio1994learning",
+    "he2015resnet",
+    "highway2015",
+    "petersen2024mathdl"
+  ],
+  "claims": [
+    {
+      "id": "auto-resnetlab-title-0-1",
+      "subject": "resnetlab",
+      "predicate": "title",
+      "value": "Deep Learning Mechanics: ResNets & Vanishing Gradients",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "resnetlab"
+      },
+      "quote": "title: Deep Learning Mechanics: ResNets & Vanishing Gradients",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-resnetlab-part-0-2",
+      "subject": "resnetlab",
+      "predicate": "part",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "resnetlab"
+      },
+      "quote": "part: 3",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-resnetlab-order-0-3",
+      "subject": "resnetlab",
+      "predicate": "order",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "resnetlab"
+      },
+      "quote": "order: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "source": "hyperparameters.php",
+  "lesson": "hyperparameters",
+  "title": "Hyperparameters: The Numbers You Choose",
+  "part": 2,
+  "order": 8,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "ruder2016overview",
+    "goyal2017largebatch",
+    "bengio2012practical",
+    "kaplan2020scaling",
+    "hoffmann2022chinchilla",
+    "yang2022mup",
+    "bergstra2010random",
+    "mockus1978bo",
+    "snoek2012practical",
+    "bergstra2011algorithms",
+    "bergstra2013science",
+    "jones1998ego",
+    "hyperopt",
+    "akiba2019optuna",
+    "olson2025ax",
+    "li2016hyperband",
+    "jaderberg2017pbt",
+    "omniopt",
+    "balandat2020botorch"
+  ],
+  "claims": [
+    {
+      "id": "auto-hyperparameters-title-0-1",
+      "subject": "hyperparameters",
+      "predicate": "title",
+      "value": "Hyperparameters: The Numbers You Choose",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "hyperparameters"
+      },
+      "quote": "title: Hyperparameters: The Numbers You Choose",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-hyperparameters-part-0-2",
+      "subject": "hyperparameters",
+      "predicate": "part",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "hyperparameters"
+      },
+      "quote": "part: 2",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-hyperparameters-order-0-3",
+      "subject": "hyperparameters",
+      "predicate": "order",
+      "value": 8,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "hyperparameters"
+      },
+      "quote": "order: 8",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

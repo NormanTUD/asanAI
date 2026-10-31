@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "source": "topology.php",
+  "lesson": "topology",
+  "title": "Topology and the Geometry of Thought",
+  "part": 3,
+  "order": 5,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "keup2022origami",
+    "colah2014manifolds",
+    "eulerbridges",
+    "morris2007topology",
+    "poincareanalysissitus",
+    "brouwer1911invariance",
+    "morse1929foundations",
+    "karpathy2015convnetjs",
+    "mclarty2006noether",
+    "edelsbrunner2002persistent",
+    "zomorodian2005",
+    "fefferman2016testing",
+    "riek2019neural"
+  ],
+  "claims": [
+    {
+      "id": "auto-topology-title-0-1",
+      "subject": "topology",
+      "predicate": "title",
+      "value": "Topology and the Geometry of Thought",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "topology"
+      },
+      "quote": "title: Topology and the Geometry of Thought",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-topology-part-0-2",
+      "subject": "topology",
+      "predicate": "part",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "topology"
+      },
+      "quote": "part: 3",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-topology-order-0-3",
+      "subject": "topology",
+      "predicate": "order",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "topology"
+      },
+      "quote": "order: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

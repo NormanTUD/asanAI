@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "source": "agents.php",
+  "lesson": "agents",
+  "title": "AI Agents: Autonomous Reasoning and Tool Use",
+  "part": 5,
+  "order": 5,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "licklider1960symbiosis",
+    "mccarthy1969some",
+    "shrdlu_image",
+    "alphago_leesedol_image",
+    "yao2023react",
+    "winograd1972understanding",
+    "brooks1986layered",
+    "brooks1990elephants",
+    "laird1987soar",
+    "anderson2004actr",
+    "rao1995bdi",
+    "schick2023toolformer",
+    "abboud2025opencode",
+    "autogpt2023",
+    "wang2023voyager",
+    "anthropic2024mcp",
+    "du2023multiagent",
+    "wu2023autogen",
+    "wang2023planandexecute",
+    "shinn2023reflexion"
+  ],
+  "claims": [
+    {
+      "id": "auto-agents-title-0-1",
+      "subject": "agents",
+      "predicate": "title",
+      "value": "AI Agents: Autonomous Reasoning and Tool Use",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "agents"
+      },
+      "quote": "title: AI Agents: Autonomous Reasoning and Tool Use",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-agents-part-0-2",
+      "subject": "agents",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "agents"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-agents-order-0-3",
+      "subject": "agents",
+      "predicate": "order",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "agents"
+      },
+      "quote": "order: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

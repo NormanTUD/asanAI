@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "source": "atlas.php",
+  "lesson": "atlas",
+  "title": "The Atlas",
+  "part": 6,
+  "order": 20,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "cosmic_web_image",
+    "budassi_universe_image",
+    "transformer_attention_figure",
+    "perceptronimagedetection",
+    "starfield_eso_image",
+    "solsys_planet_textures",
+    "earth_moon_cc_textures",
+    "earth_night_lights",
+    "m87_blackhole_image",
+    "crab_nebula_image"
+  ],
+  "claims": [
+    {
+      "id": "auto-atlas-title-0-1",
+      "subject": "atlas",
+      "predicate": "title",
+      "value": "The Atlas",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "atlas"
+      },
+      "quote": "title: The Atlas",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-atlas-part-0-2",
+      "subject": "atlas",
+      "predicate": "part",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "atlas"
+      },
+      "quote": "part: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-atlas-order-0-3",
+      "subject": "atlas",
+      "predicate": "order",
+      "value": 20,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "atlas"
+      },
+      "quote": "order: 20",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

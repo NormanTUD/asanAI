@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "source": "inference_vs_training.php",
+  "lesson": "inference_vs_training",
+  "title": "Inference vs Training — the KV-cache and the two regimes",
+  "part": 5,
+  "order": 19,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "pope2022scaling",
+    "flashattention2022",
+    "vllm2023"
+  ],
+  "claims": [
+    {
+      "id": "auto-inference_vs_training-title-0-1",
+      "subject": "inference_vs_training",
+      "predicate": "title",
+      "value": "Inference vs Training — the KV-cache and the two regimes",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "inference_vs_training"
+      },
+      "quote": "title: Inference vs Training — the KV-cache and the two regimes",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-inference_vs_training-part-0-2",
+      "subject": "inference_vs_training",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "inference_vs_training"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-inference_vs_training-order-0-3",
+      "subject": "inference_vs_training",
+      "predicate": "order",
+      "value": 19,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "inference_vs_training"
+      },
+      "quote": "order: 19",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

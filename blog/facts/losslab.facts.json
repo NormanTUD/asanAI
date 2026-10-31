@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "source": "losslab.php",
+  "lesson": "losslab",
+  "title": "Loss: Teaching through Failure",
+  "part": 2,
+  "order": 1,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "legendre1805",
+    "gauss1809",
+    "laplace1810clt",
+    "boscovich_mactutor",
+    "laplace1812analytic",
+    "huber1964",
+    "cortes1995svm",
+    "lin2017focal",
+    "goodhartslaw",
+    "strathern1997",
+    "bender2021stochasticparrots",
+    "hoffmann2022chinchilla",
+    "shannon1948communication",
+    "kullback1951information",
+    "colah2015visualinfo",
+    "hutterprize"
+  ],
+  "claims": [
+    {
+      "id": "auto-losslab-title-0-1",
+      "subject": "losslab",
+      "predicate": "title",
+      "value": "Loss: Teaching through Failure",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "losslab"
+      },
+      "quote": "title: Loss: Teaching through Failure",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-losslab-part-0-2",
+      "subject": "losslab",
+      "predicate": "part",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "losslab"
+      },
+      "quote": "part: 2",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-losslab-order-0-3",
+      "subject": "losslab",
+      "predicate": "order",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "losslab"
+      },
+      "quote": "order: 1",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

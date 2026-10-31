@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "source": "websearch.php",
+  "lesson": "websearch",
+  "title": "How LLMs Search the Web",
+  "part": 5,
+  "order": 4,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "schick2023toolformer",
+    "mialon2023augmented",
+    "ma2023queryrewriting",
+    "reuters2023chatgptbrowsing",
+    "google2025grounding",
+    "anthropic2025websearch",
+    "perplexityai",
+    "youcom",
+    "searxng",
+    "bravesearchapi",
+    "googlecustomsearch",
+    "serper",
+    "tavily",
+    "mozillareadability",
+    "barbaresi2021trafilatura",
+    "beautifulsoup",
+    "playwright",
+    "puppeteer",
+    "jinareader",
+    "reimers2019sentencebert",
+    "robertson2009bm25",
+    "lewis2020rag",
+    "openai2023functioncalling",
+    "yao2023react",
+    "greshake2023injection"
+  ],
+  "claims": [
+    {
+      "id": "auto-websearch-title-0-1",
+      "subject": "websearch",
+      "predicate": "title",
+      "value": "How LLMs Search the Web",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "websearch"
+      },
+      "quote": "title: How LLMs Search the Web",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-websearch-part-0-2",
+      "subject": "websearch",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "websearch"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-websearch-order-0-3",
+      "subject": "websearch",
+      "predicate": "order",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "websearch"
+      },
+      "quote": "order: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

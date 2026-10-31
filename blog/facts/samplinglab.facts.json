@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "source": "samplinglab.php",
+  "lesson": "samplinglab",
+  "title": "Temperature & Sampling",
+  "part": 4,
+  "order": 8,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "boltzmann",
+    "gibbs1902",
+    "geman1984gibbs",
+    "ackley1985boltzmann",
+    "fan2018topk",
+    "holtzman2020nucleus",
+    "nguyen2025minp",
+    "meister2022typical",
+    "keskar2019ctrl",
+    "su2022contrastive",
+    "basu2020mirostat",
+    "lowerre1976harpy",
+    "sutskever2014seq2seq",
+    "leviathan2023speculative",
+    "wang2024entropy"
+  ],
+  "claims": [
+    {
+      "id": "auto-samplinglab-title-0-1",
+      "subject": "samplinglab",
+      "predicate": "title",
+      "value": "Temperature & Sampling",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "samplinglab"
+      },
+      "quote": "title: Temperature & Sampling",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-samplinglab-part-0-2",
+      "subject": "samplinglab",
+      "predicate": "part",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "samplinglab"
+      },
+      "quote": "part: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-samplinglab-order-0-3",
+      "subject": "samplinglab",
+      "predicate": "order",
+      "value": 8,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "samplinglab"
+      },
+      "quote": "order: 8",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

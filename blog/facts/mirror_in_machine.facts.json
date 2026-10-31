@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "source": "mirror_in_machine.php",
+  "lesson": "mirror_in_machine",
+  "title": "The Mirror in the Machine",
+  "part": 6,
+  "order": 7,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "cajal1888",
+    "golgi1873",
+    "waldeyer1891",
+    "hubelwiesel",
+    "adrian1922allornothing",
+    "mccullochpitts1943",
+    "lapicque1907",
+    "mark_i_perceptron_manual",
+    "hartline1956limulus",
+    "lateral_inhibition_wiki",
+    "winner_take_all_wiki",
+    "neocognitron",
+    "lecun1989backpropagation",
+    "hebb1949organizationofbehaviour",
+    "okeefe1971place",
+    "nobel2014spatial",
+    "stachenfeld2017predictivemap",
+    "miller1956magicalnumber",
+    "cowan2001magical4",
+    "baddeley1986workingmemory",
+    "diekelmann2010sleep",
+    "rao1999predictive",
+    "clark2013whatevernext",
+    "keller2018canonical",
+    "bastos2012microcircuit",
+    "caucheteux2023predictive",
+    "whittington2019backprop",
+    "kriegeskorte2015dcnn",
+    "wang2025foundation",
+    "nishimoto2011reconstruct",
+    "huth2016semanticmaps",
+    "affolter2020brain2word",
+    "lu2025fmritotext",
+    "allen2022nsd",
+    "schwartz2019brainbias",
+    "hosseini2024universality",
+    "raichle2007defaultmode",
+    "simon1955bounded",
+    "schultz1997dopamine",
+    "baars",
+    "dehaene"
+  ],
+  "claims": [
+    {
+      "id": "auto-mirror_in_machine-title-0-1",
+      "subject": "mirror_in_machine",
+      "predicate": "title",
+      "value": "The Mirror in the Machine",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "mirror_in_machine"
+      },
+      "quote": "title: The Mirror in the Machine",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-mirror_in_machine-part-0-2",
+      "subject": "mirror_in_machine",
+      "predicate": "part",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "mirror_in_machine"
+      },
+      "quote": "part: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-mirror_in_machine-order-0-3",
+      "subject": "mirror_in_machine",
+      "predicate": "order",
+      "value": 7,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "mirror_in_machine"
+      },
+      "quote": "order: 7",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

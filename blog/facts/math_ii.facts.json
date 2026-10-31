@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "source": "math_ii.php",
+  "lesson": "math_ii",
+  "title": "Basic Math Concepts II — Linear Algebra for AI",
+  "part": 1,
+  "order": 4,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "rgb_color_cube",
+    "axler2024linearalgebra",
+    "hamilton1844quaternions",
+    "grassmann1844ausdehnungslehre",
+    "sylvester1850matrix",
+    "cayleymemoirmatrices",
+    "frobenius1878linear",
+    "frobenius1879differential",
+    "mactutor_matrices_determinants",
+    "numpy_broadcasting",
+    "einstein1916annalen",
+    "boyd2018appliedlinearalgebra",
+    "etymonline_matrix",
+    "cramer1750introduction",
+    "etymonline_vector",
+    "hamiltonextensionsquaternions",
+    "etymonline_scalar",
+    "hamilton1846quaternions",
+    "miller_vector",
+    "etymonline_tensor",
+    "voigt1898krystalle",
+    "riccilevicivita1900",
+    "miller_tensor",
+    "colah2015types",
+    "macTutorFunctions",
+    "miller_functionsymbols",
+    "hadamardproduct",
+    "hadamard1899series",
+    "schur1911bilinear",
+    "hadamard_product_wiki",
+    "boltzmann_distribution_wiki",
+    "luce1959individualchoice",
+    "bridle1990softmax",
+    "shannon1948communication",
+    "kullback1951information",
+    "good1952rational"
+  ],
+  "claims": [
+    {
+      "id": "auto-math_ii-title-0-1",
+      "subject": "math_ii",
+      "predicate": "title",
+      "value": "Basic Math Concepts II — Linear Algebra for AI",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "math_ii"
+      },
+      "quote": "title: Basic Math Concepts II — Linear Algebra for AI",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-math_ii-part-0-2",
+      "subject": "math_ii",
+      "predicate": "part",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "math_ii"
+      },
+      "quote": "part: 1",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-math_ii-order-0-3",
+      "subject": "math_ii",
+      "predicate": "order",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "math_ii"
+      },
+      "quote": "order: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

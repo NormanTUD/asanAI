@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "source": "search_lib.php",
+  "lesson": "search_lib",
+  "title": "",
+  "part": "",
+  "order": "",
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [],
+  "claims": []
+}

@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "source": "hallucinations.php",
+  "lesson": "hallucinations",
+  "title": "Hallucinations and Dangers of AI and How to use AI Safely",
+  "part": 5,
+  "order": 2,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "sharma2023sycophancy",
+    "berglund2023reversal",
+    "prakash2021fitness",
+    "hoffman2015interface",
+    "unfinishablemap2026fbt",
+    "wei2022cot",
+    "holtzman2019nucleus",
+    "bender2021stochasticparrots",
+    "clark1998extended"
+  ],
+  "claims": [
+    {
+      "id": "auto-hallucinations-title-0-1",
+      "subject": "hallucinations",
+      "predicate": "title",
+      "value": "Hallucinations and Dangers of AI and How to use AI Safely",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "hallucinations"
+      },
+      "quote": "title: Hallucinations and Dangers of AI and How to use AI Safely",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-hallucinations-part-0-2",
+      "subject": "hallucinations",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "hallucinations"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-hallucinations-order-0-3",
+      "subject": "hallucinations",
+      "predicate": "order",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "hallucinations"
+      },
+      "quote": "order: 2",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "source": "frontier.php",
+  "lesson": "frontier",
+  "title": "Frontier Topics",
+  "part": 6,
+  "order": 8,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "ouyang2022instructgpt",
+    "anthropic2024goldengate",
+    "redman2024causalscrubbing",
+    "zou2023repeng",
+    "zhang2024mathshepherd",
+    "sun2024ttt",
+    "su2021rope",
+    "peng2023yarn",
+    "press2022alibi",
+    "li2023seqparallel",
+    "infllm2024",
+    "mohtashami2023landmark",
+    "raposo2024mod",
+    "elhoushi2024early",
+    "fedus2022switch",
+    "du2023multiagent",
+    "schick2023toolformer",
+    "patil2023gorilla",
+    "hafner2023dreamer",
+    "lecun2022path",
+    "deepseek2024v3",
+    "kimi2025k2",
+    "longcat2025",
+    "gptoss2025",
+    "minimax2025lightning",
+    "deepseek2024v2",
+    "guo2025deepseekr1",
+    "qwen2025qwen3",
+    "llama3herd2024",
+    "meta2025llama4",
+    "gemma2025v3",
+    "anthropic2025biology",
+    "pan2024latentqa",
+    "nie2025llada"
+  ],
+  "claims": [
+    {
+      "id": "auto-frontier-title-0-1",
+      "subject": "frontier",
+      "predicate": "title",
+      "value": "Frontier Topics",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "frontier"
+      },
+      "quote": "title: Frontier Topics",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-frontier-part-0-2",
+      "subject": "frontier",
+      "predicate": "part",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "frontier"
+      },
+      "quote": "part: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-frontier-order-0-3",
+      "subject": "frontier",
+      "predicate": "order",
+      "value": 8,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "frontier"
+      },
+      "quote": "order: 8",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

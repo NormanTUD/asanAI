@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "source": "normalizationlab.php",
+  "lesson": "normalizationlab",
+  "title": "Understanding Layer Normalization",
+  "part": 3,
+  "order": 6,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "ba2016layernorm",
+    "semianalysis2023gpt4",
+    "zhang2019rmsnorm",
+    "touvron2023llama",
+    "wu2018groupnorm"
+  ],
+  "claims": [
+    {
+      "id": "auto-normalizationlab-title-0-1",
+      "subject": "normalizationlab",
+      "predicate": "title",
+      "value": "Understanding Layer Normalization",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "normalizationlab"
+      },
+      "quote": "title: Understanding Layer Normalization",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-normalizationlab-part-0-2",
+      "subject": "normalizationlab",
+      "predicate": "part",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "normalizationlab"
+      },
+      "quote": "part: 3",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-normalizationlab-order-0-3",
+      "subject": "normalizationlab",
+      "predicate": "order",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "normalizationlab"
+      },
+      "quote": "order: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

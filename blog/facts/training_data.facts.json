@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "source": "training_data.php",
+  "lesson": "training_data",
+  "title": "Training Data Curation",
+  "part": 5,
+  "order": 12,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "hoffmann2022chinchilla",
+    "rae2021gopher",
+    "raffel2020t5",
+    "penedo2024fineweb",
+    "abbas2023semdedup",
+    "chollet2024arcagi",
+    "gao2020pile",
+    "commonpile2025",
+    "together2024redpajama",
+    "chen2021codex",
+    "li2022alphacode",
+    "ma2023codereasoning",
+    "waheed2025codeinduced",
+    "gao2022pal",
+    "wang2024codeact",
+    "roziere2023codellama",
+    "guo2024deepseekcoder",
+    "jimenez2024swebench",
+    "bai2022constitutional",
+    "hendrycks2021math",
+    "shumailov2023modelcollapse",
+    "gage1994bpe"
+  ],
+  "claims": [
+    {
+      "id": "auto-training_data-title-0-1",
+      "subject": "training_data",
+      "predicate": "title",
+      "value": "Training Data Curation",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "training_data"
+      },
+      "quote": "title: Training Data Curation",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-training_data-part-0-2",
+      "subject": "training_data",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "training_data"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-training_data-order-0-3",
+      "subject": "training_data",
+      "predicate": "order",
+      "value": 12,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "training_data"
+      },
+      "quote": "order: 12",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

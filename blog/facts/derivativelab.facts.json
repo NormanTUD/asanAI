@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "source": "derivativelab.php",
+  "lesson": "derivativelab",
+  "title": "Derivatives: How AI \"Learns\" to get better",
+  "part": 2,
+  "order": 2,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "eudoxus_mactutor",
+    "archimedes_works_heath",
+    "cauchy1847",
+    "hadamard1908",
+    "madhava_mactutor",
+    "madhava",
+    "condorcet1770",
+    "legendre1786",
+    "historyofmathematicalnotation",
+    "newton1736fluxions",
+    "leibniz1684nova",
+    "cauchy1823resume",
+    "weierstrass_mactutor"
+  ],
+  "claims": [
+    {
+      "id": "auto-derivativelab-title-0-1",
+      "subject": "derivativelab",
+      "predicate": "title",
+      "value": "Derivatives: How AI \"Learns\" to get better",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "derivativelab"
+      },
+      "quote": "title: Derivatives: How AI \"Learns\" to get better",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-derivativelab-part-0-2",
+      "subject": "derivativelab",
+      "predicate": "part",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "derivativelab"
+      },
+      "quote": "part: 2",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-derivativelab-order-0-3",
+      "subject": "derivativelab",
+      "predicate": "order",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "derivativelab"
+      },
+      "quote": "order: 2",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

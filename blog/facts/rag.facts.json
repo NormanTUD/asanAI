@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "source": "rag.php",
+  "lesson": "rag",
+  "title": "Retrieval-Augmented Generation: Giving LLMs a Search Engine",
+  "part": 5,
+  "order": 3,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "lewis2020rag",
+    "malkov2018hnsw",
+    "jegou2011pq",
+    "liu2023lostmiddle",
+    "robertson2009bm25",
+    "beir2021",
+    "contextualretrieval2024",
+    "ragsurvey2023",
+    "bush1945aswemaythink",
+    "salton1975vectorspace",
+    "salton1988termweighting",
+    "voorhees1999trecqa",
+    "rajpurkar2016squad",
+    "karpukhin2020dpr",
+    "guu2020realm",
+    "borgeaud2022retro",
+    "izacard2022atlas",
+    "asai2023selfrag",
+    "edge2024graphrag"
+  ],
+  "claims": [
+    {
+      "id": "auto-rag-title-0-1",
+      "subject": "rag",
+      "predicate": "title",
+      "value": "Retrieval-Augmented Generation: Giving LLMs a Search Engine",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "rag"
+      },
+      "quote": "title: Retrieval-Augmented Generation: Giving LLMs a Search Engine",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-rag-part-0-2",
+      "subject": "rag",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "rag"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-rag-order-0-3",
+      "subject": "rag",
+      "predicate": "order",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "rag"
+      },
+      "quote": "order: 3",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

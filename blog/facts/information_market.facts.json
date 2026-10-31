@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "source": "information_market.php",
+  "lesson": "information_market",
+  "title": "The Market for Information",
+  "part": 1,
+  "order": 14,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "fuggernews",
+    "habermaspublicsphere",
+    "isidoreofseville",
+    "etymologiae",
+    "wired2002isidore",
+    "encyclopedie",
+    "paulotlet",
+    "mundaneum",
+    "traitededocumentation",
+    "catalogingtheworld"
+  ],
+  "claims": [
+    {
+      "id": "auto-information_market-title-0-1",
+      "subject": "information_market",
+      "predicate": "title",
+      "value": "The Market for Information",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "information_market"
+      },
+      "quote": "title: The Market for Information",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-information_market-part-0-2",
+      "subject": "information_market",
+      "predicate": "part",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "information_market"
+      },
+      "quote": "part: 1",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-information_market-order-0-3",
+      "subject": "information_market",
+      "predicate": "order",
+      "value": 14,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "information_market"
+      },
+      "quote": "order: 14",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "source": "positionalembeddingslab.php",
+  "lesson": "positionalembeddingslab",
+  "title": "Positional Embeddings",
+  "part": 4,
+  "order": 7,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "vaswani2017attention",
+    "indianastronomer",
+    "indianastronomerconstruction",
+    "chester1145",
+    "alkwarizma",
+    "gunter1620",
+    "peng2023yarn",
+    "chen2023position",
+    "lstm",
+    "elman1990finding",
+    "gehring2017convs2s",
+    "firstgpt",
+    "bert",
+    "gpt2",
+    "shaw2018relative",
+    "bahdanau2014",
+    "raffel2020t5",
+    "rope2021",
+    "alibi2022"
+  ],
+  "claims": [
+    {
+      "id": "auto-positionalembeddingslab-title-0-1",
+      "subject": "positionalembeddingslab",
+      "predicate": "title",
+      "value": "Positional Embeddings",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "positionalembeddingslab"
+      },
+      "quote": "title: Positional Embeddings",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-positionalembeddingslab-part-0-2",
+      "subject": "positionalembeddingslab",
+      "predicate": "part",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "positionalembeddingslab"
+      },
+      "quote": "part: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-positionalembeddingslab-order-0-3",
+      "subject": "positionalembeddingslab",
+      "predicate": "order",
+      "value": 7,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "positionalembeddingslab"
+      },
+      "quote": "order: 7",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "source": "law_regulation.php",
+  "lesson": "law_regulation",
+  "title": "AI Law & Regulation",
+  "part": 6,
+  "order": 10,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "eu2019dsm",
+    "euaiact2024",
+    "edpb2024ai",
+    "pld2024",
+    "china2025labelling",
+    "colorado2024ai",
+    "sb53cal2025",
+    "oecd2019ai",
+    "unesco2021ai",
+    "coe2024ai"
+  ],
+  "claims": [
+    {
+      "id": "auto-law_regulation-title-0-1",
+      "subject": "law_regulation",
+      "predicate": "title",
+      "value": "AI Law & Regulation",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "law_regulation"
+      },
+      "quote": "title: AI Law & Regulation",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-law_regulation-part-0-2",
+      "subject": "law_regulation",
+      "predicate": "part",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "law_regulation"
+      },
+      "quote": "part: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-law_regulation-order-0-3",
+      "subject": "law_regulation",
+      "predicate": "order",
+      "value": 10,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "law_regulation"
+      },
+      "quote": "order: 10",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "source": "differentiation.php",
+  "lesson": "differentiation",
+  "title": "Differentiation: The Mathematics of Change",
+  "part": 2,
+  "order": 3,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "newton_portrait",
+    "leibniz_portrait",
+    "leibniz1684nova",
+    "historyofmathematicalnotation",
+    "oeuvresdeformat",
+    "wallis1655",
+    "lagrange1797theorie",
+    "lagrange_portrait",
+    "euler1755",
+    "cauchy1847",
+    "rumelhart1986",
+    "condorcet1770",
+    "legendre1786"
+  ],
+  "claims": [
+    {
+      "id": "auto-differentiation-title-0-1",
+      "subject": "differentiation",
+      "predicate": "title",
+      "value": "Differentiation: The Mathematics of Change",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "differentiation"
+      },
+      "quote": "title: Differentiation: The Mathematics of Change",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-differentiation-part-0-2",
+      "subject": "differentiation",
+      "predicate": "part",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "differentiation"
+      },
+      "quote": "part: 2",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-differentiation-order-0-3",
+      "subject": "differentiation",
+      "predicate": "order",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "differentiation"
+      },
+      "quote": "order: 3",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

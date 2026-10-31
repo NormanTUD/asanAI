@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "source": "attentionlab.php",
+  "lesson": "attentionlab",
+  "title": "The Semantic Tug-of-War: How Transformers 'Think'",
+  "part": 4,
+  "order": 6,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "colah2015lstm",
+    "gage1994bpe",
+    "zelligharris",
+    "firth1957distributive",
+    "mikolov2013word2vec",
+    "bahdanau2014",
+    "luong2015attention",
+    "vaswani2017attention",
+    "tsai2019kernel",
+    "merullo2024talkingheads",
+    "analyzingmultiheads",
+    "htu2019dependencies",
+    "clark2019bertattention",
+    "litman2025sdpaot",
+    "cuturi2013sinkhorn",
+    "jaynes1957maxent",
+    "neuralturingmachines",
+    "ramsauer2021hopfield",
+    "xiao2023streaming",
+    "darcet2024registers",
+    "cancedda2024sinks",
+    "wong2025sinks"
+  ],
+  "claims": [
+    {
+      "id": "auto-attentionlab-title-0-1",
+      "subject": "attentionlab",
+      "predicate": "title",
+      "value": "The Semantic Tug-of-War: How Transformers 'Think'",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "attentionlab"
+      },
+      "quote": "title: The Semantic Tug-of-War: How Transformers 'Think'",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-attentionlab-part-0-2",
+      "subject": "attentionlab",
+      "predicate": "part",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "attentionlab"
+      },
+      "quote": "part: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-attentionlab-order-0-3",
+      "subject": "attentionlab",
+      "predicate": "order",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "attentionlab"
+      },
+      "quote": "order: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

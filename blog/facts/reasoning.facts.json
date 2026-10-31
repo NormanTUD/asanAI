@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "source": "reasoning.php",
+  "lesson": "reasoning",
+  "title": "Reasoning & Test-Time Compute",
+  "part": 5,
+  "order": 15,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "kojima2022zeroshot",
+    "wei2022cot",
+    "yao2023tot",
+    "madaan2023selfrefine",
+    "yao2023react",
+    "wang2022selfconsistency",
+    "shao2024grpo",
+    "ouyang2022instructgpt",
+    "zhang2024mathshepherd",
+    "snell2024testtime",
+    "hendrycks2021math"
+  ],
+  "claims": [
+    {
+      "id": "auto-reasoning-title-0-1",
+      "subject": "reasoning",
+      "predicate": "title",
+      "value": "Reasoning & Test-Time Compute",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "reasoning"
+      },
+      "quote": "title: Reasoning & Test-Time Compute",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-reasoning-part-0-2",
+      "subject": "reasoning",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "reasoning"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-reasoning-order-0-3",
+      "subject": "reasoning",
+      "predicate": "order",
+      "value": 15,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "reasoning"
+      },
+      "quote": "order: 15",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

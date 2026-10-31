@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "source": "ai_for_science.php",
+  "lesson": "ai_for_science",
+  "title": "Closing the Loop — AI for Science",
+  "part": 6,
+  "order": 14,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "jumper2021alphafold",
+    "alphafold3",
+    "alphamissense",
+    "alphafold_db",
+    "alphafold_protein_img",
+    "navier_stokes_openai",
+    "navier_stokes_priority",
+    "alphatensor",
+    "funsearch",
+    "deletion_codes",
+    "alphaevolve",
+    "imo_wiki",
+    "alphageometry2",
+    "merchant2023gnome",
+    "pathak2022fourcastnet",
+    "lam2023graphcast",
+    "price2024gencast",
+    "silver2016go",
+    "silver2018zero",
+    "lecun2022jepa",
+    "coherent_difference"
+  ],
+  "claims": [
+    {
+      "id": "auto-ai_for_science-title-0-1",
+      "subject": "ai_for_science",
+      "predicate": "title",
+      "value": "Closing the Loop — AI for Science",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "ai_for_science"
+      },
+      "quote": "title: Closing the Loop — AI for Science",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-ai_for_science-part-0-2",
+      "subject": "ai_for_science",
+      "predicate": "part",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "ai_for_science"
+      },
+      "quote": "part: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-ai_for_science-order-0-3",
+      "subject": "ai_for_science",
+      "predicate": "order",
+      "value": 14,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "ai_for_science"
+      },
+      "quote": "order: 14",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

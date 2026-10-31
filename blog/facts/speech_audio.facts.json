@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "source": "speech_audio.php",
+  "lesson": "speech_audio",
+  "title": "Speech & Audio Models",
+  "part": 4,
+  "order": 15,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [],
+  "claims": [
+    {
+      "id": "auto-speech_audio-title-0-1",
+      "subject": "speech_audio",
+      "predicate": "title",
+      "value": "Speech & Audio Models",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "speech_audio"
+      },
+      "quote": "title: Speech & Audio Models",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-speech_audio-part-0-2",
+      "subject": "speech_audio",
+      "predicate": "part",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "speech_audio"
+      },
+      "quote": "part: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-speech_audio-order-0-3",
+      "subject": "speech_audio",
+      "predicate": "order",
+      "value": 15,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "speech_audio"
+      },
+      "quote": "order: 15",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

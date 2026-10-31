@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "source": "loss_landscape.php",
+  "lesson": "loss_landscape",
+  "title": "The Loss Landscape",
+  "part": 2,
+  "order": 6,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "li2018losslandscape",
+    "rumelhart1986learning",
+    "hochreiter1991vanishing",
+    "dinh2017sharpness",
+    "ioffe2015batchnorm",
+    "saxe2014deep",
+    "kawaguchi2016deep",
+    "lu2017expressive",
+    "dauphin2014saddle",
+    "smithle2018bayesian",
+    "mandt2017variational",
+    "hyperbolic_paraboloid_saddle",
+    "keskar2016largebatch",
+    "foret2021sam",
+    "he2016identity",
+    "choromanska2015loss",
+    "nguyen2017loss",
+    "garipov2018mode",
+    "grokking",
+    "amit1989modeling",
+    "chaudhari2016entropysgd",
+    "wales2003energy",
+    "hopfield1982"
+  ],
+  "claims": [
+    {
+      "id": "auto-loss_landscape-title-0-1",
+      "subject": "loss_landscape",
+      "predicate": "title",
+      "value": "The Loss Landscape",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "loss_landscape"
+      },
+      "quote": "title: The Loss Landscape",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-loss_landscape-part-0-2",
+      "subject": "loss_landscape",
+      "predicate": "part",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "loss_landscape"
+      },
+      "quote": "part: 2",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-loss_landscape-order-0-3",
+      "subject": "loss_landscape",
+      "predicate": "order",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "loss_landscape"
+      },
+      "quote": "order: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

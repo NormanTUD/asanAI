@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "source": "alignment.php",
+  "lesson": "alignment",
+  "title": "Alignment — Making Objectives Match Intent",
+  "part": 6,
+  "order": 9,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "bostrom2012orthogonal",
+    "bostrom2003ethical",
+    "mesa_optimization",
+    "hubinger2024sleeperagents",
+    "alignment_faking",
+    "thought_crime",
+    "reward_tampering",
+    "rogue_agents",
+    "treacherous_turn",
+    "wiener1960moral",
+    "asimov1942runaround",
+    "good1965explosion",
+    "asilomar2017",
+    "bletchley2023",
+    "euaiact2024",
+    "aisi2023",
+    "oecd2019ai",
+    "unesco2021ai",
+    "nist2023airmf",
+    "eo14110",
+    "christiano2017rlhf",
+    "ouyang2022instructgpt",
+    "rlaif",
+    "bai2022constitutional",
+    "rafailov2023dpo",
+    "orpo",
+    "kadavath2022selfknowledge",
+    "ai_safety_debate",
+    "weak_to_strong",
+    "verify_step_by_step",
+    "ai_control",
+    "mech_interp_alignment"
+  ],
+  "claims": [
+    {
+      "id": "auto-alignment-title-0-1",
+      "subject": "alignment",
+      "predicate": "title",
+      "value": "Alignment — Making Objectives Match Intent",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "alignment"
+      },
+      "quote": "title: Alignment — Making Objectives Match Intent",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-alignment-part-0-2",
+      "subject": "alignment",
+      "predicate": "part",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "alignment"
+      },
+      "quote": "part: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-alignment-order-0-3",
+      "subject": "alignment",
+      "predicate": "order",
+      "value": 9,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "alignment"
+      },
+      "quote": "order: 9",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

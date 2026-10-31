@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "source": "production_serving.php",
+  "lesson": "production_serving",
+  "title": "Production Serving & Inference",
+  "part": 5,
+  "order": 14,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "ainslie2023gqa",
+    "kwon2023vllm",
+    "leviathan2023speculative",
+    "ma2024bitnet",
+    "lin2023awq",
+    "frantar2022gptq",
+    "hinton2015distilling",
+    "routellm2024",
+    "nemocguardrails",
+    "react2022",
+    "otelgenai",
+    "continuous_delivery_wiki"
+  ],
+  "claims": [
+    {
+      "id": "auto-production_serving-title-0-1",
+      "subject": "production_serving",
+      "predicate": "title",
+      "value": "Production Serving & Inference",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "production_serving"
+      },
+      "quote": "title: Production Serving & Inference",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-production_serving-part-0-2",
+      "subject": "production_serving",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "production_serving"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-production_serving-order-0-3",
+      "subject": "production_serving",
+      "predicate": "order",
+      "value": 14,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "production_serving"
+      },
+      "quote": "order: 14",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-h100-memory-101-4",
+      "subject": "h100",
+      "predicate": "memory",
+      "value": "80",
+      "unit": "GB",
+      "qualifiers": {
+        "precision": "bf16"
+      },
+      "quote": "LLM decoding is **memory-bound**, not compute-bound. Each token requires reading all model weights once. A 70B model in bf16 cannot fit on a single 80 GB H100 at all; split across two H100s it tops out near ~40 tokens/s, and in FP8 on one H100 near the same order, regardless of FLOPs.",
+      "line": 101,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

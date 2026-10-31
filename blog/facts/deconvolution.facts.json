@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "source": "deconvolution.php",
+  "lesson": "deconvolution",
+  "title": "Pixels and Checkerboards",
+  "part": 3,
+  "order": 8,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "odena2016deconvolution"
+  ],
+  "claims": [
+    {
+      "id": "auto-deconvolution-title-0-1",
+      "subject": "deconvolution",
+      "predicate": "title",
+      "value": "Pixels and Checkerboards",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "deconvolution"
+      },
+      "quote": "title: Pixels and Checkerboards",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-deconvolution-part-0-2",
+      "subject": "deconvolution",
+      "predicate": "part",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "deconvolution"
+      },
+      "quote": "part: 3",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-deconvolution-order-0-3",
+      "subject": "deconvolution",
+      "predicate": "order",
+      "value": 8,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "deconvolution"
+      },
+      "quote": "order: 8",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

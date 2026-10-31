@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "source": "deeplearninglab.php",
+  "lesson": "deeplearninglab",
+  "title": "Deep Learning",
+  "part": 3,
+  "order": 1,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "deeplearningfirstuse",
+    "aizenberg2000",
+    "hinton2006",
+    "cybenko1989",
+    "hornik1989universal",
+    "petersen2024mathdl",
+    "telgarsky2016wars",
+    "montufar2014regions",
+    "he2015resnet",
+    "elhage2021framework",
+    "li2018losslandscape",
+    "dauphin2014saddle",
+    "ruder2016overview",
+    "grokking",
+    "nanda2023grokking",
+    "davies2023unifying",
+    "belkin2019reconciling"
+  ],
+  "claims": [
+    {
+      "id": "auto-deeplearninglab-title-0-1",
+      "subject": "deeplearninglab",
+      "predicate": "title",
+      "value": "Deep Learning",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "deeplearninglab"
+      },
+      "quote": "title: Deep Learning",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-deeplearninglab-part-0-2",
+      "subject": "deeplearninglab",
+      "predicate": "part",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "deeplearninglab"
+      },
+      "quote": "part: 3",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-deeplearninglab-order-0-3",
+      "subject": "deeplearninglab",
+      "predicate": "order",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "deeplearninglab"
+      },
+      "quote": "order: 1",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

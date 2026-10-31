@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "source": "inceptionism.php",
+  "lesson": "inceptionism",
+  "title": "Inceptionism: What the Network Sees",
+  "part": 3,
+  "order": 9,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "mordvintsev2015inceptionism"
+  ],
+  "claims": [
+    {
+      "id": "auto-inceptionism-title-0-1",
+      "subject": "inceptionism",
+      "predicate": "title",
+      "value": "Inceptionism: What the Network Sees",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "inceptionism"
+      },
+      "quote": "title: Inceptionism: What the Network Sees",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-inceptionism-part-0-2",
+      "subject": "inceptionism",
+      "predicate": "part",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "inceptionism"
+      },
+      "quote": "part: 3",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-inceptionism-order-0-3",
+      "subject": "inceptionism",
+      "predicate": "order",
+      "value": 9,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "inceptionism"
+      },
+      "quote": "order: 9",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

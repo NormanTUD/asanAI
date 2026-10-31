@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "source": "reinforcement_learning.php",
+  "lesson": "reinforcement_learning",
+  "title": "Reinforcement Learning",
+  "part": 2,
+  "order": 12,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "watkins1989qlearning",
+    "mnih2013dqn",
+    "mnih2015dqn",
+    "sutton2018reinforcement",
+    "williams1992reinforce",
+    "litman2025sdpaot",
+    "mnih2016a3c",
+    "schulman2017ppo",
+    "rafailov2023dpo",
+    "azar2023ipo",
+    "ethayarajh2024kto",
+    "hong2024orpo",
+    "meng2024simpo",
+    "shao2024grpo",
+    "du2023multiagent"
+  ],
+  "claims": [
+    {
+      "id": "auto-reinforcement_learning-title-0-1",
+      "subject": "reinforcement_learning",
+      "predicate": "title",
+      "value": "Reinforcement Learning",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "reinforcement_learning"
+      },
+      "quote": "title: Reinforcement Learning",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-reinforcement_learning-part-0-2",
+      "subject": "reinforcement_learning",
+      "predicate": "part",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "reinforcement_learning"
+      },
+      "quote": "part: 2",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-reinforcement_learning-order-0-3",
+      "subject": "reinforcement_learning",
+      "predicate": "order",
+      "value": 12,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "reinforcement_learning"
+      },
+      "quote": "order: 12",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

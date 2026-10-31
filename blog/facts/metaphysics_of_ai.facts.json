@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "source": "metaphysics_of_ai.php",
+  "lesson": "metaphysics_of_ai",
+  "title": "The Metaphysics of Artificial Intelligence",
+  "part": 6,
+  "order": 12,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "olson2018metaphysics",
+    "chalmers2016singularity",
+    "putnam1967functionalism",
+    "sep_multiple_realizability",
+    "sep_computational_mind",
+    "floridi2011information",
+    "piccinini2015computation",
+    "penrose1989emperor",
+    "sep_godel_incompleteness",
+    "parfit1984reasons"
+  ],
+  "claims": [
+    {
+      "id": "auto-metaphysics_of_ai-title-0-1",
+      "subject": "metaphysics_of_ai",
+      "predicate": "title",
+      "value": "The Metaphysics of Artificial Intelligence",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "metaphysics_of_ai"
+      },
+      "quote": "title: The Metaphysics of Artificial Intelligence",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-metaphysics_of_ai-part-0-2",
+      "subject": "metaphysics_of_ai",
+      "predicate": "part",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "metaphysics_of_ai"
+      },
+      "quote": "part: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-metaphysics_of_ai-order-0-3",
+      "subject": "metaphysics_of_ai",
+      "predicate": "order",
+      "value": 12,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "metaphysics_of_ai"
+      },
+      "quote": "order: 12",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

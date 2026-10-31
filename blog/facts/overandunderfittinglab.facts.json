@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "source": "overandunderfittinglab.php",
+  "lesson": "overandunderfittinglab",
+  "title": "Over- and underfitting",
+  "part": 3,
+  "order": 3,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "adam",
+    "ruder2016overview",
+    "hornik1989universal",
+    "hornik",
+    "rungesphenomenon",
+    "tibshirani1996lasso",
+    "hoerl1970ridge",
+    "earlyl2",
+    "srivastava2014dropout",
+    "hoffmann2022chinchilla",
+    "petersen2024mathdl"
+  ],
+  "claims": [
+    {
+      "id": "auto-overandunderfittinglab-title-0-1",
+      "subject": "overandunderfittinglab",
+      "predicate": "title",
+      "value": "Over- and underfitting",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "overandunderfittinglab"
+      },
+      "quote": "title: Over- and underfitting",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-overandunderfittinglab-part-0-2",
+      "subject": "overandunderfittinglab",
+      "predicate": "part",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "overandunderfittinglab"
+      },
+      "quote": "part: 3",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-overandunderfittinglab-order-0-3",
+      "subject": "overandunderfittinglab",
+      "predicate": "order",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "overandunderfittinglab"
+      },
+      "quote": "order: 3",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

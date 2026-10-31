@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "source": "ai_existential_risk.php",
+  "lesson": "ai_existential_risk",
+  "title": "AI Existential Risk — What Is Real and What Is Speculative",
+  "part": 6,
+  "order": 16,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "shelley1818frankenstein",
+    "butler1863machines",
+    "asimov1942runaround",
+    "turing1950computing",
+    "good1965explosion",
+    "joy2000future",
+    "bostrom2014superintelligence",
+    "bostrom2013xrisk",
+    "bales2024catastrophic",
+    "bostrom2012orthogonal",
+    "bostrom2003ethical",
+    "hubinger2024sleeperagents",
+    "alignment_faking",
+    "reward_tampering",
+    "treacherous_turn",
+    "thought_crime",
+    "rogue_agents",
+    "anthropic2025shutdown",
+    "statement_on_ai_risk_2023",
+    "fli2023pause",
+    "metz2023godfather",
+    "lecun2022autonomous",
+    "bender2021stochasticparrots",
+    "crawford2021atlas",
+    "fli2025ban",
+    "christian2020alignment",
+    "grace2024survey",
+    "kokotajlo2016takeoff",
+    "ord2020precipice",
+    "sutton2019bitter",
+    "gwern2020scaling",
+    "aschenbrenner2024",
+    "kokotajlo2025ai2027",
+    "christiano2019failure",
+    "simulatorstheory",
+    "karnofsky2021",
+    "amodei2024machines"
+  ],
+  "claims": [
+    {
+      "id": "auto-ai_existential_risk-title-0-1",
+      "subject": "ai_existential_risk",
+      "predicate": "title",
+      "value": "AI Existential Risk — What Is Real and What Is Speculative",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "ai_existential_risk"
+      },
+      "quote": "title: AI Existential Risk — What Is Real and What Is Speculative",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-ai_existential_risk-part-0-2",
+      "subject": "ai_existential_risk",
+      "predicate": "part",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "ai_existential_risk"
+      },
+      "quote": "part: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-ai_existential_risk-order-0-3",
+      "subject": "ai_existential_risk",
+      "predicate": "order",
+      "value": 16,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "ai_existential_risk"
+      },
+      "quote": "order: 16",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

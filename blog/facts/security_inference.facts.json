@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "source": "security_inference.php",
+  "lesson": "security_inference",
+  "title": "Security & Adversarial Attacks",
+  "part": 5,
+  "order": 8,
+  "curated": true,
+  "citations": [
+    "greshake2023injection",
+    "liu2024formalizing",
+    "wei2024jailbroken",
+    "hubinger2024sleeperagents"
+  ],
+  "claims": [
+    {
+      "id": "prompt-injection-described",
+      "subject": "prompt-injection",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {
+        "event": "Greshake et al."
+      },
+      "quote": "Prompt injection occurs when an attacker embeds instructions inside user-supplied data",
+      "line": 21,
+      "citation_keys": [
+        "greshake2023injection"
+      ]
+    },
+    {
+      "id": "jailbreaking-described",
+      "subject": "jailbreaking",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {
+        "event": "Wei et al."
+      },
+      "quote": "Jailbreaking manipulates the model into bypassing its safety training",
+      "line": 34,
+      "citation_keys": [
+        "wei2024jailbroken"
+      ]
+    },
+    {
+      "id": "data-poisoning-described",
+      "subject": "data-poisoning",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {
+        "event": "Hubinger et al."
+      },
+      "quote": "An attacker injects malicious examples into the training or fine-tuning data",
+      "line": 38,
+      "citation_keys": [
+        "hubinger2024sleeperagents"
+      ]
+    },
+    {
+      "id": "trojan-horse-painting-year",
+      "subject": "trojan-horse-painting",
+      "predicate": "year",
+      "value": 1773,
+      "unit": "year",
+      "qualifiers": {
+        "event": "painted by Giovanni Domenico Tiepolo"
+      },
+      "quote": "painted by Giovanni Domenico Tiepolo in 1773",
+      "line": 40
+    },
+    {
+      "id": "model-7b-memory-32bit",
+      "subject": "model-7b",
+      "predicate": "memory",
+      "value": 28,
+      "unit": "GB",
+      "qualifiers": {
+        "precision": "32-bit",
+        "approx": true
+      },
+      "quote": "Running a 7B-parameter model in 32-bit precision needs ~28 GB of memory",
+      "line": 81
+    },
+    {
+      "id": "model-7b-memory-16bit",
+      "subject": "model-7b",
+      "predicate": "memory",
+      "value": 14,
+      "unit": "GB",
+      "qualifiers": {
+        "precision": "16-bit",
+        "approx": true
+      },
+      "quote": "precision to 16 bits halves that to ~14 GB",
+      "line": 82
+    },
+    {
+      "id": "model-7b-memory-8bit",
+      "subject": "model-7b",
+      "predicate": "memory",
+      "value": 7,
+      "unit": "GB",
+      "qualifiers": {
+        "precision": "8-bit",
+        "approx": true
+      },
+      "quote": "8 bits drops it further to ~7 GB",
+      "line": 83
+    },
+    {
+      "id": "model-7b-memory-4bit",
+      "subject": "model-7b",
+      "predicate": "memory",
+      "value": 3.5,
+      "unit": "GB",
+      "qualifiers": {
+        "precision": "4-bit",
+        "approx": true
+      },
+      "quote": "4 bits shrinks to ~3.5 GB",
+      "line": 83
+    }
+  ]
+}

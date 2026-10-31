@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "source": "coherent_world_models.php",
+  "lesson": "coherent_world_models",
+  "title": "From World to Model: Coherent Representation",
+  "part": 4,
+  "order": 3,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "kant_critique_pure_reason",
+    "cartwright1983laws",
+    "cartwright1999dappled",
+    "brandom1994making",
+    "brandom2000articulating",
+    "spivak2012ologs",
+    "spivak2014cts",
+    "sellars1956empiricism",
+    "hacking1983representing",
+    "caramello2017theories",
+    "worrall1989structural",
+    "ladyman1998what",
+    "ladymanross2007everything",
+    "goodman1978ways",
+    "tarski1935wahrheitsbegriff",
+    "tarski1944semantic",
+    "tarski1956logic",
+    "naturanonfacitsaltus",
+    "bradley1893appearance",
+    "blanshard1939nature",
+    "walker2019coherence",
+    "joachim1906nature",
+    "bonjour1985structure",
+    "einstein1916foundation",
+    "popper1963conjectures",
+    "bertot2013coq",
+    "moura2015lean",
+    "schmitz_neo_phenomenology",
+    "prakash2021fitness",
+    "petersen2024mathdl"
+  ],
+  "claims": [
+    {
+      "id": "auto-coherent_world_models-title-0-1",
+      "subject": "coherent_world_models",
+      "predicate": "title",
+      "value": "From World to Model: Coherent Representation",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "coherent_world_models"
+      },
+      "quote": "title: From World to Model: Coherent Representation",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-coherent_world_models-part-0-2",
+      "subject": "coherent_world_models",
+      "predicate": "part",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "coherent_world_models"
+      },
+      "quote": "part: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-coherent_world_models-order-0-3",
+      "subject": "coherent_world_models",
+      "predicate": "order",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "coherent_world_models"
+      },
+      "quote": "order: 3",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "source": "backproplab.php",
+  "lesson": "backproplab",
+  "title": "Backpropagation: How a Neural Network Learns From Its Mistakes",
+  "part": 2,
+  "order": 5,
+  "curated": true,
+  "citations": [
+    "rumelhart1986"
+  ],
+  "claims": [
+    {
+      "id": "backpropagation-year",
+      "subject": "backpropagation",
+      "predicate": "year",
+      "value": 1986,
+      "unit": "year",
+      "qualifiers": {
+        "event": "introduced to the field of AI"
+      },
+      "quote": "Backpropagation, introduced to the field of AI in 1986",
+      "line": 17,
+      "citation_keys": [
+        "rumelhart1986"
+      ]
+    },
+    {
+      "id": "backproplab-demo-layers",
+      "subject": "backproplab-demo",
+      "predicate": "layers",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "the demo below runs a 4-layer network",
+      "line": 29
+    },
+    {
+      "id": "backproplab-demo-architecture",
+      "subject": "backproplab-demo",
+      "predicate": "architecture",
+      "value": "3-4-4-2",
+      "unit": "count",
+      "qualifiers": {
+        "definition": "layer widths from input to output"
+      },
+      "quote": "with shape 3 → 4 → 4 → 2",
+      "line": 29
+    },
+    {
+      "id": "backproplab-demo-activation",
+      "subject": "backproplab-demo",
+      "predicate": "activation",
+      "value": "sigmoid",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The sigmoid squashes any real number into (0, 1)",
+      "line": 47
+    },
+    {
+      "id": "sigmoid-range",
+      "subject": "sigmoid",
+      "predicate": "range",
+      "value": "(0,1)",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "The sigmoid squashes any real number into (0, 1)",
+      "line": 47
+    },
+    {
+      "id": "backproplab-demo-loss",
+      "subject": "backproplab-demo",
+      "predicate": "loss",
+      "value": "half-sum-of-squares",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "We measure error with the half sum-of-squares",
+      "line": 65
+    },
+    {
+      "id": "backpropagation-gradient-rule",
+      "subject": "backpropagation",
+      "predicate": "gradient_rule",
+      "value": "chain-rule",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "At any hidden layer (chain rule)",
+      "line": 86
+    },
+    {
+      "id": "backproplab-demo-update",
+      "subject": "backproplab-demo",
+      "predicate": "weight_update",
+      "value": "w - eta * dE/dw",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "w ← w − η · ∂E/∂w",
+      "line": 100
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "source": "symbolic_ai.php",
+  "lesson": "symbolic_ai",
+  "title": "Symbolic AI, Knowledge Graphs & Neuro-Symbolic AI",
+  "part": 5,
+  "order": 11,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "frege1879",
+    "russell1910pm",
+    "russell_paradox_sep",
+    "hilbert1928entscheidung",
+    "godel1931incompleteness",
+    "sep_godel_incompleteness",
+    "turing1936",
+    "turing1950computing",
+    "mccarthy1955dartmouth",
+    "newell1976empirical",
+    "brooks1990elephants",
+    "newell1956logictheorist",
+    "newell1957gps",
+    "mccarthy1960lisp",
+    "lisp_wiki",
+    "robinson1965resolution",
+    "kowalski1974prolog",
+    "colmerauer1973prolog",
+    "bordes2013transe",
+    "yang2015distmult",
+    "sun2019rotate",
+    "hamilton2017graphsage",
+    "schlichtkrull2018rgcn",
+    "feigenbaum1965dendral",
+    "shortliffe1976mycin",
+    "crevier1993ai",
+    "winograd1972understanding",
+    "mccarthy1969some",
+    "cyc_wiki",
+    "berners2001sw",
+    "singhal2012knowledge",
+    "manhaeve2018deepproblog",
+    "trinh2024alphageometry",
+    "garcez2020neurosymbolic",
+    "deepmind2024alphaproof",
+    "yao2023react",
+    "schick2023toolformer"
+  ],
+  "claims": [
+    {
+      "id": "auto-symbolic_ai-title-0-1",
+      "subject": "symbolic_ai",
+      "predicate": "title",
+      "value": "Symbolic AI, Knowledge Graphs & Neuro-Symbolic AI",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "symbolic_ai"
+      },
+      "quote": "title: Symbolic AI, Knowledge Graphs & Neuro-Symbolic AI",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-symbolic_ai-part-0-2",
+      "subject": "symbolic_ai",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "symbolic_ai"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-symbolic_ai-order-0-3",
+      "subject": "symbolic_ai",
+      "predicate": "order",
+      "value": 11,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "symbolic_ai"
+      },
+      "quote": "order: 11",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

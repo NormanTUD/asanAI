@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "source": "trainingdynamics.php",
+  "lesson": "trainingdynamics",
+  "title": "The Training Run as a Phenomenon",
+  "part": 2,
+  "order": 13,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "kaplan2020scaling",
+    "hoffmann2022chinchilla",
+    "brown2020gpt3",
+    "wsd2025",
+    "goyal2017largebatch",
+    "cohen2021edgeofstability",
+    "arora2022edgeofstability",
+    "yang2022mup"
+  ],
+  "claims": [
+    {
+      "id": "auto-trainingdynamics-title-0-1",
+      "subject": "trainingdynamics",
+      "predicate": "title",
+      "value": "The Training Run as a Phenomenon",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "trainingdynamics"
+      },
+      "quote": "title: The Training Run as a Phenomenon",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-trainingdynamics-part-0-2",
+      "subject": "trainingdynamics",
+      "predicate": "part",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "trainingdynamics"
+      },
+      "quote": "part: 2",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-trainingdynamics-order-0-3",
+      "subject": "trainingdynamics",
+      "predicate": "order",
+      "value": 13,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "trainingdynamics"
+      },
+      "quote": "order: 13",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

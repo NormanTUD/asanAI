@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "source": "evaluation.php",
+  "lesson": "evaluation",
+  "title": "Evaluation & Benchmarks",
+  "part": 5,
+  "order": 16,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "goodhartslaw",
+    "hendrycks2021mmlu",
+    "chen2021humaneval",
+    "zheng2023lmsys",
+    "wang2024mmlupro",
+    "zellers2019hellaswag",
+    "clark2018arc",
+    "cobbe2021gsm8k",
+    "hendrycks2021math",
+    "austin2021mbpp",
+    "srivastava2022bigbench",
+    "dubois2024alpacaeval",
+    "chiang2024arena",
+    "wang2018glue",
+    "wang2019superglue",
+    "rein2024gpqa",
+    "chollet2024arcagi",
+    "carlini2021extracting",
+    "shi2024mink",
+    "white2024livebench",
+    "glazer2024frontiermath",
+    "liang2023helm",
+    "cohenkappa",
+    "llmjudge2023",
+    "helm2022"
+  ],
+  "claims": [
+    {
+      "id": "auto-evaluation-title-0-1",
+      "subject": "evaluation",
+      "predicate": "title",
+      "value": "Evaluation & Benchmarks",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "evaluation"
+      },
+      "quote": "title: Evaluation & Benchmarks",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-evaluation-part-0-2",
+      "subject": "evaluation",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "evaluation"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-evaluation-order-0-3",
+      "subject": "evaluation",
+      "predicate": "order",
+      "value": 16,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "evaluation"
+      },
+      "quote": "order: 16",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

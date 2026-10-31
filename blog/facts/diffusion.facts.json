@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "source": "diffusion.php",
+  "lesson": "diffusion",
+  "title": "Diffusion Models",
+  "part": 4,
+  "order": 14,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "diffusion_astronaut_img",
+    "ho2020ddpm",
+    "sohl2015deep",
+    "song2019score",
+    "ramesh2022dalle2",
+    "ramesh2021dalle",
+    "nichol2021improved",
+    "dhariwal2021diffusion",
+    "song2020ddim",
+    "song2021sde",
+    "ho2022cfg",
+    "diffusion_architecture_img",
+    "hu2021lora",
+    "zhang2023controlnet",
+    "ronneberger2015unet",
+    "kingma2014vae",
+    "esser2021taming",
+    "rombach2022ldm",
+    "diffusion_ddim_img",
+    "lipman2023flow",
+    "peebles2023dit",
+    "austin2021d3pm",
+    "nie2025llada"
+  ],
+  "claims": [
+    {
+      "id": "auto-diffusion-title-0-1",
+      "subject": "diffusion",
+      "predicate": "title",
+      "value": "Diffusion Models",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "diffusion"
+      },
+      "quote": "title: Diffusion Models",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-diffusion-part-0-2",
+      "subject": "diffusion",
+      "predicate": "part",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "diffusion"
+      },
+      "quote": "part: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-diffusion-order-0-3",
+      "subject": "diffusion",
+      "predicate": "order",
+      "value": 14,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "diffusion"
+      },
+      "quote": "order: 14",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-stable-diffusion-parameters-180-4",
+      "subject": "stable-diffusion",
+      "predicate": "parameters",
+      "value": "860",
+      "unit": "M",
+      "qualifiers": {},
+      "quote": "The only fully-connected layers are tiny MLPs for the time and text embeddings. Everything else is convolution or attention. Stable Diffusion 1.5's U-Net has ~860 M parameters (the full pipeline, including text encoder and VAE, is about 1 B). The forward pass per denoising step: encode $t$, run the ",
+      "line": 180,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

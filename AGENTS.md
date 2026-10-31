@@ -853,6 +853,120 @@ and tour stop. A hardcoded marker in `atlas.js` breaks all of that:
   switch to WebGL at boot.
 - Indentation is tabs; Unix line endings; `semi: always` per .eslintrc.js.
 
+## The Blog: fact ledger (`blog/facts/`)
+
+The ledger is the deterministic, machine-checkable subset of the prose. No
+LLM, no network, no embeddings. It exists so a new sentence cannot silently
+introduce a number, date, unit or model spec that contradicts another lesson.
+
+**Hard rule.** Every top-level lesson `blog/<slug>.php` that carries
+`COURSE_METADATA` has exactly one `blog/facts/<slug>.facts.json`. The only
+files without a fact file are the non-lesson entry points (`index.php`,
+`index_full.php`, `functions.php`, `asanai_blog_proxy.php`, `graph.php`).
+Adding a lesson means adding its fact file in the same commit; deleting or
+renaming a lesson means deleting or renaming its fact file.
+
+**Commands (from the repository root).**
+
+```bash
+# Create missing files; existing curated files are never overwritten.
+uv run blog/tools/factcheck/extract_facts.py blog/
+
+# Regenerate every non-curated (generator-owned) file.
+uv run blog/tools/factcheck/extract_facts.py blog/ --force
+
+# Validate coverage, schema and cross-lesson conflicts.
+uv run blog/tools/factcheck/check_facts.py blog/
+
+# Unit tests for the ledger itself (aliases, units, conflict detection).
+uv run blog/tests/fact_ledger_test.py
+```
+
+`check_facts.py` fails when a lesson has no fact file, when an orphan fact
+file has no lesson, when a claim is malformed, or when two claims about the
+same `(subject, predicate, qualifiers)` carry incompatible normalised values.
+It exits 0/1 and is run in the blog CI workflow.
+
+**Top-level file shape.**
+
+```json
+{
+  "schema_version": 1,
+  "source": "backproplab.php",
+  "lesson": "backproplab",
+  "title": "Backpropagation: …",
+  "part": 2,
+  "order": 5,
+  "curated": true,
+  "generated_by": "extract_facts.py",
+  "citations": ["rumelhart1986"],
+  "claims": []
+}
+```
+
+**Claim shape.**
+
+```json
+{
+  "id": "backproplab-demo-layers",
+  "subject": "backproplab-demo",
+  "predicate": "layers",
+  "value": 4,
+  "unit": "count",
+  "qualifiers": {},
+  "quote": "the demo below runs a 4-layer network",
+  "line": 29,
+  "citation_keys": [],
+  "source_url": "",
+  "confidence": "stated"
+}
+```
+
+**Naming rules — use these exact shapes for new files.**
+
+- **File:** `blog/facts/<slug>.facts.json`; `<slug>` is the PHP basename
+  without `.php`. Never create a second name for the same lesson.
+- **`subject`:** stable lowercase kebab-case ID, not prose:
+  `gpt-3`, `gpt-4`, `llama-2-70b`, `llama-3-405b`, `h100`, `a100`,
+  `alexnet`, `resnet-152`, `chinchilla`, `imagenet`, `prompt-injection`.
+  Put a version/variant into the subject when it changes the value
+  (`gpt-3` vs `gpt-3-175b`; `model-7b`).
+- **`predicate`:** lowercase snake_case, controlled vocabulary:
+  `parameters`, `layers`, `context_window`, `training_tokens`, `year`,
+  `memory`, `tflops`, `d_model`, `heads`, `accuracy`, `price`, `title`,
+  `part`, `order`, `cites`. Domain-specific predicates are allowed
+  (`architecture`, `activation`, `loss`, `range`, `gradient_rule`), but
+  reuse an existing one instead of inventing a synonym.
+- **`unit`:** `count`, `year`, `token`, `GB`, `TB`, `TFLOPS`, `%`, `USD`,
+  `name`, `formula`, `interval`. Do not write the unit into `value`.
+- **`qualifiers`:** only the fields that change the meaning:
+  `precision` (`bf16`, `fp16`, `fp32`, `int8`, `int4`, `32-bit`, `16-bit`,
+  `8-bit`, `4-bit`), `parameter_kind` (`total`/`active`), `variant`,
+  `event`, `definition`, `scope`, `approx` (`true`). Two values that are
+  legitimately different need different qualifiers or different subjects —
+  never remove the qualifier to silence a conflict.
+- **`value`:** a number for quantities (put the unit in `unit`), a string
+  only for names, formulas, intervals or textual definitions.
+- **`quote` / `line`:** the exact substring and its 1-based line in the PHP
+  file. `citation_keys` when the claim rests on a source.
+- **`curated`:** `true` for human-verified claims; `false` for the
+  generator. The extractor never overwrites a `curated: true` file.
+- **`confidence`:** `stated` for curated claims, `extracted` for generated
+  ones.
+
+**Alias tolerance is intentional.** `check_facts.py` accepts
+`claims`/`facts`/`items`, `subject`/`entity`/`topic`,
+`predicate`/`property`, `value`/`val`, `qualifiers`/`context`,
+`quote`/`evidence`, and canonicalises `params`→`parameters`,
+`context_length`→`context_window`, `GPT3`→`gpt-3`, etc. New files should
+still use the canonical spellings above; aliases exist for generated or
+legacy files, not as a style choice.
+
+**When you change a lesson.** Any new or changed number, date, unit, model
+spec or formula must be added or updated in that lesson's fact file. Run
+`check_facts.py` before committing. A genuine intentional difference gets a
+qualifier (precision, variant, parameter kind, event), not an allowlist.
+
 ## Validate before you finish
 
 Run from the **repository root**. Python validators self-bootstrap under `uv`
@@ -873,6 +987,8 @@ dependency in a header won't resolve for a few days).
 | `uv run blog/tests/lesson_guard.py blog/` | per-lesson static regression guards (currently `math_iv.php`: headings-in-md, citation keys, 3D wiring) — extend the `LESSONS` list per lesson — plus blog-wide citation-integration, quiz-option-balance and site-footer guards | any guard | `blog/**` |
 | `uv run blog/tests/link_checker.py blog/` | every `url:` in `literature.js` returns 2xx; PDFs must start `%PDF`; TLS/bot-block soft-passes never fail | real failures | `blog/**` + weekly cron |
 | `uv run blog/tests/literature_dup_keys.py blog/` | every top-level key in `literature.js` appears exactly once (JS object last-wins would silently hide a duplicate) | **any duplicate** | `blog/**` |
+| `uv run blog/tools/factcheck/check_facts.py blog/` | one fact file per lesson; schema; cross-lesson numeric/date/unit/model-spec conflicts (alias-tolerant, no LLM) | missing/orphan file, malformed claim, conflict | `blog/**` (php-validation job) |
+| `uv run blog/tests/fact_ledger_test.py` | unit tests for aliases, unit normalisation, conflict detection, coverage | any failed test | `blog/**` (php-validation job) |
 | `node blog/tests/{topics,math_alt,keypoint,search_js,semantic_js}_test.js` | DOM-stubbed unit tests of BlogTopics (interests, math dial, learned), math-alts, keypoints, search, semantic ranking | any failed check | `blog/**` |
 | `node blog/tests/rag_chat_test.js` | RAG chat status text, citation links, HTML escaping | any failed check | `blog/**` |
 | `uv run blog/tests/semantic_index_test.py` | semantic index freshness vs `.search_cache.json`, vector shape, Python↔JS tokenizer parity, int8 vector fidelity | stale index or any failed check | `blog/**` (semantic-index job) |

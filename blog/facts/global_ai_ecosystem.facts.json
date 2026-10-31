@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "source": "global_ai_ecosystem.php",
+  "lesson": "global_ai_ecosystem",
+  "title": "The Global AI Ecosystem",
+  "part": 6,
+  "order": 1,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "deepseekv3tech2024",
+    "qwen2024",
+    "ai4bharat2024",
+    "masakhane2024",
+    "guo2025deepseekr1",
+    "qwen2024qwen25",
+    "qwen2025qwen3",
+    "glm2024",
+    "kimi2025k2",
+    "minimax2025lightning",
+    "longcat2025",
+    "deepseek2024v3",
+    "china2023algorithmic",
+    "insta2023",
+    "ssi2024",
+    "tml2025",
+    "ndea2025",
+    "arcee2025",
+    "technologyinnovation2024",
+    "lieber2024jamba",
+    "euaiact2024",
+    "gptoss2025",
+    "black2022gptneox",
+    "zhang2022opt",
+    "scao2022bloom",
+    "biderman2023pythia"
+  ],
+  "claims": [
+    {
+      "id": "auto-global_ai_ecosystem-title-0-1",
+      "subject": "global_ai_ecosystem",
+      "predicate": "title",
+      "value": "The Global AI Ecosystem",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "global_ai_ecosystem"
+      },
+      "quote": "title: The Global AI Ecosystem",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-global_ai_ecosystem-part-0-2",
+      "subject": "global_ai_ecosystem",
+      "predicate": "part",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "global_ai_ecosystem"
+      },
+      "quote": "part: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-global_ai_ecosystem-order-0-3",
+      "subject": "global_ai_ecosystem",
+      "predicate": "order",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "global_ai_ecosystem"
+      },
+      "quote": "order: 1",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

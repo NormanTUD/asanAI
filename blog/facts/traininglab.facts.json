@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "source": "traininglab.php",
+  "lesson": "traininglab",
+  "title": "Live Training of a Neural Network",
+  "part": 2,
+  "order": 11,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [],
+  "claims": [
+    {
+      "id": "auto-traininglab-title-0-1",
+      "subject": "traininglab",
+      "predicate": "title",
+      "value": "Live Training of a Neural Network",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "traininglab"
+      },
+      "quote": "title: Live Training of a Neural Network",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-traininglab-part-0-2",
+      "subject": "traininglab",
+      "predicate": "part",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "traininglab"
+      },
+      "quote": "part: 2",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-traininglab-order-0-3",
+      "subject": "traininglab",
+      "predicate": "order",
+      "value": 11,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "traininglab"
+      },
+      "quote": "order: 11",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

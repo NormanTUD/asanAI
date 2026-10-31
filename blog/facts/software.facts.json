@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "source": "software.php",
+  "lesson": "software",
+  "title": "Software: Operating Systems, Programming Languages & the Abstraction Stack",
+  "part": 6,
+  "order": 18,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "vonneumann",
+    "leibnizrechenmaschine",
+    "leibniz1686calculus",
+    "leibnizcc",
+    "chm",
+    "lovelacequote",
+    "babbage",
+    "zusebook",
+    "zusetoolazy",
+    "zusez1",
+    "edvac_os",
+    "ctss_annals",
+    "licklider",
+    "multics_plan9",
+    "unix_ts",
+    "bell_labs",
+    "plan9_9front",
+    "windows_ms",
+    "mach",
+    "gnu_hurd",
+    "minix3",
+    "mars_pathfinder",
+    "fortran2",
+    "lispworks",
+    "algol60",
+    "goto_harmful",
+    "isocpp",
+    "pascal",
+    "smalltalk",
+    "haskell",
+    "prolog",
+    "apl_j",
+    "dartmouth",
+    "codd1970",
+    "garmisch1968",
+    "java_oracle",
+    "python",
+    "python_zen",
+    "javascript_mdn",
+    "csharp_ms",
+    "go_lang",
+    "rust_lang",
+    "gnu_make",
+    "git"
+  ],
+  "claims": [
+    {
+      "id": "auto-software-title-0-1",
+      "subject": "software",
+      "predicate": "title",
+      "value": "Software: Operating Systems, Programming Languages & the Abstraction Stack",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "software"
+      },
+      "quote": "title: Software: Operating Systems, Programming Languages & the Abstraction Stack",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-software-part-0-2",
+      "subject": "software",
+      "predicate": "part",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "software"
+      },
+      "quote": "part: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-software-order-0-3",
+      "subject": "software",
+      "predicate": "order",
+      "value": 18,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "software"
+      },
+      "quote": "order: 18",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

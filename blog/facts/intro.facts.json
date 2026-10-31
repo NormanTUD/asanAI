@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "source": "intro.php",
+  "lesson": "intro",
+  "title": "From Nothing to Large Language Models: A Peek inside the Black Box",
+  "part": 0,
+  "order": 0,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "cuevadelasmanos_image",
+    "perceptronimagedetection",
+    "twocultures",
+    "hayakawa"
+  ],
+  "claims": [
+    {
+      "id": "auto-intro-title-0-1",
+      "subject": "intro",
+      "predicate": "title",
+      "value": "From Nothing to Large Language Models: A Peek inside the Black Box",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "intro"
+      },
+      "quote": "title: From Nothing to Large Language Models: A Peek inside the Black Box",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-intro-part-0-2",
+      "subject": "intro",
+      "predicate": "part",
+      "value": 0,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "intro"
+      },
+      "quote": "part: 0",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-intro-order-0-3",
+      "subject": "intro",
+      "predicate": "order",
+      "value": 0,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "intro"
+      },
+      "quote": "order: 0",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

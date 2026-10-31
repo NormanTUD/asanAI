@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "source": "math_iii.php",
+  "lesson": "math_iii",
+  "title": "Basic Math Concepts III — Approximation, High Dimensions & a Taste of Type Theory",
+  "part": 1,
+  "order": 5,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "kleinetymology",
+    "jcgm2012vim",
+    "eudoxus_mactutor",
+    "archimedes_works_heath",
+    "liuhui_pi_wiki",
+    "zuchongzhi_mactutor",
+    "newton1736fluxions",
+    "euler1768integralis",
+    "cybenko1989",
+    "hornik1989",
+    "petersen2024mathdl",
+    "historyofmathematicalnotation",
+    "cavalieri1635geometria",
+    "riemann1854trig",
+    "lebesgue1902integrale",
+    "cauchy1825memoire",
+    "lang2005basicmath",
+    "turning_number_wiki",
+    "bellman1957book",
+    "bellman1961adaptive",
+    "beyer1999nearest",
+    "gorban2018blessing",
+    "elhage2022superposition",
+    "templeton2024scaling",
+    "gromov1983isoperimetric",
+    "concentration_of_measure_wiki",
+    "talagrand1995concentration",
+    "cayton2005manifold",
+    "olah2014manifolds",
+    "loaizaganem2024manifoldsurvey",
+    "whitney1936manifolds",
+    "zhang2017rethinking",
+    "frege1879",
+    "russell_paradox_sep",
+    "russell1903principles",
+    "russell1910principia",
+    "churchsimplytyped",
+    "martinlof1984intuitionistic",
+    "intuitionistic_type_theory_sep",
+    "voevodsky2006hlambda",
+    "voevodsky2010equivalence",
+    "hottbook",
+    "youvan2024"
+  ],
+  "claims": [
+    {
+      "id": "auto-math_iii-title-0-1",
+      "subject": "math_iii",
+      "predicate": "title",
+      "value": "Basic Math Concepts III — Approximation, High Dimensions & a Taste of Type Theory",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "math_iii"
+      },
+      "quote": "title: Basic Math Concepts III — Approximation, High Dimensions & a Taste of Type Theory",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-math_iii-part-0-2",
+      "subject": "math_iii",
+      "predicate": "part",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "math_iii"
+      },
+      "quote": "part: 1",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-math_iii-order-0-3",
+      "subject": "math_iii",
+      "predicate": "order",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "math_iii"
+      },
+      "quote": "order: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

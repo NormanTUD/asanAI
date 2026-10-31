@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "source": "recurrent_networks.php",
+  "lesson": "recurrent_networks",
+  "title": "Networks with Memory",
+  "part": 4,
+  "order": 5,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "colah2015lstm",
+    "hopfield1982",
+    "colah2014conv",
+    "jordan1986",
+    "elman1990finding",
+    "colah2015backprop",
+    "hochreiter1991vanishing",
+    "bengio1994learning",
+    "werbos1990bptt",
+    "lstm",
+    "lstm_vanilla",
+    "cho2014gru",
+    "greff2015lstm",
+    "vaswani2017attention",
+    "sutskever2014seq2seq",
+    "bahdanau2014",
+    "williams1989",
+    "bengio2015scheduled",
+    "wu2016gnmt",
+    "raffel2020t5",
+    "radford2022whisper"
+  ],
+  "claims": [
+    {
+      "id": "auto-recurrent_networks-title-0-1",
+      "subject": "recurrent_networks",
+      "predicate": "title",
+      "value": "Networks with Memory",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "recurrent_networks"
+      },
+      "quote": "title: Networks with Memory",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-recurrent_networks-part-0-2",
+      "subject": "recurrent_networks",
+      "predicate": "part",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "recurrent_networks"
+      },
+      "quote": "part: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-recurrent_networks-order-0-3",
+      "subject": "recurrent_networks",
+      "predicate": "order",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "recurrent_networks"
+      },
+      "quote": "order: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

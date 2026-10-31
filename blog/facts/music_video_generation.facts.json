@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "source": "music_video_generation.php",
+  "lesson": "music_video_generation",
+  "title": "AI Music & Video Generation",
+  "part": 4,
+  "order": 16,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "diffusion_astronaut_img",
+    "brooks2024sora",
+    "panharmonicon",
+    "strachey1952",
+    "illiac_suite",
+    "max_mathews",
+    "music_theory",
+    "midi",
+    "midi_keyboard_img",
+    "pcm",
+    "nyquist_sampling",
+    "cd_digital_audio",
+    "oscilloscope_waveform_img",
+    "vinyl_lp_record_img",
+    "cd_compact_disc_img",
+    "mp3",
+    "mdct",
+    "audio_spectrogram_img",
+    "zeghidour2021soundstream",
+    "defossez2022encodec",
+    "vaswani2017attention",
+    "radford2021clip",
+    "oord2016wavenet",
+    "sutton2019bitter",
+    "fan2018topk",
+    "holtzman2019nucleus",
+    "borsos2023audiolm",
+    "agostinelli2023musiqlm",
+    "copet2023musicgen",
+    "ho2020ddpm",
+    "kingma2014vae",
+    "rombach2022ldm",
+    "ho2022cfg",
+    "peebles2023dit",
+    "film_strip_35mm_img",
+    "vhs_cassette_img",
+    "video_compression",
+    "dct",
+    "h264_coding_structure_img",
+    "h264",
+    "av1",
+    "yan2021videogpt",
+    "vq_vae",
+    "bain2021webvid",
+    "ha2018worldmodels",
+    "liu2023audioldm"
+  ],
+  "claims": [
+    {
+      "id": "auto-music_video_generation-title-0-1",
+      "subject": "music_video_generation",
+      "predicate": "title",
+      "value": "AI Music & Video Generation",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "music_video_generation"
+      },
+      "quote": "title: AI Music & Video Generation",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-music_video_generation-part-0-2",
+      "subject": "music_video_generation",
+      "predicate": "part",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "music_video_generation"
+      },
+      "quote": "part: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-music_video_generation-order-0-3",
+      "subject": "music_video_generation",
+      "predicate": "order",
+      "value": 16,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "music_video_generation"
+      },
+      "quote": "order: 16",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

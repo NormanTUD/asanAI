@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "source": "statistics_ii.php",
+  "lesson": "statistics_ii",
+  "title": "Statistics II — Inference and Information",
+  "part": 1,
+  "order": 11,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "bayes1763essay",
+    "thomas_bayes_image",
+    "nyquist_sampling",
+    "hartley1928transmission",
+    "szilard1929entropy",
+    "shannon1948communication",
+    "em_algorithm_wiki",
+    "nietzsche1883zarathustra",
+    "boltzmann",
+    "fisher1922",
+    "kolmogorov1933",
+    "leiblerkullback",
+    "kullback_wiki",
+    "colah2015visualinfo",
+    "zelligharris"
+  ],
+  "claims": [
+    {
+      "id": "auto-statistics_ii-title-0-1",
+      "subject": "statistics_ii",
+      "predicate": "title",
+      "value": "Statistics II — Inference and Information",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "statistics_ii"
+      },
+      "quote": "title: Statistics II — Inference and Information",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-statistics_ii-part-0-2",
+      "subject": "statistics_ii",
+      "predicate": "part",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "statistics_ii"
+      },
+      "quote": "part: 1",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-statistics_ii-order-0-3",
+      "subject": "statistics_ii",
+      "predicate": "order",
+      "value": 11,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "statistics_ii"
+      },
+      "quote": "order: 11",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "source": "autodiff.php",
+  "lesson": "autodiff",
+  "title": "Automatic Differentiation: How Machines Learn",
+  "part": 2,
+  "order": 4,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "colah2015backprop",
+    "leibniz1684nova",
+    "wengert1964",
+    "linnainmaa1970",
+    "linnainmaa1976",
+    "werbos1974",
+    "rumelhart1986",
+    "speelpenning1980",
+    "griewank1989",
+    "griewank2008",
+    "differenceengine",
+    "cauchy1847",
+    "tensorflow2016",
+    "pytorch",
+    "jax2018",
+    "hochreiter1991vanishing",
+    "bengio1994learning",
+    "relupaper",
+    "he2015resnet",
+    "ba2016layernorm",
+    "vaswani2017attention"
+  ],
+  "claims": [
+    {
+      "id": "auto-autodiff-title-0-1",
+      "subject": "autodiff",
+      "predicate": "title",
+      "value": "Automatic Differentiation: How Machines Learn",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "autodiff"
+      },
+      "quote": "title: Automatic Differentiation: How Machines Learn",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-autodiff-part-0-2",
+      "subject": "autodiff",
+      "predicate": "part",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "autodiff"
+      },
+      "quote": "part: 2",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-autodiff-order-0-3",
+      "subject": "autodiff",
+      "predicate": "order",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "autodiff"
+      },
+      "quote": "order: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-gpt-3-parameters-46-4",
+      "subject": "gpt-3",
+      "predicate": "parameters",
+      "value": "175",
+      "unit": "billion",
+      "qualifiers": {},
+      "quote": "This requires **one forward pass per parameter** to compute each partial derivative. For a model with $n$ parameters, that means $n + 1$ forward passes. GPT-3 has 175 billion parameters, numerical differentiation would require 175 billion forward passes per training step. It is also numerically unst",
+      "line": 46,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

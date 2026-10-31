@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "source": "geometry_iii.php",
+  "lesson": "geometry_iii",
+  "title": "The Shape of Holes: A Working Algebraic Topology",
+  "part": 1,
+  "order": 12,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "morris2007topology",
+    "eulerbridges",
+    "eulersolids",
+    "poincareanalysissitus",
+    "poincareconjecture1904",
+    "perelmanpoincare",
+    "mclarty2006noether",
+    "condorcet1770",
+    "legendre1786",
+    "historyofmathematicalnotation",
+    "hatcher",
+    "derham1931",
+    "hottbook",
+    "youvan2024",
+    "eilenbergmaclane1942",
+    "eilenbergsteenrod1952",
+    "maclane1998categories",
+    "mayer1929",
+    "vietoris1930",
+    "vietorisbio2002",
+    "seifert1931",
+    "vankampen1933",
+    "brown1967",
+    "hurewicz1935",
+    "eilenbergmaclane1945spaces",
+    "hopf1931fibration",
+    "freudenthal1937",
+    "serre1951",
+    "serre1953",
+    "whitehead1949",
+    "eilenberglane1945",
+    "milnor1962additivity",
+    "leray1946",
+    "steenrod1947",
+    "adams1960",
+    "bott1959",
+    "reidemeister1935",
+    "reidemeistertorsion_wiki",
+    "milnor1966torsion",
+    "edelsbrunner2002persistent",
+    "zomorodian2005",
+    "cohensteiner2007",
+    "carlsson2009tda",
+    "riek2019neural",
+    "brouwer1911fixed",
+    "degree_wiki"
+  ],
+  "claims": [
+    {
+      "id": "auto-geometry_iii-title-0-1",
+      "subject": "geometry_iii",
+      "predicate": "title",
+      "value": "The Shape of Holes: A Working Algebraic Topology",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "geometry_iii"
+      },
+      "quote": "title: The Shape of Holes: A Working Algebraic Topology",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-geometry_iii-part-0-2",
+      "subject": "geometry_iii",
+      "predicate": "part",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "geometry_iii"
+      },
+      "quote": "part: 1",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-geometry_iii-order-0-3",
+      "subject": "geometry_iii",
+      "predicate": "order",
+      "value": 12,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "geometry_iii"
+      },
+      "quote": "order: 12",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

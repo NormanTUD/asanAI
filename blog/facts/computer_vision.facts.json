@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "source": "computer_vision.php",
+  "lesson": "computer_vision",
+  "title": "What Machines See",
+  "part": 3,
+  "order": 7,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "neocognitron",
+    "hubelwiesel",
+    "lecun1989backpropagation",
+    "deng2009imagenet",
+    "krizhevsky2012imagenet",
+    "colah2014conv",
+    "colah2015types",
+    "petersen2024mathdl",
+    "stopsignimage",
+    "he2015resnet",
+    "girshick2014rcnn",
+    "ren2015faster",
+    "redmon2016yolo",
+    "ronneberger2015unet",
+    "he2017maskrcnn",
+    "kirillov2023sam",
+    "sam_demo_img",
+    "dosovitskiy2021vit",
+    "he2021mae",
+    "radford2021clip",
+    "goh2021multimodal",
+    "darcet2024registers",
+    "mordvintsev2015inceptionism"
+  ],
+  "claims": [
+    {
+      "id": "auto-computer_vision-title-0-1",
+      "subject": "computer_vision",
+      "predicate": "title",
+      "value": "What Machines See",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "computer_vision"
+      },
+      "quote": "title: What Machines See",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-computer_vision-part-0-2",
+      "subject": "computer_vision",
+      "predicate": "part",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "computer_vision"
+      },
+      "quote": "part: 3",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-computer_vision-order-0-3",
+      "subject": "computer_vision",
+      "predicate": "order",
+      "value": 7,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "computer_vision"
+      },
+      "quote": "order: 7",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

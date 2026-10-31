@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "source": "math_iv.php",
+  "lesson": "math_iv",
+  "title": "Basic Math Concepts IV — Affine Maps & the Fold",
+  "part": 1,
+  "order": 6,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "lang2005basicmath",
+    "descartesgeometrie",
+    "mobius1827barycentric",
+    "grassmann1844ausdehnungslehre",
+    "klein1872erlangen",
+    "riemann1854raum",
+    "affine_geometry_wiki",
+    "euler1748introductio",
+    "klein1948geometry",
+    "projective_transformation_wiki",
+    "homography_cv_wiki",
+    "albertidepictura",
+    "desarguesbrouillon",
+    "projective_geometry_wiki",
+    "poncelet1822traite",
+    "mobius_transformation_wiki",
+    "riemann_wiki",
+    "nlab_homeomorphism",
+    "morris2007topology",
+    "nlab_invariance_of_domain",
+    "keup2022origami",
+    "nlab_hopf_link",
+    "hopf_link_wiki",
+    "nlab_knot",
+    "nlab_link",
+    "nlab_isotopy",
+    "nlab_unknot",
+    "hopf_link_image",
+    "nlab_linking_number",
+    "linking_number_wiki",
+    "nlab_topological_property",
+    "homeomorphism_wiki",
+    "montufar2014regions",
+    "petersen2024mathdl",
+    "amrami2021depth",
+    "lewandowski2025spacefolds",
+    "listingtopologie",
+    "knot_theory_wiki",
+    "poincareanalysissitus",
+    "foldandcut_wiki",
+    "vaswani2017attention",
+    "abel_ruffini_wiki",
+    "galoisgroup",
+    "cayleygroups"
+  ],
+  "claims": [
+    {
+      "id": "auto-math_iv-title-0-1",
+      "subject": "math_iv",
+      "predicate": "title",
+      "value": "Basic Math Concepts IV — Affine Maps & the Fold",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "math_iv"
+      },
+      "quote": "title: Basic Math Concepts IV — Affine Maps & the Fold",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-math_iv-part-0-2",
+      "subject": "math_iv",
+      "predicate": "part",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "math_iv"
+      },
+      "quote": "part: 1",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-math_iv-order-0-3",
+      "subject": "math_iv",
+      "predicate": "order",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "math_iv"
+      },
+      "quote": "order: 6",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "source": "algorithms.php",
+  "lesson": "algorithms",
+  "title": "How Algorithms Work: From Euclid to the Transformer",
+  "part": 4,
+  "order": 12,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "euclideanalgorithm",
+    "euclidelements",
+    "knuth1972babylonian",
+    "sieveoferatosthenes",
+    "historyofmath_wikipedia",
+    "alkhwarizmi820algebra",
+    "newton1736fluxions",
+    "menabrea_lovelace1843",
+    "ada_lovelace_wiki",
+    "hilbert1928entscheidung",
+    "godel1931incompleteness",
+    "churchturing1936",
+    "turing1937",
+    "binarysearch_wiki",
+    "taocp3",
+    "dijkstra1968goto",
+    "hoare1969axiomatic",
+    "cook1971complexity",
+    "cooklevin_wiki",
+    "bellman1957book",
+    "dantzig1963linear",
+    "cooley1965fft",
+    "fft_history_wiki",
+    "brin1998pagerank",
+    "silver2016go",
+    "nanda2023grokking",
+    "power2022grokking",
+    "garg2022incontext",
+    "olsson2022induction",
+    "zhou2022algorithmic",
+    "madaan2022textpatterns",
+    "levy2024numbers",
+    "cacioli2026weber",
+    "fu2024count",
+    "conde2025count",
+    "ding2024fittest",
+    "engels2024multidim",
+    "hahn2020limitations",
+    "katharopoulos2020linear",
+    "adriaensen2024moore",
+    "vonoswald2022indc",
+    "merullo2024talkingheads"
+  ],
+  "claims": [
+    {
+      "id": "auto-algorithms-title-0-1",
+      "subject": "algorithms",
+      "predicate": "title",
+      "value": "How Algorithms Work: From Euclid to the Transformer",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "algorithms"
+      },
+      "quote": "title: How Algorithms Work: From Euclid to the Transformer",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-algorithms-part-0-2",
+      "subject": "algorithms",
+      "predicate": "part",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "algorithms"
+      },
+      "quote": "part: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-algorithms-order-0-3",
+      "subject": "algorithms",
+      "predicate": "order",
+      "value": 12,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "algorithms"
+      },
+      "quote": "order: 12",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

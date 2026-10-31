@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "source": "finetuninglab.php",
+  "lesson": "finetuninglab",
+  "title": "Fine-Tuning & Post-Training",
+  "part": 5,
+  "order": 1,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "wang2022selfinstruct",
+    "taori2023alpaca",
+    "ouyang2022instructgpt",
+    "rafailov2023dpo",
+    "orpo",
+    "shao2024grpo",
+    "lambert2024tulu3",
+    "guo2025deepseekr1",
+    "hinton2015distilling",
+    "hsieh2023distilling",
+    "gudibande2023falsepromise",
+    "hu2021lora",
+    "dettmers2023qlora",
+    "houlsby2019adapters",
+    "lester2021prompttuning",
+    "liu2022ia3",
+    "liu2024dora"
+  ],
+  "claims": [
+    {
+      "id": "auto-finetuninglab-title-0-1",
+      "subject": "finetuninglab",
+      "predicate": "title",
+      "value": "Fine-Tuning & Post-Training",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "finetuninglab"
+      },
+      "quote": "title: Fine-Tuning & Post-Training",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-finetuninglab-part-0-2",
+      "subject": "finetuninglab",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "finetuninglab"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-finetuninglab-order-0-3",
+      "subject": "finetuninglab",
+      "predicate": "order",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "finetuninglab"
+      },
+      "quote": "order: 1",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "source": "math_i.php",
+  "lesson": "math_i",
+  "title": "Basic Math Concepts I — The Numerical Foundations",
+  "part": 1,
+  "order": 3,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "lebombobone",
+    "ishangobone",
+    "ishango12",
+    "macTutorBabylonianMathematics",
+    "macTutorBabylonianNumerals",
+    "macTutorEgyptianNumerals",
+    "rhindpapyrus",
+    "historyofmathematicalnotation",
+    "lageometrie",
+    "macTutorFunctions",
+    "euler1748introductio",
+    "euler1755",
+    "miller_functionsymbols",
+    "lang2005basicmath",
+    "macTutorZero",
+    "brahmagupta_colebrooke",
+    "jiuzhangsuanshu",
+    "macTutorRealNumbers",
+    "euclidelements",
+    "dedekind1872",
+    "cantor1895",
+    "macTutorSetTheory",
+    "millerOperation",
+    "kramp1808",
+    "euler_portrait",
+    "macTutorE",
+    "madhava",
+    "gregoryachievements",
+    "newtonquadratura",
+    "taylor1715",
+    "maclaurin",
+    "napier1614",
+    "napier_portrait",
+    "macTutorBurgi",
+    "kepler1624chilias",
+    "laplace1821",
+    "mercator1668",
+    "wallis1655",
+    "macTutorInfinity",
+    "aristotlephysics",
+    "grosseteste_on_light"
+  ],
+  "claims": [
+    {
+      "id": "auto-math_i-title-0-1",
+      "subject": "math_i",
+      "predicate": "title",
+      "value": "Basic Math Concepts I — The Numerical Foundations",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "math_i"
+      },
+      "quote": "title: Basic Math Concepts I — The Numerical Foundations",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-math_i-part-0-2",
+      "subject": "math_i",
+      "predicate": "part",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "math_i"
+      },
+      "quote": "part: 1",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-math_i-order-0-3",
+      "subject": "math_i",
+      "predicate": "order",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "math_i"
+      },
+      "quote": "order: 3",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

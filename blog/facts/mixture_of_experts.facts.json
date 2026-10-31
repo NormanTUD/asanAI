@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "source": "mixture_of_experts.php",
+  "lesson": "mixture_of_experts",
+  "title": "Mixture of Experts",
+  "part": 4,
+  "order": 18,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "mixtral2024",
+    "deepseekv3tech2024",
+    "jacobs1991moe",
+    "jordan1993hme",
+    "shazeer2017moe",
+    "xue2024openmoe",
+    "wang2024auxfree",
+    "lepikhin2021gshard",
+    "switchtransformers2022",
+    "zhou2022expertchoice",
+    "deepseekmoe2024"
+  ],
+  "claims": [
+    {
+      "id": "auto-mixture_of_experts-title-0-1",
+      "subject": "mixture_of_experts",
+      "predicate": "title",
+      "value": "Mixture of Experts",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "mixture_of_experts"
+      },
+      "quote": "title: Mixture of Experts",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-mixture_of_experts-part-0-2",
+      "subject": "mixture_of_experts",
+      "predicate": "part",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "mixture_of_experts"
+      },
+      "quote": "part: 4",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-mixture_of_experts-order-0-3",
+      "subject": "mixture_of_experts",
+      "predicate": "order",
+      "value": 18,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "mixture_of_experts"
+      },
+      "quote": "order: 18",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-deepseek-v3-parameters-108-4",
+      "subject": "deepseek-v3",
+      "predicate": "parameters",
+      "value": "671",
+      "unit": "billion",
+      "qualifiers": {},
+      "quote": "A cleaner decomposition arrived with DeepSeekMoE (\\cite[DeepSeekMoE, 2024]{deepseekmoe2024}) and was carried into DeepSeek-V3 (\\cite[DeepSeek-V3, 2024]{deepseekv3tech2024}); the design is now the reference. The first is a **shared expert**: one expert is *dense* — every token goes through it — while",
+      "line": 108,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

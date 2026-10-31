@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "source": "knowledge_map.php",
+  "lesson": "knowledge_map",
+  "title": "",
+  "part": "",
+  "order": "",
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [],
+  "claims": []
+}

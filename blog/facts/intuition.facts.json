@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "source": "intuition.php",
+  "lesson": "intuition",
+  "title": "An Intuition of how Large Language Models (LLMs) work",
+  "part": 1,
+  "order": 1,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "glitchtokens",
+    "land2024fishing",
+    "rumbelow2023solidgold",
+    "mikolov2013word2vec",
+    "vaswani2017attention",
+    "elhage2021mathematical",
+    "geva2021kv",
+    "meng2022locating",
+    "elhage2022superposition",
+    "bricken2023monosemanticity",
+    "cunningham2023sparse",
+    "shazeer2020glu",
+    "fedus2022switch",
+    "keup2022origami",
+    "bender2021stochasticparrots",
+    "gardenfors2000conceptual",
+    "mabrok2026latent"
+  ],
+  "claims": [
+    {
+      "id": "auto-intuition-title-0-1",
+      "subject": "intuition",
+      "predicate": "title",
+      "value": "An Intuition of how Large Language Models (LLMs) work",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "intuition"
+      },
+      "quote": "title: An Intuition of how Large Language Models (LLMs) work",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-intuition-part-0-2",
+      "subject": "intuition",
+      "predicate": "part",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "intuition"
+      },
+      "quote": "part: 1",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-intuition-order-0-3",
+      "subject": "intuition",
+      "predicate": "order",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "intuition"
+      },
+      "quote": "order: 1",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

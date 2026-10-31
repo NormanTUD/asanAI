@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "source": "contextwindows.php",
+  "lesson": "contextwindows",
+  "title": "Context Windows & Memory: What LLMs Can Hold in Mind",
+  "part": 5,
+  "order": 7,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "vaswani2017attention",
+    "dao2022flashattention",
+    "ainslie2023gqa",
+    "shazeer2019mqa",
+    "liu2023ringattention",
+    "liu2023lostmiddle",
+    "merullo2024talkingheads",
+    "kwon2023vllm",
+    "gu2023mamba"
+  ],
+  "claims": [
+    {
+      "id": "auto-contextwindows-title-0-1",
+      "subject": "contextwindows",
+      "predicate": "title",
+      "value": "Context Windows & Memory: What LLMs Can Hold in Mind",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "contextwindows"
+      },
+      "quote": "title: Context Windows & Memory: What LLMs Can Hold in Mind",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-contextwindows-part-0-2",
+      "subject": "contextwindows",
+      "predicate": "part",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "contextwindows"
+      },
+      "quote": "part: 5",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-contextwindows-order-0-3",
+      "subject": "contextwindows",
+      "predicate": "order",
+      "value": 7,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "contextwindows"
+      },
+      "quote": "order: 7",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}

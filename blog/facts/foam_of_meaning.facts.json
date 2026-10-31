@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "source": "foam_of_meaning.php",
+  "lesson": "foam_of_meaning",
+  "title": "The foam of meaning",
+  "part": 1,
+  "order": 13,
+  "curated": false,
+  "generated_by": "extract_facts.py",
+  "citations": [
+    "cosmic_web_image",
+    "greatwallpaper",
+    "cosmologicalprinciple",
+    "lymanalphaforest",
+    "mabrok2026latent",
+    "gardenfors2000conceptual",
+    "shepard1987universal",
+    "he2023sideeffects",
+    "jablonka2025geometry",
+    "petersen2024mathdl",
+    "vyshnyvetska2025infogravity",
+    "tarski1935wahrheitsbegriff",
+    "hodges1993modeltheory",
+    "lakoff1993metaphor",
+    "gentner1983structuremapping",
+    "edelsbrunner2002persistent",
+    "carlsson2009tda",
+    "hatcher",
+    "cohensteiner2007",
+    "fiber_bundle_wiki",
+    "zipf1949human",
+    "statisticsofextremes"
+  ],
+  "claims": [
+    {
+      "id": "auto-foam_of_meaning-title-0-1",
+      "subject": "foam_of_meaning",
+      "predicate": "title",
+      "value": "The foam of meaning",
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "foam_of_meaning"
+      },
+      "quote": "title: The foam of meaning",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-foam_of_meaning-part-0-2",
+      "subject": "foam_of_meaning",
+      "predicate": "part",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "foam_of_meaning"
+      },
+      "quote": "part: 1",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-foam_of_meaning-order-0-3",
+      "subject": "foam_of_meaning",
+      "predicate": "order",
+      "value": 13,
+      "unit": "count",
+      "qualifiers": {
+        "lesson": "foam_of_meaning"
+      },
+      "quote": "order: 13",
+      "line": 0,
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-gpt-2-parameters-365-4",
+      "subject": "gpt-2",
+      "predicate": "parameters",
+      "value": "1.5",
+      "unit": "B",
+      "qualifiers": {},
+      "quote": "- **The gap grows linearly.** For a semantic manifold of intrinsic dimension $k$, the *normalized* expressibility gap $\\eta(\\varepsilon)$ — the fraction of semantic space lying within $\\varepsilon$ of a boundary — satisfies $\\eta(\\varepsilon) = c\\,\\varepsilon + O(\\varepsilon^{2})$ for small $\\vareps",
+      "line": 365,
+      "citation_keys": [],
+      "confidence": "extracted"
+    }
+  ]
+}
