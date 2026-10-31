@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2361;
+var DEFAULT_EXPECTED_TEST_COUNT = 2407;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -9888,6 +9888,172 @@ async function _coverage_tests_model_helpers() {
 	}
 }
 
+async function _coverage_tests_low_coverage_modules() {
+	var oldErrs = num_errs;
+	var oldWrns = num_wrns;
+	var oldModel = window.model;
+	var oldLang = lang;
+	var oldLabelDebug = set_label_debug;
+	var tensors = [];
+
+	try {
+		// --- base_wrappers.js ---
+		var bw = tensor([[1, 2], [3, 4]]);
+		tensors.push(bw);
+		var bw_r = reshape(bw, [4]);
+		tensors.push(bw_r);
+		test_equal("base_wrappers reshape flattens", JSON.stringify(bw_r.shape), "[4]");
+		var bw_min = min(bw);
+		tensors.push(bw_min);
+		test_equal("base_wrappers min returns the minimum", bw_min.dataSync()[0], 1);
+		var bw_max = max(bw);
+		tensors.push(bw_max);
+		test_equal("base_wrappers max returns the maximum", bw_max.dataSync()[0], 4);
+		var pixCanvas = document.createElement("canvas");
+		pixCanvas.width = 2;
+		pixCanvas.height = 2;
+		var pixTensor = tensor([[1, 0, 0], [0, 1, 0]]);
+		tensors.push(pixTensor);
+		await toPixels(pixTensor, pixCanvas);
+		var pixel = pixCanvas.getContext("2d").getImageData(0, 0, 1, 1).data;
+		test_equal("base_wrappers toPixels writes pixels", pixel[0], 255);
+
+		// --- debug.js ---
+		header("coverage header");
+		header_error("coverage header error");
+		logt("coverage log trace");
+		var probe = document.createElement("div");
+		probe.id = "coverage_debug_probe";
+		probe.textContent = "probe";
+		document.body.appendChild(probe);
+		var xpath = get_element_xpath(probe);
+		highlight_element(xpath);
+		test_equal("debug highlight_element marks the element", probe.style.backgroundColor, "yellow");
+		unhighlight_element(xpath);
+		test_equal("debug unhighlight_element clears the element", probe.style.backgroundColor, "");
+		data_debug({ probe: 1 });
+		set_label_debug = true;
+		label_debug("coverage label debug", { probe: 1 });
+		probe.remove();
+
+		// --- fcnn_editable.js ---
+		var fcnnHtml = _fcnn_edit_build_popup_html(true);
+		test_equal("fcnn_editable builds a weight section", fcnnHtml.indexOf("fcnn_edit_weight_section") !== -1, true);
+		test_equal("fcnn_editable builds a bias section", fcnnHtml.indexOf("fcnn_edit_bias_section") !== -1, true);
+		var mapped = _fcnn_edit_map_to_neuron_indices({ x: 0, y: 0, w: 100, h: 100 }, 50, 100, 5, 5);
+		test_equal("fcnn_editable maps mouse to neuron indices", mapped.from_idx, 4);
+		var lookup = _fcnn_edit_lookup_weight({ shape: [2, 3], data: [1, 2, 3, 4, 5, 6] }, 1, 2);
+		test_equal("fcnn_editable looks up a weight value", lookup.weightValue, 6);
+		var biasLayer = { getWeights: function () { return [{}, { shape: [4] }]; }, getConfig: function () { return { use_bias: true }; } };
+		test_equal("fcnn_editable detects a bias tensor", _fcnn_edit_check_layer_bias(biasLayer, 4), true);
+		test_equal("fcnn_editable checks bias size", _fcnn_edit_layer_has_bias_of_size(biasLayer, 4), true);
+		test_equal("fcnn_editable detects use_bias false", _check_layer_has_no_bias({ getConfig: function () { return { use_bias: false }; } }), true);
+		test_equal("fcnn_editable extracts tensor arrays", JSON.stringify(_try_extract_array_from_tensor({ dataSync: function () { return new Float32Array([1, 2, 3]); } })), "[1,2,3]");
+		test_equal("fcnn_editable extracts weight variable arrays", JSON.stringify(_try_extract_array_from_weight_variable({ val: { dataSync: function () { return new Float32Array([4, 5]); } } })), "[4,5]");
+		test_equal("fcnn_editable reads bias via getWeights", JSON.stringify(_try_read_bias_from_getWeights({ getWeights: function () { return [{}, { dataSync: function () { return new Float32Array([7, 8]); } }]; } })), "[7,8]");
+		test_equal("fcnn_editable reads bias via weights property", JSON.stringify(_try_read_bias_from_weights_property({ weights: [{}, { val: { dataSync: function () { return new Float32Array([9, 10]); } } }] })), "[9,10]");
+		test_equal("fcnn_editable reads direct bias", JSON.stringify(_try_read_bias_from_layer_bias({ bias: { dataSync: function () { return new Float32Array([11, 12]); } } })), "[11,12]");
+
+		// --- math_editable.js ---
+		math_clear_editables();
+		var editableId = "coverage_math_editable";
+		math_register_editable(editableId, function () { return 1.234; }, function () {}, 0, 10, "probe", { step: 0.1, decimals: 2 });
+		var editable = math_find_editable(editableId);
+		test_equal("math_editable registers a variable", !!editable, true);
+		test_equal("math_editable stores decimals", editable.decimals, 2);
+		var editableSpan = document.createElement("span");
+		editableSpan.style.color = "#53d8fb";
+		editableSpan.textContent = "1.234";
+		var editableWrapper = document.createElement("div");
+		editableWrapper.appendChild(editableSpan);
+		_replace_colored_spans_with_editables(editableWrapper, [{ eid: editableId }]);
+		test_equal("math_editable converts a colored span", editableSpan.classList.contains("math-ed-num"), true);
+		test_equal("math_editable formats the editable value", editableSpan.textContent, "1.23");
+		var latexContainer = document.createElement("div");
+		el_render_single_latex_with_editables(latexContainer, "x^2", []);
+		test_equal("math_editable renders latex", latexContainer.querySelectorAll(".math-hybrid-rendered").length, 1);
+		math_clear_editables();
+		test_equal("math_editable clears variables", _math_editables.length, 0);
+
+		// --- my_temml.js ---
+		window.model = {
+			layers: [
+				{
+					epsilon: 0.001,
+					weights: [
+						{ name: "conv2d/kernel", val: { shape: [3, 3, 2, 4], isDisposed: false, dataSync: function () { return new Float32Array(72); } } },
+						{ name: "conv2d/bias", val: { shape: [4], isDisposed: false, dataSync: function () { return new Float32Array([0, 0, 0, 0]); } } }
+					]
+				},
+				{
+					weights: [
+						{ name: "batch_normalization/gamma", val: { shape: [4], isDisposed: false, dataSync: function () { return new Float32Array([1, 1, 1, 1]); } } },
+						{ name: "batch_normalization/beta", val: { shape: [4], isDisposed: false, dataSync: function () { return new Float32Array([0, 0, 0, 0]); } } }
+					]
+				}
+			]
+		};
+		test_equal("my_temml reads conv2d kernel shape", JSON.stringify(_get_conv2d_kernel_shape(0)), "[3,3,2,4]");
+		test_equal("my_temml resolves weight indices by name", JSON.stringify(_resolve_weight_indices_by_name(0, ["kernel", "bias"])), "{\"kernel\":0,\"bias\":1}");
+		test_equal("my_temml resolves batchnorm indices", JSON.stringify(_resolve_batchnorm_weight_indices(1)), "{\"gamma\":0,\"beta\":1}");
+		var oneDEditables = [];
+		var oneDLatex = _build_1d_param_latex(0, "bias", [0.1, 0.2], 2, 2, oneDEditables);
+		test_equal("my_temml builds 1D parameter latex", oneDLatex.indexOf("pmatrix") !== -1, true);
+		test_equal("my_temml builds an empty 1D placeholder", _build_1d_param_latex(0, "bias", [], 2, 2, []), "\\text{N/A}");
+
+		// --- math_mode.js ---
+		window.model = { layers: [{ name: "dense_0", outputShape: [null, 4] }, { name: "skip_add_1", outputShape: [null, 8] }] };
+		test_equal("math_mode reads skip identity dimension", _get_skip_identity_dimension(0), 4);
+		test_equal("math_mode reads layer output dimension", _get_layer_output_dim(1), 8);
+		test_equal("math_mode recognizes a skip projection", _skip_proj_belongs_to_layer("skip_proj_dense_1", 1), true);
+		test_equal("math_mode rejects an unrelated layer name", _skip_proj_belongs_to_layer("dense_1", 1), false);
+		test_equal("math_mode finds skip add layers", _has_skip_add_layer([{ name: "skip_add_1" }], 1), true);
+		test_equal("math_mode formats skip kernel rows", _format_skip_kernel_rows([1, 2, 3]).indexOf("&") !== -1, true);
+
+		// --- translations.js ---
+		var probeImg = document.createElement("img");
+		probeImg.src = "lang/__de__probe.png";
+		document.body.appendChild(probeImg);
+		lang = "en";
+		swap_image_src_language();
+		test_equal("translations swap image sources", probeImg.getAttribute("src"), "lang/__en__probe.png");
+		lang = "de";
+		swap_image_src_language();
+		test_equal("translations swap image sources back", probeImg.getAttribute("src"), "lang/__de__probe.png");
+		probeImg.remove();
+
+		// --- origami_folds.js / origami_live.js ---
+		test_equal("origami_folds exposes a palette", OrigamiFolds.classPalette.length > 0, true);
+		test_equal("origami_folds class colors are stable", OrigamiFolds.classColor(0), OrigamiFolds.classPalette[0]);
+		var oldFoldsGrid = OrigamiFolds.getConfig().gridResolution;
+		OrigamiFolds.setConfig({ gridResolution: 7 });
+		test_equal("origami_folds stores a valid config", OrigamiFolds.getConfig().gridResolution, 7);
+		OrigamiFolds.setConfig({ gridResolution: oldFoldsGrid });
+		test_equal("origami_live exposes a palette", OrigamiLive.palette.classes.length > 0, true);
+		test_equal("origami_live class colors are stable", OrigamiLive.classColor(0), OrigamiLive.palette.classes[0]);
+		var oldLiveGrid = OrigamiLive.getConfig().gridRes;
+		OrigamiLive.setConfig({ gridRes: 9 });
+		test_equal("origami_live stores a valid config", OrigamiLive.getConfig().gridRes, 9);
+		OrigamiLive.setConfig({ gridRes: oldLiveGrid });
+
+		// --- online_python.js ---
+		var pyCanvas = PyodideEditor.createCanvas(12, 8);
+		test_equal("online_python creates a canvas", pyCanvas.width, 12);
+		test_equal("online_python canvas has the requested height", pyCanvas.height, 8);
+		test_equal("online_python reports captured photos as an array", Array.isArray(PyodideEditor.getCapturedPhotos()), true);
+	} finally {
+		for (var ti = 0; ti < tensors.length; ti++) {
+			try { await dispose(tensors[ti]); } catch (e) {}
+		}
+		window.model = oldModel;
+		lang = oldLang;
+		set_label_debug = oldLabelDebug;
+		math_clear_editables();
+		num_errs = oldErrs;
+		num_wrns = oldWrns;
+	}
+}
+
 function _coverage_tests_math_tooltips_smoke() {
 	var oldErrs = num_errs;
 	var oldWrns = num_wrns;
@@ -9937,6 +10103,7 @@ async function run_coverage_tests() {
 	_coverage_tests_safety();
 	await _coverage_tests_drawing();
 	await _coverage_tests_autocomplete();
+	await _coverage_tests_low_coverage_modules();
 	await _coverage_tests_custom_images();
 	return true;
 }

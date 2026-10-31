@@ -2,6 +2,21 @@
 
 var _custom_tensors = {};
 
+// Firefox warns when float-blend formats are used through implicitly enabled
+// WebGL extensions. Request the extensions explicitly on every context.
+(function () {
+	if (typeof HTMLCanvasElement === "undefined" || !HTMLCanvasElement.prototype.getContext) return;
+	var original_get_context = HTMLCanvasElement.prototype.getContext;
+	HTMLCanvasElement.prototype.getContext = function (type) {
+		var context = original_get_context.apply(this, arguments);
+		if (context && typeof type === "string" && /webgl/i.test(type)) {
+			try { context.getExtension("EXT_float_blend"); } catch (e) {}
+			try { context.getExtension("WEBGL_color_buffer_float"); } catch (e) {}
+		}
+		return context;
+	};
+})();
+
 function convert_to_tensor_if_not(t) {
 	if(is_tensor(t)) {
 		return t;

@@ -127,8 +127,16 @@ def resolve_chromium_executable(args):
     return None
 
 
+BENIGN_BROWSER_WARNINGS = (
+    "Using format enabled by implicitly enabled extension: EXT_float_blend",
+    "Using format enabled by implicitly enabled extension: WEBGL_color_buffer_float",
+)
+
+
 def capture_console(page, browser_label: str):
     def handle_console(msg):
+        if msg.type == "warning" and any(fragment in msg.text for fragment in BENIGN_BROWSER_WARNINGS):
+            return
         fn = LOG_LEVELS.get(msg.type, logging.info)
         fn(f"[{browser_label}] [console.{msg.type}] {msg.text}")
 
