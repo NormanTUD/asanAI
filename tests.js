@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2441;
+var DEFAULT_EXPECTED_TEST_COUNT = 2442;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -10013,14 +10013,18 @@ async function _coverage_tests_low_coverage_modules() {
 		// --- translations.js ---
 		var probeImg = document.createElement("img");
 		probeImg.src = "lang/__de__probe.png";
+		var blankImg = document.createElement("img");
 		document.body.appendChild(probeImg);
+		document.body.appendChild(blankImg);
 		lang = "en";
 		swap_image_src_language();
 		test_equal("translations swap image sources", probeImg.getAttribute("src"), "lang/__en__probe.png");
+		test_equal("translations ignore images without a source", blankImg.getAttribute("src"), null);
 		lang = "de";
 		swap_image_src_language();
 		test_equal("translations swap image sources back", probeImg.getAttribute("src"), "lang/__de__probe.png");
 		probeImg.remove();
+		blankImg.remove();
 
 		// --- origami_folds.js / origami_live.js ---
 		test_equal("origami_folds exposes a palette", OrigamiFolds.classPalette.length > 0, true);

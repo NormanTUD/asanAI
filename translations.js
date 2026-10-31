@@ -58,6 +58,7 @@ function swap_image_src_language () {
 	for (var image_idx = 0; image_idx < images.length; image_idx++) {
 		const img = images[image_idx];
 		const currentSrc = img.getAttribute("src");
+		if (!currentSrc) continue;
 
 		if (lang === "en" && currentSrc.startsWith("lang/__de__")) {
 			// Replace 'de' with 'en'
