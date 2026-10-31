@@ -139,6 +139,13 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Mathematics_of_paper_folding",
 		alternativetitle: "Mathematics of paper folding (Wikipedia)"
 	},
+	"friedman2018folding": {
+		title: "A History of Folding in Mathematics: Mathematizing the Margins",
+		author: "Michael Friedman",
+		year: 2018,
+		url: "https://doi.org/10.1007/978-3-319-72487-4",
+		alternativetitle: "Friedman, A History of Folding in Mathematics (2018)"
+	},
 	"beloch_fold_wiki": {
 		title: "Beloch fold",
 		author: "Wikipedia contributors",
