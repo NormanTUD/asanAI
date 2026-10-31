@@ -18,8 +18,10 @@ Exit code 0 = no conflicts/schema/coverage errors, 1 otherwise.
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import math
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -118,8 +120,17 @@ def _has_cycle(edges: list[tuple[str, str]]) -> str | None:
     return None
 
 
+def _normalize_source(text: str) -> str:
+    text = re.sub(r"<\?php.*?\?>", " ", text, flags=re.S)
+    text = re.sub(r"<script.*?</script>|<style.*?</style>", " ", text, flags=re.S | re.I)
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = html.unescape(text)
+    return re.sub(r"\s+", " ", text).strip().lower()
+
+
 def check(blog: Path, coverage: bool = True, verbose: bool = False,
-          strict_relations: bool = False, strict_temporal: bool = False):
+          strict_relations: bool = False, strict_temporal: bool = False,
+          strict_quotes: bool = False):
     errors: list[str] = []
     conflicts: list[str] = []
 
@@ -147,6 +158,9 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
     groups: dict[tuple[str, str, str], list[dict]] = defaultdict(list)
     all_claims: list[dict] = []
     relations: list[dict] = []
+    quote_warnings: list[str] = []
+    seen_claim_ids: set[str] = set()
+    source_cache: dict[str, tuple[str, str]] = {}
     for slug, path in sorted(facts.items()):
         try:
             document, claims = load_fact_file(path)
@@ -167,21 +181,49 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
             for key in cited:
                 if key and key not in literature_keys:
                     errors.append(f"{path}: citation not in literature.js: {key}")
+        source_path = blog / f"{slug}.php"
+        if not slug.startswith("_") and source_path.exists():
+            raw_source = source_path.read_text(encoding="utf-8", errors="replace")
+            source_cache[slug] = (raw_source, _normalize_source(raw_source))
+        elif not slug.startswith("_"):
+            source_cache[slug] = ("", "")
+
+        def quote_ok(quote: str) -> bool:
+            if not quote or slug.startswith("_"):
+                return True
+            raw_source, norm_source = source_cache.get(slug, ("", ""))
+            return quote in raw_source or _normalize_source(quote) in norm_source
+
         for raw_rel in iter_relations(document):
+            if "line" in raw_rel:
+                errors.append(f"{path}: relation {raw_rel.get('id', '?')} has a line field; use quote only")
             rel = relation_normalized(raw_rel)
             if rel is None:
                 errors.append(f"{path}: relation missing from/to/kind: {raw_rel!r}")
                 continue
             rel["source"] = path.name
+            if rel["quote"] and rel["kind"] not in {"mentioned_in", "part_of"} and not quote_ok(rel["quote"]):
+                quote_warnings.append(f"{path}: relation {rel['id'] or rel['kind']} quote not found in source")
             relations.append(rel)
         if not claims and verbose:
             print(f"[info] {path}: no claims")
         for raw in iter_claims(document):
+            if "line" in raw:
+                errors.append(f"{path}: claim {raw.get('id', '?')} has a line field; use quote only")
             claim = claim_normalized(raw)
             if claim is None:
                 errors.append(f"{path}: claim missing subject/predicate/value: {raw!r}")
                 continue
             claim["source"] = path.name
+            if claim.get("id"):
+                if claim["id"] in seen_claim_ids:
+                    errors.append(f"{path}: duplicate claim id {claim['id']!r} (global)")
+                else:
+                    seen_claim_ids.add(claim["id"])
+            if not claim["quote"] and not slug.startswith("_") and claim["predicate"] not in {"title", "part", "order"}:
+                errors.append(f"{path}: claim {claim.get('id', '?')} has no quote")
+            elif claim["quote"] and claim["predicate"] not in {"title", "part", "order"} and not quote_ok(claim["quote"]):
+                quote_warnings.append(f"{path}: claim {claim.get('id', '?')} quote not found in source")
             keys = claim.get("citation_keys") or []
             if isinstance(keys, str):
                 keys = [keys]
@@ -355,6 +397,12 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
             else:
                 conflicts.append(message)
 
+    if quote_warnings:
+        print("=" * 72)
+        print("QUOTE WARNINGS (non-blocking unless --strict-quotes)")
+        print("=" * 72)
+        for warning in quote_warnings:
+            print(f"  ! {warning}")
     if relation_warnings:
         print("=" * 72)
         print("RELATION WARNINGS")
@@ -378,6 +426,8 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
         errors.extend(temporal_warnings)
     if strict_relations and relation_warnings:
         errors.extend(relation_warnings)
+    if strict_quotes and quote_warnings:
+        errors.extend(quote_warnings)
     if errors:
         print("=" * 72)
         print("FACT LEDGER ERRORS")
@@ -388,7 +438,7 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
     print(
         f"[{'FAIL' if (errors or conflicts) else 'PASS'}] "
         f"{len(facts)} fact files, {len(all_claims)} claims, {len(relations)} relations, "
-        f"{len(isolated)} isolated subject(s), "
+        f"{len(isolated)} isolated subject(s), {len(quote_warnings)} quote warning(s), "
         f"{len(conflicts)} conflict(s), {len(errors)} error(s)"
     )
     return 1 if (errors or conflicts) else 0
@@ -403,10 +453,12 @@ def main() -> None:
                         help="fail if a non-metadata subject has no relation")
     parser.add_argument("--strict-temporal", action="store_true",
                         help="promote temporal warnings to errors")
+    parser.add_argument("--strict-quotes", action="store_true",
+                        help="promote quote-freshness warnings to errors")
     args = parser.parse_args()
     sys.exit(check(Path(args.blog), coverage=not args.no_coverage,
                    verbose=args.verbose, strict_relations=args.strict_relations,
-                   strict_temporal=args.strict_temporal))
+                   strict_temporal=args.strict_temporal, strict_quotes=args.strict_quotes))
 
 
 if __name__ == "__main__":

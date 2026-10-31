@@ -90,6 +90,12 @@
    "year": "2026",
    "url": "https://en.wikipedia.org/wiki/Mathematics_of_paper_folding"
   },
+  "friedman2018folding": {
+   "title": "A History of Folding in Mathematics: Mathematizing the Margins",
+   "author": "Michael Friedman",
+   "year": "2018",
+   "url": "https://doi.org/10.1007/978-3-319-72487-4"
+  },
   "beloch_fold_wiki": {
    "title": "Beloch fold",
    "author": "Wikipedia contributors",
@@ -28279,6 +28285,9 @@
   "math_paper_folding_wiki": [
    "origami"
   ],
+  "friedman2018folding": [
+   "origami"
+  ],
   "houdini1922papermagic": [
    "origami"
   ],
@@ -30987,6 +30996,14 @@
     "ai_copyright_wiki",
     "colorado2024ai",
     "coe2024ai"
+   ]
+  },
+  "Michael Friedman": {
+   "count": 1,
+   "minyear": 2018,
+   "maxyear": 2018,
+   "keys": [
+    "friedman2018folding"
    ]
   },
   "Thomas C. Hull": {

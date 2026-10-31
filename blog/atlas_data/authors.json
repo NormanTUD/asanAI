@@ -80252,6 +80252,23 @@
   ]
  },
  {
+  "name": "Michael Friedman",
+  "canon": "Michael Friedman",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "friedman2018folding"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
   "name": "Jim Belk",
   "canon": "Jim Belk",
   "alias": null,

@@ -134,7 +134,7 @@
       "value": "prompt injection, jailbreaking, data poisoning and reward hacking",
       "unit": "name",
       "qualifiers": {},
-      "quote": "LLMs are powerful but fragile under adversarial pressure"
+      "quote": "LLMs are powerful but **fragile under adversarial pressure**"
     }
   ],
   "relations": [
@@ -168,7 +168,7 @@
       "to": "jailbreaking",
       "kind": "related_to",
       "qualifiers": {},
-      "quote": "Prompt injection and jailbreaking are related attack surfaces"
+      "quote": "Jailbreaking manipulates the model into bypassing its safety training"
     },
     {
       "id": "prov-security_inference-prompt-injection",
@@ -232,7 +232,7 @@
       "to": "security_inference",
       "kind": "mentioned_in",
       "qualifiers": {},
-      "quote": "LLMs are powerful but fragile under adversarial pressure",
+      "quote": "LLMs are powerful but **fragile under adversarial pressure**",
       "citation_keys": [],
       "confidence": "provenance"
     }

@@ -697,7 +697,7 @@
 				'<input type="checkbox" class="rag-chat-scope-input">' +
 				'<span>Only this page</span>' +
 			'</label>' +
-			'<div class="rag-chat-disclaimer">AI-generated answers can be wrong. Always verify with the linked lessons, the sources they cite, and other reliable sources.</div>' +
+			'<div class="rag-chat-privacy">Questions and answers are logged without IP addresses so the course can be improved. Please don\'t share personal data; the logs are visible only to the course team.</div>' +
 			'<form class="rag-chat-form">' +
 				'<textarea class="rag-chat-input" rows="2" maxlength="2000" ' +
 				'placeholder="Ask a question about the course…" aria-label="Your question"></textarea>' +

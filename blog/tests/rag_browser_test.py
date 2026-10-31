@@ -232,10 +232,12 @@ def main() -> int:
 		note_text = wait_for_text(browser, ".rag-chat-ai-note", "AI")
 		check("AI" in note_text and "mistakes" in note_text,
 			"the welcome explains that AI answers can be wrong", note_text)
-		disclaimer_text = wait_for_text(browser, ".rag-chat-disclaimer", "verify").lower()
-		check("verify" in disclaimer_text, "the footer reminds readers to verify", disclaimer_text)
-		check("sources they cite" in disclaimer_text and "other reliable sources" in disclaimer_text,
-			"the footer names lesson sources and other sources")
+		privacy_text = wait_for_text(browser, ".rag-chat-privacy", "logged").lower()
+		check("logged" in privacy_text, "the footer says that chats are logged", privacy_text)
+		check("personal data" in privacy_text, "the footer warns against personal data", privacy_text)
+		check("course team" in privacy_text, "the footer says who can see the logs", privacy_text)
+		check(len(browser.find_elements(By.CSS_SELECTOR, ".rag-chat-disclaimer")) == 0,
+			"the old footer disclaimer is gone")
 
 		browser.execute_script(
 			"const input = document.querySelector('.rag-chat-input');"
