@@ -97,6 +97,16 @@
       "quote": "For a $224 \\times 224$ image with $P=16$: $n = 196$ patches. ViT-L/14 processes this with 24 layers, 16 heads, $d=1024$, yielding ~304M parameters. Modern ViTs (EVA-02, SigLIP) push to $P=14$ patches on $448 \\times 448$ inputs, yielding $>1000$ tokens per image.",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "prov-multimodal-part",
+      "from": "multimodal",
+      "to": "part-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ]
 }

@@ -23,6 +23,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from facts_lib import (  # noqa: E402
+    canon_ref,
     fact_files,
     iter_relations,
     load_fact_file,
@@ -36,13 +37,15 @@ def load_graph(blog: Path):
     for path in fact_files(blog).values():
         document, claims = load_fact_file(path)
         for claim in claims:
-            nodes.add(claim["subject"])
+            nodes.add(canon_ref(claim["subject"]))
             if claim.get("id"):
-                nodes.add(claim["id"])
+                nodes.add(canon_ref(claim["id"]))
         for raw in iter_relations(document):
             rel = relation_normalized(raw)
             if rel:
                 rel["source"] = path.name
+                rel["from"] = canon_ref(rel["from"])
+                rel["to"] = canon_ref(rel["to"])
                 nodes.add(rel["from"])
                 nodes.add(rel["to"])
                 edges.append(rel)
@@ -124,7 +127,7 @@ def main() -> None:
         return
 
     if args.neighbors:
-        node = args.neighbors
+        node = canon_ref(args.neighbors)
         outgoing = [(rel["to"], rel["kind"], rel, False) for rel in edges if rel["from"] == node]
         incoming = inbound(edges, node)
         rows = outgoing + incoming
@@ -142,7 +145,7 @@ def main() -> None:
 
     if not args.start or not args.goal:
         parser.error("--from and --to are required (or use --neighbors/--dot)")
-    path = shortest_path(edges, args.start, args.goal, args.max_depth,
+    path = shortest_path(edges, canon_ref(args.start), canon_ref(args.goal), args.max_depth,
                          args.undirected, include_provenance=not args.no_provenance)
     if args.json:
         print(json.dumps([

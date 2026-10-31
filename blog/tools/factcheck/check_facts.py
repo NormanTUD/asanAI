@@ -130,6 +130,8 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
         for slug in sorted(set(lessons) - set(facts)):
             errors.append(f"missing fact file: blog/facts/{slug}.facts.json")
         for slug in sorted(set(facts) - set(lessons)):
+            if slug.startswith("_"):
+                continue  # structural file (course/part nodes)
             errors.append(f"orphan fact file: blog/facts/{slug}.facts.json (no lesson {slug}.php)")
 
     literature_keys = set()
@@ -151,12 +153,13 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
         except Exception as exc:  # noqa: BLE001 - report, do not crash the CI run
             errors.append(f"{path}: cannot parse: {exc}")
             continue
-        source = document.get("source") if isinstance(document, dict) else None
-        if source and source != f"{slug}.php":
-            errors.append(f"{path}: source is {source!r}, expected {slug}.php")
-        lesson = document.get("lesson") if isinstance(document, dict) else None
-        if lesson and lesson != slug:
-            errors.append(f"{path}: lesson is {lesson!r}, expected {slug!r}")
+        if not slug.startswith("_"):
+            source = document.get("source") if isinstance(document, dict) else None
+            if source and source != f"{slug}.php":
+                errors.append(f"{path}: source is {source!r}, expected {slug}.php")
+            lesson = document.get("lesson") if isinstance(document, dict) else None
+            if lesson and lesson != slug:
+                errors.append(f"{path}: lesson is {lesson!r}, expected {slug!r}")
         if literature_keys:
             cited = document.get("citations", []) if isinstance(document, dict) else []
             if isinstance(cited, str):

@@ -69,7 +69,12 @@ Das deterministische System ist bereits angelegt:
 - `blog/tools/factcheck/check_facts.py` — prüft Coverage, Schema und
   Cross-Lesson-Konflikte (Alias-tolerant, ohne LLM).
 - `blog/tools/factcheck/trace_facts.py` — Pfade/Beziehungen zwischen Fakten
-  anzeigen (`--from`, `--to`, `--neighbors`, `--dot`, `--undirected`).
+  anzeigen (`--from`, `--to`, `--neighbors`, `--dot`, `--undirected`,
+  `--no-provenance`).
+- `blog/tools/factcheck/link_provenance.py` — `mentioned_in`-Rückgrat und
+  Lektion → Teil → Kurs.
+- `blog/tools/factcheck/derive_relations.py` — zusätzliche Kanten aus
+  expliziten Claim-Prädikaten.
 - `blog/tests/fact_ledger_test.py` — Unit-Tests für Aliase, Einheiten,
   Konflikterkennung, Coverage und Relations-/Pfad-Konsistenz.
 - Ausführliche Regeln: `blog/facts/README.md` und `AGENTS.md`.

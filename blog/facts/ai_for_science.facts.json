@@ -71,5 +71,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-ai_for_science-part",
+      "from": "ai-for-science",
+      "to": "part-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 6",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

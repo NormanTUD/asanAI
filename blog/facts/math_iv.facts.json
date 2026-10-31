@@ -94,5 +94,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-math_iv-part",
+      "from": "math-iv",
+      "to": "part-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 1",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

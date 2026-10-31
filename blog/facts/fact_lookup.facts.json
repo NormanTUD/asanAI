@@ -79,5 +79,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-fact_lookup-part",
+      "from": "fact-lookup",
+      "to": "part-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

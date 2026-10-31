@@ -91,5 +91,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-mirror_in_machine-part",
+      "from": "mirror-in-machine",
+      "to": "part-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 6",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

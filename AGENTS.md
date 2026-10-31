@@ -1005,7 +1005,10 @@ normalises inverse pairs, rejects missing endpoints and self-loops, requires
 then re-checks claim agreement, and rejects temporal contradictions
 (`before`/`influenced`/`caused`/`derived_from` with source year > target
 year). Every non-metadata subject must have at least one relation;
-`--strict-relations` enforces it. Render paths with
+`--strict-relations` enforces it. Use versioned subject ids for specific
+versions (`python-3`, `gpt-3-175b`); family ids (`python`, `java`) may carry
+`"family": true` on their year claim, which means "first release", not an
+upper bound. Render paths with
 `uv run blog/tools/factcheck/trace_facts.py blog/ --from <id> --to <id>`;
 `--neighbors`, `--dot`, `--undirected` and `--json` are also available.
 
@@ -1029,7 +1032,7 @@ dependency in a header won't resolve for a few days).
 | `uv run blog/tests/lesson_guard.py blog/` | per-lesson static regression guards (currently `math_iv.php`: headings-in-md, citation keys, 3D wiring) — extend the `LESSONS` list per lesson — plus blog-wide citation-integration, quiz-option-balance and site-footer guards | any guard | `blog/**` |
 | `uv run blog/tests/link_checker.py blog/` | every `url:` in `literature.js` returns 2xx; PDFs must start `%PDF`; TLS/bot-block soft-passes never fail | real failures | `blog/**` + weekly cron |
 | `uv run blog/tests/literature_dup_keys.py blog/` | every top-level key in `literature.js` appears exactly once (JS object last-wins would silently hide a duplicate) | **any duplicate** | `blog/**` |
-| `uv run blog/tools/factcheck/check_facts.py blog/` | one fact file per lesson; schema; cross-lesson numeric/date/unit/model-spec conflicts (alias-tolerant, no LLM) | missing/orphan file, malformed claim, conflict | `blog/**` (php-validation job) |
+| `uv run blog/tools/factcheck/check_facts.py blog/ --strict-relations` | one fact file per lesson; schema; cross-lesson numeric/date/unit/model-spec conflicts; relation endpoints/cycles/temporal; every subject connected | missing/orphan file, malformed claim, conflict, isolated subject | `blog/**` (php-validation job) |
 | `uv run blog/tests/fact_ledger_test.py` | unit tests for aliases, unit normalisation, conflict detection, coverage | any failed test | `blog/**` (php-validation job) |
 | `node blog/tests/{topics,math_alt,keypoint,search_js,semantic_js}_test.js` | DOM-stubbed unit tests of BlogTopics (interests, math dial, learned), math-alts, keypoints, search, semantic ranking | any failed check | `blog/**` |
 | `node blog/tests/rag_chat_test.js` | RAG chat status text, citation links, HTML escaping | any failed check | `blog/**` |

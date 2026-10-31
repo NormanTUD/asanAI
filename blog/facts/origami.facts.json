@@ -126,5 +126,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-origami-part",
+      "from": "origami",
+      "to": "part-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 3",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

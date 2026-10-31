@@ -60,5 +60,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-information_market-part",
+      "from": "information-market",
+      "to": "part-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 1",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

@@ -56,5 +56,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-running_locally-part",
+      "from": "running-locally",
+      "to": "part-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 5",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

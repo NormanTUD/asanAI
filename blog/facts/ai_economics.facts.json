@@ -112,6 +112,16 @@
       "quote": "H100 (~495 TFLOP/s TF32)",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_economics-part",
+      "from": "ai-economics",
+      "to": "part-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 5",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ]
 }

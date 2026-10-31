@@ -88,5 +88,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-geometry_ii-part",
+      "from": "geometry-ii",
+      "to": "part-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 1",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

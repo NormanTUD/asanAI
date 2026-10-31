@@ -117,6 +117,16 @@
       "quote": "points requires $N \\gg P$ to avoid overfitting. GPT-3 has **175 billion parameters**",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-part",
+      "from": "embeddinglab",
+      "to": "part-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ]
 }

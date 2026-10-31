@@ -163,5 +163,16 @@
       "confidence": "extracted"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-geometry_i-part",
+      "from": "geometry-i",
+      "to": "part-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 1",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

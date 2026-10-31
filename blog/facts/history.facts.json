@@ -27076,6 +27076,16 @@
       "quote": "Abstracting away the non-human interaction part of using computers by simulating *meaning*",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "prov-history-part",
+      "from": "history",
+      "to": "part-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 1",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ]
 }

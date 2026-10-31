@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "source": "_structure",
+  "lesson": "_structure",
+  "title": "Course structure",
+  "curated": true,
+  "citations": [],
+  "claims": [
+    {
+      "id": "course-title",
+      "subject": "course",
+      "predicate": "title",
+      "value": "From Nothing to Large Language Models",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": ""
+    },
+    {
+      "id": "part-1-title",
+      "subject": "part-1",
+      "predicate": "title",
+      "value": "Part 1",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": ""
+    },
+    {
+      "id": "part-2-title",
+      "subject": "part-2",
+      "predicate": "title",
+      "value": "Part 2",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": ""
+    },
+    {
+      "id": "part-3-title",
+      "subject": "part-3",
+      "predicate": "title",
+      "value": "Part 3",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": ""
+    },
+    {
+      "id": "part-4-title",
+      "subject": "part-4",
+      "predicate": "title",
+      "value": "Part 4",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": ""
+    },
+    {
+      "id": "part-5-title",
+      "subject": "part-5",
+      "predicate": "title",
+      "value": "Part 5",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": ""
+    },
+    {
+      "id": "part-6-title",
+      "subject": "part-6",
+      "predicate": "title",
+      "value": "Part 6",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": ""
+    }
+  ],
+  "relations": [
+    {
+      "id": "rel-part-1-course",
+      "from": "part-1",
+      "to": "course",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": ""
+    },
+    {
+      "id": "rel-part-2-course",
+      "from": "part-2",
+      "to": "course",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": ""
+    },
+    {
+      "id": "rel-part-3-course",
+      "from": "part-3",
+      "to": "course",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": ""
+    },
+    {
+      "id": "rel-part-4-course",
+      "from": "part-4",
+      "to": "course",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": ""
+    },
+    {
+      "id": "rel-part-5-course",
+      "from": "part-5",
+      "to": "course",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": ""
+    },
+    {
+      "id": "rel-part-6-course",
+      "from": "part-6",
+      "to": "course",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": ""
+    }
+  ]
+}

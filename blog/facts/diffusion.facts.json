@@ -94,6 +94,16 @@
       "quote": "The only fully-connected layers are tiny MLPs for the time and text embeddings. Everything else is convolution or attention. Stable Diffusion 1.5's U-Net has ~860 M parameters (the full pipeline, including text encoder and VAE, is about 1 B). The forward pass per denoising step: encode $t$, run the ",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-part",
+      "from": "diffusion",
+      "to": "part-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ]
 }

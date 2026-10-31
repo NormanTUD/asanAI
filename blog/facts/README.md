@@ -337,3 +337,26 @@ uv run blog/tools/factcheck/trace_facts.py blog/ \
 Ein Trace zeigt jede Kante mit `kind`, Quote und `file`. So ist eine
 Aussagekette nachvollziehbar: `chain-rule → backpropagation →
 backproplab-demo`.
+
+## Versionen, Familien und Zeitprüfung
+
+Ein `year`-Claim ist nur dann ein harter Zeitanker, wenn er ein Ereignis
+qualifiziert (`qualifiers.event`) und das Subjekt keine Familie ist.
+
+- **Spezifische Version:** `python-3`, `python-2`, `gpt-3-175b`, `java-8`.
+- **Familie:** `python`, `java`, `c-language`. Ein Familien-Jahr ist die
+  Erstveröffentlichung, keine Obergrenze: spätere Mitglieder können von
+  späterer Arbeit beeinflusst sein. Deshalb trägt der Familien-Claim
+  `"family": true`.
+- **Zeitprüfung:** `before`/`caused` sind hart. `influenced`/`derived_from`
+  werden nur hart geprüft, wenn beide Endpunkte ein ereignisqualifiziertes
+  Jahr haben; sonst gibt es eine Warnung. `--strict-temporal` macht daraus
+  einen Fehler.
+
+Beispiel: NumPy (2005) beeinflusste die spätere Python-Datenwissenschaft,
+nicht die Sprache Python von 1991. Deshalb ist `python` eine Familie; die
+Relation bleibt gültig, ohne den 1991er-Anker als Obergrenze zu missbrauchen.
+
+`mentioned_in`-Kanten sind reine Provenienz (Entität → Lektion) und werden
+vom `--strict-relations`-Check mitgezählt. Semantische Traces lassen sie sich
+mit `--no-provenance` ausblenden.
