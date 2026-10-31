@@ -915,7 +915,6 @@ It exits 0/1 and is run in the blog CI workflow.
   "unit": "count",
   "qualifiers": {},
   "quote": "the demo below runs a 4-layer network",
-  "line": 29,
   "citation_keys": [],
   "source_url": "",
   "confidence": "stated"
@@ -947,8 +946,10 @@ It exits 0/1 and is run in the blog CI workflow.
   never remove the qualifier to silence a conflict.
 - **`value`:** a number for quantities (put the unit in `unit`), a string
   only for names, formulas, intervals or textual definitions.
-- **`quote` / `line`:** the exact substring and its 1-based line in the PHP
-  file. `citation_keys` when the claim rests on a source.
+- **`quote`:** the exact substring that anchors the claim. Do **not** store
+  line numbers: they drift too quickly. `citation_keys` when the claim rests
+  on a source. The checker accepts a legacy `line` key but never requires or
+  emits it.
 - **`curated`:** `true` for human-verified claims; `false` for the
   generator. The extractor never overwrites a `curated: true` file.
 - **`confidence`:** `stated` for curated claims, `extracted` for generated
@@ -966,6 +967,21 @@ legacy files, not as a style choice.
 spec or formula must be added or updated in that lesson's fact file. Run
 `check_facts.py` before committing. A genuine intentional difference gets a
 qualifier (precision, variant, parameter kind, event), not an allowlist.
+
+**Relations and traces.** A fact file may also carry a `relations` array.
+Each edge is `{id, from, to, kind, qualifiers, quote, citation_keys}`;
+`from`/`to` are fact ids or subject ids and must exist in the ledger.
+Canonical kinds: `influenced`/`influenced_by`, `before`/`after`/
+`preceded_by`/`followed_by`, `caused`/`caused_by`, `authored_by`/`wrote`,
+`part_of`, `same_as`/`alias_of`, `derived_from`, `located_in`, `uses`/
+`used_by`, `supports`, `contradicts`, `cites`, `related_to`. The checker
+normalises inverse pairs, rejects missing endpoints and self-loops, requires
+`before`/`part_of`/`caused` to be acyclic, closes `same_as` transitively and
+then re-checks claim agreement, and rejects temporal contradictions
+(`before`/`influenced`/`caused`/`derived_from` with source year > target
+year). Render paths with
+`uv run blog/tools/factcheck/trace_facts.py blog/ --from <id> --to <id>`;
+`--neighbors`, `--dot`, `--undirected` and `--json` are also available.
 
 ## Validate before you finish
 
