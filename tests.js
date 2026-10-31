@@ -4423,7 +4423,7 @@ async function test_different_layer_types_with_skip_connection() {
 			$layer_type.trigger("focus");
 
 			while (last_disable_invalid_layers_event_uuid != special_disable_invalid_layers_event_uuid) {
-				log("Waiting for finishing disabling invalid layers...");
+				log_once("Waiting for finishing disabling invalid layers...");
 				await delay(200);
 			}
 
@@ -4654,7 +4654,7 @@ async function test_different_layer_types() {
 			$layer_type.trigger("focus");
 
 			while (last_disable_invalid_layers_event_uuid != special_disable_invalid_layers_event_uuid) {
-				log("Waiting for finishing disabling invalid layers...");
+				log_once("Waiting for finishing disabling invalid layers...");
 				await delay(200);
 			}
 
