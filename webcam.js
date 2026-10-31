@@ -366,20 +366,18 @@ async function _captureAndProcessWebcamImage(elem, nol, _enable_train_and_last_l
 
 	let resizedTensor = capturedTensor;
 	try {
-		resizedTensor = resize_image(capturedTensor, [capturedTensor.shape[0], capturedTensor.shape[1]]);
+		// Shrink before the array round-trip: a 1280x720 camera frame would
+		// otherwise copy ~2.8 million channel values just to draw a <=200 px
+		// preview.
+		resizedTensor = resize_image(capturedTensor, [canvasHeight, canvasWidth]);
 	} catch (e) {
 		resizedTensor = capturedTensor;
 	}
 
-	const expandedTensor = expand_dims(resizedTensor);
-	const floatTensor = tf_to_float(expandedTensor);
-	const arrayResult = array_sync(floatTensor);
-	const cam_image = arrayResult[0];
+	const cam_image = array_sync(resizedTensor);
 
 	await dispose(capturedTensor);
-	await dispose(resizedTensor);
-	await dispose(expandedTensor);
-	await dispose(floatTensor);
+	if (resizedTensor !== capturedTensor) await dispose(resizedTensor);
 
 	const category = $(elem).parent();
 	const category_name = $(category).find(".own_image_label").val();
