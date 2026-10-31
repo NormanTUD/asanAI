@@ -764,7 +764,7 @@ var OrigamiFolds = (function (global) {
 	function _prepareData() {
 		var g = _xyGlobal();
 		if (!g) {
-			_log("keine xy_data_global vorhanden");
+			_log("no xy_data_global available");
 			return false;
 		}
 
@@ -773,7 +773,7 @@ var OrigamiFolds = (function (global) {
 
 		var xT = g.x;
 		if (_isDisposedTensor(xT)) {
-			_warn("xy_data_global.x ist disposed");
+			_warn("xy_data_global.x is disposed");
 			return false;
 		}
 
@@ -782,7 +782,7 @@ var OrigamiFolds = (function (global) {
 		catch (e) { total = 0; }
 
 		if (!_isFiniteNum(total) || total < 1) {
-			_log("xy_data_global.x hat 0 Samples");
+			_log("xy_data_global.x has 0 samples");
 			return false;
 		}
 
@@ -805,7 +805,7 @@ var OrigamiFolds = (function (global) {
 			if (idxs.length >= maxPoints) break;
 		}
 		if (!idxs.length) {
-			_warn("Subsampling ergab 0 Indizes");
+			_warn("Subsampling produced 0 indices");
 			return false;
 		}
 
@@ -817,7 +817,7 @@ var OrigamiFolds = (function (global) {
 				return global.tf.keep(g2);
 			});
 		} catch (e) {
-			_error("Konnte X nicht subsamplen: " + e);
+			_error("Could not subsample X: " + e);
 			newX = null;
 		}
 
@@ -873,11 +873,11 @@ var OrigamiFolds = (function (global) {
 						classIdx = yArr;
 					}
 				} else {
-					_log("y-Shape nicht interpretierbar: " + JSON.stringify(yShape));
+					_log("y-shape not interpretable: " + JSON.stringify(yShape));
 				}
 			}
 		} catch (e) {
-			_warn("Konnte Klassen aus y nicht ableiten: " + e);
+			_warn("Could not derive classes from y: " + e);
 			classIdx = null;
 		}
 
@@ -906,7 +906,7 @@ var OrigamiFolds = (function (global) {
 					if (labelsArr && labelsArr[ci] != null) {
 						classNames.push(String(labelsArr[ci]));
 					} else {
-						classNames.push(_tr("origami_class", "Klasse") + " " + ci);
+						classNames.push(_tr("origami_class", "Class") + " " + ci);
 					}
 				}
 				colors = classIdx.map(function (ci2) { return _classColor(ci2); });
@@ -927,7 +927,7 @@ var OrigamiFolds = (function (global) {
 		_state.cachedSampleCount  = idxs.length;
 		_state.cachedXHash        = xHash;
 
-		_log("Daten vorbereitet: " + idxs.length + " von " + total + " Punkten, " +
+		_log("Data prepared: " + idxs.length + " of " + total + " points, " +
 		     (classNames ? classNames.length + " Klassen" :
 		      (isRegression ? "Regression" : "keine Klassen")));
 
@@ -985,7 +985,7 @@ var OrigamiFolds = (function (global) {
 				}, dim);
 			});
 		} catch (e) {
-			_warn("Konnte Input-Raum nicht lesen: " + e);
+			_warn("Could not read input space: " + e);
 			return null;
 		}
 	}
@@ -1022,7 +1022,7 @@ var OrigamiFolds = (function (global) {
 		}
 
 		if (bad > 0) {
-			_warn("Aktivierungen enthielten " + bad + " nicht-finite Werte (auf 0 gesetzt)");
+			_warn("Activations contained " + bad + " non-finite values (set to 0)");
 		}
 
 		return { xs: xs, ys: ys, zs: zs, dim: useDim, n: n };
@@ -1156,7 +1156,7 @@ var OrigamiFolds = (function (global) {
 			catch (e) { cls = ""; }
 
 			if (String(cls).toLowerCase() !== "dense") {
-				_log("Gitter: nur Dense-Layer unterstützt (" + cls + ")");
+				_log("Grid: only Dense layers supported (" + cls + ")");
 				return null;
 			}
 
@@ -1218,9 +1218,9 @@ var OrigamiFolds = (function (global) {
 			}, outDim);
 		} catch (e) {
 			if (_isDisposedError(e)) {
-				_log("Gitter-Forward: Layer disposed, übersprungen");
+				_log("Grid forward: layer disposed, skipped");
 			} else {
-				_log("Gitter-Forward: " + e);
+				_log("Grid forward: " + e);
 			}
 			return null;
 		}
@@ -1364,7 +1364,7 @@ var OrigamiFolds = (function (global) {
 			var actOut = spaceActs[_spaceKey(p.outNode)];
 
 			if (!actIn || !actOut) {
-				_log("Paar " + i + ": Aktivierungen fehlen, übersprungen");
+				_log("Pair " + i + ": activations missing, skipped");
 				results.push(null);
 				prevGridOut = null;
 				continue;
@@ -1409,7 +1409,7 @@ var OrigamiFolds = (function (global) {
 					if (gridOut) {
 						dist = _gridDistortion(grid, gridIn, gridOut);
 						bOut = _mergeBounds(bOut, _computeBounds(gridOut));
-						// Topologie für das nächste Paar vorbereiten
+						// Topologie für das nächste Pair vorbereiten
 						if (gridOut) {
 							var outCoords = new Float64Array(gridOut.n * gridOut.dim);
 							for (var q = 0; q < gridOut.n; q++) {
@@ -1473,7 +1473,7 @@ var OrigamiFolds = (function (global) {
 				outputs: symOut
 			});
 		} catch (e) {
-			_log("tf.model() für Paare fehlgeschlagen: " + e);
+			_log("tf.model() for pairs failed: " + e);
 			return null;
 		}
 		if (!subModel) return null;
@@ -1495,9 +1495,9 @@ var OrigamiFolds = (function (global) {
 			});
 		} catch (e) {
 			if (_isDisposedError(e)) {
-				_log("Paar-Sub-Model: disposed, Fallback");
+				_log("Pair sub-model: disposed, fallback");
 			} else {
-				_warn("Paar-Sub-Model predict fehlgeschlagen: " + e);
+				_warn("Pair sub-model predict failed: " + e);
 			}
 			return null;
 		}
@@ -1545,7 +1545,7 @@ var OrigamiFolds = (function (global) {
 			}
 		}
 
-		_log("Paare: Fallback auf schrittweisen Forward-Pass");
+		_log("Pairs: falling back to stepwise forward pass");
 		return _collectSpaceActivationsStepwise(pairs, layerNodes, out);
 	}
 
@@ -1563,13 +1563,13 @@ var OrigamiFolds = (function (global) {
 		try {
 			cur = global.tf.keep(global.tf.clone(_state.cachedX));
 		} catch (e) {
-			_error("Konnte X nicht klonen: " + e);
+			_error("Could not clone X: " + e);
 			return null;
 		}
 
 		for (var li = 0; li < layers.length; li++) {
 			if (!_layerAlive(layers[li])) {
-				_log("Layer " + li + " disposed, Forward-Pass abgebrochen");
+				_log("Layer " + li + " disposed, forward pass aborted");
 				break;
 			}
 			var nxt = null;
@@ -1583,7 +1583,7 @@ var OrigamiFolds = (function (global) {
 				if (_isDisposedError(e)) {
 					_log("Layer " + li + " apply(): disposed");
 				} else {
-					_warn("Layer " + li + " apply() fehlgeschlagen: " + e);
+					_warn("Layer " + li + " apply() failed: " + e);
 				}
 				nxt = null;
 			}
@@ -1785,7 +1785,7 @@ var OrigamiFolds = (function (global) {
 
 			return planes.length ? planes : null;
 		} catch (e) {
-			_warn("Konnte Hyperplanes nicht extrahieren: " + e);
+			_warn("Could not extract hyperplanes: " + e);
 			return null;
 		}
 	}
@@ -1981,7 +1981,7 @@ var OrigamiFolds = (function (global) {
 		var drawn = 0;
 
 		// Sammel-Mesh fuer alle Trennflaechen eines Layers. Ein einziger
-		// Trace statt N Stueck haelt die Trace-Zahl klein und sorgt fuer
+		// Trace instead of N Stueck haelt die Trace-Zahl klein und sorgt fuer
 		// konsistentes Alpha-Blending.
 		var mx = [], my = [], mz = [];
 		var mi = [], mj = [], mk = [];
@@ -2029,8 +2029,8 @@ var OrigamiFolds = (function (global) {
 		if (!drawn) return [];
 
 		var isHardC = isHard;
-		var label = (isHardC ? _tr("origami_relu_cut", "Faltkante (ReLU)")
-		                     : _tr("origami_soft_fold", "weiche Biegung")) +
+		var label = (isHardC ? _tr("origami_relu_cut", "Crease (ReLU)")
+		                     : _tr("origami_soft_fold", "soft bend")) +
 		            " \u00B7 " + drawn;
 
 		// --- Trennflaeche als halbtransparentes Mesh ---
@@ -2092,7 +2092,7 @@ var OrigamiFolds = (function (global) {
 		if (!grid || !act) return traces;
 		if (!_state.config.showGrid) return traces;
 		if (act.n !== grid.n) {
-			_log("Gitter-Größe passt nicht (" + grid.n + " vs " + act.n + ")");
+			_log("Grid size mismatch (" + grid.n + " vs " + act.n + ")");
 			return traces;
 		}
 
@@ -2145,7 +2145,7 @@ var OrigamiFolds = (function (global) {
 				x: xs, y: ys, z: zs,
 				line: { color: theme.gridColor, width: lw },
 				opacity: op,
-				name: _tr("origami_grid", "Raumgitter") +
+				name: _tr("origami_grid", "Space grid") +
 				      (tagLabel ? (" \u00B7 " + tagLabel) : ""),
 				legendgroup: "grid",
 				showlegend: showLegend,
@@ -2192,7 +2192,7 @@ var OrigamiFolds = (function (global) {
 		}
 
 		if (segCount > 60000) {
-			_log("Gitter hätte " + segCount + " Segmente – Auflösung reduziert.");
+			_log("Grid would have " + segCount + " segments — resolution reduced.");
 			return traces;
 		}
 
@@ -2226,11 +2226,11 @@ var OrigamiFolds = (function (global) {
 			var legName = "";
 			if (showLegend && bi2 === 0) {
 				inLegend = true;
-				legName = "\u25C0 " + _tr("origami_compressed", "gestaucht") +
+				legName = "\u25C0 " + _tr("origami_compressed", "compressed") +
 				          "  2^" + lo.toFixed(1);
 			} else if (showLegend && bi2 === DISTORTION_BUCKETS - 1) {
 				inLegend = true;
-				legName = _tr("origami_stretched", "gestreckt") +
+				legName = _tr("origami_stretched", "stretched") +
 				          "  2^" + hi.toFixed(1) + " \u25B6";
 			}
 
@@ -2319,7 +2319,7 @@ var OrigamiFolds = (function (global) {
 		       v >= 0 && v < nMax && Math.floor(v) === v;
 	}
 
-	// --- GUARDRAIL B: entartete Dreiecke erkennen ---
+	// --- GUARDRAIL B: degenerate triangles erkennen ---
 	// Zwei zusammenfallende Ecken -> Fläche 0 -> WebGL verwirft das
 	// Dreieck und es entsteht ein sichtbares Loch im Mesh.
 	function _triAreaSq(xs, ys, zs, a, b, c) {
@@ -2339,7 +2339,7 @@ var OrigamiFolds = (function (global) {
 		if (!_isFiniteNum(grid.n) || grid.n < 3) return [];
 
 		// --- GUARDRAIL D: Quad-Liste auf Konsistenz prüfen ---
-		// Eine von prevGridOut übernommene Liste kann zu einer anderen
+		// Eine of prevGridOut übernommene Liste kann zu einer anderen
 		// Auflösung gehören. Dann zeigen Indizes ins Leere und ganze
 		// Streifen der Fläche fallen weg.
 		var topo = (typeof grid.topo === "number" && _isFiniteNum(grid.topo))
@@ -2351,7 +2351,7 @@ var OrigamiFolds = (function (global) {
 		if (!quads || !quads.length) {
 			needRebuild = true;
 		} else if (want > 0 && quads.length !== want) {
-			_log("Quad-Anzahl inkonsistent (" + quads.length + " statt " +
+			_log("Quad count inconsistent (" + quads.length + " instead of " +
 			     want + "), Topologie wird neu gebaut");
 			needRebuild = true;
 		}
@@ -2359,7 +2359,7 @@ var OrigamiFolds = (function (global) {
 		if (needRebuild) {
 			quads = _rebuildQuads(grid);
 			if (!quads || !quads.length) {
-				_log("Keine Quads rekonstruierbar (dim " + grid.dim +
+				_log("No quads reconstructable (dim " + grid.dim +
 				     ", res " + grid.res + ")");
 				return [];
 			}
@@ -2393,7 +2393,7 @@ var OrigamiFolds = (function (global) {
 		}
 		var spanMax = Math.max(_span(xs), _span(ys), _span(zs));
 		if (!(spanMax > 1e-9)) {
-			_log("Gitterfläche degeneriert (Ausdehnung " + spanMax + ")");
+			_log("Grid surface degenerated (extent " + spanMax + ")");
 			return [];
 		}
 
@@ -2434,19 +2434,19 @@ var OrigamiFolds = (function (global) {
 		}
 
 		if (badIdx > 0) {
-			_log("Gitterfläche: " + badIdx + " Quads mit ungültigen Indizes " +
+			_log("Grid surface: " + badIdx + " quads with invalid indices " +
 			      "verworfen (n=" + n + ")");
 		}
 
 		/*
 		if (degenerate > 0) {
-			_log("Gitterfläche: " + degenerate + " entartete Dreiecke " +
+			_log("Grid surface: " + degenerate + " degenerate triangles " +
 			     "übersprungen (von " + (quads.length * 2) + ")");
 		}
 		*/
 
 		if (!ii.length) {
-			dbg("Gitterfläche: kein einziges gültiges Dreieck übrig");
+			dbg("Grid surface: kein einziges gültiges Dreieck übrig");
 			return [];
 		}
 
@@ -2456,8 +2456,8 @@ var OrigamiFolds = (function (global) {
 			i: ii, j: jj, k: kk,
 			opacity: op,
 			flatshading: true,
-			name: _tr("origami_surface", "gefaltete Fläche") +
-			      (isInput ? (" \u00B7 " + _tr("origami_before", "vorher")) : ""),
+			name: _tr("origami_surface", "folded surface") +
+			      (isInput ? (" \u00B7 " + _tr("origami_before", "before")) : ""),
 			legendgroup: "surface",
 			showlegend: showLegend,
 			hoverinfo: "skip",
@@ -2489,7 +2489,7 @@ var OrigamiFolds = (function (global) {
 			// Ein einziger NaN im intensity-Array lässt Plotly das
 			// komplette Mesh verwerfen – deshalb hier hart absichern.
 			if (nanCount > n * 0.5) {
-				_log("Verzerrungswerte überwiegend ungültig (" + nanCount +
+				_log("Distortion values mostly invalid (" + nanCount +
 				      "/" + n + "), Fläche wird einfarbig gezeichnet");
 				trace.color = theme.surfaceColor;
 			} else {
@@ -2633,7 +2633,7 @@ var OrigamiFolds = (function (global) {
 		target.zs = fix(target.zs);
 
 		if (nonFinite > 0 || clamped > 0) {
-			_log("OrigamiFolds: " + nonFinite + " nicht-finite, " +
+			_log("OrigamiFolds: " + nonFinite + " non-finite, " +
 			     clamped + " gesättigt (Limit " + lim.toFixed(2) + ")");
 		}
 		return target;
@@ -2662,7 +2662,7 @@ var OrigamiFolds = (function (global) {
 				}
 			}
 		}
-		if (bad > 0) _log("OrigamiFolds: " + bad + " Trace-Werte gesäubert (NaN/Inf)");
+		if (bad > 0) _log("OrigamiFolds: " + bad + " trace values cleaned (NaN/Inf)");
 		return traces;
 	}
 
@@ -2679,7 +2679,7 @@ var OrigamiFolds = (function (global) {
 		// --- GUARDRAIL A: immer auf Kopien arbeiten ---
 		// o.act und o.gridAct werden vom Aufrufer weiterverwendet
 		// (prevGridOut, results[]). Jede In-Place-Änderung hier würde
-		// beim nächsten Paar erneut angewandt.
+		// beim nächsten Pair erneut angewandt.
 		var act = _sanitizeAct(o.act, false);
 		var n   = act.n;
 
@@ -2721,12 +2721,12 @@ var OrigamiFolds = (function (global) {
 
 		// Zusätzliche Konsistenzprüfung: passt die Punktzahl überhaupt?
 		if (drawGrid && gridActForBuild.n !== o.grid.n) {
-			_log("Gitter-Punktzahl passt nicht (" + gridActForBuild.n +
+			_log("Grid point count mismatch (" + gridActForBuild.n +
 				      " vs " + o.grid.n + ") in Szene " + sceneName);
 			drawGrid = false;
 		}
 		if (!drawGrid && o.gridAct) {
-			_log("OrigamiFolds: Gitter nicht zeichenbar für Szene " + sceneName +
+			_log("OrigamiFolds: Grid not drawable for scene " + sceneName +
 			     " (dim " + dim + ")");
 		}
 
@@ -2751,8 +2751,8 @@ var OrigamiFolds = (function (global) {
 				o.distortion,
 				sceneName, theme,
 				showLegend && isOut,
-				isOut ? _tr("origami_after", "nachher")
-				      : _tr("origami_before", "vorher"),
+				isOut ? _tr("origami_after", "after")
+				      : _tr("origami_before", "before"),
 				!isOut
 			);
 			for (var g = 0; g < gt.length; g++) traces.push(gt[g]);
@@ -2768,7 +2768,7 @@ var OrigamiFolds = (function (global) {
 					x: wf.xs, y: wf.ys, z: wf.zs,
 					line: { color: theme.boxColor, width: isOut ? 2.5 : 1.2 },
 					opacity: isOut ? 0.75 : 0.35,
-					name: _tr("origami_subspace", "Unterraum") + " (" + dim + "D)",
+					name: _tr("origami_subspace", "Subspace") + " (" + dim + "D)",
 					legendgroup: "box",
 					showlegend: showLegend && isOut,
 					hoverinfo: "skip",
@@ -2852,7 +2852,7 @@ var OrigamiFolds = (function (global) {
 						}
 					},
 					name: classNames[ci] ||
-					      (_tr("origami_class", "Klasse") + " " + ci),
+					      (_tr("origami_class", "Class") + " " + ci),
 					legendgroup: "cls" + ci,
 					showlegend: showLegend,
 					hovertemplate:
@@ -2880,8 +2880,8 @@ var OrigamiFolds = (function (global) {
 						color: theme.markerEdge
 					}
 				},
-				name: isReg ? _tr("origami_target", "Zielwert")
-				            : _tr("origami_data", "Daten"),
+				name: isReg ? _tr("origami_target", "Target value")
+				            : _tr("origami_data", "Data"),
 				legendgroup: "data",
 				showlegend: showLegend,
 				hovertemplate:
@@ -3221,7 +3221,7 @@ var OrigamiFolds = (function (global) {
 				if (cam) _state.lastCameras[k] = cam;
 			}
 		} catch (e) {
-			_log("Kameras konnten nicht gesichert werden: " + e);
+			_log("Could not save cameras: " + e);
 		}
 	}
 
@@ -3270,7 +3270,7 @@ var OrigamiFolds = (function (global) {
 			div.addEventListener("touchmove", function (e) { e.stopPropagation(); },
 				{ passive: false });
 		} catch (e) {
-			_warn("Konnte Interaktions-Listener nicht anhängen: " + e);
+			_warn("Could not attach interaction listeners: " + e);
 		}
 
 		try {
@@ -3323,7 +3323,7 @@ var OrigamiFolds = (function (global) {
 			}, { threshold: 0.03 });
 			_state.observer.observe(_state.container);
 		} catch (e) {
-			_warn("IntersectionObserver fehlgeschlagen: " + e);
+			_warn("IntersectionObserver failed: " + e);
 			_state.isVisible = true;
 		}
 	}
@@ -3354,7 +3354,7 @@ var OrigamiFolds = (function (global) {
 			var iv = setInterval(function () {
 				tries++;
 				if (_hasPlotly()) { clearInterval(iv); cb(); }
-				else if (tries > 200) { clearInterval(iv); _error("Plotly-Ladezeit überschritten"); }
+				else if (tries > 200) { clearInterval(iv); _error("Plotly load time exceeded"); }
 			}, 50);
 			return;
 		}
@@ -3363,7 +3363,7 @@ var OrigamiFolds = (function (global) {
 		var iv2 = setInterval(function () {
 			tries2++;
 			if (_hasPlotly()) { clearInterval(iv2); _state.plotlyLoading = false; cb(); }
-			else if (tries2 > 200) { clearInterval(iv2); _state.plotlyLoading = false; _error("Plotly-Ladezeit überschritten"); }
+			else if (tries2 > 200) { clearInterval(iv2); _state.plotlyLoading = false; _error("Plotly load time exceeded"); }
 		}, 50);
 	}
 
@@ -3385,10 +3385,10 @@ var OrigamiFolds = (function (global) {
 			_state.infoDiv.style.display = "block";
 			_state.infoDiv.style.color = theme.infoText;
 			_state.infoDiv.innerHTML =
-				"<b>" + _tr("origami_title", "Origami-Visualizer") + "</b><br>" +
+				"<b>" + _tr("origami_title", "Origami Visualizer") + "</b><br>" +
 				_state.deactivationMsg;
 		}
-		_log("deaktiviert: " + _state.deactivationMsg);
+		_log("deactivated: " + _state.deactivationMsg);
 	}
 
 	function _reactivate() {
@@ -3433,7 +3433,7 @@ var OrigamiFolds = (function (global) {
 		_state.dataDirty = true;
 		_state.pendingRender = true;
 		_scheduleRender();
-		_warn("Plotly-Pick-Crash, Plot neu aufgebaut (" + _state.pickRecoveryCount + "/10)");
+		_warn("Plotly pick crash, plot rebuilt (" + _state.pickRecoveryCount + "/10)");
 	}
 
 	function _setupPickRecoveryGuard() {
@@ -3464,7 +3464,7 @@ var OrigamiFolds = (function (global) {
 	function _ofRender() {
 		if (!_state.initialized || !_state.plotDiv) return;
 		if (!_state.plotDiv.parentNode) {
-			_log("plotDiv nicht im DOM, Render abgebrochen");
+			_log("plotDiv not in DOM, render aborted");
 			return;
 		}
 		if (!_hasPlotly()) {
@@ -3528,7 +3528,7 @@ var OrigamiFolds = (function (global) {
 		var pairs = built.pairs;
 
 		if (pairs.length && !_chainAlive(pairs)) {
-			_log("Paar-Kette enthält disposed Layer, übersprungen");
+			_log("Pair chain contains disposed layers, skipped");
 			return;
 		}
 
@@ -3548,7 +3548,7 @@ var OrigamiFolds = (function (global) {
 
 		var sig = _chainSignature(pairs);
 		if (sig !== _state.lastChainSignature) {
-			_log("Paar-Kette geändert: " + sig);
+			_log("Pair chain changed: " + sig);
 			_state.lastChainSignature = sig;
 			_state.lastFingerprint = null;
 			if (_state.deactivated) _reactivate();
@@ -3577,7 +3577,7 @@ var OrigamiFolds = (function (global) {
 			|| (rev !== _state.lastDataRevision);
 
 		if (!changed) {
-			_log("keine Änderung, Render übersprungen");
+			_log("no change, render skipped");
 			return;
 		}
 
@@ -3588,7 +3588,7 @@ var OrigamiFolds = (function (global) {
 				_deactivate("origami_activation_failed",
 					"Aktivierungen konnten mehrfach nicht berechnet werden.");
 			} else {
-				_warn("Aktivierungen fehlgeschlagen (Versuch " +
+				_warn("Activations failed (attempt " +
 				      _state.consecutiveErrors + "/4)");
 			}
 			return;
@@ -3696,11 +3696,11 @@ var OrigamiFolds = (function (global) {
 						_lastRebuildTime         = now;
 						_attachInteractionListeners();
 						_saveCameras();
-						_log("Plot neu erstellt (" + results.length + " Paare, " +
+						_log("Plot recreated (" + results.length + " pairs, " +
 						     _state.cachedSampleCount + " Punkte)");
 					})
 					.catch(function (e) {
-						_error("Plotly.newPlot fehlgeschlagen: " + e);
+						_error("Plotly.newPlot failed: " + e);
 						_state.plotlyInitialized = false;
 						_resetGlSettle();
 					});
@@ -3715,13 +3715,13 @@ var OrigamiFolds = (function (global) {
 						_saveCameras();
 					})
 					.catch(function (e) {
-						_error("Plotly.react fehlgeschlagen: " + e);
+						_error("Plotly.react failed: " + e);
 						_state.plotlyInitialized = false;
 						_resetGlSettle();
 					});
 			}
 		} catch (e) {
-			_error("Rendern fehlgeschlagen: " + e);
+			_error("Rendering failed: " + e);
 			_state.plotlyInitialized = false;
 		}
 	}
@@ -3738,7 +3738,7 @@ var OrigamiFolds = (function (global) {
 				_state.parentId = divOrId;
 				return byId;
 			}
-			_warn("Div mit ID '" + divOrId + "' nicht gefunden, hänge an <body>");
+			_warn("Div with ID '" + divOrId + "' not found, appending to <body>");
 			return null;
 		}
 
@@ -3772,22 +3772,18 @@ var OrigamiFolds = (function (global) {
 
 	function _buttonDefs() {
 		return [
-			["\u21BA " + _tr("origami_reset_view", "Ansicht"),
-			 _tr("origami_reset_view_tip",
-			  "Setzt alle Kameras auf die Standardansicht zurück.")],
-			["\u27F3 " + _tr("origami_force", "Neu zeichnen"),
-			 _tr("origami_force_tip", "Erzwingt eine Neuberechnung.")],
-			["\u2702 " + _tr("origami_toggle_cuts", "Schnitte"),
-			 _tr("origami_toggle_cuts_tip",
-			  "Zeigt/versteckt die ReLU-Hyperplanes.")],
-			["\u25A3 " + _tr("origami_toggle_box", "Rahmen"),
-			 _tr("origami_toggle_box_tip",
-			  "Zeigt/versteckt die Begrenzung des Unterraums.")],
-			["\u229E " + _tr("origami_toggle_grid", "Gitter"),
-			 _tr("origami_toggle_grid_tip", "Zeigt/versteckt das Raumgitter.")],
-			["\u25E7 " + _tr("origami_toggle_surface", "Fläche"),
-			 _tr("origami_toggle_surface_tip",
-			  "Zeigt die gefaltete Fläche als Körper (2D).")]
+			["\u21BA " + _tr("origami_reset_view", "View"),
+			 _tr("origami_reset_view_tip", "Resets all cameras to the default view.")],
+			["\u27F3 " + _tr("origami_force", "Redraw"),
+			 _tr("origami_force_tip", "Forces a recomputation.")],
+			["\u2702 " + _tr("origami_toggle_cuts", "Cuts"),
+			 _tr("origami_toggle_cuts_tip", "Shows/hides the ReLU hyperplanes.")],
+			["\u25A3 " + _tr("origami_toggle_box", "Bounds"),
+			 _tr("origami_toggle_box_tip", "Shows/hides the subspace bounds.")],
+			["\u229E " + _tr("origami_toggle_grid", "Grid"),
+			 _tr("origami_toggle_grid_tip", "Shows/hides the space grid.")],
+			["\u25E7 " + _tr("origami_toggle_surface", "Surface"),
+			 _tr("origami_toggle_surface_tip", "Shows the folded surface as a solid (2D).")]
 		];
 	}
 
@@ -3799,8 +3795,7 @@ var OrigamiFolds = (function (global) {
 		if (title) {
 			title.style.color = theme.textAccent;
 			title.innerHTML = "\u2726 " +
-				_tr("origami_title_paired",
-					"Origami: Faltung der Datenmannigfaltigkeit");
+				_tr("origami_title_paired", "Origami: Folding of the data manifold");
 		}
 
 		var btnRow = document.getElementById(BTNROW_ID);
@@ -3819,7 +3814,7 @@ var OrigamiFolds = (function (global) {
 		if (foot) {
 			foot.style.color = theme.infoText;
 			foot.innerHTML =
-				"<b>" + _tr("origami_legend", "Lesehilfe") + ":</b> " +
+				"<b>" + _tr("origami_legend", "Reading guide") + ":</b> " +
 				_tr("origami_legend_text",
 					"Unten: Raum VOR dem Layer. Oben: NACH dem Layer. " +
 					"Das Gitter zeigt die Faltung. Blau=gestaucht, Rot=gestreckt. " +
@@ -3831,7 +3826,7 @@ var OrigamiFolds = (function (global) {
 			if (_state.deactivated &&
 			    _state.infoDiv.style.display !== "none") {
 				_state.infoDiv.innerHTML =
-					"<b>" + _tr("origami_title", "Origami-Visualizer") + "</b><br>" +
+					"<b>" + _tr("origami_title", "Origami Visualizer") + "</b><br>" +
 					_tr(_state.deactivationKey, _state.deactivationMsg);
 			}
 		}
@@ -3867,8 +3862,7 @@ var OrigamiFolds = (function (global) {
 			"font-weight:700;font-size:13px;letter-spacing:0.3px;color:" +
 			theme.textAccent + ";";
 		title.innerHTML = "\u2726 " +
-			_tr("origami_title_paired",
-				"Origami: Faltung der Datenmannigfaltigkeit");
+			_tr("origami_title_paired", "Origami: Folding of the data manifold");
 		head.appendChild(title);
 
 		var btnRow = document.createElement("div");
@@ -3886,7 +3880,7 @@ var OrigamiFolds = (function (global) {
 				";color:" + theme.btnText + ";";
 			b.addEventListener("click", function (e) {
 				e.preventDefault();
-				try { onClick(); } catch (err) { _error("Button-Handler: " + err); }
+				try { onClick(); } catch (err) { _error("Button handler: " + err); }
 			});
 			btnRow.appendChild(b);
 			return b;
@@ -3952,7 +3946,7 @@ var OrigamiFolds = (function (global) {
 			"margin-top:8px;font-size:10.5px;line-height:1.6;opacity:0.75;color:" +
 			theme.infoText + ";";
 		foot.innerHTML =
-			"<b>" + _tr("origami_legend", "Lesehilfe") + ":</b> " +
+			"<b>" + _tr("origami_legend", "Reading guide") + ":</b> " +
 			_tr("origami_legend_text",
 				"Unten: Raum VOR dem Layer. Oben: NACH dem Layer. " +
 				"Das Gitter zeigt die Faltung. Blau=gestaucht, Rot=gestreckt. " +
@@ -3966,7 +3960,7 @@ var OrigamiFolds = (function (global) {
 				document.body.appendChild(container);
 			}
 		} catch (e) {
-			_error("Konnte Container nicht in den DOM einhängen: " + e);
+			_error("Could not attach container to the DOM: " + e);
 			try { document.body.appendChild(container); } catch (e2) { /* give up */ }
 		}
 
@@ -4034,12 +4028,12 @@ var OrigamiFolds = (function (global) {
 		try {
 			_buildDOM(divOrId);
 		} catch (e) {
-			_error("init() fehlgeschlagen: " + e);
+			_error("init() failed: " + e);
 			return OrigamiFolds;
 		}
 
 		if (!_state.container) {
-			_error("Kein Container vorhanden, Abbruch.");
+			_error("No container available, aborting.");
 			return OrigamiFolds;
 		}
 
@@ -4058,7 +4052,7 @@ var OrigamiFolds = (function (global) {
 			_scheduleRender();
 		});
 
-		_log("initialisiert (Container: " + SINGLETON_ID + ")");
+		_log("initialized (container: " + SINGLETON_ID + ")");
 		return OrigamiFolds;
 	}
 
@@ -4068,14 +4062,14 @@ var OrigamiFolds = (function (global) {
 
 	function update() {
 		if (!_state.initialized) {
-			_log("update() vor init() – initialisiere automatisch");
+			_log("update() before init() – initializing automatically");
 			var tabPlot = document.getElementById("origami_folds_plot");
 			init(tabPlot || undefined);
 			return OrigamiFolds;
 		}
 
 		if (!_state.container || !_state.container.parentNode) {
-			_log("Container nicht mehr im DOM, baue neu auf");
+			_log("Container no longer in DOM, rebuilding");
 			_state.initialized = false;
 			_state.plotlyInitialized = false;
 			_state.observer = null;
@@ -4148,7 +4142,7 @@ var OrigamiFolds = (function (global) {
 		_state.lastChainSignature = null;
 		_state.modelRef = null;
 
-		_log("zerstört");
+		_log("destroyed");
 		return OrigamiFolds;
 	}
 
@@ -4164,18 +4158,18 @@ var OrigamiFolds = (function (global) {
 		for (var i = 0; i < keys.length; i++) {
 			var k = keys[i];
 			if (!Object.prototype.hasOwnProperty.call(_state.config, k)) {
-				_warn("Unbekannte Config-Option ignoriert: " + k);
+				_warn("Unknown config option ignored: " + k);
 				continue;
 			}
 			var v = cfg[k];
 			var expected = typeof _state.config[k];
 			if (typeof v !== expected) {
-				_warn("Config '" + k + "' erwartet " + expected + ", bekam " +
+				_warn("Config '" + k + "' expected " + expected + ", got " +
 				      typeof v + " – ignoriert");
 				continue;
 			}
 			if (expected === "number" && !_isFiniteNum(v)) {
-				_warn("Config '" + k + "' ist keine finite Zahl – ignoriert");
+				_warn("Config '" + k + "' is not a finite number – ignored");
 				continue;
 			}
 			if (_state.config[k] !== v) {
@@ -4227,9 +4221,9 @@ function create_origami_folds(divOrId) {
 		return OrigamiFolds.init(divOrId);
 	} catch (e) {
 		if (typeof err === "function") {
-			err("[origami_folds] create_origami_folds fehlgeschlagen: " + e);
+			err("[origami_folds] create_origami_folds failed: " + e);
 		} else {
-			console.error("[origami_folds] create_origami_folds fehlgeschlagen:", e);
+			console.error("[origami_folds] create_origami_folds failed:", e);
 		}
 	}
 }
@@ -4398,9 +4392,9 @@ function update_origami_folds() {
 		return OrigamiFolds.update();
 	} catch (e) {
 		if (typeof wrn === "function") {
-			wrn("[origami_folds] update_origami_folds fehlgeschlagen: " + e);
+			wrn("[origami_folds] update_origami_folds failed: " + e);
 		} else {
-			console.warn("[origami_folds] update_origami_folds fehlgeschlagen:", e);
+			console.warn("[origami_folds] update_origami_folds failed:", e);
 		}
 	}
 }

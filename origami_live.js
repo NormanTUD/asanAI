@@ -322,7 +322,7 @@ var OrigamiLive = (function (global) {
 				if (req) req.call(el);
 			}
 		} catch (e) {
-			_wrn("Vollbild nicht möglich: " + e);
+			_wrn("Fullscreen not possible: " + e);
 		}
 	}
 
@@ -655,7 +655,7 @@ var OrigamiLive = (function (global) {
 			layer:      null,
 			dim:        _featDim(inShape),
 			shape:      inShape,
-			name:       _tr("origami_live_input", "Eingaberaum"),
+			name:       _tr("origami_live_input", "Input space"),
 			className:  "Input",
 			activation: null,
 			foldKind:   "none",
@@ -722,7 +722,7 @@ var OrigamiLive = (function (global) {
 		}
 
 		if (skipped.length) {
-			_log("Übersprungene Layer: " + skipped.join(", "));
+			_log("Skipped layers: " + skipped.join(", "));
 		}
 
 		if (chain.length < 2) {
@@ -833,11 +833,11 @@ var OrigamiLive = (function (global) {
 		if (!_fin(maxP) || maxP < 8) maxP = 600;
 
 		var xT = g.x;
-		if (_tDead(xT)) { _warn("x ist disposed"); return false; }
+		if (_tDead(xT)) { _warn("x is disposed"); return false; }
 
 		var total = 0;
 		try { total = (xT.shape && xT.shape[0]) ? xT.shape[0] : 0; } catch (e) { total = 0; }
-		if (!_fin(total) || total < 1) { _log("0 Samples"); return false; }
+		if (!_fin(total) || total < 1) { _log("0 samples"); return false; }
 
 		var hash = null;
 		try {
@@ -865,7 +865,7 @@ var OrigamiLive = (function (global) {
 				return global.tf.keep(global.tf.gather(xT, it));
 			});
 		} catch (e) {
-			_err("Subsampling fehlgeschlagen: " + e);
+			_err("Subsampling failed: " + e);
 			return false;
 		}
 		if (!newX || _tDead(newX)) { _tFree(newX); return false; }
@@ -905,7 +905,7 @@ var OrigamiLive = (function (global) {
 				}
 			}
 		} catch (e) {
-			_warn("Klassen nicht ableitbar: " + e);
+			_warn("Classes not derivable: " + e);
 			classIdx = null;
 		}
 
@@ -931,7 +931,7 @@ var OrigamiLive = (function (global) {
 				classNames = [];
 				for (var ci = 0; ci <= maxC; ci++) {
 					classNames.push(labs && labs[ci] != null ? String(labs[ci])
-					              : (_tr("origami_live_class", "Klasse") + " " + ci));
+					              : (_tr("origami_live_class", "Class") + " " + ci));
 				}
 				colors = classIdx.map(function (c2) { return _classColor(c2); });
 			}
@@ -952,8 +952,8 @@ var OrigamiLive = (function (global) {
 		_state.cache.yMin = yMin;
 		_state.cache.yMax = yMax;
 
-		_log("Daten bereit: " + idxs.length + "/" + total + " Punkte" +
-		     (classNames ? (", " + classNames.length + " Klassen") :
+		_log("Data ready: " + idxs.length + "/" + total + " points" +
+		     (classNames ? (", " + classNames.length + " classes") :
 		      (isReg ? ", Regression" : "")));
 		return true;
 	}
@@ -1127,7 +1127,7 @@ var OrigamiLive = (function (global) {
 		var kShape = ws[0].shape;
 		if (!Array.isArray(kShape) || kShape.length !== 2) return null;
 		if (kShape[0] !== inDim) {
-			_log("Dense-Forward: Dimension passt nicht (" + kShape[0] + " vs " + inDim + ")");
+			_log("Dense forward: dimension mismatch (" + kShape[0] + " vs " + inDim + ")");
 			return null;
 		}
 
@@ -1230,7 +1230,7 @@ var OrigamiLive = (function (global) {
 			// kuenstlich, indem wir den Eingaberaum zyklisch auffuellen.
 			// Das ist eine Projektion, keine echte Konvolution: fuer die
 			// Faltungs-Geometrie reicht das, weil nur die Hyperebenen zaehlen.
-			_log("Conv-Patch: Dimension " + inDim + " != Patch " + patchDim +
+			_log("Conv patch: dimension " + inDim + " != patch " + patchDim +
 			     " — zyklische Projektion");
 		}
 
@@ -1483,7 +1483,7 @@ var OrigamiLive = (function (global) {
 			inDim  = pack.dim;
 			nSamples = pack.n;
 		} catch (e) {
-			_err("Eingabedaten nicht lesbar: " + e);
+			_err("Input data unreadable: " + e);
 			return null;
 		}
 		if (!inFlat || !_fin(inDim) || inDim < 1) return null;
@@ -1565,12 +1565,12 @@ var OrigamiLive = (function (global) {
 			} else if (st.convPatch && cfg.convPatchMode) {
 				fw = _convPatchForward(curFlat, nSamples, curDim, st.layer, st.convPatch);
 			} else {
-				_log("Stufe " + li + " (" + st.className + ") nicht faltbar — Kette endet");
+				_log("Stage " + li + " (" + st.className + ") not foldable — chain ends");
 				break;
 			}
 
 			if (!fw) {
-				_log("Forward für Stufe " + li + " fehlgeschlagen — Kette endet");
+				_log("Forward for stage " + li + " failed — chain ends");
 				break;
 			}
 
@@ -1994,7 +1994,7 @@ var OrigamiLive = (function (global) {
 	}
 
 	/**
-	 * Halbräume für den Stack-Modus: pro Neuron EIN eingefärbtes Blatt,
+	 * Halbräume für den Stack-Mode: pro Neuron EIN eingefärbtes Blatt,
 	 * cyan für die positive, ocker für die negative Seite.
 	 * Genau die Darstellung aus Screenshot 1/5/6.
 	 */
@@ -2177,11 +2177,11 @@ var OrigamiLive = (function (global) {
 			var outD   = st.dim;
 
 			if (!kernel || !_fin(inD) || !_fin(outD)) {
-				_log("Grenz-Rückprojektion: Stufe " + li + " ohne Gewichte");
+				_log("Boundary back-projection: stage " + li + " without weights");
 				return null;
 			}
 			if (inD !== curDim) {
-				_log("Grenz-Rückprojektion: Dimension bricht bei Stufe " + li);
+				_log("Boundary back-projection: dimension breaks at stage " + li);
 				return null;
 			}
 
@@ -3369,7 +3369,7 @@ var OrigamiLive = (function (global) {
 		lines.renderOrder = 4;
 		_state.foldGroup.add(lines);
 
-		_log("Urbild-Falten: " + totalFolds + " Kanten im Eingaberaum");
+		_log("Preimage folds: " + totalFolds + " edges in input space");
 	}
 
 	/**
@@ -3379,7 +3379,7 @@ var OrigamiLive = (function (global) {
 	function _pushGrid(flat, n, inDim, stage) {
 		if (!stage || !stage.kernel) return null;
 		if (stage.inDim !== inDim) {
-			_log("_pushGrid: Dimension passt nicht (" + inDim + " vs " + stage.inDim + ")");
+			_log("_pushGrid: dimension mismatch (" + inDim + " vs " + stage.inDim + ")");
 			return null;
 		}
 		var outD = stage.dim;
@@ -3642,7 +3642,7 @@ var OrigamiLive = (function (global) {
 		if (typeof divOrId === "string" && divOrId !== "") {
 			var byId = document.getElementById(divOrId);
 			if (byId) { _state.parentRef = divOrId; return byId; }
-			_warn("Div '" + divOrId + "' nicht gefunden — hänge an <body>");
+			_warn("Div '" + divOrId + "' not found — appending to <body>");
 			return null;
 		}
 		if (divOrId && typeof HTMLElement !== "undefined" && divOrId instanceof HTMLElement) {
@@ -3742,8 +3742,7 @@ var OrigamiLive = (function (global) {
 			"text-shadow:0 1px 10px rgba(0,0,0,0.45)",
 			"pointer-events:none"
 		].join(";");
-		title.innerHTML = "\u2726 " + _tr("origami_live_title",
-			"Origami: Wie das Netz den Raum faltet");
+		title.innerHTML = "\u2726 " + _tr("origami_live_title", "Origami: How the network folds space");
 		head.appendChild(title);
 
 		var modeRow = document.createElement("div");
@@ -3807,25 +3806,24 @@ var OrigamiLive = (function (global) {
 		}
 
 		_state.playBtn = tool("\u25B6",
-			_tr("origami_live_play_tip",
-				"Zeitlupe: faltet das Blatt Schicht für Schicht auf und zu."),
+			_tr("origami_live_play_tip", "Slow-motion: folds the sheet layer by layer open and closed."),
 			function () { _togglePlay(); });
 		_state.uiText.push({ el: _state.playBtn, kind: "tip",
 		                     key: "origami_live_play_tip",
 		                     fb: "Zeitlupe: faltet das Blatt Schicht für Schicht auf und zu." });
 
 		tool("\u21BA",
-			_tr("origami_live_reset_tip", "Kamera zurücksetzen."),
+			_tr("origami_live_reset_tip", "Reset camera."),
 			function () { _resetCamera(); });
 
 		_state.fsBtn = tool("\u26F6",
-			_tr("origami_live_fullscreen_tip", "Vollbild."),
+			_tr("origami_live_fullscreen_tip", "Fullscreen."),
 			function () { _toggleFullscreen(); });
 		_state.uiText.push({ el: _state.fsBtn, kind: "tip",
 		                     key: "origami_live_fullscreen_tip", fb: "Vollbild." });
 
 		_state.gearBtn = tool("\u2699",
-			_tr("origami_live_settings_tip", "Einstellungen und Qualität."),
+			_tr("origami_live_settings_tip", "Settings and quality."),
 			function () { _togglePanel(); });
 
 		head.appendChild(toolRow);
@@ -3847,7 +3845,7 @@ var OrigamiLive = (function (global) {
 			"color:" + th.text,
 			"text-shadow:0 1px 8px rgba(0,0,0,0.5)"
 		].join(";");
-		scrubLbl.textContent = _tr("origami_live_layer", "Schicht") + " —";
+		scrubLbl.textContent = _tr("origami_live_layer", "Layer") + " —";
 		scrubWrap.appendChild(scrubLbl);
 		_state.scrubLblEl = scrubLbl;
 		_state.uiText.push({ el: scrubLbl, kind: "label",
@@ -3970,7 +3968,7 @@ var OrigamiLive = (function (global) {
 			if (parent) parent.appendChild(c);
 			else document.body.appendChild(c);
 		} catch (e) {
-			_err("Container konnte nicht eingehängt werden: " + e);
+			_err("Could not attach container: " + e);
 			try { document.body.appendChild(c); } catch (e2) {}
 		}
 
@@ -4076,14 +4074,14 @@ var OrigamiLive = (function (global) {
 		}
 
 		// ---- Qualität ----
-		section(_tr("origami_live_sec_quality", "Qualität"));
+		section(_tr("origami_live_sec_quality", "Quality"));
 
 		var qRow = document.createElement("div");
 		qRow.style.cssText = "display:flex;gap:4px;margin:4px 0 8px 0;";
 		var QL = [
-			[0, _tr("origami_live_q_low", "Spar")],
-			[1, _tr("origami_live_q_mid", "Mittel")],
-			[2, _tr("origami_live_q_high", "Hoch")],
+			[0, _tr("origami_live_q_low", "Low")],
+			[1, _tr("origami_live_q_mid", "Medium")],
+			[2, _tr("origami_live_q_high", "High")],
 			[3, _tr("origami_live_q_ultra", "Ultra")]
 		];
 		_state.qBtns = [];
@@ -4129,96 +4127,83 @@ var OrigamiLive = (function (global) {
 		});
 		autoW.appendChild(autoCb);
 		var autoSp = document.createElement("span");
-		autoSp.textContent = _tr("origami_live_auto", "Automatisch anpassen");
+		autoSp.textContent = _tr("origami_live_auto", "Auto-adjust");
 		autoW.appendChild(autoSp);
 		el.appendChild(autoW);
 
-		slider("gridRes", _tr("origami_live_gridres", "Gitterauflösung"),
+		slider("gridRes", _tr("origami_live_gridres", "Grid resolution"),
 			7, 81, 2,
-			_tr("origami_live_gridres_tip",
-				"Wie fein das gefaltete Blatt vernetzt ist."),
+			_tr("origami_live_gridres_tip", "How finely the folded sheet is meshed."),
 			function (v) { return v.toFixed(0); });
 
-		slider("maxNeurons", _tr("origami_live_maxneurons", "Falten pro Schicht"),
+		slider("maxNeurons", _tr("origami_live_maxneurons", "Folds per layer"),
 			1, 64, 1,
 			_tr("origami_live_maxneurons_tip",
 				"Jedes Neuron erzeugt eine Faltkante. Hier wird begrenzt, " +
 				"wie viele davon gezeichnet werden — sortiert nach Wirkung."),
 			function (v) { return v.toFixed(0); });
 
-		slider("maxLayers", _tr("origami_live_maxlayers", "Sichtbare Schichten"),
+		slider("maxLayers", _tr("origami_live_maxlayers", "Visible layers"),
 			1, 12, 1,
-			_tr("origami_live_maxlayers_tip",
-				"Tiefe der dargestellten Faltungskette."),
+			_tr("origami_live_maxlayers_tip", "Depth of the displayed fold chain."),
 			function (v) { return v.toFixed(0); });
 
-		slider("boundaryRes", _tr("origami_live_boundres", "Grenz-Auflösung"),
+		slider("boundaryRes", _tr("origami_live_boundres", "Boundary resolution"),
 			30, 160, 10,
 			_tr("origami_live_boundres_tip",
 				"Feinheit der magenta Entscheidungsgrenze. Höher = glatter, " +
 				"aber rechenintensiver."),
 			function (v) { return v.toFixed(0); });
 
-		slider("maxPoints", _tr("origami_live_maxpoints", "Datenpunkte"),
+		slider("maxPoints", _tr("origami_live_maxpoints", "Data points"),
 			100, 6000, 100,
-			_tr("origami_live_maxpoints_tip",
-				"Anzahl der dargestellten Trainingsbeispiele."),
+			_tr("origami_live_maxpoints_tip", "Number of training examples drawn."),
 			function (v) { return v.toFixed(0); });
 
 		// ---- Darstellung ----
-		section(_tr("origami_live_sec_look", "Darstellung"));
+		section(_tr("origami_live_sec_look", "Display"));
 
-		check("showSheet", _tr("origami_live_show_sheet", "Gefaltetes Blatt"),
-			_tr("origami_live_show_sheet_tip",
-				"Die Fläche, die das Netz knickt."));
-		check("showGrid", _tr("origami_live_show_grid", "Gitterlinien"),
+		check("showSheet", _tr("origami_live_show_sheet", "Folded sheet"),
+			_tr("origami_live_show_sheet_tip", "The surface the network creases."));
+		check("showGrid", _tr("origami_live_show_grid", "Grid lines"),
 			_tr("origami_live_show_grid_tip",
 				"Zeigt, wie stark einzelne Kanten gestaucht oder gestreckt " +
 				"werden — hell = starke Verformung."));
-		check("showFolds", _tr("origami_live_show_folds", "Faltkanten"),
-			_tr("origami_live_show_folds_tip",
-				"Die weißen Linien: dort gilt w·x + b = 0, dort knickt ReLU."));
-		check("showData", _tr("origami_live_show_data", "Datenpunkte"),
-			_tr("origami_live_show_data_tip",
-				"Die Trainingsbeispiele, nach Klasse gefärbt."));
-		check("showBoundary", _tr("origami_live_show_bound", "Entscheidungsgrenze"),
-			_tr("origami_live_show_bound_tip",
-				"Die magenta Linie: hier wechselt die Vorhersage."));
-		check("showAxes", _tr("origami_live_show_axes", "Achsenkreuz"),
-			_tr("origami_live_show_axes_tip",
-				"Koordinatenachsen des aktuellen Raums."));
-		check("showNetDiagram", _tr("origami_live_show_net", "Mini-Netz"),
-			_tr("origami_live_show_net_tip",
-				"Kleines Diagramm rechts unten mit der aktiven Schicht."));
-		check("showHud", _tr("origami_live_show_hud", "Erklärtext"),
-			_tr("origami_live_show_hud_tip",
-				"Die Infobox links unten."));
+		check("showFolds", _tr("origami_live_show_folds", "Fold edges"),
+			_tr("origami_live_show_folds_tip", "The white lines: w·x + b = 0 — where ReLU creases."));
+		check("showData", _tr("origami_live_show_data", "Data points"),
+			_tr("origami_live_show_data_tip", "The training examples, colored by class."));
+		check("showBoundary", _tr("origami_live_show_bound", "Decision boundary"),
+			_tr("origami_live_show_bound_tip", "The magenta line: where the prediction switches."));
+		check("showAxes", _tr("origami_live_show_axes", "Axes"),
+			_tr("origami_live_show_axes_tip", "Coordinate axes of the current space."));
+		check("showNetDiagram", _tr("origami_live_show_net", "Mini network"),
+			_tr("origami_live_show_net_tip", "Small diagram bottom-right showing the active layer."));
+		check("showHud", _tr("origami_live_show_hud", "Explanation"),
+			_tr("origami_live_show_hud_tip", "The info box on the left."));
 
-		slider("sheetOpacity", _tr("origami_live_sheetop", "Blatt-Deckkraft"),
+		slider("sheetOpacity", _tr("origami_live_sheetop", "Sheet opacity"),
 			0.05, 1, 0.01, "", function (v) { return v.toFixed(2); });
-		slider("stackOpacity", _tr("origami_live_stackop", "Stapel-Deckkraft"),
+		slider("stackOpacity", _tr("origami_live_stackop", "Stack opacity"),
 			0.05, 1, 0.01, "", function (v) { return v.toFixed(2); });
-		slider("stackSpread", _tr("origami_live_spread", "Stapel-Abstand"),
+		slider("stackSpread", _tr("origami_live_spread", "Stack spacing"),
 			0, 8, 0.05,
-			_tr("origami_live_spread_tip",
-				"Zieht die gestapelten Halbräume auseinander."),
+			_tr("origami_live_spread_tip", "Pulls the stacked half-spaces apart."),
 			function (v) { return v.toFixed(2); });
-		slider("pointSize", _tr("origami_live_ptsize", "Punktgröße"),
+		slider("pointSize", _tr("origami_live_ptsize", "Point size"),
 			0.8, 12, 0.2, "", function (v) { return v.toFixed(1); });
 
 		// ---- Bewegung ----
-		section(_tr("origami_live_sec_motion", "Bewegung"));
+		section(_tr("origami_live_sec_motion", "Motion"));
 
-		check("autoRotate", _tr("origami_live_rotate", "Automatisch drehen"),
-			_tr("origami_live_rotate_tip",
-				"Dreht die Szene langsam, damit die Faltung räumlich lesbar wird."));
+		check("autoRotate", _tr("origami_live_rotate", "Auto-rotate"),
+			_tr("origami_live_rotate_tip", "Rotates the scene slowly so the folding reads as 3D."));
 
-		slider("rotateSpeed", _tr("origami_live_rotspeed", "Drehgeschwindigkeit"),
+		slider("rotateSpeed", _tr("origami_live_rotspeed", "Rotation speed"),
 			0.02, 0.8, 0.02, "", function (v) { return v.toFixed(2); });
-		slider("scrubSpeed", _tr("origami_live_scrubspeed", "Zeitlupen-Tempo"),
+		slider("scrubSpeed", _tr("origami_live_scrubspeed", "Slow-motion speed"),
 			0.1, 2, 0.05,
-			_tr("origami_live_scrubspeed_tip",
-				"Wie schnell das Blatt beim Abspielen gefaltet wird."),
+			_tr("origami_live_scrubspeed_tip", "How fast the sheet folds during playback."),
 			function (v) { return v.toFixed(2); });
 
 		// ---- Achsen ----
@@ -4231,7 +4216,7 @@ var OrigamiLive = (function (global) {
 		}
 
 		if (needAxes) {
-			section(_tr("origami_live_sec_axes", "Achsen"));
+			section(_tr("origami_live_sec_axes", "Axes"));
 
 			var note = document.createElement("div");
 			note.style.cssText = [
@@ -4251,8 +4236,8 @@ var OrigamiLive = (function (global) {
 			var modeRow2 = document.createElement("div");
 			modeRow2.style.cssText = "display:flex;gap:4px;margin:4px 0 8px 0;";
 			var AM = [
-				["auto",   _tr("origami_live_axes_auto", "Automatisch")],
-				["manual", _tr("origami_live_axes_manual", "Manuell")]
+				["auto",   _tr("origami_live_axes_auto", "Automatic")],
+				["manual", _tr("origami_live_axes_manual", "Manual")]
 			];
 			for (var ai = 0; ai < AM.length; ai++) {
 				(function (val, lbl) {
@@ -4288,7 +4273,7 @@ var OrigamiLive = (function (global) {
 			}
 		}
 		if (hasConv) {
-			section(_tr("origami_live_sec_conv", "Faltungsschichten"));
+			section(_tr("origami_live_sec_conv", "Conv layers"));
 
 			var convNote = document.createElement("div");
 			convNote.style.cssText = [
@@ -4305,19 +4290,18 @@ var OrigamiLive = (function (global) {
 				"analysieren wie bei dichten Schichten.");
 			el.appendChild(convNote);
 
-			check("convPatchMode", _tr("origami_live_conv_patch", "Patch-Modus"),
+			check("convPatchMode", _tr("origami_live_conv_patch", "Patch mode"),
 				_tr("origami_live_conv_patch_tip",
 					"Behandelt jeden Filter als kleines dichtes Netz über " +
 					"seinem Bildausschnitt."));
-			slider("convMaxFilters", _tr("origami_live_conv_filters", "Filter zeigen"),
+			slider("convMaxFilters", _tr("origami_live_conv_filters", "Show filters"),
 				1, 64, 1,
-				_tr("origami_live_conv_filters_tip",
-					"Wie viele Filter pro Faltungsschicht dargestellt werden."),
+				_tr("origami_live_conv_filters_tip", "How many filters per conv layer are drawn."),
 				function (v) { return v.toFixed(0); });
 		}
 
 		// ---- Diagnose ----
-		section(_tr("origami_live_sec_diag", "Diagnose"));
+		section(_tr("origami_live_sec_diag", "Diagnostics"));
 		var diag = document.createElement("div");
 		diag.id = SID + "_diag";
 		diag.style.cssText = [
@@ -4330,7 +4314,7 @@ var OrigamiLive = (function (global) {
 		_updateDiag();
 
 		// ---- Legende ----
-		section(_tr("origami_live_sec_legend", "Lesehilfe"));
+		section(_tr("origami_live_sec_legend", "Reading aid"));
 		var leg = document.createElement("div");
 		leg.style.cssText = "font-size:10.5px;line-height:1.75;";
 		leg.innerHTML = _legendHtml(th);
@@ -4349,21 +4333,20 @@ var OrigamiLive = (function (global) {
 		}
 		var out = "";
 		out += sw("#2ba3b8",
-			_tr("origami_live_leg_pos", "Positive Seite"),
-			_tr("origami_live_leg_pos_d",
-				"Hier ist w·x + b > 0 — ReLU lässt die Punkte unverändert."));
+			_tr("origami_live_leg_pos", "Positive side"),
+			_tr("origami_live_leg_pos_d", "Here w·x + b > 0 — ReLU leaves the points unchanged."));
 		out += sw("#b8860b",
-			_tr("origami_live_leg_neg", "Negative Seite"),
+			_tr("origami_live_leg_neg", "Negative side"),
 			_tr("origami_live_leg_neg_d",
 				"Hier ist w·x + b < 0 — ReLU drückt alles auf die Ebene. " +
 				"Genau das ist der Knick."));
 		out += sw("#ffffff",
-			_tr("origami_live_leg_fold", "Faltkante"),
+			_tr("origami_live_leg_fold", "Fold edge"),
 			_tr("origami_live_leg_fold_d",
 				"Die Hyperebene w·x + b = 0. Entlang dieser Kante wird das " +
 				"Innere der Verteilung nach außen gekehrt."));
 		out += sw("#ff2dd4",
-			_tr("origami_live_leg_bound", "Entscheidungsgrenze"),
+			_tr("origami_live_leg_bound", "Decision boundary"),
 			_tr("origami_live_leg_bound_d",
 				"Die flache Trennebene der letzten Schicht — zurückgefaltet " +
 				"in den Eingaberaum."));
@@ -4398,7 +4381,7 @@ var OrigamiLive = (function (global) {
 				var w = document.createElement("label");
 				w.style.cssText = "display:block;margin:6px 0;font-size:11px;";
 				var t = document.createElement("div");
-				t.textContent = _tr("origami_live_axis", "Achse") + " " + nm;
+				t.textContent = _tr("origami_live_axis", "Axis") + " " + nm;
 				t.style.cssText = "opacity:0.85;margin-bottom:3px;";
 				w.appendChild(t);
 
@@ -4426,7 +4409,7 @@ var OrigamiLive = (function (global) {
 					var o2 = document.createElement("option");
 					o2.disabled = true;
 					o2.textContent = "… " + (ref.dim - 256) + " " +
-					                 _tr("origami_live_more", "weitere");
+					                 _tr("origami_live_more", "more");
 					sel.appendChild(o2);
 				}
 
@@ -4456,8 +4439,7 @@ var OrigamiLive = (function (global) {
 			           "[" + st.axes.join(", ") + "]");
 		}
 		box.textContent = lines.length ? lines.join("\n")
-		                              : _tr("origami_live_no_axes",
-		                                    "Alle Räume ≤ 3D");
+		                              : _tr("origami_live_no_axes", "All spaces ≤ 3D");
 		el.appendChild(box);
 	}
 
@@ -4512,7 +4494,7 @@ var OrigamiLive = (function (global) {
 		cfg.dpr         = q.dpr;
 		_state.cache.xHash = null;   // Punktzahl hat sich geändert
 		_applyDpr();
-		_log("Qualität: Stufe " + lvl);
+		_log("Quality: level " + lvl);
 	}
 
 	function _applyDpr() {
@@ -4544,11 +4526,11 @@ var OrigamiLive = (function (global) {
 		var changed = false;
 		if (avg > 26 && _state.qualityLevel > 0) {
 			_applyQuality(_state.qualityLevel - 1);
-			_log("Auto-Qualität ↓ (" + avg.toFixed(1) + " ms/Frame)");
+			_log("Auto quality ↓ (" + avg.toFixed(1) + " ms/Frame)");
 			changed = true;
 		} else if (avg < 9 && _state.qualityLevel < QUALITY.length - 1) {
 			_applyQuality(_state.qualityLevel + 1);
-			_log("Auto-Qualität ↑ (" + avg.toFixed(1) + " ms/Frame)");
+			_log("Auto quality ↑ (" + avg.toFixed(1) + " ms/Frame)");
 			changed = true;
 		}
 
@@ -4580,7 +4562,7 @@ var OrigamiLive = (function (global) {
 		el.style.borderColor = th.panelBorder;
 
 		if (!pipe || !pipe.stages || pipe.stages.length < 2) {
-			el.innerHTML = "<b>" + _tr("origami_live_hud_wait", "Warte auf Daten…") +
+			el.innerHTML = "<b>" + _tr("origami_live_hud_wait", "Waiting for data…") +
 			               "</b>";
 			return;
 		}
@@ -4594,9 +4576,9 @@ var OrigamiLive = (function (global) {
 		// Kopf
 		h += "<div style='font-weight:800;font-size:12px;margin-bottom:4px;'>";
 		if (cfg.mode === MODE_BOUNDARY) {
-			h += "\u25C8 " + _tr("origami_live_hud_bound", "Entscheidungsgrenze");
+			h += "\u25C8 " + _tr("origami_live_hud_bound", "Decision boundary");
 		} else if (cfg.mode === MODE_STACK) {
-			h += "\u2338 " + _tr("origami_live_hud_stack", "Halbräume") +
+			h += "\u2338 " + _tr("origami_live_hud_stack", "Half-spaces") +
 			     " \u00B7 " + st.name;
 		} else {
 			h += "\u25F0 " + st.name;
@@ -4605,12 +4587,12 @@ var OrigamiLive = (function (global) {
 
 		// Dimension
 		h += "<div style='opacity:0.85;margin-bottom:5px;'>";
-		h += _tr("origami_live_hud_space", "Raum") + ": <b>" + st.dim + "D</b>";
+		h += _tr("origami_live_hud_space", "Space") + ": <b>" + st.dim + "D</b>";
 		if (st.rawDim && st.rawDim !== st.dim) {
 			h += " <span style='opacity:0.65;'>(von " + st.rawDim + ")</span>";
 		}
 		if (st.dim > 3) {
-			h += " \u00B7 " + _tr("origami_live_hud_axes", "Achsen") +
+			h += " \u00B7 " + _tr("origami_live_hud_axes", "Axes") +
 			     " [" + st.axes.join(",") + "]";
 		}
 		h += "</div>";
@@ -4619,14 +4601,13 @@ var OrigamiLive = (function (global) {
 		if (!st.isInput) {
 			var kindTxt, kindCol;
 			if (st.foldKind === "hard") {
-				kindTxt = _tr("origami_live_hud_hard", "harte Faltung (Knick)");
+				kindTxt = _tr("origami_live_hud_hard", "hard fold (crease)");
 				kindCol = "#ffffff";
 			} else if (st.foldKind === "soft") {
-				kindTxt = _tr("origami_live_hud_soft", "weiche Biegung");
+				kindTxt = _tr("origami_live_hud_soft", "soft bend");
 				kindCol = "#ffe9a8";
 			} else {
-				kindTxt = _tr("origami_live_hud_affine",
-					"nur affin — keine Faltung");
+				kindTxt = _tr("origami_live_hud_affine", "affine only — no folding");
 				kindCol = th.textDim;
 			}
 			h += "<div style='margin-bottom:5px;'>";
@@ -4646,8 +4627,8 @@ var OrigamiLive = (function (global) {
 				if (st.folds.planes[f].visible < 0.25) hidden++;
 			}
 			h += "<div style='margin-bottom:5px;'>";
-			h += _tr("origami_live_hud_folds", "Faltkanten") + ": <b>" + act +
-			     "</b> " + _tr("origami_live_hud_of", "von") + " " +
+			h += _tr("origami_live_hud_folds", "Fold edges") + ": <b>" + act +
+			     "</b> " + _tr("origami_live_hud_of", "of") + " " +
 			     st.folds.units;
 			if (hidden > 0) {
 				h += "<br><span style='opacity:0.72;font-size:10.5px;'>" +
@@ -4662,7 +4643,7 @@ var OrigamiLive = (function (global) {
 		// Conv-Hinweis
 		if (st.isConv) {
 			h += "<div style='margin-bottom:5px;font-size:10.5px;opacity:0.85;'>";
-			h += "\u25A6 " + _tr("origami_live_hud_conv", "Filter-Patches") +
+			h += "\u25A6 " + _tr("origami_live_hud_conv", "Filter patches") +
 			     ": " + st.shown + "/" + st.filters;
 			h += "</div>";
 		}
@@ -4672,12 +4653,11 @@ var OrigamiLive = (function (global) {
 			var nseg = pipe.boundary.segs
 				? Math.floor(pipe.boundary.segs.length / 6) : 0;
 			h += "<div style='margin-bottom:5px;'>";
-			h += _tr("origami_live_hud_segs", "Grenzsegmente") + ": <b>" +
+			h += _tr("origami_live_hud_segs", "Boundary segments") + ": <b>" +
 			     nseg + "</b>";
 			if (pipe.boundary.multi) {
 				h += "<br><span style='opacity:0.72;font-size:10.5px;'>" +
-				     _tr("origami_live_hud_multi",
-				         "mehrere Klassen — gezeigt wird, wo das Maximum wechselt") +
+				     _tr("origami_live_hud_multi", "multiple classes — shown where the maximum switches") +
 				     "</span>";
 			}
 			h += "</div>";
@@ -4825,7 +4805,7 @@ var OrigamiLive = (function (global) {
 			"<div style='font-size:9px;font-weight:700;letter-spacing:0.4px;" +
 			"text-align:center;margin-bottom:2px;color:" + th.textDim + ";" +
 			"text-transform:uppercase;'>" +
-			_tr("origami_live_net", "Netz") + "</div>" +
+			_tr("origami_live_net", "Network") + "</div>" +
 			svg +
 			"<div style='font-size:8.5px;text-align:center;margin-top:1px;" +
 			"color:" + th.text + ";font-weight:600;'>" + label + "</div>";
@@ -4837,7 +4817,7 @@ var OrigamiLive = (function (global) {
 		var pipe = _state.pipeline;
 		var lines = [];
 
-		lines.push("Modus: " + _state.cfg.mode);
+		lines.push("Mode: " + _state.cfg.mode);
 		lines.push("Qualität: " + _state.qualityLevel +
 		           (_state.autoQuality ? " (auto)" : ""));
 
@@ -5134,7 +5114,7 @@ var OrigamiLive = (function (global) {
 		if (!el) return;
 		var pipe = _state.pipeline;
 		if (!pipe || !pipe.stages || pipe.stages.length < 2) {
-			el.textContent = _tr("origami_live_layer", "Schicht") + " —";
+			el.textContent = _tr("origami_live_layer", "Layer") + " —";
 			return;
 		}
 
@@ -5153,7 +5133,7 @@ var OrigamiLive = (function (global) {
 		}
 
 		if (_state.cfg.mode === MODE_STACK) {
-			el.textContent = _tr("origami_live_layer", "Schicht") + " " +
+			el.textContent = _tr("origami_live_layer", "Layer") + " " +
 			                 shorten(nameHi);
 		} else if (mix < 0.03) {
 			el.textContent = shorten(nameLo);
@@ -5247,10 +5227,10 @@ var OrigamiLive = (function (global) {
 			try {
 				_state.renderer.render(_state.scene, _state.camera);
 			} catch (e) {
-				_err("Render-Fehler: " + e);
+				_err("Render error: " + e);
 				_state.errorStreak++;
 				if (_state.errorStreak > 12) {
-					_warn("Zu viele Render-Fehler, Loop gestoppt");
+					_warn("Too many render errors, loop stopped");
 					if (_state.animId) cancelAnimationFrame(_state.animId);
 					_state.animId = null;
 				}
@@ -5334,7 +5314,7 @@ var OrigamiLive = (function (global) {
 			}, { threshold: 0.02 });
 			_state.observer.observe(_state.container);
 		} catch (e) {
-			_warn("IntersectionObserver fehlgeschlagen: " + e);
+			_warn("IntersectionObserver failed: " + e);
 			_state.visible = true;
 		}
 	}
@@ -5499,7 +5479,7 @@ var OrigamiLive = (function (global) {
 			_updateScrubLabel();
 			_state.dirty = true;
 		} catch (e) {
-			_err("Geometrie-Update fehlgeschlagen: " + e);
+			_err("Geometry update failed: " + e);
 		}
 	}
 
@@ -5521,7 +5501,7 @@ var OrigamiLive = (function (global) {
 		_clearGroup(_state.stackGroup);
 		_state.dirty = true;
 		_updateDiag();
-		if (isTransition) _log("deaktiviert: " + _state.offMsg);
+		if (isTransition) _log("deactivated: " + _state.offMsg);
 	}
 
 	function _setOn() {
@@ -5537,7 +5517,7 @@ var OrigamiLive = (function (global) {
 	function _rebuild() {
 		if (!_state.initialized || _state.destroyed) return;
 		if (!_state.container || !_state.container.parentNode) {
-			_log("Container nicht im DOM");
+			_log("Container not in DOM");
 			return;
 		}
 		if (!_state.visible) { _state.pendingRender = true; return; }
@@ -5593,7 +5573,7 @@ var OrigamiLive = (function (global) {
 		var sig = _chainSig(built.chain);
 		var chainChanged = (sig !== _state.lastChainSig);
 		if (chainChanged) {
-			_log("Kette geändert: " + sig);
+			_log("Chain changed: " + sig);
 			_state.lastChainSig = sig;
 			_state.lastFingerprint = null;
 			_state.lastFitLayer = -1;
@@ -5637,9 +5617,9 @@ var OrigamiLive = (function (global) {
 			pipe = _computePipeline(built.chain);
 		} catch (e) {
 			if (_isDisposedErr(e)) {
-				_log("Pipeline: Tensor disposed, nächster Versuch");
+				_log("Pipeline: tensor disposed, retrying");
 			} else {
-				_err("Pipeline fehlgeschlagen: " + e);
+				_err("Pipeline failed: " + e);
 			}
 			pipe = null;
 		}
@@ -5651,7 +5631,7 @@ var OrigamiLive = (function (global) {
 					"Die Faltung konnte mehrfach nicht berechnet werden. " +
 					"Prüfe die Netzarchitektur.");
 			} else {
-				_log("Pipeline leer (Versuch " + _state.errorStreak + "/5)");
+				_log("Pipeline empty (attempt " + _state.errorStreak + "/5)");
 			}
 			return;
 		}
@@ -5662,7 +5642,7 @@ var OrigamiLive = (function (global) {
 		try {
 			_buildScene();
 		} catch (e) {
-			_err("Szene konnte nicht gebaut werden: " + e);
+			_err("Could not build scene: " + e);
 			return;
 		}
 
@@ -5687,8 +5667,8 @@ var OrigamiLive = (function (global) {
 		_updateScrubLabel();
 		_updateDiag();
 
-		_log("Faltung aktualisiert: " + pipe.stages.length + " Stufen, " +
-		     pipe.nSamples + " Punkte, Modus " + _state.cfg.mode);
+		_log("Fold updated: " + pipe.stages.length + " stages, " +
+		     pipe.nSamples + " points, Modus " + _state.cfg.mode);
 	}
 
 	// ==================================================================
@@ -5718,7 +5698,7 @@ var OrigamiLive = (function (global) {
 			});
 		} catch (e) {
 			_state.webglError = String(e);
-			_err("WebGLRenderer konnte nicht erstellt werden: " + e);
+			_err("Could not create WebGLRenderer: " + e);
 			return false;
 		}
 
@@ -5785,13 +5765,13 @@ var OrigamiLive = (function (global) {
 	function init(divOrId) {
 		if (_state.initialized && !_state.destroyed) {
 			// Singleton: erneuter Aufruf = Update
-			_log("init() erneut aufgerufen → Update");
+			_log("init() called again → update");
 			update();
 			return API;
 		}
 
 		if (!_hasTHREE()) {
-			_err("three.js ist nicht geladen. Lade three.min.js VOR origami_live.js.");
+			_err("three.js is not loaded. Load three.min.js BEFORE origami_live.js.");
 			return API;
 		}
 
@@ -5800,12 +5780,12 @@ var OrigamiLive = (function (global) {
 		try {
 			_buildDOM(divOrId);
 		} catch (e) {
-			_err("DOM-Aufbau fehlgeschlagen: " + e);
+			_err("DOM build failed: " + e);
 			return API;
 		}
 
 		if (!_state.container || !_state.canvasWrap) {
-			_err("Container konnte nicht erstellt werden.");
+			_err("Could not create container.");
 			return API;
 		}
 
@@ -5814,7 +5794,7 @@ var OrigamiLive = (function (global) {
 
 		_state.webglError = null;
 		if (!_setupThree()) {
-			_err("three.js-Setup fehlgeschlagen.");
+			_err("three.js setup failed.");
 			return API;
 		}
 
@@ -5830,18 +5810,18 @@ var OrigamiLive = (function (global) {
 		_state.pendingRender = true;
 		if (_state.visible) _scheduleRebuild();
 
-		_log("initialisiert (" + SID + ")");
+		_log("initialized (" + SID + ")");
 		return API;
 	}
 
 	function update() {
 		if (!_state.initialized || _state.destroyed) {
-			_log("update() vor init() → initialisiere automatisch");
+			_log("update() before init() → initializing automatically");
 			return init();
 		}
 
 		if (!_state.container || !_state.container.parentNode) {
-			_log("Container nicht mehr im DOM → Neuaufbau");
+			_log("Container no longer in DOM → rebuilding");
 			var ref = _state.parentRef;
 			_softReset();
 			return init(ref);
@@ -5873,7 +5853,7 @@ var OrigamiLive = (function (global) {
 
 	function setMode(mode) {
 		if ([MODE_FOLD, MODE_BOUNDARY, MODE_STACK].indexOf(mode) < 0) {
-			_warn("Unbekannter Modus: " + mode);
+			_warn("Unknown mode: " + mode);
 			return API;
 		}
 		if (_state.cfg.mode === mode) return API;
@@ -5922,7 +5902,7 @@ var OrigamiLive = (function (global) {
 			_scheduleRebuild();
 		}
 
-		_log("Modus: " + mode);
+		_log("Mode: " + mode);
 		return API;
 	}
 
@@ -5940,7 +5920,7 @@ var OrigamiLive = (function (global) {
 		for (var i = 0; i < keys.length; i++) {
 			var k = keys[i];
 			if (!Object.prototype.hasOwnProperty.call(_state.cfg, k)) {
-				_warn("Unbekannte Option ignoriert: " + k);
+				_warn("Unknown option ignored: " + k);
 				continue;
 			}
 			var v = cfg[k];
@@ -5948,7 +5928,7 @@ var OrigamiLive = (function (global) {
 
 			if (k === "mode") {
 				if ([MODE_FOLD, MODE_BOUNDARY, MODE_STACK].indexOf(v) < 0) {
-					_warn("Ungültiger Modus: " + v);
+					_warn("Invalid mode: " + v);
 					continue;
 				}
 				if (_state.cfg.mode !== v) { touchedMode = true; }
@@ -5957,11 +5937,11 @@ var OrigamiLive = (function (global) {
 			}
 
 			if (typeof v !== want) {
-				_warn("Option '" + k + "' erwartet " + want + ", bekam " + typeof v);
+				_warn("Option '" + k + "' expected " + want + ", got " + typeof v);
 				continue;
 			}
 			if (want === "number" && !_fin(v)) {
-				_warn("Option '" + k + "' ist keine finite Zahl");
+				_warn("Option '" + k + "' is not a finite number");
 				continue;
 			}
 			if (_state.cfg[k] !== v) {
@@ -6086,7 +6066,7 @@ var OrigamiLive = (function (global) {
 		_state.overlayEl  = null;
 		_state.modelRef   = null;
 
-		_log("zerstört");
+		_log("destroyed");
 		return API;
 	}
 
@@ -6146,9 +6126,9 @@ function create_origami_live(divOrId) {
 		return OrigamiLive.init(divOrId);
 	} catch (e) {
 		if (typeof err === "function") {
-			err("[origami_live] create_origami_live fehlgeschlagen: " + e);
+			err("[origami_live] create_origami_live failed: " + e);
 		} else if (typeof console !== "undefined") {
-			console.error("[origami_live] create_origami_live fehlgeschlagen:", e);
+			console.error("[origami_live] create_origami_live failed:", e);
 		}
 	}
 }
@@ -6174,9 +6154,9 @@ function update_origami_live(divOrId) {
 		return OrigamiLive.update();
 	} catch (e) {
 		if (typeof wrn === "function") {
-			wrn("[origami_live] update_origami_live fehlgeschlagen: " + e);
+			wrn("[origami_live] update_origami_live failed: " + e);
 		} else if (typeof console !== "undefined") {
-			console.warn("[origami_live] update_origami_live fehlgeschlagen:", e);
+			console.warn("[origami_live] update_origami_live failed:", e);
 		}
 	}
 }
