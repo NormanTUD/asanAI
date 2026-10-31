@@ -1837,10 +1837,11 @@ window.bibData = {
 		year: 2026
 	},
 	"ramsauer2021hopfield": {
-		url: "https://arxiv.org/abs/2402.13725v1",
-		year: 2024,
-		title: "https://arxiv.org/abs/2402.13725v1",
-		author: "Saul Santos, Vlad Niculae, Daniel McNamee, Andre F. T. Martins"
+		url: "https://arxiv.org/abs/2008.02217",
+		year: 2021,
+		title: "Hopfield Networks is All You Need",
+		author: "Hubert Ramsauer, Bernhard Schäfl, Johannes Lehner, Philipp Seidl, Michael Widrich, Lukas Gruber, Markus Holzleitner, Milena Pavlović, Geir Kjetil Sandve, Victor Greiff, David Kreil, Michael Kopp, Günter Klambauer, Johannes Brandstetter, Sepp Hochreiter",
+		alternativetitle: "Modern Hopfield Networks (ICLR 2021)"
 	},
 	"hutter2006universal": {
 		url: "https://arxiv.org/abs/0712.3329",
@@ -2506,7 +2507,7 @@ window.bibData = {
 	"anthropic2023mapping": {
 		title: "Mapping the mind of a large language model",
 		author: "Anthropic Interpretability Team",
-		year: 2023,
+		year: 2024,
 		url: "https://www.anthropic.com/research/mapping-mind-language-model",
 		alternativetitle: "Mapping the Mind of an LLM"
 	},
@@ -5234,7 +5235,7 @@ window.bibData = {
 	"hornik": {
 		url: "https://papers.baulab.info/papers/also/Hornik-1991.pdf",
 		author: "Kurt Hornik",
-		year: 1990,
+		year: 1991,
 		title: "Approximation Capabilities of Multilayer Feedforward Networks"
 	},
 	"piccini": {
@@ -7106,6 +7107,7 @@ window.bibData = {
 		year: 2014,
 		author: "Karen Simonyan, Andrew Zisserman",
 		title: "Very Deep Convolutional Networks for Large-Scale Image Recognition",
+		url: "https://arxiv.org/abs/1409.1556",
 		alternativetitle: "VGGNet"
 	},
 
@@ -7855,11 +7857,11 @@ window.bibData = {
 		alternativetitle: "Stable Video Diffusion"
 	},
 	"brooks2024sora": {
-		url: "https://en.wikipedia.org/wiki/Sora_(text-to-video_model)",
-		title: "Sora — Wikipedia",
-		author: "Wikipedia contributors",
+		url: "https://openai.com/index/video-generation-models-as-world-simulators/",
+		title: "Video generation models as world simulators",
+		author: "Tim Brooks, Bill Peebles, et al. (OpenAI)",
 		year: 2024,
-		alternativetitle: "Sora (OpenAI, Feb 2024) — 'Video generation models as world simulators'"
+		alternativetitle: "Sora (OpenAI, Feb 2024)"
 	},
 	"zeghidour2021soundstream": {
 		url: "https://arxiv.org/abs/2107.03312",
@@ -7920,11 +7922,11 @@ window.bibData = {
 		alternativetitle: "CD-DA (Red Book, 44.1 kHz / 16-bit)"
 	},
 	"nyquist_sampling": {
-		url: "https://en.wikipedia.org/wiki/Nyquist%E2%80%93Shannon_sampling_theorem",
-		title: "Nyquist–Shannon sampling theorem — Wikipedia",
-		author: "Wikipedia contributors",
-		year: 2026,
-		alternativetitle: "Sampling theorem (Nyquist–Shannon)"
+		url: "https://doi.org/10.1109/T-AIEE.1928.5055024",
+		title: "Certain Topics in Telegraph Transmission Theory",
+		author: "Harry Nyquist",
+		year: 1928,
+		alternativetitle: "Nyquist (1928) — the 2B sampling criterion"
 	},
 	"mp3": {
 		url: "https://en.wikipedia.org/wiki/MP3",
@@ -8344,11 +8346,11 @@ window.bibData = {
 		alternativetitle: "REINFORCE"
 	},
 	"watkins1989qlearning": {
-		url: "https://link.springer.com/article/10.1007/BF00992698",
+		url: "https://www.cs.rhul.ac.uk/~chrisw/new_thesis.pdf",
 		title: "Learning from Delayed Rewards",
 		author: "Christopher J. C. H. Watkins",
 		year: 1989,
-		alternativetitle: "Q-Learning"
+		alternativetitle: "Q-Learning (PhD thesis, 1989)"
 	},
 	"rafailov2023dpo": {
 		url: "https://arxiv.org/abs/2305.18290",
@@ -8842,11 +8844,11 @@ window.bibData = {
 		alternativetitle: "OpenAI Pricing"
 	},
 	"deepseek2024v3": {
-		url: "https://api-docs.deepseek.com/quick_start/pricing",
-		title: "DeepSeek API Pricing",
-		author: "DeepSeek",
+		url: "https://arxiv.org/abs/2412.19437",
+		title: "DeepSeek-V3 Technical Report",
+		author: "DeepSeek-AI",
 		year: 2024,
-		alternativetitle: "DeepSeek Pricing"
+		alternativetitle: "DeepSeek-V3 Technical Report"
 	},
 	"together2024pricing": {
 		url: "https://www.together.ai/pricing",
@@ -9035,11 +9037,11 @@ window.bibData = {
 		alternativetitle: "Falcon"
 	},
 	"redman2024causalscrubbing": {
-		url: "https://arxiv.org/abs/2402.12527",
-		title: "Causal Scrubbing: A Method for Rigorously Interpreting Indirect Encoding Results",
-		author: "Dylan Redman, Kevin Smith, Ian Das",
-		year: 2024,
-		alternativetitle: "Causal Scrubbing"
+		url: "https://www.alignmentforum.org/posts/JvZhhzycHu2Yd57RN/causal-scrubbing-a-method-for-rigorously-testing",
+		title: "Causal Scrubbing: A Method for Rigorously Testing Interpretability Hypotheses",
+		author: "Lawrence Chan, Adrià Garriga-Alonso, Nicholas Goldowsky-Dill, et al.",
+		year: 2022,
+		alternativetitle: "Causal scrubbing (Chan et al., 2022)"
 	},
 	"sakurai2024skrr": {
 		url: "https://arxiv.org/abs/2406.07481",
@@ -10751,7 +10753,7 @@ window.bibData = {
 	},
 	"lin2021truthful": {
 		url: "https://arxiv.org/abs/2109.07958",
-		title: "Truthful AI: Developing and Governing AI That Does Not Lie",
+		title: "TruthfulQA: Measuring How Models Mimic Human Falsehoods",
 		author: "Stephanie Lin, Jacob Hilton, Owain Evans",
 		year: 2022,
 		alternativetitle: "Truthfulness"
@@ -14345,9 +14347,9 @@ window.bibData = {
 	/* ── The deep cuts ── */
 	"diekelmann2010sleep": {
 		title: "The Memory Function of Sleep",
-		author: "Sonja Diekelmann and Jana Born",
+		author: "Susanne Diekelmann and Jan Born",
 		year: 2010,
-		url: "https://www.nature.com/articles/nrn2873",
+		url: "https://www.nature.com/articles/nrn2762",
 		alternativetitle: "Diekelmann & Born, The Memory Function of Sleep"
 	},
 	"maturavarela1980autopoiesis": {
@@ -14853,7 +14855,7 @@ window.bibData = {
 	},
 	"alphafold_db": {
 		title: "AlphaFold Protein Structure Database",
-		author: "Minko Savate, Milot Mirdita, et al. (EMBL-EBI)",
+		author: "Mihaly Varadi et al. (EMBL-EBI)",
 		year: 2023,
 		url: "https://www.alphafold.ebi.ac.uk/",
 		alternativetitle: "200M+ predicted protein structures"
@@ -17279,11 +17281,11 @@ window.bibData = {
 	 *  labor panic, and the false magic/nothing binary.
 	 * ───────────────────────────────────────────────────────────────────── */
 	"weizenbaum1966eliza": {
-		title: "ELIZA effect",
+		title: "ELIZA—A Computer Program for the Study of Natural Language Communication Between Man and Machine",
 		author: "Joseph Weizenbaum",
 		year: 1966,
-		url: "https://en.wikipedia.org/wiki/ELIZA_effect",
-		alternativetitle: "Weizenbaum's ELIZA effect (1966)"
+		url: "https://doi.org/10.1145/365153.365168",
+		alternativetitle: "Weizenbaum's ELIZA (1966)"
 	},
 	"computational_theory_of_mind": {
 		title: "Computational theory of mind",
@@ -18100,7 +18102,7 @@ window.bibData = {
 	},
 	"cowan2001magical4": {
 		title: "The 'Magical Number 4' in Short-Term Memory: A Reconsideration of Mental Storage Capacity",
-		author: "Neil Cowan",
+		author: "Nelson Cowan",
 		year: 2001,
 		url: "https://doi.org/10.1017/S0140525X01003922",
 		alternativetitle: "Cowan 2001, Behavioral and Brain Sciences"
@@ -18316,7 +18318,7 @@ window.bibData = {
 	},
 	"romera2023funsearch": {
 		title: "Mathematical discoveries from program search with large language models",
-		author: "Brendan Romera-Paredes, Miniumo Lokshtanov, Ahmed Obaid, Carlos Pulido, Jørgen N. Rosenblatt, Pablo Sessa, Manas Rietzler, Tanmay Jayaram, Demis Hassabis, Pushmeet Kohli, Alvaro Sanchez",
+		author: "Bernardino Romera-Paredes, Mohammadamin Barekatain, Alexander Novikov, et al.",
 		year: 2023,
 		journal: "Nature",
 		url: "https://www.nature.com/articles/s41586-023-06924-6",
@@ -18422,11 +18424,11 @@ window.bibData = {
 		alternativetitle: "Cognitive offloading (Wikipedia) — the Google Effect and external memory"
 	},
 	"parasuraman1997automation": {
-		title: "Automation bias",
-		author: "Wikipedia contributors",
-		year: 2026,
-		url: "https://en.wikipedia.org/wiki/Automation_bias",
-		alternativetitle: "Automation bias (Wikipedia) — the literature on over-trusting automated systems"
+		title: "Humans and Automation: Use, Misuse, Disuse, Abuse",
+		author: "Raja Parasuraman and Victor Riley",
+		year: 1997,
+		url: "https://doi.org/10.1518/001872097778543886",
+		alternativetitle: "Parasuraman & Riley (1997) — automation bias and over-trust"
 	},
 	"whisper2022": {
 		title: "Robust Speech Recognition via Large-Scale Weak Supervision",
@@ -18437,7 +18439,7 @@ window.bibData = {
 	},
 	"popel2020cubitt": {
 		title: "Machine Translation Quality is Now on Par with Human Translation",
-		author: "Svetlana Kirillov, Sanchit Kumar, et al.",
+		author: "Martin Popel, et al.",
 		year: 2020,
 		journal: "Nature Communications",
 		url: "https://www.nature.com/articles/s41467-020-18073-9",

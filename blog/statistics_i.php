@@ -290,7 +290,7 @@ We can't start at $-\infty$, but the curve is essentially zero for $z < -4$, so 
             <th style="padding: 8px 12px; text-align: center; color: #475569;">$t$</th>
             <th style="padding: 8px 12px; text-align: center; color: #475569;">$f(t)$</th>
             <th style="padding: 8px 12px; text-align: center; color: #475569;">Rectangle area $f(t) \cdot \Delta t$</th>
-            <th style="padding: 8px 12px; text-align: center; color: #475569;">Running total</th>
+            <th style="padding: 8px 12px; text-align: center; color: #475569;">Running total (estimates $\Phi(t+\Delta t)$)</th>
         </tr>
     </thead>
     <tbody>
@@ -347,7 +347,7 @@ We can't start at $-\infty$, but the curve is essentially zero for $z < -4$, so 
 
 <div class="md" data-mathlevel="60">
 
-With our coarse $\Delta t = 0.5$ slices, we get $\Phi(1.0) \approx 0.90$. The true value is $0.8413$. The difference exists because the rectangles are too wide to follow the curve closely.
+With our coarse $\Delta t = 0.5$ slices the running total is a left-rectangle estimate of $\Phi(t+\Delta t)$, so the row $t=1.0$ (total $\approx 0.90$) estimates $\Phi(1.5)$; the true $\Phi(1.5)$ is $0.9332$. To estimate $\Phi(1.0)$, read the row $t=0.5$: $\approx 0.78$, against the true $0.8413$. The difference exists because the rectangles are too wide to follow the curve closely.
 
 **Step C: Make the slices thinner**
 

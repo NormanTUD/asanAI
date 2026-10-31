@@ -5,7 +5,7 @@ title: The Atlas
 description: Every person, place, institution, author and event of this course as a living globe — zoom out from Earth, past the Moon and the solar system, to the Big Bang.
 icon: 🌐
 part: 6
-order: 19
+order: 20
 color: sky
 topics: history, philosophy, society
 -->

@@ -179,7 +179,7 @@ The discovery that a square's diagonal is **incommensurable** with its side brok
 </div>
 
 <div class="optional md" data-headline="Where the set notation comes from">
-Cantor's 1895 definition is the source of the modern notation: "Unter einer 'Menge' verstehen wir jede Zusammenfassung M von bestimmten wohlunterschiedenen Objecten m unsrer Anschauung oder unseres Denkens ... zu einem Ganzen" — a set is any collection of definite, distinct objects of our intuition or thought into a whole (\cite[Cantor, 1895]{cantor1895}). The symbol $\in$ is younger: Peano introduced it in 1889, taking the first letter of the Greek *esti* ("is") (\cite[MacTutor: Set Theory]{macTutorSetTheory}). Cantor's unrestricted "any collection" later forced axiomatisation after Russell's 1902 paradox (\cite[MacTutor: Set Theory]{macTutorSetTheory}).
+Cantor's 1895 definition is the source of the modern notation: "Unter einer 'Menge' verstehen wir jede Zusammenfassung M von bestimmten wohlunterschiedenen Objecten m unsrer Anschauung oder unseres Denkens ... zu einem Ganzen" — a set is any collection of definite, distinct objects of our intuition or thought into a whole (\cite[Cantor, 1895]{cantor1895}). The symbol $\in$ is younger: Peano introduced it in 1889, taking the first letter of the Greek *esti* ("is") (\cite[MacTutor: Set Theory]{macTutorSetTheory}). Cantor's unrestricted "any collection" later forced axiomatisation after Russell's paradox (discovered around 1901–02) (\cite[MacTutor: Set Theory]{macTutorSetTheory}).
 </div>
 
 <div class="md" data-lesson-id="math-i">
