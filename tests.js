@@ -9837,7 +9837,15 @@ async function _coverage_tests_gui_mobile() {
 
 async function _coverage_tests_model_helpers() {
 	test_equal("get_weights_shape reads a nested array", JSON.stringify(await get_weights_shape("[[1,2],[3,4]]")), "[2,2]");
-	test_equal("get_weights_shape handles invalid json", await get_weights_shape("not json"), undefined);
+	var old_err = err;
+	var errs_before = num_errs;
+	try {
+		err = function () {};
+		test_equal("get_weights_shape handles invalid json", await get_weights_shape("not json"), undefined);
+	} finally {
+		err = old_err;
+		num_errs = errs_before;
+	}
 }
 
 function _coverage_tests_math_tooltips_smoke() {
