@@ -27,7 +27,7 @@ Stage 1: **Supervised Fine-Tuning (SFT)** teaches it to follow instructions.
 Stage 2: **Preference optimization** aligns its outputs with human values.
 Stage 3: **Reasoning RL** (optional) teaches it to think longer on hard problems.
 
-The total post-training cost is typically **1–10% of pretraining** but produces most of the perceived improvement in helpfulness.
+The post-training **compute** is typically **1–10% of pretraining**; once data and human labour are included, the total budget is often closer to **10–30%** — and it produces most of the perceived improvement in helpfulness.
 </div>
 
 <div class="md" data-mathlevel="60">
@@ -277,7 +277,7 @@ For DPO:
 <pre><code class="language-python"><?php print get_string_of_file_or_die("py/finetuninglab/dpo.py"); ?></code></pre>
 
 <div class="md">
-Training time: ~2-6 hours for a 7B model with QLoRA on ~10K examples. Cost: on the order of $10-30 of compute on a rented H100 (~$2-5 per GPU-hour).
+Training time: ~2-6 hours for a 7B model with QLoRA on ~10K examples. Cost: on the order of $4-30 of compute on a rented H100 (~$2-5 per GPU-hour).
 </div>
 
 <div class="md">

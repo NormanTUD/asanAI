@@ -216,7 +216,7 @@ Token 5 knows about tokens 1 through 4. But token 2 has no idea what token 5 wil
 * **Order is causal.** Instructions placed later in the prompt have the full context of everything before them. Later instructions override earlier ones because they see more.
 * **Chain-of-Thought works because of the causal mask.** Each reasoning step becomes “former context” for the next step, building a chain of conditional probabilities.
 * **Context window position matters.** Important instructions should go at the beginning (they influence everything after) or at the very end (they see everything before). The middle is where the model pays least attention.
-* **The Reversal Curse is baked into the architecture.** If your prompt expects the model to infer reverse relationships, you must explicitly provide both directions.
+* **The Reversal Curse is a robust failure mode of autoregressive training.** The causal mask is part of the explanation, but not the whole story; if your prompt expects the model to infer reverse relationships, provide both directions explicitly.
 </div>
 
 <div class="md">

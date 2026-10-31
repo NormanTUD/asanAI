@@ -12,7 +12,7 @@ tags: math-heavy, code-heavy
 -->
 
 <div class="md">
-Training a frontier model costs US Dollar 100M+; serving it can cost **US Dollar 1M+ per day at scale**. Inference optimization makes LLMs economically viable. The frontier in 2025: serving 100+ million tokens per second per cluster with sub-100ms latency.
+Training a frontier model costs US Dollar 100M+; serving it can cost **US Dollar 1M+ per day at scale**. Inference optimization makes LLMs economically viable. The frontier in 2025: serving millions of tokens per second across a large cluster with sub-100 ms latency.
 
 This chapter covers every lever: quantization, KV-cache management, paged attention, FlashAttention, speculative decoding, batching, distillation, and the serving stacks that tie it together.
 </div>
@@ -26,7 +26,7 @@ For a single token generation step on a 70B model (fp16):
 
 | Component | Memory / Compute |
 |-----------|------------------|
-| Read all weights from HBM | 140 GB ÷ HBM bandwidth (3 TB/s on H100) = ~46 ms |
+| Read all weights from HBM (70B bf16, split over 2 H100s) | 70 GB ÷ 3 TB/s ≈ 23 ms |
 | Compute matmul (forward pass) | ~10 ms with batch=1, ~50 TFLOPS |
 | Generate one token | dominated by memory bandwidth |
 

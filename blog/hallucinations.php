@@ -166,7 +166,7 @@ Beyond Temperature, developers use two other mathematical “fences” to keep t
 
 | Technique | Function | Impact on Hallucination |
 | :--- | :--- | :--- |
-| **Top-P (Nucleus) Sampling** \cite{holtzman2019nucleus} | Only considers the top $P$ percentage of likely words. | Cuts off the “long tail” of nonsensical words before they can be picked. |
+| **Top-P (Nucleus) Sampling** \cite{holtzman2019nucleus} | Keeps the smallest set of tokens whose cumulative probability reaches $P$. | Cuts off the “long tail” of nonsensical words before they can be picked. |
 | **Logit Bias** | Manually increases or decreases the “Raw Score” ($z$) of specific words. | Can be used to “ban” certain words or force the AI toward verified terminology. |
 
 
@@ -235,7 +235,7 @@ AI models often equate “longer” responses with “better” or more helpful 
 
 #### Tokenization Errors (The “Sub-word” Problem)
 Hallucinations often occur because of how AI “sees” text. Models don't read words as whole units; they process “tokens” (mathematical chunks of characters).
-* **The Problem:** A word like “Apple” might be seen as the tokens `App` and `le`. This explains why AI is notoriously bad at tasks like counting letters in a word or performing precise arithmetic, it isn't looking at individual characters, but at these statistical chunks.
+* **The Problem:** A word like “strawberry” might be seen as the tokens `straw` and `berry`. This explains why AI is notoriously bad at tasks like counting letters in a word or performing precise arithmetic, it isn't looking at individual characters, but at these statistical chunks.
 * **Example:** Asking an AI to count the “m”s in “strawberry” often triggers a hallucination because the tokenization obscures the actual spelling.
 
 #### Hallucination vs. Creativity
@@ -251,7 +251,7 @@ It is helpful to recognize that “hallucination” is a double-edged sword. In 
 #### Advanced Mitigation Checklist
 To further harden an AI system against “stochastic parroting”, consider these additional strategies:
 * **Few-Shot Prompting:** Provide 3–5 examples of correct Question/Answer pairs to “prime” the model's pattern-matching toward accuracy.
-* **Self-Consistency:** Run the same prompt multiple times; if the AI provides a different answer each time, the output is likely a hallucination.
+* **Self-Consistency:** Sample several independent reasoning paths and take the majority answer; low agreement across runs is a useful uncertainty signal, though disagreement alone does not prove hallucination.
 * **System Persona:** Use a system prompt to assign a “skeptical” persona (e.g., “You are a world-class fact-checker”) to reduce the Sycophancy Trap.
 
 ### Hallucination Snowballing

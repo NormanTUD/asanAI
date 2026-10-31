@@ -13,7 +13,7 @@ math: 50
 -->
 
 <div class="md" data-lesson-id="ai_economics">
-The course has covered what AI *is* and what it *can do*; this chapter is the part that decides what it *can afford to do* — and it is missing until now. Economics is not a business afterthought bolted onto the technology; it is a **physical layer**, and it explains decisions you have already seen without a word of arithmetic: why the frontier moved to [Mixture of Experts](mixture_of_experts.php) (more knowledge, same active cost), why the field went from small over-trained models to big under-trained ones ([Scaling](hyperparameters.php), \cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}), and why "just run it locally" is sometimes the cheapest option and sometimes the most expensive. The whole layer reduces to two numbers — *FLOPs for training* and *FLOPs per token for inference* — and everything below is arithmetic on top of those two.
+The course has covered what AI *is* and what it *can do*; this chapter is the part that decides what it *can afford to do* — and it is missing until now. Economics is not a business afterthought bolted onto the technology; it is a **physical layer**, and it explains decisions you have already seen without a word of arithmetic: why the frontier moved to [Mixture of Experts](mixture_of_experts.php) (more knowledge, same active cost), why the field moved from large under-trained models toward smaller models trained on far more data ([Scaling](hyperparameters.php), \cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}), and why "just run it locally" is sometimes the cheapest option and sometimes the most expensive. The whole layer reduces to two numbers — *FLOPs for training* and *FLOPs per token for inference* — and everything below is arithmetic on top of those two.
 </div>
 
 <div class="md">
@@ -52,8 +52,8 @@ Double $N$ or double $D$ and you double the cost — that linearity is why "make
 		<label style="color:var(--mn-text-secondary);">Tokens $D$ (billions)<br><input type="number" id="tc-d" value="20" min="1" step="1" style="width:100%; padding:6px; border:1px solid var(--mn-border); border-radius:6px; background:var(--mn-bg-subtle); color:var(--mn-text);"></label>
 		<label style="color:var(--mn-text-secondary);">GPU<br><select id="tc-gpu" style="width:100%; padding:6px; border:1px solid var(--mn-border); border-radius:6px; background:var(--mn-bg-subtle); color:var(--mn-text);">
 			<option value="312" data-price="3.0">A100 (~312 TFLOP/s BF16)</option>
-			<option value="495" data-price="4.0" selected>H100 (~495 TFLOP/s BF16)</option>
-			<option value="989" data-price="4.5">H100 FP8 (~989 TFLOP/s)</option>
+			<option value="495" data-price="4.0" selected>H100 (~495 TFLOP/s TF32)</option>
+			<option value="989" data-price="4.5">H100 BF16 (~989 TFLOP/s)</option>
 		</select></label>
 		<label style="color:var(--mn-text-secondary);">MFU % (default 40)<br><input type="number" id="tc-mfu" value="40" min="1" max="100" step="1" style="width:100%; padding:6px; border:1px solid var(--mn-border); border-radius:6px; background:var(--mn-bg-subtle); color:var(--mn-text);"></label>
 	</div>
@@ -106,7 +106,7 @@ Double $N$ or double $D$ and you double the cost — that linearity is why "make
 <div class="md">
 ### Inference cost per token: active parameters, not total
 
-Inference is a **forward pass only** — no backward — so the per-token cost is roughly half of one training step's forward, i.e. about **2 FLOPs per active parameter per token**:
+Inference is a **forward pass only** — no backward — so the per-token cost equals one training step's forward pass, about **2 FLOPs per active parameter per token** (one third of the $6N$ used for a full training step):
 
 <div>
 $$ \text{FLOPs}_{\text{infer}}/\text{token} \approx 2 \times (\text{active params}) $$

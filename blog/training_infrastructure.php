@@ -31,7 +31,7 @@ A single training step requires storing:
 | **Gradients (G)** | $2 \cdot N$ bytes | fp16 |
 | **Activations (A)** | $O(L \cdot B \cdot S \cdot d)$ bytes | L layers, B batch, S seq, d hidden |
 
-For a 70B model: $W + G + O = 140 + 140 + 560 = 840$ GB just for parameters + gradients + optimizer. An H100 has 80 GB. The model literally does not fit.
+For a 70B model: $W + G + O + M = 140 + 140 + 560 + 280 = 1120$ GB just for bf16 parameters, bf16 gradients, Adam's fp32 moments and the fp32 master weights. An H100 has 80 GB. The model literally does not fit.
 
 This is why **distributed training** is mandatory.
 </div>
@@ -133,7 +133,7 @@ Three primitives dominate:
 | **ReduceScatter** | Each GPU gets a slice of the reduced tensor | ZeRO-3 + optimizer |
 | **AllToAll** | Every GPU sends a unique chunk to every other | MoE routing |
 
-Bandwidth hierarchy (one-way, per link): NVLink (ca. 900 GB/s) $\gg$ InfiniBand NDR (400 Gb/s $\approx$ 50 GB/s) $\gg$ 100GbE Ethernet (ca. 12.5 GB/s). Modern training uses **NVLink within a node, InfiniBand across nodes**.
+Bandwidth hierarchy: NVLink 4 is a bidirectional aggregate of ca. 900 GB/s per GPU (about 50 GB/s per link in each direction) $\gg$ InfiniBand NDR (400 Gb/s $\approx$ 50 GB/s) $\gg$ 100GbE Ethernet (ca. 12.5 GB/s). Modern training uses **NVLink within a node, InfiniBand across nodes**.
 
 **Gradient accumulation** amortizes communication by computing gradients over multiple micro-batches before syncing. **Gradient compression** (1-bit Adam, PowerSGD) reduces the bytes sent.
 </div>
@@ -204,12 +204,13 @@ For a 70B model with bf16:
 | Component | Memory |
 |-----------|--------|
 | Parameters | 140 GB |
-| Optimizer (Adam fp32) | 560 GB |
+| Optimizer (Adam fp32 moments) | 560 GB |
+| Master weights (fp32) | 280 GB |
 | Gradients (bf16) | 140 GB |
 | Activations (8K seq, bs=1, ckpt) | (ca. )80 GB |
-| **Total** | **(ca. )920 GB** |
+| **Total** | **(ca. )1.2 TB** |
 
-On 8 H100s with 80 GB each = 640 GB total. **FSDP across 16 H100s** (1280 GB) comfortably fits. With TP=8 within node + ZeRO-3 across 16 nodes = 128 GPUs, you have headroom for larger batch sizes.
+On 8 H100s with 80 GB each = 640 GB total. **FSDP across 16 H100s** (1280 GB) fits, with little headroom for activations. With TP=8 within node + ZeRO-3 across 16 nodes = 128 GPUs, you have headroom for larger batch sizes.
 
 For a 405B model (Llama 3): a *theoretical minimum* configuration with TP=8, PP=16, FSDP across 8 replicas = **1024 H100s** would suffice. (In practice, Meta's published report for the same 405B run used the larger **16,384 H100s** configuration cited above, trading additional compute for faster wall-clock training.)
 
@@ -223,7 +224,7 @@ The frontier in 2025: **multi-trillion parameter models on 100,000+ GPU clusters
 	if (!c) return;
 
 	const strategies = ['Data\nParallelism', 'Tensor\nParallelism', 'Pipeline\nParallelism', 'Sequence\nParallelism', 'FSDP\n(ZeRO-3)'];
-	const memPerGPU = [840, 420, 60, 840, 60];  // GB for 70B model on 8 GPUs
+	const memPerGPU = [1120, 140, 140, 1120, 140];  // GB of model state per GPU for a 70B model on 8 GPUs
 	const commGB = [10, 60, 5, 80, 40];          // per-step communication
 	const ease = [9, 5, 4, 4, 6];                // ease of implementation (subjective)
 

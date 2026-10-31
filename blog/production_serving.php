@@ -23,7 +23,7 @@ The frontier in 2025: serving **hundreds of thousands of tokens per second per c
 
 ### The Inference Challenge
 
-For a 70B model in bf16 on a single H100, each generated token requires reading the full model weights from HBM. With 140 GB at ~3 TB/s HBM bandwidth, this gives **~46 ms per token** as a *pure memory-bandwidth lower bound*, the absolute floor for fp16, single-user, single-GPU decode. Production chat targets are tighter: **TTFT** (time to first token) of < 500 ms and **TPOT** (time per output token) of < 50 ms. To beat the 46 ms floor, systems use FP8 quantization, speculative decoding (multiple tokens per memory pass), and/or multi-GPU sharding that reduces per-GPU memory traffic, the techniques discussed in this chapter.
+For a 70B model in bf16, each generated token requires reading the full model weights from HBM. The weights are 140 GB, which does not fit on one 80 GB H100; on two H100s (70 GB per GPU) at ~3 TB/s per GPU, the memory traffic gives **~23 ms per token** as a *pure memory-bandwidth lower bound* (about 40 tokens/s). Production chat targets are tighter: **TTFT** (time to first token) of < 500 ms and **TPOT** (time per output token) of < 50 ms. To beat that floor, systems use FP8 quantization, speculative decoding (multiple tokens per memory pass), and/or multi-GPU sharding that reduces per-GPU memory traffic, the techniques discussed in this chapter.
 
 Three bottlenecks:
 
@@ -98,7 +98,7 @@ Paged Attention (\cite[Kwon et al., 2023]{kwon2023vllm}) is now the standard in 
 <div class="md">
 ### Speculative Decoding
 
-LLM decoding is **memory-bound**, not compute-bound. Each token requires reading all model weights once. A 70B model can generate at most ~20 tokens/s on a single H100, regardless of FLOPs.
+LLM decoding is **memory-bound**, not compute-bound. Each token requires reading all model weights once. A 70B model in bf16 cannot fit on a single 80 GB H100 at all; split across two H100s it tops out near ~40 tokens/s, and in FP8 on one H100 near the same order, regardless of FLOPs.
 
 **Speculative decoding** (\cite[Leviathan et al., 2023]{leviathan2023speculative}) breaks this:
 
@@ -122,7 +122,7 @@ Reduce precision of weights and/or activations:
 | fp16 / bf16 | 16 | 140 GB | Negligible |
 | int8 (weights only) | 8 | 70 GB | ~0.5% on benchmarks |
 | int4 (GPTQ, AWQ) | 4 | 35 GB | 1–3% |
-| int3 / int2 (QuIP, QuIP#) | 2–3 | 17–23 GB | 3–10% |
+| int3 / int2 (QuIP, QuIP#) | 2–3 | ~17–26 GB | 3–10% |
 | 1-bit (BitNet \cite[Ma et al., 2024]{ma2024bitnet}) | 1.58 | 13 GB | Comparable to fp16 at scale |
 
 Modern quantization is **nearly free** at int8 and acceptable at int4 for most workloads. AWQ (Activation-aware Weight Quantization \cite[Lin et al., 2023]{lin2023awq}) and GPTQ (\cite[Frantar et al., 2023]{frantar2022gptq}) are the standard tools. The trade-off is non-uniform: outliers in some channels cause big errors; per-channel scaling mitigates.

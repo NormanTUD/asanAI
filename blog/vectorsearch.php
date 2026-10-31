@@ -350,7 +350,7 @@ Vector search retrieves candidates quickly but approximately. A **re-ranker** th
 | **Retrieval** (vector search) | ~10ms for millions of docs | Good (approximate) | Bi-encoder (separate embeddings) |
 | **Re-ranking** | ~50-200ms for top 20-50 | Excellent | Cross-encoder (joint query-doc scoring) |
 
-A **bi-encoder** embeds query and document separately, fast but can miss subtle interactions. A **cross-encoder** reads query and document *together* as a single input, slow but much more accurate \cite{khattab2020colbert}.
+A **bi-encoder** embeds query and document separately, fast but can miss subtle interactions. A **cross-encoder** reads query and document *together* as a single input, slow but much more accurate. **ColBERT** sits between them: it encodes separately but keeps every token embedding and scores the pair with late interaction (MaxSim) \cite{khattab2020colbert}.
 
 <p>$$ \underbrace{\text{Vector DB: } 1M \rightarrow 50}_{\text{fast, approximate}} \;\xrightarrow{\text{re-ranker}}\; \underbrace{50 \rightarrow 5}_{\text{slow, precise}} \;\rightarrow\; \text{LLM prompt} $$</p>
 
