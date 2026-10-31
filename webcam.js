@@ -407,7 +407,7 @@ async function _configureWebcamUI(available_webcams_list) {
 }
 
 async function _captureAndProcessWebcamImage(elem, nol, _enable_train_and_last_layer_shape_warning) {
-	if (!nol) l(language[lang]["taking_photo_from_webcam"]);
+	if (!nol) dbg(language[lang]["taking_photo_from_webcam"]);
 	_set_webcam_data_status("webcam_data_status_capturing", "Taking picture…");
 
 	// Insert the preview immediately so the click gives feedback while the
@@ -493,7 +493,7 @@ async function _captureAndProcessWebcamImage(elem, nol, _enable_train_and_last_l
 	update_image_counters();
 
 	if (_enable_train_and_last_layer_shape_warning) enable_train();
-	if (!nol) l(language[lang]["took_photo_from_webcam"]);
+	if (!nol) dbg(language[lang]["took_photo_from_webcam"]);
 	_set_webcam_data_status("webcam_data_status_ready", "Camera ready");
 
 	got_images_from_webcam = true;
