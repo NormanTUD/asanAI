@@ -77,6 +77,9 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from course_order_test import check_course_order
+
 
 # Lesson under guard: (php template, js module). Extend the list to add more.
 LESSONS = [
@@ -449,6 +452,16 @@ def main() -> None:
             print(f"  ✗ {i}")
     else:
         print("Site footer: shared shell + home pages OK")
+
+    order_errors, order_warnings = check_course_order(root)
+    for i in order_warnings:
+        print(f"  ! course order: {i}")
+    if order_errors:
+        print("=" * 64)
+        print("Course order")
+        print("=" * 64)
+        for i in order_errors:
+            print(f"  ✗ {i}")
     for path in sorted(root.glob("*.php")):
         if path.name in CITE_SKIP:
             continue
@@ -513,7 +526,9 @@ def main() -> None:
     print(f"Quiz balance guard: {cite_checked} file(s) checked, "
           f"{quiz_fail} issue(s)")
     print(f"Site footer guard: {len(footer_issues)} issue(s)")
-    total_fail += cite_fail + quiz_fail + len(footer_issues)
+    print(f"Course order guard: {len(order_errors)} error(s), "
+          f"{len(order_warnings)} warning(s)")
+    total_fail += cite_fail + quiz_fail + len(footer_issues) + len(order_errors)
     if total_fail:
         print(f"[FAIL] {total_fail} guard violation(s) found → exit code 1")
         sys.exit(1)
