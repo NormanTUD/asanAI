@@ -57,6 +57,36 @@ function logt(...msg) {
 	console.trace();
 }
 
+var _recent_logged_keys = [];
+
+function _log_args_key(args) {
+	return args.map(function (value) {
+		if (value === null) return "null";
+		if (typeof value === "object") {
+			try { return String(value); } catch (e) { return "[object]"; }
+		}
+		return String(value);
+	}).join("|");
+}
+
+function _recent_log_duplicate(kind, args) {
+	var key = kind + "|" + _log_args_key(args);
+	if (_recent_logged_keys.includes(key)) return true;
+	_recent_logged_keys.push(key);
+	if (_recent_logged_keys.length > 200) _recent_logged_keys.shift();
+	return false;
+}
+
+function log_once_recent(...args) {
+	if (_recent_log_duplicate("log", args)) return;
+	log(...args);
+}
+
+function info_once_recent(...args) {
+	if (_recent_log_duplicate("info", args)) return;
+	info(...args);
+}
+
 function info (...args) {
 	var function_name = get_latest_caller(get_stack_trace(1));
 	if(function_name) {
