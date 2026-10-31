@@ -33,6 +33,9 @@ function update_image_counters() {
 		$(container).find(".own_images_count").text(count);
 	});
 	update_label_sidebar_counts();
+	if (typeof _update_webcam_data_category_counts === "function") {
+		_update_webcam_data_category_counts();
+	}
 }
 
 function add_upload_container_html(k) {

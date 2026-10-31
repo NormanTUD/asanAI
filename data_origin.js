@@ -881,4 +881,8 @@ function add_label_sidebar() {
 		labelSidebarObserver.observe(own_images_tab, {attributes:true, attributeFilter:['style','class','hidden']});
 	}
 	labelSidebarObserver.observe(document.body, {childList:true, subtree:true});
+
+	if (typeof _update_webcam_data_category_counts === "function") {
+		_update_webcam_data_category_counts();
+	}
 }

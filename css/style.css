@@ -639,6 +639,29 @@ button:disabled:hover {
 	font-size: 20px;
 	max-height: 220px;
 	overflow-y: auto;
+	padding: 6px 8px;
+	border-radius: 6px;
+	background: rgba(0, 0, 0, 0.6);
+	color: #ffffff;
+}
+
+body:not(.darkmode) #webcam_data_prediction {
+	background: rgba(255, 255, 255, 0.94);
+	color: #111111;
+}
+
+#webcam_data_prediction table {
+	border-collapse: collapse;
+}
+
+#webcam_data_prediction td {
+	padding: 2px 8px;
+}
+
+#webcam_data_prediction .webcam_data_category_count {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	font-weight: 600;
 }
 
 .fireworks-container {
