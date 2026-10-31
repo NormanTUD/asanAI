@@ -14,7 +14,7 @@
   ],
   "claims": [
     {
-      "id": "auto-ai_economics-title-0-1",
+      "id": "auto-ai_economics-title-1",
       "subject": "ai_economics",
       "predicate": "title",
       "value": "The Economic Layer",
@@ -27,7 +27,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-ai_economics-part-0-2",
+      "id": "auto-ai_economics-part-2",
       "subject": "ai_economics",
       "predicate": "part",
       "value": 5,
@@ -40,7 +40,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-ai_economics-order-0-3",
+      "id": "auto-ai_economics-order-3",
       "subject": "ai_economics",
       "predicate": "order",
       "value": 21,
@@ -53,7 +53,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-a100-tflops-54-4",
+      "id": "auto-a100-tflops-4",
       "subject": "a100",
       "predicate": "tflops",
       "value": "312",
@@ -66,7 +66,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-h100-tflops-55-5",
+      "id": "auto-h100-tflops-5",
       "subject": "h100",
       "predicate": "tflops",
       "value": "495",
@@ -79,7 +79,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-h100-tflops-56-6",
+      "id": "auto-h100-tflops-6",
       "subject": "h100",
       "predicate": "tflops",
       "value": "989",
@@ -92,36 +92,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-ai_economics-a100",
-      "from": "a100",
-      "to": "ai_economics",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "A100 (~312 TFLOP/s BF16)",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "prov-ai_economics-h100",
-      "from": "h100",
-      "to": "ai_economics",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "H100 (~495 TFLOP/s TF32)",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "prov-ai_economics-part",
-      "from": "ai-economics",
-      "to": "part-5",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 5",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

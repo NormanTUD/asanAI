@@ -12,7 +12,7 @@
   ],
   "claims": [
     {
-      "id": "auto-deconvolution-title-0-1",
+      "id": "auto-deconvolution-title-1",
       "subject": "deconvolution",
       "predicate": "title",
       "value": "Pixels and Checkerboards",
@@ -25,7 +25,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-deconvolution-part-0-2",
+      "id": "auto-deconvolution-part-2",
       "subject": "deconvolution",
       "predicate": "part",
       "value": 3,
@@ -38,7 +38,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-deconvolution-order-0-3",
+      "id": "auto-deconvolution-order-3",
       "subject": "deconvolution",
       "predicate": "order",
       "value": 8,
@@ -51,16 +51,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-deconvolution-part",
-      "from": "deconvolution",
-      "to": "part-3",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 3",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

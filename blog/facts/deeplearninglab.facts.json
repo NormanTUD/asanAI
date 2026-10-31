@@ -28,7 +28,7 @@
   ],
   "claims": [
     {
-      "id": "auto-deeplearninglab-title-0-1",
+      "id": "auto-deeplearninglab-title-1",
       "subject": "deeplearninglab",
       "predicate": "title",
       "value": "Deep Learning",
@@ -41,7 +41,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-deeplearninglab-part-0-2",
+      "id": "auto-deeplearninglab-part-2",
       "subject": "deeplearninglab",
       "predicate": "part",
       "value": 3,
@@ -54,7 +54,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-deeplearninglab-order-0-3",
+      "id": "auto-deeplearninglab-order-3",
       "subject": "deeplearninglab",
       "predicate": "order",
       "value": 1,
@@ -67,16 +67,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-deeplearninglab-part",
-      "from": "deeplearninglab",
-      "to": "part-3",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 3",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

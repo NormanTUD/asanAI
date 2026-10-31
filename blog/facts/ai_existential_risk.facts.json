@@ -48,7 +48,7 @@
   ],
   "claims": [
     {
-      "id": "auto-ai_existential_risk-title-0-1",
+      "id": "auto-ai_existential_risk-title-1",
       "subject": "ai_existential_risk",
       "predicate": "title",
       "value": "AI Existential Risk — What Is Real and What Is Speculative",
@@ -61,7 +61,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-ai_existential_risk-part-0-2",
+      "id": "auto-ai_existential_risk-part-2",
       "subject": "ai_existential_risk",
       "predicate": "part",
       "value": 6,
@@ -74,7 +74,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-ai_existential_risk-order-0-3",
+      "id": "auto-ai_existential_risk-order-3",
       "subject": "ai_existential_risk",
       "predicate": "order",
       "value": 16,
@@ -87,16 +87,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-ai_existential_risk-part",
-      "from": "ai-existential-risk",
-      "to": "part-6",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 6",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

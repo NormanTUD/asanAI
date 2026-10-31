@@ -31,7 +31,7 @@
   ],
   "claims": [
     {
-      "id": "auto-agents-title-0-1",
+      "id": "auto-agents-title-1",
       "subject": "agents",
       "predicate": "title",
       "value": "AI Agents: Autonomous Reasoning and Tool Use",
@@ -44,7 +44,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-agents-part-0-2",
+      "id": "auto-agents-part-2",
       "subject": "agents",
       "predicate": "part",
       "value": 5,
@@ -57,7 +57,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-agents-order-0-3",
+      "id": "auto-agents-order-3",
       "subject": "agents",
       "predicate": "order",
       "value": 5,
@@ -70,16 +70,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-agents-part",
-      "from": "agents",
-      "to": "part-5",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 5",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

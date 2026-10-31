@@ -20,7 +20,7 @@
   ],
   "claims": [
     {
-      "id": "auto-contextwindows-title-0-1",
+      "id": "auto-contextwindows-title-1",
       "subject": "contextwindows",
       "predicate": "title",
       "value": "Context Windows & Memory: What LLMs Can Hold in Mind",
@@ -33,7 +33,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-contextwindows-part-0-2",
+      "id": "auto-contextwindows-part-2",
       "subject": "contextwindows",
       "predicate": "part",
       "value": 5,
@@ -46,7 +46,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-contextwindows-order-0-3",
+      "id": "auto-contextwindows-order-3",
       "subject": "contextwindows",
       "predicate": "order",
       "value": 7,
@@ -59,16 +59,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-contextwindows-part",
-      "from": "contextwindows",
-      "to": "part-5",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 5",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

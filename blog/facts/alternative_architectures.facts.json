@@ -24,7 +24,7 @@
   ],
   "claims": [
     {
-      "id": "auto-alternative_architectures-title-0-1",
+      "id": "auto-alternative_architectures-title-1",
       "subject": "alternative_architectures",
       "predicate": "title",
       "value": "Beyond Transformers (Mamba, RWKV, RetNet)",
@@ -37,7 +37,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-alternative_architectures-part-0-2",
+      "id": "auto-alternative_architectures-part-2",
       "subject": "alternative_architectures",
       "predicate": "part",
       "value": 4,
@@ -50,7 +50,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-alternative_architectures-order-0-3",
+      "id": "auto-alternative_architectures-order-3",
       "subject": "alternative_architectures",
       "predicate": "order",
       "value": 17,
@@ -63,16 +63,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-alternative_architectures-part",
-      "from": "alternative-architectures",
-      "to": "part-4",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 4",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

@@ -34,7 +34,7 @@
   ],
   "claims": [
     {
-      "id": "auto-computer_vision-title-0-1",
+      "id": "auto-computer_vision-title-1",
       "subject": "computer_vision",
       "predicate": "title",
       "value": "What Machines See",
@@ -47,7 +47,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-computer_vision-part-0-2",
+      "id": "auto-computer_vision-part-2",
       "subject": "computer_vision",
       "predicate": "part",
       "value": 3,
@@ -60,7 +60,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-computer_vision-order-0-3",
+      "id": "auto-computer_vision-order-3",
       "subject": "computer_vision",
       "predicate": "order",
       "value": 7,
@@ -73,16 +73,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-computer_vision-part",
-      "from": "computer-vision",
-      "to": "part-3",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 3",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

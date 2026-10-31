@@ -40,7 +40,7 @@
   ],
   "claims": [
     {
-      "id": "auto-fact_lookup-title-0-1",
+      "id": "auto-fact_lookup-title-1",
       "subject": "fact_lookup",
       "predicate": "title",
       "value": "Where 'Paris' Lives — How an LLM Retrieves a Fact",
@@ -53,7 +53,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-fact_lookup-part-0-2",
+      "id": "auto-fact_lookup-part-2",
       "subject": "fact_lookup",
       "predicate": "part",
       "value": 4,
@@ -66,7 +66,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-fact_lookup-order-0-3",
+      "id": "auto-fact_lookup-order-3",
       "subject": "fact_lookup",
       "predicate": "order",
       "value": 11,
@@ -79,16 +79,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-fact_lookup-part",
-      "from": "fact-lookup",
-      "to": "part-4",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 4",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

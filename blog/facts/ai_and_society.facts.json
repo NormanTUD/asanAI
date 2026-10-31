@@ -86,7 +86,7 @@
   ],
   "claims": [
     {
-      "id": "auto-ai_and_society-title-0-1",
+      "id": "auto-ai_and_society-title-1",
       "subject": "ai_and_society",
       "predicate": "title",
       "value": "AI and Society: The Cultural Impact of Machines That Create",
@@ -99,7 +99,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-ai_and_society-part-0-2",
+      "id": "auto-ai_and_society-part-2",
       "subject": "ai_and_society",
       "predicate": "part",
       "value": 6,
@@ -112,7 +112,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-ai_and_society-order-0-3",
+      "id": "auto-ai_and_society-order-3",
       "subject": "ai_and_society",
       "predicate": "order",
       "value": 15,
@@ -125,16 +125,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-ai_and_society-part",
-      "from": "ai-and-society",
-      "to": "part-6",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 6",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

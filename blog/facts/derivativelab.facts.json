@@ -24,7 +24,7 @@
   ],
   "claims": [
     {
-      "id": "auto-derivativelab-title-0-1",
+      "id": "auto-derivativelab-title-1",
       "subject": "derivativelab",
       "predicate": "title",
       "value": "Derivatives: How AI \"Learns\" to get better",
@@ -37,7 +37,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-derivativelab-part-0-2",
+      "id": "auto-derivativelab-part-2",
       "subject": "derivativelab",
       "predicate": "part",
       "value": 2,
@@ -50,7 +50,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-derivativelab-order-0-3",
+      "id": "auto-derivativelab-order-3",
       "subject": "derivativelab",
       "predicate": "order",
       "value": 2,
@@ -63,16 +63,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-derivativelab-part",
-      "from": "derivativelab",
-      "to": "part-2",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 2",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

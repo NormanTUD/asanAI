@@ -75,7 +75,7 @@
   ],
   "claims": [
     {
-      "id": "auto-coherent_difference-title-0-1",
+      "id": "auto-coherent_difference-title-1",
       "subject": "coherent_difference",
       "predicate": "title",
       "value": "Coherent Difference",
@@ -88,7 +88,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-coherent_difference-part-0-2",
+      "id": "auto-coherent_difference-part-2",
       "subject": "coherent_difference",
       "predicate": "part",
       "value": 4,
@@ -101,7 +101,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-coherent_difference-order-0-3",
+      "id": "auto-coherent_difference-order-3",
       "subject": "coherent_difference",
       "predicate": "order",
       "value": 2,
@@ -114,16 +114,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-coherent_difference-part",
-      "from": "coherent-difference",
-      "to": "part-4",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 4",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

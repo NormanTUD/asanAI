@@ -41,7 +41,7 @@
   ],
   "claims": [
     {
-      "id": "auto-coherent_world_models-title-0-1",
+      "id": "auto-coherent_world_models-title-1",
       "subject": "coherent_world_models",
       "predicate": "title",
       "value": "From World to Model: Coherent Representation",
@@ -54,7 +54,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-coherent_world_models-part-0-2",
+      "id": "auto-coherent_world_models-part-2",
       "subject": "coherent_world_models",
       "predicate": "part",
       "value": 4,
@@ -67,7 +67,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-coherent_world_models-order-0-3",
+      "id": "auto-coherent_world_models-order-3",
       "subject": "coherent_world_models",
       "predicate": "order",
       "value": 3,
@@ -80,16 +80,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-coherent_world_models-part",
-      "from": "coherent-world-models",
-      "to": "part-4",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 4",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

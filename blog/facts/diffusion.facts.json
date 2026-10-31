@@ -34,7 +34,7 @@
   ],
   "claims": [
     {
-      "id": "auto-diffusion-title-0-1",
+      "id": "auto-diffusion-title-1",
       "subject": "diffusion",
       "predicate": "title",
       "value": "Diffusion Models",
@@ -47,7 +47,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-diffusion-part-0-2",
+      "id": "auto-diffusion-part-2",
       "subject": "diffusion",
       "predicate": "part",
       "value": 4,
@@ -60,7 +60,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-diffusion-order-0-3",
+      "id": "auto-diffusion-order-3",
       "subject": "diffusion",
       "predicate": "order",
       "value": 14,
@@ -71,39 +71,7 @@
       "quote": "order: 14",
       "citation_keys": [],
       "confidence": "extracted"
-    },
-    {
-      "id": "auto-stable-diffusion-parameters-180-4",
-      "subject": "stable-diffusion",
-      "predicate": "parameters",
-      "value": "860",
-      "unit": "M",
-      "qualifiers": {},
-      "quote": "The only fully-connected layers are tiny MLPs for the time and text embeddings. Everything else is convolution or attention. Stable Diffusion 1.5's U-Net has ~860 M parameters (the full pipeline, including text encoder and VAE, is about 1 B). The forward pass per denoising step: encode $t$, run the ",
-      "citation_keys": [],
-      "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-diffusion-stable-diffusion",
-      "from": "stable-diffusion",
-      "to": "diffusion",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "The only fully-connected layers are tiny MLPs for the time and text embeddings. Everything else is convolution or attention. Stable Diffusion 1.5's U-Net has ~860 M parameters (the full pipeline, including text encoder and VAE, is about 1 B). The forward pass per denoising step: encode $t$, run the ",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "prov-diffusion-part",
-      "from": "diffusion",
-      "to": "part-4",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 4",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

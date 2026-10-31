@@ -24,7 +24,7 @@
   ],
   "claims": [
     {
-      "id": "auto-differentiation-title-0-1",
+      "id": "auto-differentiation-title-1",
       "subject": "differentiation",
       "predicate": "title",
       "value": "Differentiation: The Mathematics of Change",
@@ -37,7 +37,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-differentiation-part-0-2",
+      "id": "auto-differentiation-part-2",
       "subject": "differentiation",
       "predicate": "part",
       "value": 2,
@@ -50,7 +50,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-differentiation-order-0-3",
+      "id": "auto-differentiation-order-3",
       "subject": "differentiation",
       "predicate": "order",
       "value": 3,
@@ -63,16 +63,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-differentiation-part",
-      "from": "differentiation",
-      "to": "part-2",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 2",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

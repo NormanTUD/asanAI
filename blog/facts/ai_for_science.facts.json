@@ -32,7 +32,7 @@
   ],
   "claims": [
     {
-      "id": "auto-ai_for_science-title-0-1",
+      "id": "auto-ai_for_science-title-1",
       "subject": "ai_for_science",
       "predicate": "title",
       "value": "Closing the Loop — AI for Science",
@@ -45,7 +45,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-ai_for_science-part-0-2",
+      "id": "auto-ai_for_science-part-2",
       "subject": "ai_for_science",
       "predicate": "part",
       "value": 6,
@@ -58,7 +58,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-ai_for_science-order-0-3",
+      "id": "auto-ai_for_science-order-3",
       "subject": "ai_for_science",
       "predicate": "order",
       "value": 14,
@@ -71,16 +71,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-ai_for_science-part",
-      "from": "ai-for-science",
-      "to": "part-6",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 6",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

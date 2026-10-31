@@ -33,7 +33,7 @@
   ],
   "claims": [
     {
-      "id": "auto-activationlab-title-0-1",
+      "id": "auto-activationlab-title-1",
       "subject": "activationlab",
       "predicate": "title",
       "value": "Activation Functions: The Neural Decision Makers",
@@ -46,7 +46,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-activationlab-part-0-2",
+      "id": "auto-activationlab-part-2",
       "subject": "activationlab",
       "predicate": "part",
       "value": 2,
@@ -59,7 +59,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-activationlab-order-0-3",
+      "id": "auto-activationlab-order-3",
       "subject": "activationlab",
       "predicate": "order",
       "value": 10,
@@ -72,16 +72,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-activationlab-part",
-      "from": "activationlab",
-      "to": "part-2",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 2",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

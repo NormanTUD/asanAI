@@ -277,7 +277,7 @@
   ],
   "claims": [
     {
-      "id": "auto-beyond_llms-title-0-1",
+      "id": "auto-beyond_llms-title-1",
       "subject": "beyond_llms",
       "predicate": "title",
       "value": "Beyond LLMs — The Wider World of Algorithms & Models",
@@ -290,7 +290,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-beyond_llms-part-0-2",
+      "id": "auto-beyond_llms-part-2",
       "subject": "beyond_llms",
       "predicate": "part",
       "value": 6,
@@ -303,7 +303,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-beyond_llms-order-0-3",
+      "id": "auto-beyond_llms-order-3",
       "subject": "beyond_llms",
       "predicate": "order",
       "value": 6,
@@ -316,16 +316,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-beyond_llms-part",
-      "from": "beyond-llms",
-      "to": "part-6",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 6",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

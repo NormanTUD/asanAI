@@ -33,7 +33,7 @@
   ],
   "claims": [
     {
-      "id": "auto-foam_of_meaning-title-0-1",
+      "id": "auto-foam_of_meaning-title-1",
       "subject": "foam_of_meaning",
       "predicate": "title",
       "value": "The foam of meaning",
@@ -46,7 +46,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-foam_of_meaning-part-0-2",
+      "id": "auto-foam_of_meaning-part-2",
       "subject": "foam_of_meaning",
       "predicate": "part",
       "value": 1,
@@ -59,7 +59,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-foam_of_meaning-order-0-3",
+      "id": "auto-foam_of_meaning-order-3",
       "subject": "foam_of_meaning",
       "predicate": "order",
       "value": 13,
@@ -72,7 +72,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-gpt-2-parameters-365-4",
+      "id": "auto-gpt-2-parameters-4",
       "subject": "gpt-2",
       "predicate": "parameters",
       "value": "1.5",
@@ -83,26 +83,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-foam_of_meaning-gpt-2",
-      "from": "gpt-2",
-      "to": "foam_of_meaning",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "- **The gap grows linearly.** For a semantic manifold of intrinsic dimension $k$, the *normalized* expressibility gap $\\eta(\\varepsilon)$ — the fraction of semantic space lying within $\\varepsilon$ of a boundary — satisfies $\\eta(\\varepsilon) = c\\,\\varepsilon + O(\\varepsilon^{2})$ for small $\\vareps",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "prov-foam_of_meaning-part",
-      "from": "foam-of-meaning",
-      "to": "part-1",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 1",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

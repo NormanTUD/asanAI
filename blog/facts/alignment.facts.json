@@ -43,7 +43,7 @@
   ],
   "claims": [
     {
-      "id": "auto-alignment-title-0-1",
+      "id": "auto-alignment-title-1",
       "subject": "alignment",
       "predicate": "title",
       "value": "Alignment — Making Objectives Match Intent",
@@ -56,7 +56,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-alignment-part-0-2",
+      "id": "auto-alignment-part-2",
       "subject": "alignment",
       "predicate": "part",
       "value": 6,
@@ -69,7 +69,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-alignment-order-0-3",
+      "id": "auto-alignment-order-3",
       "subject": "alignment",
       "predicate": "order",
       "value": 9,
@@ -82,16 +82,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-alignment-part",
-      "from": "alignment",
-      "to": "part-6",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 6",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

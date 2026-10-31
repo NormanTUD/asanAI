@@ -45,7 +45,7 @@
   ],
   "claims": [
     {
-      "id": "auto-frontier-title-0-1",
+      "id": "auto-frontier-title-1",
       "subject": "frontier",
       "predicate": "title",
       "value": "Frontier Topics",
@@ -58,7 +58,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-frontier-part-0-2",
+      "id": "auto-frontier-part-2",
       "subject": "frontier",
       "predicate": "part",
       "value": 6,
@@ -71,7 +71,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-frontier-order-0-3",
+      "id": "auto-frontier-order-3",
       "subject": "frontier",
       "predicate": "order",
       "value": 8,
@@ -84,16 +84,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-frontier-part",
-      "from": "frontier",
-      "to": "part-6",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 6",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

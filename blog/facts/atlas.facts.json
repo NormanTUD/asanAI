@@ -21,7 +21,7 @@
   ],
   "claims": [
     {
-      "id": "auto-atlas-title-0-1",
+      "id": "auto-atlas-title-1",
       "subject": "atlas",
       "predicate": "title",
       "value": "The Atlas",
@@ -34,7 +34,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-atlas-part-0-2",
+      "id": "auto-atlas-part-2",
       "subject": "atlas",
       "predicate": "part",
       "value": 6,
@@ -47,7 +47,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-atlas-order-0-3",
+      "id": "auto-atlas-order-3",
       "subject": "atlas",
       "predicate": "order",
       "value": 20,
@@ -60,16 +60,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-atlas-part",
-      "from": "atlas",
-      "to": "part-6",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 6",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

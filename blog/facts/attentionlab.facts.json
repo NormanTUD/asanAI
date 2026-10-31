@@ -33,7 +33,7 @@
   ],
   "claims": [
     {
-      "id": "auto-attentionlab-title-0-1",
+      "id": "auto-attentionlab-title-1",
       "subject": "attentionlab",
       "predicate": "title",
       "value": "The Semantic Tug-of-War: How Transformers 'Think'",
@@ -46,7 +46,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-attentionlab-part-0-2",
+      "id": "auto-attentionlab-part-2",
       "subject": "attentionlab",
       "predicate": "part",
       "value": 4,
@@ -59,7 +59,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-attentionlab-order-0-3",
+      "id": "auto-attentionlab-order-3",
       "subject": "attentionlab",
       "predicate": "order",
       "value": 6,
@@ -72,16 +72,5 @@
       "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-attentionlab-part",
-      "from": "attentionlab",
-      "to": "part-4",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 4",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }

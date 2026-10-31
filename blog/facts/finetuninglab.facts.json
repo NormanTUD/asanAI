@@ -28,7 +28,7 @@
   ],
   "claims": [
     {
-      "id": "auto-finetuninglab-title-0-1",
+      "id": "auto-finetuninglab-title-1",
       "subject": "finetuninglab",
       "predicate": "title",
       "value": "Fine-Tuning & Post-Training",
@@ -41,7 +41,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-finetuninglab-part-0-2",
+      "id": "auto-finetuninglab-part-2",
       "subject": "finetuninglab",
       "predicate": "part",
       "value": 5,
@@ -54,7 +54,7 @@
       "confidence": "extracted"
     },
     {
-      "id": "auto-finetuninglab-order-0-3",
+      "id": "auto-finetuninglab-order-3",
       "subject": "finetuninglab",
       "predicate": "order",
       "value": 1,
@@ -65,18 +65,29 @@
       "quote": "order: 1",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "auto-lora-parameters-4",
+      "subject": "lora",
+      "predicate": "parameters",
+      "value": "131",
+      "unit": "K",
+      "qualifiers": {},
+      "quote": "With $r = 16$ on a 4096×4096 weight matrix, LoRA adds ~131K parameters (0.78% of the original).",
+      "citation_keys": [],
+      "confidence": "extracted"
+    },
+    {
+      "id": "auto-qlora-memory-5",
+      "subject": "qlora",
+      "predicate": "memory",
+      "value": "24",
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "For a 7B–13B model with QLoRA on a single consumer GPU (24 GB):",
+      "citation_keys": [],
+      "confidence": "extracted"
     }
   ],
-  "relations": [
-    {
-      "id": "prov-finetuninglab-part",
-      "from": "finetuninglab",
-      "to": "part-5",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 5",
-      "citation_keys": [],
-      "confidence": "provenance"
-    }
-  ]
+  "relations": []
 }
