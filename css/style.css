@@ -658,12 +658,6 @@ body:not(.darkmode) #webcam_data_prediction {
 	padding: 2px 8px;
 }
 
-#webcam_data_prediction .webcam_data_category_count {
-	text-align: right;
-	font-variant-numeric: tabular-nums;
-	font-weight: 600;
-}
-
 .camera_search_status {
 	max-width: 320px;
 	text-align: center;

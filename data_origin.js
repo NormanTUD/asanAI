@@ -882,7 +882,4 @@ function add_label_sidebar() {
 	}
 	labelSidebarObserver.observe(document.body, {childList:true, subtree:true});
 
-	if (typeof _update_webcam_data_category_counts === "function") {
-		_update_webcam_data_category_counts();
-	}
 }

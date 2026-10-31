@@ -4947,13 +4947,16 @@ async function wait_for_webcam_images(category_id, timeout_ms, required) {
 	});
 }
 
-async function wait_for_webcam_data_prediction (timeout_ms) {
+async function wait_for_label_sidebar_counts (timeout_ms) {
 	const start_time = Date.now();
 
 	while (Date.now() - start_time < timeout_ms) {
-		const prediction = $("#webcam_data_prediction");
+		const rows = $("#labelSidebar table tr");
+		const has_counts = rows.find("td").filter(function () {
+			return /\(\d+\)/.test($(this).text());
+		}).length > 0;
 
-		if (prediction.is(":visible") && prediction.find("table.predict_table tr").length > 0) {
+		if (rows.length > 0 && has_counts) {
 			return true;
 		}
 
@@ -5192,13 +5195,9 @@ async function test_webcam(disable_webcam) {
 	$("#custom_webcam_training_data_small").click();
 	await delay(10000);
 
-	if (model) {
-		if (!await wait_for_webcam_data_prediction(15000)) {
-			err("Live webcam prediction table is not visible in custom images");
-			return false;
-		}
-	} else {
-		dbg("test_webcam: no model yet; skipping the pre-training live prediction check");
+	if (!await wait_for_label_sidebar_counts(15000)) {
+		err("Category counts are not visible in the label sidebar");
+		return false;
 	}
 
 	while (!$(".own_image_label").length) {

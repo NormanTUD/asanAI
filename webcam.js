@@ -292,32 +292,10 @@ function _ensure_webcam_data_prediction_container() {
 	return prediction;
 }
 
-function _update_webcam_data_category_counts() {
-	if (!webcam_custom_data_started) return;
-
-	var prediction = _ensure_webcam_data_prediction_container();
-	prediction.show();
-
-	var table = $("<table>").addClass("predict_table webcam_data_category_counts");
-	var tbody = $("<tbody>");
-	var labelInputs = $(".own_image_label");
-	var imageContainers = $(".own_images");
-
-	labelInputs.each(function (i) {
-		var name = $(this).val() || ("category " + i);
-		var count = $(imageContainers[i]).find(".own_image_span").length;
-		var row = $("<tr>");
-		$("<td>").addClass("label_element webcam_data_category_name").text(name).appendTo(row);
-		$("<td>").addClass("webcam_data_category_count").text(count).appendTo(row);
-		tbody.append(row);
-	});
-
-	table.append(tbody);
-	prediction.empty().append(table);
-}
-
 function _start_webcam_custom_data_prediction() {
-	_update_webcam_data_category_counts();
+	// Category counts live in the label sidebar now; keep this container empty
+	// so the sidebar does not show the same list twice.
+	$("#webcam_data_prediction").hide().empty();
 }
 
 function _stop_webcam_custom_data_prediction() {
