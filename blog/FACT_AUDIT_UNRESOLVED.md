@@ -23,15 +23,33 @@ Aussagen, sondern eine Arbeitsliste für einen Menschen mit Bibliothekszugang.
 | `derivativelab.php:41`, `derivativelab.php:235`, `optimizerlab.php:435`, `geometry_ii.php:186` | Hadamards Memoir von 1908 führte das Steilste-Abstiegs-Verfahren für eingespannte elastische Platten ein. | Der Eintrag `hadamard1908` ist weiterhin eine Wikipedia-Geschichtsseite (`literature.js`, Autor „Wikipedia contributors“, 2026). Gallica und der BnF-Katalog blockieren automatisierte Zugriffe von diesem Host; ein DOI-/Numdam-Datensatz wurde nicht gefunden. | Das Original *Mémoire sur le problème d’analyse relatif à l’équilibre des plaques élastiques encastrées* (1908) oder eine wissenschaftliche Geschichte, die es zitiert. Dann den Wikipedia-Eintrag ersetzen. |
 | `math_i.php:21` | Der Lebombo-Knochen sei „durch 24 Radiokarbonmessungen“ auf 42.000–43.000 Jahre datiert. | Der zitierte Bruderer-Artikel (CACM 2024) lieferte HTTP 403; die genaue Zahl der Messungen war im Abstract nicht sichtbar. | Volltext Bruderer (2024) oder die ursprüngliche Border-Cave-/Lebombo-Datierungsarbeit. |
 | `foam_of_meaning.php:369` | Die intrinsische Dimension „peak around 19–22“ und „only 1–3 % of the ambient width“. | Das arXiv-Abstract bestätigt das Hourglass-Profil und die Fit-Steigungen, aber nicht diese beiden Zahlen. | Volltext Mabrok (2026), Tabellen/Abbildungen mit den Schätzungen pro Schicht. |
-| `language.php:23` | Die Sprachfähigkeit sei „likely entering widespread social use by 100,000 years ago“. | Die zitierte Frontiers-Arbeit (2025) stützt Sprachfähigkeit um 135 kya; das 100-kya-Datum für gesellschaftliche Nutzung steht nicht in Titel/Abstract. | Volltext Miyagawa et al. (2025). |
 | `history.php:1461` | Venture-Investitionen 1,3 Mrd. $ (2010) → >40 Mrd. $ (2020); ~70 Mrd. $ Unternehmensinvestitionen; zwölffaches Artikelwachstum; zehnfache NeurIPS-Teilnahme. | Aus dem Toosi-et-al.-Review übernommen; die zugrunde liegenden AI-Index-Tabellen wurden nicht erneut gelesen. | Toosi et al. (2021) plus die dort zitierten AI-Index-Tabellen. |
-| `information_market.php:51` | Johannes Paul II. habe Isidor von Sevilla „um 1997“ als Internet-Patron vorgeschlagen. | Die Lektion kennzeichnet selbst, dass die Quellen uneinig sind, ob daraus je ein förmliches Dekret wurde. | Vatikanisches Dokument oder belegte päpstliche Audienz/Erklärung. |
 | `computer_vision.php:24` | LeNet-5 sei „the first commercially deployed convolutional network“ gewesen, „from about 1996“ in US-Banken. | LeCun et al. (1989) bestätigen die ZIP-Code-Aufgabe; das exakte Deployment-Datum und der „erste“-Anspruch waren aus dem 1998er-Text nicht sauber extrahierbar. | LeCun et al. (1998) im Volltext plus NCR-/Deployment-Belege. |
 | `origami.php:462` | Die Huzita–Justin-Axiome stammen von Justin (1986) und wurden von Huzita (1989) wiederentdeckt. | Sekundärquellen datieren Huzitas Vortrag meist auf die Konferenz 1991; eine Publikation von 1989 mag existieren, wurde aber nicht verifiziert. | Huzitas Originalarbeit/Konferenzband. |
 | `deconvolution.php:65` | Distills DeepDream-Abbildung nutze „8×8 random shifts per iteration“. | Der Distill-Artikel beschreibt ein 8×8-Jitter-Raster, nicht das exakte Protokoll pro Iteration. | Distill-Quellcode/Bildunterschrift oder Autorenhinweis. |
-| `normalizationlab.php:39` | „GPT-4 family is estimated around 100+ layers.“ | Schätzung, keine veröffentlichte Architekturangabe. | OpenAI-Bericht oder glaubwürdiger Architektur-Leak; sonst ausdrücklich als Spekulation kennzeichnen. |
 | `deeplearninglab.php:20` | „Dechter (1986)“ und Aizenbergs Priorität für Begriff/Idee. | Die genaue Priorität wurde nicht an den Primärwerken geprüft. | Dechter (1986) und Aizenberg et al. im Original. |
-| `resnetlab.php:38` | Hochreiters Analyse von 1991 enthalte „already the germ“ der Skip-Connections. | Interpretativ; das Constant-Error-Carousel wird meist auf das LSTM-Papier von 1997 datiert. | Hochreiters Diplomarbeit (1991) vollständig lesen. |
+
+## 1a. Nachträglich geklärt (aus dieser Liste entfernt)
+
+- **`language.php:23`** — Die Aussage folgt jetzt dem Abstract von Miyagawa
+  et al. (2025): Sprache sei demnach die Auslöserin für das „widespread
+  appearance of modern human behavior“ um 100 kya, nicht für „widespread
+  social use“ der Sprache selbst. Quelle:
+  https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2025.1503900/full
+- **`information_market.php:51`** — Die päpstliche 1997er-Zuschreibung ist
+  ersetzt durch das, was die Wired-Recherche von 2002 belegt: katholische
+  Internetgruppen und ein vatikanisches Medienbüro bewarben Isidore, ein
+  förmliches Dekret ist nicht dokumentiert. Quelle:
+  https://www.wired.com/2002/01/searchin-for-the-surfers-saint/
+- **`normalizationlab.php:39`** — GPT-4s Tiefe ist nicht veröffentlicht; die
+  Lektion nennt jetzt eine verbreitete, ausdrücklich unbestätigte
+  120-Schichten-Schätzung von SemiAnalysis (2023). Quelle:
+  https://www.semianalysis.com/p/gpt-4-architecture-infrastructure
+- **`resnetlab.php:38`** — Die Diplomarbeit (1991) wurde gelesen: Sie
+  analysiert den Vanishing Gradient und schlägt einen „konstanten
+  Fehlerrückfluss“ vor (die Idee hinter dem LSTM-CEC), aber keine
+  ResNet-artigen Identity-Shortcuts. Die Lektion sagt das jetzt so. Quelle:
+  https://people.idsia.ch/~juergen/SeppHochreiter1991ThesisAdvisorSchmidhuber.pdf
 
 ## 2. Zahlen nicht aus dem Primärtext nachgerechnet
 
