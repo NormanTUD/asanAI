@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2357;
+var DEFAULT_EXPECTED_TEST_COUNT = 2359;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -8132,6 +8132,14 @@ function _tiny_tests_topological_analyzer_js() {
 		TopologicalAnalyzer.init(container);
 		test_equal("TopologicalAnalyzer init renders", container.querySelectorAll(".tda-section").length >= 1, true);
 		test_equal("TopologicalAnalyzer init renders SVG charts", container.querySelectorAll("svg").length >= 1, true);
+
+		TopologicalAnalyzer.init("topological_data_analysis");
+		var moved_singleton = document.getElementById("tda_analyzer_singleton");
+		var tda_tab = document.getElementById("topological_data_analysis");
+		test_equal("TopologicalAnalyzer moves into the TDA tab", !!tda_tab && tda_tab.contains(moved_singleton), true);
+		TopologicalAnalyzer.init(container);
+		moved_singleton = document.getElementById("tda_analyzer_singleton");
+		test_equal("TopologicalAnalyzer moves back into the requested container", !!moved_singleton && container.contains(moved_singleton), true);
 		test_equal("TopologicalAnalyzer exposes configuration", typeof TopologicalAnalyzer.getConfig().maxPoints, "number");
 		TopologicalAnalyzer.setConfig({ maxPoints: 100, showDecisionBoundary: false });
 		test_equal("TopologicalAnalyzer updates configuration", TopologicalAnalyzer.getConfig().maxPoints, 100);

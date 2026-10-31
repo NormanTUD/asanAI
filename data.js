@@ -1207,7 +1207,7 @@ async function download_image_data(skip_real_image_download = 0, dont_show_swal 
 	const reset_gallery = (started_training || force_download) && !force_no_download;
 
 	if (reset_gallery) {
-		dbg("Resetting photos element");
+		dbg(language[lang]["photos_resetting_element"]);
 		_photo_gallery_reset();
 		window._perf_helpers.dom_pending = [];
 	}

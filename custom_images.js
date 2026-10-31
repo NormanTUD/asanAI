@@ -112,7 +112,7 @@ function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr) {
 	var save_button = "";
 
 	if(uuid) {
-		save_button = `<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>`;
+		save_button = `<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr}, $('#${uuid}_sketcher')[0].width, $('#${uuid}_sketcher')[0].height);event.preventDefault();clear_attrament('${uuid}_sketcher');">&#128190;</button>`;
 	}
 
 	var code = `<form class='no_mark${classes} atrament_form' onkeydown="return event.key != 'Enter';">
@@ -289,9 +289,15 @@ async function create_zip_with_custom_images () {
 	return res;
 }
 
-function add_image_to_category (img, category) {
+function add_image_to_category (img, category, sourceWidth, sourceHeight) {
 	var imgDiv = $($(".own_images")[category]);
-	var html = `<span class="own_image_span"><img data-category="${category}" height="90" src="${img}" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span><br>`;
+	var widthAttr = "";
+	if (sourceWidth > 0 && sourceHeight > 0) {
+		var displayHeight = 90;
+		var displayWidth = Math.max(1, Math.round(sourceWidth * displayHeight / sourceHeight));
+		widthAttr = ` width="${displayWidth}"`;
+	}
+	var html = `<span class="own_image_span"><img data-category="${category}"${widthAttr} height="90" src="${img}" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span><br>`;
 	imgDiv.prepend(html);
 
 	update_image_counters();

@@ -1720,9 +1720,14 @@ function attachTooltipListeners(container) {
 			_state.parentElement = divOrId;
 		}
 
-		// Singleton: reuse existing
+		// Singleton: reuse existing, but move it if the caller asked for a
+		// different parent. Early update() calls may have created it on <body>
+		// before the actual tab was available.
 		var existing = document.getElementById(SINGLETON_ID);
 		if (existing) {
+			if (parent && existing.parentNode !== parent) {
+				parent.appendChild(existing);
+			}
 			_state.container = existing;
 			render();
 			return TopologicalAnalyzer;
@@ -1765,7 +1770,11 @@ function attachTooltipListeners(container) {
 		}
 
 		if (!_state.container) {
-			init();
+			if (document.getElementById("topological_data_analysis")) {
+				init("topological_data_analysis");
+			} else {
+				init();
+			}
 		} else {
 			render();
 		}

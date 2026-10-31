@@ -77,7 +77,7 @@ async function _getCameraConstraints() {
 	const chosen_webcam_device_id = available_webcams_ids[selected_webcam_id];
 	const chosen_webcam_name = available_webcams[selected_webcam_id];
 
-	dbg(`_getCameraConstraints: Available webcams: ${available_webcams}. Chosen ID: ${selected_webcam_id}. Name: ${chosen_webcam_name}. Device ID: ${chosen_webcam_device_id}`);
+	dbg("[webcam] " + sprintf(language[lang]["webcam_constraints"], available_webcams, selected_webcam_id, chosen_webcam_name, chosen_webcam_device_id));
 
 	if (chosen_webcam_device_id) {
 		constraints.video = { deviceId: { exact: chosen_webcam_device_id } };
@@ -195,10 +195,10 @@ async function _startWebcamDataStream(video_element) {
 	window.cam = await _startStreamAndAssignToCam(video_element);
 
 	if (window.cam) {
-		dbg("get_data_from_webcam: cam was set");
+		dbg("get_data_from_webcam: " + language[lang]["webcam_cam_was_set"]);
 		_show_webcam_data_stream_ui();
 	} else {
-		dbg("get_data_from_webcam: cam SHOULD have been set but was not");
+		dbg("get_data_from_webcam: " + language[lang]["webcam_cam_should_have_been_set"]);
 		l(language[lang]["error_starting_webcam"]);
 		_set_webcam_button_translation("enable_webcam");
 		return;
@@ -373,11 +373,11 @@ function _has_front_and_back_camera_labels(webcam_names) {
 }
 
 async function _configureWebcamUI(available_webcams_list) {
-	dbg("[init_webcams] Number of available cams: " + available_webcams_list.length);
+	dbg("[init_webcams] " + sprintf(language[lang]["webcam_available_count"], available_webcams_list.length));
 
 	if (available_webcams_list.length) {
-		dbg("[init_webcams] Webcam(s) were found. Enabling webcam related features.");
-		dbg("[init_webcams] List of found webcams: " + available_webcams_list.join(", "));
+		dbg("[init_webcams] " + language[lang]["webcam_enabling_features"]);
+		dbg("[init_webcams] " + sprintf(language[lang]["webcam_found_list"], available_webcams_list.join(", ")));
 		$(".only_when_webcam").show();
 
 		if (_has_front_and_back_camera_labels(available_webcams_list)) {
@@ -623,7 +623,7 @@ async function get_data_from_webcam(force_restart = 0, _isRestart = false) {
 	}
 
 	if (!available_webcams.length) {
-		err("No webcams found");
+		err(language[lang]["webcam_no_cameras_found"]);
 		return;
 	}
 
@@ -1128,19 +1128,19 @@ async function switch_to_next_camera () {
 
 async function get_data_from_webcam_if_possible(){
 	if(!cam) {
-		dbg("cam was not defined. Trying to get data from webcam");
+		dbg(language[lang]["webcam_cam_not_defined"]);
 		await get_data_from_webcam();
 	}
 
 	if(!cam) {
 		try {
-			dbg("cam was still not defined. Trying to get data from webcam again");
+			dbg(language[lang]["webcam_cam_still_not_defined"]);
 			await get_data_from_webcam();
 		} catch (e) {
 			err(e);
 		}
 	} else {
-		dbg("cam is defined, not trying to show it again");
+		dbg(language[lang]["webcam_cam_defined"]);
 	}
 }
 
@@ -1149,7 +1149,7 @@ async function set_custom_webcam_training_data() {
 
 	labels = [];
 
-	dbg("Init webcams");
+	dbg(language[lang]["webcam_init"]);
 	await init_webcams(true);
 	if (!document.querySelector(".overlay")) {
 		show_overlay(getCameraSearchHTML());
@@ -1208,7 +1208,7 @@ async function set_custom_webcam_training_data() {
 	await delay(200);
 	remove_overlay();
 
-	dbg("Done setting web for custom training data");
+	dbg(language[lang]["webcam_done_custom_setup"]);
 }
 
 function stop_webcam_if_cam() {
