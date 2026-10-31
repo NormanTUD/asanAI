@@ -529,9 +529,15 @@ def main() -> int:
 			"return document.querySelector('.rag-chat-input').getAttribute('placeholder')"
 		) == "Ask about this lesson…", "the prompt names the lesson scope")
 
-		WebDriverWait(browser, 10).until(
+		# The loader keeps #contents at display:none until revealContent(); a
+		# Range over hidden text reports an empty selection, so the feedback
+		# trigger would ignore it. Wait for the revealed page, not just the
+		# layer (which the module may build on a timer before the reveal).
+		WebDriverWait(browser, 30).until(
 			lambda d: d.execute_script(
-				"return !!document.getElementById('mn-feedback-layer')"
+				"const c = document.getElementById('contents');"
+				"return !!document.getElementById('mn-feedback-layer') &&"
+				"!!c && getComputedStyle(c).display !== 'none'"
 			)
 		)
 		browser.execute_script("""
