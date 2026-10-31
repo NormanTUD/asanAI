@@ -31,7 +31,6 @@
         "lesson": "reasoning"
       },
       "quote": "title: Reasoning & Test-Time Compute",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -45,7 +44,6 @@
         "lesson": "reasoning"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -59,9 +57,9 @@
         "lesson": "reasoning"
       },
       "quote": "order: 15",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

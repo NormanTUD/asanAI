@@ -66,7 +66,6 @@
         "lesson": "embeddinglab"
       },
       "quote": "title: Embeddings: The Geometry of Meaning",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -80,7 +79,6 @@
         "lesson": "embeddinglab"
       },
       "quote": "part: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -94,7 +92,6 @@
         "lesson": "embeddinglab"
       },
       "quote": "order: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -106,9 +103,9 @@
       "unit": "billion",
       "qualifiers": {},
       "quote": "points requires $N \\gg P$ to avoid overfitting. GPT-3 has **175 billion parameters**",
-      "line": 706,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

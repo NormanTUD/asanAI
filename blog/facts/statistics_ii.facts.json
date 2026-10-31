@@ -35,7 +35,6 @@
         "lesson": "statistics_ii"
       },
       "quote": "title: Statistics II — Inference and Information",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -49,7 +48,6 @@
         "lesson": "statistics_ii"
       },
       "quote": "part: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -63,9 +61,9 @@
         "lesson": "statistics_ii"
       },
       "quote": "order: 11",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

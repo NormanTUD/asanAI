@@ -41,7 +41,6 @@
         "lesson": "ai_for_science"
       },
       "quote": "title: Closing the Loop — AI for Science",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -55,7 +54,6 @@
         "lesson": "ai_for_science"
       },
       "quote": "part: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -69,9 +67,9 @@
         "lesson": "ai_for_science"
       },
       "quote": "order: 14",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

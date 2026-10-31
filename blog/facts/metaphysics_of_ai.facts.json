@@ -30,7 +30,6 @@
         "lesson": "metaphysics_of_ai"
       },
       "quote": "title: The Metaphysics of Artificial Intelligence",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -44,7 +43,6 @@
         "lesson": "metaphysics_of_ai"
       },
       "quote": "part: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -58,9 +56,9 @@
         "lesson": "metaphysics_of_ai"
       },
       "quote": "order: 12",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

@@ -64,7 +64,6 @@
         "lesson": "software"
       },
       "quote": "title: Software: Operating Systems, Programming Languages & the Abstraction Stack",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -78,7 +77,6 @@
         "lesson": "software"
       },
       "quote": "part: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -92,9 +90,9 @@
         "lesson": "software"
       },
       "quote": "order: 18",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

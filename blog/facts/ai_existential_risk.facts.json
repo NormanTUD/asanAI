@@ -57,7 +57,6 @@
         "lesson": "ai_existential_risk"
       },
       "quote": "title: AI Existential Risk — What Is Real and What Is Speculative",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -71,7 +70,6 @@
         "lesson": "ai_existential_risk"
       },
       "quote": "part: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -85,9 +83,9 @@
         "lesson": "ai_existential_risk"
       },
       "quote": "order: 16",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

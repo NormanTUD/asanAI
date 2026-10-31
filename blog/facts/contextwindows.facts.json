@@ -29,7 +29,6 @@
         "lesson": "contextwindows"
       },
       "quote": "title: Context Windows & Memory: What LLMs Can Hold in Mind",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -43,7 +42,6 @@
         "lesson": "contextwindows"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -57,9 +55,9 @@
         "lesson": "contextwindows"
       },
       "quote": "order: 7",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

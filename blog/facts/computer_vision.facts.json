@@ -43,7 +43,6 @@
         "lesson": "computer_vision"
       },
       "quote": "title: What Machines See",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -57,7 +56,6 @@
         "lesson": "computer_vision"
       },
       "quote": "part: 3",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -71,9 +69,9 @@
         "lesson": "computer_vision"
       },
       "quote": "order: 7",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

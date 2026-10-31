@@ -31,7 +31,6 @@
         "lesson": "overandunderfittinglab"
       },
       "quote": "title: Over- and underfitting",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -45,7 +44,6 @@
         "lesson": "overandunderfittinglab"
       },
       "quote": "part: 3",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -59,9 +57,9 @@
         "lesson": "overandunderfittinglab"
       },
       "quote": "order: 3",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

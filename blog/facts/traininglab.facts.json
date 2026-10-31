@@ -19,7 +19,6 @@
         "lesson": "traininglab"
       },
       "quote": "title: Live Training of a Neural Network",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -33,7 +32,6 @@
         "lesson": "traininglab"
       },
       "quote": "part: 2",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -47,9 +45,9 @@
         "lesson": "traininglab"
       },
       "quote": "order: 11",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

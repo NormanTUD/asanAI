@@ -54,7 +54,6 @@
         "lesson": "frontier"
       },
       "quote": "title: Frontier Topics",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -68,7 +67,6 @@
         "lesson": "frontier"
       },
       "quote": "part: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -82,9 +80,9 @@
         "lesson": "frontier"
       },
       "quote": "order: 8",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

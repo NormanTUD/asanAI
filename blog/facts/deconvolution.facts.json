@@ -21,7 +21,6 @@
         "lesson": "deconvolution"
       },
       "quote": "title: Pixels and Checkerboards",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -35,7 +34,6 @@
         "lesson": "deconvolution"
       },
       "quote": "part: 3",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -49,9 +47,9 @@
         "lesson": "deconvolution"
       },
       "quote": "order: 8",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

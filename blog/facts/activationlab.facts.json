@@ -42,7 +42,6 @@
         "lesson": "activationlab"
       },
       "quote": "title: Activation Functions: The Neural Decision Makers",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -56,7 +55,6 @@
         "lesson": "activationlab"
       },
       "quote": "part: 2",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -70,9 +68,9 @@
         "lesson": "activationlab"
       },
       "quote": "order: 10",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

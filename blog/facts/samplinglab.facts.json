@@ -35,7 +35,6 @@
         "lesson": "samplinglab"
       },
       "quote": "title: Temperature & Sampling",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -49,7 +48,6 @@
         "lesson": "samplinglab"
       },
       "quote": "part: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -63,9 +61,9 @@
         "lesson": "samplinglab"
       },
       "quote": "order: 8",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

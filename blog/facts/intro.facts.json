@@ -24,7 +24,6 @@
         "lesson": "intro"
       },
       "quote": "title: From Nothing to Large Language Models: A Peek inside the Black Box",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -38,7 +37,6 @@
         "lesson": "intro"
       },
       "quote": "part: 0",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -52,9 +50,9 @@
         "lesson": "intro"
       },
       "quote": "order: 0",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

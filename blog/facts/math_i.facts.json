@@ -61,7 +61,6 @@
         "lesson": "math_i"
       },
       "quote": "title: Basic Math Concepts I — The Numerical Foundations",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -75,7 +74,6 @@
         "lesson": "math_i"
       },
       "quote": "part: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -89,9 +87,9 @@
         "lesson": "math_i"
       },
       "quote": "order: 3",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

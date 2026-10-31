@@ -28,7 +28,6 @@
         "lesson": "trainingdynamics"
       },
       "quote": "title: The Training Run as a Phenomenon",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -42,7 +41,6 @@
         "lesson": "trainingdynamics"
       },
       "quote": "part: 2",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -56,9 +54,9 @@
         "lesson": "trainingdynamics"
       },
       "quote": "order: 13",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

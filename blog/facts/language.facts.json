@@ -89,7 +89,6 @@
         "lesson": "language"
       },
       "quote": "title: The History of Language: From Sanskrit to LLMs",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -103,7 +102,6 @@
         "lesson": "language"
       },
       "quote": "part: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -117,9 +115,9 @@
         "lesson": "language"
       },
       "quote": "order: 9",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

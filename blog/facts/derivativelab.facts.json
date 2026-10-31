@@ -33,7 +33,6 @@
         "lesson": "derivativelab"
       },
       "quote": "title: Derivatives: How AI \"Learns\" to get better",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -47,7 +46,6 @@
         "lesson": "derivativelab"
       },
       "quote": "part: 2",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -61,9 +59,9 @@
         "lesson": "derivativelab"
       },
       "quote": "order: 2",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

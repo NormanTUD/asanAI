@@ -66,7 +66,6 @@
         "lesson": "geometry_iii"
       },
       "quote": "title: The Shape of Holes: A Working Algebraic Topology",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -80,7 +79,6 @@
         "lesson": "geometry_iii"
       },
       "quote": "part: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -94,9 +92,9 @@
         "lesson": "geometry_iii"
       },
       "quote": "order: 12",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

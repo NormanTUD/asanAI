@@ -60,7 +60,6 @@
         "lesson": "statistics_i"
       },
       "quote": "title: Statistics I — Distributions and Inference",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -74,7 +73,6 @@
         "lesson": "statistics_i"
       },
       "quote": "part: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -88,9 +86,9 @@
         "lesson": "statistics_i"
       },
       "quote": "order: 10",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

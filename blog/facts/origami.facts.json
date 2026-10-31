@@ -95,7 +95,6 @@
         "lesson": "origami"
       },
       "quote": "title: Origami in N Dimensions",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -109,7 +108,6 @@
         "lesson": "origami"
       },
       "quote": "part: 3",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -123,9 +121,9 @@
         "lesson": "origami"
       },
       "quote": "order: 2",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

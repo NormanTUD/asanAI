@@ -8,5 +8,6 @@
   "curated": false,
   "generated_by": "extract_facts.py",
   "citations": [],
-  "claims": []
+  "claims": [],
+  "relations": []
 }

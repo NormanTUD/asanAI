@@ -50,7 +50,6 @@
         "lesson": "coherent_world_models"
       },
       "quote": "title: From World to Model: Coherent Representation",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -64,7 +63,6 @@
         "lesson": "coherent_world_models"
       },
       "quote": "part: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -78,9 +76,9 @@
         "lesson": "coherent_world_models"
       },
       "quote": "order: 3",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

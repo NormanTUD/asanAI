@@ -26,7 +26,6 @@
         "lesson": "vectorsearch"
       },
       "quote": "title: Semantic Search & Vector Databases: Finding Needles in Haystacks",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -40,7 +39,6 @@
         "lesson": "vectorsearch"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -54,9 +52,9 @@
         "lesson": "vectorsearch"
       },
       "quote": "order: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

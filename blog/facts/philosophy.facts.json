@@ -183,7 +183,6 @@
         "lesson": "philosophy"
       },
       "quote": "title: Philosophical and societal implications, ethical usage of AI",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -197,7 +196,6 @@
         "lesson": "philosophy"
       },
       "quote": "part: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -211,9 +209,9 @@
         "lesson": "philosophy"
       },
       "quote": "order: 11",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

@@ -47,7 +47,6 @@
         "lesson": "optimizerlab"
       },
       "quote": "title: The Optimizer: Navigating the Loss Landscape",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -61,7 +60,6 @@
         "lesson": "optimizerlab"
       },
       "quote": "part: 2",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -75,9 +73,9 @@
         "lesson": "optimizerlab"
       },
       "quote": "order: 7",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

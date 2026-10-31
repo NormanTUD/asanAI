@@ -42,7 +42,6 @@
         "lesson": "training_data"
       },
       "quote": "title: Training Data Curation",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -56,7 +55,6 @@
         "lesson": "training_data"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -70,9 +68,9 @@
         "lesson": "training_data"
       },
       "quote": "order: 12",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

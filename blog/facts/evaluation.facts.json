@@ -45,7 +45,6 @@
         "lesson": "evaluation"
       },
       "quote": "title: Evaluation & Benchmarks",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -59,7 +58,6 @@
         "lesson": "evaluation"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -73,9 +71,9 @@
         "lesson": "evaluation"
       },
       "quote": "order: 16",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

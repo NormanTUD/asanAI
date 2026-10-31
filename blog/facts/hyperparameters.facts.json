@@ -39,7 +39,6 @@
         "lesson": "hyperparameters"
       },
       "quote": "title: Hyperparameters: The Numbers You Choose",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -53,7 +52,6 @@
         "lesson": "hyperparameters"
       },
       "quote": "part: 2",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -67,9 +65,9 @@
         "lesson": "hyperparameters"
       },
       "quote": "order: 8",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

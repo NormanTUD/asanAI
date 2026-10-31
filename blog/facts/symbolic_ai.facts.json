@@ -57,7 +57,6 @@
         "lesson": "symbolic_ai"
       },
       "quote": "title: Symbolic AI, Knowledge Graphs & Neuro-Symbolic AI",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -71,7 +70,6 @@
         "lesson": "symbolic_ai"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -85,9 +83,9 @@
         "lesson": "symbolic_ai"
       },
       "quote": "order: 11",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

@@ -20,7 +20,6 @@
         "event": "introduced to the field of AI"
       },
       "quote": "Backpropagation, introduced to the field of AI in 1986",
-      "line": 17,
       "citation_keys": [
         "rumelhart1986"
       ]
@@ -32,8 +31,7 @@
       "value": 4,
       "unit": "count",
       "qualifiers": {},
-      "quote": "the demo below runs a 4-layer network",
-      "line": 29
+      "quote": "the demo below runs a 4-layer network"
     },
     {
       "id": "backproplab-demo-architecture",
@@ -44,8 +42,7 @@
       "qualifiers": {
         "definition": "layer widths from input to output"
       },
-      "quote": "with shape 3 → 4 → 4 → 2",
-      "line": 29
+      "quote": "with shape 3 → 4 → 4 → 2"
     },
     {
       "id": "backproplab-demo-activation",
@@ -54,8 +51,7 @@
       "value": "sigmoid",
       "unit": "name",
       "qualifiers": {},
-      "quote": "The sigmoid squashes any real number into (0, 1)",
-      "line": 47
+      "quote": "The sigmoid squashes any real number into (0, 1)"
     },
     {
       "id": "sigmoid-range",
@@ -64,8 +60,7 @@
       "value": "(0,1)",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "The sigmoid squashes any real number into (0, 1)",
-      "line": 47
+      "quote": "The sigmoid squashes any real number into (0, 1)"
     },
     {
       "id": "backproplab-demo-loss",
@@ -74,8 +69,7 @@
       "value": "half-sum-of-squares",
       "unit": "name",
       "qualifiers": {},
-      "quote": "We measure error with the half sum-of-squares",
-      "line": 65
+      "quote": "We measure error with the half sum-of-squares"
     },
     {
       "id": "backpropagation-gradient-rule",
@@ -84,8 +78,7 @@
       "value": "chain-rule",
       "unit": "name",
       "qualifiers": {},
-      "quote": "At any hidden layer (chain rule)",
-      "line": 86
+      "quote": "At any hidden layer (chain rule)"
     },
     {
       "id": "backproplab-demo-update",
@@ -94,8 +87,42 @@
       "value": "w - eta * dE/dw",
       "unit": "formula",
       "qualifiers": {},
-      "quote": "w ← w − η · ∂E/∂w",
-      "line": 100
+      "quote": "w ← w − η · ∂E/∂w"
+    },
+    {
+      "id": "chain-rule-role",
+      "subject": "chain-rule",
+      "predicate": "role",
+      "value": "the mathematical rule behind backpropagation",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The Chain Rule Is All You Need"
+    }
+  ],
+  "relations": [
+    {
+      "id": "rel-chain-rule-backprop",
+      "from": "chain-rule",
+      "to": "backpropagation",
+      "kind": "influenced",
+      "qualifiers": {},
+      "quote": "The Chain Rule Is All You Need"
+    },
+    {
+      "id": "rel-backprop-demo",
+      "from": "backpropagation",
+      "to": "backproplab-demo",
+      "kind": "influenced",
+      "qualifiers": {},
+      "quote": "the demo below runs a 4-layer network"
+    },
+    {
+      "id": "rel-sigmoid-demo",
+      "from": "sigmoid",
+      "to": "backproplab-demo",
+      "kind": "used_by",
+      "qualifiers": {},
+      "quote": "The sigmoid squashes any real number"
     }
   ]
 }

@@ -57,7 +57,6 @@
         "lesson": "unexpected_capabilities"
       },
       "quote": "title: Unexpected Capabilities of LLMs",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -71,7 +70,6 @@
         "lesson": "unexpected_capabilities"
       },
       "quote": "part: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -85,9 +83,9 @@
         "lesson": "unexpected_capabilities"
       },
       "quote": "order: 13",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

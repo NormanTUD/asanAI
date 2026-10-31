@@ -23,7 +23,6 @@
         "lesson": "inference_vs_training"
       },
       "quote": "title: Inference vs Training — the KV-cache and the two regimes",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -37,7 +36,6 @@
         "lesson": "inference_vs_training"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -51,9 +49,9 @@
         "lesson": "inference_vs_training"
       },
       "quote": "order: 19",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

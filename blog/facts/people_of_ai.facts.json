@@ -203,7 +203,6 @@
         "lesson": "people_of_ai"
       },
       "quote": "title: People of AI",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -217,7 +216,6 @@
         "lesson": "people_of_ai"
       },
       "quote": "part: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -231,9 +229,9 @@
         "lesson": "people_of_ai"
       },
       "quote": "order: 19",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

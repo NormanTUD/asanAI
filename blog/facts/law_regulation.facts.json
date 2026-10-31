@@ -30,7 +30,6 @@
         "lesson": "law_regulation"
       },
       "quote": "title: AI Law & Regulation",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -44,7 +43,6 @@
         "lesson": "law_regulation"
       },
       "quote": "part: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -58,9 +56,9 @@
         "lesson": "law_regulation"
       },
       "quote": "order: 10",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

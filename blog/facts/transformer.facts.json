@@ -77,7 +77,6 @@
         "lesson": "transformer"
       },
       "quote": "title: The Architecture of Meaning: A Deep Dive into Transformers",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -91,7 +90,6 @@
         "lesson": "transformer"
       },
       "quote": "part: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -105,7 +103,6 @@
         "lesson": "transformer"
       },
       "quote": "order: 9",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -117,9 +114,9 @@
       "unit": "billion",
       "qualifiers": {},
       "quote": "Scaling became a science in 2020. \\cite[Kaplan et al. (2020)]{kaplan2020scaling} measured how language-model loss falls as parameters, data and compute grow, and found smooth power laws across several orders of magnitude (\\cite[Kaplan et al., 2020]{kaplan2020scaling}). That turned “make it bigger” f",
-      "line": 676,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

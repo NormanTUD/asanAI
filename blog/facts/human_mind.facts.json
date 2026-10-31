@@ -101,7 +101,6 @@
         "lesson": "human_mind"
       },
       "quote": "title: The Mind That Built Machines",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -115,7 +114,6 @@
         "lesson": "human_mind"
       },
       "quote": "part: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -129,9 +127,9 @@
         "lesson": "human_mind"
       },
       "quote": "order: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

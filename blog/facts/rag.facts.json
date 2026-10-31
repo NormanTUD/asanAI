@@ -39,7 +39,6 @@
         "lesson": "rag"
       },
       "quote": "title: Retrieval-Augmented Generation: Giving LLMs a Search Engine",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -53,7 +52,6 @@
         "lesson": "rag"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -67,9 +65,9 @@
         "lesson": "rag"
       },
       "quote": "order: 3",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

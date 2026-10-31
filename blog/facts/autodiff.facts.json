@@ -41,7 +41,6 @@
         "lesson": "autodiff"
       },
       "quote": "title: Automatic Differentiation: How Machines Learn",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -55,7 +54,6 @@
         "lesson": "autodiff"
       },
       "quote": "part: 2",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -69,7 +67,6 @@
         "lesson": "autodiff"
       },
       "quote": "order: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -81,9 +78,9 @@
       "unit": "billion",
       "qualifiers": {},
       "quote": "This requires **one forward pass per parameter** to compute each partial derivative. For a model with $n$ parameters, that means $n + 1$ forward passes. GPT-3 has 175 billion parameters, numerical differentiation would require 175 billion forward passes per training step. It is also numerically unst",
-      "line": 46,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

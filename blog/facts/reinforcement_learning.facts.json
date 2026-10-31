@@ -35,7 +35,6 @@
         "lesson": "reinforcement_learning"
       },
       "quote": "title: Reinforcement Learning",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -49,7 +48,6 @@
         "lesson": "reinforcement_learning"
       },
       "quote": "part: 2",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -63,9 +61,9 @@
         "lesson": "reinforcement_learning"
       },
       "quote": "order: 12",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

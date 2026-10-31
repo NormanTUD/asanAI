@@ -39,7 +39,6 @@
         "lesson": "positionalembeddingslab"
       },
       "quote": "title: Positional Embeddings",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -53,7 +52,6 @@
         "lesson": "positionalembeddingslab"
       },
       "quote": "part: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -67,9 +65,9 @@
         "lesson": "positionalembeddingslab"
       },
       "quote": "order: 7",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

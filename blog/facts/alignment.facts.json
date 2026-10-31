@@ -52,7 +52,6 @@
         "lesson": "alignment"
       },
       "quote": "title: Alignment — Making Objectives Match Intent",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -66,7 +65,6 @@
         "lesson": "alignment"
       },
       "quote": "part: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -80,9 +78,9 @@
         "lesson": "alignment"
       },
       "quote": "order: 9",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

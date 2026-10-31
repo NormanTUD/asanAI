@@ -64,7 +64,6 @@
         "lesson": "math_iv"
       },
       "quote": "title: Basic Math Concepts IV — Affine Maps & the Fold",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -78,7 +77,6 @@
         "lesson": "math_iv"
       },
       "quote": "part: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -92,9 +90,9 @@
         "lesson": "math_iv"
       },
       "quote": "order: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

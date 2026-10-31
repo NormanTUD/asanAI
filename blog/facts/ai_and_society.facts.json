@@ -95,7 +95,6 @@
         "lesson": "ai_and_society"
       },
       "quote": "title: AI and Society: The Cultural Impact of Machines That Create",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -109,7 +108,6 @@
         "lesson": "ai_and_society"
       },
       "quote": "part: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -123,9 +121,9 @@
         "lesson": "ai_and_society"
       },
       "quote": "order: 15",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

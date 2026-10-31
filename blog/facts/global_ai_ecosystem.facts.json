@@ -46,7 +46,6 @@
         "lesson": "global_ai_ecosystem"
       },
       "quote": "title: The Global AI Ecosystem",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -60,7 +59,6 @@
         "lesson": "global_ai_ecosystem"
       },
       "quote": "part: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -74,9 +72,9 @@
         "lesson": "global_ai_ecosystem"
       },
       "quote": "order: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

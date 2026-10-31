@@ -43,7 +43,6 @@
         "lesson": "loss_landscape"
       },
       "quote": "title: The Loss Landscape",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -57,7 +56,6 @@
         "lesson": "loss_landscape"
       },
       "quote": "part: 2",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -71,9 +69,9 @@
         "lesson": "loss_landscape"
       },
       "quote": "order: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

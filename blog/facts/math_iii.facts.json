@@ -63,7 +63,6 @@
         "lesson": "math_iii"
       },
       "quote": "title: Basic Math Concepts III — Approximation, High Dimensions & a Taste of Type Theory",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -77,7 +76,6 @@
         "lesson": "math_iii"
       },
       "quote": "part: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -91,9 +89,9 @@
         "lesson": "math_iii"
       },
       "quote": "order: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

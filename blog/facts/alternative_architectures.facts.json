@@ -33,7 +33,6 @@
         "lesson": "alternative_architectures"
       },
       "quote": "title: Beyond Transformers (Mamba, RWKV, RetNet)",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -47,7 +46,6 @@
         "lesson": "alternative_architectures"
       },
       "quote": "part: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -61,9 +59,9 @@
         "lesson": "alternative_architectures"
       },
       "quote": "order: 17",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

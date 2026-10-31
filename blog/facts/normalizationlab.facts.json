@@ -25,7 +25,6 @@
         "lesson": "normalizationlab"
       },
       "quote": "title: Understanding Layer Normalization",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -39,7 +38,6 @@
         "lesson": "normalizationlab"
       },
       "quote": "part: 3",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -53,9 +51,9 @@
         "lesson": "normalizationlab"
       },
       "quote": "order: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

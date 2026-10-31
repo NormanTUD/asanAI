@@ -30,7 +30,6 @@
         "lesson": "information_market"
       },
       "quote": "title: The Market for Information",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -44,7 +43,6 @@
         "lesson": "information_market"
       },
       "quote": "part: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -58,9 +56,9 @@
         "lesson": "information_market"
       },
       "quote": "order: 14",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

@@ -286,7 +286,6 @@
         "lesson": "beyond_llms"
       },
       "quote": "title: Beyond LLMs — The Wider World of Algorithms & Models",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -300,7 +299,6 @@
         "lesson": "beyond_llms"
       },
       "quote": "part: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -314,9 +312,9 @@
         "lesson": "beyond_llms"
       },
       "quote": "order: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

@@ -31,7 +31,6 @@
         "lesson": "mixture_of_experts"
       },
       "quote": "title: Mixture of Experts",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -45,7 +44,6 @@
         "lesson": "mixture_of_experts"
       },
       "quote": "part: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -59,7 +57,6 @@
         "lesson": "mixture_of_experts"
       },
       "quote": "order: 18",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -71,9 +68,9 @@
       "unit": "billion",
       "qualifiers": {},
       "quote": "A cleaner decomposition arrived with DeepSeekMoE (\\cite[DeepSeekMoE, 2024]{deepseekmoe2024}) and was carried into DeepSeek-V3 (\\cite[DeepSeek-V3, 2024]{deepseekv3tech2024}); the design is now the reference. The first is a **shared expert**: one expert is *dense* — every token goes through it — while",
-      "line": 108,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

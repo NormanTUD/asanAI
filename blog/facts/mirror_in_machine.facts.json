@@ -61,7 +61,6 @@
         "lesson": "mirror_in_machine"
       },
       "quote": "title: The Mirror in the Machine",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -75,7 +74,6 @@
         "lesson": "mirror_in_machine"
       },
       "quote": "part: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -89,9 +87,9 @@
         "lesson": "mirror_in_machine"
       },
       "quote": "order: 7",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

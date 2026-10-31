@@ -25,7 +25,6 @@
         "lesson": "resnetlab"
       },
       "quote": "title: Deep Learning Mechanics: ResNets & Vanishing Gradients",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -39,7 +38,6 @@
         "lesson": "resnetlab"
       },
       "quote": "part: 3",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -53,9 +51,9 @@
         "lesson": "resnetlab"
       },
       "quote": "order: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

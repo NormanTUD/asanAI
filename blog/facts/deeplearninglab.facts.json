@@ -37,7 +37,6 @@
         "lesson": "deeplearninglab"
       },
       "quote": "title: Deep Learning",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -51,7 +50,6 @@
         "lesson": "deeplearninglab"
       },
       "quote": "part: 3",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -65,9 +63,9 @@
         "lesson": "deeplearninglab"
       },
       "quote": "order: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

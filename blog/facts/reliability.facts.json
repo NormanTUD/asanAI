@@ -33,7 +33,6 @@
         "lesson": "reliability"
       },
       "quote": "title: Reliability — Calibration & Knowing When to Stop",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -47,7 +46,6 @@
         "lesson": "reliability"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -61,9 +59,9 @@
         "lesson": "reliability"
       },
       "quote": "order: 17",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

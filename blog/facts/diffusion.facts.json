@@ -43,7 +43,6 @@
         "lesson": "diffusion"
       },
       "quote": "title: Diffusion Models",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -57,7 +56,6 @@
         "lesson": "diffusion"
       },
       "quote": "part: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -71,7 +69,6 @@
         "lesson": "diffusion"
       },
       "quote": "order: 14",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -83,9 +80,9 @@
       "unit": "M",
       "qualifiers": {},
       "quote": "The only fully-connected layers are tiny MLPs for the time and text embeddings. Everything else is convolution or attention. Stable Diffusion 1.5's U-Net has ~860 M parameters (the full pipeline, including text encoder and VAE, is about 1 B). The forward pass per denoising step: encode $t$, run the ",
-      "line": 180,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

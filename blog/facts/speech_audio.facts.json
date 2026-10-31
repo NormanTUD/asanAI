@@ -19,7 +19,6 @@
         "lesson": "speech_audio"
       },
       "quote": "title: Speech & Audio Models",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -33,7 +32,6 @@
         "lesson": "speech_audio"
       },
       "quote": "part: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -47,9 +45,9 @@
         "lesson": "speech_audio"
       },
       "quote": "order: 15",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

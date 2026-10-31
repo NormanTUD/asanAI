@@ -33,7 +33,6 @@
         "lesson": "topology"
       },
       "quote": "title: Topology and the Geometry of Thought",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -47,7 +46,6 @@
         "lesson": "topology"
       },
       "quote": "part: 3",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -61,9 +59,9 @@
         "lesson": "topology"
       },
       "quote": "order: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

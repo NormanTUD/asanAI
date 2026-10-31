@@ -49,7 +49,6 @@
         "lesson": "fact_lookup"
       },
       "quote": "title: Where 'Paris' Lives — How an LLM Retrieves a Fact",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -63,7 +62,6 @@
         "lesson": "fact_lookup"
       },
       "quote": "part: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -77,9 +75,9 @@
         "lesson": "fact_lookup"
       },
       "quote": "order: 11",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

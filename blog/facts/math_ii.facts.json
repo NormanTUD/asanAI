@@ -56,7 +56,6 @@
         "lesson": "math_ii"
       },
       "quote": "title: Basic Math Concepts II — Linear Algebra for AI",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -70,7 +69,6 @@
         "lesson": "math_ii"
       },
       "quote": "part: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -84,9 +82,9 @@
         "lesson": "math_ii"
       },
       "quote": "order: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

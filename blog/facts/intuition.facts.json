@@ -37,7 +37,6 @@
         "lesson": "intuition"
       },
       "quote": "title: An Intuition of how Large Language Models (LLMs) work",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -51,7 +50,6 @@
         "lesson": "intuition"
       },
       "quote": "part: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -65,9 +63,9 @@
         "lesson": "intuition"
       },
       "quote": "order: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

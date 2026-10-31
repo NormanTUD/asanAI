@@ -133,7 +133,6 @@
         "lesson": "geometry_i"
       },
       "quote": "title: The Shape of Space — A History of Geometry",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -147,7 +146,6 @@
         "lesson": "geometry_i"
       },
       "quote": "part: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -161,9 +159,9 @@
         "lesson": "geometry_i"
       },
       "quote": "order: 7",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

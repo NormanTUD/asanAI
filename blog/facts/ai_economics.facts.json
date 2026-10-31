@@ -23,7 +23,6 @@
         "lesson": "ai_economics"
       },
       "quote": "title: The Economic Layer",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -37,7 +36,6 @@
         "lesson": "ai_economics"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -51,7 +49,6 @@
         "lesson": "ai_economics"
       },
       "quote": "order: 21",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -65,7 +62,6 @@
         "precision": "bf16"
       },
       "quote": "A100 (~312 TFLOP/s BF16)",
-      "line": 54,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -79,7 +75,6 @@
         "precision": "tf32"
       },
       "quote": "H100 (~495 TFLOP/s TF32)",
-      "line": 55,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -93,9 +88,9 @@
         "precision": "bf16"
       },
       "quote": "H100 BF16 (~989 TFLOP/s)",
-      "line": 56,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

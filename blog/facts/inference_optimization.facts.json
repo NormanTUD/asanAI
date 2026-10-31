@@ -38,7 +38,6 @@
         "lesson": "inference_optimization"
       },
       "quote": "title: Inference Optimization",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -52,7 +51,6 @@
         "lesson": "inference_optimization"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -66,9 +64,9 @@
         "lesson": "inference_optimization"
       },
       "quote": "order: 9",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

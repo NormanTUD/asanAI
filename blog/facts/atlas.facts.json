@@ -30,7 +30,6 @@
         "lesson": "atlas"
       },
       "quote": "title: The Atlas",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -44,7 +43,6 @@
         "lesson": "atlas"
       },
       "quote": "part: 6",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -58,9 +56,9 @@
         "lesson": "atlas"
       },
       "quote": "order: 20",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

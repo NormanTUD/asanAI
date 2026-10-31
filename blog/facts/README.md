@@ -246,3 +246,77 @@ Es garantiert **interne Konsistenz und Registrierung**, nicht die Wahrheit
 beliebiger Prosa. Kausale Behauptungen, Bewertungen, Interpretationen und
 „X beeinflusste Y“ bleiben ohne typisiertes Prädikat + Quelle
 `unverified` und gehören in die menschliche Review-Queue.
+
+## Beziehungen und Traces
+
+Fakten sind nicht nur Einzelwerte. Jede Fact-Datei darf ein `relations`-Array
+enthalten:
+
+```json
+{
+  "relations": [
+    {
+      "id": "rel-prompt-injection-scope",
+      "from": "prompt-injection",
+      "to": "llm-security",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "Prompt injection occurs when an attacker embeds instructions",
+      "line": 21,
+      "citation_keys": ["greshake2023injection"]
+    }
+  ]
+}
+```
+
+`from`/`to` dürfen Fact-IDs (`backproplab-demo-layers`) oder Subject-IDs
+(`backproplab-demo`, `gpt-3`) sein. Beide müssen im Ledger existieren.
+
+### Kanonische Beziehungsarten
+
+| `kind` | Bedeutung | kanonische Richtung |
+|---|---|---|
+| `influenced` / `influenced_by` | X beeinflusste Y | Einflussquelle → Ziel |
+| `before` / `after` / `preceded_by` / `followed_by` | zeitliche Ordnung | früher → später |
+| `caused` / `caused_by` | Kausalität | Ursache → Wirkung |
+| `authored_by` / `wrote` | Urheberschaft | Person → Werk |
+| `part_of` | Teil-Ganzes | Teil → Ganzes |
+| `same_as` / `alias_of` | Identität | symmetrisch |
+| `derived_from` | Ableitung | Ableitung → Ursprung |
+| `located_in` | Ort | Ding → Ort |
+| `uses` / `used_by` | Verwendung | Nutzer → Werkzeug |
+| `supports`, `contradicts`, `cites`, `related_to` | Evidenz/Assoziation | frei |
+
+Der Checker normalisiert inverse Paare (`influenced_by` → `influenced`,
+`after` → `before`, `authored_by` → `wrote`, `used_by` → `uses`) und prüft:
+
+- Endpunkte existieren,
+- keine Selbstkanten (außer `same_as`),
+- `before`, `part_of`, `caused` sind azyklisch,
+- `same_as` wird transitiv geschlossen; danach müssen die Claims der
+  verschmolzenen Subjekte übereinstimmen,
+- zeitliche Kompatibilität: bei `before`/`influenced`/`caused`/`derived_from`
+  darf die Quelle nicht später datiert sein als das Ziel (wenn beide ein
+  `year`-Claim haben).
+
+### Traces anzeigen
+
+```bash
+# Kürzester gerichteter Pfad
+uv run blog/tools/factcheck/trace_facts.py blog/ \
+  --from chain-rule --to backproplab-demo
+
+# Nachbarn eines Knotens
+uv run blog/tools/factcheck/trace_facts.py blog/ --neighbors backpropagation
+
+# Graph als DOT (Graphviz)
+uv run blog/tools/factcheck/trace_facts.py blog/ --dot > facts.dot
+
+# Ungerichtete Pfade (für „wie hängt das zusammen?“)
+uv run blog/tools/factcheck/trace_facts.py blog/ \
+  --from prompt-injection --to llm-security --undirected
+```
+
+Ein Trace zeigt jede Kante mit `kind`, Quote und `file:line`. So ist eine
+Aussagekette nachvollziehbar: `chain-rule → backpropagation →
+backproplab-demo`.

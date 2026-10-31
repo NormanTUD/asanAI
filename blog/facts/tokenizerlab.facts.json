@@ -40,7 +40,6 @@
         "lesson": "tokenizerlab"
       },
       "quote": "title: Tokenization: How Words become Numbers",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -54,7 +53,6 @@
         "lesson": "tokenizerlab"
       },
       "quote": "part: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -68,9 +66,9 @@
         "lesson": "tokenizerlab"
       },
       "quote": "order: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

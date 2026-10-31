@@ -37,7 +37,6 @@
         "lesson": "finetuninglab"
       },
       "quote": "title: Fine-Tuning & Post-Training",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -51,7 +50,6 @@
         "lesson": "finetuninglab"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -65,9 +63,9 @@
         "lesson": "finetuninglab"
       },
       "quote": "order: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

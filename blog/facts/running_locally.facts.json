@@ -26,7 +26,6 @@
         "lesson": "running_locally"
       },
       "quote": "title: Running Models Locally",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -40,7 +39,6 @@
         "lesson": "running_locally"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -54,9 +52,9 @@
         "lesson": "running_locally"
       },
       "quote": "order: 10",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

@@ -41,7 +41,6 @@
         "lesson": "recurrent_networks"
       },
       "quote": "title: Networks with Memory",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -55,7 +54,6 @@
         "lesson": "recurrent_networks"
       },
       "quote": "part: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -69,9 +67,9 @@
         "lesson": "recurrent_networks"
       },
       "quote": "order: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

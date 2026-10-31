@@ -74,7 +74,6 @@
         "lesson": "vibe_coding"
       },
       "quote": "title: Vibe Coding: When Software Writes Itself",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -88,7 +87,6 @@
         "lesson": "vibe_coding"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -102,9 +100,9 @@
         "lesson": "vibe_coding"
       },
       "quote": "order: 20",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

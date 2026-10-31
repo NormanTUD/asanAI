@@ -84,7 +84,6 @@
         "lesson": "coherent_difference"
       },
       "quote": "title: Coherent Difference",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -98,7 +97,6 @@
         "lesson": "coherent_difference"
       },
       "quote": "part: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -112,9 +110,9 @@
         "lesson": "coherent_difference"
       },
       "quote": "order: 2",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

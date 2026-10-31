@@ -33,7 +33,6 @@
         "lesson": "differentiation"
       },
       "quote": "title: Differentiation: The Mathematics of Change",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -47,7 +46,6 @@
         "lesson": "differentiation"
       },
       "quote": "part: 2",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -61,9 +59,9 @@
         "lesson": "differentiation"
       },
       "quote": "order: 3",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

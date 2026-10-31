@@ -45,7 +45,6 @@
         "lesson": "websearch"
       },
       "quote": "title: How LLMs Search the Web",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -59,7 +58,6 @@
         "lesson": "websearch"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -73,9 +71,9 @@
         "lesson": "websearch"
       },
       "quote": "order: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

@@ -38,7 +38,6 @@
         "lesson": "promptengineering"
       },
       "quote": "title: Prompt Engineering: How to talk to LLMs",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -52,7 +51,6 @@
         "lesson": "promptengineering"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -66,9 +64,9 @@
         "lesson": "promptengineering"
       },
       "quote": "order: 18",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

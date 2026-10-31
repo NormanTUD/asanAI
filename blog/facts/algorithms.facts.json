@@ -62,7 +62,6 @@
         "lesson": "algorithms"
       },
       "quote": "title: How Algorithms Work: From Euclid to the Transformer",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -76,7 +75,6 @@
         "lesson": "algorithms"
       },
       "quote": "part: 4",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -90,9 +88,9 @@
         "lesson": "algorithms"
       },
       "quote": "order: 12",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

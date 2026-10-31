@@ -40,7 +40,6 @@
         "lesson": "agents"
       },
       "quote": "title: AI Agents: Autonomous Reasoning and Tool Use",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -54,7 +53,6 @@
         "lesson": "agents"
       },
       "quote": "part: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -68,9 +66,9 @@
         "lesson": "agents"
       },
       "quote": "order: 5",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

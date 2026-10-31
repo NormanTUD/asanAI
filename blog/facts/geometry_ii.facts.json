@@ -58,7 +58,6 @@
         "lesson": "geometry_ii"
       },
       "quote": "title: The Shape of the Machine — A Working Geometry for AI",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -72,7 +71,6 @@
         "lesson": "geometry_ii"
       },
       "quote": "part: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -86,9 +84,9 @@
         "lesson": "geometry_ii"
       },
       "quote": "order: 8",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

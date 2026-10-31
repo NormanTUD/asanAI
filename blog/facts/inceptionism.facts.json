@@ -21,7 +21,6 @@
         "lesson": "inceptionism"
       },
       "quote": "title: Inceptionism: What the Network Sees",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -35,7 +34,6 @@
         "lesson": "inceptionism"
       },
       "quote": "part: 3",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -49,9 +47,9 @@
         "lesson": "inceptionism"
       },
       "quote": "order: 9",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }

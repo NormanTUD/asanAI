@@ -23,7 +23,6 @@
         "event": "Greshake et al."
       },
       "quote": "Prompt injection occurs when an attacker embeds instructions inside user-supplied data",
-      "line": 21,
       "citation_keys": [
         "greshake2023injection"
       ]
@@ -38,7 +37,6 @@
         "event": "Wei et al."
       },
       "quote": "Jailbreaking manipulates the model into bypassing its safety training",
-      "line": 34,
       "citation_keys": [
         "wei2024jailbroken"
       ]
@@ -53,7 +51,6 @@
         "event": "Hubinger et al."
       },
       "quote": "An attacker injects malicious examples into the training or fine-tuning data",
-      "line": 38,
       "citation_keys": [
         "hubinger2024sleeperagents"
       ]
@@ -67,8 +64,7 @@
       "qualifiers": {
         "event": "painted by Giovanni Domenico Tiepolo"
       },
-      "quote": "painted by Giovanni Domenico Tiepolo in 1773",
-      "line": 40
+      "quote": "painted by Giovanni Domenico Tiepolo in 1773"
     },
     {
       "id": "model-7b-memory-32bit",
@@ -80,8 +76,7 @@
         "precision": "32-bit",
         "approx": true
       },
-      "quote": "Running a 7B-parameter model in 32-bit precision needs ~28 GB of memory",
-      "line": 81
+      "quote": "Running a 7B-parameter model in 32-bit precision needs ~28 GB of memory"
     },
     {
       "id": "model-7b-memory-16bit",
@@ -93,8 +88,7 @@
         "precision": "16-bit",
         "approx": true
       },
-      "quote": "precision to 16 bits halves that to ~14 GB",
-      "line": 82
+      "quote": "precision to 16 bits halves that to ~14 GB"
     },
     {
       "id": "model-7b-memory-8bit",
@@ -106,8 +100,7 @@
         "precision": "8-bit",
         "approx": true
       },
-      "quote": "8 bits drops it further to ~7 GB",
-      "line": 83
+      "quote": "8 bits drops it further to ~7 GB"
     },
     {
       "id": "model-7b-memory-4bit",
@@ -119,8 +112,50 @@
         "precision": "4-bit",
         "approx": true
       },
-      "quote": "4 bits shrinks to ~3.5 GB",
-      "line": 83
+      "quote": "4 bits shrinks to ~3.5 GB"
+    },
+    {
+      "id": "llm-security-scope",
+      "subject": "llm-security",
+      "predicate": "scope",
+      "value": "prompt injection, jailbreaking, data poisoning and reward hacking",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "LLMs are powerful but fragile under adversarial pressure"
+    }
+  ],
+  "relations": [
+    {
+      "id": "rel-prompt-injection-scope",
+      "from": "prompt-injection",
+      "to": "llm-security",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "Prompt injection occurs when an attacker embeds instructions"
+    },
+    {
+      "id": "rel-jailbreaking-scope",
+      "from": "jailbreaking",
+      "to": "llm-security",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "Jailbreaking manipulates the model into bypassing its safety training"
+    },
+    {
+      "id": "rel-poisoning-scope",
+      "from": "data-poisoning",
+      "to": "llm-security",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "An attacker injects malicious examples into the training or fine-tuning data"
+    },
+    {
+      "id": "rel-prompt-jailbreak",
+      "from": "prompt-injection",
+      "to": "jailbreaking",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "Prompt injection and jailbreaking are related attack surfaces"
     }
   ]
 }

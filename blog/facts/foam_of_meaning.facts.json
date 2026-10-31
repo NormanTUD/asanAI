@@ -42,7 +42,6 @@
         "lesson": "foam_of_meaning"
       },
       "quote": "title: The foam of meaning",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -56,7 +55,6 @@
         "lesson": "foam_of_meaning"
       },
       "quote": "part: 1",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -70,7 +68,6 @@
         "lesson": "foam_of_meaning"
       },
       "quote": "order: 13",
-      "line": 0,
       "citation_keys": [],
       "confidence": "extracted"
     },
@@ -82,9 +79,9 @@
       "unit": "B",
       "qualifiers": {},
       "quote": "- **The gap grows linearly.** For a semantic manifold of intrinsic dimension $k$, the *normalized* expressibility gap $\\eta(\\varepsilon)$ — the fraction of semantic space lying within $\\varepsilon$ of a boundary — satisfies $\\eta(\\varepsilon) = c\\,\\varepsilon + O(\\varepsilon^{2})$ for small $\\vareps",
-      "line": 365,
       "citation_keys": [],
       "confidence": "extracted"
     }
-  ]
+  ],
+  "relations": []
 }
