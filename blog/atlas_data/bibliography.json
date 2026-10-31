@@ -15852,6 +15852,12 @@
    "year": "accessed 2026",
    "url": "https://en.wikipedia.org/wiki/Isidore_of_Seville"
   },
+  "wired2002isidore": {
+   "title": "Searchin' for the Surfer's Saint",
+   "author": "Noah Shachtman",
+   "year": "2002",
+   "url": "https://www.wired.com/2002/01/searchin-for-the-surfers-saint/"
+  },
   "paulotlet": {
    "title": "Paul Otlet",
    "author": "Wikipedia contributors",
@@ -17057,6 +17063,12 @@
    "author": "OpenAI",
    "year": "2023",
    "url": "https://arxiv.org/abs/2303.08774"
+  },
+  "semianalysis2023gpt4": {
+   "title": "GPT-4 Architecture, Infrastructure, Training Dataset, Costs, Vision, MoE",
+   "author": "Dylan Patel, Gerald Wong",
+   "year": "2023",
+   "url": "https://www.semianalysis.com/p/gpt-4-architecture-infrastructure"
   },
   "kimi2025k2": {
    "title": "Kimi K2: Open Agentic Intelligence",
@@ -20427,6 +20439,9 @@
    "autodiff",
    "normalizationlab",
    "transformer"
+  ],
+  "semianalysis2023gpt4": [
+   "normalizationlab"
   ],
   "zhang2019rmsnorm": [
    "normalizationlab",
@@ -28747,6 +28762,9 @@
    "information_market"
   ],
   "etymologiae": [
+   "information_market"
+  ],
+  "wired2002isidore": [
    "information_market"
   ],
   "encyclopedie": [
@@ -65018,6 +65036,14 @@
     "etymologiae"
    ]
   },
+  "Noah Shachtman": {
+   "count": 1,
+   "minyear": 2002,
+   "maxyear": 2002,
+   "keys": [
+    "wired2002isidore"
+   ]
+  },
   "Paul Otlet": {
    "count": 1,
    "minyear": 1934,
@@ -66232,6 +66258,22 @@
    "maxyear": 2025,
    "keys": [
     "meta2025llama4"
+   ]
+  },
+  "Dylan Patel": {
+   "count": 1,
+   "minyear": 2023,
+   "maxyear": 2023,
+   "keys": [
+    "semianalysis2023gpt4"
+   ]
+  },
+  "Gerald Wong": {
+   "count": 1,
+   "minyear": 2023,
+   "maxyear": 2023,
+   "keys": [
+    "semianalysis2023gpt4"
    ]
   },
   "Kimi Team": {

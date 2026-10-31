@@ -82022,6 +82022,23 @@
   ]
  },
  {
+  "name": "Noah Shachtman",
+  "canon": "Noah Shachtman",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2002,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wired2002isidore"
+  ],
+  "cited_in": [
+   "information_market"
+  ]
+ },
+ {
   "name": "Meta AI",
   "canon": "Meta AI",
   "alias": null,
@@ -82036,6 +82053,40 @@
   ],
   "cited_in": [
    "frontier"
+  ]
+ },
+ {
+  "name": "Dylan Patel",
+  "canon": "Dylan Patel",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "semianalysis2023gpt4"
+  ],
+  "cited_in": [
+   "normalizationlab"
+  ]
+ },
+ {
+  "name": "Gerald Wong",
+  "canon": "Gerald Wong",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "semianalysis2023gpt4"
+  ],
+  "cited_in": [
+   "normalizationlab"
   ]
  },
  {
