@@ -85,6 +85,20 @@ for slug, order in expected_part6.items():
 # 2. Every citation key resolves to a literature.js entry.
 # ---------------------------------------------------------------------------
 
+# The bibliography is a JavaScript object: a stray comma there is invisible to
+# the PHP validators but breaks every citation on every page at runtime.
+import shutil
+import subprocess
+
+if shutil.which("node"):
+    check = subprocess.run(
+        ["node", "--check", str(BLOG / "literature.js")],
+        capture_output=True,
+        text=True,
+    )
+    if check.returncode != 0:
+        fail("literature.js does not parse: " + check.stderr.strip().splitlines()[-1])
+
 literature = (BLOG / "literature.js").read_text(encoding="utf-8")
 keys = set(re.findall(r'^\s*"?([A-Za-z0-9_\-]+)"?\s*:\s*\{', literature, re.M))
 cite_re = re.compile(r"\\cite[a-zA-Z]*\s*(?:\[[^\]]*\])?\{([^}]*)\}")

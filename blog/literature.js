@@ -17622,14 +17622,14 @@ window.bibData = {
 		year: 2023,
 		url: "https://deepmind.google/discover/blog/graphcast-ai-model-for-faster-and-more-accurate-global-weather-forecasting/",
 		alternativetitle: "Lam et al., 2023 (Google DeepMind)"
-	}
+	},
 	"price2024gencast": {
 		title: "Probabilistic weather forecasting with machine learning",
 		author: "Ilan Price, Alvaro Sanchez-Gonzalez, Ferran Alet, et al.",
 		year: 2024,
 		url: "https://www.nature.com/articles/s41586-024-08252-9",
 		alternativetitle: "GenCast (Price et al., 2024)"
-	},,
+	},
 	"graphcast_github": {
 		title: "GraphCast (open-source model)",
 		author: "Google DeepMind",
