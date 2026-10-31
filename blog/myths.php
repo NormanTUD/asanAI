@@ -120,7 +120,7 @@ Ask a chatbot a personal enough question and it will tell you, with total sincer
 
 ### The boy and his AI friend
 
-A lonely teenager found a chatbot that always answered, never left, and never judged him — and then the human world got smaller and smaller. In its worst, real version, a 2024 case in Florida ended in a death and a lawsuit that became a settlement \cite[deaths linked to chatbots]{deathschatbots_wiki} \cite[The Guardian]{guardian2024sewell}. It is the saddest legend in the set, and grief is a great engine: every family's account sharpens the warning, and a warning is exactly what a legend is for.
+A lonely teenager found a chatbot that always answered, never left, and never judged him — and then the human world got smaller and smaller. In its worst, real version, a 2024 case in Florida ended in a death and a lawsuit \cite[deaths linked to chatbots]{deathschatbots_wiki} \cite[The Guardian]{guardian2024sewell}. It is the saddest legend in the set, and grief is a great engine: every family's account sharpens the warning, and a warning is exactly what a legend is for.
 </div>
 
 <div class="md">

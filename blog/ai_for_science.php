@@ -20,7 +20,7 @@ This book opened with the universe: stars forging the elements, a handful of law
 
 ### The flagship: AlphaFold
 
-**Protein folding** — predicting a protein's 3D shape from its amino-acid sequence — was a 50-year grand challenge. **AlphaFold** solved it at near-experimental accuracy, winning CASP14 by a wide margin (\cite[Jumper et al., 2021]{jumper2021alphafold}); its leaders shared the 2024 **Nobel Prize in Chemistry**. **AlphaFold 3** extended the model to the joint structure of proteins, nucleic acids, ligands, ions, and modified residues (\cite[Abramson et al., 2024]{alphafold3}), and **AlphaMissense** scored essentially all ~216 million possible human missense variants (\cite[Abramson et al., 2023]{alphamissense}). The AlphaFold Protein Structure Database released ~**200 million** predicted structures, free to use — a new atlas of biology. (\cite[EMBL-EBI, 2023]{alphafold_db})
+**Protein folding** — predicting a protein's 3D shape from its amino-acid sequence — was a 50-year grand challenge. **AlphaFold** solved it at near-experimental accuracy, winning CASP14 by a wide margin (\cite[Jumper et al., 2021]{jumper2021alphafold}); its leaders shared the 2024 **Nobel Prize in Chemistry**. **AlphaFold 3** extended the model to the joint structure of proteins, nucleic acids, ligands, ions, and modified residues (\cite[Abramson et al., 2024]{alphafold3}), and **AlphaMissense** scored 71 million single-nucleotide missense variants in canonical transcripts (216 million across isoforms) (\cite[Abramson et al., 2023]{alphamissense}). The AlphaFold Protein Structure Database released ~**200 million** predicted structures, free to use — a new atlas of biology. (\cite[EMBL-EBI, 2023]{alphafold_db})
 </div>
 
 <div class="image-row md">
@@ -52,8 +52,8 @@ The competition-math line ran in parallel: **AlphaProof** + **AlphaGeometry 2** 
 <div class="md">
 ### Materials, weather, molecules
 
-* **Materials.** **GNoME**, a graph network over crystal structures, predicted **2.2 million** new stable materials, ~800,000 of them promising ceramics, superhard substances, and superconductors (\cite[Merchant et al., 2023]{merchant2023gnome}).
-* **Weather.** **FourCastNet** and **Graph Cast** forecast a week of global weather in *seconds*, matching or beating the physics-based ECMWF model while being orders of magnitude faster (\cite[Pathak et al., 2022]{pathak2022fourcastnet}).
+* **Materials.** **GNoME**, a graph network over crystal structures, predicted **2.2 million** new stable materials, about 380,000 of them on the updated convex hull (stable candidates), including promising ceramics, superhard substances, and superconductors (\cite[Merchant et al., 2023]{merchant2023gnome}).
+* **Weather.** **FourCastNet** (2022) and **GraphCast** (2023) forecast global weather in seconds to minutes, often matching or beating the physics-based ECMWF model while being orders of magnitude faster (\cite[Pathak et al., 2022]{pathak2022fourcastnet}; \cite[Lam et al., 2023]{lam2023graphcast}); **GenCast** (2024) extended this to probabilistic ensemble forecasts, beating ENS on 97.2% of targets (\cite[Price et al., 2024]{price2024gencast}).
 * **Games → search.** **AlphaGo** beat the Go champion (\cite[Silver et al., 2016]{silver2016go}); **AlphaZero** then taught itself Go, chess and shogi by self-play (\cite[Silver et al., 2018]{silver2018zero}) — the *learned value + search* engine that powered everything above.
 * **World models.** **JEPA**-style models predict the *next state* of a system rather than its raw pixels — the idea behind control and robotics (\cite[LeCun, 2022]{lecun2022jepa}).
 </div>

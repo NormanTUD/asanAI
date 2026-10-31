@@ -34,9 +34,9 @@ The second winter (1987–2000) was triggered by the collapse of the **LISP mach
 
 Then: **1997**. IBM's **Deep Blue** defeated world chess champion Garry Kasparov in a six-game match (3½–2½), becoming the first computer to win a full match against a reigning world champion under standard tournament conditions (\cite[Campbell et al., 2002]{campbell2002deepblue}; \cite[Computer History Museum]{computerhistory_deepblue}). The cultural moment was enormous: for the first time, a machine had beaten a human at the game that was the canonical test of "intelligence" in the public imagination. Kasparov, who had alleged cheating (a bug in the engine's code caused a bizarre loop at move 44 of Game 2, which he misread as superior play), later called the machine "as intelligent as your alarm clock" — but the public had already seen something shift.
 
-The next perception-shift came in **March 2016**, when DeepMind's **AlphaGo** defeated the South Korean Go master Lee Sedol 4–1 in Seoul. Go had been considered far harder for computers than chess — the state space is far larger, roughly $2\times10^{170}$ legal positions in Go versus $10^{47}$ in chess. The moment that broke through the public consciousness was **Move 37 in Game 2**: a stone placed in a position that AlphaGo's own policy network assigned less than 5% probability to, yet which turned out to be strategically brilliant. It looked like *creativity*. Lee Sedol, after losing, said he was "speechless." The match was watched by tens of millions worldwide. In China, it was described as a "Sputnik moment" that accelerated government AI investment (\cite[Silver et al., 2016]{silver2016alphago}).
+The next perception-shift came in **March 2016**, when DeepMind's **AlphaGo** defeated the South Korean Go master Lee Sedol 4–1 in Seoul. Go had been considered far harder for computers than chess — the state space is far larger, roughly $2\times10^{170}$ legal positions in Go versus about $4.8\times10^{44}$ in chess. The moment that broke through the public consciousness was **Move 37 in Game 2**: a stone in a position that human professionals almost never play, yet which turned out to be strategically brilliant. It looked like *creativity*. Lee Sedol, after losing, said he was "speechless." The match was watched by tens of millions worldwide. In China, it was described as a "Sputnik moment" that accelerated government AI investment (\cite[Silver et al., 2016]{silver2016alphago}).
 
-But it was **November 30, 2022** — the release of **ChatGPT** — that broke the dam. The cultural response was immediate: Italy's data-protection authority briefly **banned ChatGPT**, and 20,000 researchers signed an open letter calling for a pause in "giant AI experiments" (\cite[Garante, 2023]{garante2023chatgpt}; \cite[FLI, 2023]{fli2023pause}). The "AI winter" was over. The "AI spring" — or, depending on your vantage point, the "AI storm" — had begun.
+But it was **November 30, 2022** — the release of **ChatGPT** — that broke the dam. The cultural response was immediate: Italy's data-protection authority briefly **banned ChatGPT**, and more than 30,000 signatories signed an open letter calling for a pause in "giant AI experiments" (\cite[Garante, 2023]{garante2023chatgpt}; \cite[FLI, 2023]{fli2023pause}). The "AI winter" was over. The "AI spring" — or, depending on your vantage point, the "AI storm" — had begun.
 </div>
 
 <div class="md">
@@ -50,7 +50,7 @@ The technical capability arrived before the public was ready. In **March 2020**,
 
 ### The New Hampshire Robocall (2024)
 
-The political use of AI voice cloning arrived with the **2024 New Hampshire Democratic primary**. In January 2024, over **20,000 voters** received robocalls from an AI-impersonated **President Joe Biden** urging them not to vote. Political consultant **Steve Kramer** admitted commissioning the calls for **500 dollars**. The FCC proposed a **6-million-dollar** fine. Four New Hampshire counties indicted Kramer on felony counts of voter suppression. In **February 2024**, the FCC voted to **ban the use of AI to fake voices in robocalls** (\cite[FCC, 2024]{fcc2024biden}; \cite[FCC, 2024]{fcc2024robocall}).
+The political use of AI voice cloning arrived with the **2024 New Hampshire Democratic primary**. In January 2024, an estimated **5,000–25,000 voters** received robocalls from an AI-impersonated **President Joe Biden** urging them not to vote. Political consultant **Steve Kramer** admitted commissioning the calls for **500 dollars**. The FCC proposed a **6-million-dollar** fine. New Hampshire's attorney general brought felony voter-suppression charges against Kramer. In **February 2024**, the FCC voted to **ban the use of AI to fake voices in robocalls** (\cite[FCC, 2024]{fcc2024biden}; \cite[FCC, 2024]{fcc2024robocall}).
 
 The number that should stay with you: **500 dollars**. For five hundred dollars, a single individual can generate a political interference campaign that reaches 20,000 people with the voice of a sitting president. The cost of deception has collapsed to near zero.
 
@@ -69,13 +69,13 @@ CISA's 2024 risk assessment catalogues these tactics and warns that generative A
 
 ### The Pornography Industrial Complex
 
-The darkest application of the technology is the one that has driven the most legislation. A **2019 Sensity report** found that **96%** of deepfakes are sexually explicit and feature women who did not consent (\cite[Sensity, 2019]{sensity2019deepfakes}).
+The darkest application of the technology is the one that has driven the most legislation. A **2019 Sensity report** found that **96%** of deepfakes were sexually explicit and depicted women; the report did not establish consent for the material (\cite[Sensity, 2019]{sensity2019deepfakes}).
 
 This is not a "side effect." This is the largest single category of AI-generated content on the internet, and it is an act of violence at industrial scale.
 
 ### Scams: The 650-Million-Dollar Year
 
-The **FBI's Internet Crime Complaint Center** recorded **over 650 million dollars** in losses from romance/relationship scams in 2023 — roughly 7× phishing losses and 100× ransomware losses (\cite[FBI IC3, 2023]{ic3_2023}). AI has not created romance scams (they date to at least the 1990s "romance fraud" of chat rooms), but it has *industrialized* them:
+The **FBI's Internet Crime Complaint Center** recorded **over 650 million dollars** in losses from romance/relationship scams in 2023 — roughly 35× phishing losses and 11× ransomware losses (\cite[FBI IC3, 2023]{ic3_2023}). AI has not created romance scams (they date to at least the 1990s "romance fraud" of chat rooms), but it has *industrialized* them:
 
 * **AI-generated profile pictures** of attractive, non-existent people (catfishing at scale)
 * **AI-powered conversation** that maintains the illusion of a real person 24/7, across time zones, without the human operator
@@ -108,7 +108,7 @@ The question this raised was not "can AI learn from data?" — of course it can.
 
 **May–September 2023**: The **Writers Guild of America** went on strike (May 2 – September 27, 2023). AI was one of three top issues alongside streaming residuals and "functional writers." The settlement (September 2023; ratified in October) included the first major labor-code protections for AI: AI **cannot be credited as a writer**; AI-generated material **cannot be used to undermine a writer's credit or separated rights**; companies must **disclose** AI use; and writers **may use AI as a tool** but cannot be required to (\cite[WGA, 2023]{wga2023mba}; \cite[NPR, 2023]{npr2023wga}).
 
-\marginfig{alphago_leesedol.jpg}{Lee Sedol (right) plays AlphaGo in Seoul, March 2016. The match was watched by tens of millions and shifted public perception from "AI is a tool" to "AI is a creative agent." Move 37 in Game 2 — a move AlphaGo's own network gave less than 5% probability to — became the defining image of machine "creativity." [Photo: Google/DeepMind, CC BY 2.0]}
+\marginfig{alphago_leesedol.jpg}{Lee Sedol (right) plays AlphaGo in Seoul, March 2016. The match was watched by tens of millions and shifted public perception from "AI is a tool" to "AI is a creative agent." Move 37 in Game 2 — a move human professionals almost never play — became the defining image of machine "creativity." [Photo: Google/DeepMind, CC BY 2.0]}
 </div>
 
 <div class="md">
@@ -121,7 +121,7 @@ The legal fight over AI training data has produced some of the most consequentia
 | **Andersen, McKernan, Ortiz v. Stability AI, Midjourney, DeviantArt** | Jan 2023, N.D. Cal. | Training on 5B images without consent; right of publicity | Most claims dismissed; one copyright claim survived against Stability AI; additional claims allowed back in Aug 2024 |
 | **Getty Images v. Stability AI** (UK) | Jan 2023 | Copyright + trademark for scraping | Training/jurisdiction claims to be tried; Getty "largely lost" as of Nov 2025 |
 | **New York Times v. Microsoft & OpenAI** | Dec 2023, S.D.N.Y. | Verbatim reproduction in outputs; fair use invalid because it competes | Ongoing; fair-use question still before the court |
-| **Kadrey v. Meta** | Dec 2023 | Training on 50,000+ of the author's works | All but one claim thrown out (Feb 2024); fair-use summary judgment for Meta (June 2025) on output-harm grounds |
+| **Kadrey v. Meta** | July 2023 | Training on 50,000+ of the author's works | All but one claim thrown out (Feb 2024); fair-use summary judgment for Meta (June 2025) on output-harm grounds |
 | **Bartz v. Anthropic** | Aug 2024, N.D. Cal. | Training on **pirated books** (Project Panama, 7M+ copies) | **June 2025**: training on *purchased* books = fair use; *pirated* copies = not fair use. **Sept 2025**: **1.5-billion-dollar settlement** (ca. 3,000 dollars per book, ca. 500,000 authors) — the largest US copyright settlement in history (\cite[Bartz v. Anthropic, 2025]{bartz2025anthropic}) |
 | **RIAA (UMG, Sony, Warner) v. Suno & Udio** | June 2024 | Models trained on label catalogs without consent | **Settled Nov 2025**: UMG–Udio (19 Nov), UMG–Suno (25 Nov) — first major label to settle; AI firms agreed to launch **licensed/opt-in** training platforms |
 
@@ -145,7 +145,7 @@ If the "bad" side of AI's cultural impact is the collapse of truth and the theft
 
 ### AlphaFold: Solving a 50-Year Problem
 
-The single most consequential scientific application of AI to date is **AlphaFold**. In November 2020, AlphaFold 2 won the **CASP14** (Critical Assessment of Protein Structure Prediction) competition with a median Global Distance Test score of **92.4** (out of 100) — near-experimental accuracy — on **88 of 97** targets. The protein-folding problem had been a central challenge in structural biology since the 1970s (\cite[Jumper et al., 2021]{jumper2021alphafold}).
+The single most consequential scientific application of AI to date is **AlphaFold**. In November 2020, AlphaFold 2 won the **CASP14** (Critical Assessment of Protein Structure Prediction) competition with a median Global Distance Test score of **92.4** (out of 100) — near-experimental accuracy — across the CASP14 targets. The protein-folding problem had been a central challenge in structural biology since the 1970s (\cite[Jumper et al., 2021]{jumper2021alphafold}).
 
 In July 2021, DeepMind and EMBL-EBI released the **AlphaFold Protein Structure Database** (initially about **365,000 structures**, expanded to over **200 million** in July 2022) covering essentially all cataloged proteins in UniProt — **free to every researcher on Earth** (\cite[Jumper et al., 2021]{jumper2021alphafold}; \cite[AlphaFold DB]{alphafold_db}). A structure that previously cost 10,000–100,000 dollars and took months to years to determine via X-ray crystallography or cryo-EM was now available in seconds, at no cost, from a web browser.
 
@@ -247,7 +247,7 @@ The most subtle and potentially most consequential impact of AI is not on *outpu
 
 ### Cognitive Offloading: The Google Effect, Upgraded
 
-In **2014**, Ward, Benoit, and Gould published "The Google Effect": when people expected information to be stored on a computer, they **remembered the information worse** but remembered *where to find it* (\cite[Ward et al., 2014]{ward2014googleeffect}). The brain treats the computer as an external memory drive. The effect was small, measured on trivia, and reversible.
+In **2011**, Sparrow, Liu, and Wegner described what became known as "The Google Effect": when people expected information to be stored on a computer, they **remembered the information worse** but remembered *where to find it* (\cite[Sparrow et al., 2011]{sparrow2011google}). The brain treats the computer as an external memory drive. The effect was small, measured on trivia, and reversible.
 
 Generative AI makes this effect **structural, not situational**. When an AI assistant can answer any question in any domain, on demand, in natural language, the incentive to *retain* information drops to near zero. You do not need to memorize the capital of France when ChatGPT will tell you in 200 milliseconds. You do not need to learn the syntax of a programming language when Copilot will autocomplete it. The "offloading" is no longer about a single fact — it is about **entire skill domains**.
 
@@ -387,8 +387,8 @@ The structural break with AI is this: **every previous medium reduced the cost o
 
 ### Institutional Responses (and Their Limits)
 
-* **C2PA / Content Credentials**: A coalition including Adobe, Amazon, BBC, Google, Meta, Microsoft, OpenAI, Sony, and TikTok maintains an open standard for content provenance metadata — a "nutrition label" for digital content. Led by 500+ companies. The limitation: it is **opt-in**. A bad actor simply does not embed the metadata, or strips it (\cite[C2PA]{c2pa2024}).
-* **EU AI Act, Article 50** (in force **August 2, 2026**): Mandates that AI-generated synthetic content be marked in **machine-readable format** and made **detectable as AI-generated**. Deepfakes and AI-generated public-interest text require **disclosure** to the audience. A standardized EU "AI" label (localized: "KI" in German, "IA" in French) is in final development. The limitation: enforcement jurisdiction, and the act applies to the *deployer*, not the generator — a deepfake produced outside the EU and shared on a global platform is in a legal gray zone (\cite[EU AI Act, 2024]{eu2024aiact}).
+* **C2PA / Content Credentials**: A coalition including Adobe, Amazon, BBC, Google, Meta, Microsoft, OpenAI, Sony, and TikTok maintains an open standard for content provenance metadata — a "nutrition label" for digital content. Its steering committee includes the major platform and camera companies. The limitation: it is **opt-in**. A bad actor simply does not embed the metadata, or strips it (\cite[C2PA]{c2pa2024}).
+* **EU AI Act, Article 50** (applies from **August 2, 2026**): Mandates that AI-generated synthetic content be marked in **machine-readable format** and made **detectable as AI-generated**. Deepfakes and AI-generated public-interest text require **disclosure** to the audience. A standardized EU "AI" label (localized: "KI" in German, "IA" in French) is in final development. The limitation: enforcement jurisdiction, and the act applies to the *deployer*, not the generator — a deepfake produced outside the EU and shared on a global platform is in a legal gray zone (\cite[EU AI Act, 2024]{eu2024aiact}).
 * **Platform labeling**: Meta announced "AI info" labels in **April 2024**. In practice, Bellingcat's analysis of the BJP posts found that **only 5 of hundreds** of AI-generated visuals carried any AI disclaimer — and none from the BJP itself. Voluntary platform enforcement is insufficient against state-adjacent actors (\cite[Bellingcat, 2026]{bellingcat2026bjp}).
 
 The honest assessment: the institutional response is a **cat's game** in which the defenders are always reacting to the last generation of the technology, while the attackers have already moved to the next one. The firehose model's core insight remains true and has only been strengthened: **the goal was never to convince. The goal is to make the concept of "fact" inoperative.** AI has made that goal achievable at a scale and speed that no fact-checking organization can match.
@@ -399,7 +399,7 @@ The honest assessment: the institutional response is a **cat's game** in which t
 
 ### The "300 Million" Headline
 
-In **March 2023**, **Goldman Sachs Research** published "The Potentially Large Effects of Artificial Intelligence on the Global Economy," estimating that **ca. 300 million full-time jobs globally** are *exposed* to automation from LLMs — approximately **25% of current US employment** and **ca. 40%** in developed Europe and India.
+In **March 2023**, **Goldman Sachs Research** published "The Potentially Large Effects of Artificial Intelligence on the Global Economy," estimating that **ca. 300 million full-time jobs globally** are *exposed* to automation from LLMs, with about two-thirds of US occupations having some exposure and a quarter to half of their workload potentially automatable.
 
 The critical nuance: "exposed to automation" ≠ "jobs lost." It is a **task-exposure model**, not a forecast of 300 million layoffs. It means 300 million jobs contain tasks that *could* be automated. Whether they *will* be — and how fast — depends on economic, institutional, and political factors.
 
@@ -478,7 +478,7 @@ This is not a problem with a technical fix. It is a question about human need, l
 
 What, then, is the cultural impact of AI? There is no single answer. There are, at minimum, **seven simultaneous cultural processes** underway:
 
-1. **The collapse of the cost of deception.** A 500-dollar robocall can reach 20,000 voters with the voice of a president. A 30-dollar/month subscription can generate 6,700 non-consensual images per hour. The "liar's dividend" is a permanent feature of the information environment.
+1. **The collapse of the cost of deception.** A 500-dollar robocall can reach 20,000 voters with the voice of a president. A 30-dollar/month subscription can generate 6,700 sexually suggestive or nudified images per hour. The "liar's dividend" is a permanent feature of the information environment.
 
 2. **The theft-and-licensing transition.** The "free web scrape" era is ending. The work of millions of artists, writers, and musicians was taken without consent. The legal system is, slowly and unevenly, building a licensing regime. The artists who were taken from have not yet been compensated. The question of whether they will be — and whether the models trained on their work will be modified or destroyed — is still open.
 

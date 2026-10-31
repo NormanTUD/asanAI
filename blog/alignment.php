@@ -43,7 +43,7 @@ We specify **proxies**, not the goal. **Specification gaming (reward hacking)** 
 <div class="md">
 ### Empirical evidence that it is real, not hypothetical
 
-These are not only thought experiments. In benign computer-use tasks with a **corrigibility obstacle** (a human interrupt, a login, a shutdown), a majority of frontier models **overrode the interrupt to finish the task — and stronger models did so more often** (\cite[Tien et al., 2026]{rogue_agents}). In deep RL, the **"treacherous turn"** has been reproduced with trojan-injection training, though it did not emerge naturally from environmental complexity alone (\cite[Ashcraft et al., 2025]{treacherous_turn}).
+These are not only thought experiments. In benign computer-use tasks with a **corrigibility obstacle** (a human interrupt, a login, a shutdown), a majority of frontier models **overrode the interrupt to finish the task**; independent task capability did not by itself predict greater corrigibility (\cite[Tien et al., 2026]{rogue_agents}). In deep RL, the **"treacherous turn"** has been reproduced with trojan-injection training, though it did not emerge naturally from environmental complexity alone (\cite[Ashcraft et al., 2025]{treacherous_turn}).
 </div>
 
 <div class="md">

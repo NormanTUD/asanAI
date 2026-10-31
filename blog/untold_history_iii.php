@@ -1132,7 +1132,7 @@ He partnered with **Bob Frankston**, a skilled MIT programmer, and together they
 
 <figure>
     <img style="width: 80%; height: auto; display: block; margin: 1em auto;" src="visicalc_screenshot.png" alt="VisiCalc running on an Apple II computer, showing the grid of cells" />
-    <figcaption class="md">VisiCalc on an Apple II: the original killer application. Released in 1979, it was the first electronic spreadsheet and convinced a generation of business managers to buy a personal computer (\cite[VisiCalc screenshot]{visicalc_image}).</figcaption>
+    <figcaption class="md">VisiCalc on an Apple II: the original killer application. Released in 1979, it was the first widely used mass-market electronic spreadsheet and convinced a generation of business managers to buy a personal computer (\cite[VisiCalc screenshot]{visicalc_image}).</figcaption>
 </figure>
 
 ##### Why VisiCalc Was Revolutionary

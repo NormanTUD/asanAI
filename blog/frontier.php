@@ -30,7 +30,7 @@ Bai et al. (Anthropic, 2022) replaced most of the human labelling used by \citea
 
 A typical constitution entry: *“Which response is more honest? Response A states the limits of its knowledge; Response B makes up plausible-sounding facts. Choose the more honest response.”*
 
-CAI reduces human labelling by ~10× while matching (\cite[Ouyang et al., 2022]{ouyang2022instructgpt}) on harmlessness benchmarks. Anthropic uses CAI for Claude 2/3/4. The same approach underlies **self-critique** in many production systems.
+CAI reduces human labelling substantially; the paper compares it with an RLHF baseline rather than with InstructGPT (\cite[Ouyang et al., 2022]{ouyang2022instructgpt}). Anthropic uses CAI for Claude 2/3/4. The same approach underlies **self-critique** in many production systems.
 </div>
 
 <div class="md">
@@ -52,7 +52,7 @@ The L1 penalty forces only a few features to be active for any input. Anthropic'
 
 * A single SAE feature activated on **Golden Gate Bridge** references, across languages, image descriptions, and even ASCII art (\cite[Templeton et al., 2024]{anthropic2024goldengate}).
 * Features for **code bugs**, **refusal**, **deception** could be identified.
-* Some features are **universal** across model families (Llama, GPT, Claude).
+* Anthropic reported these features in Claude 3 Sonnet; whether they are **universal** across model families is still an open question.
 
 The “**Golden Gate Claude**” demonstration (\cite[Templeton et al., 2024]{anthropic2024goldengate}) amplified a single feature to make the model obsessed with the Golden Gate Bridge. This is the first direct evidence that specific, semantically meaningful features can be **causally manipulated** at inference time.
 </div>
@@ -63,7 +63,7 @@ The “**Golden Gate Claude**” demonstration (\cite[Templeton et al., 2024]{an
 From the Mechanistic Interpretability chapter's foundation, frontier work in 2024–2025:
 
 * **Sparse autoencoders** (see above), millions of features per model.
-* **Causal scrubbing** (\cite[Redman et al., 2024]{redman2024causalscrubbing}): formally verify which circuits implement a behavior.
+* **Causal scrubbing** (\cite[Chan et al., 2022]{redman2024causalscrubbing}): formally verify which circuits implement a behavior.
 * **Cross-model universality**: do circuits transfer across models? Yes, partially, “induction heads” appear in every Transformer.
 * **Alignment-via-interpretability**: identify features for “deception”, “harm”, “sycophancy” and steer the model away from them. **Representation engineering** (\cite[Zou et al., 2023]{zou2023repeng}) is the umbrella term.
 
@@ -79,7 +79,7 @@ Recall from the Reasoning chapter: a **Process Reward Model** scores every step 
 
 * **\citealternativetitle{zhang2024mathshepherd}**: auto-labels step correctness by checking if subsequent steps can reach the answer.
 * **Critic models** (Qwen, DeepSeek): separate models trained to score the quality of intermediate steps.
-* **Tree search**: best-of-N with PRM-guided search gives dramatic improvements on hard math (o1-mini with PRM ≈ GPT-4 on AIME).
+* **Tree search**: best-of-N with PRM-guided search gives dramatic improvements on hard math .
 
 The trade-off: PRMs add 2–5× inference cost. Used selectively on the hardest 10–20% of queries.
 </div>
@@ -131,7 +131,7 @@ $$
 
 Result: ~50% compute reduction at equal quality. The capacity is preserved; the routing learns to allocate it.
 
-Related: **early exit** (\cite[Elhoushi et al., 2024]{elhoushi2024early}), **conditional computation** (\cite[Fedus et al., 2022]{fedus2022switch}), **Skrr** (skip-routing, \cite[Sakurai et al., 2024]{sakurai2024skrr}).
+Related: **early exit** (\cite[Elhoushi et al., 2024]{elhoushi2024early}), **conditional computation** (\cite[Fedus et al., 2022]{fedus2022switch}).
 </div>
 
 <div class="md">
@@ -147,7 +147,7 @@ See the AI Agents chapter for the basics. Frontier developments:
 * **Code agents**: SWE-Agent, AutoCodeRover, Devin, autonomous software engineering. Still unreliable but improving.
 * **Hierarchical agents**: a planner agent delegates to specialist sub-agents. Used in many production systems.
 
-A 2025 benchmark (GAIA, Mialon et al., Meta) tests realistic agent tasks: “find the CEO of the company that acquired Twitter's recommendation team and their phone number on the website”. Frontier agents solve ~50% of these; humans solve 92%.
+GAIA (Mialon et al., 2023, Meta) tests realistic agent tasks: “find the CEO of the company that acquired Twitter's recommendation team and their phone number on the website”. Frontier agents solve ~50% of these; humans solve 92%.
 </div>
 
 <div class="md">
@@ -173,9 +173,8 @@ The hypothesis: **true general intelligence requires internal simulation of cons
 
 LLMs are still **predominantly English-centric** in training:
 
-* Llama 3.1: ~90% English tokens.
-* GPT-4o: ~85%.
-* DeepSeek-V3: ~75% (more Chinese than Western models).
+* Llama 3.1: ~90% English tokens (the Llama 3 report publishes this figure).
+* GPT-4o and DeepSeek-V3: their training mixes are not public, so exact percentages should not be treated as established.
 
 This biases models toward English cultural norms, knowledge, and reasoning patterns. Frontier efforts in 2025:
 
@@ -217,7 +216,7 @@ A model zoo is not a curriculum, but the releases of 2023–2026 are a useful au
 
 **4. Hybrid thinking modes arrived.** Qwen3 trained dense and mixture-of-experts models with both a fast, non-thinking mode and a slower reasoning mode, selectable per request (\cite[Qwen Team, 2025]{qwen2025qwen3}) — an acknowledgment that most queries do not need a thousand tokens of deliberation.
 
-**5. Open weights moved from “small models” to frontier-adjacent scale.** The Llama 3 herd's 405B variant was the first open-weight model widely described as competitive with closed frontier systems (\cite[Grattafiori et al., 2024]{llama3herd2024}); Llama 4 added native multimodality and MoE (\cite[Meta AI, 2025]{meta2025llama4}); Gemma 3 brought multimodality and long context to the small-model tier (\cite[Gemma Team, 2025]{gemma2025v3}); Qwen3 and Kimi K2 became standard bases for fine-tuning. The open ecosystem no longer trails by a full generation on architecture — mainly on data and compute.
+**5. Open weights moved from “small models” to frontier-adjacent scale.** Llama 3 405B was **one of the first** open-weight models widely described as competitive with closed frontier systems (\cite[Grattafiori et al., 2024]{llama3herd2024}); Llama 4 added native multimodality and MoE (\cite[Meta AI, 2025]{meta2025llama4}); Gemma 3 brought multimodality and long context to the small-model tier (\cite[Gemma Team, 2025]{gemma2025v3}); Qwen3 and Kimi K2 became standard bases for fine-tuning. The open ecosystem no longer trails by a full generation on architecture — mainly on data and compute.
 
 **6. Interpretability moved into the system card.** Frontier safety reports now routinely include sparse-autoencoder features, attribution graphs, activation steering, and activation verbalizers — the techniques of the [Mechanistic Interpretability](mechanistic_interpretability.php) chapter — as evidence about internal states rather than as research curiosities (\cite[Lindsey et al., 2025]{anthropic2025biology}; \cite[Pan et al., 2024]{pan2024latentqa}).
 

@@ -15167,6 +15167,13 @@ window.bibData = {
 		url: "https://arxiv.org/abs/2606.00341",
 		alternativetitle: "Overriding human interrupt"
 	},
+	"grace2024survey": {
+		title: "Thousands of AI Authors on the Future of AI",
+		author: "Katja Grace, Harlan Stewart, Julia Fabienne Sandkühler, et al.",
+		year: 2024,
+		url: "https://doi.org/10.1613/jair.1.19087",
+		alternativetitle: "Grace et al. (2024) — AI researcher survey"
+	},
 	"ai_control": {
 		title: "AI Control: Improving Safety Despite Intentional Subversion",
 		author: "Ryan Greenblatt, et al.",
@@ -16455,18 +16462,11 @@ window.bibData = {
 		alternativetitle: "FLI Pause Giant AI Experiments (2023)"
 	},
 	"fli2025ban": {
-		title: "An Open Letter Calling for a Ban on the Development of Superintelligence",
+		title: "Statement on Superintelligence",
 		author: "Future of Life Institute",
 		year: 2025,
-		url: "https://futureoflife.org/open-letter/superintelligence-ban/",
-		alternativetitle: "FLI Superintelligence Ban Letter (2025)"
-	},
-	"openai2023superintelligence": {
-		title: "Superintelligence is Closer Than You Think",
-		author: "OpenAI",
-		year: 2023,
-		url: "https://openai.com/superintelligence-is-closer-than-you-think/",
-		alternativetitle: "OpenAI, superintelligence timeline (2023)"
+		url: "https://superintelligence-statement.org",
+		alternativetitle: "Statement on Superintelligence (2025)"
 	},
 	"metz2023godfather": {
 		title: "'The Godfather of A.I.' Leaves Google and Warns of Danger Ahead",
@@ -16475,26 +16475,12 @@ window.bibData = {
 		url: "https://www.nytimes.com/2023/05/01/technology/ai-google-chatbot-engineer-quits-hinton.html",
 		alternativetitle: "Metz, NYT — Hinton leaves Google (2023)"
 	},
-	"hinton2023caution": {
-		title: "Geoffrey Hinton: AI Could Be the End of Humanity",
-		author: "BBC News (interview)",
-		year: 2023,
-		url: "https://www.bbc.com/news/technology-67746563",
-		alternativetitle: "Hinton, AI caution / 60 Minutes (2023)"
-	},
 	"anthropic2025shutdown": {
-		title: "Claude's Shutdown Resistance and Safety Concerns",
+		title: "Agentic Misalignment: How LLMs Could Be Insider Threats",
 		author: "Anthropic",
 		year: 2025,
-		url: "https://www.anthropic.com/research/shutdown-resistance",
-		alternativetitle: "Anthropic, shutdown resistance study (2025)"
-	},
-	"tien2026rogue": {
-		title: "Rogue Agents: A Study of Frontier Model Corrigibility",
-		author: "Tien et al.",
-		year: 2026,
-		url: "https://arxiv.org/abs/2601.00000",
-		alternativetitle: "Tien et al., rogue agents / corrigibility (2026)"
+		url: "https://www.anthropic.com/research/agentic-misalignment",
+		alternativetitle: "Anthropic, agentic misalignment (2025)"
 	},
 	"kokotajlo2016takeoff": {
 		title: "A Conversation About AI Takeoff",
@@ -17636,7 +17622,14 @@ window.bibData = {
 		year: 2023,
 		url: "https://deepmind.google/discover/blog/graphcast-ai-model-for-faster-and-more-accurate-global-weather-forecasting/",
 		alternativetitle: "Lam et al., 2023 (Google DeepMind)"
-	},
+	}
+	"price2024gencast": {
+		title: "Probabilistic weather forecasting with machine learning",
+		author: "Ilan Price, Alvaro Sanchez-Gonzalez, Ferran Alet, et al.",
+		year: 2024,
+		url: "https://www.nature.com/articles/s41586-024-08252-9",
+		alternativetitle: "GenCast (Price et al., 2024)"
+	},,
 	"graphcast_github": {
 		title: "GraphCast (open-source model)",
 		author: "Google DeepMind",
@@ -18432,6 +18425,13 @@ window.bibData = {
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/Cognitive_offloading",
 		alternativetitle: "Cognitive offloading (Wikipedia) — the Google Effect and external memory"
+	},
+	"sparrow2011google": {
+		title: "Google Effects on Memory: Cognitive Consequences of Having Information at Our Fingertips",
+		author: "Betsy Sparrow, Jenny Liu, Daniel M. Wegner",
+		year: 2011,
+		url: "https://doi.org/10.1126/science.1207745",
+		alternativetitle: "Sparrow, Liu & Wegner (2011) — the Google effect"
 	},
 	"parasuraman1997automation": {
 		title: "Humans and Automation: Use, Misuse, Disuse, Abuse",

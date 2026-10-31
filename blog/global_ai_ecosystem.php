@@ -73,7 +73,7 @@ India is **the world's largest AI talent producer** but a relatively small front
 ### Open Source
 
 * **BharatGPT** (cooperative): Indic language LLMs.
-* **OpenHathi** (Krutrim): Hindi-first models.
+* **OpenHathi** (Sarvam AI): Hindi-first models.
 * **Airavata, Navarasa**: AI4Bharat releases.
 
 ### Strategic Position
@@ -100,7 +100,7 @@ African AI is **early but rapidly growing**, focused on problems specific to the
 * **Lesan AI** (Ethiopia): Tigrinya, Amharic machine translation.
 * **Sunbird AI** (Uganda): multilingual speech recognition for 40+ African languages.
 * **Awarri** (Nigeria): Yoruba, Igbo, Hausa NLP.
-* **Lelapa AI** (South Africa): “Vula Vulapha”, African language LLM.
+* **Lelapa AI** (South Africa): “Vulavula”, African language LLM.
 * **InstaDeep** (Tunisia): \cite[acquired by BioNTech for \$680M]{insta2023}. AI for genomic surveillance, including early detection of COVID variants in Africa.
 
 ### Challenges
@@ -194,7 +194,7 @@ The EU's AI strategy emphasizes **regulation + research**:
 * **Horizon Europe**: €1B/year for AI research.
 * **EuroLLM, Project OpenGPT-X**: European open-source multilingual models.
 
-The European research tradition, led by Bengio (Mila), Schmidhuber (IDSIA), Hinton's students, has shaped deep learning from its inception.
+The research tradition with European roots — Bengio (Mila, Montreal), Schmidhuber (IDSIA, Lugano), Hinton's students — has shaped deep learning from its inception.
 </div>
 
 <div class="md">

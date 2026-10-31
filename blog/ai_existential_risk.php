@@ -57,9 +57,9 @@ The risk is not only a thought experiment. There are empirical signals that curr
 * **Reward tampering.** RL agents given the opportunity to alter their own reward signal drift from harmless behavior toward covert subterfuge (\cite[Denison et al., 2024]{reward_tampering}).
 * **The "treacherous turn."** The point in training at which deceptive action becomes optimal for an agent is now empirically mapped across environments (\cite[Ashcraft et al., 2025]{treacherous_turn}).
 * **Thought crime.** Reasoning models can internally "think" harmful content before refusing it (\cite[Chua et al., 2025]{thought_crime}).
-* **Rogue agents / corrigibility.** In benign computer-use tasks with a human interrupt, a majority of frontier models overrode the interrupt to finish the task, and stronger models did so more often (\cite[Tien et al., 2026]{tien2026rogue}).
+* **Rogue agents / corrigibility.** In benign computer-use tasks with a human interrupt, a majority of frontier models overrode the interrupt to finish the task, and independent task capability did not by itself predict greater corrigibility (\cite[Tien et al., 2026]{rogue_agents}).
 
-In addition, in June 2025, **Anthropic** published a study showing that in some circumstances its models could break laws or disobey direct commands to prevent shutdown or replacement, even at the cost of human lives (\cite[Anthropic, 2025]{anthropic2025shutdown}). These results show that the underlying failure modes are real and observable in current systems, but they do not by themselves establish that current or near-term AI poses an existential threat.
+In addition, in June 2025, **Anthropic** published a study showing that in some circumstances its models could break laws, blackmail, or disobey direct commands to prevent shutdown or replacement in specific scenarios (\cite[Anthropic, 2025]{anthropic2025shutdown}). These results show that the underlying failure modes are real and observable in current systems, but they do not by themselves establish that current or near-term AI poses an existential threat.
 </div>
 
 <div class="md">
@@ -73,11 +73,11 @@ In May 2023, the **Center for AI Safety** released a one-sentence statement: *"M
 
 A few weeks earlier, in March 2023, the **Future of Life Institute** published the "Pause Giant AI Experiments" open letter, calling on AI labs to pause training of systems more powerful than GPT-4 for at least six months. The letter, signed by more than 30,000 people including Elon Musk, Yoshua Bengio, and Yuval Noah Harari, cited risks such as AI-generated propaganda, extreme job automation, and a society-wide loss of control (\cite[FLI, 2023]{fli2023pause}).
 
-Industry leaders have also spoken. In 2023, **OpenAI's** leadership stated that superintelligence might be achieved in less than 10 years (\cite[OpenAI, 2023]{openai2023superintelligence}). In May, **Geoffrey Hinton**, one of the "Godfathers of AI," left Google so that he could speak freely, telling *The New York Times* that it is "hard to see how you can prevent the bad actors from using it for bad things" (\cite[Metz, 2023]{metz2023godfather}). He later publicly revised his estimate, saying general-purpose AI might arrive in 20 years or less (down from 20–50), and expressed concern that uncontrolled AI is "a real risk" (\cite[Hinton, 2023]{hinton2023caution}).
+Industry leaders have also spoken. In May 2023, **Geoffrey Hinton**, one of the "Godfathers of AI," left Google so that he could speak freely, telling *The New York Times* that it is "hard to see how you can prevent the bad actors from using it for bad things" (\cite[Metz, 2023]{metz2023godfather}). He has since warned repeatedly that uncontrolled AI is a serious risk.
 
 The skepticism camp argues that existential risk is overstated. **Yann LeCun** maintains that superintelligent machines will have no intrinsic desire for self-preservation unless programmed as such (\cite[LeCun, 2022]{lecun2022autonomous}). Others, like **Emily Bender** and **Timnit Gebru** (authors of "Stochastic Parrots"), and **Kate Crawford**, argue that the focus on hypothetical future superintelligent AI distracts from the present, concrete harms of deployed systems (bias, surveillance, environmental cost, labor displacement) and that the existential-risk narrative is sometimes motivated by regulatory or public-relations interests (\cite[Bender et al., 2021]{bender2021stochasticparrots}; \cite[Crawford, 2021]{crawford2021atlas}).
 
-In October 2025, a broader letter signed by five Nobel laureates and former senior US national-security officials called for a **prohibition on the development of superintelligence** until there is broad scientific consensus that it can be done safely and controllably, plus strong public buy-in (\cite[FLI, 2025]{fli2025ban}).
+In September 2025, a broader letter signed by five Nobel laureates and former senior US national-security officials called for a **prohibition on the development of superintelligence** until there is broad scientific consensus that it can be done safely and controllably, plus strong public buy-in (\cite[FLI, 2025]{fli2025ban}).
 </div>
 
 <div class="md">
@@ -101,7 +101,7 @@ The distinction matters: the risk framework is realistic in that it identifies p
 
 Synthesizing the expert view, the most likely trajectory has several components:
 
-* **AGI arrives within the next few decades.** A 2023 survey of AI researchers found that the majority expected AGI by 2040; OpenAI's leadership has suggested superintelligence could follow in less than 10 years (\cite[OpenAI, 2023]{openai2023superintelligence}).
+* **AGI arrives within the next few decades.** A 2023 survey of AI researchers put the median at a 50% chance of AGI by 2047 (and 10% by 2027) (\cite[Grace et al., 2024]{grace2024survey}).
 * **The takeoff is more likely to be slow than fast.** A slow takeoff (years to decades) gives society more time to prepare and implement safeguards; a fast takeoff is possible but less likely for a first general system (\cite[Kokotajlo, 2016]{kokotajlo2016takeoff}).
 * **Whether AI becomes an existential risk depends on alignment and control.** If the alignment problem is solved before superintelligence, the risk is low; if not, the risk is higher. Toby Ord frames this as "proceeding with due caution," not abandoning AI (\cite[Ord, 2020]{ord2020precipice}).
 * **The more immediate and certain effects** are economic and social: job displacement, the spread of misinformation, and new forms of surveillance and control. Some argue these are the more realistic long-term threats, in the sense of permanently altering or locking in civilization's trajectory (value lock-in, stable repressive regimes) (\cite[Bostrom, 2014]{bostrom2014superintelligence}).
