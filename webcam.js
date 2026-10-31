@@ -83,9 +83,9 @@ async function _getCameraConstraints() {
 		constraints.video = { deviceId: { exact: chosen_webcam_device_id } };
 	} else if (await hasBothFrontAndBack()) {
 		constraints.video = { facingMode: webcam_modes[webcam_id] };
-		l(language[lang]["using_camera"] + " " + webcam_modes[webcam_id]);
+		dbg(language[lang]["using_camera"] + " " + webcam_modes[webcam_id]);
 	} else {
-		l(language[lang]["only_one_webcam"]);
+		dbg(language[lang]["only_one_webcam"]);
 	}
 
 	return constraints;
