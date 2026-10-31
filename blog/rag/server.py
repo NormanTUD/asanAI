@@ -63,8 +63,15 @@ RATE_DAY = int(os.environ.get("RATE_DAY", "20"))
 RATE_SECONDS = int(os.environ.get("RATE_SECONDS", "5"))
 CACHE_TTL = int(os.environ.get("CACHE_TTL_SECONDS", str(30 * 24 * 3600)))
 INITIAL_ETA = float(os.environ.get("INITIAL_ETA_SECONDS", "45"))
-CACHE_VERSION = "4"
+CACHE_VERSION = "5"
 QUERIES_DB = Path(os.environ.get("ASANAI_RAG_QUERIES_DB", "/var/lib/asanai-rag/queries.sqlite"))
+SMALL_INDEX_ENABLED = os.environ.get("SMALL_INDEX", "1").strip().lower() not in (
+    "0",
+    "false",
+    "no",
+    "off",
+)
+SMALL_CHUNKS = max(1, min(5, int(os.environ.get("SMALL_CHUNKS", "3"))))
 
 # The blog admin may run as the checkout owner while the service runs as
 # www-data. Group-writable SQLite files let the ACL grant both users access.
@@ -261,9 +268,13 @@ class BM25:
         ]
 
 
-def load_index(data_dir: Path):
-    meta = json.loads((data_dir / "rag_index.json").read_text(encoding="utf-8"))
-    raw = (data_dir / "rag_vectors.bin").read_bytes()
+def load_index(
+    data_dir: Path,
+    json_name: str = "rag_index.json",
+    vectors_name: str = "rag_vectors.bin",
+):
+    meta = json.loads((data_dir / json_name).read_text(encoding="utf-8"))
+    raw = (data_dir / vectors_name).read_bytes()
     magic, version, count, dims = struct.unpack_from("<4I", raw, 0)
     if magic != MAGIC or version != 1:
         raise RuntimeError("rag_vectors.bin has an unsupported header")
@@ -294,6 +305,31 @@ class RagEngine:
             chunk["pt"] + " " + chunk["h"] + " " + chunk["x"]
             for chunk in self.chunks
         ])
+
+        self.small = None
+        self.small_chunks = []
+        self.small_vectors = None
+        self.small_scales = None
+        self.small_bm25 = None
+        if SMALL_INDEX_ENABLED:
+            try:
+                small_meta, small_vectors, small_scales = load_index(
+                    data_dir,
+                    "rag_index_small.json",
+                    "rag_vectors_small.bin",
+                )
+                self.small = small_meta
+                self.small_chunks = small_meta["chunks"]
+                self.small_vectors = small_vectors.astype(np.float32)
+                self.small_scales = small_scales
+                self.small_bm25 = BM25([
+                    chunk["pt"] + " " + chunk["h"] + " " + chunk["x"]
+                    for chunk in self.small_chunks
+                ])
+            except FileNotFoundError:
+                pass
+            except Exception as exc:
+                print(f"warning: small index unavailable: {exc}", file=sys.stderr)
 
         self.last_done_reason = None
         self.embedder = None
@@ -354,6 +390,98 @@ class RagEngine:
             total += len(self.chunks[next_index]["x"]) + 1
         chunk["context"] = " ".join(self.chunks[i]["x"] for i in sorted(selected))
         return chunk
+
+    def _small_window(self, index: int) -> dict:
+        """A tiny anchor plus the chunk before and after it (same page)."""
+        chunks = self.small_chunks
+        chunk = dict(chunks[index])
+        page = chunk.get("p")
+        selected = [index]
+        for offset in (-1, 1):
+            neighbor = index + offset
+            if 0 <= neighbor < len(chunks) and chunks[neighbor].get("p") == page:
+                selected.append(neighbor)
+        selected.sort()
+        chunk["context"] = " ".join(chunks[i]["x"] for i in selected)
+        chunk["small"] = True
+        return chunk
+
+    @staticmethod
+    def _distinct_windows(windows: list, limit: int) -> list:
+        result = []
+        seen = []
+        for window in windows:
+            text = window.get("context", "")
+            if any(text in other or other in text for other in seen):
+                continue
+            result.append(window)
+            seen.append(text)
+            if len(result) >= limit:
+                break
+        return result
+
+    def retrieve_small(self, question: str, limit: int = SMALL_CHUNKS,
+                       page: str | None = None):
+        """Best tiny anchors, each widened by one chunk on both sides."""
+        chunks = getattr(self, "small_chunks", None)
+        if not chunks or getattr(self, "small_bm25", None) is None:
+            return []
+        page = (page or "").strip()
+        in_scope = (
+            (lambda index: chunks[index].get("p") == page)
+            if page
+            else (lambda index: True)
+        )
+        query = self.embed_question(question)
+        dense = []
+        if query is not None and getattr(self, "small_vectors", None) is not None:
+            scores = (self.small_vectors @ query) * self.small_scales
+            order = np.argsort(-scores)[:25]
+            dense = [int(index) for index in order if in_scope(int(index))]
+        lexical = [
+            index
+            for index in self.small_bm25.search(
+                question, len(chunks) if page else 25
+            )
+            if in_scope(index)
+        ][:25]
+        candidates = list(dict.fromkeys(dense + lexical))
+        if not candidates:
+            return []
+        reranker = getattr(self, "reranker", None)
+        if reranker:
+            try:
+                documents = [
+                    f"{chunks[index]['pt']} — {chunks[index]['h']}\n"
+                    f"{self._small_window(index)['context']}"
+                    for index in candidates
+                ]
+                scores = list(reranker.rerank(question, documents, batch_size=16))
+                order = sorted(
+                    range(len(candidates)),
+                    key=lambda position: scores[position]
+                    + heading_boost(chunks[candidates[position]], question),
+                    reverse=True,
+                )
+                return self._distinct_windows(
+                    [self._small_window(candidates[position]) for position in order],
+                    limit,
+                )
+            except Exception as exc:
+                print(f"warning: small reranker failed: {exc}", file=sys.stderr)
+        rank_scores = {}
+        for ranks in (dense, lexical):
+            for rank, index in enumerate(ranks):
+                rank_scores[index] = rank_scores.get(index, 0.0) + 1.0 / (60 + rank)
+        order = sorted(
+            candidates,
+            key=lambda index: rank_scores.get(index, 0.0)
+            + 0.005 * heading_boost(chunks[index], question),
+            reverse=True,
+        )
+        return self._distinct_windows(
+            [self._small_window(index) for index in order], limit
+        )
 
     def retrieve(self, question: str, limit: int = 5, page: str | None = None):
         page = (page or "").strip()
@@ -502,9 +630,9 @@ class RagEngine:
                page: str | None = None) -> dict:
         english = self.translate(question, lang)
         page = (page or "").strip()
-        chunks = self.retrieve(
-            self.retrieval_query(english, history), 5 if page else 4, page=page or None
-        )
+        query = self.retrieval_query(english, history)
+        chunks = self.retrieve(query, 5 if page else 4, page=page or None)
+        chunks += self.retrieve_small(query, SMALL_CHUNKS, page=page or None)
         if not chunks:
             return {
                 "grounded": False,
@@ -593,8 +721,15 @@ class RagEngine:
                 "Scope: the current lesson only. Use only the passages below and "
                 "prefer the most specific one.\n\n"
             )
+        detail = ""
+        if any(chunk.get("small") for chunk in chunks):
+            detail = (
+                "Some passages are short verbatim windows with their "
+                "neighbouring text; use them for precise details, and the "
+                "longer passages for context.\n\n"
+            )
         user = (
-            f"{previous}{scope}Question (answer in {language}): {question}\n"
+            f"{previous}{scope}{detail}Question (answer in {language}): {question}\n"
             f"English retrieval query: {english}\n"
             f"IMPORTANT: Write the final answer in {language} only.\n\n"
             "Passages:\n\n" + "\n\n".join(passages)
@@ -1191,6 +1326,7 @@ class RagService:
             "model": OLLAMA_MODEL,
             "model_present": model_present,
             "chunks": len(getattr(self.engine, "chunks", [])),
+            "small_chunks": len(getattr(self.engine, "small_chunks", []) or []),
             "embedder": bool(getattr(self.engine, "embedder", None)),
             "reranker": bool(getattr(self.engine, "reranker", None)),
             "query_log": str(getattr(self.query_log, "path", "")),

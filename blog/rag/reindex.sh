@@ -24,6 +24,11 @@ sudo -u "$BLOG_OWNER" env \
 		--out-dir "$INDEX_TMP"
 install -o www-data -g www-data -m 0644 \
 	"$INDEX_TMP/rag_index.json" "$INDEX_TMP/rag_vectors.bin" "$ASANAI_RAG_DATA/"
+if [ -f "$INDEX_TMP/rag_index_small.json" ]; then
+	install -o www-data -g www-data -m 0644 \
+		"$INDEX_TMP/rag_index_small.json" "$INDEX_TMP/rag_vectors_small.bin" \
+		"$ASANAI_RAG_DATA/"
+fi
 rm -rf "$INDEX_TMP"
 
 systemctl restart asanai-rag

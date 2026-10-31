@@ -142,18 +142,26 @@ TextCrossEncoder(sys.argv[2])
 print("models ready")
 PY
 
-echo "[7/8] Installing the retrieval index"
+echo "[7/8] Installing the retrieval indexes"
 BLOG_HASH=$(php -r 'require $argv[1] . "/search_lib.php"; echo searchSourceHash($argv[1], search_excludes());' "$BLOG_DIR" 2>/dev/null || true)
 INDEX_HASH=""
+SMALL_HASH=""
 if [ -f "$BLOG_DIR/rag_data/rag_index.json" ]; then
 	INDEX_HASH=$("$SERVICE_DIR/venv/bin/python" -c 'import json,sys; print(json.load(open(sys.argv[1])).get("sourceHash", ""))' "$BLOG_DIR/rag_data/rag_index.json" 2>/dev/null || true)
 fi
-if [ -n "$INDEX_HASH" ] && [ "$INDEX_HASH" = "$BLOG_HASH" ]; then
-	echo "Using the index committed in the blog repository."
+if [ -f "$BLOG_DIR/rag_data/rag_index_small.json" ]; then
+	SMALL_HASH=$("$SERVICE_DIR/venv/bin/python" -c 'import json,sys; print(json.load(open(sys.argv[1])).get("sourceHash", ""))' "$BLOG_DIR/rag_data/rag_index_small.json" 2>/dev/null || true)
+fi
+if [ -n "$INDEX_HASH" ] && [ "$INDEX_HASH" = "$BLOG_HASH" ] \
+	&& [ -n "$SMALL_HASH" ] && [ "$SMALL_HASH" = "$BLOG_HASH" ]; then
+	echo "Using the indexes committed in the blog repository."
 	install -o www-data -g www-data -m 0644 \
 		"$BLOG_DIR/rag_data/rag_index.json" "$BLOG_DIR/rag_data/rag_vectors.bin" "$RAG_DATA/"
+	install -o www-data -g www-data -m 0644 \
+		"$BLOG_DIR/rag_data/rag_index_small.json" \
+		"$BLOG_DIR/rag_data/rag_vectors_small.bin" "$RAG_DATA/"
 else
-	echo "The committed index is stale; rebuilding (this can take a few minutes)."
+	echo "The committed indexes are stale; rebuilding (this can take a few minutes)."
 	# Run as the blog owner: /home/<user> is often not traversable by www-data,
 	# and the builder refreshes .search_cache.json in the blog. The result is
 	# installed into the service's data directory as www-data.
@@ -165,6 +173,11 @@ else
 			--out-dir "$INDEX_TMP"
 	install -o www-data -g www-data -m 0644 \
 		"$INDEX_TMP/rag_index.json" "$INDEX_TMP/rag_vectors.bin" "$RAG_DATA/"
+	if [ -f "$INDEX_TMP/rag_index_small.json" ]; then
+		install -o www-data -g www-data -m 0644 \
+			"$INDEX_TMP/rag_index_small.json" \
+			"$INDEX_TMP/rag_vectors_small.bin" "$RAG_DATA/"
+	fi
 	rm -rf "$INDEX_TMP"
 fi
 

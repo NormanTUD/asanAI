@@ -46,6 +46,12 @@ browser  ──POST /ask.php──▶  PHP proxy  ──▶  127.0.0.1:8090  (qu
   reranking and a heading/year boost, so date and entity questions (for example
   “when was the Transformer invented?”) prefer headings such as
   “The Transformer and Attention (2017)”.
+- **Two granularities:** next to the 900-character context index, a second index
+  stores 50-character anchors. The service picks the best three anchors and
+  appends each anchor together with the chunk before and after it, so the model
+  gets precise details as well as the broader context. Set `SMALL_INDEX=0` in
+  `/etc/asanai-rag.env` to return to the large-index-only behaviour; no reindex
+  is needed.
 - **Local-only:** the Python service binds to `127.0.0.1`; `ask.php` is the only
   public entry.
 
@@ -140,8 +146,12 @@ sudo /opt/asanai-rag/reindex.sh
 ```
 
 This calls `blog/tools/build_rag_index.py`, which refreshes
-`.search_cache.json` through PHP, re-embeds the full chunks, and writes
-`/var/lib/asanai-rag/data/rag_index.json` + `rag_vectors.bin`.
+`.search_cache.json` through PHP, re-embeds changed chunks, and writes
+`rag_index.json` + `rag_vectors.bin` (900-character context chunks) and
+`rag_index_small.json` + `rag_vectors_small.bin` (50-character detail chunks)
+into `/var/lib/asanai-rag/data/`. Both builds are incremental. Use
+`--no-small` to skip the detail index or `--only small` to rebuild it alone;
+`--probe-small "question"` shows the anchor plus its two neighbours.
 
 If you only changed CSS or JavaScript, no reindex is needed.
 
@@ -165,6 +175,8 @@ Edit `/etc/asanai-rag.env` and `systemctl restart asanai-rag`:
 |---|---|---|
 | `OLLAMA_MODEL` | `qwen2.5:1.5b` | Generation model |
 | `RERANK_MODEL` | `Xenova/ms-marco-MiniLM-L-6-v2` | Cross-encoder |
+| `SMALL_INDEX` | `1` | `0` disables the 50-character detail index and restores large-index-only retrieval |
+| `SMALL_CHUNKS` | `3` | Detail anchors per answer (1–5) |
 | `MAX_QUEUE` | `20` | Pending requests before 429 |
 | `MAX_ANSWER_TOKENS` | `512` | Answer budget; if reached, the text is trimmed to a complete sentence |
 | `NUM_CTX` | `4096` | Context window |
