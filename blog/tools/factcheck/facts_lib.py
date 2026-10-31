@@ -181,7 +181,7 @@ def canon_subject(raw: Any) -> str:
             if key in raw:
                 return canon_subject(raw[key])
         return ""
-    text = str(raw).strip().lower()
+    text = str(raw).strip().lower().replace("_", "-")
     text = re.sub(r"\s+", " ", text)
     text = text.strip(" .,:;!?\"'`")
     if text in SUBJECT_ALIASES:
@@ -432,7 +432,7 @@ def canon_ref(raw: Any) -> str:
             if key in raw:
                 return canon_ref(raw[key])
         return ""
-    text = str(raw).strip()
+    text = str(raw).strip().replace("_", "-")
     text = re.sub(r"\s+", "-", text)
     text = re.sub(r"[^A-Za-z0-9_.+\-/]+", "", text).lower()
     return text.strip("-")
