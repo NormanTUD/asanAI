@@ -139,3 +139,110 @@ uv run blog/tests/fact_ledger_test.py
 
 Ein fehlendes, verwaistes oder widersprüchliches Fact-File lässt den Job
 fehlschlagen.
+
+## Verbesserungs-Roadmap (erster Draft → belastbares System)
+
+Das jetzige System ist bewusst konservativ. Es prüft **nur Claims, die im
+Ledger stehen**. Damit ist die größte Lücke klar:
+
+### P0 — unregistrierte Claims erkennen
+
+Ein neuer Satz mit einer neuen Zahl, einem neuen Datum oder einer neuen
+Modell-Spec, der nicht ins Fact-File eingetragen wurde, ist für den Checker
+unsichtbar. Das ist die wichtigste nächste Ausbaustufe.
+
+Vorschlag:
+
+- `extract_candidates.py` extrahiert aus jeder **geänderten** Lektion alle
+  Kandidaten (Zahl + Einheit, Jahr, Modellname, Formel).
+- Für jeden Kandidaten: Gibt es einen passenden Claim im Fact-File?
+- Nein → CI-Fehler `unregistered claim at file:line: quote`.
+- Ausnahmen (Beispiel, Schätzung, Quiz-Antwort) müssen explizit markiert
+  werden, z. B. `qualifiers: {"example": true}` oder ein Makro
+  `<!-- fact-example -->`.
+- Nur geänderte Lektionen prüfen (`git diff --name-only`), aber gegen das
+  **volle** Registry vergleichen.
+
+### P0 — Regeneration und Zitat-Frische
+
+- `extract_facts.py --check`: erzeugt die Dateien in einem Temp-Verzeichnis
+  und schlägt fehl, wenn ein nicht-kuratiertes Fact-File vom Generator
+  abweicht. So kann niemand vergessen, nach einer Textänderung zu
+  regenerieren.
+- `check_facts.py` prüft, ob `quote` noch in der PHP-Datei vorkommt (nahe
+  `line`). Das findet veraltete Facts nach Umbauten.
+
+### P1 — Datengetriebene Registry
+
+Die Alias-Tabellen liegen aktuell in `facts_lib.py`. Besser:
+`blog/facts/registry.json` mit
+
+```json
+{
+  "subjects": {"gpt-3": {"aliases": ["GPT3", "GPT 3"], "kind": "model"}},
+  "predicates": {"params": "parameters", "context_length": "context_window"},
+  "units": {"billion": "1e9", "Billionen": "1e12"}
+}
+```
+
+Dann können neue Entitäten ohne Python-Änderung ergänzt werden, und die
+Registry ist versioniert und reviewbar.
+
+### P1 — Manifest für wirklich jede PHP-Datei
+
+`blog/facts/_manifest.json` listet **jede** Top-Level-PHP als
+`lesson` oder `infrastructure`. Die Coverage-Prüfung vergleicht dagegen.
+Damit ist „jede PHP-Datei“ explizit und neue, unklassifizierte Dateien
+fallen sofort auf. Infrastruktur-Dateien bekommen ein Fact-File mit
+`kind: "infrastructure"` und null Claims.
+
+### P1 — Beispiele und Nicht-Fakten markieren
+
+Zahlen in Quizfragen, hypothetischen Rechnungen („20 Layer“) und
+didaktischen Beispielen dürfen keine Fakten werden. Der Extraktor sollte
+Quiz-/`<script>`-Blöcke komplett überspringen (teilweise schon umgesetzt)
+und `example: true` respektieren. Der Checker darf solche Claims nicht als
+harte Widersprüche behandeln.
+
+### P2 — Reichhaltigere Normalisierung
+
+- Datumsintervalle (`ca.`, `~`, `vor`, `nach`, `zwischen`).
+- Einheiten über eine kleine Konversionstabelle oder `pint`
+  (`GB`/`GiB`/`TB`, `%`, `USD`, `TFLOPS`).
+- Formeln als normalisierter AST (`sympy`), damit `6ND` und `2ND + 4ND`
+  als gleich erkannt werden.
+- Währungen mit explizitem Jahr/Preisstand.
+
+### P2 — Quellen-Metadaten deterministisch prüfen
+
+- Citation-Key existiert (bereits implementiert).
+- Crossref/OpenAlex/arXiv-Metadaten: Autor, Titel, Jahr passen zum Claim.
+- Optional: Keyword-/Entitäts-Overlap zwischen Claim und Quellentitel.
+  Das ist deterministisch, aber nur ein Signal — keine Wahrheitsgarantie.
+
+### P2 — Mutationstests gegen den echten Korpus
+
+Für jeden der ~30 Kern-Fakten wird in einer temporären Kopie der Lektion
+der Wert mutiert (`175e9` → `170e9`, `2012` → `2011`, `989` → `495`).
+Der Checker muss anschlagen. Das beweist, dass die Erkennung nicht still
+kaputtgeht. Ein Beispiel dafür ist bereits in
+`blog/tests/fact_ledger_test.py`.
+
+### P3 — Review-Workflow und Severity
+
+- `--json`-Report mit `severity`, `confidence`, `status`.
+- `unverified`-Queue für Claims ohne Belegstelle.
+- `reviewed`-Feld, damit ein Mensch bestätigen kann.
+- Getrennte CI-Stufen: harte Fehler blockieren, weiche Hinweise nur warnen.
+
+### P3 — Schema-Migration
+
+`schema_version` ernst nehmen: bei Änderungen ein Migrationsskript und
+einen Test, der alte Dateien weiter lesen kann.
+
+### Was das System weiterhin nicht kann
+
+Es garantiert **interne Konsistenz und Registrierung**, nicht die Wahrheit
+beliebiger Prosa. Kausale Behauptungen, Bewertungen, Interpretationen und
+„X beeinflusste Y“ bleiben ohne typisiertes Prädikat + Quelle
+`unverified` und gehören in die menschliche Review-Queue.
