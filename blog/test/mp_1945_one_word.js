@@ -61,23 +61,6 @@
         }
       }
 
-      var phrase = "one word after another";
-      var fs = Math.max(20, Math.min(w, h) * 0.062);
-      ctx.save();
-      ctx.font = fs + "px " + SERIF;
-      var pw = ctx.measureText(phrase).width;
-      ctx.restore();
-      var px = w * 0.5 - pw / 2;
-      var py = h * 0.5;
-      MP.label(ctx, phrase, w * 0.5, py, c.ink, fs, "center", SERIF);
-
-      var blink = (Math.sin(t * 2.2) + 1) / 2;
-      ctx.save();
-      ctx.globalAlpha = 0.25 + 0.65 * blink;
-      ctx.fillStyle = c.accent;
-      ctx.fillRect(px + pw + fs * 0.18, py - fs * 0.56, Math.max(2, fs * 0.06), fs * 1.1);
-      ctx.restore();
-
       ctx.save();
       ctx.globalAlpha = 0.05;
       MP.label(ctx, "¶", w * 0.82, h * 0.36, c.accent, Math.min(w, h) * 0.42, "center", SERIF);
