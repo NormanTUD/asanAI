@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2435;
+var DEFAULT_EXPECTED_TEST_COUNT = 2441;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -10067,11 +10067,35 @@ async function _coverage_tests_low_coverage_modules() {
 		test_equal("origami_live clamps exponents high", OrigamiLive._clampExp(100), 60);
 		test_equal("origami_live clamps exponents low", OrigamiLive._clampExp(-100), -60);
 
+		// --- debug error counters ---
+		var errs_before_debug = num_errs;
+		err("coverage error probe");
+		test_equal("debug err increments the error counter", num_errs, errs_before_debug + 1);
+		num_errs = errs_before_debug;
+		var warns_before_debug = num_wrns;
+		wrn("coverage warning probe");
+		test_equal("debug wrn increments the warning counter", num_wrns, warns_before_debug + 1);
+		num_wrns = warns_before_debug;
+
+		// --- fcnn_editable mouse conversion ---
+		var fcnnCanvas = document.getElementById("fcnn_canvas");
+		if (fcnnCanvas) {
+			var converted = _fcnn_edit_convert_mouse_to_canvas({}, 10, 20);
+			test_equal("fcnn_editable converts mouse coordinates", !!converted && typeof converted.canvasMouseX === "number", true);
+		}
+
 		// --- online_python.js ---
 		var pyCanvas = PyodideEditor.createCanvas(12, 8);
 		test_equal("online_python creates a canvas", pyCanvas.width, 12);
 		test_equal("online_python canvas has the requested height", pyCanvas.height, 8);
 		test_equal("online_python reports captured photos as an array", Array.isArray(PyodideEditor.getCapturedPhotos()), true);
+		PyodideEditor.appendRichOutput(document.createElement("span"));
+		var pyConsole = document.getElementById("pyodide_console_output");
+		test_equal("online_python appends rich output", !!pyConsole && pyConsole.querySelector(".pe-rich-output, span") !== null, true);
+		PyodideEditor.displayHtml("<b>coverage</b>");
+		test_equal("online_python displays html", !!pyConsole && pyConsole.textContent.indexOf("coverage") !== -1, true);
+		PyodideEditor.clearPrediction();
+		test_equal("online_python clears predictions", PyodideEditor.getLastPrediction(), null);
 	} finally {
 		for (var ti = 0; ti < tensors.length; ti++) {
 			try { await dispose(tensors[ti]); } catch (e) {}
