@@ -157,6 +157,7 @@ function _set_webcam_button_translation (key) {
 async function _startWebcamDataStream(video_element) {
 	l(language[lang]["starting_webcam"]);
 	_set_webcam_button_translation("disable_webcam");
+	_set_webcam_data_status("webcam_data_status_starting", "Starting camera…");
 
 	window.cam = await _startStreamAndAssignToCam(video_element);
 
@@ -175,7 +176,27 @@ function _show_webcam_data_stream_ui() {
 	$("#webcam_data").show();
 	$(".webcam_data_button").show();
 	webcam_custom_data_started = true;
+	_set_webcam_data_status("webcam_data_status_ready", "Camera ready");
 	_start_webcam_custom_data_prediction();
+}
+
+function _ensure_webcam_data_status() {
+	var status = $("#webcam_data_status");
+	if (status.length) return status;
+
+	status = $("<div id='webcam_data_status' class='webcam_data_status'></div>");
+	var video = $("#webcam_data video").last();
+	if (video.length) {
+		status.insertAfter(video);
+	} else {
+		$("#webcam_data").append(status);
+	}
+	return status;
+}
+
+function _set_webcam_data_status(key, fallback) {
+	var text = (typeof language !== "undefined" && language[lang] && language[lang][key]) || fallback;
+	_ensure_webcam_data_status().attr("data-tr-text", key).text(text);
 }
 
 function _ensure_webcam_data_prediction_container() {
@@ -354,12 +375,48 @@ async function _configureWebcamUI(available_webcams_list) {
 
 async function _captureAndProcessWebcamImage(elem, nol, _enable_train_and_last_layer_shape_warning) {
 	if (!nol) l(language[lang]["taking_photo_from_webcam"]);
+	_set_webcam_data_status("webcam_data_status_capturing", "Taking picture…");
+
+	// Insert the preview immediately so the click gives feedback while the
+	// camera frame is still being captured.
+	const category = $(elem).parent();
+	const category_name = $(category).find(".own_image_label").val();
+	const base_id = await md5(category_name);
+	let i = 1;
+	let id = base_id + "_" + i;
+	while (document.getElementById(id + "_canvas")) { i++; id = base_id + "_" + i; }
+
+	const canvas = insertCanvasIntoCategory(elem, category_name, id, 160, 90);
+	const wrapper = $(canvas).closest(".own_image_span")[0];
+	if (wrapper) {
+		wrapper.classList.add("webcam-capture-pending");
+		$("<span class='webcam_capture_spinner'></span>").appendTo(wrapper);
+	}
+
+	// Give the browser a frame to paint the placeholder/spinner before the
+	// synchronous capture work starts.
+	await new Promise(function (resolve) {
+		if (typeof requestAnimationFrame === "function") {
+			requestAnimationFrame(function () {
+				requestAnimationFrame(resolve);
+			});
+		} else {
+			setTimeout(resolve, 0);
+		}
+	});
 
 	let capturedTensor = await getValidTensorFromCamStream(cam);
 	if (!capturedTensor) {
+		if (wrapper) {
+			$(wrapper).remove();
+			update_image_counters();
+		}
+		_set_webcam_data_status("webcam_data_status_error", "Could not take picture.");
 		if (!nol) l(language[lang]["error_taking_photo"]);
 		return;
 	}
+
+	_set_webcam_data_status("webcam_data_status_processing", "Processing image…");
 
 	let maxSize = 200;
 	let [canvasWidth, canvasHeight] = computeCanvasSizeFromTensor(capturedTensor, maxSize);
@@ -379,14 +436,8 @@ async function _captureAndProcessWebcamImage(elem, nol, _enable_train_and_last_l
 	await dispose(capturedTensor);
 	if (resizedTensor !== capturedTensor) await dispose(resizedTensor);
 
-	const category = $(elem).parent();
-	const category_name = $(category).find(".own_image_label").val();
-	const base_id = await md5(category_name);
-	let i = 1;
-	let id = base_id + "_" + i;
-	while (document.getElementById(id + "_canvas")) { i++; id = base_id + "_" + i; }
-
-	const canvas = insertCanvasIntoCategory(elem, category_name, id, canvasWidth, canvasHeight);
+	canvas.width = canvasWidth;
+	canvas.height = canvasHeight;
 
 	if (cam_image && cam_image.length && cam_image[0] && cam_image[0].length) {
 		if (canvasWidth === cam_image[0].length && canvasHeight === cam_image.length) {
@@ -401,8 +452,15 @@ async function _captureAndProcessWebcamImage(elem, nol, _enable_train_and_last_l
 		}
 	}
 
+	if (wrapper) {
+		$(wrapper).find(".webcam_capture_spinner").remove();
+		wrapper.classList.remove("webcam-capture-pending");
+	}
+	update_image_counters();
+
 	if (_enable_train_and_last_layer_shape_warning) enable_train();
 	if (!nol) l(language[lang]["took_photo_from_webcam"]);
+	_set_webcam_data_status("webcam_data_status_ready", "Camera ready");
 
 	got_images_from_webcam = true;
 }
@@ -1063,6 +1121,7 @@ async function set_custom_webcam_training_data() {
 	// always starts a fresh stream. Reusing a leftover cam wrapper can keep a
 	// stream whose track still says "live" but no longer delivers frames.
 	l(language[lang]["starting_webcam"]);
+	_set_webcam_data_status("webcam_data_status_starting", "Starting camera…");
 	_set_webcam_button_translation("disable_webcam");
 	const video_element = _prepareVideoElement($("#webcam_data"));
 	$("#webcam_data").hide();

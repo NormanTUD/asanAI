@@ -515,6 +515,13 @@ async function restart_webcams () {
 		await get_data_from_webcam(1);
 	}
 
+	if (cam && typeof _webcam_stream_is_active === "function" && !_webcam_stream_is_active()) {
+		const wait_start = Date.now();
+		while (!_webcam_stream_is_active() && Date.now() - wait_start < 3000) {
+			await delay(50);
+		}
+	}
+
 	remove_overlay();
 }
 
