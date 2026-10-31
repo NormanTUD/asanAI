@@ -6102,7 +6102,11 @@ var OrigamiLive = (function (global) {
 		_marchingSquares:  _marchingSquares,
 		classColor:        _classColor,
 		classColorCss:     _classColorCss,
-		palette:           PALETTE
+		palette:           PALETTE,
+		_fnv:              _fnv,
+		_hashNums:         _hashNums,
+		_regColor:         _regColor,
+		_clampExp:         _clampExp
 	};
 
 	if (typeof global !== "undefined") {

@@ -4201,7 +4201,24 @@ var OrigamiFolds = (function (global) {
 		_makeGrid:            _makeGrid,
 		_gridDistortion:      _gridDistortion,
 		classColor:           _classColor,
-		classPalette:         CLASS_PALETTE
+		classPalette:         CLASS_PALETTE,
+		_viridis:             _viridis,
+		_distortionT:         _distortionT,
+		_distortionScale:     _distortionScale,
+		_hashNumbers:         _hashNumbers,
+		_mergeBounds:         _mergeBounds,
+		_spaceKey:            _spaceKey,
+		_boxWireframe:        _boxWireframe,
+		_isReluLike:          _isReluLike,
+		_isSoftFold:          _isSoftFold,
+		_expectedQuadCount:   _expectedQuadCount,
+		_validIdx:            _validIdx,
+		_triAreaSq:           _triAreaSq,
+		_offsetAct:           _offsetAct,
+		_sanitizeAct:         _sanitizeAct,
+		_sanitizeTraces:      _sanitizeTraces,
+		_sceneNameFor:        _sceneNameFor,
+		_defaultCamera:       _defaultCamera
 	};
 
 	if (typeof global !== "undefined") {

@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2407;
+var DEFAULT_EXPECTED_TEST_COUNT = 2435;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -10035,6 +10035,37 @@ async function _coverage_tests_low_coverage_modules() {
 		OrigamiLive.setConfig({ gridRes: 9 });
 		test_equal("origami_live stores a valid config", OrigamiLive.getConfig().gridRes, 9);
 		OrigamiLive.setConfig({ gridRes: oldLiveGrid });
+
+		test_equal("origami_folds viridis returns css colors", OrigamiFolds._viridis(0).indexOf("rgb("), 0);
+		test_equal("origami_folds viridis changes with the value", OrigamiFolds._viridis(0) !== OrigamiFolds._viridis(1), true);
+		test_equal("origami_folds distortion is neutral at zero", OrigamiFolds._distortionT(0, -1, 1), 0.5);
+		test_equal("origami_folds distortion stays below neutral for negatives", OrigamiFolds._distortionT(-1, -1, 1) < 0.5, true);
+		test_equal("origami_folds distortion scale is a list", OrigamiFolds._distortionScale(true).length, 9);
+		test_equal("origami_folds hash numbers is stable", OrigamiFolds._hashNumbers([1, 2, 3]), OrigamiFolds._hashNumbers([1, 2, 3]));
+		test_equal("origami_folds hash numbers changes with input", OrigamiFolds._hashNumbers([1, 2, 3]) !== OrigamiFolds._hashNumbers([1, 2, 4]), true);
+		test_equal("origami_folds merges bounds", OrigamiFolds._mergeBounds({x:{lo:0,hi:1},y:{lo:0,hi:1},z:{lo:0,hi:1},dim:2},{x:{lo:-1,hi:0.5},y:{lo:-1,hi:0.5},z:{lo:-1,hi:0.5},dim:3}).x.lo, -1);
+		test_equal("origami_folds builds a space key for inputs", OrigamiFolds._spaceKey({isInput:true}), "input");
+		test_equal("origami_folds builds a space key for layers", OrigamiFolds._spaceKey({layerIdx:2}), "L2");
+		test_equal("origami_folds builds a wireframe", OrigamiFolds._boxWireframe({x:{lo:0,hi:1},y:{lo:0,hi:1},z:{lo:0,hi:1}},2).xs.length > 0, true);
+		test_equal("origami_folds recognizes ReLU activations", OrigamiFolds._isReluLike("relu"), true);
+		test_equal("origami_folds recognizes soft folds", OrigamiFolds._isSoftFold("tanh"), true);
+		test_equal("origami_folds counts 2D quads", OrigamiFolds._expectedQuadCount(3,2), 4);
+		test_equal("origami_folds validates indices", OrigamiFolds._validIdx(2,3), true);
+		test_equal("origami_folds rejects fractional indices", OrigamiFolds._validIdx(1.5,3), false);
+		test_equal("origami_folds computes triangle area", OrigamiFolds._triAreaSq([0,1,0],[0,0,1],[0,0,0],0,1,2), 1);
+		test_equal("origami_folds offsets activations", OrigamiFolds._offsetAct({xs:[0],ys:[0],zs:[0],dim:2,n:1},2,5).zs[0], 5);
+		var sanitized = OrigamiFolds._sanitizeAct({xs:[NaN,2],ys:[Infinity,3],zs:[0,4],dim:3,n:2}, false);
+		test_equal("origami_folds sanitizes activations", isFinite(sanitized.xs[0]) && isFinite(sanitized.ys[0]), true);
+		var sanitized_traces = OrigamiFolds._sanitizeTraces([{x:[NaN,1],y:[2,Infinity],z:[0,3],marker:{color:[NaN,"red"]}}]);
+		test_equal("origami_folds sanitizes traces", sanitized_traces[0].x[0], 0);
+		test_equal("origami_folds names scene zero", OrigamiFolds._sceneNameFor(0), "scene");
+		test_equal("origami_folds names later scenes", OrigamiFolds._sceneNameFor(2), "scene3");
+		test_equal("origami_folds gives 1D cameras depth", OrigamiFolds._defaultCamera(1).eye.z, 0.9);
+		test_equal("origami_live fnv hashes strings", OrigamiLive._fnv(0, "abc") > 0, true);
+		test_equal("origami_live hashes numbers", OrigamiLive._hashNums([1,2,3]) > 0, true);
+		test_equal("origami_live regression colors are numeric", typeof OrigamiLive._regColor(0.5), "number");
+		test_equal("origami_live clamps exponents high", OrigamiLive._clampExp(100), 60);
+		test_equal("origami_live clamps exponents low", OrigamiLive._clampExp(-100), -60);
 
 		// --- online_python.js ---
 		var pyCanvas = PyodideEditor.createCanvas(12, 8);
