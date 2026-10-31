@@ -16,6 +16,39 @@ function _webcam_stream_is_active() {
 	}
 }
 
+async function _wait_for_camera_feed_ready(timeoutMs) {
+	var start = Date.now();
+	while (Date.now() - start < (timeoutMs || 6000)) {
+		var video = cam && cam.video;
+		if (_webcam_stream_is_active() && video && video.readyState >= 2 && video.videoWidth > 1 && video.videoHeight > 1) {
+			return true;
+		}
+		await delay(50);
+	}
+	return false;
+}
+
+function _webcam_preview_dimensions() {
+	var width = 640;
+	var height = 480;
+	try {
+		if (cam && cam.video && cam.video.videoWidth > 1 && cam.video.videoHeight > 1) {
+			width = cam.video.videoWidth;
+			height = cam.video.videoHeight;
+		}
+	} catch (e) {}
+	var ratio = Math.min(1, 200 / Math.max(width, height));
+	return [Math.max(1, Math.round(width * ratio)), Math.max(1, Math.round(height * ratio))];
+}
+
+function _set_camera_search_status(key, fallback) {
+	var status = document.getElementById("camera_search_status");
+	if (!status) return;
+	var text = (typeof language !== "undefined" && language[lang] && language[lang][key]) || fallback;
+	status.setAttribute("data-tr-text", key);
+	status.textContent = text;
+}
+
 function _updateWebcamButtonToStopped() {
 	$("#show_webcam_button").html(`
 		<span class="large_button" style="display:inline-block; position:relative; width:64px; height:64px;">
@@ -386,7 +419,8 @@ async function _captureAndProcessWebcamImage(elem, nol, _enable_train_and_last_l
 	let id = base_id + "_" + i;
 	while (document.getElementById(id + "_canvas")) { i++; id = base_id + "_" + i; }
 
-	const canvas = insertCanvasIntoCategory(elem, category_name, id, 160, 90);
+	const [placeholderWidth, placeholderHeight] = _webcam_preview_dimensions();
+	const canvas = insertCanvasIntoCategory(elem, category_name, id, placeholderWidth, placeholderHeight);
 	const wrapper = $(canvas).closest(".own_image_span")[0];
 	if (wrapper) {
 		wrapper.classList.add("webcam-capture-pending");
@@ -507,12 +541,14 @@ async function switch_to_next_camera_predict() {
 	await show_webcam(1);
 }
 
-async function init_webcams() {
+async function init_webcams(keep_overlay = false) {
 	if (inited_webcams) {
 		return;
 	}
 
-	show_overlay(getCameraSearchHTML());
+	const had_overlay = document.querySelectorAll(".overlay").length > 0;
+	if (!had_overlay) show_overlay(getCameraSearchHTML());
+	_set_camera_search_status("checking_webcams", "Checking webcams…");
 	taint_privacy();
 
 	inited_webcams = true;
@@ -524,7 +560,9 @@ async function init_webcams() {
 
 	await _configureWebcamUI(available_webcams);
 
-	remove_overlay();
+	if (!keep_overlay && !had_overlay) {
+		remove_overlay();
+	}
 }
 
 function stop_webcam() {
@@ -1112,7 +1150,10 @@ async function set_custom_webcam_training_data() {
 	labels = [];
 
 	dbg("Init webcams");
-	await init_webcams();
+	await init_webcams(true);
+	if (!document.querySelector(".overlay")) {
+		show_overlay(getCameraSearchHTML());
+	}
 
 	const switched_to_image = $("#data_origin").val() != "image";
 	let early_stream_promise = null;
@@ -1121,6 +1162,7 @@ async function set_custom_webcam_training_data() {
 	// always starts a fresh stream. Reusing a leftover cam wrapper can keep a
 	// stream whose track still says "live" but no longer delivers frames.
 	l(language[lang]["starting_webcam"]);
+	_set_camera_search_status("webcam_data_status_starting", "Starting camera…");
 	_set_webcam_data_status("webcam_data_status_starting", "Starting camera…");
 	_set_webcam_button_translation("disable_webcam");
 	const video_element = _prepareVideoElement($("#webcam_data"));
@@ -1141,6 +1183,9 @@ async function set_custom_webcam_training_data() {
 		await early_stream_promise;
 	}
 
+	_set_camera_search_status("webcam_data_status_waiting", "Waiting for the camera…");
+	await _wait_for_camera_feed_ready(6000);
+
 	if(_webcam_stream_is_active()) {
 		_show_webcam_data_stream_ui();
 	} else {
@@ -1158,6 +1203,10 @@ async function set_custom_webcam_training_data() {
 	if (_webcam_stream_is_active()) {
 		_show_webcam_data_stream_ui();
 	}
+
+	_set_camera_search_status("webcam_data_status_ready", "Camera ready");
+	await delay(200);
+	remove_overlay();
 
 	dbg("Done setting web for custom training data");
 }
@@ -1178,6 +1227,7 @@ function _stop_webcam_if_active() {
 
 function getCameraSearchHTML() {
 	var html = `
+<div style="display:flex; flex-direction:column; align-items:center; gap:14px;">
 <div style="position: relative; width: 150px; height: 150px;">
   <div style="
     position: absolute;
@@ -1206,6 +1256,8 @@ function getCameraSearchHTML() {
       animation: counter-rotate 3s linear infinite;
     ">🔍</div>
   </div>
+</div>
+<div id="camera_search_status" class="camera_search_status"></div>
 </div>
 <style>
 @keyframes orbit {

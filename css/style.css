@@ -664,6 +664,14 @@ body:not(.darkmode) #webcam_data_prediction {
 	font-weight: 600;
 }
 
+.camera_search_status {
+	max-width: 320px;
+	text-align: center;
+	font-size: 16px;
+	line-height: 1.4;
+	opacity: 0.85;
+}
+
 .webcam_data_status {
 	margin-top: 4px;
 	padding: 2px 6px;
