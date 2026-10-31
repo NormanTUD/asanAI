@@ -49,7 +49,9 @@ browser  ──POST /ask.php──▶  PHP proxy  ──▶  127.0.0.1:8090  (qu
 - **Two granularities:** next to the 900-character context index, a second index
   stores 50-character anchors. The service picks the best three anchors and
   appends each anchor together with the chunk before and after it, so the model
-  gets precise details as well as the broader context. Set `SMALL_INDEX=0` in
+  gets precise details as well as the broader context. The detail index uses
+  the packed `potion-base-8M` model that also powers browser search, so it
+  builds in seconds; the large index keeps bge-small. Set `SMALL_INDEX=0` in
   `/etc/asanai-rag.env` to return to the large-index-only behaviour; no reindex
   is needed.
 - **Local-only:** the Python service binds to `127.0.0.1`; `ask.php` is the only

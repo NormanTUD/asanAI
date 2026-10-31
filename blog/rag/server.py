@@ -72,6 +72,7 @@ SMALL_INDEX_ENABLED = os.environ.get("SMALL_INDEX", "1").strip().lower() not in 
     "off",
 )
 SMALL_CHUNKS = max(1, min(5, int(os.environ.get("SMALL_CHUNKS", "3"))))
+SMALL_EMBED_MODEL = "potion-base-8M"
 
 # The blog admin may run as the checkout owner while the service runs as
 # www-data. Group-writable SQLite files let the ACL grant both users access.
@@ -311,6 +312,7 @@ class RagEngine:
         self.small_vectors = None
         self.small_scales = None
         self.small_bm25 = None
+        self.small_embedder = None
         if SMALL_INDEX_ENABLED:
             try:
                 small_meta, small_vectors, small_scales = load_index(
@@ -326,6 +328,23 @@ class RagEngine:
                     chunk["pt"] + " " + chunk["h"] + " " + chunk["x"]
                     for chunk in self.small_chunks
                 ])
+                if small_meta.get("model") == SMALL_EMBED_MODEL:
+                    try:
+                        tools_dir = str(BLOG_DIR / "tools")
+                        if tools_dir not in sys.path:
+                            sys.path.insert(0, tools_dir)
+                        from build_semantic_index import (
+                            DEFAULT_MODEL,
+                            Embedder,
+                            load_packed,
+                        )
+
+                        self.small_embedder = Embedder(*load_packed(DEFAULT_MODEL))
+                    except Exception as exc:
+                        print(
+                            f"warning: small embedder unavailable: {exc}",
+                            file=sys.stderr,
+                        )
             except FileNotFoundError:
                 pass
             except Exception as exc:
@@ -361,6 +380,20 @@ class RagEngine:
         except Exception as exc:
             print(f"warning: query embedding failed: {exc}", file=sys.stderr)
             return None
+
+    def embed_small_question(self, text: str):
+        embedder = getattr(self, "small_embedder", None)
+        if embedder is not None:
+            try:
+                vector = np.asarray(embedder.embed(text), dtype=np.float32)
+                norm = float(np.linalg.norm(vector))
+                if norm:
+                    vector /= norm
+                return vector
+            except Exception as exc:
+                print(f"warning: small query embedding failed: {exc}", file=sys.stderr)
+                return None
+        return self.embed_question(text)
 
     def _with_context(self, index: int, max_chars: int = 1400):
         chunk = dict(self.chunks[index])
@@ -432,9 +465,13 @@ class RagEngine:
             if page
             else (lambda index: True)
         )
-        query = self.embed_question(question)
+        query = self.embed_small_question(question)
         dense = []
-        if query is not None and getattr(self, "small_vectors", None) is not None:
+        if (
+            query is not None
+            and getattr(self, "small_vectors", None) is not None
+            and query.shape[0] == self.small_vectors.shape[1]
+        ):
             scores = (self.small_vectors @ query) * self.small_scales
             order = np.argsort(-scores)[:25]
             dense = [int(index) for index in order if in_scope(int(index))]
@@ -1327,6 +1364,7 @@ class RagService:
             "model_present": model_present,
             "chunks": len(getattr(self.engine, "chunks", [])),
             "small_chunks": len(getattr(self.engine, "small_chunks", []) or []),
+            "small_embedder": bool(getattr(self.engine, "small_embedder", None)),
             "embedder": bool(getattr(self.engine, "embedder", None)),
             "reranker": bool(getattr(self.engine, "reranker", None)),
             "query_log": str(getattr(self.query_log, "path", "")),
