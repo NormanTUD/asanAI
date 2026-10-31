@@ -23,7 +23,7 @@ This chapter is everything a vision model does and how it does it. First the **m
 
 The idea of hierarchical visual feature detection was pioneered by \citeauthor{neocognitron}: he published multilayered visual feature-extraction networks as early as 1969 and introduced the \cite[Neocognitron]{neocognitron} in 1979 (English 1980), directly inspired by \citeauthorlastnameand{hubelwiesel}'s Nobel Prize–winning research on the mammalian visual cortex. Years later, in \citeyear{lecun1989backpropagation}, LeCun et al. made the concept practical by combining convolutions with backpropagation to recognize handwritten ZIP codes for the U.S. Postal Service. That 1989 system was a research prototype; the first *commercially deployed* convolutional network was the later LeNet-5, built into NCR's check-reading systems and fielded in U.S. banks from about 1996.
 
-The prototype lineage became the mainstream in 2012. **ImageNet** — 14 million images organized by WordNet, with a 1,000-class ILSVRC challenge — gave vision a common benchmark of realistic difficulty (\cite[Deng et al., 2009]{deng2009imagenet}). **AlexNet** (\cite[Krizhevsky et al., 2012]{krizhevsky2012imagenet}) trained a deep CNN on two consumer GPUs and cut the top-5 error to 15.3 percent, beating the runner-up by more than ten points. It was not a new idea — convolutions, ReLU, and dropout all existed — but it was the first demonstration that scale, data, and GPU compute could leave hand-engineered features behind. The third AI boom is usually dated from that result.
+The prototype lineage became the mainstream in 2012. **ImageNet** — 3.2 million images in its 2009 release (later about 14 million), organized by WordNet, with a 1,000-class ILSVRC challenge — gave vision a common benchmark of realistic difficulty (\cite[Deng et al., 2009]{deng2009imagenet}). **AlexNet** (\cite[Krizhevsky et al., 2012]{krizhevsky2012imagenet}) trained a deep CNN on two consumer GPUs; its 7-model ensemble reached 15.3 percent top-5 error (a single model reached 18.2 percent), beating the runner-up by more than ten points. It was not a new idea — convolutions, ReLU, and dropout all existed — but it was the demonstration, at ImageNet scale, that data and GPU compute could leave hand-engineered features behind. The third AI boom is usually dated from that result.
 
 \citeauthorlastnameand{hubelwiesel}'s paper serves as the direct biological blueprint for Convolutional Neural Networks (CNNs):
 
@@ -41,7 +41,7 @@ $$
 (\mathbf{I} * \mathbf{K})(x, y) = \sum_{i} \sum_{j} \mathbf{I}(x+i,\; y+j) \cdot \mathbf{K}(-i,\; -j)
 $$
 
-Where $\mathbf{I}$ is the input image, $\mathbf{K}$ is the kernel, and $(x, y)$ is the output pixel coordinate. This is computed independently for each color channel (Red, Green, Blue).
+Where $\mathbf{I}$ is the input image, $\mathbf{K}$ is the kernel, and $(x, y)$ is the output pixel coordinate. This is the mathematical convolution (the kernel is flipped). Deep-learning libraries usually implement *cross-correlation* instead — the same sliding window without the flip — and for an RGB image one kernel slice per input channel is summed, not kept independent. For a single-channel image the two operations differ only by a flip of $\mathbf{K}$.
 
 The kernel can equally be read as a **template**: at every position the convolution measures the strength of the *match* between kernel and the patch of image beneath it — patches that resemble the kernel produce large responses, so a feature map is literally a map of where the kernel's pattern is believed to occur. Seen this way, a convolution is a sliding search engine, and its filters are the *hypotheses* the network formed about what the image contains \cite{colah2014conv}.
 
@@ -293,7 +293,7 @@ $cvcodetabs = array(
 render_gem_tabs($cvcodetabs, "computer_vision");
 ?>
 <div class="md">
-Both versions train with `python3 tf.py --mode train --path dataset` (one subfolder of images per class) and classify with `python3 tf.py --mode predict --path dataset/cat/1.jpg`, saving `classifier.pth` (PyTorch) or `classifier.keras` (TensorFlow). In one line the pipeline is: **normalize $\to$ conv (features) $\to$ pool (invariance) $\to$ flatten $\to$ dense + softmax ($P(\text{class})$)** — each step differentiable, which is what makes end-to-end learning possible.
+Both versions train with `python3 pytorch.py --mode train --path dataset` or `python3 tensorflow.py --mode train --path dataset` (one subfolder of images per class) and classify with `python3 pytorch.py --mode predict --path dataset/cat/1.jpg` or `python3 tensorflow.py --mode predict --path dataset/cat/1.jpg`, saving `classifier.pth` (PyTorch) or `classifier.keras` (TensorFlow). In one line the pipeline is: **normalize $\to$ conv (features) $\to$ pool (invariance) $\to$ flatten $\to$ dense + sigmoid (binary) or softmax (multi-class)** — each step differentiable, which is what makes end-to-end learning possible.
 </div>
 
 <div class="md">

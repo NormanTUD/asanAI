@@ -66,7 +66,7 @@ And here is the surprise. With a **smooth, strictly monotone** activation, each 
 cut, tear, or fold** it. It preserves every topological property — a loop stays a loop, a
 region that surrounds another still surrounds it, connected things stay connected (\cite[Morris, Topology Without Tears, Ch. 4, p. 89]{morris2007topology}).
 
-Poincaré gave the question its modern form in *Analysis Situs* (1895): two spaces are the same when a homeomorphism carries one to the other, and the fundamental group records the loops no such map can remove (\cite[Poincaré, 1895]{poincareanalysissitus}). Brouwer supplied the fact the width argument quietly leans on: a continuous injective map from an open subset of $\mathbb{R}^n$ into $\mathbb{R}^n$ is open, so it cannot lower dimension or squash a neighbourhood to a point (\cite[Brouwer, 1911]{brouwer1911fixed}). A singular weight matrix is exactly that forbidden collapse.
+Poincaré gave the question its modern form in *Analysis Situs* (1895): two spaces are the same when a homeomorphism carries one to the other, and the fundamental group records the loops no such map can remove (\cite[Poincaré, 1895]{poincareanalysissitus}). Brouwer supplied the fact the width argument quietly leans on: a continuous injective map from an open subset of $\mathbb{R}^n$ into $\mathbb{R}^n$ is open, so it cannot lower dimension or squash a neighbourhood to a point (\cite[Brouwer, 1911]{brouwer1911invariance}). A singular weight matrix is exactly that forbidden collapse.
 </div>
 
 <div class="optional md" data-headline="The homeomorphism theorem, proved" data-mathlevel="65">
@@ -130,7 +130,7 @@ problem. This is a genuine **topological lower bound** on the width of a network
 the first time a topological property of the *data* has produced a hard statement about the
 *architecture* that is needed to solve it.
 
-Morse theory gives the smooth counterpart of the fold. For a smooth scalar function on a manifold, the topology of its sublevel sets changes only when the gradient vanishes, at a critical point (\cite[Morse, 1929]{morse1929foundations}). A layer with invertible $W$ and a strictly monotone activation has an invertible Jacobian everywhere, so it contributes no such critical point: it can move the data, but it cannot change its topology. ReLU is different — its kink at zero is a whole critical locus, and that is where a fold can be born.
+Morse theory gives the smooth counterpart of the fold. For a smooth scalar function on a manifold, the topology of its sublevel sets changes only when the gradient vanishes, at a critical point (\cite[Morse, 1929]{morse1929foundations}). A layer with invertible $W$ and an activation whose derivative is positive everywhere (tanh, sigmoid, softplus) has an invertible Jacobian everywhere, so it contributes no such critical point: it can move the data, but it cannot change its topology. ReLU is different — its kink at zero is a whole critical locus, and that is where a fold can be born.
 
 In the demo below, train a 2-layer tanh net on the egg with **two** hidden units and watch
 it flounder at a ceiling well short of 100%. Then switch to **three** and watch the same

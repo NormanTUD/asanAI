@@ -280,7 +280,7 @@ LayerNorm has a beautiful geometric interpretation: after centering (subtracting
 
 The key insight: **LayerNorm separates direction from magnitude**. Only the *direction* of the activation vector carries information about the token's identity and context. The *magnitude* is discarded because it's unreliable, it can vary due to accumulated activations, layer depth, or input length. By projecting onto a sphere of radius $\sqrt{d}$, LayerNorm forces the model to encode all information in angular relationships alone, making learning more stable and less sensitive to the absolute scale of activations.
 
-This is why Transformers work well with Pre-Norm: the clean spherical geometry ensures that attention patterns depend only on the *angle* between query and key vectors, not their potentially erratic magnitudes.
+This is why Transformers work well with Pre-Norm: LayerNorm removes the token-level scale before the query/key projections, so attention logits are not dominated by runaway activation magnitudes. (The per-head query and key magnitudes still matter: $q\cdot k = \|q\|\|k\|\cos\theta$.)
 </div>
 
 <div class="md">
@@ -316,7 +316,7 @@ The output's root mean square is exactly $1$, which is what the normalization pr
 
 To normalize a feature map, you first have to decide **which numbers get pooled into the same average**. LayerNorm says “all channels of one token”; BatchNorm says “this channel across all samples in the batch”. **Group Normalization (GN)** \cite{wu2018groupnorm} splits the $C$ channels into $G$ slices (groups), then for each group computes **one** mean and **one** std across that group's channels × all spatial positions.
 
-The payoff: GN is **independent of the batch**, so it works at batch size 1 (essential for high-resolution image generation, where memory forces tiny batches), while still **preserving channel structure** that LayerNorm throws away. This is why every ResBlock of Stable Diffusion ends with `Conv → GroupNorm → SiLU`.
+The payoff: GN is **independent of the batch**, so it works at batch size 1 (essential for high-resolution image generation, where memory forces tiny batches), while still **preserving channel structure** that LayerNorm throws away. This is why Stable Diffusion's ResBlocks are built from `GroupNorm → SiLU → Conv` (twice, with a residual add), rather than relying on batch statistics.
 
 Drag the slider below and watch the same eight channels get regrouped.
 </div>

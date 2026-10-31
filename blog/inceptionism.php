@@ -19,15 +19,13 @@ Everything so far trained a network by adjusting **weights** so that an input ma
 
 Start from pure noise, maximize the “banana” output, and the noise organizes into a banana — first a blurry, surreal one, then, zoomed in with feedback, an endless cascade of banana-things. The authors describe the mechanism in plainly human terms \cite{mordvintsev2015inceptionism}:
 
-> …this can be thought of as essentially an “inception”-like process, where the network will produce a recurring signal … just as it is with children, who consider the clouds and see animals.
-
-> “A child's mind sees objects in clouds — the network sees them in noise.”
+> This creates a feedback loop: if a cloud looks a little bit like a bird, the network will make it look more like a bird. This in turn will make the network recognize the bird even more strongly on the next pass and so forth, until a highly detailed bird appears, seemingly out of nowhere.
 </div>
 
 <div class="md">
 ### Gradient Ascent on a Class
 
-A classifier trained on ImageNet computes a score for each of ~22,000 classes. In forward mode the image is fixed and the network reads it; in dream mode the roles flip — a single random seed gradient-ascented on the “banana” channel. The same image can be optimized for *any* class or any region of it, and the network's layer depth decides the visual style: low layers produce edges, curves and simple strokes; high layers assemble **whole objects** from what they represent \cite{mordvintsev2015inceptionism}.
+A classifier trained on ImageNet computes a score for each of 1,000 classes (the Places205 network used for some of the essay's images has 205). In forward mode the image is fixed and the network reads it; in dream mode the roles flip — a single random seed gradient-ascented on the “banana” channel. The same image can be optimized for *any* class or any region of it, and the network's layer depth decides the visual style: low layers produce edges, curves and simple strokes; high layers assemble **whole objects** from what they represent \cite{mordvintsev2015inceptionism}.
 </div>
 
 <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center; margin:16px 0;">
@@ -59,9 +57,9 @@ Instead of prescribing a class, feed the network a photo and ask it to *enhance 
 
 The funniest artifact of the process is that the dreams obey the network's *natural environment*. Asked to dream a dumbbell, the network repeatedly produced pictures of a **weightlifter holding one up** — not because the weights encode a dumbbell standing alone, but because, in the training world, dumbbells practically never appear without a person \cite{mordvintsev2015inceptionism}. The dream exposes the training distribution's hidden scenery.
 
-\marginfig{inceptionism_dumbbells.png}{The network's dumbbell dream: a dumbbell *and* a weightlifter holding it — "dumbbells don't usually appear without people holding them" \cite{mordvintsev2015inceptionism}. (\cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism})}
+\marginfig{inceptionism_dumbbells.png}{The network's dumbbell dream: a dumbbell *and* a weightlifter holding it — "Maybe it's never been shown a dumbbell without an arm holding it." \cite{mordvintsev2015inceptionism}. (\cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism})}
 
-The same effect recurs everywhere: clouds swirled into **birds**, rocks rebuilt as **towers and pagodas**, leaves peppered with **animals**, even a **duck-billed platypus** appearing in a portrait's armpit. Each is a feedback loop — *recognize, amplify, repeat* — until the network's own expectation takes over. This is **engineered pareidolia**, the machine counterpart of the face in the [Jupiter photograph](hallucinations.php) or in everyday household objects: our visual system and a convolutional net both **project trained patterns onto ambiguous input**.
+The same effect recurs everywhere: clouds swirled into **birds**, rocks and trees rebuilt as **towers and pagodas** or buildings, and birds and insects appearing in images of leaves. Each is a feedback loop — *recognize, amplify, repeat* — until the network's own expectation takes over. This is **engineered pareidolia**, the machine counterpart of the face in the [Jupiter photograph](hallucinations.php) or in everyday household objects: our visual system and a convolutional net both **project trained patterns onto ambiguous input**.
 </div>
 
 <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center; margin:16px 0;">
@@ -84,7 +82,7 @@ But because the data is stored at such a high abstraction, the results are an in
 
 ### The Dream Map
 
-An especially revealing variant: instead of starting from noise, start from a real photo. Editing it by gradient ascent shows *where* the network already had opinions — \citeauthor{mordvintsev2015inceptionism} call the visualization a **dream map**, showing which regions the network "understood" as what:
+An especially revealing variant: instead of starting from noise, start from a real photo. Editing it by gradient ascent shows *where* the network already had opinions. The essay's accompanying image — the one whose file is named `image-dream-map` — is captioned simply: "The original image influences what kind of objects form in the processed image."
 </div>
 
 <figure style="background:var(--mn-surface, #f8fafc); padding:16px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0); margin:16px 0; max-width:680px; margin-left:auto; margin-right:auto;">
@@ -97,13 +95,13 @@ An especially revealing variant: instead of starting from noise, start from a re
 
 Zoom the dream into a pattern and run the loop again — the process never settles. Each new pattern is parsed by the network and amplified into new objects, which themselves re-enter the loop: towers sprout from rocks, birds spiral from clouds, and every iteration of the zoom yields *more intricate* structure. In the post's own, now-famous formulation \cite{mordvintsev2015inceptionism}:
 
-> Because of the fractal-like feedback, zooming in on a group of pixels yields an endless stream of new patterns, details, and objects — often whole new worlds.
+> If we apply the algorithm iteratively on its own outputs and apply some zooming after each iteration, we get an endless stream of new impressions, exploring the set of things the network knows about.
 
 ## A Tool, Not a Mirror
 
-The essay ends on a refreshing note. The authors are explicit that these images are **not** a faithful picture of what the network “knows”, but rather *petri dishes for the network's errors and biases* — the weightlifter is exactly the kind of hallucination that leaks training-distribution priors. And they unashamedly welcome the artistic use: neural networks as an instrument, alongside the [perceptual style transfer](computer_vision.php) toolchain, for painters and photographers \cite{mordvintsev2015inceptionism}.
+The essay ends on a refreshing note. The authors are careful not to present these images as a faithful picture of what the network “knows”: visualization can reveal that a network has learned the wrong thing, and can help correct those training mishaps. The weightlifter is exactly the kind of leakage of training-distribution priors they have in mind. And they unashamedly welcome the artistic use: neural networks as an instrument, alongside the [perceptual style transfer](computer_vision.php) toolchain, for painters and photographers \cite{mordvintsev2015inceptionism}.
 
-> Maybe today it is a little artificial and blurry, but the neural network then is a tool for artists — and what the network sees, *you* can learn to see: the next time a cloud looks like a face, remember the network that would agree.
+> It also makes us wonder whether neural networks could become a tool for artists—a new way to remix visual concepts—or perhaps even shed a little light on the roots of the creative process in general.
 
 *All images on this page come from the original blog post and are licensed by **Google Inc.** under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/), except for the MIT Places-database images, which are not used here.*
 </div>

@@ -503,7 +503,7 @@ again**, exactly like real origami. After a few folds a sheet has exponentially 
 than the number of folds you actually made — the creases compound. The same is true here:
 a deep ReLU network is a **piecewise-linear** function whose number of linear regions
 **grows exponentially with depth**. Depth buys a combinatorial explosion of boundaries that
-a wide but shallow net cannot match. The bound is tight: a depth-$L$ network of width 2 in one input dimension produces exactly $2^L$ regions (a "sawtooth" with $2^L$ spikes) \cite{petersen2024mathdl}.
+a wide but shallow net cannot match. The bound is tight: Petersen's extremal depth-$L$ construction at width 2 has $2^{L-1}$ spikes and at least $2^L$ linear pieces \cite{petersen2024mathdl}.
 
 **Many small separations, in a high-dimensional space, *are* the space.** Each crease is one straight cut; a deep network is a large arrangement of such cuts, and the cells they enclose — the **linear regions** — are the pieces the network's space is actually made of. Read those cells the way the book later defines a space (<a href="coherent_difference">Coherent Difference</a>): not as a container that already exists waiting to be filled, but as *distinguishable local data that cohere on their overlaps into an invariant global whole*. Here the local data are the affine regions, the overlaps are the creases they share, and the coherence is the fact that the network is continuous across every crease. So the spatiality a deep net has is not bought by adding dimensions alone; it is *assembled*, crease by crease, out of distinctions.
 
@@ -654,8 +654,7 @@ house, …). The architecture is $10 \to 100 \to 100 \to 10$.
 
 This task is a perfect probe for four reasons: a linear classifier sits near chance (so the
 network *must* manufacture separability); the tabular data offers no advantage to
-convolution (so we stay in the fully-connected regime); the dataset is exhaustive (so the
-true task structure is actually learned); and it is high-dimensional enough to defeat
+convolution (so we stay in the fully-connected regime); the dataset is large and covers all 10 classes, so the true task structure is actually learned (though it is not exhaustive over all possible hands); and it is high-dimensional enough to defeat
 3-D visualization, yet simple enough to reason about.
 
 What the trained network shows is exactly the predicted pattern — strong **dimensionality

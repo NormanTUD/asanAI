@@ -99,7 +99,7 @@ const ResNetLab = {
 		const gain = parseFloat(this.el.gain.value);
 		this.fill(this.el.depth); this.fill(this.el.gain);
 		this.el.depthv.textContent = L + " layers";
-		this.el.gainv.textContent = "≈ " + (gain * 0.95).toFixed(2);
+		this.el.gainv.textContent = "≈ " + gain.toFixed(2);
 
 		const s = this.simulate(L, gain);
 		const C = this.colors();

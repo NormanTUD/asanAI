@@ -18,7 +18,7 @@ Generative models must *go the other way*: instead of shrinking an image into de
 
 > A transposed convolution that upscales by factor 2 with a kernel size of 3 spreads each input pixel over a *square* of the output — and leaves some output pixels darker where those squares overlap.
 
-Neural upsampling has a geometric story: a transposed convolution with stride 2 places each input pixel's “stamp” at 2-pixel intervals. With a $3\times 3$ kernel, those stamps are wide — each one is a **smeared square** on the output, traditionally called a deconvolution, a name that flatters it: a transposed convolution is *not* an inverse of a convolution. \citeauthor{odena2016deconvolution} (\citeyear{odena2016deconvolution}) demonstrated that incorrect naming is a real source of confusion \cite{odena2016deconvolution}.
+Neural upsampling has a geometric story: a transposed convolution with stride 2 places each input pixel's “stamp” at 2-pixel intervals. With a $3\times 3$ kernel, those stamps are wide — each one is a **smeared square** on the output, traditionally called a deconvolution, a name that flatters it: a transposed convolution is *not* an inverse of a convolution. \citeauthor{odena2016deconvolution} (\citeyear{odena2016deconvolution}) note that the operation has several interpretations and several names, and use “deconvolution” for brevity \cite{odena2016deconvolution}.
 </div>
 
 <div class="md" data-mathlevel="45">
@@ -26,7 +26,7 @@ Neural upsampling has a geometric story: a transposed convolution with stride 2 
 
 In one dimension the mechanism is easy to see. Transpose a $3$-wide kernel $\{w_0, w_1, w_2\}$ and walk it across the output with stride 2. Some output positions receive one kernel tap; their neighbors receive two, because the 3-wide kernel “overlaps” itself across the 2-wide stride. With all weights equal, the 1D pattern alternates **1, 2, 1, 2, …**:
 
-$$\text{1D overlap (k=3, s=2):}\quad \dots\quad w_0,\quad w_0{+}w_2,\quad w_1,\quad w_0{+}w_2,\quad \dots$$
+$$\text{1D overlap (k=3, s=2):}\quad \dots\quad w_1,\quad w_0{+}w_2,\quad w_1,\quad w_0{+}w_2,\quad \dots$$
 
 In two dimensions the pattern is the outer product of two such 1D stripes — and since the stride factorizes, you get intensity differences that repeat in a **checkerboard** with a $2\times 2$ tile. The general law, stated by \citeauthor{odena2016deconvolution}: whenever the kernel size is **not divisible by the stride**, the upsampling is uneven — some output positions end up brighter than others \cite{odena2016deconvolution}:
 
@@ -55,7 +55,7 @@ The artifact does **not** wait for training — even a randomly-initialized tran
 
 Three consequences follow \cite{odena2016deconvolution}:
 
-* **Color matters:** the artifact is strongest in **bright**, saturated regions and weakest on black, because the bias term dominates where the image is dark and nearly constant.
+* **Color matters:** the artifact is strongest for **unusual**, saturated colors and weakest near the average color, because producing the average is easy for the bias term while a color far from it needs a large deconvolution contribution.
 * **Layering compounds it:** stacked deconvolutions overlap each decoder stage's pattern, multiplying the checkerboard into a fractal, multi-period grid.
 * **The Internet's favorite workaround** — the one DeepDream already used — is **jitter**: shifting the image by a random number of pixels each iteration and averaging. Averaging over shifts *cancels* the periodic pattern.
 </div>

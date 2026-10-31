@@ -3807,7 +3807,7 @@ window.bibData = {
 		url: "https://www.cs.cmu.edu/~epxing/Class/10715/reading/Kornick_et_al.pdf",
 		title: "Multilayer Feedforward Networks are Universal Approximators",
 		year: 1989,
-		author: "Kurt Hornik"
+		author: "Kurt Hornik, Maxwell Stinchcombe, Halbert White"
 	},
 	"statisticsofextremes": {
 		year: 1958,
@@ -10365,6 +10365,16 @@ window.bibData = {
 		pages: "97–115",
 		url: "https://doi.org/10.1007/BF01456931",
 		alternativetitle: "Brouwer's fixed-point theorem"
+	},
+	"brouwer1911invariance": {
+		title: "Beweis der Invarianz des n-dimensionalen Gebiets",
+		author: "L. E. J. Brouwer",
+		year: 1911,
+		journal: "Mathematische Annalen",
+		volume: 71,
+		pages: "305–313",
+		url: "https://doi.org/10.1007/BF01456846",
+		alternativetitle: "Brouwer's invariance of domain"
 	},
 	"morse1929foundations": {
 		title: "The Foundations of the Calculus of Variations in the Large in m-Space (First Paper)",
@@ -21798,6 +21808,13 @@ window.bibData = {
 		year: 2024,
 		url: "https://arxiv.org/abs/2403.04132",
 		alternativetitle: "Chatbot Arena (Chiang et al., 2024)"
+	},
+	"chiang2023blurryjpeg": {
+		title: "ChatGPT Is a Blurry JPEG of the Web",
+		author: "Ted Chiang",
+		year: 2023,
+		url: "https://www.newyorker.com/tech/annals-of-technology/chatgpt-is-a-blurry-jpeg-of-the-web",
+		alternativetitle: "Ted Chiang, 'ChatGPT Is a Blurry JPEG of the Web' (2023)"
 	},
 	"raffel2020c4": {
 		title: "Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer",

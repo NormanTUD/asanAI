@@ -60,7 +60,7 @@ When the dimensions don't match, we cannot simply add $x$. We must transform $x$
 $$ y = F(x, \{W_i\}) + W_s x $$
 
 **The $1 \times 1$ Convolution:** The most common way to implement $W_s$ is a **$1 \times 1$ Convolution**.
-* **Spatial:** A $1 \times 1$ kernel does not look at neighboring pixels; it preserves the spatial height and width ($H \times W$).
+* **Spatial:** A $1 \times 1$ kernel does not look at neighboring pixels; with stride 1 it preserves the spatial height and width ($H \times W$). When the main path downsamples, the projection shortcut uses the same stride and downsamples with it.
 * **Depth:** It acts as a linear projection across the channels. If input $x$ has $C_\text{in}$ channels and we need $C_\text{out}$ channels, the $1 \times 1$ layer performs a weighted sum of the input channels to produce the desired output depth.
 
 
@@ -122,8 +122,8 @@ This allows the network to match the “shape” of the main path $F(x)$ so the 
 			<input type="range" data-gh="depth" min="2" max="100" step="1" value="20" aria-label="Network depth">
 		</label>
 		<label class="mnlab-ctrl">
-			<span class="mnlab-ctrl-top"><span class="mnlab-label">Local derivative per plain layer</span><span class="mnlab-val" data-gh="gainv">0.9</span></span>
-			<input type="range" data-gh="gain" min="0.5" max="1.3" step="0.01" value="0.8" aria-label="Local derivative per layer">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">Local derivative per plain layer</span><span class="mnlab-val" data-gh="gainv">0.90</span></span>
+			<input type="range" data-gh="gain" min="0.5" max="1.3" step="0.01" value="0.9" aria-label="Local derivative per layer">
 		</label>
 	</div>
 	<div class="mnlab-row" style="margin-top: 8px;">
