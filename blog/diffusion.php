@@ -177,7 +177,7 @@ It is **not** a stack of dense layers. The denoiser is a **U-Net** built from:
 * **Skip connections** from each encoder block to the matching decoder block
 * **Sinusoidal time embedding** for the timestep $t$, injected into every block
 
-The only fully-connected layers are tiny MLPs for the time and text embeddings. Everything else is convolution or attention. Stable Diffusion 1.5 has ~860 M parameters. The forward pass per denoising step: encode $t$, run the noisy latent down through four encoder blocks, apply self- and cross-attention at the bottleneck, run back up through four decoder blocks with skip connections, output the predicted noise.
+The only fully-connected layers are tiny MLPs for the time and text embeddings. Everything else is convolution or attention. Stable Diffusion 1.5's U-Net has ~860 M parameters (the full pipeline, including text encoder and VAE, is about 1 B). The forward pass per denoising step: encode $t$, run the noisy latent down through four encoder blocks, apply self- and cross-attention at the bottleneck, run back up through four decoder blocks with skip connections, output the predicted noise.
 
 ### Stable Diffusion: doing it in a compressed space
 

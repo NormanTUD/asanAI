@@ -47,7 +47,7 @@ where $w$ is a window function (Hann, Hamming) and $H$ is the hop size.
 
 For an LLM to “read” audio as discrete tokens (like text tokens), a **neural codec** compresses audio into a stream of integers. Examples:
 
-* **SoundStream** (Google, 2021): 24 kHz mono audio → discrete codes at 6–24 kbps.
+* **SoundStream** (Google, 2021): 24 kHz mono audio → discrete codes at 3–18 kbps.
 * **EnCodec** (Meta, 2022): 24 kHz stereo → discrete codes; uses a residual vector quantizer.
 * **DAC** (Descript, 2023): improved quality at low bitrates.
 * **Whisper's log-mel**: not discrete, but the de facto input for ASR models.
@@ -93,8 +93,8 @@ TTS has three historical generations:
 
 ### Music Generation
 
-* **Jukebox** (OpenAI, 2020): VQ-VAE on raw audio + autoregressive Transformer. Slow, hours of music.
-* **MusicGen** (Meta, 2024): single-pass Transformer over EnCodec tokens, conditioned on text and (optionally) melody.
+* **Jukebox** (OpenAI, 2020): VQ-VAE on raw audio + autoregressive Transformer. Slow, and limited to a few minutes of music per sample.
+* **MusicGen** (Meta, 2023): single-pass Transformer over EnCodec tokens, conditioned on text and (optionally) melody.
 * **Suno / Udio** (2024): closed-source, end-to-end text → song with vocals and instruments. Industry-leading quality.
 * **Stable Audio** (Stability AI, 2024): latent diffusion over audio spectrograms.
 
@@ -111,7 +111,7 @@ The frontier is a single Transformer that handles text, audio, and image tokens 
 * **Voxtral** (Mistral, 2025): open-weight 24B audio model.
 * **Qwen2-Audio** (Alibaba, 2024): open-weights audio chat model.
 
-The training data for these is massive: trillions of audio-text interleaved examples. Internally, audio is encoded into the LLM's vocabulary; the model is trained as a normal next-token predictor.
+The training data for these is massive: trillions of audio tokens, interleaved with text. Internally, audio is encoded into the LLM's vocabulary; the model is trained as a normal next-token predictor.
 </div>
 
 <div class="md">

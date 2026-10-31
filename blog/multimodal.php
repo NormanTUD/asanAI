@@ -127,7 +127,7 @@ The LLM treats the visual tokens as if they were a foreign language it has been 
 | **MM-Bench** | Broad multimodal evaluation | Now multilingual |
 | **RealWorldQA** | Real-world spatial reasoning | Self-driving, robotics |
 
-The leaderboard has shifted dramatically: in 2022, GPT-3.5 with no vision got ~0% on MMMU. By 2025, top models (GPT-4o, Claude 3.5, Gemini 1.5 Pro) exceed 70%, and on VQA v2 they exceed 85%.
+The leaderboard has shifted dramatically: when MMMU appeared in 2023, text-only models sat near the random baseline. By 2025, top models (GPT-4o, Claude 3.5, Gemini 1.5 Pro) exceed 70%, and on VQA v2 they exceed 85%.
 </div>
 
 <div class="md">
@@ -159,7 +159,7 @@ Multimodal LLMs are conceptually simple:
 2. **Project** all modalities into a shared token space (or use cross-attention).
 3. **Train** the model as a normal next-token predictor on the joint sequence.
 
-The hard parts are data (curating trillions of matched image-text-audio samples, see the Training Data chapter), compute (vision towers + LLMs + alignment data = massive training runs), and evaluation (the benchmarks above are still being developed). But the architectural recipe is now standard and reproducible, which is why every frontier lab ships multimodal-by-default in 2025.
+The hard parts are data (curating billions of matched image-text-audio samples, see the Training Data chapter), compute (vision towers + LLMs + alignment data = massive training runs), and evaluation (the benchmarks above are still being developed). But the architectural recipe is now standard and reproducible, which is why every frontier lab ships multimodal-by-default in 2025.
 </div>
 
 <script>

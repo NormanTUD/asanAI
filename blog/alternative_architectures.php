@@ -74,7 +74,7 @@ $$
 B_t, C_t, \Delta_t = \text{Linear}(x_t)
 $$
 
-i.e. the state-transition matrices depend on the current input. This breaks linearity at inference (the recurrence must be computed step by step), but allows the model to selectively remember or forget based on context. Mamba matches Transformer quality at language modelling, scales linearly in $n$, and at inference runs roughly as fast as a Transformer with KV-cache enabled (the standard optimized setting; see Production Serving chapter).
+i.e. the state-transition matrices depend on the current input. This breaks time-invariance, so the efficient global-convolution mode is no longer available and the recurrence must be run step by step; in exchange the model can selectively remember or forget based on context. Mamba matches Transformer quality at language modelling, scales linearly in $n$, and at inference avoids the growing KV-cache (see Production Serving chapter).
 </div>
 
 <div class="md">
@@ -112,13 +112,13 @@ $\phi(x) = \exp(-\|x\|^2/2) \cdot (\exp(\omega_1 \cdot x), \ldots, \exp(\omega_m
 <div class="md">
 #### RetNet (Sun et al., Microsoft, 2023)
 
-RetNet uses $\phi = \text{ELU} + 1$ (a simple element-wise nonlinearity) and supports three computation modes:
+RetNet uses a **decayed retention** mechanism (a decay matrix $D_{nm} = \gamma^{n-m}$) and supports three computation modes:
 
 * **Parallel**: same $O(n^2 \cdot d)$ as Transformer during training.
 * **Recurrent**: $O(d^2)$ state, like an SSM at inference.
 * **Chunkwise**: hybrid, sliding window.
 
-RetNet claims 8× lower latency and 7× lower memory than vanilla Transformer at inference.
+RetNet reports 8.4× faster decoding and about 70% less memory than a vanilla Transformer at inference (roughly 3.3× smaller).
 
 #### RWKV
 

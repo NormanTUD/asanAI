@@ -704,7 +704,7 @@ Below, you can watch this process unfold. The **left panel** shows the geometric
 
 Classical statistics tells us that fitting a model with $P$ parameters to $N$ data
 points requires $N \gg P$ to avoid overfitting. GPT-3 has **175 billion parameters**
-but was trained on **~300 billion tokens**, a ratio of roughly **1.7:1**, which
+but was trained on **~300 billion tokens**, roughly **1.7 tokens per parameter**, which
 classical theory says should catastrophically overfit.
 
 The resolution is the **Manifold Hypothesis**: although the parameter space is
@@ -714,7 +714,7 @@ dimension* of the data manifold, not the ambient parameter space. Natural langua
 despite its surface complexity, has a much lower intrinsic dimension because of the
 constraints of grammar, logic, physics, and human cognition.
 
-LLMs don't overfit despite having as many parameters as the data they're trained on — 175 billion of them for ~300 billion tokens — because the data constrains them to a low-dimensional manifold in parameter space. The 175 billion parameters are not 175 billion independent degrees of
+LLMs don't overfit despite having 175 billion parameters for only ~300 billion training tokens — because the data constrains them to a low-dimensional manifold in parameter space. The 175 billion parameters are not 175 billion independent degrees of
 freedom, they're 175 billion coordinates describing a position on a manifold
 whose intrinsic dimension might be **orders of magnitude smaller**.
 
