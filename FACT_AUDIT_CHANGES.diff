@@ -1,17 +1,17 @@
-# Git diff: blog changes from the fact audit
+# Git diff: changes from the fact audit
 #
 # Base: bfb28faa1 (state before the first audit commit)
-# End:  fd03b2afa (current HEAD at generation time)
-# Range includes the audit commits and the later course-order guard.
-# Human commits since the audit that did not touch blog/ (tests.js, translations.js) are excluded by the -- blog/ pathspec.
+# End:  d8880e0fb (current HEAD at generation time)
+# Includes the blog source changes, the new tests, the order guard and FACT_CHECK_README.md.
 # Generated artifacts (*.bin, *.json indexes, atlas_data) are excluded to keep this diff readable.
 #
 # Full diff including generated files:
-#   git diff bfb28faa1..fd03b2afa -- blog/
+#   git diff bfb28faa1..d8880e0fb -- blog/ FACT_CHECK_README.md
 #
 # Stat:
-#    blog/FACT_AUDIT_UNRESOLVED.md         | 133 ++++++++++++++++++++++
-#    blog/ai_and_society.php               |  28 ++---
+#    FACT_CHECK_README.md                  | 239 ++++++++++++++++++++++++++++++++++
+#    blog/FACT_AUDIT_UNRESOLVED.md         | 151 +++++++++++++++++++++
+#    blog/ai_and_society.php               |  28 ++--
 #    blog/ai_economics.php                 |   8 +-
 #    blog/ai_existential_risk.php          |  10 +-
 #    blog/ai_for_science.php               |   6 +-
@@ -30,7 +30,7 @@
 #    blog/embeddinglab.php                 |   4 +-
 #    blog/fact_lookup.php                  |   6 +-
 #    blog/finetuninglab.php                |   6 +-
-#    blog/frontier.php                     |  21 ++--
+#    blog/frontier.php                     |  21 ++-
 #    blog/geometry_i.php                   |   2 +-
 #    blog/geometry_iii.php                 |   2 +-
 #    blog/global_ai_ecosystem.php          |   6 +-
@@ -39,10 +39,11 @@
 #    blog/human_mind.php                   |   2 +-
 #    blog/inceptionism.php                 |  18 ++-
 #    blog/inference_optimization.php       |   6 +-
+#    blog/information_market.php           |   2 +-
 #    blog/intro.php                        |   2 +-
-#    blog/language.php                     |   2 +-
-#    blog/literature.js                    | 157 ++++++++++++++------------
-#    blog/loss_landscape.php               |  14 +--
+#    blog/language.php                     |   4 +-
+#    blog/literature.js                    | 171 ++++++++++++++----------
+#    blog/loss_landscape.php               |  14 +-
 #    blog/losslab.php                      |   2 +-
 #    blog/math_i.php                       |   2 +-
 #    blog/math_ii.php                      |   2 +-
@@ -51,7 +52,7 @@
 #    blog/multimodal.php                   |   4 +-
 #    blog/music_video_generation.php       |  12 +-
 #    blog/myths.php                        |   2 +-
-#    blog/normalizationlab.php             |   6 +-
+#    blog/normalizationlab.php             |   8 +-
 #    blog/optimizerlab.php                 |  10 +-
 #    blog/origami.php                      |   5 +-
 #    blog/people_of_ai.php                 |   6 +-
@@ -68,26 +69,272 @@
 #    blog/speech_audio.php                 |   8 +-
 #    blog/statistics_i.php                 |   4 +-
 #    blog/statistics_ii.php                |   2 +-
-#    blog/tests/course_order_test.py       | 134 +++++++++++++++++++++++
-#    blog/tests/fact_consistency_test.py   | 200 ++++++++++++++++++++++++++++++++++
+#    blog/tests/course_order_test.py       | 134 +++++++++++++++++++
+#    blog/tests/fact_consistency_test.py   | 208 +++++++++++++++++++++++++++++
 #    blog/tests/lesson_guard.py            |  17 ++-
+#    blog/tests/run_fact_audit.sh          |  51 ++++++++
 #    blog/topology.php                     |   4 +-
 #    blog/training_data.php                |   6 +-
-#    blog/training_infrastructure.php      |  13 ++-
+#    blog/training_infrastructure.php      |  13 +-
 #    blog/trainingdynamics.php             |  12 +-
 #    blog/unexpected_capabilities.php      |  16 +--
 #    blog/untold_history_i.php             |   2 +-
 #    blog/untold_history_ii.php            |   2 +-
 #    blog/untold_history_iii.php           |   2 +-
 #    blog/vectorsearch.php                 |   2 +-
-#    70 files changed, 760 insertions(+), 262 deletions(-)
+#    73 files changed, 1093 insertions(+), 265 deletions(-)
 
+diff --git a/FACT_CHECK_README.md b/FACT_CHECK_README.md
+new file mode 100644
+index 000000000..a6a4ec985
+--- /dev/null
++++ b/FACT_CHECK_README.md
+@@ -0,0 +1,239 @@
++# Automatische Fakten- und Konsistenzprüfung
++
++Diese Datei beschreibt (a) was heute schon automatisch läuft, (b) wie man es
++mit einem Befehl ausführt, und (c) den Vorschlag für ein inhaltliches
++Fakten-Prüfsystem, das aus den Texten selbst Claims extrahiert und global
++verklebt.
++
++Die Kurzfassung: **deterministische Prüfungen blockieren in der CI, LLM/NLI
++schlägt nur vor und braucht immer eine Belegstelle.** Kein Modell darf allein
++darüber entscheiden, ob eine Aussage falsch ist.
++
++---
++
++## 1. Was heute automatisch läuft
++
++| Prüfung | Datei / Befehl | Was sie findet | In CI? |
++|---|---|---|---|
++| Kurs-Reihenfolge | `blog/tests/course_order_test.py` | doppelte `(part, order)`-Paare, fehlende Teile, Lücken | ja, über `lesson_guard.py` |
++| Querschnitts-Fakten | `blog/tests/fact_consistency_test.py` | bekannte falsche Formulierungen, Bibliographie-Identitäten, Citation-Keys, `literature.js`-Syntax | nein (manuell / Runner) |
++| PHP-Syntax + HTML-Balance | `uv run blog/tests/php_validator.py blog/` | PHP-Fehler, kaputte Tags, BOM | ja |
++| JS-Grundprüfung | `uv run blog/tests/js_validator.py blog/` | Klammern, Strings, `debugger`, DOM-Tippfehler | ja |
++| Lesson-Guards | `uv run blog/tests/lesson_guard.py blog/` | Zitate, Quiz-Balance, Footer, **Order** | ja |
++| Bibliographie-Duplikate | `uv run blog/tests/literature_dup_keys.py blog/` | doppelte Top-Level-Keys | ja |
++| Node-Unit-Tests | `node blog/tests/{topics,math_alt,keypoint,search_js,semantic_js,rag_chat}_test.js` | DOM-/Such-/Quiz-Logik | ja |
++| Suchindex-Frische | `uv run blog/tests/{semantic,rag}_index_test.py` | Index passt nicht zum Inhalt | ja |
++| RAG inkrementell | `uv run blog/tests/rag_incremental_test.py` | Builder reused/embedded falsch | ja |
++| Atlas | `python3 blog/atlas_data/atlas_check.py` | Entities/Threads/Bibliographie | manuell |
++| Link-Checker | `uv run blog/tests/link_checker.py blog/` | tote URLs, falsche PDFs | wöchentlich |
++| Render-Validator | `uv run blog/tests/php_render_validator.py blog/ --pages …` | JS-Fehler, LaTeX, Breite | teilweise |
++
++### Ein-Kommando-Runner
++
++```bash
++bash blog/tests/run_fact_audit.sh          # schnelle + Index-/Atlas-Prüfungen
++bash blog/tests/run_fact_audit.sh --fast   # nur die schnellen Guards
++```
++
++Der Runner bricht beim ersten Fehler ab (`set -euo pipefail`) und gibt die
++rohen Ausgaben der Tests aus.
++
++### Order-Test im Detail
++
++`blog/tests/course_order_test.py` prüft:
++
++- `part` und `order` sind Integer,
++- `order >= 1`,
++- **keine doppelte `(part, order)`-Kombination** → harter Fehler,
++- Teile 1–6 existieren,
++- Lücken in einer Teil-Reihenfolge → Warnung (kein harter Fehler, damit das
++  Löschen einer Lektion nicht sofort alles blockiert).
++
++Er ist in `lesson_guard.py` importiert und läuft damit in der bestehenden
++CI. Ein künstliches Duplikat erzeugt:
++
++```
++✗ duplicate course position part=3 order=1: lesson04 and lesson05
++[FAIL] course order: 1 error(s), 0 warning(s)
++```
++
++---
++
++## 2. Vorschlag: Claim-Ledger mit Gluing-Checks
++
++### Grundidee
++
++Jede Lektion ist eine lokale Sektion. Jede prüfbare Aussage wird zu einem
++Claim mit Provenienz:
++
++```json
++{
++  "claim_id": "language-23-1",
++  "lesson": "language",
++  "file": "blog/language.php",
++  "line": 23,
++  "quote": "likely entering widespread social use by 100,000 years ago",
++  "subject_id": "concept:language",
++  "predicate": "widespread_social_use",
++  "value": {"kind": "time", "approx": true, "years_before_present": 100000},
++  "qualifiers": {"species": "Homo sapiens"},
++  "citation_keys": ["earlylanguage"],
++  "status": "extracted"
++}
++```
++
++Überlappungen sind dieselben `(subject_id, predicate)`-Paare. Das ist die
++Verklebe-Bedingung: Wenn zwei Lektionen über dasselbe Entität-Merkmal reden,
++müssen die normalisierten Werte übereinstimmen — sonst gibt es einen
++Obstruktionsbericht. Die Presheaf-Sprache ist hier nützlich, aber der
++Implementierung ist sie egal; entscheidend sind kanonische Entitäten,
++explizite Qualifier und ein Report statt stiller Annahmen.
++
++### Stufen
++
++**Tier 0 — deterministisch, jeder Push, < 10 s**
++
++- PHP/Markdown → Textspans, Sätze, `\cite`-Bindung.
++- Regex + kuratierte Dictionaries für Zahlen, Einheiten, Jahre, Modellnamen,
++  Versionen.
++- Kanonisierung: `175 billion` → `1.75e11`, `1,4 Billionen` → `1.4e12`,
++  `~20` → Intervall.
++- Abgleich gegen ein kleines **Fact Registry** (`registry.yaml`): 30–50
++  Kernentitäten (GPT-2/3/4, Transformer, Chinchilla, Llama 2/3, AlexNet,
++  ResNet, H100, AlphaFold, …).
++- Meldet harte Widersprüche: gleiche Entität + gleiches Merkmal +
++  verschiedene Werte ohne Versions-/Zeit-Qualifier.
++
++**Tier 1 — Cross-Lesson-Checks, nightly**
++
++- Alle Claims als JSONL/SQLite sammeln.
++- Constraints: Gleichheit, Toleranz, Intervalle, Ordnungsrelationen,
++  Einheitenumrechnung, Formel-AST-Vergleich.
++- Optional Z3 für harte Constraint-Systeme (Datumsordnungen, Budgets,
++  FLOPs).
++- Output: `fact_report.md` mit `file:line`, Claim, Widerspruch,
++  Schweregrad.
++
++**Tier 2 — Quellenprüfung, weekly**
++
++- Citation-Keys → Crossref/OpenAlex/arXiv/Semantic Scholar.
++- PDF/HTML cachen, Text extrahieren (GROBID/`pdftotext`/`docling`).
++- Für jeden Claim die relevante Passage per BM25 + Embedding holen.
++- NLI (z. B. DeBERTa-MNLI) **oder** lokales LLM (Ollama/Qwen) als Judge,
++  aber mit Pflicht auf **wörtliches Zitat + Seite/Abschnitt**.
++- Numerische Claims zusätzlich deterministisch parsen und vergleichen —
++  NLI ist bei Zahlen unzuverlässig.
++- Ergebnis: `supported` / `contradicted` / `unverified`. Ohne Belegstelle
++  niemals `contradicted`.
++
++### Datenmodell (JSONL / SQLite)
++
++```
++claim_id, lesson, file, line, span, quote,
++subject_id, predicate, value, unit, time, qualifiers,
++citation_keys[], source_urls[], source_evidence{quote,page},
++status, severity, detector, confidence
++```
++
++### Ordnerstruktur (Vorschlag)
++
++```
++blog/tools/factcheck/
++  extract.py        # Lektionen -> claims.jsonl
++  registry.yaml     # kanonische Entitäten und Specs
++  normalize.py      # Einheiten, Jahre, Intervalle, Modellnamen
++  check.py          # Cross-Lesson-Constraints + Report
++  verify_sources.py # Tier 2: Quellen holen, NLI/LLM, Belegstellen
++  report.py         # Markdown/HTML-Report
++  golden/           # manuell gelabelte Claims (Precision/Recall)
++```
++
++Keine Laufzeit-Abhängigkeit für die Site: eigene PEP-723-Umgebung, nicht im
++Apache-Build.
++
++### Erster Meilenstein
++
++1. `extract.py`: Lektionen parsen, Sätze mit Zitaten und Zahlen als JSONL.
++2. `registry.yaml`: 30 Kernentitäten mit kanonischen Specs.
++3. `check.py`: Registry-Abgleich + Cross-Lesson-Duplikate, Report als
++   Markdown.
++4. Zuerst **non-blocking** in CI, Baseline-Snapshot committen.
++5. Golden Set (ca. 200 Claims, 10 Lektionen) labeln; Precision/Recall pro
++   Detektor messen.
++6. Erst dann die hochsicheren Regeln blockierend schalten.
++7. Tier 2 als separaten Nightly-Job.
++
++### CI-Integration
++
++Schnelle Guards (heute schon):
++
++```yaml
++- name: Fact audit (fast)
++  run: bash blog/tests/run_fact_audit.sh --fast
++```
++
++Nightly (Tier 1/2):
++
++```yaml
++- name: Full fact report
++  run: bash blog/tests/run_fact_audit.sh
++- name: Source verification
++  run: uv run blog/tools/factcheck/verify_sources.py blog/
++```
++
++### Evaluierung
++
++- Golden Set: ca. 200 manuell gelabelte Claims
++  (`supported` / `contradicted` / `unverified`) und ca. 50 bekannte
++  Cross-Lesson-Konflikte.
++- Precision-first: keine Fehlalarme in der CI.
++- Jede akzeptierte Korrektur wird Regressionstest (Ledger oder
++  `fact_consistency_test.py`).
++
++### Grenzen und Risiken
++
++- Entity-Resolution ist der schwierigste Teil; mit einem kleinen kuratierten
++  Registry starten und manuell erweitern.
++- PDFs/HTML/Paywalls: cachen und als `unverified` markieren, nicht raten.
++- LLM-Halluzination: nur mit Beleg-Span akzeptieren.
++- Versionen und Definitionen explizit machen: `GPT-3 175B` ≠ `GPT-4`;
++  `total params` ≠ `active params`; `context window` ≠ `training tokens`.
++- Toleranzen statt Scheingenaugkeit: exakt bei Zählern, relativ bei
++  Schätzungen, Intervalle bei „~“, „about“, „mehr als“.
++
++---
++
++## 3. Aktueller Audit-Stand
++
++- Lesbarer Diff der Quelltext-Änderungen: `FACT_AUDIT_CHANGES.diff`
++  (Basis `bfb28faa1`, Ende `fd03b2afa`; generierte Binärdateien/Indizes
++  ausgeschlossen).
++- Ungeklärte Punkte: `blog/FACT_AUDIT_UNRESOLVED.md`.
++- Order-Guard: `blog/tests/course_order_test.py`, eingebunden in
++  `lesson_guard.py`.
++- Querschnitts-Fakten: `blog/tests/fact_consistency_test.py`.
++
++### Nützliche Einzelbefehle
++
++```bash
++uv run blog/tests/fact_consistency_test.py
++uv run blog/tests/course_order_test.py blog/
++uv run blog/tests/lesson_guard.py blog/
++uv run blog/tests/php_validator.py blog/
++uv run blog/tests/js_validator.py blog/
++uv run blog/tests/literature_dup_keys.py blog/
++uv run blog/tests/semantic_index_test.py
++uv run blog/tests/rag_index_test.py
++uv run blog/tests/rag_incremental_test.py
++(cd blog && python3 atlas_data/atlas_check.py)
++```
++
++### Bekannte Einschränkungen
++
++- Der vollständige `php_render_validator.py --all-lessons`-Lauf braucht lokal
++  sehr lange (> 30 min) und wurde hier nicht komplett abgeschlossen; ein
++  repräsentativer Seiten-Subset-Lauf war grün.
++- `link_checker.py` meldet aktuell 230 harte Fehlschläge, überwiegend
++  arXiv-Verbindungsabbrüche und DOI-403 (Bot-Schutz), nicht inhaltliche
++  Widersprüche. Die fünf schlimmsten toten Einträge wurden behoben; Details
++  in `blog/FACT_AUDIT_UNRESOLVED.md`.
 diff --git a/blog/FACT_AUDIT_UNRESOLVED.md b/blog/FACT_AUDIT_UNRESOLVED.md
 new file mode 100644
-index 000000000..1d8b4305c
+index 000000000..586738a4a
 --- /dev/null
 +++ b/blog/FACT_AUDIT_UNRESOLVED.md
-@@ -0,0 +1,133 @@
+@@ -0,0 +1,151 @@
 +# Fakten-Audit — ungeklärte Punkte
 +
 +Umfang: alle 95 Lektionen in `blog/*.php`, ihre Zitate in `literature.js` und
@@ -113,15 +360,33 @@ index 000000000..1d8b4305c
 +| `derivativelab.php:41`, `derivativelab.php:235`, `optimizerlab.php:435`, `geometry_ii.php:186` | Hadamards Memoir von 1908 führte das Steilste-Abstiegs-Verfahren für eingespannte elastische Platten ein. | Der Eintrag `hadamard1908` ist weiterhin eine Wikipedia-Geschichtsseite (`literature.js`, Autor „Wikipedia contributors“, 2026). Gallica und der BnF-Katalog blockieren automatisierte Zugriffe von diesem Host; ein DOI-/Numdam-Datensatz wurde nicht gefunden. | Das Original *Mémoire sur le problème d’analyse relatif à l’équilibre des plaques élastiques encastrées* (1908) oder eine wissenschaftliche Geschichte, die es zitiert. Dann den Wikipedia-Eintrag ersetzen. |
 +| `math_i.php:21` | Der Lebombo-Knochen sei „durch 24 Radiokarbonmessungen“ auf 42.000–43.000 Jahre datiert. | Der zitierte Bruderer-Artikel (CACM 2024) lieferte HTTP 403; die genaue Zahl der Messungen war im Abstract nicht sichtbar. | Volltext Bruderer (2024) oder die ursprüngliche Border-Cave-/Lebombo-Datierungsarbeit. |
 +| `foam_of_meaning.php:369` | Die intrinsische Dimension „peak around 19–22“ und „only 1–3 % of the ambient width“. | Das arXiv-Abstract bestätigt das Hourglass-Profil und die Fit-Steigungen, aber nicht diese beiden Zahlen. | Volltext Mabrok (2026), Tabellen/Abbildungen mit den Schätzungen pro Schicht. |
-+| `language.php:23` | Die Sprachfähigkeit sei „likely entering widespread social use by 100,000 years ago“. | Die zitierte Frontiers-Arbeit (2025) stützt Sprachfähigkeit um 135 kya; das 100-kya-Datum für gesellschaftliche Nutzung steht nicht in Titel/Abstract. | Volltext Miyagawa et al. (2025). |
 +| `history.php:1461` | Venture-Investitionen 1,3 Mrd. $ (2010) → >40 Mrd. $ (2020); ~70 Mrd. $ Unternehmensinvestitionen; zwölffaches Artikelwachstum; zehnfache NeurIPS-Teilnahme. | Aus dem Toosi-et-al.-Review übernommen; die zugrunde liegenden AI-Index-Tabellen wurden nicht erneut gelesen. | Toosi et al. (2021) plus die dort zitierten AI-Index-Tabellen. |
-+| `information_market.php:51` | Johannes Paul II. habe Isidor von Sevilla „um 1997“ als Internet-Patron vorgeschlagen. | Die Lektion kennzeichnet selbst, dass die Quellen uneinig sind, ob daraus je ein förmliches Dekret wurde. | Vatikanisches Dokument oder belegte päpstliche Audienz/Erklärung. |
 +| `computer_vision.php:24` | LeNet-5 sei „the first commercially deployed convolutional network“ gewesen, „from about 1996“ in US-Banken. | LeCun et al. (1989) bestätigen die ZIP-Code-Aufgabe; das exakte Deployment-Datum und der „erste“-Anspruch waren aus dem 1998er-Text nicht sauber extrahierbar. | LeCun et al. (1998) im Volltext plus NCR-/Deployment-Belege. |
 +| `origami.php:462` | Die Huzita–Justin-Axiome stammen von Justin (1986) und wurden von Huzita (1989) wiederentdeckt. | Sekundärquellen datieren Huzitas Vortrag meist auf die Konferenz 1991; eine Publikation von 1989 mag existieren, wurde aber nicht verifiziert. | Huzitas Originalarbeit/Konferenzband. |
 +| `deconvolution.php:65` | Distills DeepDream-Abbildung nutze „8×8 random shifts per iteration“. | Der Distill-Artikel beschreibt ein 8×8-Jitter-Raster, nicht das exakte Protokoll pro Iteration. | Distill-Quellcode/Bildunterschrift oder Autorenhinweis. |
-+| `normalizationlab.php:39` | „GPT-4 family is estimated around 100+ layers.“ | Schätzung, keine veröffentlichte Architekturangabe. | OpenAI-Bericht oder glaubwürdiger Architektur-Leak; sonst ausdrücklich als Spekulation kennzeichnen. |
 +| `deeplearninglab.php:20` | „Dechter (1986)“ und Aizenbergs Priorität für Begriff/Idee. | Die genaue Priorität wurde nicht an den Primärwerken geprüft. | Dechter (1986) und Aizenberg et al. im Original. |
-+| `resnetlab.php:38` | Hochreiters Analyse von 1991 enthalte „already the germ“ der Skip-Connections. | Interpretativ; das Constant-Error-Carousel wird meist auf das LSTM-Papier von 1997 datiert. | Hochreiters Diplomarbeit (1991) vollständig lesen. |
++
++## 1a. Nachträglich geklärt (aus dieser Liste entfernt)
++
++- **`language.php:23`** — Die Aussage folgt jetzt dem Abstract von Miyagawa
++  et al. (2025): Sprache sei demnach die Auslöserin für das „widespread
++  appearance of modern human behavior“ um 100 kya, nicht für „widespread
++  social use“ der Sprache selbst. Quelle:
++  https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2025.1503900/full
++- **`information_market.php:51`** — Die päpstliche 1997er-Zuschreibung ist
++  ersetzt durch das, was die Wired-Recherche von 2002 belegt: katholische
++  Internetgruppen und ein vatikanisches Medienbüro bewarben Isidore, ein
++  förmliches Dekret ist nicht dokumentiert. Quelle:
++  https://www.wired.com/2002/01/searchin-for-the-surfers-saint/
++- **`normalizationlab.php:39`** — GPT-4s Tiefe ist nicht veröffentlicht; die
++  Lektion nennt jetzt eine verbreitete, ausdrücklich unbestätigte
++  120-Schichten-Schätzung von SemiAnalysis (2023). Quelle:
++  https://www.semianalysis.com/p/gpt-4-architecture-infrastructure
++- **`resnetlab.php:38`** — Die Diplomarbeit (1991) wurde gelesen: Sie
++  analysiert den Vanishing Gradient und schlägt einen „konstanten
++  Fehlerrückfluss“ vor (die Idee hinter dem LSTM-CEC), aber keine
++  ResNet-artigen Identity-Shortcuts. Die Lektion sagt das jetzt so. Quelle:
++  https://people.idsia.ch/~juergen/SeppHochreiter1991ThesisAdvisorSchmidhuber.pdf
 +
 +## 2. Zahlen nicht aus dem Primärtext nachgerechnet
 +
@@ -1061,6 +1326,19 @@ index 3161aa904..e4b643daf 100644
  </div>
  
  <div class="md">
+diff --git a/blog/information_market.php b/blog/information_market.php
+index 1a3eecf04..4ed4705df 100644
+--- a/blog/information_market.php
++++ b/blog/information_market.php
+@@ -48,7 +48,7 @@ The urge to gather *all* knowledge into one place is far older than the Enlighte
+ 
+ Isidore did not merely store the classics; he reorganized them. Drawing on hundreds of earlier authors — Pliny, Solinus, Servius, the church fathers — he sorted everything from grammar, rhetoric, and the mathematical *quadrivium* to medicine, law, animals, geography, and the making of furniture into twenty books, each a folder in one universal filing cabinet \cite{etymologiae}. The *Etymologiae* became *the* textbook of the Middle Ages, copied in nearly a thousand surviving manuscripts; so completely did it stand in for the originals that some classical works stopped being copied and were lost, surviving only as his excerpts \cite{etymologiae}.
+ 
+-It is a fitting accident of history, then, that the Catholic Church has come to regard Isidore as the patron saint of the internet — and of computer users and programmers. The attribution traces to Pope John Paul II, who around 1997 proposed the compiler of the first great encyclopedia as a guardian for the network of all knowledge; the sources disagree over whether the gesture was ever made a formal decree, which is itself a very Isidorean sort of uncertainty (\cite[Isidore of Seville, Wikipedia]{isidoreofseville}). A seventh-century bishop who tried to put the whole world into twenty books is, at the very least, the right ancestor for the thing this chapter is about.
++It is a fitting accident of history, then, that the Catholic Church has come to regard Isidore as the patron saint of the internet — and of computer users and programmers. The identification is best described as a popular, informal patronage: in the early 2000s Catholic internet groups and a Vatican media office promoted Isidore for the role, but no formal papal decree is documented, which is itself a very Isidorean sort of uncertainty (\cite[Shachtman, 2002]{wired2002isidore}). A seventh-century bishop who tried to put the whole world into twenty books is, at the very least, the right ancestor for the thing this chapter is about.
+ </div>
+ 
+ <div class="md">
 diff --git a/blog/intro.php b/blog/intro.php
 index 4414d74dc..72dd06957 100644
 --- a/blog/intro.php
@@ -1075,9 +1353,18 @@ index 4414d74dc..72dd06957 100644
  
  ## A Course That Adapts to You
 diff --git a/blog/language.php b/blog/language.php
-index ea348c09c..64cb4480e 100644
+index ea348c09c..64dc0f91d 100644
 --- a/blog/language.php
 +++ b/blog/language.php
+@@ -20,7 +20,7 @@ The intelligence of a modern Large Language Model (LLM) is the digital climax of
+ 
+ Before language could be abstracted into data, it required a radical “hardware” upgrade. Humans possess a vocal tract configuration that is unique among primates.
+ 
+-* **Earliest Signs:** Genomic evidence suggests that the unique human capacity for language was present at least **\cite[135,000 years ago]{earlylanguage}**, likely entering widespread social use by **100,000 years ago**. This “Cognitive Ignition” precedes the archaeological appearance of symbolic art like the \citetitle{blombosochre}.
++* **Earliest Signs:** Genomic evidence suggests that the unique human capacity for language was present at least **\cite[135,000 years ago]{earlylanguage}**, and the same authors propose that language may have triggered the widespread appearance of modern human behavior around **100,000 years ago** (\cite[Miyagawa et al., 2025]{earlylanguage}). This “Cognitive Ignition” precedes the archaeological appearance of symbolic art like the \citetitle{blombosochre}.
+ * **The Descended Larynx:** In most mammals, the larynx (voice box) sits high in the throat, allowing for simultaneous breathing and swallowing. In humans, the larynx descended during evolution, creating a large pharyngeal cavity, an acoustic chamber that allows the tongue to move both vertically and horizontally to produce a vast range of resonant frequencies.
+ * **The First Anatomists:** While ancient Indian texts like the **\cite[Sushruta Samhita]{sushruta}** (c. 300 BCE) mentioned the throat as the source of voice, **\cite[Alcmaeon of Croton]{alcmaeon}** (c. 500 BCE) dissected animals and identified “channels” (*poroi*) that connected the senses to the brain — though whether his dissections were systematic is contested.
+ * **The Renaissance Map:** The most precise early mapping of this “vocal machine” came from **\cite[Leonardo da Vinci]{davinci_anatomical}** (c. 1510). He treated the larynx as an acoustic instrument, sketching the tongue's muscles and performing experiments, such as squeezing the lungs of a dead goose, to show how the larynx produced tone.
 @@ -90,7 +90,7 @@ For a language model, the input is already discrete: tokens. For a human infant,
  
  The most profound leap in human evolution was the transition from **indexical signaling** to **symbolic displacement**. Early primate communication was largely tied to immediate stimuli, a specific call for a specific predator, right here, right now. True language emerged when our ancestors began using sounds to refer to things *absent* in time or space. This required a massive expansion in working memory and the cognitive ability to maintain “mental representations.”
@@ -1088,7 +1375,7 @@ index ea348c09c..64cb4480e 100644
  As these symbolic tools became more refined, language transitioned from a survival utility into a formal system of logic. Once humans could decouple a “number” from a physical pile of stones, they could perform operations on the concept of quantity itself. This “mathematization” of thought, treating words as variables in a logical equation, is what allowed **\cite[Pāṇini]{panini_ashtadhyayi}** to formalize Sanskrit and **\cite[Aristotle]{aristotle_categories}** to categorize the “atoms” of thought. By the time we reached the 20th century, we realized that if language is just a system of abstract symbols and their relationships, it could be mapped into the high-dimensional geometry of a computer.
  
 diff --git a/blog/literature.js b/blog/literature.js
-index 0fa111ff8..0cc25b0de 100644
+index 0fa111ff8..45137173f 100644
 --- a/blog/literature.js
 +++ b/blog/literature.js
 @@ -1837,10 +1837,11 @@ window.bibData = {
@@ -1416,7 +1703,35 @@ index 0fa111ff8..0cc25b0de 100644
  		year: 2020,
  		journal: "Nature Communications",
  		url: "https://www.nature.com/articles/s41467-020-18073-9",
-@@ -21797,6 +21809,13 @@ window.bibData = {
+@@ -19110,6 +19122,13 @@ window.bibData = {
+ 		url: "https://en.wikipedia.org/wiki/Isidore_of_Seville",
+ 		alternativetitle: "Isidore of Seville"
+ 	},
++	"wired2002isidore": {
++		title: "Searchin' for the Surfer's Saint",
++		author: "Noah Shachtman",
++		year: 2002,
++		url: "https://www.wired.com/2002/01/searchin-for-the-surfers-saint/",
++		alternativetitle: "Wired (2002) — the campaign for an internet patron saint"
++	},
+ 	"paulotlet": {
+ 		title: "Paul Otlet",
+ 		author: "Wikipedia contributors",
+@@ -20645,6 +20664,13 @@ window.bibData = {
+ 		year: 2023,
+ 		alternativetitle: "GPT-4"
+ 	},
++	"semianalysis2023gpt4": {
++		title: "GPT-4 Architecture, Infrastructure, Training Dataset, Costs, Vision, MoE",
++		author: "Dylan Patel, Gerald Wong",
++		year: 2023,
++		url: "https://www.semianalysis.com/p/gpt-4-architecture-infrastructure",
++		alternativetitle: "SemiAnalysis (2023) — unconfirmed GPT-4 architecture estimate"
++	},
+ 	"kimi2025k2": {
+ 		url: "https://arxiv.org/abs/2507.20534",
+ 		title: "Kimi K2: Open Agentic Intelligence",
+@@ -21797,6 +21823,13 @@ window.bibData = {
  		url: "https://arxiv.org/abs/2403.04132",
  		alternativetitle: "Chatbot Arena (Chiang et al., 2024)"
  	},
@@ -1636,9 +1951,18 @@ index 395755352..73a40b514 100644
  
  <div class="md">
 diff --git a/blog/normalizationlab.php b/blog/normalizationlab.php
-index 272b1166b..7b9cf8581 100644
+index 272b1166b..03afecfd5 100644
 --- a/blog/normalizationlab.php
 +++ b/blog/normalizationlab.php
+@@ -36,7 +36,7 @@ For a specific layer input vector $x$ with $d$ dimensions, the normalization fol
+ ## Integration in Transformer Models (GPT)
+ In models like **GPT-3** and **GPT-4**, Layer Normalization is the “glue” that keeps the deep stack of blocks stable.
+ 
+-* **Pre-Norm Architecture:** In modern GPT models, LN is applied *before* the Multi-Head Attention and Feed-Forward networks. This creates a “clean” residual path, allowing gradients to flow through 96 layers without exploding or vanishing (together with residual skips). The “96 layers” figure is specific to GPT-3 (175B); other models use different depths, e.g., LLaMA-7B has ~32, LLaMA-70B has ~80, GPT-4 family is estimated around 100+ layers.
++* **Pre-Norm Architecture:** In modern GPT models, LN is applied *before* the Multi-Head Attention and Feed-Forward networks. This creates a “clean” residual path, allowing gradients to flow through 96 layers without exploding or vanishing (together with residual skips). The “96 layers” figure is specific to GPT-3 (175B); other models use different depths, e.g., LLaMA-7B has ~32, LLaMA-70B has ~80. OpenAI has not published the GPT-4 family's depth; a widely circulated 2023 estimate puts it near 120 layers, but this is unconfirmed (\cite[SemiAnalysis, 2023]{semianalysis2023gpt4}).
+ * **Independence from Batch Size:** Unlike Batch Norm, LN does not depend on other samples in the batch. This is vital for GPT because:
+     * Inference often happens one sequence at a time (Batch Size = 1).
+     * Sequence lengths can vary significantly.
 @@ -280,7 +280,7 @@ LayerNorm has a beautiful geometric interpretation: after centering (subtracting
  
  The key insight: **LayerNorm separates direction from magnitude**. Only the *direction* of the activation vector carries information about the token's identity and context. The *magnitude* is discarded because it's unreliable, it can vary due to accumulated activations, layer depth, or input length. By projecting onto a sphere of radius $\sqrt{d}$, LayerNorm forces the model to encode all information in angular relationships alone, making learning more stable and less sensitive to the absolute scale of activations.
@@ -1945,7 +2269,7 @@ index 80abb180f..befd1af3d 100644
  		const s = this.simulate(L, gain);
  		const C = this.colors();
 diff --git a/blog/resnetlab.php b/blog/resnetlab.php
-index b5e3d6113..0642a2473 100644
+index b5e3d6113..1370f284d 100644
 --- a/blog/resnetlab.php
 +++ b/blog/resnetlab.php
 @@ -35,7 +35,7 @@ This was first mathematically accurately described by \citeauthor{hochreiter1991
@@ -1953,7 +2277,7 @@ index b5e3d6113..0642a2473 100644
  ## The Residual Solution
  
 -ResNet (short for *Residual Network*) was introduced by Kaiming He et al. in \citeyear{he2015resnet} in their paper '\citetitle{he2015resnet}', and won the ImageNet competition in December 2015. The skip-connection idea itself, however, did not originate there: Hochreiter's \citeyear{hochreiter1991vanishing} analysis already contained the germ of the idea, and \citeauthor{highway2015}'s **Highway Networks** \citeyear{highway2015} (May 2015, seven months earlier) introduced learnable gating on top of skip connections and demonstrated training of truly deep feedforward networks with hundreds of layers. ResNet can be viewed as the special case of a Highway Network whose gates are always open (see the History chapter). ResNet changes the fundamental building block of the convolution. Instead of trying to learn the mapping $H(x)$ directly, we ask the network to learn the **residual** (the *difference*) $F(x) := H(x) - x$. The original mapping is reconstructed as:
-+ResNet (short for *Residual Network*) was introduced by Kaiming He et al. in \citeyear{he2015resnet} in their paper '\citetitle{he2015resnet}', and won the ImageNet competition in December 2015. The skip-connection idea itself, however, did not originate there: Hochreiter's \citeyear{hochreiter1991vanishing} analysis already contained the germ of the idea, and \citeauthor{highway2015}'s **Highway Networks** \citeyear{highway2015} (May 2015, seven months earlier) introduced learnable gating on top of skip connections and demonstrated training of truly deep feedforward networks with hundreds of layers. ResNet is closely related to a Highway Network whose gates are always open — a useful analogy rather than an exact algebraic special case (see the History chapter). ResNet changes the fundamental building block of the convolution. Instead of trying to learn the mapping $H(x)$ directly, we ask the network to learn the **residual** (the *difference*) $F(x) := H(x) - x$. The original mapping is reconstructed as:
++ResNet (short for *Residual Network*) was introduced by Kaiming He et al. in \citeyear{he2015resnet} in their paper '\citetitle{he2015resnet}', and won the ImageNet competition in December 2015. The skip-connection idea itself, however, did not originate there: \citeauthor{highway2015}'s **Highway Networks** \citeyear{highway2015} (May 2015, seven months earlier) introduced learnable gating on top of skip connections and demonstrated training of truly deep feedforward networks with hundreds of layers. Hochreiter's \citeyear{hochreiter1991vanishing} thesis is a different ancestor: it analysed the vanishing-gradient problem and proposed a *constant error flow* — the idea that became the LSTM's constant error carousel — but it did not propose ResNet-style identity shortcuts. ResNet is closely related to a Highway Network whose gates are always open — a useful analogy rather than an exact algebraic special case (see the History chapter). ResNet changes the fundamental building block of the convolution. Instead of trying to learn the mapping $H(x)$ directly, we ask the network to learn the **residual** (the *difference*) $F(x) := H(x) - x$. The original mapping is reconstructed as:
  
  $$ y = F(x, \{W_i\}) + x $$
  
@@ -2240,10 +2564,10 @@ index 000000000..c0e114740
 +    main()
 diff --git a/blog/tests/fact_consistency_test.py b/blog/tests/fact_consistency_test.py
 new file mode 100644
-index 000000000..fa74367a0
+index 000000000..36144d74c
 --- /dev/null
 +++ b/blog/tests/fact_consistency_test.py
-@@ -0,0 +1,200 @@
+@@ -0,0 +1,208 @@
 +# /// script
 +# requires-python = ">=3.11"
 +# dependencies = []
@@ -2424,6 +2748,14 @@ index 000000000..fa74367a0
 +must_not_contain("philosophy.php", ["under every major scientific theory", "nothing it is like to be them", "surpass the Turing Test regularly"])
 +must_not_contain("myths.php", ["lawsuit that became a settlement"])
 +must_not_contain("atlas.php", ["that appears anywhere in this course is a dot"])
++must_contain("language.php", ["widespread appearance of modern human behavior around **100,000 years ago**"])
++must_not_contain("language.php", ["widespread social use by **100,000 years ago**"])
++must_contain("information_market.php", ["no formal papal decree is documented"])
++must_not_contain("information_market.php", ["Pope John Paul II, who around 1997 proposed"])
++must_contain("normalizationlab.php", ["near 120 layers", "unconfirmed"])
++must_not_contain("normalizationlab.php", ["GPT-4 family is estimated around 100+ layers"])
++must_contain("resnetlab.php", ["constant error flow", "did not propose ResNet-style identity shortcuts"])
++must_not_contain("resnetlab.php", ["already contained the germ of the idea"])
 +must_not_contain("reinforcement_learning.php", ["the first open-weight model to exhibit"])
 +must_not_contain("normalizationlab.php", ["empirically wins on every high-resolution image benchmark"])
 +must_not_contain("reasoning.php", ["(used in o1,"])
@@ -2486,6 +2818,63 @@ index 04701ab10..1064fd5c6 100644
      if total_fail:
          print(f"[FAIL] {total_fail} guard violation(s) found → exit code 1")
          sys.exit(1)
+diff --git a/blog/tests/run_fact_audit.sh b/blog/tests/run_fact_audit.sh
+new file mode 100755
+index 000000000..ffd3b4ad7
+--- /dev/null
++++ b/blog/tests/run_fact_audit.sh
+@@ -0,0 +1,51 @@
++#!/usr/bin/env bash
++# Run the blog fact/consistency checks from the repository root.
++# Usage: bash blog/tests/run_fact_audit.sh [--fast]
++set -euo pipefail
++
++ROOT="$(git rev-parse --show-toplevel)"
++cd "$ROOT"
++
++FAST=0
++if [[ "${1:-}" == "--fast" ]]; then
++	FAST=1
++fi
++
++echo "== fact consistency"
++uv run blog/tests/fact_consistency_test.py
++
++echo "== course order"
++uv run blog/tests/course_order_test.py blog/
++
++echo "== lesson guards (includes course order)"
++uv run blog/tests/lesson_guard.py blog/
++
++echo "== php validator"
++uv run blog/tests/php_validator.py blog/
++
++echo "== js validator"
++uv run blog/tests/js_validator.py blog/
++
++echo "== literature duplicate keys"
++uv run blog/tests/literature_dup_keys.py blog/
++
++echo "== node unit tests"
++for test in topics math_alt keypoint search_js semantic_js rag_chat; do
++	node "blog/tests/${test}_test.js"
++done
++
++if [[ "$FAST" -eq 0 ]]; then
++	echo "== semantic index freshness"
++	uv run blog/tests/semantic_index_test.py
++
++	echo "== rag index freshness"
++	uv run blog/tests/rag_index_test.py
++
++	echo "== rag incremental builder"
++	uv run blog/tests/rag_incremental_test.py
++
++	echo "== atlas data"
++	(cd blog && python3 atlas_data/atlas_check.py)
++fi
++
++echo "== all fact/consistency checks passed (fast=$FAST)"
 diff --git a/blog/topology.php b/blog/topology.php
 index a94117105..311f68b22 100644
 --- a/blog/topology.php
