@@ -203,6 +203,149 @@ Nightly (Tier 1/2):
 
 ---
 
+## 2a. Deterministisch ohne LLM: was wirklich garantiert werden kann
+
+Die ehrliche Grenze: Ob ein beliebiger deutscher oder englischer Satz
+inhaltlich stimmt, ist ohne Sprachemodell nicht allgemein entscheidbar. Was
+sich aber **vollständig deterministisch** garantieren lässt, ist die
+*verklebbare* Schicht: Zahlen, Einheiten, Daten, Modell-Specs, Formeln,
+Entitäten, Zitate und explizit typisierte Aussagen.
+
+Das Ziel ist deshalb nicht „jeden Satz verstehen“, sondern: **Jede prüfbare
+Aussage muss im Ledger stehen. Was nicht im Ledger steht, ist ein Fehler.**
+Ein neuer Text kann dann nicht mehr still eine neue Zahl oder einen neuen
+Widerspruch einführen.
+
+### Die drei deterministischen Schritte
+
+**1. Extrahieren (regelbasiert)**
+
+- Sätze und Textspans aus `.md`-Blöcken.
+- `\cite`-Bindung an den Satz/Absatz.
+- Regex + kuratierte Alias-Tabellen für:
+  - Zahlen mit Einheiten (`175 billion`, `1,4 T`, `989 TFLOPS`, `80 GB`),
+  - Jahre/Daten (`2012`, `November 2022`, `ca. 100 kya`),
+  - Modellnamen (`GPT-3`, `Llama-2 70B`, `H100`, `ResNet-152`),
+  - Formeln (`$...$`, `$$...$$`) als LaTeX-String.
+- Jeder extrahierte Wert bekommt `file:line`, `quote` und `citation_keys`.
+
+**2. Kanonisieren (ohne ML)**
+
+- `registry.yaml` ist die einzige Wahrheit für Kernentitäten:
+
+```yaml
+gpt-3:
+  aliases: ["GPT-3", "GPT3", "Brown et al. 2020 model"]
+  params: 175e9
+  layers: 96
+  d_model: 12288
+  context: 2048
+  train_tokens: 300e9
+  source: "https://arxiv.org/abs/2005.14165"
+
+h100:
+  aliases: ["H100 SXM", "NVIDIA H100"]
+  bf16_dense_tflops: 989
+  tf32_dense_tflops: 495
+  fp8_dense_tflops: 1979
+  memory_gb: 80
+  source: "https://www.nvidia.com/en-us/data-center/h100/"
+```
+
+- Einheiten über `pint` (oder eine kleine eigene Tabelle) in SI umrechnen.
+- Jahre als Intervalle (`ca.`, `~`, `mindestens`).
+- Modellnamen über die Alias-Tabelle auf `subject_id` abbilden.
+- Versionen/Qualifier explizit machen: `gpt-3`, `gpt-4`, `total_params`,
+  `active_params`, `context_window`, `train_tokens`.
+
+**3. Verkleben (Constraints + Baseline)**
+
+- Gruppiere alle Claims nach `(subject_id, predicate, scope)`.
+- Innerhalb einer Gruppe: normalisiere Werte und vergleiche.
+  - exakte Ganzzahlen: Gleichheit,
+  - Schätzungen: relative Toleranz,
+  - Jahre: Intervall-Überlappung,
+  - Einheiten: nach Umrechnung,
+  - Formeln: normalisierter AST (z. B. `sympy`).
+- Ein Konflikt entsteht nur, wenn die Scopes überlappen. `gpt-3.params` und
+  `gpt-4.params` sind verschiedene Scopes; `gpt-3.params` und
+  `gpt-3.active_params` sind verschiedene Prädikate.
+- `baseline.json` speichert den aktuellen Stand. Die CI schlägt nur bei
+  **neuen** Konflikten fehl, nicht bei bekannten Altlasten.
+
+### Die entscheidende Regel: unregistrierte Claims sind Fehler
+
+Für jede geänderte Lektion gilt:
+
+1. Jede Zahl mit Einheit, jedes Jahr, jeder Modellname und jede Formel muss
+   von der Extraktion **konsumiert** werden.
+2. Ist der Claim im Registry bekannt: Wert vergleichen.
+3. Ist er unbekannt: CI meldet
+   `unregistered claim at blog/<datei>.php:<zeile>: <quote>`.
+4. Der Autor trägt den Claim entweder mit Quelle ins Registry ein oder
+   markiert ihn explizit als Beispiel/Näherung/Nicht-Faktum.
+
+Damit ist „verklebbar“ keine Hoffnung, sondern eine Invariante: **Es gibt
+keine neue prüfbare Aussage, die nicht entweder registriert oder abgelehnt
+wurde.**
+
+### Was das konkret findet
+
+| Fall | Deterministisch prüfbar? |
+|---|---|
+| `GPT-3 hat 175B Parameter` vs. `175 Milliarden` | ja (Alias + Einheit + Zahl) |
+| `H100: 495 TFLOPS BF16` vs. Registry 989 BF16 | ja (Prädikat + Einheit) |
+| `Chinchilla: 20 Tokens/Parameter` vs. 10 | ja (Toleranz) |
+| `AlexNet: 2012` vs. `2011` | ja (Jahr) |
+| `1.4T Tokens` vs. `1,4 Billionen` | ja (Normalisierung) |
+| `6ND` vs. `2ND + 4ND` | ja, wenn als Formel-AST hinterlegt |
+| `X beeinflusste Y` | nein, ohne typisiertes Prädikat + Quelle |
+| `Das ist die beste Erklärung` | nein (Bewertung, kein Faktum) |
+
+Für die letzteren Fälle gilt: **nicht automatisch freigeben.** Sie bleiben
+`unverified` und gehen in die menschliche Review-Queue.
+
+### Der Verklebe-/Sheaf-Check formal
+
+- Lektionen sind offene Mengen; Überlappungen sind geteilte `subject_id`s.
+- Jede Lektion liefert einen Schnitt (ihre Claims).
+- Restriktionsabbildungen sind Alias-/Einheiten-/Datums-Normalisierung.
+- Die Klebebedingung ist: Auf jeder Überlappung stimmen die normalisierten
+  Werte überein — oder die Scopes sind explizit disjunkt.
+- Ein Widerspruch ist eine Obstruktion: eine Zusammenhangskomponente mit
+  mehr als einem kompatiblen Wert. Der Report listet den „Kocykel“:
+  welche Lektionen, welche Zeilen, welche Werte.
+
+### Mutationstests: den Prüfer selbst prüfen
+
+Ein Prüfer, der nie anschlägt, ist wertlos. Deshalb:
+
+- Für jeden Registry-Fakt wird in einer temporären Kopie einer Lektion der
+  Wert mutiert (z. B. `175e9` → `170e9`).
+- Der Checker muss genau diesen Konflikt melden.
+- Ebenso: `2012` → `2011`, `989` → `495`, `20` → `10`.
+- Diese Mutationstests laufen in der CI und beweisen, dass die Erkennung
+  nicht still kaputtgegangen ist.
+
+### Konkreter Fahrplan (deterministisch)
+
+1. `registry.yaml` mit 30–50 Kernentitäten (GPT-2/3/4, Transformer,
+   Chinchilla, Llama 2/3, AlexNet, ResNet, H100, AlphaFold, …).
+2. `extract.py` + `normalize.py`: Claims als JSONL, inklusive `file:line`
+   und `quote`.
+3. `check.py`: Gruppierung, Toleranzen, Konflikt-Report, `baseline.json`.
+4. CI: `--fast` prüft nur geänderte Lektionen gegen das volle Registry;
+   neue unregistrierte Claims oder neue Konflikte → Exit 1.
+5. Mutationstests für die 20 wichtigsten Fakten.
+6. Erst danach den Scope erweitern (Formeln, Datumsordnungen, Budgets).
+
+Das ist ohne LLM, offline, reproduzierbar und auditierbar. Es garantiert
+nicht die Wahrheit jeder Prosa-Aussage — aber es garantiert, dass **jede
+formal prüfbare Aussage entweder konsistent mit dem gesamten Buch ist oder
+sichtbar als offen markiert wird**.
+
+---
+
 ## 3. Aktueller Audit-Stand
 
 - Lesbarer Diff der Quelltext-Änderungen: `FACT_AUDIT_CHANGES.diff`
