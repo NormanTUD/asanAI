@@ -136,6 +136,13 @@ var codeAndTable = chat.answerHtml(
 check(codeAndTable.indexOf('rag-code') !== -1 && codeAndTable.indexOf('rag-table') !== -1,
 	'a code block and a table can live in the same answer');
 
+check(chat.hasCodeBlock('```python\nprint(1)\n```') === true,
+	'code-block detection finds fenced answers');
+check(chat.hasCodeBlock('~~~js\nlet a = 1;\n~~~') === true,
+	'code-block detection accepts tilde fences');
+check(chat.hasCodeBlock('no code here') === false,
+	'code-block detection ignores plain prose');
+
 check(chat.errorText({ error: 'unknown_job' }).indexOf('restarted') !== -1,
 	'lost-job error suggests retrying');
 check(chat.errorText({ error: 'rate_limited', retry_after: 7 }).indexOf('7') !== -1,

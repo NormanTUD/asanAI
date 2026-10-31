@@ -98,7 +98,12 @@
 		"disco": { cat: "hidden", icon: "🪩", name: "Disco Fever", desc: "Flip between light and dark mode 8 times on one page.", hidden: true, hint: "Lights on, lights off, lights on…" },
 		"speedrun": { cat: "hidden", icon: "🏎️", name: "Speedrunner", desc: "Zip to the bottom of a long page and back to the top in under 3 seconds.", hidden: true, hint: "Top to bottom to top. Fast." },
 		"lost-in-thought": { cat: "hidden", icon: "💭", name: "Lost in Thought", desc: "Stay on a page for 5 minutes without touching anything, then carry on.", hidden: true, hint: "Sometimes it pays to just sit and think." },
-		"copy-paste": { cat: "hidden", icon: "📋", name: "Copy-Paste Engineer", desc: "Copy a code example from a lesson.", hidden: true, hint: "Real programmers…" }
+		"copy-paste": { cat: "hidden", icon: "📋", name: "Copy-Paste Engineer", desc: "Copy a code example from a lesson.", hidden: true, hint: "Real programmers…" },
+		"chat-open": { cat: "hidden", icon: "💬", name: "The Course Talks Back", desc: "Open the “Ask the course” chat.", hidden: true, hint: "Some pages have a small speech bubble in the corner." },
+		"chat-code": { cat: "hidden", icon: "⌨️", name: "Code Whisperer", desc: "Get a chat answer with a code block.", hidden: true, hint: "Ask the course for code." },
+		"chat-five": { cat: "hidden", icon: "🗨️", name: "Deep Conversation", desc: "Have a five-message conversation with the course.", hidden: true, hint: "Don't stop after the first answer." },
+		"chat-source": { cat: "hidden", icon: "🔗", name: "Follow the Thread", desc: "Open a source from a chat answer.", hidden: true, hint: "Every answer points somewhere." },
+		"margin-notes": { cat: "hidden", icon: "✍️", name: "Margin Notes", desc: "Select a passage and leave a comment.", hidden: true, hint: "Select some text and look to the right." }
 	};
 
 	function blank() {

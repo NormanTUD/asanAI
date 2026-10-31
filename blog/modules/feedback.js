@@ -837,6 +837,7 @@
 		if (rememberEl.checked && email) {
 			setStoredEmail(email);
 		}
+		var commented = Boolean(String(commentEl.value || "").trim());
 		var payload = {
 			token: cfg.token,
 			request_id: pending.requestId,
@@ -922,7 +923,7 @@
 			});
 		}).then(function () {
 			clearTimeout(timer);
-			finishSuccess();
+			finishSuccess(commented);
 		}).catch(function (error) {
 			clearTimeout(timer);
 			busy = false;
@@ -941,7 +942,7 @@
 		});
 	}
 
-	function finishSuccess() {
+	function finishSuccess(commented) {
 		busy = false;
 		body.hidden = true;
 		successEl.hidden = false;
@@ -950,6 +951,10 @@
 		try {
 			if (window.MNQuest && typeof window.MNQuest.toast === "function") {
 				window.MNQuest.toast('<b class="mnq-plus">💬</b> Thanks — this helps improve the article.', "xp");
+			}
+			if (commented && pending && pending.selectedText &&
+					window.MNQuest && typeof window.MNQuest.unlock === "function") {
+				window.MNQuest.unlock("margin-notes");
 			}
 		} catch (e) { /* ignore */ }
 		closeTimer = setTimeout(closePanel, 2800);

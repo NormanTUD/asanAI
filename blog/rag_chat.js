@@ -36,6 +36,16 @@
 	};
 	var els = {};
 
+	function unlockAchievement(id) {
+		try {
+			if (window.MNQuest && typeof window.MNQuest.unlock === 'function') {
+				window.MNQuest.unlock(id);
+			}
+		} catch (error) {
+			/* achievements are optional: the chat works without them */
+		}
+	}
+
 	/* Briefly marquee a message through document.title after an answer
 	   completes, then restore the page's real title. The animation is
 	   deliberately short and self-cancelling so it never becomes a
@@ -309,6 +319,10 @@
 		return html + '</table></div>';
 	}
 
+	function hasCodeBlock(text) {
+		return /(^|\n)[ \t]*(?:`{3,}|~{3,})/.test(String(text || ''));
+	}
+
 	function extractFences(text, stash) {
 		var lines = String(text).split('\n');
 		var out = [];
@@ -559,7 +573,9 @@
 			));
 			pruneBrokenImages(node);
 			if (message.grounded === false) node.classList.add('rag-chat-msg-refusal');
+			if (hasCodeBlock(message.text)) unlockAchievement('chat-code');
 		});
+		if (state.messages.length >= 5) unlockAchievement('chat-five');
 		if (state.messages.length) scrollMessages();
 	}
 
@@ -741,6 +757,13 @@
 		panel.addEventListener('keydown', function(event) {
 			if (event.key === 'Escape') close();
 		});
+		els.messages.addEventListener('click', function(event) {
+			var target = event.target;
+			var link = target && target.closest
+				? target.closest('.rag-sources a, .rag-cite')
+				: null;
+			if (link) unlockAchievement('chat-source');
+		});
 	}
 
 	function toggle() {
@@ -754,6 +777,7 @@
 		els.panel.hidden = false;
 		els.panel.setAttribute('aria-hidden', 'false');
 		if (els.button) els.button.setAttribute('aria-expanded', 'true');
+		unlockAchievement('chat-open');
 		setTimeout(function() { els.input.focus(); }, 50);
 	}
 
@@ -1028,6 +1052,8 @@
 			grounded: data.grounded !== false
 		});
 		state.messages = state.messages.slice(-20);
+		if (hasCodeBlock(answer)) unlockAchievement('chat-code');
+		if (state.messages.length >= 5) unlockAchievement('chat-five');
 		saveConversation();
 		clearActiveJob();
 		state.lastQuestion = '';
@@ -1133,6 +1159,7 @@
 			mount: mount,
 			statusText: statusText,
 			answerHtml: answerHtml,
+			hasCodeBlock: hasCodeBlock,
 			clear: clearConversation,
 			pageSlugFrom: pageSlugFrom,
 			_internals: {
@@ -1150,6 +1177,7 @@
 		module.exports = {
 			statusText: statusText,
 			answerHtml: answerHtml,
+			hasCodeBlock: hasCodeBlock,
 			esc: esc,
 			visiblePartial: visiblePartial,
 			errorText: errorText,

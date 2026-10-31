@@ -119,6 +119,14 @@ MOCK = r"""
 		if (url.indexOf('ask.php?health=1') !== -1) {
 			return reply({ ok: true, ready: true, ollama: true, model: 'mock', model_present: true });
 		}
+		if (url.indexOf('feedback_track') !== -1) {
+			try {
+				window.__ragMock.feedback = init && init.body ? JSON.parse(init.body) : null;
+			} catch (error) {
+				window.__ragMock.feedback = null;
+			}
+			return reply({ ok: true });
+		}
 		if (url.indexOf('ask.php?status=') !== -1) {
 			if (url.indexOf('undefined') !== -1 || window.__ragMock.failStatus) {
 				return reply({ error: 'unknown_job' });
@@ -135,7 +143,7 @@ MOCK = r"""
 			return reply({
 				status: 'done',
 				grounded: true,
-				answer: '**A perceptron** is a *linear* classifier [S1].\n\n\\[ a^2 + b^2 = c^2 \\]',
+				answer: '**A perceptron** is a *linear* classifier [S1].\n\n\\[ a^2 + b^2 = c^2 \\]\n\n```python\nweights = [0.2, -0.4]\n```',
 				sources: [{
 					id: 'S1',
 					title: 'Brief History of AI',
@@ -167,6 +175,13 @@ def status_text(browser: webdriver.Chrome) -> str:
 	)
 
 
+def unlocked(browser: webdriver.Chrome, achievement: str) -> bool:
+	return bool(browser.execute_script(
+		"const s = JSON.parse(localStorage.getItem('mn_quest_v1') || '{}');"
+		"return !!(s.unlocked && s.unlocked['" + achievement + "']);"
+	))
+
+
 def main() -> int:
 	port = free_port()
 	server = subprocess.Popen(
@@ -192,6 +207,8 @@ def main() -> int:
 			lambda d: not d.find_element(By.ID, "rag-chat-panel").get_attribute("hidden")
 		)
 		check(True, "the chat panel opens")
+		WebDriverWait(browser, 5).until(lambda d: unlocked(d, "chat-open"))
+		check(True, "opening the chat unlocks its hidden achievement")
 		check(not browser.find_element(By.CSS_SELECTOR, ".rag-chat-scope").is_displayed(),
 			"the course index does not offer a page scope")
 		browser.execute_script("document.getElementById('rag-chat-toggle').click()")
@@ -250,6 +267,12 @@ def main() -> int:
 			"running status shows the remaining time", status_text(browser))
 		check("close this window" in status_text(browser).lower(),
 			"running status explains that the window can be closed", status_text(browser))
+		WebDriverWait(browser, 8).until(
+			lambda d: "taking a bit longer" in status_text(d)
+		)
+		time.sleep(1)
+		check("taking a bit longer" in status_text(browser),
+			"the slower hint stays visible instead of flickering")
 		browser.execute_script("document.querySelector('.rag-chat-close').click()")
 		check(browser.execute_script(
 			"return document.getElementById('rag-chat-panel').hidden"
@@ -260,12 +283,6 @@ def main() -> int:
 				d.find_element(By.CSS_SELECTOR, ".rag-chat-msg-assistant").text
 		)
 		check(True, "partial answer streams while generating")
-		WebDriverWait(browser, 8).until(
-			lambda d: "taking a bit longer" in status_text(d)
-		)
-		time.sleep(1)
-		check("taking a bit longer" in status_text(browser),
-			"the slower hint stays visible instead of flickering")
 
 		WebDriverWait(browser, 10).until(
 			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-sources")) > 0
@@ -281,6 +298,13 @@ def main() -> int:
 		check("history#the-perceptron" in assistant_html, "citation points at the lesson")
 		check("<strong>" in assistant_html and "<em>" in assistant_html,
 			"markdown bold and italic render in answers")
+		check("rag-code" in assistant_html and "language-python" in assistant_html,
+			"fenced code blocks render in answers")
+		check(browser.execute_script(
+			"return document.querySelectorAll('.rag-code .token').length"
+		) > 0, "answer code is highlighted")
+		WebDriverWait(browser, 5).until(lambda d: unlocked(d, "chat-code"))
+		check(True, "a code-block answer unlocks its hidden achievement")
 		WebDriverWait(browser, 5).until(
 			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".rag-chat-msg-assistant math")) >= 1
 		)
@@ -290,6 +314,13 @@ def main() -> int:
 		check("frank_rosenblatt_portrait.jpg" in
 			browser.find_element(By.CSS_SELECTOR, ".rag-source-thumb").get_attribute("src"),
 			"source figure points at the course image")
+		browser.execute_script(
+			"const link = document.querySelector('.rag-sources a');"
+			"link.addEventListener('click', function(event) { event.preventDefault(); }, { once: true });"
+			"link.click();"
+		)
+		WebDriverWait(browser, 5).until(lambda d: unlocked(d, "chat-source"))
+		check(True, "clicking a chat source unlocks its hidden achievement")
 
 
 		# Enter sends; Shift+Enter inserts a newline and does not send.
@@ -439,6 +470,29 @@ def main() -> int:
 			"return document.querySelector('.rag-chat-messages').scrollTop"
 		) == 0, "streaming does not force-scroll a reader who is reading upwards")
 
+		# Restoring a five-message conversation unlocks the conversation achievement.
+		browser.execute_script("""
+			localStorage.removeItem('mn_rag_chat_job_v1');
+			localStorage.setItem('mn_rag_chat_v1', JSON.stringify({
+				history: [],
+				messages: [
+					{ role: 'user', text: 'one' },
+					{ role: 'assistant', text: 'two' },
+					{ role: 'user', text: 'three' },
+					{ role: 'assistant', text: 'four' },
+					{ role: 'user', text: 'five' }
+				]
+			}));
+		""")
+		browser.get(f"http://127.0.0.1:{port}/index.php")
+		WebDriverWait(browser, 60).until(
+			lambda d: d.execute_script(
+				"return !!document.getElementById('rag-chat-toggle')"
+			)
+		)
+		WebDriverWait(browser, 10).until(lambda d: unlocked(d, "chat-five"))
+		check(True, "a five-message conversation unlocks its hidden achievement")
+
 		# A lesson page offers the page-scoped search.
 		browser.get(f"http://127.0.0.1:{port}/minimalneuron.php")
 		WebDriverWait(browser, 60).until(
@@ -474,6 +528,37 @@ def main() -> int:
 		check(browser.execute_script(
 			"return document.querySelector('.rag-chat-input').getAttribute('placeholder')"
 		) == "Ask about this lesson…", "the prompt names the lesson scope")
+
+		WebDriverWait(browser, 10).until(
+			lambda d: d.execute_script(
+				"return !!document.getElementById('mn-feedback-layer')"
+			)
+		)
+		browser.execute_script("""
+			const block = document.querySelector('#contents p');
+			const range = document.createRange();
+			range.selectNodeContents(block);
+			const selection = window.getSelection();
+			selection.removeAllRanges();
+			selection.addRange(range);
+			block.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, button: 0 }));
+		""")
+		WebDriverWait(browser, 10).until(
+			lambda d: len(d.find_elements(By.CSS_SELECTOR, ".mn-feedback-panel.is-open")) > 0
+		)
+		browser.execute_script("""
+			document.querySelector('.mnf-reaction[data-reaction="helpful"]').click();
+			const comment = document.querySelector('.mnf-comment');
+			comment.value = 'The example could use a short caption.';
+			comment.dispatchEvent(new Event('input', { bubbles: true }));
+			document.querySelector('.mnf-send').click();
+		""")
+		WebDriverWait(browser, 10).until(lambda d: unlocked(d, "margin-notes"))
+		check(browser.execute_script(
+			"const body = window.__ragMock.feedback || {};"
+			"return body.comment === 'The example could use a short caption.' &&"
+			"!!(body.selection && body.selection.text);"
+		), "commenting on selected text sends the comment and unlocks its hidden achievement")
 
 		severe = [entry for entry in browser.get_log("browser")
 				  if entry.get("level") == "SEVERE"]
