@@ -1790,6 +1790,12 @@ function get_max_number_values () {
 function load_own_images_for_classification(keys, x, y, category_counter, divide_by) {
 	var original_indices = [];
 	var dom_image_counter = 0;
+	// Without augmentation the per-image tensors can stay on the backend and
+	// be concatenated directly. Copying each one to JS with array_sync() and
+	// uploading the whole array again made loading custom images needlessly
+	// slow.
+	const use_tensor_stack = !is_auto_augment();
+	var image_tensors = [];
 
 	for (var label_nr = 0; label_nr < category_counter; label_nr++) {
 		var own_images_from_label_nr = $(".own_images")[label_nr];
@@ -1809,11 +1815,24 @@ function load_own_images_for_classification(keys, x, y, category_counter, divide
 					continue;
 				}
 
-				var resized_image = tf_to_float(
-					resize_image(tf_img, [height, width])
-				);
+				var resized_image = tidy(() => {
+					var _resized = tf_to_float(
+						resize_image(tf_img, [height, width])
+					);
 
-				resized_image = divNoNan(resized_image, divide_by);
+					return divNoNan(_resized, divide_by);
+				});
+
+				if(use_tensor_stack) {
+					image_tensors.push(expand_dims(resized_image, 0));
+					resized_image.dispose();
+
+					y.push(label_nr);
+					original_indices.push(dom_image_counter);
+					dom_image_counter++;
+
+					continue;
+				}
 
 				var this_img = array_sync(resized_image);
 
@@ -1828,16 +1847,32 @@ function load_own_images_for_classification(keys, x, y, category_counter, divide
 					original_indices.push(dom_image_counter);
 				}
 
+				resized_image.dispose();
 				dom_image_counter++;
 			}
 		}
 	}
 
-	if(x.length != y.length) {
-		wrn(`load_own_images_for_classification: x.length != y.length (${x.length} != ${y.length})`);
-	}
+	if(use_tensor_stack) {
+		if(image_tensors.length != y.length) {
+			wrn(`load_own_images_for_classification: x.length != y.length (${image_tensors.length} != ${y.length})`);
+		}
 
-	x = tensor(x);
+		if(image_tensors.length === 1) {
+			x = image_tensors[0];
+		} else if(image_tensors.length > 1) {
+			x = tf_concat(image_tensors[0], image_tensors.slice(1), 0);
+			image_tensors.forEach(function(tensor) { tensor.dispose(); });
+		} else {
+			x = tensor([]);
+		}
+	} else {
+		if(x.length != y.length) {
+			wrn(`load_own_images_for_classification: x.length != y.length (${x.length} != ${y.length})`);
+		}
+
+		x = tensor(x);
+	}
 	y = tensor(y);
 
 	return [x, y, keys, original_indices];
@@ -3178,13 +3213,17 @@ function x_y_warning(x_and_y) {
 	} else if (x_and_y["x"] === undefined || x_and_y["x"] === null) {
 		error_messages.push("x-data is null.");
 	} else {
-		tf.engine().startScope();
-		var x_data = array_sync(x_and_y["x"]);
-		tf.engine().endScope();
+		// Reading the length must not download every tensor element. For large
+		// custom-image sets array_sync() here alone cost hundreds of ms.
+		var x_value = x_and_y["x"];
+		var x_length = 0;
 
-		var x_length = (Array.isArray(x_data) || (x_data && typeof x_data === "object" && "length" in x_data))
-			? x_data.length
-			: 0;
+		if (is_tensor(x_value)) {
+			x_length = (x_value.shape && x_value.shape[0]) || 0;
+		} else if (Array.isArray(x_value) || (x_value && typeof x_value === "object" && "length" in x_value)) {
+			x_length = x_value.length;
+		}
+
 		if (x_length === 0) {
 			error_messages.push("X-data is empty. Check if your data source correctly provides feature or image arrays.");
 		}
@@ -3197,20 +3236,19 @@ function x_y_warning(x_and_y) {
 	} else if (x_and_y["y"] === null) {
 		error_messages.push("Y-data is null.");
 	} else {
-		var y_data = array_sync_if_tensor(x_and_y["y"]);
-
+		var y_value = x_and_y["y"];
 		var y_length = 0;
 
-		if (Array.isArray(y_data)) {
-			y_length = y_data.length;
-		} else if (y_data && typeof y_data === "object" && "length" in y_data) {
-			y_length = y_data.length;
-		} else if (y_data == null) {
+		if (is_tensor(y_value)) {
+			y_length = (y_value.shape && y_value.shape[0]) || 0;
+		} else if (Array.isArray(y_value)) {
+			y_length = y_value.length;
+		} else if (y_value && typeof y_value === "object" && "length" in y_value) {
+			y_length = y_value.length;
+		} else if (y_value == null) {
 			err("y_data is null or undefined");
-			y_length = 0;
 		} else {
-			wrn("y_data has unexpected type:", typeof y_data, y_data);
-			y_length = 0;
+			wrn("y_data has unexpected type:", typeof y_value, y_value);
 		}
 
 		if (y_length === 0) {
@@ -3671,7 +3709,7 @@ function disable_auto_one_hot_encoding () {
 	$("#auto_one_hot_y").prop("checked", false);
 }
 
-async function get_x_y_from_csv () {
+async function get_x_y_from_csv (parsed_data = null) {
 	if(csv_global_x) {
 		await dispose(csv_global_x);
 	}
@@ -3692,7 +3730,7 @@ async function get_x_y_from_csv () {
 
 	await set_labels(y_headers);
 
-	var parsed = parse_csv_file(csv);
+	var parsed = parsed_data || parse_csv_file(csv);
 
 	var x_data = await get_data_struct_by_header(x_headers, parsed, 0, false);
 	if(x_data.is_incomplete) {

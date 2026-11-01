@@ -21,7 +21,7 @@ async function handle_csv_file_upload(event) {
 		reader.onload = function(e) {
 			var text = e.target.result;
 			$("#csv_file").val(text).trigger("keyup");
-			show_csv_file(); // await not possible here
+			show_csv_file(false, true); // await not possible here
 		};
 		reader.readAsText(file);
 	} else if (is_excel) {
@@ -41,7 +41,7 @@ async function handle_csv_file_upload(event) {
 				}
 
 				$("#csv_file").val(csv_text).trigger("keyup");
-				show_csv_file(); // await not possible here
+				show_csv_file(false, true); // await not possible here
 			} catch (e) {
 				err(language[lang]["error_reading_excel_file"] + ": " + e.message);
 			}
@@ -50,11 +50,19 @@ async function handle_csv_file_upload(event) {
 	}
 }
 
-async function show_csv_file(disabled_show_head_data=false) {
+const CSV_PREVIEW_DEBOUNCE_MS = 200;
+
+async function show_csv_file(disabled_show_head_data=false, immediate=false) {
 	if (t_show_csv_file) clearTimeout(t_show_csv_file);
+
+	if (immediate) {
+		await _show_csv_file(disabled_show_head_data);
+		return;
+	}
+
 	t_show_csv_file = setTimeout(async function() {
 		await _show_csv_file(disabled_show_head_data);
-	}, 1000);
+	}, CSV_PREVIEW_DEBOUNCE_MS);
 }
 
 async function _show_csv_file(disabled_show_head_data=false) {
@@ -86,7 +94,7 @@ async function _show_csv_file(disabled_show_head_data=false) {
 			show_head_data(head);
 		}
 
-		var parsed_data = await get_x_y_from_csv();
+		var parsed_data = await get_x_y_from_csv(data);
 
 		if(typeof parsed_data == "string" && parsed_data == "incomplete") {
 			return;
@@ -461,7 +469,7 @@ async function load_shoe_example () {
 
 	$("#csv_file").val(example_shoe_str).trigger("keyup");
 
-	await show_csv_file();
+	await show_csv_file(false, true);
 }
 
 function load_csv_custom_function () {
@@ -518,6 +526,7 @@ function load_csv_custom_function () {
 	var str = fill_get_data_between(start, end, stepsize, fn);
 
 	$("#csv_file").val(str).trigger("keyup");
+	show_csv_file(false, true); // await not possible here
 }
 
 function get_generated_encoding(nr, max) {

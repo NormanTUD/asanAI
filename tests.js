@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2571;
+var DEFAULT_EXPECTED_TEST_COUNT = 2578;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -4112,6 +4112,88 @@ async function test_resize_time () {
 	}
 
 	test_equal(`time resize took was less than ${max_resize_seconds} seconds`, time_test_ok, true);
+}
+
+function test_x_y_warning_does_not_download_tensors () {
+	var x = tensor([[1, 2], [3, 4]]);
+	var original_array_sync = window.array_sync;
+	var calls = 0;
+
+	window.array_sync = function (...args) {
+		calls++;
+		return original_array_sync.apply(this, args);
+	};
+
+	try {
+		x_y_warning({ x: x, y: x });
+	} finally {
+		window.array_sync = original_array_sync;
+		x.dispose();
+	}
+
+	test_equal("x_y_warning does not download tensors", calls, 0);
+
+	return calls === 0;
+}
+
+async function test_custom_csv_preview_updates_immediately () {
+	test_equal("CSV preview debounce is short", CSV_PREVIEW_DEBOUNCE_MS <= 300, true);
+
+	var original_show = window._show_csv_file;
+	var called_synchronously = false;
+
+	window._show_csv_file = async function (...args) {
+		called_synchronously = true;
+		return original_show.apply(this, args);
+	};
+
+	var previous_csv = $("#csv_file").val();
+
+	try {
+		$("#csv_file").val("");
+		var wait_for_preview = show_csv_file(false, true); // await not possible here: the synchronous call is what this test checks
+
+		test_equal("CSV immediate preview runs without debounce", called_synchronously, true);
+
+		await wait_for_preview;
+	} finally {
+		window._show_csv_file = original_show;
+		$("#csv_file").val(previous_csv);
+	}
+
+	return called_synchronously;
+}
+
+async function test_custom_csv_parses_once () {
+	var $headers = $("<div id='test_csv_header_selects'></div>");
+	$headers.append("<select class='header_select' name='x1'><option value='X' selected>X</option></select>");
+	$headers.append("<select class='header_select' name='x2'><option value='X' selected>X</option></select>");
+	$headers.append("<select class='header_select' name='y'><option value='Y' selected>Y</option></select>");
+	$("body").append($headers);
+
+	var csv = "x1,x2,y\n1,2,3\n2,3,5\n3,4,7\n";
+	var original_parse_csv_file = window.parse_csv_file;
+	var original_set_labels = window.set_labels;
+	var calls = 0;
+	var parsed = original_parse_csv_file(csv);
+
+	window.parse_csv_file = function (...args) {
+		calls++;
+		return original_parse_csv_file.apply(this, args);
+	};
+	window.set_labels = async function () {};
+
+	try {
+		await get_x_y_from_csv(parsed);
+	} finally {
+		window.parse_csv_file = original_parse_csv_file;
+		window.set_labels = original_set_labels;
+		$headers.remove();
+	}
+
+	test_equal("get_x_y_from_csv reuses the parsed CSV", calls, 0);
+
+	return calls === 0;
 }
 
 async function test_custom_csv_x_squared() {
@@ -13010,6 +13092,9 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_custom_drawn_images()", await test_custom_drawn_images(), true);
 		//test_equal("test_custom_drawn_images_with_augmentation()", await test_custom_drawn_images_with_augmentation(), true);
 		test_equal("test_custom_csv_x_squared()", await test_custom_csv_x_squared(), true);
+		test_equal("test_x_y_warning_does_not_download_tensors()", test_x_y_warning_does_not_download_tensors(), true);
+		test_equal("test_custom_csv_preview_updates_immediately()", await test_custom_csv_preview_updates_immediately(), true);
+		test_equal("test_custom_csv_parses_once()", await test_custom_csv_parses_once(), true);
 		test_equal("cycle_through_visualization_tabs()", await cycle_through_visualization_tabs(), true);
 		test_equal("test_custom_tensor()", await test_custom_tensor(), true);
 		test_equal("test_image_map_dense()", await test_image_map_dense(), true);
