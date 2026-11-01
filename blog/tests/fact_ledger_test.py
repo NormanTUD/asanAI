@@ -178,6 +178,22 @@ class CheckerTests(unittest.TestCase):
             write_facts(root, "b", {"source": "b.php", "claims": [claim(subject="b")]})
             self.assertEqual(self.run_check(root), 1)
 
+    def test_conflict_message_is_actionable(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            write_lesson(root, "a")
+            write_lesson(root, "b", order=2)
+            write_facts(root, "a", {"source": "a.php", "claims": [claim(value=1)]})
+            write_facts(root, "b", {"source": "b.php", "claims": [claim(value=2)]})
+            buffer = io.StringIO()
+            with contextlib.redirect_stdout(buffer):
+                rc = check_facts.check(root)
+            output = buffer.getvalue()
+            self.assertEqual(rc, 1)
+            for token in ("FACT CONFLICT", "AI FIX PROMPT", "COPY FROM HERE",
+                          "why:", "fix:", "--strict-relations"):
+                self.assertIn(token, output)
+
     def test_trace_finds_path(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

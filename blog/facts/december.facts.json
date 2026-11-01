@@ -5,7 +5,7 @@
   "title": "The December Calendar",
   "part": "",
   "order": "",
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [],
   "claims": [
@@ -21,7 +21,356 @@
       "quote": "title: The December Calendar",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "december-total-days",
+      "subject": "december-calendar",
+      "predicate": "day_count",
+      "value": 31,
+      "unit": "count",
+      "quote": "<span><strong>31</strong> days</span>",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-section-count",
+      "subject": "december-calendar",
+      "predicate": "section_count",
+      "value": 6,
+      "unit": "count",
+      "quote": "The month has six sections.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-section-1",
+      "subject": "december-section-1",
+      "predicate": "day_range",
+      "value": "1-5",
+      "unit": "interval",
+      "quote": "'days' => [1, 2, 3, 4, 5],",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-section-2",
+      "subject": "december-section-2",
+      "predicate": "day_range",
+      "value": "6-11",
+      "unit": "interval",
+      "quote": "'days' => [6, 7, 8, 9, 10, 11],",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-section-3",
+      "subject": "december-section-3",
+      "predicate": "day_range",
+      "value": "12-16",
+      "unit": "interval",
+      "quote": "'days' => [12, 13, 14, 15, 16],",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-section-4",
+      "subject": "december-section-4",
+      "predicate": "day_range",
+      "value": "17-22",
+      "unit": "interval",
+      "quote": "'days' => [17, 18, 19, 20, 21, 22],",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-section-5",
+      "subject": "december-section-5",
+      "predicate": "day_range",
+      "value": "23-26",
+      "unit": "interval",
+      "quote": "'days' => [23, 24, 25, 26],",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-section-6",
+      "subject": "december-section-6",
+      "predicate": "day_range",
+      "value": "27-31",
+      "unit": "interval",
+      "quote": "'days' => [27, 28, 29, 30, 31],",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-day-1-time",
+      "subject": "december-day-1",
+      "predicate": "session_time",
+      "value": "15-20 min",
+      "unit": "interval",
+      "quote": "'time' => '15-20 min',",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-day-1-lesson",
+      "subject": "december-day-1",
+      "predicate": "lesson",
+      "value": "intuition",
+      "unit": "name",
+      "quote": "'slugs' => ['intuition'],",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-tokenizerlab-lesson",
+      "subject": "tokenizerlab-lesson",
+      "predicate": "lesson_slug",
+      "value": "tokenizerlab",
+      "unit": "name",
+      "quote": "'slugs' => ['tokenizerlab', 'embeddinglab'],",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-factlookup-lesson",
+      "subject": "fact-lookup-lesson",
+      "predicate": "lesson_slug",
+      "value": "fact_lookup",
+      "unit": "name",
+      "quote": "'slugs' => ['fact_lookup', 'algorithms'],",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-agents-lesson",
+      "subject": "agents-lesson",
+      "predicate": "lesson_slug",
+      "value": "agents",
+      "unit": "name",
+      "quote": "'slugs' => ['agents', 'security_inference', 'running_locally'],",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-day-16-lessons",
+      "subject": "december-day-16",
+      "predicate": "lesson_count",
+      "value": 2,
+      "unit": "count",
+      "quote": "'slugs' => ['tokenizerlab', 'embeddinglab'],",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-day-16-tokenizer",
+      "subject": "december-day-16",
+      "predicate": "lesson",
+      "value": "tokenizerlab",
+      "unit": "name",
+      "quote": "'slugs' => ['tokenizerlab', 'embeddinglab'],",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-day-20-factlookup",
+      "subject": "december-day-20",
+      "predicate": "lesson",
+      "value": "fact_lookup",
+      "unit": "name",
+      "quote": "'slugs' => ['fact_lookup', 'algorithms'],",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-day-24-agents",
+      "subject": "december-day-24",
+      "predicate": "lesson",
+      "value": "agents",
+      "unit": "name",
+      "quote": "'slugs' => ['agents', 'security_inference', 'running_locally'],",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "december-day-30-risk",
+      "subject": "december-day-30",
+      "predicate": "lesson",
+      "value": "ai_existential_risk",
+      "unit": "name",
+      "quote": "'slugs' => ['ai_for_science', 'ai_and_society', 'ai_existential_risk'],",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-december-december-calendar",
+      "from": "december-calendar",
+      "to": "december",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "<span><strong>31</strong> days</span>",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-december-december-section-1",
+      "from": "december-section-1",
+      "to": "december",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "'days' => [1, 2, 3, 4, 5],",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-december-december-section-2",
+      "from": "december-section-2",
+      "to": "december",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "'days' => [6, 7, 8, 9, 10, 11],",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-december-december-section-3",
+      "from": "december-section-3",
+      "to": "december",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "'days' => [12, 13, 14, 15, 16],",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-december-december-section-4",
+      "from": "december-section-4",
+      "to": "december",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "'days' => [17, 18, 19, 20, 21, 22],",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-december-december-section-5",
+      "from": "december-section-5",
+      "to": "december",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "'days' => [23, 24, 25, 26],",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-december-december-section-6",
+      "from": "december-section-6",
+      "to": "december",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "'days' => [27, 28, 29, 30, 31],",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-december-december-day-1",
+      "from": "december-day-1",
+      "to": "december",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "'time' => '15-20 min',",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-december-tokenizerlab-lesson",
+      "from": "tokenizerlab-lesson",
+      "to": "december",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "'slugs' => ['tokenizerlab', 'embeddinglab'],",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-december-fact-lookup-lesson",
+      "from": "fact-lookup-lesson",
+      "to": "december",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "'slugs' => ['fact_lookup', 'algorithms'],",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-december-agents-lesson",
+      "from": "agents-lesson",
+      "to": "december",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "'slugs' => ['agents', 'security_inference', 'running_locally'],",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-december-december-day-16",
+      "from": "december-day-16",
+      "to": "december",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "'slugs' => ['tokenizerlab', 'embeddinglab'],",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-december-december-day-20",
+      "from": "december-day-20",
+      "to": "december",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "'slugs' => ['fact_lookup', 'algorithms'],",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-december-december-day-24",
+      "from": "december-day-24",
+      "to": "december",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "'slugs' => ['agents', 'security_inference', 'running_locally'],",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-december-december-day-30",
+      "from": "december-day-30",
+      "to": "december",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "'slugs' => ['ai_for_science', 'ai_and_society', 'ai_existential_risk'],",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

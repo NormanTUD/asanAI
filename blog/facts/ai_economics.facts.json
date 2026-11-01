@@ -5,13 +5,9 @@
   "title": "The Economic Layer",
   "part": 5,
   "order": 21,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [
-    "hoffmann2022chinchilla",
-    "kaplan2020scaling",
-    "promptcaching"
-  ],
+  "citations": [],
   "claims": [
     {
       "id": "auto-ai_economics-title-1",

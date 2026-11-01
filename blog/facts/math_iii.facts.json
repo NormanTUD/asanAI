@@ -5,52 +5,21 @@
   "title": "Basic Math Concepts III — Approximation, High Dimensions & a Taste of Type Theory",
   "part": 1,
   "order": 5,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "kleinetymology",
-    "jcgm2012vim",
+    "gorban2018blessing",
     "eudoxus_mactutor",
-    "archimedes_works_heath",
     "liuhui_pi_wiki",
     "zuchongzhi_mactutor",
-    "newton1736fluxions",
-    "euler1768integralis",
     "cybenko1989",
     "hornik1989",
-    "petersen2024mathdl",
     "historyofmathematicalnotation",
-    "cavalieri1635geometria",
     "riemann1854trig",
     "lebesgue1902integrale",
     "cauchy1825memoire",
-    "lang2005basicmath",
-    "turning_number_wiki",
-    "bellman1957book",
-    "bellman1961adaptive",
-    "beyer1999nearest",
-    "gorban2018blessing",
-    "elhage2022superposition",
-    "templeton2024scaling",
-    "gromov1983isoperimetric",
-    "concentration_of_measure_wiki",
-    "talagrand1995concentration",
-    "cayton2005manifold",
-    "olah2014manifolds",
-    "loaizaganem2024manifoldsurvey",
-    "whitney1936manifolds",
-    "zhang2017rethinking",
-    "frege1879",
-    "russell_paradox_sep",
-    "russell1903principles",
-    "russell1910principia",
-    "churchsimplytyped",
-    "martinlof1984intuitionistic",
-    "intuitionistic_type_theory_sep",
-    "voevodsky2006hlambda",
-    "voevodsky2010equivalence",
     "hottbook",
-    "youvan2024"
+    "templeton2024scaling"
   ],
   "claims": [
     {
@@ -91,6 +60,241 @@
       "quote": "order: 5",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "math_iii-fp32-precision",
+      "subject": "fp32",
+      "predicate": "machine_precision",
+      "value": 1e-07,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "machine precision ($\\approx 10^{-7}$ for fp32)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-vector-dimensions",
+      "subject": "vector-space",
+      "predicate": "typical_dimension_range",
+      "value": "768 to 16,000",
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Modern AI happens in vector spaces of dimension 768 to 16,000.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-cosine-768",
+      "subject": "random-vectors-cosine-768d",
+      "predicate": "probability_above_0_1",
+      "value": 0.6,
+      "unit": "%",
+      "qualifiers": {
+        "dimension": "768"
+      },
+      "quote": "so $P(|\\cos|>0.1)$ is about $0.6\\%$ at $d=768$",
+      "citation_keys": [
+        "gorban2018blessing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-cube-samples",
+      "subject": "100-dimensional-cube",
+      "predicate": "samples_for_10_per_axis",
+      "value": 1e+100,
+      "unit": "count",
+      "qualifiers": {
+        "per_axis": 10
+      },
+      "quote": "With $d = 100$ and 10 samples per axis, you need $10^{100}$ samples, more than atoms in the universe.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-eudoxus-life",
+      "subject": "eudoxus",
+      "predicate": "lifespan",
+      "value": "c. 408–355 BCE",
+      "unit": "name",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Eudoxus of Cnidus (c. 408–355 BCE)",
+      "citation_keys": [
+        "eudoxus_mactutor"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-liu-hui-year",
+      "subject": "liu-hui",
+      "predicate": "year",
+      "value": 263,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Liu Hui's 263 CE commentary",
+      "citation_keys": [
+        "liuhui_pi_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-zu-bound",
+      "subject": "zu-chongzhi",
+      "predicate": "pi_bound",
+      "value": "3.1415926 < pi < 3.1415927",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "Zu Chongzhi sharpened the bound to $3.1415926\\lt\\pi\\lt3.1415927$",
+      "citation_keys": [
+        "zuchongzhi_mactutor"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-uat-statement",
+      "subject": "universal-approximation-theorem",
+      "predicate": "statement",
+      "value": "a feed-forward network with a single hidden layer of sufficient width can approximate any continuous function on a compact domain to arbitrary precision",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "a feed-forward network with a single hidden layer of sufficient width can approximate **any continuous function** on a compact domain to arbitrary precision",
+      "citation_keys": [
+        "cybenko1989",
+        "hornik1989"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-integral-sign",
+      "subject": "integral-sign",
+      "predicate": "introduced_year",
+      "value": 1675,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "introduced it in 1675",
+      "citation_keys": [
+        "historyofmathematicalnotation"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-riemann-lecture",
+      "subject": "riemann",
+      "predicate": "habilitation_lecture_year",
+      "value": 1854,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Riemann's 1854 habilitation lecture",
+      "citation_keys": [
+        "riemann1854trig"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-lebesgue-thesis",
+      "subject": "lebesgue",
+      "predicate": "thesis_year",
+      "value": 1902,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Lebesgue's 1902 thesis",
+      "citation_keys": [
+        "lebesgue1902integrale"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-cauchy-memoir",
+      "subject": "cauchy",
+      "predicate": "memoir_year",
+      "value": 1825,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Cauchy's 1825 memoir",
+      "citation_keys": [
+        "cauchy1825memoire"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-hott-book",
+      "subject": "hott-book",
+      "predicate": "year",
+      "value": 2013,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the 2012–13 IAS special year produced the HoTT Book",
+      "citation_keys": [
+        "hottbook"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-univalence",
+      "subject": "univalence-axiom",
+      "predicate": "statement",
+      "value": "(A ≃ B) ≃ (A = B)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "**univalence axiom** says: $(A \\simeq B) \\simeq (A = B)$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-pi1-circle",
+      "subject": "circle-s1",
+      "predicate": "fundamental_group",
+      "value": "π1(S1) ≅ Z",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "$\\pi_1(S^1) \\cong \\mathbb{Z}$",
+      "citation_keys": [
+        "hottbook"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-face-dimension",
+      "subject": "manifold-hypothesis",
+      "predicate": "intrinsic_dimension_faces",
+      "value": 100,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "The intrinsic dimensionality of “face-ness” might be ~100",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-claude-features",
+      "subject": "claude-3-sonnet",
+      "predicate": "features_extracted",
+      "value": "millions",
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "The 2024 Claude 3 Sonnet study then extracted millions of interpretable features",
+      "citation_keys": [
+        "templeton2024scaling"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-cosine-variance",
+      "subject": "random-unit-vectors",
+      "predicate": "cosine_variance",
+      "value": "1/d",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "$\\operatorname{Var}(\\cos)\\approx1/d$",
+      "citation_keys": [
+        "gorban2018blessing"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -102,6 +306,213 @@
       "qualifiers": {},
       "quote": "part: 1",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-fp32",
+      "from": "fp32",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "machine precision ($\\approx 10^{-7}$ for fp32)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-vector-space",
+      "from": "vector-space",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Modern AI happens in vector spaces of dimension 768 to 16,000.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-random-vectors-cosine-768d",
+      "from": "random-vectors-cosine-768d",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "so $P(|\\cos|>0.1)$ is about $0.6\\%$ at $d=768$",
+      "citation_keys": [
+        "gorban2018blessing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-100-dimensional-cube",
+      "from": "100-dimensional-cube",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "With $d = 100$ and 10 samples per axis, you need $10^{100}$ samples, more than atoms in the universe.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-eudoxus",
+      "from": "eudoxus",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Eudoxus of Cnidus (c. 408–355 BCE)",
+      "citation_keys": [
+        "eudoxus_mactutor"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-liu-hui",
+      "from": "liu-hui",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Liu Hui's 263 CE commentary",
+      "citation_keys": [
+        "liuhui_pi_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-zu-chongzhi",
+      "from": "zu-chongzhi",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Zu Chongzhi sharpened the bound to $3.1415926\\lt\\pi\\lt3.1415927$",
+      "citation_keys": [
+        "zuchongzhi_mactutor"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-universal-approximation-theorem",
+      "from": "universal-approximation-theorem",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a feed-forward network with a single hidden layer of sufficient width can approximate **any continuous function** on a compact domain to arbitrary precision",
+      "citation_keys": [
+        "cybenko1989",
+        "hornik1989"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-integral-sign",
+      "from": "integral-sign",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "introduced it in 1675",
+      "citation_keys": [
+        "historyofmathematicalnotation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-riemann",
+      "from": "riemann",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Riemann's 1854 habilitation lecture",
+      "citation_keys": [
+        "riemann1854trig"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-lebesgue",
+      "from": "lebesgue",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Lebesgue's 1902 thesis",
+      "citation_keys": [
+        "lebesgue1902integrale"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-cauchy",
+      "from": "cauchy",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Cauchy's 1825 memoir",
+      "citation_keys": [
+        "cauchy1825memoire"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-hott-book",
+      "from": "hott-book",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the 2012–13 IAS special year produced the HoTT Book",
+      "citation_keys": [
+        "hottbook"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-univalence-axiom",
+      "from": "univalence-axiom",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**univalence axiom** says: $(A \\simeq B) \\simeq (A = B)$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-circle-s1",
+      "from": "circle-s1",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$\\pi_1(S^1) \\cong \\mathbb{Z}$",
+      "citation_keys": [
+        "hottbook"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-manifold-hypothesis",
+      "from": "manifold-hypothesis",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The intrinsic dimensionality of “face-ness” might be ~100",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-claude-3-sonnet",
+      "from": "claude-3-sonnet",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The 2024 Claude 3 Sonnet study then extracted millions of interpretable features",
+      "citation_keys": [
+        "templeton2024scaling"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-random-unit-vectors",
+      "from": "random-unit-vectors",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$\\operatorname{Var}(\\cos)\\approx1/d$",
+      "citation_keys": [
+        "gorban2018blessing"
+      ],
       "confidence": "provenance"
     }
   ]

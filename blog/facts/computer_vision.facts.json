@@ -5,32 +5,16 @@
   "title": "What Machines See",
   "part": 3,
   "order": 7,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "neocognitron",
-    "hubelwiesel",
     "lecun1989backpropagation",
     "deng2009imagenet",
     "krizhevsky2012imagenet",
     "colah2014conv",
-    "colah2015types",
-    "petersen2024mathdl",
-    "stopsignimage",
-    "he2015resnet",
-    "girshick2014rcnn",
-    "ren2015faster",
-    "redmon2016yolo",
-    "ronneberger2015unet",
-    "he2017maskrcnn",
-    "kirillov2023sam",
-    "sam_demo_img",
-    "dosovitskiy2021vit",
     "he2021mae",
-    "radford2021clip",
-    "goh2021multimodal",
-    "darcet2024registers",
-    "mordvintsev2015inceptionism"
+    "dosovitskiy2021vit"
   ],
   "claims": [
     {
@@ -71,6 +55,254 @@
       "quote": "order: 7",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "computer-vision-neocognitron-1969",
+      "subject": "neocognitron",
+      "predicate": "first_published",
+      "value": 1969,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "he published multilayered visual feature-extraction networks as early as 1969",
+      "citation_keys": [
+        "neocognitron"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-neocognitron-1979",
+      "subject": "neocognitron",
+      "predicate": "introduced",
+      "value": 1979,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "introduced the \\cite[Neocognitron]{neocognitron} in 1979 (English 1980)",
+      "citation_keys": [
+        "neocognitron"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-lecun-year",
+      "subject": "lecun-1989-cnn",
+      "predicate": "year",
+      "value": 1989,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in \\citeyear{lecun1989backpropagation}, LeCun et al. made the concept practical",
+      "citation_keys": [
+        "lecun1989backpropagation"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-lecun-task",
+      "subject": "lecun-1989-cnn",
+      "predicate": "task",
+      "value": "recognize handwritten ZIP codes",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "to recognize handwritten ZIP codes for the U.S. Postal Service.",
+      "citation_keys": [
+        "lecun1989backpropagation"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-lenet5",
+      "subject": "lenet-5",
+      "predicate": "commercial_deployment",
+      "value": 1996,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "fielded in U.S. banks from about 1996.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-imagenet-2009",
+      "subject": "imagenet",
+      "predicate": "images_2009",
+      "value": 3200000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "3.2 million images in its 2009 release",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-imagenet-later",
+      "subject": "imagenet",
+      "predicate": "images_later",
+      "value": 14000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "later about 14 million",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-imagenet-classes",
+      "subject": "imagenet",
+      "predicate": "classes",
+      "value": 1000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "with a 1,000-class ILSVRC challenge",
+      "citation_keys": [
+        "deng2009imagenet"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-alexnet-year",
+      "subject": "alexnet",
+      "predicate": "year",
+      "value": 2012,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**AlexNet** (\\cite[Krizhevsky et al., 2012]{krizhevsky2012imagenet})",
+      "citation_keys": [
+        "krizhevsky2012imagenet"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-alexnet-ensemble",
+      "subject": "alexnet",
+      "predicate": "top5_error_ensemble",
+      "value": 15.3,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "its 7-model ensemble reached 15.3 percent top-5 error",
+      "citation_keys": [
+        "krizhevsky2012imagenet"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-alexnet-single",
+      "subject": "alexnet",
+      "predicate": "top5_error_single",
+      "value": 18.2,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "a single model reached 18.2 percent",
+      "citation_keys": [
+        "krizhevsky2012imagenet"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-sobel-year",
+      "subject": "sobel-filter",
+      "predicate": "year",
+      "value": 1968,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Named after Irwin Sobel, who introduced them in 1968.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-conv-naive",
+      "subject": "convolution",
+      "predicate": "naive_complexity",
+      "value": "O(n^2)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "although a convolution looks like an $O(n^2)$ sum",
+      "citation_keys": [
+        "colah2014conv"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-conv-fast",
+      "subject": "convolution",
+      "predicate": "fast_complexity",
+      "value": "O(n log n)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "it can be evaluated in $O(n\\log n)$ with the right transform",
+      "citation_keys": [
+        "colah2014conv"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-resnet50",
+      "subject": "resnet-50",
+      "predicate": "layers",
+      "value": 50,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "ResNet-50 with 50 layers",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-vgg16",
+      "subject": "vgg-16",
+      "predicate": "layers",
+      "value": 16,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "VGG-16 with 16 layers",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-sam-masks",
+      "subject": "sam",
+      "predicate": "training_masks",
+      "value": 1000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Trained on **1 billion masks**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-mae-ratio",
+      "subject": "mae",
+      "predicate": "masked_patch_ratio",
+      "value": 75,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "self-supervised pretraining by masking 75% of patches",
+      "citation_keys": [
+        "he2021mae"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-vit-patch",
+      "subject": "vision-transformer",
+      "predicate": "patch_size",
+      "value": 16,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "splits an image into 16×16 **patches**",
+      "citation_keys": [
+        "dosovitskiy2021vit"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer-vision-vector",
+      "subject": "cnn-classifier",
+      "predicate": "flatten_vector_size",
+      "value": 76832,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "\\underbrace{\\text{Vector}}_{76832\\times1}",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -81,6 +313,148 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 3",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-neocognitron",
+      "from": "neocognitron",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "he published multilayered visual feature-extraction networks as early as 1969",
+      "citation_keys": [
+        "neocognitron"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-lecun-1989-cnn",
+      "from": "lecun-1989-cnn",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in \\citeyear{lecun1989backpropagation}, LeCun et al. made the concept practical",
+      "citation_keys": [
+        "lecun1989backpropagation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-lenet-5",
+      "from": "lenet-5",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "fielded in U.S. banks from about 1996.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-imagenet",
+      "from": "imagenet",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "3.2 million images in its 2009 release",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-alexnet",
+      "from": "alexnet",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**AlexNet** (\\cite[Krizhevsky et al., 2012]{krizhevsky2012imagenet})",
+      "citation_keys": [
+        "krizhevsky2012imagenet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-sobel-filter",
+      "from": "sobel-filter",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Named after Irwin Sobel, who introduced them in 1968.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-convolution",
+      "from": "convolution",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "although a convolution looks like an $O(n^2)$ sum",
+      "citation_keys": [
+        "colah2014conv"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-resnet-50",
+      "from": "resnet-50",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "ResNet-50 with 50 layers",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-vgg-16",
+      "from": "vgg-16",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "VGG-16 with 16 layers",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-sam",
+      "from": "sam",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Trained on **1 billion masks**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-mae",
+      "from": "mae",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "self-supervised pretraining by masking 75% of patches",
+      "citation_keys": [
+        "he2021mae"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-vision-transformer",
+      "from": "vision-transformer",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "splits an image into 16×16 **patches**",
+      "citation_keys": [
+        "dosovitskiy2021vit"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-cnn-classifier",
+      "from": "cnn-classifier",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\underbrace{\\text{Vector}}_{76832\\times1}",
       "citation_keys": [],
       "confidence": "provenance"
     }

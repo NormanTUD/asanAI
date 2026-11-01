@@ -5,22 +5,9 @@
   "title": "Production Serving & Inference",
   "part": 5,
   "order": 14,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [
-    "ainslie2023gqa",
-    "kwon2023vllm",
-    "leviathan2023speculative",
-    "ma2024bitnet",
-    "lin2023awq",
-    "frantar2022gptq",
-    "hinton2015distilling",
-    "routellm2024",
-    "nemocguardrails",
-    "react2022",
-    "otelgenai",
-    "continuous_delivery_wiki"
-  ],
+  "citations": [],
   "claims": [
     {
       "id": "auto-production_serving-title-0-1",

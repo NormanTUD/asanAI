@@ -363,3 +363,57 @@ Relation bleibt gültig, ohne den 1991er-Anker als Obergrenze zu missbrauchen.
 `mentioned_in`-Kanten sind reine Provenienz (Entität → Lektion) und werden
 vom `--strict-relations`-Check mitgezählt. Semantische Traces lassen sie sich
 mit `--no-provenance` ausblenden.
+
+## Inhaltliche Claims — Pflicht, nicht Deko
+
+Metadaten (`title`, `part`, `order`) reichen nicht. Jede Lektion braucht
+mindestens einen **inhaltlichen Claim**:
+
+```json
+{
+  "id": "transformer-2017",
+  "subject": "transformer",
+  "predicate": "year",
+  "value": 2017,
+  "unit": "year",
+  "qualifiers": {"event": "Vaswani et al. paper"},
+  "quote": "The Transformer architecture (Vaswani et al., 2017)",
+  "citation_keys": ["vaswani2017"]
+}
+```
+
+Der `quote` ist der einzige Anker; **keine Zeilennummern**. Der Wert muss
+normalisierbar sein (Zahl + Einheit, Jahr, Version, Definition, Formel).
+Beziehungen zwischen Entitäten kommen in `relations`; `link_provenance.py`
+ergänzt danach das `mentioned_in`-Rückgrat.
+
+### Wie man eine Lektion befüllt
+
+1. Prüfbare Aussagen sammeln: Zahlen, Daten, Modell-Specs, Benchmarks,
+   benannte Werke/Ereignisse, Definitionen, Formeln.
+2. Canonical `subject` / `predicate` / `unit` wählen, exakten `quote`
+   eintragen, `citation_keys` nur aus demselben Satz.
+3. Explizite Relationen ergänzen (`influenced`, `before`, `wrote`,
+   `part_of`, `same_as`, …); Endpunkte müssen im Ledger existieren.
+4. `link_provenance.py` laufen lassen, damit jeder Eintrag erreichbar ist.
+5. Prüfen:
+
+```bash
+uv run blog/tests/content_claims_test.py
+uv run blog/tools/factcheck/check_facts.py blog/ \
+  --strict-relations --strict-quotes --require-claims
+```
+
+`--require-claims` macht aus einer metadata-only Lektion einen CI-Fehler.
+`content_claims_test.py` prüft zusätzlich Kernfakten (GPT-3 175B, Backprop
+1986, H100 80 GB / 989 TFLOPS, AlexNet 2012, Transformer 2017, Chinchilla
+20 Tokens/Parameter), Tiefe der Geschichtskapitel und Quote/Einheit-Pflicht.
+
+### CI-Fehler sind kopierbar
+
+Zwei nicht verklebbare Claims erzeugen einen Block mit `FACT CONFLICT`,
+Claim-IDs, Dateien, Quotes, `why`, `fix`, einem GitHub-`::error`-Annotation
+und einem fertigen `AI FIX PROMPT` zwischen `COPY FROM HERE` / `COPY TO
+HERE`. Der Prompt nennt Subjekt, Prädikat, Scope, beide Werte, den Grund und
+den exakten Reparaturbefehl. So kann Mensch oder KI den Fehler direkt
+übernehmen, ohne die CI-Ausgabe zu interpretieren.

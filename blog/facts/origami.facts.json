@@ -5,85 +5,22 @@
   "title": "Origami in N Dimensions",
   "part": 3,
   "order": 2,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "origami_cranes_img",
     "cybenko1989",
     "hornik1989universal",
-    "linear_separability_wiki",
-    "softmax_wiki",
-    "keup2022origami",
-    "relu_wiki",
-    "spencerbrown1969form",
-    "lewandowski2025spacefolds",
-    "convex_hull_wiki",
     "colah2014manifolds",
     "naitzat2020topology",
+    "relu_wiki",
     "hendrycks2016gelu",
     "ramachandran2017swish",
-    "inverse_function_theorem_wiki",
-    "colah2015backprop",
-    "info_geometry_nlab",
-    "foldandcut_wiki",
-    "foldedkoch_img",
-    "math_paper_folding_wiki",
-    "friedman2018folding",
-    "houdini1922papermagic",
+    "softmax_wiki",
+    "petersen2024mathdl",
+    "papyan2020neuralcollapse",
     "beloch_fold_wiki",
     "hull2011beloch",
-    "hull1997origametry",
-    "huzita_justin_wiki",
-    "houdini_portrait_img",
-    "houdini_papermagic_img",
-    "maekawa_theorem_wiki",
-    "kawasaki_theorem_wiki",
-    "robert_lang_wiki",
-    "geometric_folding_algorithms_wiki",
-    "fold_and_cut_problem_wiki",
-    "erik_demaine_site",
-    "dragon_origami_img",
-    "modular_origami_img",
-    "langorigami_computational",
-    "miura_fold_wiki",
-    "rigid_origami_wiki",
-    "petersen2024mathdl",
-    "johnson2018skinny",
-    "lewandowski2025spacebetween",
-    "amrami2021depth",
-    "montufar2014regions",
-    "poker_hand_uci",
-    "cover1965",
-    "vershynin2018hd",
-    "johnson1984lindenstrauss",
-    "larsen2014jloptimal",
-    "papyan2020neuralcollapse",
-    "ergengrillo2024topological",
-    "lee2023topologywidth",
-    "fefferman2016testing",
-    "vaswani2017attention",
-    "keyvalmem",
-    "simonyan2014vgg",
-    "he2015resnet",
-    "groetschel2005polyhedral",
-    "huchette2026polyhedral",
-    "carlsson2009topologydata",
-    "love2021topdeepsurvey",
-    "hanin2019linearregions",
-    "raghu2017expressive",
-    "grigsby2020transversality",
-    "chen2018neuralode",
-    "papamakarios2019flows",
-    "teshima2020inndiffeo",
-    "dinh2016realnvp",
-    "tenenbaum2000isomap",
-    "chung2017perceptual",
-    "loaizaganem2024manifoldsurvey",
-    "yoneda_nlab",
-    "cruzmorales2021grothendieck",
-    "jacot2018ntk",
-    "lee2019widelinear",
-    "wu2024linguisticcollapse"
+    "math_paper_folding_wiki"
   ],
   "claims": [
     {
@@ -124,6 +61,253 @@
       "quote": "order: 2",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "origami-fold-and-cut-year",
+      "subject": "fold-and-cut-theorem",
+      "predicate": "year",
+      "value": 1998,
+      "unit": "year",
+      "quote": "The Fold-and-Cut Theorem (Demaine et al. 1998)",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-fold-and-cut-statement",
+      "subject": "fold-and-cut-theorem",
+      "predicate": "statement",
+      "value": "any straight-line shape from one straight cut",
+      "unit": "name",
+      "quote": "you can cut out any shape made of straight lines from a single sheet of paper with just one straight cut",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-universal-approximation",
+      "subject": "universal-approximation-theorem",
+      "predicate": "year",
+      "value": 1989,
+      "unit": "year",
+      "quote": "(\\cite[Cybenko, 1989]{cybenko1989})",
+      "citation_keys": [
+        "cybenko1989",
+        "hornik1989universal"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-egg-neurons",
+      "subject": "two-dimensional-egg",
+      "predicate": "neurons",
+      "value": 3,
+      "unit": "count",
+      "quote": "single* hidden layer of just **three** ReLU neurons.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-egg-accuracy",
+      "subject": "two-dimensional-egg",
+      "predicate": "recall",
+      "value": "100% inner, ~97% outer",
+      "unit": "%",
+      "quote": "recall of $100\\%$ for the inner class and $\\approx 97\\%$ for the outer",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-nd-egg-neurons",
+      "subject": "n-dimensional-egg",
+      "predicate": "neurons",
+      "value": "N+1",
+      "unit": "count",
+      "quote": "$N+1$ neurons</b> — a small, constant overhead, not an exponential one.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-relu-topology",
+      "subject": "relu",
+      "predicate": "property",
+      "value": "non-homeomorphism that can change topology",
+      "unit": "name",
+      "quote": "As a **non-homeomorphism** it can *change the data's topology*",
+      "citation_keys": [
+        "colah2014manifolds",
+        "naitzat2020topology"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-leaky-relu",
+      "subject": "leaky-relu",
+      "predicate": "property",
+      "value": "bi-Lipschitz homeomorphism",
+      "unit": "name",
+      "quote": "**bi-Lipschitz**, hence a *homeomorphism*: it bends at the crease but never crushes, so the topology is preserved.",
+      "citation_keys": [
+        "relu_wiki"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gelu",
+      "subject": "gelu",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "quote": "(\\cite[Hendrycks & Gimpel, 2016]{hendrycks2016gelu})",
+      "citation_keys": [
+        "hendrycks2016gelu"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-silu",
+      "subject": "silu",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "quote": "(\\cite[Ramachandran et al. 2017]{ramachandran2017swish})",
+      "citation_keys": [
+        "ramachandran2017swish"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-softmax-simplex",
+      "subject": "softmax",
+      "predicate": "codomain",
+      "value": "probability simplex",
+      "unit": "name",
+      "quote": "it reads the whole logit vector at once and lands it in the **probability simplex** $\\Delta^{d-1}$",
+      "citation_keys": [
+        "softmax_wiki"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-linear-regions",
+      "subject": "deep-relu-network",
+      "predicate": "linear_regions",
+      "value": "exponential in depth",
+      "unit": "name",
+      "quote": "a deep ReLU network is a **piecewise-linear** function whose number of linear regions",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-petersen-bound",
+      "subject": "petersen-depth-construction",
+      "predicate": "linear_pieces",
+      "value": "2^L",
+      "unit": "count",
+      "quote": "Petersen's extremal depth-$L$ construction at width 2 has $2^{L-1}$ spikes and at least $2^L$ linear pieces",
+      "citation_keys": [
+        "petersen2024mathdl"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-poker-architecture",
+      "subject": "poker-hand-network",
+      "predicate": "architecture",
+      "value": "10→100→100→10",
+      "unit": "name",
+      "quote": "The architecture is $10 \\to 100 \\to 100 \\to 10$.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-cover-formula",
+      "subject": "covers-counting-function",
+      "predicate": "formula",
+      "value": "C(N,d)=2 sum binom(N-1,k)",
+      "unit": "formula",
+      "quote": "$$C(N,d) \\;=\\; 2\\sum_{k=0}^{d-1}\\binom{N-1}{k}.$$",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-jl-lemma",
+      "subject": "johnson-lindenstrauss-lemma",
+      "predicate": "dimensions",
+      "value": "O(log N / epsilon^2)",
+      "unit": "formula",
+      "quote": "a linear map into $k=O(\\log N/\\varepsilon^{2})$ dimensions preserves *all* pairwise distances",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-neural-collapse",
+      "subject": "neural-collapse",
+      "predicate": "year",
+      "value": 2020,
+      "unit": "year",
+      "quote": "**4. Neural collapse — where the folding ends** (\\cite[Papyan, Han & Donoho, 2020]{papyan2020neuralcollapse})",
+      "citation_keys": [
+        "papyan2020neuralcollapse"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-folding-depth",
+      "subject": "space-folding-measure",
+      "predicate": "depth_correlation",
+      "value": 0.99,
+      "unit": "count",
+      "quote": "correlating with depth at $r \\approx 0.99$",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-beloch",
+      "subject": "beloch-fold",
+      "predicate": "year",
+      "value": 1936,
+      "unit": "year",
+      "quote": "**Margherita Piazzola Beloch** (1936): one special fold, the **Beloch fold**, solves the general cubic",
+      "citation_keys": [
+        "beloch_fold_wiki",
+        "hull2011beloch"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-flat-foldability",
+      "subject": "flat-foldability",
+      "predicate": "complexity",
+      "value": "NP-complete",
+      "unit": "name",
+      "quote": "**Bern and Hayes (1996)** showed that deciding flat-foldability is **NP-complete**",
+      "citation_keys": [
+        "math_paper_folding_wiki"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -135,6 +319,209 @@
       "qualifiers": {},
       "quote": "part: 3",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-fold-and-cut-theorem",
+      "from": "fold-and-cut-theorem",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Fold-and-Cut Theorem (Demaine et al. 1998)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-universal-approximation-theorem",
+      "from": "universal-approximation-theorem",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Cybenko, 1989]{cybenko1989})",
+      "citation_keys": [
+        "cybenko1989",
+        "hornik1989universal"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-two-dimensional-egg",
+      "from": "two-dimensional-egg",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "single* hidden layer of just **three** ReLU neurons.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-n-dimensional-egg",
+      "from": "n-dimensional-egg",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$N+1$ neurons</b> — a small, constant overhead, not an exponential one.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-relu",
+      "from": "relu",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "As a **non-homeomorphism** it can *change the data's topology*",
+      "citation_keys": [
+        "colah2014manifolds",
+        "naitzat2020topology"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-leaky-relu",
+      "from": "leaky-relu",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**bi-Lipschitz**, hence a *homeomorphism*: it bends at the crease but never crushes, so the topology is preserved.",
+      "citation_keys": [
+        "relu_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-gelu",
+      "from": "gelu",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Hendrycks & Gimpel, 2016]{hendrycks2016gelu})",
+      "citation_keys": [
+        "hendrycks2016gelu"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-silu",
+      "from": "silu",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Ramachandran et al. 2017]{ramachandran2017swish})",
+      "citation_keys": [
+        "ramachandran2017swish"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-softmax",
+      "from": "softmax",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it reads the whole logit vector at once and lands it in the **probability simplex** $\\Delta^{d-1}$",
+      "citation_keys": [
+        "softmax_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-deep-relu-network",
+      "from": "deep-relu-network",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a deep ReLU network is a **piecewise-linear** function whose number of linear regions",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-petersen-depth-construction",
+      "from": "petersen-depth-construction",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Petersen's extremal depth-$L$ construction at width 2 has $2^{L-1}$ spikes and at least $2^L$ linear pieces",
+      "citation_keys": [
+        "petersen2024mathdl"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-poker-hand-network",
+      "from": "poker-hand-network",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The architecture is $10 \\to 100 \\to 100 \\to 10$.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-covers-counting-function",
+      "from": "covers-counting-function",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$$C(N,d) \\;=\\; 2\\sum_{k=0}^{d-1}\\binom{N-1}{k}.$$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-johnson-lindenstrauss-lemma",
+      "from": "johnson-lindenstrauss-lemma",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a linear map into $k=O(\\log N/\\varepsilon^{2})$ dimensions preserves *all* pairwise distances",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-neural-collapse",
+      "from": "neural-collapse",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**4. Neural collapse — where the folding ends** (\\cite[Papyan, Han & Donoho, 2020]{papyan2020neuralcollapse})",
+      "citation_keys": [
+        "papyan2020neuralcollapse"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-space-folding-measure",
+      "from": "space-folding-measure",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "correlating with depth at $r \\approx 0.99$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-beloch-fold",
+      "from": "beloch-fold",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Margherita Piazzola Beloch** (1936): one special fold, the **Beloch fold**, solves the general cubic",
+      "citation_keys": [
+        "beloch_fold_wiki",
+        "hull2011beloch"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-flat-foldability",
+      "from": "flat-foldability",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Bern and Hayes (1996)** showed that deciding flat-foldability is **NP-complete**",
+      "citation_keys": [
+        "math_paper_folding_wiki"
+      ],
       "confidence": "provenance"
     }
   ]

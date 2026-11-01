@@ -5,24 +5,19 @@
   "title": "Statistics II — Inference and Information",
   "part": 1,
   "order": 11,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "bayes1763essay",
-    "thomas_bayes_image",
     "nyquist_sampling",
     "hartley1928transmission",
     "szilard1929entropy",
     "shannon1948communication",
     "em_algorithm_wiki",
-    "nietzsche1883zarathustra",
     "boltzmann",
     "fisher1922",
     "kolmogorov1933",
-    "leiblerkullback",
-    "kullback_wiki",
-    "colah2015visualinfo",
-    "zelligharris"
+    "colah2015visualinfo"
   ],
   "claims": [
     {
@@ -63,6 +58,246 @@
       "quote": "order: 11",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "statistics-ii-bayes-year",
+      "subject": "bayes-theorem",
+      "predicate": "essay_year",
+      "value": 1763,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "published posthumously in the year \\citeyear{bayes1763essay}",
+      "citation_keys": [
+        "bayes1763essay"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-bayes-life",
+      "subject": "thomas-bayes",
+      "predicate": "lifespan",
+      "value": "1702-1761",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "Thomas Bayes (1702–1761)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-nyquist-year",
+      "subject": "nyquist-sampling-theorem",
+      "predicate": "year",
+      "value": 1928,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Nyquist (1928).**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-nyquist-rate",
+      "subject": "nyquist-sampling-theorem",
+      "predicate": "sampling_rate",
+      "value": "2B per second",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "a signal with no frequencies above $B$ hertz is completely determined by samples taken at or faster than **$2B$ per second**",
+      "citation_keys": [
+        "nyquist_sampling"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-hartley-year",
+      "subject": "hartley-information",
+      "predicate": "year",
+      "value": 1928,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Hartley (1928).** In the same year, Ralph Hartley made the first information-theoretic paper",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-hartley-unit",
+      "subject": "hartley-information",
+      "predicate": "unit",
+      "value": "hartley",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "treating information as a countable quantity with a unit (the *hartley*)",
+      "citation_keys": [
+        "hartley1928transmission"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-szilard-year",
+      "subject": "szilard-entropy",
+      "predicate": "year",
+      "value": 1929,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Szilard (1929).** The decisive turn came from physics.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-szilard-value",
+      "subject": "szilard-entropy",
+      "predicate": "entropy_reduction",
+      "value": "k ln 2",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "knowing which half it is in reduces the entropy by exactly **$k \\ln 2$**",
+      "citation_keys": [
+        "szilard1929entropy"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-shannon-year",
+      "subject": "shannon-entropy",
+      "predicate": "year",
+      "value": 1948,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Claude Shannon** in \\citeyear{shannon1948communication} aimed",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-entropy-formula",
+      "subject": "shannon-entropy",
+      "predicate": "formula",
+      "value": "-sum P log2 P",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "H(X) = - \\sum_{i=1}^{n} \\underbrace{P(x_i)}_{\\text{Probability}} \\cdot \\underbrace{\\log_2 P(x_i)}_{\\text{The “Surprise” (Bits)}}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-dirichlet-low",
+      "subject": "dirichlet-distribution",
+      "predicate": "low_alpha_effect",
+      "value": "pushes probabilities toward corners",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "When $\\alpha < 1$, the distribution pushes probabilities toward the corners",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-dirichlet-high",
+      "subject": "dirichlet-distribution",
+      "predicate": "high_alpha_effect",
+      "value": "pushes everything toward the center",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "When $\\alpha > 1$, it pushes everything toward the center",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-em-year",
+      "subject": "em-algorithm",
+      "predicate": "year",
+      "value": 1977,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "formalized by **Arthur Dempster, Laird, and Rubin** in 1977",
+      "citation_keys": [
+        "em_algorithm_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-markov-year",
+      "subject": "markov-chain",
+      "predicate": "year",
+      "value": 1906,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "This is the logic of **Andrey Markov** (1906).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-boltzmann-year",
+      "subject": "boltzmann-distribution",
+      "predicate": "year",
+      "value": 1860,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "first derived by Maxwell (1860) and generalized by **\\citeauthor{boltzmann}**",
+      "citation_keys": [
+        "boltzmann"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-mle-year",
+      "subject": "maximum-likelihood-estimation",
+      "predicate": "year",
+      "value": 1922,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Popularized by **Sir \\citeauthor{fisher1922}**",
+      "citation_keys": [
+        "fisher1922"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-kolmogorov-year",
+      "subject": "probability-axioms",
+      "predicate": "year",
+      "value": 1933,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "established by **\\citeauthor{kolmogorov1933}** in *\\citetitle{kolmogorov1933}* (\\citeyear{kolmogorov1933})",
+      "citation_keys": [
+        "kolmogorov1933"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-kl-asymmetry",
+      "subject": "kl-divergence",
+      "predicate": "symmetry",
+      "value": "not symmetric",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "KL divergence is *not* a true distance because it is not symmetric",
+      "citation_keys": [
+        "colah2015visualinfo"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-kl-zero",
+      "subject": "kl-divergence",
+      "predicate": "zero_condition",
+      "value": "distributions identical",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The divergence $D_{KL}$ is 0 only when the distributions are identical.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-lda",
+      "subject": "lda",
+      "predicate": "uses",
+      "value": "Dirichlet distribution",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "In topic models such as Latent Dirichlet Allocation (LDA), the Dirichlet distribution is used",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -73,6 +308,160 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 1",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-bayes-theorem",
+      "from": "bayes-theorem",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "published posthumously in the year \\citeyear{bayes1763essay}",
+      "citation_keys": [
+        "bayes1763essay"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-thomas-bayes",
+      "from": "thomas-bayes",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Thomas Bayes (1702–1761)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-nyquist-sampling-theorem",
+      "from": "nyquist-sampling-theorem",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Nyquist (1928).**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-hartley-information",
+      "from": "hartley-information",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Hartley (1928).** In the same year, Ralph Hartley made the first information-theoretic paper",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-szilard-entropy",
+      "from": "szilard-entropy",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Szilard (1929).** The decisive turn came from physics.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-shannon-entropy",
+      "from": "shannon-entropy",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Claude Shannon** in \\citeyear{shannon1948communication} aimed",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-dirichlet-distribution",
+      "from": "dirichlet-distribution",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "When $\\alpha < 1$, the distribution pushes probabilities toward the corners",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-em-algorithm",
+      "from": "em-algorithm",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "formalized by **Arthur Dempster, Laird, and Rubin** in 1977",
+      "citation_keys": [
+        "em_algorithm_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-markov-chain",
+      "from": "markov-chain",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This is the logic of **Andrey Markov** (1906).",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-boltzmann-distribution",
+      "from": "boltzmann-distribution",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "first derived by Maxwell (1860) and generalized by **\\citeauthor{boltzmann}**",
+      "citation_keys": [
+        "boltzmann"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-maximum-likelihood-estimation",
+      "from": "maximum-likelihood-estimation",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Popularized by **Sir \\citeauthor{fisher1922}**",
+      "citation_keys": [
+        "fisher1922"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-probability-axioms",
+      "from": "probability-axioms",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "established by **\\citeauthor{kolmogorov1933}** in *\\citetitle{kolmogorov1933}* (\\citeyear{kolmogorov1933})",
+      "citation_keys": [
+        "kolmogorov1933"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-kl-divergence",
+      "from": "kl-divergence",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "KL divergence is *not* a true distance because it is not symmetric",
+      "citation_keys": [
+        "colah2015visualinfo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-lda",
+      "from": "lda",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In topic models such as Latent Dirichlet Allocation (LDA), the Dirichlet distribution is used",
       "citation_keys": [],
       "confidence": "provenance"
     }

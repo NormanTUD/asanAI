@@ -5,45 +5,23 @@
   "title": "Basic Math Concepts II — Linear Algebra for AI",
   "part": 1,
   "order": 4,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "rgb_color_cube",
     "axler2024linearalgebra",
     "hamilton1844quaternions",
     "grassmann1844ausdehnungslehre",
     "sylvester1850matrix",
-    "cayleymemoirmatrices",
-    "frobenius1878linear",
-    "frobenius1879differential",
     "mactutor_matrices_determinants",
-    "numpy_broadcasting",
     "einstein1916annalen",
-    "boyd2018appliedlinearalgebra",
-    "etymonline_matrix",
-    "cramer1750introduction",
-    "etymonline_vector",
-    "hamiltonextensionsquaternions",
-    "etymonline_scalar",
-    "hamilton1846quaternions",
-    "miller_vector",
-    "etymonline_tensor",
-    "voigt1898krystalle",
-    "riccilevicivita1900",
-    "miller_tensor",
-    "colah2015types",
-    "macTutorFunctions",
-    "miller_functionsymbols",
-    "hadamardproduct",
-    "hadamard1899series",
-    "schur1911bilinear",
-    "hadamard_product_wiki",
-    "boltzmann_distribution_wiki",
-    "luce1959individualchoice",
     "bridle1990softmax",
     "shannon1948communication",
     "kullback1951information",
-    "good1952rational"
+    "hadamard1899series",
+    "schur1911bilinear",
+    "cayleymemoirmatrices",
+    "hamilton1846quaternions",
+    "voigt1898krystalle"
   ],
   "claims": [
     {
@@ -84,6 +62,223 @@
       "quote": "order: 4",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "math_ii-vector-space-axioms",
+      "subject": "vector-space",
+      "predicate": "axiom_count",
+      "value": 8,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "satisfy eight axioms (closure, associativity, identity, inverses, distributivity, compatibility of scalar multiplication)",
+      "citation_keys": [
+        "axler2024linearalgebra"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-quaternions",
+      "subject": "quaternions",
+      "predicate": "year",
+      "value": 1843,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1843 William Rowan Hamilton found the rule $i^2=j^2=k^2=ijk=-1$",
+      "citation_keys": [
+        "hamilton1844quaternions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-grassmann",
+      "subject": "ausdehnungslehre",
+      "predicate": "year",
+      "value": 1844,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "A year later Hermann Grassmann's *Ausdehnungslehre* built a coordinate-free algebra of $n$-dimensional extensions",
+      "citation_keys": [
+        "grassmann1844ausdehnungslehre"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-tensor-definition",
+      "subject": "tensor",
+      "predicate": "definition",
+      "value": "a rectangular array of numbers with a fixed number of axes",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A *tensor* is a rectangular array of numbers with a fixed number of axes",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-matrix-named",
+      "subject": "matrix",
+      "predicate": "named_year",
+      "value": 1850,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in 1850 he called the result a *matrix*",
+      "citation_keys": [
+        "sylvester1850matrix"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-matrix-algebra",
+      "subject": "matrix-algebra",
+      "predicate": "year",
+      "value": 1858,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Cayley's 1858 memoir changed its status.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-determinant",
+      "subject": "determinant",
+      "predicate": "first_computed_year",
+      "value": 1683,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Seki Takakazu computed determinants in Japan by 1683",
+      "citation_keys": [
+        "mactutor_matrices_determinants"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-summation-convention",
+      "subject": "einstein-summation-convention",
+      "predicate": "year",
+      "value": 1916,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the *summation convention* Einstein introduced in 1916",
+      "citation_keys": [
+        "einstein1916annalen"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-softmax-name",
+      "subject": "softmax",
+      "predicate": "named_year",
+      "value": 1989,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The name \"softmax\" is John Bridle's; he used it for a normalised exponential in a 1989 conference paper published in 1990",
+      "citation_keys": [
+        "bridle1990softmax"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-entropy",
+      "subject": "entropy",
+      "predicate": "year",
+      "value": 1948,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Shannon's 1948 paper defined the entropy",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-kl-divergence",
+      "subject": "kl-divergence",
+      "predicate": "year",
+      "value": 1951,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Kullback and Leibler's 1951 \"mean information for discrimination\"",
+      "citation_keys": [
+        "kullback1951information"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-hadamard-product",
+      "subject": "hadamard-product",
+      "predicate": "year",
+      "value": 1899,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the term-by-term product and the related **Hadamard multiplication theorem** belong to his 1899 *Acta Mathematica* paper",
+      "citation_keys": [
+        "hadamard1899series"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-schur-theorem",
+      "subject": "schur-product-theorem",
+      "predicate": "year",
+      "value": 1911,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the Hadamard product of two positive-semidefinite matrices is positive-semidefinite, proved as Theorem VII of his 1911 paper",
+      "citation_keys": [
+        "schur1911bilinear"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-transpose",
+      "subject": "matrix-transposition",
+      "predicate": "year",
+      "value": 1858,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The idea of matrix transposition was introduced in 1858",
+      "citation_keys": [
+        "cayleymemoirmatrices"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-rgb-colors",
+      "subject": "rgb-color-space",
+      "predicate": "distinct_colors",
+      "value": 16000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "over 16 million of them",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-vector-term",
+      "subject": "vector-term",
+      "predicate": "year",
+      "value": 1846,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Hamilton pairs *scalar* and *vector* explicitly in his 1846 *Philosophical Magazine* paper",
+      "citation_keys": [
+        "hamilton1846quaternions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-tensor-term",
+      "subject": "tensor-term",
+      "predicate": "year",
+      "value": 1898,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "his \"Tensoren,\" 1898",
+      "citation_keys": [
+        "voigt1898krystalle"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -95,6 +290,204 @@
       "qualifiers": {},
       "quote": "part: 1",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-vector-space",
+      "from": "vector-space",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "satisfy eight axioms (closure, associativity, identity, inverses, distributivity, compatibility of scalar multiplication)",
+      "citation_keys": [
+        "axler2024linearalgebra"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-quaternions",
+      "from": "quaternions",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1843 William Rowan Hamilton found the rule $i^2=j^2=k^2=ijk=-1$",
+      "citation_keys": [
+        "hamilton1844quaternions"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-ausdehnungslehre",
+      "from": "ausdehnungslehre",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A year later Hermann Grassmann's *Ausdehnungslehre* built a coordinate-free algebra of $n$-dimensional extensions",
+      "citation_keys": [
+        "grassmann1844ausdehnungslehre"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-tensor",
+      "from": "tensor",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A *tensor* is a rectangular array of numbers with a fixed number of axes",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-matrix",
+      "from": "matrix",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in 1850 he called the result a *matrix*",
+      "citation_keys": [
+        "sylvester1850matrix"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-matrix-algebra",
+      "from": "matrix-algebra",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Cayley's 1858 memoir changed its status.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-determinant",
+      "from": "determinant",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Seki Takakazu computed determinants in Japan by 1683",
+      "citation_keys": [
+        "mactutor_matrices_determinants"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-einstein-summation-convention",
+      "from": "einstein-summation-convention",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the *summation convention* Einstein introduced in 1916",
+      "citation_keys": [
+        "einstein1916annalen"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-softmax",
+      "from": "softmax",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The name \"softmax\" is John Bridle's; he used it for a normalised exponential in a 1989 conference paper published in 1990",
+      "citation_keys": [
+        "bridle1990softmax"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-entropy",
+      "from": "entropy",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Shannon's 1948 paper defined the entropy",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-kl-divergence",
+      "from": "kl-divergence",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Kullback and Leibler's 1951 \"mean information for discrimination\"",
+      "citation_keys": [
+        "kullback1951information"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-hadamard-product",
+      "from": "hadamard-product",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the term-by-term product and the related **Hadamard multiplication theorem** belong to his 1899 *Acta Mathematica* paper",
+      "citation_keys": [
+        "hadamard1899series"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-schur-product-theorem",
+      "from": "schur-product-theorem",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Hadamard product of two positive-semidefinite matrices is positive-semidefinite, proved as Theorem VII of his 1911 paper",
+      "citation_keys": [
+        "schur1911bilinear"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-matrix-transposition",
+      "from": "matrix-transposition",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The idea of matrix transposition was introduced in 1858",
+      "citation_keys": [
+        "cayleymemoirmatrices"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-rgb-color-space",
+      "from": "rgb-color-space",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "over 16 million of them",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-vector-term",
+      "from": "vector-term",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hamilton pairs *scalar* and *vector* explicitly in his 1846 *Philosophical Magazine* paper",
+      "citation_keys": [
+        "hamilton1846quaternions"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-tensor-term",
+      "from": "tensor-term",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "his \"Tensoren,\" 1898",
+      "citation_keys": [
+        "voigt1898krystalle"
+      ],
       "confidence": "provenance"
     }
   ]

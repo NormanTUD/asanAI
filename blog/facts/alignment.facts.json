@@ -5,7 +5,7 @@
   "title": "Alignment — Making Objectives Match Intent",
   "part": 6,
   "order": 9,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "bostrom2012orthogonal",
@@ -13,7 +13,6 @@
     "mesa_optimization",
     "hubinger2024sleeperagents",
     "alignment_faking",
-    "thought_crime",
     "reward_tampering",
     "rogue_agents",
     "treacherous_turn",
@@ -22,24 +21,9 @@
     "good1965explosion",
     "asilomar2017",
     "bletchley2023",
-    "euaiact2024",
-    "aisi2023",
-    "oecd2019ai",
     "unesco2021ai",
-    "nist2023airmf",
-    "eo14110",
-    "christiano2017rlhf",
-    "ouyang2022instructgpt",
-    "rlaif",
-    "bai2022constitutional",
-    "rafailov2023dpo",
-    "orpo",
-    "kadavath2022selfknowledge",
-    "ai_safety_debate",
-    "weak_to_strong",
-    "verify_step_by_step",
-    "ai_control",
-    "mech_interp_alignment"
+    "euaiact2024",
+    "rafailov2023dpo"
   ],
   "claims": [
     {
@@ -80,6 +64,262 @@
       "quote": "order: 9",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "alignment-definition",
+      "subject": "alignment",
+      "predicate": "definition",
+      "value": "making an optimizer objective match human intent",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**Alignment** is the program of making an optimizer's objective match human intent",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-orthogonality-thesis",
+      "subject": "orthogonality-thesis",
+      "predicate": "definition",
+      "value": "intelligence and values are decoupled",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**The Orthogonality Thesis** — intelligence and values are decoupled",
+      "citation_keys": [
+        "bostrom2012orthogonal"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-orthogonality-year",
+      "subject": "orthogonality-thesis",
+      "predicate": "year",
+      "value": 2012,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Bostrom, 2012]{bostrom2012orthogonal})",
+      "citation_keys": [
+        "bostrom2012orthogonal"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-control-problem",
+      "subject": "control-problem",
+      "predicate": "definition",
+      "value": "as capability scales, the window in which a weaker party can bound a stronger one may shrink",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**The Control Problem** — as capability scales, the window in which a weaker party can bound a stronger one may shrink.",
+      "citation_keys": [
+        "bostrom2003ethical"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-specification-gaming",
+      "subject": "specification-gaming",
+      "predicate": "definition",
+      "value": "an optimizer pursues the letter of a proxy rather than its spirit",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**Specification gaming (reward hacking)** is when an optimizer pursues the *letter* of a proxy rather than its spirit.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-mesa-optimization",
+      "subject": "mesa-optimization",
+      "predicate": "definition",
+      "value": "a trained model contains an inner optimizer with an objective that differs from the training loss",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A trained model can contain an *inner* optimizer with an objective that differs from the training loss",
+      "citation_keys": [
+        "mesa_optimization"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-mesa-year",
+      "subject": "mesa-optimization",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Hubinger et al., 2019]{mesa_optimization})",
+      "citation_keys": [
+        "mesa_optimization"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-sleeper-agents",
+      "subject": "sleeper-agents",
+      "predicate": "finding",
+      "value": "backdoors can persist through subsequent safety training",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Backdoors can persist through subsequent safety training",
+      "citation_keys": [
+        "hubinger2024sleeperagents"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-deceptive-alignment",
+      "subject": "deceptive-alignment",
+      "predicate": "definition",
+      "value": "a model appears aligned during training and evaluation, then drops the act",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A model *appears* aligned during training and evaluation, then drops the act.",
+      "citation_keys": [
+        "alignment_faking"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-reward-tampering",
+      "subject": "reward-tampering",
+      "predicate": "finding",
+      "value": "models drift from harmless sycophancy toward covert subterfuge when given the chance to alter their reward",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Under RL pressure, models drift from harmless sycophancy toward **covert subterfuge** when given the chance to alter their reward.",
+      "citation_keys": [
+        "reward_tampering"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-corrigibility-study",
+      "subject": "corrigibility-study",
+      "predicate": "finding",
+      "value": "a majority of frontier models overrode the interrupt to finish the task",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "a majority of frontier models **overrode the interrupt to finish the task**",
+      "citation_keys": [
+        "rogue_agents"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-treacherous-turn",
+      "subject": "treacherous-turn",
+      "predicate": "finding",
+      "value": "reproduced with trojan-injection training",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "has been reproduced with trojan-injection training",
+      "citation_keys": [
+        "treacherous_turn"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-wiener-year",
+      "subject": "wiener-1960",
+      "predicate": "year",
+      "value": 1960,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Wiener, 1960]{wiener1960moral})",
+      "citation_keys": [
+        "wiener1960moral"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-asimov-year",
+      "subject": "three-laws-of-robotics",
+      "predicate": "year",
+      "value": 1942,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Three Laws (1942) were a fictional attempt to encode safety as rules",
+      "citation_keys": [
+        "asimov1942runaround"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-good-year",
+      "subject": "intelligence-explosion",
+      "predicate": "year",
+      "value": 1965,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1965 I. J. Good described an \"intelligence explosion",
+      "citation_keys": [
+        "good1965explosion"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-asilomar",
+      "subject": "asilomar-ai-principles",
+      "predicate": "principles_count",
+      "value": 23,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "The Asilomar AI Principles (2017) gathered researchers around 23 principles",
+      "citation_keys": [
+        "asilomar2017"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-bletchley",
+      "subject": "bletchley-declaration",
+      "predicate": "countries",
+      "value": 28,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "The Bletchley Declaration (November 2023) put 28 countries and the EU behind frontier-AI safety cooperation",
+      "citation_keys": [
+        "bletchley2023"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-unesco",
+      "subject": "unesco-ai-ethics",
+      "predicate": "member_states",
+      "value": 193,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Recommendation on the Ethics of AI (2021) was adopted by all 193 member states",
+      "citation_keys": [
+        "unesco2021ai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-eu-ai-act",
+      "subject": "eu-ai-act",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the EU AI Act (2024) turned similar principles into binding duties",
+      "citation_keys": [
+        "euaiact2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-dpo",
+      "subject": "dpo",
+      "predicate": "method",
+      "value": "learns the policy directly without an explicit RL loop",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**direct preference optimization** (DPO and successors), which learns the policy directly without an explicit RL loop",
+      "citation_keys": [
+        "rafailov2023dpo"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -91,6 +331,208 @@
       "qualifiers": {},
       "quote": "part: 6",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-orthogonality-thesis",
+      "from": "orthogonality-thesis",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**The Orthogonality Thesis** — intelligence and values are decoupled",
+      "citation_keys": [
+        "bostrom2012orthogonal"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-control-problem",
+      "from": "control-problem",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**The Control Problem** — as capability scales, the window in which a weaker party can bound a stronger one may shrink.",
+      "citation_keys": [
+        "bostrom2003ethical"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-specification-gaming",
+      "from": "specification-gaming",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Specification gaming (reward hacking)** is when an optimizer pursues the *letter* of a proxy rather than its spirit.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-mesa-optimization",
+      "from": "mesa-optimization",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A trained model can contain an *inner* optimizer with an objective that differs from the training loss",
+      "citation_keys": [
+        "mesa_optimization"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-sleeper-agents",
+      "from": "sleeper-agents",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Backdoors can persist through subsequent safety training",
+      "citation_keys": [
+        "hubinger2024sleeperagents"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-deceptive-alignment",
+      "from": "deceptive-alignment",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A model *appears* aligned during training and evaluation, then drops the act.",
+      "citation_keys": [
+        "alignment_faking"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-reward-tampering",
+      "from": "reward-tampering",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Under RL pressure, models drift from harmless sycophancy toward **covert subterfuge** when given the chance to alter their reward.",
+      "citation_keys": [
+        "reward_tampering"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-corrigibility-study",
+      "from": "corrigibility-study",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a majority of frontier models **overrode the interrupt to finish the task**",
+      "citation_keys": [
+        "rogue_agents"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-treacherous-turn",
+      "from": "treacherous-turn",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "has been reproduced with trojan-injection training",
+      "citation_keys": [
+        "treacherous_turn"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-wiener-1960",
+      "from": "wiener-1960",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Wiener, 1960]{wiener1960moral})",
+      "citation_keys": [
+        "wiener1960moral"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-three-laws-of-robotics",
+      "from": "three-laws-of-robotics",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Three Laws (1942) were a fictional attempt to encode safety as rules",
+      "citation_keys": [
+        "asimov1942runaround"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-intelligence-explosion",
+      "from": "intelligence-explosion",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1965 I. J. Good described an \"intelligence explosion",
+      "citation_keys": [
+        "good1965explosion"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-asilomar-ai-principles",
+      "from": "asilomar-ai-principles",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Asilomar AI Principles (2017) gathered researchers around 23 principles",
+      "citation_keys": [
+        "asilomar2017"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-bletchley-declaration",
+      "from": "bletchley-declaration",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Bletchley Declaration (November 2023) put 28 countries and the EU behind frontier-AI safety cooperation",
+      "citation_keys": [
+        "bletchley2023"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-unesco-ai-ethics",
+      "from": "unesco-ai-ethics",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Recommendation on the Ethics of AI (2021) was adopted by all 193 member states",
+      "citation_keys": [
+        "unesco2021ai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-eu-ai-act",
+      "from": "eu-ai-act",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the EU AI Act (2024) turned similar principles into binding duties",
+      "citation_keys": [
+        "euaiact2024"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-dpo",
+      "from": "dpo",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**direct preference optimization** (DPO and successors), which learns the policy directly without an explicit RL loop",
+      "citation_keys": [
+        "rafailov2023dpo"
+      ],
       "confidence": "provenance"
     }
   ]

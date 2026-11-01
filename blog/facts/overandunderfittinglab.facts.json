@@ -5,20 +5,14 @@
   "title": "Over- and underfitting",
   "part": 3,
   "order": 3,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "adam",
-    "ruder2016overview",
-    "hornik1989universal",
-    "hornik",
-    "rungesphenomenon",
     "tibshirani1996lasso",
     "hoerl1970ridge",
-    "earlyl2",
     "srivastava2014dropout",
-    "hoffmann2022chinchilla",
-    "petersen2024mathdl"
+    "petersen2024mathdl",
+    "hornik1989universal"
   ],
   "claims": [
     {
@@ -59,6 +53,203 @@
       "quote": "order: 3",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "overandunderfittinglab-degree-10-bends",
+      "subject": "polynomial-degree-10",
+      "predicate": "max_bends",
+      "value": 9,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Degree 10 → a curve that can bend up to 9 times.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-adam-learning-rate",
+      "subject": "adam",
+      "predicate": "learning_rate",
+      "value": 0.01,
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "with $\\eta = 0.01$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-adam-lineage",
+      "subject": "adam",
+      "predicate": "lineage",
+      "value": "Adagrad, Adadelta, RMSprop",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The chain runs: Adagrad → Adadelta and RMSprop → Adam",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-adagrad-lineage",
+      "subject": "adagrad",
+      "predicate": "role",
+      "value": "optimizer in the Adam lineage",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The chain runs: Adagrad → Adadelta and RMSprop → Adam",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-bias-variance",
+      "subject": "bias-variance-tradeoff",
+      "predicate": "decomposition",
+      "value": "Bias^2 + Variance + Irreducible Noise",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "\\text{Total Error} \\;=\\; \\text{Bias}^2 \\;+\\; \\text{Variance} \\;+\\; \\text{Irreducible Noise}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-runge-year",
+      "subject": "runge-phenomenon",
+      "predicate": "year",
+      "value": 1901,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Runge's Original Example (1901)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-runge-function",
+      "subject": "runge-function",
+      "predicate": "formula",
+      "value": "1/(1+25x^2)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "f(x) = \\frac{1}{1 + 25x^2}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-lasso-year",
+      "subject": "lasso",
+      "predicate": "year",
+      "value": 1996,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**L1, Lasso** (\\citeauthor{tibshirani1996lasso}, \\citeyear{tibshirani1996lasso})",
+      "citation_keys": [
+        "tibshirani1996lasso"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-ridge-year",
+      "subject": "ridge-regression",
+      "predicate": "year",
+      "value": 1970,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**L2, Ridge** (first described by \\citeauthor{hoerl1970ridge} in \\citeyear{hoerl1970ridge})",
+      "citation_keys": [
+        "hoerl1970ridge"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-dropout-year",
+      "subject": "dropout",
+      "predicate": "year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Dropout**, as introduced by *Nitish Srivastava et al.* in \\citeyear{srivastava2014dropout}",
+      "citation_keys": [
+        "srivastava2014dropout"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-dropout-transformer-rate",
+      "subject": "dropout",
+      "predicate": "transformer_rate",
+      "value": 0.1,
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "Dropout was part of the original Transformer recipe, applied at rate 0.1 to sublayer outputs, attention weights, and embedding sums.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-double-descent",
+      "subject": "double-descent",
+      "predicate": "phenomenon",
+      "value": "test error decreases again in the extremely overparameterized regime",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "When models become *extremely* overparameterized, far past the point where they can perfectly interpolate the training data, test error can start *decreasing again*.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-lipschitz-bound",
+      "subject": "generalization-bound",
+      "predicate": "lipschitz_constant",
+      "value": "independent of parameter count",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the network is automatically Lipschitz-continuous with a constant **independent of its parameter count**",
+      "citation_keys": [
+        "petersen2024mathdl"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-hornik-approximation",
+      "subject": "universal-approximation-theorem",
+      "predicate": "claim",
+      "value": "a sufficiently wide neural network can approximate any continuous function",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "proves that a sufficiently wide neural network can approximate *any* continuous function",
+      "citation_keys": [
+        "hornik1989universal"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-extrapolation",
+      "subject": "machine-learning-models",
+      "predicate": "extrapolation_quality",
+      "value": "strong interpolators, poor extrapolators",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Machine-learning models are typically strong **interpolators** (they guess well *between* known points) but poor **extrapolators**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-overfitting-degrees",
+      "subject": "overfitting",
+      "predicate": "polynomial_degree_range",
+      "value": "7-10",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "| **Overfitting** (High Variance) | 7 – 10 | Very low | High |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-underfitting-degrees",
+      "subject": "underfitting",
+      "predicate": "polynomial_degree_range",
+      "value": "1-3",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "| **Underfitting** (High Bias) | 1 – 3 | High | High |",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -69,6 +260,166 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 3",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-polynomial-degree-10",
+      "from": "polynomial-degree-10",
+      "to": "overandunderfittinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Degree 10 → a curve that can bend up to 9 times.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-adam",
+      "from": "adam",
+      "to": "overandunderfittinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "with $\\eta = 0.01$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-adagrad",
+      "from": "adagrad",
+      "to": "overandunderfittinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The chain runs: Adagrad → Adadelta and RMSprop → Adam",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-bias-variance-tradeoff",
+      "from": "bias-variance-tradeoff",
+      "to": "overandunderfittinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\text{Total Error} \\;=\\; \\text{Bias}^2 \\;+\\; \\text{Variance} \\;+\\; \\text{Irreducible Noise}",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-runge-phenomenon",
+      "from": "runge-phenomenon",
+      "to": "overandunderfittinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Runge's Original Example (1901)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-runge-function",
+      "from": "runge-function",
+      "to": "overandunderfittinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "f(x) = \\frac{1}{1 + 25x^2}",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-lasso",
+      "from": "lasso",
+      "to": "overandunderfittinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**L1, Lasso** (\\citeauthor{tibshirani1996lasso}, \\citeyear{tibshirani1996lasso})",
+      "citation_keys": [
+        "tibshirani1996lasso"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-ridge-regression",
+      "from": "ridge-regression",
+      "to": "overandunderfittinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**L2, Ridge** (first described by \\citeauthor{hoerl1970ridge} in \\citeyear{hoerl1970ridge})",
+      "citation_keys": [
+        "hoerl1970ridge"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-dropout",
+      "from": "dropout",
+      "to": "overandunderfittinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Dropout**, as introduced by *Nitish Srivastava et al.* in \\citeyear{srivastava2014dropout}",
+      "citation_keys": [
+        "srivastava2014dropout"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-double-descent",
+      "from": "double-descent",
+      "to": "overandunderfittinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "When models become *extremely* overparameterized, far past the point where they can perfectly interpolate the training data, test error can start *decreasing again*.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-generalization-bound",
+      "from": "generalization-bound",
+      "to": "overandunderfittinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the network is automatically Lipschitz-continuous with a constant **independent of its parameter count**",
+      "citation_keys": [
+        "petersen2024mathdl"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-universal-approximation-theorem",
+      "from": "universal-approximation-theorem",
+      "to": "overandunderfittinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "proves that a sufficiently wide neural network can approximate *any* continuous function",
+      "citation_keys": [
+        "hornik1989universal"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-machine-learning-models",
+      "from": "machine-learning-models",
+      "to": "overandunderfittinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Machine-learning models are typically strong **interpolators** (they guess well *between* known points) but poor **extrapolators**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-overfitting",
+      "from": "overfitting",
+      "to": "overandunderfittinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| **Overfitting** (High Variance) | 7 – 10 | Very low | High |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-underfitting",
+      "from": "underfitting",
+      "to": "overandunderfittinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| **Underfitting** (High Bias) | 1 – 3 | High | High |",
       "citation_keys": [],
       "confidence": "provenance"
     }

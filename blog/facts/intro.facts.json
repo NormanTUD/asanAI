@@ -5,13 +5,10 @@
   "title": "From Nothing to Large Language Models: A Peek inside the Black Box",
   "part": 0,
   "order": 0,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "cuevadelasmanos_image",
-    "perceptronimagedetection",
-    "twocultures",
-    "hayakawa"
+    "twocultures"
   ],
   "claims": [
     {
@@ -52,7 +49,246 @@
       "quote": "order: 0",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "intro-cueva-dates",
+      "subject": "cueva-de-las-manos",
+      "predicate": "occupation_period",
+      "value": "c. 7300 BC - AD 700",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "Hand stencils at Cueva de las Manos, Argentina (c. 7300 BC - AD 700).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "intro-perceptron-builder",
+      "subject": "mark-i-perceptron",
+      "predicate": "builder",
+      "value": "Frank Rosenblatt group",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The Mark I Perceptron, the experimental letter-recognising machine built by Frank Rosenblatt's group and announced by the U.S. Navy.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "intro-perceptron-navy",
+      "subject": "mark-i-perceptron",
+      "predicate": "announced_by",
+      "value": "U.S. Navy",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The Mark I Perceptron, the experimental letter-recognising machine built by Frank Rosenblatt's group and announced by the U.S. Navy.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "intro-snow-year",
+      "subject": "two-cultures",
+      "predicate": "year",
+      "value": 1959,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Charles Percy Snow (1959)]{twocultures} memorably named the \"two cultures",
+      "citation_keys": [
+        "twocultures"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "intro-course-span",
+      "subject": "asanai-course",
+      "predicate": "scope",
+      "value": "from Stone Age tools through the history of mathematics to large language models",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "traces the ideas behind modern AI from Stone Age tools and the history of mathematics all the way to how large language models actually work inside",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "intro-math-parts",
+      "subject": "asanai-course",
+      "predicate": "math_parts",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**Math is split into Math I / II / III** and **Statistics into Stats I / II**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "intro-stats-parts",
+      "subject": "asanai-course",
+      "predicate": "statistics_parts",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**Math is split into Math I / II / III** and **Statistics into Stats I / II**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "intro-profiles",
+      "subject": "asanai-course",
+      "predicate": "reader_profiles",
+      "value": "Curious / Student / Engineer / Researcher",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "pick your *profile* (Curious / Student / Engineer / Researcher)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "intro-levels",
+      "subject": "asanai-course",
+      "predicate": "reader_levels",
+      "value": "High School / Undergrad / Grad / PhD",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "*level* (High School / Undergrad / Grad / PhD)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "intro-build-tools",
+      "subject": "asanai-course",
+      "predicate": "build_tools",
+      "value": "Google Gemini, Claude, ChatGPT",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "This interactive textbook was built with the help of Google Gemini, Claude, ChatGPT and other LLM systems.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "intro-hayakawa",
+      "subject": "ladder-of-abstraction",
+      "predicate": "originator",
+      "value": "Hayakawa",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "much like the framework described by \\citeauthor{hayakawa}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "intro-astronomy",
+      "subject": "astronomy",
+      "predicate": "contribution",
+      "value": "developed the optimization tools that let modern LLMs learn from the internet",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Astronomers from the fourth century onward, mapping the stars with imperfect data, developed the very optimization tools that let modern LLMs learn from the internet.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "intro-token-ancestry",
+      "subject": "token",
+      "predicate": "ancestry",
+      "value": "Babylonian place value, the Indian zero, the Chinese minus sign, Leibniz binary",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "place value and the Indian zero, through the Chinese minus sign and Leibniz's binary, to the token vocabularies modern models actually read",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "intro-rosenblatt-role",
+      "subject": "frank-rosenblatt",
+      "predicate": "role",
+      "value": "leader of the Mark I Perceptron group",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "built by Frank Rosenblatt's group",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-intro-cueva-de-las-manos",
+      "from": "cueva-de-las-manos",
+      "to": "intro",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hand stencils at Cueva de las Manos, Argentina (c. 7300 BC - AD 700).",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intro-mark-i-perceptron",
+      "from": "mark-i-perceptron",
+      "to": "intro",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Mark I Perceptron, the experimental letter-recognising machine built by Frank Rosenblatt's group and announced by the U.S. Navy.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intro-two-cultures",
+      "from": "two-cultures",
+      "to": "intro",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Charles Percy Snow (1959)]{twocultures} memorably named the \"two cultures",
+      "citation_keys": [
+        "twocultures"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intro-asanai-course",
+      "from": "asanai-course",
+      "to": "intro",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "traces the ideas behind modern AI from Stone Age tools and the history of mathematics all the way to how large language models actually work inside",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intro-ladder-of-abstraction",
+      "from": "ladder-of-abstraction",
+      "to": "intro",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "much like the framework described by \\citeauthor{hayakawa}",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intro-astronomy",
+      "from": "astronomy",
+      "to": "intro",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Astronomers from the fourth century onward, mapping the stars with imperfect data, developed the very optimization tools that let modern LLMs learn from the internet.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intro-token",
+      "from": "token",
+      "to": "intro",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "place value and the Indian zero, through the Chinese minus sign and Leibniz's binary, to the token vocabularies modern models actually read",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intro-frank-rosenblatt",
+      "from": "frank-rosenblatt",
+      "to": "intro",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "built by Frank Rosenblatt's group",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

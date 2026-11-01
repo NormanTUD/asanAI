@@ -5,7 +5,7 @@
   "title": "",
   "part": "",
   "order": "",
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [],
   "claims": [
@@ -21,7 +21,302 @@
       "quote": "knowledge_map",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "knowledge_map-universe-view",
+      "subject": "knowledge-map-universe-view",
+      "predicate": "layout",
+      "value": "Poincaré disk",
+      "unit": "name",
+      "quote": "The <b>Universe</b> view puts every concept of the course on a Poincaré disk",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "knowledge_map-course-view",
+      "subject": "knowledge-map-course-view",
+      "predicate": "parts",
+      "value": 7,
+      "unit": "count",
+      "quote": "walk the seven parts module by module",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "knowledge_map-edge-definition",
+      "subject": "knowledge-map-graph",
+      "predicate": "edges",
+      "value": "shared citation, cross-reference, or concept",
+      "unit": "name",
+      "quote": "Every module is a node. Every shared citation, cross-reference,",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "knowledge_map-distinctive-keywords",
+      "subject": "knowledge-map-concepts",
+      "predicate": "keyword_policy",
+      "value": "only distinctive keywords",
+      "unit": "name",
+      "quote": "Only DISTINCTIVE keywords count.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "knowledge_map-exclusions",
+      "subject": "knowledge-map-exclusions",
+      "predicate": "files",
+      "value": "index, index_full, functions, search, graph, literature, asanai_blog_proxy, knowledge_map, category_theory, commutation, layer_commuting_diagram, math_deri, _aurora_test",
+      "unit": "name",
+      "quote": "$KM_EXCLUDE = ['index', 'index_full', 'functions', 'search', 'graph', 'literature', 'asanai_blog_proxy', 'knowledge_map', 'category_theory', 'commutation', 'layer_commuting_diagram', 'math_deri', '_aurora_test'];",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "knowledge_map-idf",
+      "subject": "knowledge-map-idf",
+      "predicate": "formula",
+      "value": "ln(1 + total_modules / modules_covering_that_concept)",
+      "unit": "formula",
+      "quote": "idf = ln(1 + total_modules / modules_covering_that_concept)",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "knowledge_map-concept-threshold",
+      "subject": "knowledge-map-concept-threshold",
+      "predicate": "value",
+      "value": 12,
+      "unit": "count",
+      "quote": "$KM_CONCEPT_MIN = 12;",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "knowledge_map-intrapart-threshold",
+      "subject": "knowledge-map-intrapart-threshold",
+      "predicate": "value",
+      "value": 4.5,
+      "unit": "count",
+      "quote": "if ($dot < $KM_CONCEPT_MIN && !($samePart && $dot >= 4.5)) continue;",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "knowledge_map-heading-cap",
+      "subject": "knowledge-map-heading-cap",
+      "predicate": "value",
+      "value": 40,
+      "unit": "count",
+      "quote": "$headings = array_slice($headings, 0, 40);",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "knowledge_map-node-radius",
+      "subject": "knowledge-map-node-radius",
+      "predicate": "formula",
+      "value": "16 + min(13, degree * 0.3)",
+      "unit": "formula",
+      "quote": "function nodeRadius(n) { return 16 + Math.min(13, n.degree * 0.3); }",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "knowledge_map-affinity",
+      "subject": "knowledge-map-concept-affinity",
+      "predicate": "formula",
+      "value": "sum of idf squared",
+      "unit": "formula",
+      "quote": "foreach ($shared as $c => $v) $dot += $idf[$c] * $idf[$c];",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "knowledge_map-course-path",
+      "subject": "knowledge-map-course-path",
+      "predicate": "edges",
+      "value": "n to n+1 in course order",
+      "unit": "name",
+      "quote": "course learning-path edges (n → n+1 in course order)",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "knowledge_map-shortcut",
+      "subject": "knowledge-map-search",
+      "predicate": "shortcut",
+      "value": "Ctrl K",
+      "unit": "name",
+      "quote": "<span class=\"km-search-kbd\" id=\"km-kbd\">Ctrl K</span>",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "knowledge_map-citation-macros",
+      "subject": "knowledge-map-citations",
+      "predicate": "macros",
+      "value": "footcite, cite, citeauthor, citeauthorlastnameand, citetitle, citeyear, citealternativetitle, citeurl",
+      "unit": "name",
+      "quote": "footcite|cite|citeauthor|citeauthorlastnameand|citetitle|citeyear|citealternativetitle|citeurl",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-knowledge_map-knowledge-map-universe-view",
+      "from": "knowledge-map-universe-view",
+      "to": "knowledge-map",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The <b>Universe</b> view puts every concept of the course on a Poincaré disk",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-knowledge_map-knowledge-map-course-view",
+      "from": "knowledge-map-course-view",
+      "to": "knowledge-map",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "walk the seven parts module by module",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-knowledge_map-knowledge-map-graph",
+      "from": "knowledge-map-graph",
+      "to": "knowledge-map",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Every module is a node. Every shared citation, cross-reference,",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-knowledge_map-knowledge-map-concepts",
+      "from": "knowledge-map-concepts",
+      "to": "knowledge-map",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Only DISTINCTIVE keywords count.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-knowledge_map-knowledge-map-exclusions",
+      "from": "knowledge-map-exclusions",
+      "to": "knowledge-map",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$KM_EXCLUDE = ['index', 'index_full', 'functions', 'search', 'graph', 'literature', 'asanai_blog_proxy', 'knowledge_map', 'category_theory', 'commutation', 'layer_commuting_diagram', 'math_deri', '_aurora_test'];",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-knowledge_map-knowledge-map-idf",
+      "from": "knowledge-map-idf",
+      "to": "knowledge-map",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "idf = ln(1 + total_modules / modules_covering_that_concept)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-knowledge_map-knowledge-map-concept-threshold",
+      "from": "knowledge-map-concept-threshold",
+      "to": "knowledge-map",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$KM_CONCEPT_MIN = 12;",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-knowledge_map-knowledge-map-intrapart-threshold",
+      "from": "knowledge-map-intrapart-threshold",
+      "to": "knowledge-map",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "if ($dot < $KM_CONCEPT_MIN && !($samePart && $dot >= 4.5)) continue;",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-knowledge_map-knowledge-map-heading-cap",
+      "from": "knowledge-map-heading-cap",
+      "to": "knowledge-map",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$headings = array_slice($headings, 0, 40);",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-knowledge_map-knowledge-map-node-radius",
+      "from": "knowledge-map-node-radius",
+      "to": "knowledge-map",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "function nodeRadius(n) { return 16 + Math.min(13, n.degree * 0.3); }",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-knowledge_map-knowledge-map-concept-affinity",
+      "from": "knowledge-map-concept-affinity",
+      "to": "knowledge-map",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "foreach ($shared as $c => $v) $dot += $idf[$c] * $idf[$c];",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-knowledge_map-knowledge-map-course-path",
+      "from": "knowledge-map-course-path",
+      "to": "knowledge-map",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "course learning-path edges (n → n+1 in course order)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-knowledge_map-knowledge-map-search",
+      "from": "knowledge-map-search",
+      "to": "knowledge-map",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "<span class=\"km-search-kbd\" id=\"km-kbd\">Ctrl K</span>",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-knowledge_map-knowledge-map-citations",
+      "from": "knowledge-map-citations",
+      "to": "knowledge-map",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "footcite|cite|citeauthor|citeauthorlastnameand|citetitle|citeyear|citealternativetitle|citeurl",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

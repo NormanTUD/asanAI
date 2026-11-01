@@ -5,122 +5,24 @@
   "title": "The Shape of Space — A History of Geometry",
   "part": 1,
   "order": 7,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "weeksshapespace",
     "achleuleankariandusi",
-    "achleuleanhandaxe_image",
-    "handaxementaltemplate",
-    "handaxesymmetry",
-    "trinilshell_image",
-    "trinilshell",
-    "blombosochre",
     "emergenceofmodernhumanbehaviour",
-    "ishangobonephoto",
+    "blombosochre",
     "ishangobone",
-    "lebombobone",
     "rhindpapyrus",
     "moscowpapyrus",
-    "susa_geometry_tablet",
-    "hoyrup2021algebra",
-    "hoyruplengths",
-    "historyofmath_wikipedia",
-    "si427_image",
-    "si427",
-    "si427_baublatt",
-    "plimpton322",
-    "neugebauerexactsciences",
     "sulbasutras",
-    "jiuzhangsuanshu",
-    "pythagoras_portrait",
-    "heathgreekmath",
-    "archimedes_portrait",
-    "platorepublic",
-    "platomeno",
-    "aristotlephysics",
-    "euclid_portrait",
-    "euclidelements",
-    "euclidelements_heath",
-    "euclid_lueneburg_ms",
-    "platonic_solids_image",
-    "heronmetrica",
-    "apolloniusconics",
-    "conicsections_wiki",
-    "keplerastronomianova",
-    "newtonprincipia",
-    "menelaussphaerica",
-    "alkhwarizmi_portrait",
-    "alhazen_portrait",
-    "alhazenoetic",
-    "hipparchuschords",
-    "ptolemyalmagest",
-    "aryabhatiya",
-    "trigfunctions_image",
-    "altusitrig",
-    "astrolabe_image",
-    "madhava",
-    "sextanthistory",
-    "humboldtsextant",
-    "salton1975vectorspace",
-    "albertidepictura",
-    "descartes_portrait",
-    "descartesgeometrie",
-    "desarguesbrouillon",
     "mercatoratlas",
+    "descartesgeometrie",
     "eulerbridges",
-    "eulersolids",
-    "riemann1857genus",
-    "gauss_portrait",
     "gaussdisquisitiones",
-    "docarmo",
-    "lobachevskygeometry",
-    "bolyaiappendix",
     "lobachevsky_portrait",
-    "bolyai_portrait",
     "hypothesengeometrie",
-    "gudmundsson2004riemannian",
-    "mobiusband",
-    "listingtopologie",
-    "moebius_portrait",
-    "hatcher",
-    "poincareanalysissitus",
     "perelmanpoincare",
-    "hilbert1903grundlagen",
-    "boser1992svm",
-    "vapnik1995book",
-    "vapnik1963pattern",
-    "bellman1957dynamic",
-    "morris2007topology",
-    "manifold_wiki",
-    "whitney1936manifolds",
-    "hinton1989autoencoder",
-    "vandermaaten2008tsne",
-    "mcinnes2018umap",
-    "bronstein2021geometric",
-    "huh2024platonic",
-    "grothedieck_res",
-    "brouwer1911fixed",
-    "mclarty2006noether",
-    "morse1929foundations",
-    "hopf1931fibration",
-    "derham1931",
-    "chern1946",
-    "milnor1956exotic",
-    "smale1961hccobordism",
-    "atiyahsinger1963",
-    "thurston1982geometrization",
-    "freedman1982topology",
-    "donaldson1983gauge",
-    "grothendieck_image",
-    "grothedieck_ega1960",
-    "deligne1974weil",
-    "weil1949numbers",
-    "aristotleposterior",
-    "gaussbonnet_wiki",
-    "bolyai1832appendix",
-    "poincareconjecture1904",
-    "hinton2006"
+    "whitney1936manifolds"
   ],
   "claims": [
     {
@@ -161,6 +63,271 @@
       "quote": "order: 7",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "geometry_i-acheulean",
+      "subject": "acheulean-handaxe",
+      "predicate": "age",
+      "value": -1760000,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "begins about **1.76 million years ago**",
+      "citation_keys": [
+        "achleuleankariandusi"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-trinil",
+      "subject": "trinil-shell",
+      "predicate": "age",
+      "value": -500000,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "c. 500,000 years ago",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-blombos",
+      "subject": "blombos-cave",
+      "predicate": "age",
+      "value": -75000,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "dating to roughly 75,000 years ago",
+      "citation_keys": [
+        "emergenceofmodernhumanbehaviour",
+        "blombosochre"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-ishango",
+      "subject": "ishango-bone",
+      "predicate": "age",
+      "value": -18000,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "c. 18,000 BCE",
+      "citation_keys": [
+        "ishangobone"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-rhind",
+      "subject": "rhind-papyrus",
+      "predicate": "year",
+      "value": -1650,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "around 1650 BCE",
+      "citation_keys": [
+        "rhindpapyrus"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-rhind-pi",
+      "subject": "rhind-papyrus",
+      "predicate": "pi_approximation",
+      "value": "256/81",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "$\\pi \\approx \\tfrac{256}{81} \\approx 3.1605$",
+      "citation_keys": [
+        "rhindpapyrus"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-moscow",
+      "subject": "moscow-papyrus",
+      "predicate": "year",
+      "value": -1850,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "c. 1850 BCE",
+      "citation_keys": [
+        "moscowpapyrus"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-si427",
+      "subject": "si-427",
+      "predicate": "relative_date",
+      "value": "more than a thousand years before Pythagoras",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "it is *before Pythagoras by more than a thousand years*",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-sulba",
+      "subject": "sulba-sutras",
+      "predicate": "year",
+      "value": -800,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "dating to roughly 800 BCE",
+      "citation_keys": [
+        "sulbasutras"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-baudhayana-sqrt2",
+      "subject": "baudhayana-sulba-sutra",
+      "predicate": "sqrt2_approximation",
+      "value": "577/408",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "\\tfrac{577}{408} \\;\\approx\\; 1.41421\\dots",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-euclid-propositions",
+      "subject": "euclid-elements",
+      "predicate": "propositions",
+      "value": 465,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**465 propositions** follow",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-archimedes-sphere",
+      "subject": "archimedes",
+      "predicate": "sphere_volume",
+      "value": "4/3 π r^3",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "\\tfrac{4}{3}\\pi r^{3}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-mercator",
+      "subject": "mercator-projection",
+      "predicate": "year",
+      "value": 1569,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1569 **Gerardus Mercator** published the world map that bears his name",
+      "citation_keys": [
+        "mercatoratlas"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-descartes",
+      "subject": "analytic-geometry",
+      "predicate": "year",
+      "value": 1637,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\citealternativetitle{descartesgeometrie}** (1637)",
+      "citation_keys": [
+        "descartesgeometrie"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-euler-bridges",
+      "subject": "konigsberg-bridges",
+      "predicate": "year",
+      "value": 1736,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(1736, published \\citeyear{eulerbridges} \\cite{eulerbridges})",
+      "citation_keys": [
+        "eulerbridges"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gauss",
+      "subject": "theorema-egregium",
+      "predicate": "year",
+      "value": 1827,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Gauss proved in his **\\citetitle{gaussdisquisitiones}** (1827)",
+      "citation_keys": [
+        "gaussdisquisitiones"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-lobachevsky",
+      "subject": "hyperbolic-geometry",
+      "predicate": "year",
+      "value": 1829,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "who published the first non-Euclidean geometry in 1829",
+      "citation_keys": [
+        "lobachevsky_portrait"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-riemann",
+      "subject": "riemannian-manifold",
+      "predicate": "year",
+      "value": 1854,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in his 1854 habilitation lecture",
+      "citation_keys": [
+        "hypothesengeometrie"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-perelman",
+      "subject": "poincare-conjecture",
+      "predicate": "proved_years",
+      "value": "2002-2003",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "It was finally proved by **Grigori Perelman** in 2002–2003",
+      "citation_keys": [
+        "perelmanpoincare"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-whitney",
+      "subject": "whitney-embedding-theorem",
+      "predicate": "ambient_dimension",
+      "value": "2d+1",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "theorem (1936) that any smooth $d$-dimensional manifold can be embedded in $\\mathbb{R}^{2d+1}$",
+      "citation_keys": [
+        "whitney1936manifolds"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -172,6 +339,225 @@
       "qualifiers": {},
       "quote": "part: 1",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-acheulean-handaxe",
+      "from": "acheulean-handaxe",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "begins about **1.76 million years ago**",
+      "citation_keys": [
+        "achleuleankariandusi"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-trinil-shell",
+      "from": "trinil-shell",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "c. 500,000 years ago",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-blombos-cave",
+      "from": "blombos-cave",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "dating to roughly 75,000 years ago",
+      "citation_keys": [
+        "emergenceofmodernhumanbehaviour",
+        "blombosochre"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-ishango-bone",
+      "from": "ishango-bone",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "c. 18,000 BCE",
+      "citation_keys": [
+        "ishangobone"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-rhind-papyrus",
+      "from": "rhind-papyrus",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "around 1650 BCE",
+      "citation_keys": [
+        "rhindpapyrus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-moscow-papyrus",
+      "from": "moscow-papyrus",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "c. 1850 BCE",
+      "citation_keys": [
+        "moscowpapyrus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-si-427",
+      "from": "si-427",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it is *before Pythagoras by more than a thousand years*",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-sulba-sutras",
+      "from": "sulba-sutras",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "dating to roughly 800 BCE",
+      "citation_keys": [
+        "sulbasutras"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-baudhayana-sulba-sutra",
+      "from": "baudhayana-sulba-sutra",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\tfrac{577}{408} \\;\\approx\\; 1.41421\\dots",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-euclid-elements",
+      "from": "euclid-elements",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**465 propositions** follow",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-archimedes",
+      "from": "archimedes",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\tfrac{4}{3}\\pi r^{3}",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-mercator-projection",
+      "from": "mercator-projection",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1569 **Gerardus Mercator** published the world map that bears his name",
+      "citation_keys": [
+        "mercatoratlas"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-analytic-geometry",
+      "from": "analytic-geometry",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\citealternativetitle{descartesgeometrie}** (1637)",
+      "citation_keys": [
+        "descartesgeometrie"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-konigsberg-bridges",
+      "from": "konigsberg-bridges",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(1736, published \\citeyear{eulerbridges} \\cite{eulerbridges})",
+      "citation_keys": [
+        "eulerbridges"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-theorema-egregium",
+      "from": "theorema-egregium",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Gauss proved in his **\\citetitle{gaussdisquisitiones}** (1827)",
+      "citation_keys": [
+        "gaussdisquisitiones"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-hyperbolic-geometry",
+      "from": "hyperbolic-geometry",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "who published the first non-Euclidean geometry in 1829",
+      "citation_keys": [
+        "lobachevsky_portrait"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-riemannian-manifold",
+      "from": "riemannian-manifold",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in his 1854 habilitation lecture",
+      "citation_keys": [
+        "hypothesengeometrie"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-poincare-conjecture",
+      "from": "poincare-conjecture",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "It was finally proved by **Grigori Perelman** in 2002–2003",
+      "citation_keys": [
+        "perelmanpoincare"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-whitney-embedding-theorem",
+      "from": "whitney-embedding-theorem",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "theorem (1936) that any smooth $d$-dimensional manifold can be embedded in $\\mathbb{R}^{2d+1}$",
+      "citation_keys": [
+        "whitney1936manifolds"
+      ],
       "confidence": "provenance"
     }
   ]

@@ -5,50 +5,21 @@
   "title": "Common Myths and Misconceptions About AI",
   "part": 6,
   "order": 17,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "rozenblit2002ioed",
     "weizenbaum1966eliza",
-    "aiindex2025",
+    "rozenblit2002ioed",
     "brednich1990spinne",
     "brednich1991maus",
     "brednich1993huhn",
-    "brednich_wiki",
-    "urbanlegends_wiki",
     "turing1950computing",
-    "septruringtest",
-    "computational_theory_of_mind",
-    "clark2013surfing",
-    "predictive_coding_wiki",
     "vinge1993singularity",
     "kurzweil2005singularity",
-    "golem_wiki",
     "bostrom2014superintelligence",
-    "bostrom2012orthogonal",
-    "luddite_wiki",
-    "brynjolfsson2014secondmachine",
-    "techunemployment_wiki",
-    "ioed_wiki",
-    "sutton2019bitterlesson",
-    "algofairness_wiki",
-    "gfactor_wiki",
-    "heidegger1927beingandtime",
-    "korzybski_mapterritory",
-    "box1976allmodels",
-    "cnn2024deepfake",
-    "aiincident634",
-    "mataavianca_wiki",
-    "hallucination_ai_wiki",
-    "theatreopera_wiki",
-    "midjourney_wiki",
-    "ai_music_wiki",
-    "deathschatbots_wiki",
-    "guardian2024sewell",
-    "aislop_wiki",
     "deadinternet_wiki",
-    "agi_wiki",
-    "aiwinter_wiki"
+    "heidegger1927beingandtime",
+    "korzybski_mapterritory"
   ],
   "claims": [
     {
@@ -89,6 +60,249 @@
       "quote": "order: 17",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "myths-eliza-year",
+      "subject": "eliza",
+      "predicate": "year",
+      "value": 1966,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "we already caught ourselves doing this in 1966, when people projected feeling onto a chatbot that had none \\cite[the ELIZA effect]{weizenbaum1966eliza}",
+      "citation_keys": [
+        "weizenbaum1966eliza"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-ioed-source",
+      "subject": "illusion-of-explanatory-depth",
+      "predicate": "source",
+      "value": "Rozenblit & Keil",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "We overestimate how well we understand how things work, from a zipper to a traffic light \\cite[Rozenblit & Keil]{rozenblit2002ioed}",
+      "citation_keys": [
+        "rozenblit2002ioed"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-brednich-1990-year",
+      "subject": "brednich-1990",
+      "predicate": "year",
+      "value": 1990,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citetitle{brednich1990spinne} (1990)",
+      "citation_keys": [
+        "brednich1990spinne"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-brednich-1991-year",
+      "subject": "brednich-1991",
+      "predicate": "year",
+      "value": 1991,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citetitle{brednich1991maus} (1991)",
+      "citation_keys": [
+        "brednich1991maus"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-brednich-1993-year",
+      "subject": "brednich-1993",
+      "predicate": "year",
+      "value": 1993,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citetitle{brednich1993huhn} (1993)",
+      "citation_keys": [
+        "brednich1993huhn"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-brednich-features",
+      "subject": "brednich-method",
+      "predicate": "features",
+      "value": "source at a distance, three-beat shape, true core, social theme, media loop",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "a **source at a distance** (\"a friend of a friend, and it's absolutely true\"), a **three-beat shape** (everyday → the break → the point), a **true core** (*ein Fünkchen Wahrheit*), a **social theme** (a fear, a taboo, a grudge, a wish), and a **media loop** that keeps sharpening it",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-turing-year",
+      "subject": "turing-test",
+      "predicate": "year",
+      "value": 1950,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Turing offered the Imitation Game as a *behavioral* way to sidestep a question he called too meaningless to discuss (\\cite[Turing, 1950]{turing1950computing})",
+      "citation_keys": [
+        "turing1950computing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-turing-nature",
+      "subject": "turing-test",
+      "predicate": "nature",
+      "value": "pragmatic test, not a definition of mind",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "He proposed a *pragmatic* test, not a *definition* of mind",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-deepfake-amount",
+      "subject": "deepfake-boss-fraud",
+      "predicate": "amount",
+      "value": 25000000,
+      "unit": "USD",
+      "qualifiers": {},
+      "quote": "She wired $25 million.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-mata-year",
+      "subject": "mata-v-avianca",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Judge Castel's 2023 ruling in *Mata v. Avianca* was the first",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-colorado-outcome",
+      "subject": "colorado-state-fair-midjourney",
+      "predicate": "outcome",
+      "value": "won the art competition",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "entered it in the **Colorado State Fair**'s art competition (disclosing that he had used Midjourney). It won",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-drake-year",
+      "subject": "drake-ai-song",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 2023 a track that sounded like Drake and The Weeknd hit TikTok",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-luddites-year",
+      "subject": "luddites",
+      "predicate": "year",
+      "value": 1811,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The **Luddites** of 1811 are usually told as people smashing machines out of fear of technology",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-luddites-motive",
+      "subject": "luddites",
+      "predicate": "actual_motive",
+      "value": "protesting wages and quality of work",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "in fact they were skilled weavers protesting wages and the quality of work — the *terms* were the target, not the machine",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-singularity-named",
+      "subject": "technological-singularity",
+      "predicate": "named_by",
+      "value": "Vinge",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The modern labels are Vinge's *technological singularity* and Kurzweil's countdown",
+      "citation_keys": [
+        "vinge1993singularity",
+        "kurzweil2005singularity"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-bostrom-source",
+      "subject": "bostrom-superintelligence",
+      "predicate": "source",
+      "value": "Bostrom",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "There is no demonstrated path to a machine rewriting itself into superintelligence \\cite[Bostrom]{bostrom2014superintelligence}",
+      "citation_keys": [
+        "bostrom2014superintelligence"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-dead-internet-year",
+      "subject": "dead-internet-theory",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "was first named in a 2021 forum post (\"Dead Internet Theory: Most of the Internet is Fake\"), and went mainstream in 2021 \\cite[dead internet theory]{deadinternet_wiki}",
+      "citation_keys": [
+        "deadinternet_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-golem-definition",
+      "subject": "golem",
+      "predicate": "definition",
+      "value": "creation that out-runs its maker",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the **Golem**, the creation that out-runs its maker",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-ontological-difference",
+      "subject": "ontological-difference",
+      "predicate": "definition",
+      "value": "gap between beings and Being",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the error Heidegger named the **ontological difference** — the gap between *beings* (the ontic) and *Being* itself (the ontological)",
+      "citation_keys": [
+        "heidegger1927beingandtime"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-map-territory",
+      "subject": "map-territory-relation",
+      "predicate": "definition",
+      "value": "the map is not the territory",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**the map is not the territory** \\cite[the map–territory relation]{korzybski_mapterritory}",
+      "citation_keys": [
+        "korzybski_mapterritory"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -100,6 +314,209 @@
       "qualifiers": {},
       "quote": "part: 6",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-eliza",
+      "from": "eliza",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "we already caught ourselves doing this in 1966, when people projected feeling onto a chatbot that had none \\cite[the ELIZA effect]{weizenbaum1966eliza}",
+      "citation_keys": [
+        "weizenbaum1966eliza"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-illusion-of-explanatory-depth",
+      "from": "illusion-of-explanatory-depth",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "We overestimate how well we understand how things work, from a zipper to a traffic light \\cite[Rozenblit & Keil]{rozenblit2002ioed}",
+      "citation_keys": [
+        "rozenblit2002ioed"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-brednich-1990",
+      "from": "brednich-1990",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citetitle{brednich1990spinne} (1990)",
+      "citation_keys": [
+        "brednich1990spinne"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-brednich-1991",
+      "from": "brednich-1991",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citetitle{brednich1991maus} (1991)",
+      "citation_keys": [
+        "brednich1991maus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-brednich-1993",
+      "from": "brednich-1993",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citetitle{brednich1993huhn} (1993)",
+      "citation_keys": [
+        "brednich1993huhn"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-brednich-method",
+      "from": "brednich-method",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a **source at a distance** (\"a friend of a friend, and it's absolutely true\"), a **three-beat shape** (everyday → the break → the point), a **true core** (*ein Fünkchen Wahrheit*), a **social theme** (a fear, a taboo, a grudge, a wish), and a **media loop** that keeps sharpening it",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-turing-test",
+      "from": "turing-test",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Turing offered the Imitation Game as a *behavioral* way to sidestep a question he called too meaningless to discuss (\\cite[Turing, 1950]{turing1950computing})",
+      "citation_keys": [
+        "turing1950computing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-deepfake-boss-fraud",
+      "from": "deepfake-boss-fraud",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "She wired $25 million.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-mata-v-avianca",
+      "from": "mata-v-avianca",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Judge Castel's 2023 ruling in *Mata v. Avianca* was the first",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-colorado-state-fair-midjourney",
+      "from": "colorado-state-fair-midjourney",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "entered it in the **Colorado State Fair**'s art competition (disclosing that he had used Midjourney). It won",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-drake-ai-song",
+      "from": "drake-ai-song",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 2023 a track that sounded like Drake and The Weeknd hit TikTok",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-luddites",
+      "from": "luddites",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **Luddites** of 1811 are usually told as people smashing machines out of fear of technology",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-technological-singularity",
+      "from": "technological-singularity",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The modern labels are Vinge's *technological singularity* and Kurzweil's countdown",
+      "citation_keys": [
+        "vinge1993singularity",
+        "kurzweil2005singularity"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-bostrom-superintelligence",
+      "from": "bostrom-superintelligence",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "There is no demonstrated path to a machine rewriting itself into superintelligence \\cite[Bostrom]{bostrom2014superintelligence}",
+      "citation_keys": [
+        "bostrom2014superintelligence"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-dead-internet-theory",
+      "from": "dead-internet-theory",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "was first named in a 2021 forum post (\"Dead Internet Theory: Most of the Internet is Fake\"), and went mainstream in 2021 \\cite[dead internet theory]{deadinternet_wiki}",
+      "citation_keys": [
+        "deadinternet_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-golem",
+      "from": "golem",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **Golem**, the creation that out-runs its maker",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-ontological-difference",
+      "from": "ontological-difference",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the error Heidegger named the **ontological difference** — the gap between *beings* (the ontic) and *Being* itself (the ontological)",
+      "citation_keys": [
+        "heidegger1927beingandtime"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-map-territory-relation",
+      "from": "map-territory-relation",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**the map is not the territory** \\cite[the map–territory relation]{korzybski_mapterritory}",
+      "citation_keys": [
+        "korzybski_mapterritory"
+      ],
       "confidence": "provenance"
     }
   ]

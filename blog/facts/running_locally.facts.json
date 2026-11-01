@@ -5,15 +5,10 @@
   "title": "Running Models Locally",
   "part": 5,
   "order": 10,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "gerganov2023llamacpp",
-    "ollama2024",
-    "lmstudio2024",
-    "dettmers2023qlora",
-    "hu2021lora",
-    "liu2024dora"
+    "dettmers2023qlora"
   ],
   "claims": [
     {
@@ -54,6 +49,238 @@
       "quote": "order: 10",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "running_locally-70b-macbook",
+      "subject": "70b-model",
+      "predicate": "runs_on",
+      "value": "MacBook",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A quantized 70B model runs on a MacBook.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-7b-phone",
+      "subject": "7b-model",
+      "predicate": "runs_on",
+      "value": "phone",
+      "unit": "name",
+      "qualifiers": {
+        "precision": "int4"
+      },
+      "quote": "A 7B model in int4 fits on a phone.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-rtx3060-vram",
+      "subject": "rtx-3060",
+      "predicate": "vram",
+      "value": 12,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| RTX 3060 | 12 GB | 7B in int4, 13B in int3 |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-rtx4090-vram",
+      "subject": "rtx-4090",
+      "predicate": "vram",
+      "value": 24,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| RTX 4090 | 24 GB | 13B int4, 30B int4 |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-rtx5090-vram",
+      "subject": "rtx-5090",
+      "predicate": "vram",
+      "value": 32,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| RTX 5090 | 32 GB | 30B int4, 70B Q2_K |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-m3-max-memory",
+      "subject": "apple-m3-max",
+      "predicate": "unified_memory_max",
+      "value": 128,
+      "unit": "GB",
+      "qualifiers": {
+        "definition": "range 64-128 GB unified"
+      },
+      "quote": "| Apple M3 Max | 64–128 GB unified | 70B int4, 70B Q5_K_M |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-m3-ultra-memory",
+      "subject": "mac-studio-m3-ultra",
+      "predicate": "memory",
+      "value": 192,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "A Mac Studio M3 Ultra with 192 GB runs a 405B model in Q2_K at usable speeds.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gguf-definition",
+      "subject": "gguf",
+      "predicate": "definition",
+      "value": "GPT-Generated Unified Format",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**GGUF** (GPT-Generated Unified Format) is the de facto standard for local LLMs",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gguf-designer",
+      "subject": "gguf",
+      "predicate": "designer",
+      "value": "Georgi Gerganov",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "designed by Georgi Gerganov for **llama.cpp**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gerganov-role",
+      "subject": "georgi-gerganov",
+      "predicate": "role",
+      "value": "designer of GGUF for llama.cpp",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "designed by Georgi Gerganov for **llama.cpp**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-f32-size",
+      "subject": "70b-f32",
+      "predicate": "file_size",
+      "value": 280,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| F32 | 32 | Lossless | 280 GB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-f16-size",
+      "subject": "70b-f16",
+      "predicate": "file_size",
+      "value": 140,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| F16 / BF16 | 16 | Negligible loss | 140 GB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-q8-size",
+      "subject": "70b-q8-0",
+      "predicate": "file_size",
+      "value": 70,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| Q8_0 | 8 | ~0.5% loss | 70 GB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-q4km-bits",
+      "subject": "q4-k-m",
+      "predicate": "bits_per_weight",
+      "value": 4.5,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "| Q4_K_M | 4.5 | ~2–3% | 40 GB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-q4km-size",
+      "subject": "70b-q4-k-m",
+      "predicate": "file_size",
+      "value": 40,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| Q4_K_M | 4.5 | ~2–3% | 40 GB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-q2k-size",
+      "subject": "70b-q2-k",
+      "predicate": "file_size",
+      "value": 25,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| Q2_K | 2.5 | ~10% | 25 GB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-llamacpp-language",
+      "subject": "llama-cpp",
+      "predicate": "language",
+      "value": "C++",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "is a C++ inference engine, originally designed to run Llama 7B on a MacBook",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-70b-m3max-speed",
+      "subject": "70b-q4-k-m",
+      "predicate": "tokens_per_second",
+      "value": 15,
+      "unit": "token",
+      "qualifiers": {
+        "definition": "upper end of ~10-15 tokens per second"
+      },
+      "quote": "a 70B Q4_K_M on M3 Max generates ~10–15 tokens/second",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-7b-4090-speed",
+      "subject": "7b-q4-k-m",
+      "predicate": "tokens_per_second",
+      "value": 120,
+      "unit": "token",
+      "qualifiers": {
+        "definition": "upper end of ~80-120 tokens per second"
+      },
+      "quote": "A 7B Q4_K_M on RTX 4090: ~80–120 tokens/second.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-qlora-gpu",
+      "subject": "qlora",
+      "predicate": "gpu_memory",
+      "value": 48,
+      "unit": "GB",
+      "qualifiers": {
+        "scope": "65B fine-tune on a single GPU"
+      },
+      "quote": "The paper demonstrates a 65B fine-tune on a single 48 GB GPU",
+      "citation_keys": [
+        "dettmers2023qlora"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -65,6 +292,188 @@
       "qualifiers": {},
       "quote": "part: 5",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-70b-model",
+      "from": "70b-model",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A quantized 70B model runs on a MacBook.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-7b-model",
+      "from": "7b-model",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A 7B model in int4 fits on a phone.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-rtx-3060",
+      "from": "rtx-3060",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| RTX 3060 | 12 GB | 7B in int4, 13B in int3 |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-rtx-4090",
+      "from": "rtx-4090",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| RTX 4090 | 24 GB | 13B int4, 30B int4 |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-rtx-5090",
+      "from": "rtx-5090",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| RTX 5090 | 32 GB | 30B int4, 70B Q2_K |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-apple-m3-max",
+      "from": "apple-m3-max",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Apple M3 Max | 64–128 GB unified | 70B int4, 70B Q5_K_M |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-mac-studio-m3-ultra",
+      "from": "mac-studio-m3-ultra",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A Mac Studio M3 Ultra with 192 GB runs a 405B model in Q2_K at usable speeds.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-gguf",
+      "from": "gguf",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**GGUF** (GPT-Generated Unified Format) is the de facto standard for local LLMs",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-georgi-gerganov",
+      "from": "georgi-gerganov",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "designed by Georgi Gerganov for **llama.cpp**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-70b-f32",
+      "from": "70b-f32",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| F32 | 32 | Lossless | 280 GB |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-70b-f16",
+      "from": "70b-f16",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| F16 / BF16 | 16 | Negligible loss | 140 GB |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-70b-q8-0",
+      "from": "70b-q8-0",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Q8_0 | 8 | ~0.5% loss | 70 GB |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-q4-k-m",
+      "from": "q4-k-m",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Q4_K_M | 4.5 | ~2–3% | 40 GB |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-70b-q4-k-m",
+      "from": "70b-q4-k-m",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Q4_K_M | 4.5 | ~2–3% | 40 GB |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-70b-q2-k",
+      "from": "70b-q2-k",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Q2_K | 2.5 | ~10% | 25 GB |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-llama-cpp",
+      "from": "llama-cpp",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "is a C++ inference engine, originally designed to run Llama 7B on a MacBook",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-7b-q4-k-m",
+      "from": "7b-q4-k-m",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A 7B Q4_K_M on RTX 4090: ~80–120 tokens/second.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-qlora",
+      "from": "qlora",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The paper demonstrates a 65B fine-tune on a single 48 GB GPU",
+      "citation_keys": [
+        "dettmers2023qlora"
+      ],
       "confidence": "provenance"
     }
   ]

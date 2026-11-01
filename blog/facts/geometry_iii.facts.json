@@ -5,55 +5,25 @@
   "title": "The Shape of Holes: A Working Algebraic Topology",
   "part": 1,
   "order": 12,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "morris2007topology",
     "eulerbridges",
     "eulersolids",
     "poincareanalysissitus",
-    "poincareconjecture1904",
-    "perelmanpoincare",
-    "mclarty2006noether",
-    "condorcet1770",
-    "legendre1786",
-    "historyofmathematicalnotation",
-    "hatcher",
-    "derham1931",
-    "hottbook",
-    "youvan2024",
-    "eilenbergmaclane1942",
-    "eilenbergsteenrod1952",
-    "maclane1998categories",
     "mayer1929",
     "vietoris1930",
-    "vietorisbio2002",
-    "seifert1931",
-    "vankampen1933",
-    "brown1967",
-    "hurewicz1935",
-    "eilenbergmaclane1945spaces",
     "hopf1931fibration",
-    "freudenthal1937",
-    "serre1951",
-    "serre1953",
+    "hurewicz1935",
     "whitehead1949",
     "eilenberglane1945",
-    "milnor1962additivity",
-    "leray1946",
+    "eilenbergsteenrod1952",
     "steenrod1947",
-    "adams1960",
-    "bott1959",
     "reidemeister1935",
     "reidemeistertorsion_wiki",
-    "milnor1966torsion",
     "edelsbrunner2002persistent",
     "zomorodian2005",
-    "cohensteiner2007",
-    "carlsson2009tda",
-    "riek2019neural",
-    "brouwer1911fixed",
-    "degree_wiki"
+    "cohensteiner2007"
   ],
   "claims": [
     {
@@ -94,6 +64,260 @@
       "quote": "order: 12",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "geometry_iii-euler-bridges-1736",
+      "subject": "euler-konigsberg-bridges",
+      "predicate": "year",
+      "value": 1736,
+      "unit": "year",
+      "quote": "**Euler's bridges of Königsberg** (1736)",
+      "citation_keys": [
+        "eulerbridges",
+        "eulersolids"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-euler-polyhedron-formula",
+      "subject": "euler-polyhedron-formula",
+      "predicate": "year",
+      "value": 1752,
+      "unit": "year",
+      "quote": "for a polyhedron, the formula (1752)",
+      "citation_keys": [
+        "eulerbridges",
+        "eulersolids"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-betti-numbers",
+      "subject": "enrico-betti",
+      "predicate": "year",
+      "value": 1871,
+      "unit": "year",
+      "quote": "**Enrico Betti** (1871) generalized the pattern",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-analysis-situs",
+      "subject": "poincare-analysis-situs",
+      "predicate": "year",
+      "value": 1895,
+      "unit": "year",
+      "quote": "His 1895 *Analysis Situs*",
+      "citation_keys": [
+        "poincareanalysissitus"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-noether-homology-groups",
+      "subject": "emmy-noether",
+      "predicate": "year",
+      "value": 1925,
+      "unit": "year",
+      "quote": "The step from counting holes to the algebra of holes happened in 1925",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-mayer-betti",
+      "subject": "walther-mayer",
+      "predicate": "year",
+      "value": 1929,
+      "unit": "year",
+      "quote": "Mayer proved the result for *Betti numbers* in 1929",
+      "citation_keys": [
+        "mayer1929",
+        "vietoris1930"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-vietoris-homology",
+      "subject": "leopold-vietoris",
+      "predicate": "year",
+      "value": 1930,
+      "unit": "year",
+      "quote": "Vietoris then upgraded it the next year to the full *homology groups*",
+      "citation_keys": [
+        "mayer1929",
+        "vietoris1930"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-hopf-fibration",
+      "subject": "hopf-fibration",
+      "predicate": "result",
+      "value": "π3(S2) = Z",
+      "unit": "formula",
+      "quote": "**Hopf**'s 1931 computation $\\pi_{3}(S^{2}) = \\mathbb{Z}$",
+      "citation_keys": [
+        "hopf1931fibration"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-hurewicz-homotopy",
+      "subject": "hurewicz-higher-homotopy",
+      "predicate": "year",
+      "value": 1935,
+      "unit": "year",
+      "quote": "**Witold Hurewicz** (1935) introduced the higher homotopy groups $\\pi_n$",
+      "citation_keys": [
+        "hurewicz1935"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-whitehead-cw",
+      "subject": "whitehead-cw-complexes",
+      "predicate": "year",
+      "value": 1949,
+      "unit": "year",
+      "quote": "invented and named by **J.H.C. Whitehead** in his 1949 paper *Combinatorial Homotopy I*",
+      "citation_keys": [
+        "whitehead1949"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-categories",
+      "subject": "eilenberg-maclane-categories",
+      "predicate": "year",
+      "value": 1945,
+      "unit": "year",
+      "quote": "In 1945 two men, working in very different mathematical cultures, published a paper",
+      "citation_keys": [
+        "eilenberglane1945"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-axioms",
+      "subject": "eilenberg-steenrod-axioms",
+      "predicate": "year",
+      "value": 1952,
+      "unit": "year",
+      "quote": "*Foundations of Algebraic Topology* (1952)",
+      "citation_keys": [
+        "eilenbergsteenrod1952"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-leray-spectral",
+      "subject": "leray-spectral-sequences",
+      "predicate": "period",
+      "value": "1940–1945",
+      "unit": "interval",
+      "quote": "**Jean Leray**, a French mathematician held as a prisoner of war in **Oflag XVII-A in Austria** from 1940 to 1945",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-steenrod-operations",
+      "subject": "steenrod-operations",
+      "predicate": "year",
+      "value": 1947,
+      "unit": "year",
+      "quote": "In 1947 **Norman Steenrod** discovered the **Steenrod operations**",
+      "citation_keys": [
+        "steenrod1947"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-adams-hopf-invariant",
+      "subject": "adams-hopf-invariant-one",
+      "predicate": "admissible_dimensions",
+      "value": "1, 2, 4, 8",
+      "unit": "count",
+      "quote": "**only in dimensions 1, 2, 4, and 8.**",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-bott-periodicity",
+      "subject": "bott-periodicity",
+      "predicate": "period",
+      "value": "1957–1959",
+      "unit": "interval",
+      "quote": "**Bott periodicity** (1957–1959)",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-reidemeister-torsion",
+      "subject": "reidemeister-torsion",
+      "predicate": "year",
+      "value": 1935,
+      "unit": "year",
+      "quote": "in 1935 **Kurt Reidemeister** showed that certain spaces",
+      "citation_keys": [
+        "reidemeister1935",
+        "reidemeistertorsion_wiki"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-persistent-homology",
+      "subject": "persistent-homology",
+      "predicate": "year",
+      "value": 2002,
+      "unit": "year",
+      "quote": "developed seriously starting with **Edelsbrunner, Letscher, and Zomorodian** (2002)",
+      "citation_keys": [
+        "edelsbrunner2002persistent",
+        "zomorodian2005"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-persistence-stability",
+      "subject": "persistence-stability-theorem",
+      "predicate": "year",
+      "value": 2007,
+      "unit": "year",
+      "quote": "**Cohen-Steiner, Edelsbrunner, and Harer** (2007)",
+      "citation_keys": [
+        "cohensteiner2007"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-torus-betti",
+      "subject": "torus",
+      "predicate": "betti_numbers",
+      "value": "b0=1, b1=2, b2=1",
+      "unit": "count",
+      "quote": "so $b_{0}=1$ (one connected piece), $b_{1}=2$ (two independent loops), and $b_{2}=1$ (one cavity)",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -104,6 +328,240 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 1",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-euler-konigsberg-bridges",
+      "from": "euler-konigsberg-bridges",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Euler's bridges of Königsberg** (1736)",
+      "citation_keys": [
+        "eulerbridges",
+        "eulersolids"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-euler-polyhedron-formula",
+      "from": "euler-polyhedron-formula",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "for a polyhedron, the formula (1752)",
+      "citation_keys": [
+        "eulerbridges",
+        "eulersolids"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-enrico-betti",
+      "from": "enrico-betti",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Enrico Betti** (1871) generalized the pattern",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-poincare-analysis-situs",
+      "from": "poincare-analysis-situs",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "His 1895 *Analysis Situs*",
+      "citation_keys": [
+        "poincareanalysissitus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-emmy-noether",
+      "from": "emmy-noether",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The step from counting holes to the algebra of holes happened in 1925",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-walther-mayer",
+      "from": "walther-mayer",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Mayer proved the result for *Betti numbers* in 1929",
+      "citation_keys": [
+        "mayer1929",
+        "vietoris1930"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-leopold-vietoris",
+      "from": "leopold-vietoris",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Vietoris then upgraded it the next year to the full *homology groups*",
+      "citation_keys": [
+        "mayer1929",
+        "vietoris1930"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-hopf-fibration",
+      "from": "hopf-fibration",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Hopf**'s 1931 computation $\\pi_{3}(S^{2}) = \\mathbb{Z}$",
+      "citation_keys": [
+        "hopf1931fibration"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-hurewicz-higher-homotopy",
+      "from": "hurewicz-higher-homotopy",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Witold Hurewicz** (1935) introduced the higher homotopy groups $\\pi_n$",
+      "citation_keys": [
+        "hurewicz1935"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-whitehead-cw-complexes",
+      "from": "whitehead-cw-complexes",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "invented and named by **J.H.C. Whitehead** in his 1949 paper *Combinatorial Homotopy I*",
+      "citation_keys": [
+        "whitehead1949"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-eilenberg-maclane-categories",
+      "from": "eilenberg-maclane-categories",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1945 two men, working in very different mathematical cultures, published a paper",
+      "citation_keys": [
+        "eilenberglane1945"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-eilenberg-steenrod-axioms",
+      "from": "eilenberg-steenrod-axioms",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Foundations of Algebraic Topology* (1952)",
+      "citation_keys": [
+        "eilenbergsteenrod1952"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-leray-spectral-sequences",
+      "from": "leray-spectral-sequences",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Jean Leray**, a French mathematician held as a prisoner of war in **Oflag XVII-A in Austria** from 1940 to 1945",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-steenrod-operations",
+      "from": "steenrod-operations",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1947 **Norman Steenrod** discovered the **Steenrod operations**",
+      "citation_keys": [
+        "steenrod1947"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-adams-hopf-invariant-one",
+      "from": "adams-hopf-invariant-one",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**only in dimensions 1, 2, 4, and 8.**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-bott-periodicity",
+      "from": "bott-periodicity",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Bott periodicity** (1957–1959)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-reidemeister-torsion",
+      "from": "reidemeister-torsion",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in 1935 **Kurt Reidemeister** showed that certain spaces",
+      "citation_keys": [
+        "reidemeister1935",
+        "reidemeistertorsion_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-persistent-homology",
+      "from": "persistent-homology",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "developed seriously starting with **Edelsbrunner, Letscher, and Zomorodian** (2002)",
+      "citation_keys": [
+        "edelsbrunner2002persistent",
+        "zomorodian2005"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-persistence-stability-theorem",
+      "from": "persistence-stability-theorem",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Cohen-Steiner, Edelsbrunner, and Harer** (2007)",
+      "citation_keys": [
+        "cohensteiner2007"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-torus",
+      "from": "torus",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "so $b_{0}=1$ (one connected piece), $b_{1}=2$ (two independent loops), and $b_{2}=1$ (one cavity)",
       "citation_keys": [],
       "confidence": "provenance"
     }

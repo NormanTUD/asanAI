@@ -5,31 +5,13 @@
   "title": "Diffusion Models",
   "part": 4,
   "order": 14,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "diffusion_astronaut_img",
     "ho2020ddpm",
     "sohl2015deep",
-    "song2019score",
     "ramesh2022dalle2",
-    "ramesh2021dalle",
-    "nichol2021improved",
-    "dhariwal2021diffusion",
-    "song2020ddim",
-    "song2021sde",
-    "ho2022cfg",
-    "diffusion_architecture_img",
-    "hu2021lora",
-    "zhang2023controlnet",
     "ronneberger2015unet",
-    "kingma2014vae",
-    "esser2021taming",
-    "rombach2022ldm",
-    "diffusion_ddim_img",
-    "lipman2023flow",
-    "peebles2023dit",
-    "austin2021d3pm",
     "nie2025llada"
   ],
   "claims": [
@@ -71,6 +53,239 @@
       "quote": "order: 14",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "diffusion-ddpm-year",
+      "subject": "ddpm",
+      "predicate": "year",
+      "value": 2020,
+      "unit": "year",
+      "quote": "Then in 2020, a paper called **DDPM**",
+      "citation_keys": [
+        "ho2020ddpm"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-sohl-year",
+      "subject": "sohl-dickstein-diffusion",
+      "predicate": "year",
+      "value": 2015,
+      "unit": "year",
+      "quote": "introduced diffusion probabilistic models in 2015 as a way to learn a generative distribution",
+      "citation_keys": [
+        "sohl2015deep"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-timesteps",
+      "subject": "ddpm",
+      "predicate": "forward_steps",
+      "value": 1000,
+      "unit": "count",
+      "quote": "After $T = 1000$ steps nothing of the original picture survives.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-dalle1-year",
+      "subject": "dall-e",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "quote": "**DALL·E** (2021) was a 12-billion-parameter autoregressive Transformer over discrete image tokens",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-dalle1-params",
+      "subject": "dall-e",
+      "predicate": "parameters",
+      "value": 12000000000,
+      "unit": "count",
+      "quote": "**DALL·E** (2021) was a 12-billion-parameter autoregressive Transformer over discrete image tokens",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-dalle2-year",
+      "subject": "dall-e-2",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "quote": "**DALL·E 2** then switched to diffusion conditioned on CLIP *text* embeddings",
+      "citation_keys": [
+        "ramesh2022dalle2"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-cfg-drop",
+      "subject": "classifier-free-guidance",
+      "predicate": "prompt_drop_rate",
+      "value": 10,
+      "unit": "%",
+      "quote": "the network is shown the text prompt 90% of the time and *nothing* 10% of the time",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-guidance-scale",
+      "subject": "classifier-free-guidance",
+      "predicate": "default_guidance_scale",
+      "value": 7,
+      "unit": "count",
+      "quote": "Around $w \\approx 7$ is the modern default.",
+      "qualifiers": {
+        "approx": true
+      },
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-laion-size",
+      "subject": "laion-5b",
+      "predicate": "pair_count",
+      "value": 5000000000,
+      "unit": "count",
+      "quote": "**LAION-5B**, a publicly released scrape of about 5 billion (image, alt-text) pairs from the web",
+      "qualifiers": {
+        "approx": true
+      },
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-clip-dim",
+      "subject": "clip-text-encoder",
+      "predicate": "embedding_dimension",
+      "value": 768,
+      "unit": "count",
+      "quote": "768 numbers for CLIP, 4096 for T5-XXL",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-t5xxl-dim",
+      "subject": "t5-xxl",
+      "predicate": "embedding_dimension",
+      "value": 4096,
+      "unit": "count",
+      "quote": "768 numbers for CLIP, 4096 for T5-XXL",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-sd15-unet-params",
+      "subject": "stable-diffusion-1-5",
+      "predicate": "unet_parameters",
+      "value": 860000000,
+      "unit": "count",
+      "quote": "Stable Diffusion 1.5's U-Net has ~860 M parameters",
+      "qualifiers": {
+        "approx": true
+      },
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-sd15-total-params",
+      "subject": "stable-diffusion-1-5",
+      "predicate": "total_parameters",
+      "value": 1000000000,
+      "unit": "count",
+      "quote": "the full pipeline, including text encoder and VAE, is about 1 B",
+      "qualifiers": {
+        "approx": true
+      },
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-latent-size",
+      "subject": "stable-diffusion-1-5",
+      "predicate": "latent_grid",
+      "value": "64x64",
+      "unit": "count",
+      "quote": "$64 \\times 64$ for a $512 \\times 512$ image",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-latent-speedup",
+      "subject": "latent-diffusion",
+      "predicate": "training_speedup",
+      "value": "64x",
+      "unit": "name",
+      "quote": "This makes training and inference roughly 64× cheaper.",
+      "qualifiers": {
+        "approx": true
+      },
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-unet-year",
+      "subject": "u-net",
+      "predicate": "year",
+      "value": 2015,
+      "unit": "year",
+      "quote": "The **U-Net** was introduced by \\cite[Ronneberger et al. (2015)]{ronneberger2015unet}",
+      "citation_keys": [
+        "ronneberger2015unet"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-pixel-count",
+      "subject": "stable-diffusion-resolution",
+      "predicate": "pixel_count",
+      "value": 786000,
+      "unit": "count",
+      "quote": "Each image is roughly 786,000 numbers",
+      "qualifiers": {
+        "approx": true
+      },
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-llada-params",
+      "subject": "llada",
+      "predicate": "parameters",
+      "value": 8000000000,
+      "unit": "count",
+      "quote": "**LLaDA** (2025), an 8B masked-diffusion model trained from scratch",
+      "citation_keys": [
+        "nie2025llada"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-evaluations",
+      "subject": "diffusion-sampling",
+      "predicate": "network_evaluations",
+      "value": "1-8",
+      "unit": "count",
+      "quote": "Modern systems generate images in **1–8 network evaluations**",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -81,6 +296,156 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-ddpm",
+      "from": "ddpm",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Then in 2020, a paper called **DDPM**",
+      "citation_keys": [
+        "ho2020ddpm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-sohl-dickstein-diffusion",
+      "from": "sohl-dickstein-diffusion",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "introduced diffusion probabilistic models in 2015 as a way to learn a generative distribution",
+      "citation_keys": [
+        "sohl2015deep"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-dall-e",
+      "from": "dall-e",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**DALL·E** (2021) was a 12-billion-parameter autoregressive Transformer over discrete image tokens",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-dall-e-2",
+      "from": "dall-e-2",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**DALL·E 2** then switched to diffusion conditioned on CLIP *text* embeddings",
+      "citation_keys": [
+        "ramesh2022dalle2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-classifier-free-guidance",
+      "from": "classifier-free-guidance",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the network is shown the text prompt 90% of the time and *nothing* 10% of the time",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-laion-5b",
+      "from": "laion-5b",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**LAION-5B**, a publicly released scrape of about 5 billion (image, alt-text) pairs from the web",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-clip-text-encoder",
+      "from": "clip-text-encoder",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "768 numbers for CLIP, 4096 for T5-XXL",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-t5-xxl",
+      "from": "t5-xxl",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "768 numbers for CLIP, 4096 for T5-XXL",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-stable-diffusion-1-5",
+      "from": "stable-diffusion-1-5",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Stable Diffusion 1.5's U-Net has ~860 M parameters",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-latent-diffusion",
+      "from": "latent-diffusion",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This makes training and inference roughly 64× cheaper.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-u-net",
+      "from": "u-net",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **U-Net** was introduced by \\cite[Ronneberger et al. (2015)]{ronneberger2015unet}",
+      "citation_keys": [
+        "ronneberger2015unet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-stable-diffusion-resolution",
+      "from": "stable-diffusion-resolution",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Each image is roughly 786,000 numbers",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-llada",
+      "from": "llada",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**LLaDA** (2025), an 8B masked-diffusion model trained from scratch",
+      "citation_keys": [
+        "nie2025llada"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-diffusion-sampling",
+      "from": "diffusion-sampling",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Modern systems generate images in **1–8 network evaluations**",
       "citation_keys": [],
       "confidence": "provenance"
     }

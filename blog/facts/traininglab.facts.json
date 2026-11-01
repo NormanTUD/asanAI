@@ -5,7 +5,7 @@
   "title": "Live Training of a Neural Network",
   "part": 2,
   "order": 11,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [],
   "claims": [
@@ -47,6 +47,138 @@
       "quote": "order: 11",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "traininglab-optimizer",
+      "subject": "traininglab-optimizer",
+      "predicate": "name",
+      "value": "Adam",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "an **Optimizer** (like Adam) automatically turns these knobs to minimize the **Loss**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "traininglab-loss",
+      "subject": "traininglab-loss",
+      "predicate": "meaning",
+      "value": "the error",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the **Loss** (the error).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "traininglab-learning-rate-default",
+      "subject": "traininglab-learning-rate",
+      "predicate": "default_value",
+      "value": 0.1,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "id=\"traininglab-lr\" min=\"0.01\" max=\"0.5\" step=\"0.01\" value=\"0.1\"",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "traininglab-learning-rate-min",
+      "subject": "traininglab-learning-rate",
+      "predicate": "minimum_value",
+      "value": 0.01,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "id=\"traininglab-lr\" min=\"0.01\" max=\"0.5\" step=\"0.01\" value=\"0.1\"",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "traininglab-learning-rate-max",
+      "subject": "traininglab-learning-rate",
+      "predicate": "maximum_value",
+      "value": 0.5,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "id=\"traininglab-lr\" min=\"0.01\" max=\"0.5\" step=\"0.01\" value=\"0.1\"",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "traininglab-epochs-default",
+      "subject": "traininglab-epochs",
+      "predicate": "default_value",
+      "value": 500,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "id=\"traininglab-epochs\" value=\"500\"",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "traininglab-x1-default",
+      "subject": "traininglab-input-x1",
+      "predicate": "default_value",
+      "value": 0.5,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "id=\"pred-x1\" value=\"0.5\"",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "traininglab-x2-default",
+      "subject": "traininglab-input-x2",
+      "predicate": "default_value",
+      "value": 0.5,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "id=\"pred-x2\" value=\"0.5\"",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "traininglab-random-init",
+      "subject": "neural-network-weights",
+      "predicate": "initialization",
+      "value": "random",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Since the network weights are randomly initialized",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "traininglab-boundary-colors",
+      "subject": "decision-boundary",
+      "predicate": "class_colors",
+      "value": "red and blue",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Red areas represent one classification, blue the other.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "traininglab-model-definition",
+      "subject": "neural-network-model",
+      "predicate": "definition",
+      "value": "a complex function with knobs called weights",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A Model is essentially a complex function with “knobs” called **Weights**.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "traininglab-heatmaps",
+      "subject": "weight-heatmaps",
+      "predicate": "behaviour",
+      "value": "show numerical values inside each layer's weights and update live",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "These heatmaps show the numerical values inside each layer's weights, updating live as the optimizer turns the knobs.",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -57,6 +189,106 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 2",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-traininglab-traininglab-optimizer",
+      "from": "traininglab-optimizer",
+      "to": "traininglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "an **Optimizer** (like Adam) automatically turns these knobs to minimize the **Loss**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-traininglab-traininglab-loss",
+      "from": "traininglab-loss",
+      "to": "traininglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **Loss** (the error).",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-traininglab-traininglab-learning-rate",
+      "from": "traininglab-learning-rate",
+      "to": "traininglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "id=\"traininglab-lr\" min=\"0.01\" max=\"0.5\" step=\"0.01\" value=\"0.1\"",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-traininglab-traininglab-epochs",
+      "from": "traininglab-epochs",
+      "to": "traininglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "id=\"traininglab-epochs\" value=\"500\"",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-traininglab-traininglab-input-x1",
+      "from": "traininglab-input-x1",
+      "to": "traininglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "id=\"pred-x1\" value=\"0.5\"",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-traininglab-traininglab-input-x2",
+      "from": "traininglab-input-x2",
+      "to": "traininglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "id=\"pred-x2\" value=\"0.5\"",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-traininglab-neural-network-weights",
+      "from": "neural-network-weights",
+      "to": "traininglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Since the network weights are randomly initialized",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-traininglab-decision-boundary",
+      "from": "decision-boundary",
+      "to": "traininglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Red areas represent one classification, blue the other.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-traininglab-neural-network-model",
+      "from": "neural-network-model",
+      "to": "traininglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A Model is essentially a complex function with “knobs” called **Weights**.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-traininglab-weight-heatmaps",
+      "from": "weight-heatmaps",
+      "to": "traininglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "These heatmaps show the numerical values inside each layer's weights, updating live as the optimizer turns the knobs.",
       "citation_keys": [],
       "confidence": "provenance"
     }

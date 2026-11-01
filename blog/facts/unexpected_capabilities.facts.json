@@ -5,44 +5,18 @@
   "title": "Unexpected Capabilities of LLMs",
   "part": 6,
   "order": 13,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "brown2020gpt3",
-    "min2022rethinking",
-    "garg2022incontext",
     "olsson2022induction",
     "zhou2022algorithmic",
-    "chung2022flan",
-    "nye2021scratchpad",
     "wei2022chainofthought",
-    "kojima2022zeroshot",
-    "wang2022selfconsistency",
     "yao2023tot",
-    "press2022compositionality",
-    "lake2018scan",
-    "kim2020cogs",
-    "chollet2019measure",
-    "berglund2023reversal",
-    "power2022grokking",
-    "schaeffer2023mirage",
-    "chen2021humaneval",
-    "udrescu2020aifeynman",
     "li2022othello_iclr",
     "huh2024platonic",
-    "shi2023cottransfer",
-    "burns2022ccs",
-    "kadavath2022selfknowledge",
-    "elhage2022superposition",
-    "monosemanticity",
-    "kosinski2023tom",
-    "schick2023toolformer",
     "yao2023react",
-    "madaan2023selfrefine",
     "huang2022selfimprove",
-    "bai2022constitutional",
-    "lin2021truthful",
-    "carlini2021extracting",
     "mckenzie2023inverse",
     "bubeck2023sparks"
   ],
@@ -85,6 +59,252 @@
       "quote": "order: 13",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "unexpected-gpt3-params",
+      "subject": "gpt-3",
+      "predicate": "parameters",
+      "value": 175000000000,
+      "unit": "count",
+      "quote": "a 175-billion parameter autoregressive language model",
+      "citation_keys": [
+        "brown2020gpt3"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-gpt3-year",
+      "subject": "gpt-3",
+      "predicate": "year",
+      "value": 2020,
+      "unit": "year",
+      "quote": "### Few-Shot In-Context Learning (GPT-3, 2020)",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-induction-year",
+      "subject": "induction-heads",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "quote": "(\\cite[Olsson et al., 2022]{olsson2022induction}) identified **induction heads**",
+      "citation_keys": [
+        "olsson2022induction"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-addition-baseline",
+      "subject": "algorithmic-prompting-addition",
+      "predicate": "few_shot_accuracy",
+      "value": 9.5,
+      "unit": "%",
+      "quote": "a plain few-shot baseline reached 9.5% accuracy",
+      "citation_keys": [
+        "zhou2022algorithmic"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-addition-prompted",
+      "subject": "algorithmic-prompting-addition",
+      "predicate": "algorithm_prompt_accuracy",
+      "value": 90.5,
+      "unit": "%",
+      "quote": "an in-context description of the addition algorithm reached **90.5%**",
+      "citation_keys": [
+        "zhou2022algorithmic"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-flan-mmlu",
+      "subject": "flan-palm-540b",
+      "predicate": "mmlu_accuracy",
+      "value": 75.2,
+      "unit": "%",
+      "quote": "Flan-PaLM 540B reached 75.2% on five-shot MMLU",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-cot-gain",
+      "subject": "chain-of-thought",
+      "predicate": "benchmark_gain",
+      "value": 50,
+      "unit": "%",
+      "quote": "sometimes by **more than 50 percentage points**",
+      "citation_keys": [
+        "wei2022chainofthought"
+      ],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-tot-year",
+      "subject": "tree-of-thought",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "quote": "(\\cite[Yao et al., 2023]{yao2023tot}) pushed this further with **Tree of Thoughts**",
+      "citation_keys": [
+        "yao2023tot"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-game24-cot",
+      "subject": "gpt-4",
+      "predicate": "game_of_24_cot_accuracy",
+      "value": 4,
+      "unit": "%",
+      "quote": "chain-of-thought GPT-4 solved 4% of problems; Tree of Thoughts solved 74%",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-game24-tot",
+      "subject": "gpt-4",
+      "predicate": "game_of_24_tot_accuracy",
+      "value": 74,
+      "unit": "%",
+      "quote": "chain-of-thought GPT-4 solved 4% of problems; Tree of Thoughts solved 74%",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-humaneval-size",
+      "subject": "humaneval",
+      "predicate": "problem_count",
+      "value": 164,
+      "unit": "count",
+      "quote": "On HumanEval, a benchmark of 164 hand-written Python problems",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-codex-single",
+      "subject": "codex",
+      "predicate": "humaneval_single_sample",
+      "value": 28.8,
+      "unit": "%",
+      "quote": "Codex solved 28.8% of problems in a single sample, while GPT-3 (a much larger general LM) solved 0%",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-codex-sampling",
+      "subject": "codex",
+      "predicate": "humaneval_100_samples",
+      "value": 70.2,
+      "unit": "%",
+      "quote": "drawing 100 samples per problem and selecting by majority vote or test-case filtering raised accuracy to 70.2%",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-othello-year",
+      "subject": "othello-gpt",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "quote": "Perhaps the most surprising mechanistic finding of 2022. (\\cite[Li et al., 2022]{li2022othello_iclr})",
+      "citation_keys": [
+        "li2022othello_iclr"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-platonic-year",
+      "subject": "platonic-representation-hypothesis",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "quote": "(\\cite[Huh et al., 2024]{huh2024platonic})",
+      "citation_keys": [
+        "huh2024platonic"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-tom-gpt4",
+      "subject": "gpt-4",
+      "predicate": "tom_accuracy",
+      "value": 75,
+      "unit": "%",
+      "quote": "**ChatGPT-4 (Jun 2023) solved 75%**",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-react-alfworld",
+      "subject": "react",
+      "predicate": "alfworld_gain",
+      "value": 34,
+      "unit": "count",
+      "quote": "ReAct beat imitation-learning and RL baselines by 34 absolute points",
+      "citation_keys": [
+        "yao2023react"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-palm-selfimprove",
+      "subject": "palm-540b",
+      "predicate": "gsm8k_accuracy_after",
+      "value": 82.1,
+      "unit": "%",
+      "quote": "**74.4% → 82.1%** with no ground-truth labels used at any stage",
+      "citation_keys": [
+        "huang2022selfimprove"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-inverse-shape",
+      "subject": "inverse-scaling",
+      "predicate": "u_shaped_tasks",
+      "value": 6,
+      "unit": "count",
+      "quote": "performance on 6 of the 11 tasks is **U-shaped**",
+      "citation_keys": [
+        "mckenzie2023inverse"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "unexpected-sparks-length",
+      "subject": "sparks-of-agi",
+      "predicate": "page_count",
+      "value": 154,
+      "unit": "count",
+      "quote": "published a 154-page investigation of an early GPT-4 checkpoint",
+      "citation_keys": [
+        "bubeck2023sparks"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -96,6 +316,178 @@
       "qualifiers": {},
       "quote": "part: 6",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-gpt-3",
+      "from": "gpt-3",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a 175-billion parameter autoregressive language model",
+      "citation_keys": [
+        "brown2020gpt3"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-induction-heads",
+      "from": "induction-heads",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Olsson et al., 2022]{olsson2022induction}) identified **induction heads**",
+      "citation_keys": [
+        "olsson2022induction"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-algorithmic-prompting-addition",
+      "from": "algorithmic-prompting-addition",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a plain few-shot baseline reached 9.5% accuracy",
+      "citation_keys": [
+        "zhou2022algorithmic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-flan-palm-540b",
+      "from": "flan-palm-540b",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Flan-PaLM 540B reached 75.2% on five-shot MMLU",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-chain-of-thought",
+      "from": "chain-of-thought",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "sometimes by **more than 50 percentage points**",
+      "citation_keys": [
+        "wei2022chainofthought"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-tree-of-thought",
+      "from": "tree-of-thought",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Yao et al., 2023]{yao2023tot}) pushed this further with **Tree of Thoughts**",
+      "citation_keys": [
+        "yao2023tot"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-gpt-4",
+      "from": "gpt-4",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "chain-of-thought GPT-4 solved 4% of problems; Tree of Thoughts solved 74%",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-humaneval",
+      "from": "humaneval",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "On HumanEval, a benchmark of 164 hand-written Python problems",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-codex",
+      "from": "codex",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Codex solved 28.8% of problems in a single sample, while GPT-3 (a much larger general LM) solved 0%",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-othello-gpt",
+      "from": "othello-gpt",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Perhaps the most surprising mechanistic finding of 2022. (\\cite[Li et al., 2022]{li2022othello_iclr})",
+      "citation_keys": [
+        "li2022othello_iclr"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-platonic-representation-hypothesis",
+      "from": "platonic-representation-hypothesis",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Huh et al., 2024]{huh2024platonic})",
+      "citation_keys": [
+        "huh2024platonic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-react",
+      "from": "react",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "ReAct beat imitation-learning and RL baselines by 34 absolute points",
+      "citation_keys": [
+        "yao2023react"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-palm-540b",
+      "from": "palm-540b",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**74.4% → 82.1%** with no ground-truth labels used at any stage",
+      "citation_keys": [
+        "huang2022selfimprove"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-inverse-scaling",
+      "from": "inverse-scaling",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "performance on 6 of the 11 tasks is **U-shaped**",
+      "citation_keys": [
+        "mckenzie2023inverse"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-sparks-of-agi",
+      "from": "sparks-of-agi",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "published a 154-page investigation of an early GPT-4 checkpoint",
+      "citation_keys": [
+        "bubeck2023sparks"
+      ],
       "confidence": "provenance"
     }
   ]

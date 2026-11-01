@@ -5,29 +5,19 @@
   "title": "Tokenization: How Words become Numbers",
   "part": 4,
   "order": 1,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "zipf1949human",
     "markov1913ngram",
     "shannon1948communication",
-    "shannon1951communication",
-    "sutskever2011generating",
     "gage1994bpe",
     "sennrich2016subword",
-    "kudo2018unigram",
     "gpt2",
-    "tokenbias2025",
+    "kudo2018unigram",
     "rumbelow2023solidgold",
-    "land2024fishing",
-    "glitchtokens",
-    "glitchprober2024",
-    "geh2025adversarialtokenization",
-    "tokenbreak2025",
-    "byt52022",
-    "singh2024tokenizationcounts",
-    "zheng2025brokentokens",
-    "unicodeuax15"
+    "unicodeuax15",
+    "byt52022"
   ],
   "claims": [
     {
@@ -68,6 +58,219 @@
       "quote": "order: 1",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "tokenizerlab-zipf-year",
+      "subject": "zipf-law",
+      "predicate": "year",
+      "value": 1949,
+      "unit": "year",
+      "quote": "While \\citeauthor{zipf1949human} (\\citeyear{zipf1949human}) formalized the distribution problem",
+      "citation_keys": [
+        "zipf1949human"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "tokenizerlab-markov-year",
+      "subject": "markov-ngram",
+      "predicate": "year",
+      "value": 1913,
+      "unit": "year",
+      "quote": "This approach of using chains of dependencies was first pioneered by \\citeauthor{markov1913ngram} in \\citeyear{markov1913ngram}",
+      "citation_keys": [
+        "markov1913ngram"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "tokenizerlab-shannon-year",
+      "subject": "shannon-communication",
+      "predicate": "year",
+      "value": 1948,
+      "unit": "year",
+      "quote": "with his works \\cite[Mathematical Theory of Communication]{shannon1948communication} (released in \\citeyear{shannon1948communication})",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "tokenizerlab-wordpiece-year",
+      "subject": "wordpiece",
+      "predicate": "year",
+      "value": 2012,
+      "unit": "year",
+      "quote": "The original formulation (Schuster & Nakajima 2012)",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "tokenizerlab-bpe-definition",
+      "subject": "byte-pair-encoding",
+      "predicate": "definition",
+      "value": "subword tokenization that repeatedly merges the most frequent adjacent symbol pair",
+      "unit": "name",
+      "quote": "Modern AIs use **BPE (Byte-Pair Encoding)**.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "tokenizerlab-gage-year",
+      "subject": "gage-bpe-compression",
+      "predicate": "year",
+      "value": 1994,
+      "unit": "year",
+      "quote": "\\citeauthor{gage1994bpe} (\\citeyear{gage1994bpe}) developed the technique strictly for data compression",
+      "citation_keys": [
+        "gage1994bpe"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "tokenizerlab-sennrich-year",
+      "subject": "sennrich-subword",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "quote": "\\citeauthor{sennrich2016subword} (\\citeyear{sennrich2016subword}) adapted the logic into a subword tokenization strategy",
+      "citation_keys": [
+        "sennrich2016subword"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "tokenizerlab-byte-alphabet",
+      "subject": "byte-level-bpe",
+      "predicate": "alphabet_size",
+      "value": 256,
+      "unit": "count",
+      "quote": "but **all 256 bytes**",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "tokenizerlab-gpt2-year",
+      "subject": "gpt-2",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "quote": "\\cite[Radford et al., GPT-2 (2019)]{gpt2}",
+      "citation_keys": [
+        "gpt2"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "tokenizerlab-kudo-year",
+      "subject": "sentencepiece-unigram",
+      "predicate": "year",
+      "value": 2018,
+      "unit": "year",
+      "quote": "\\cite[Kudo, 2018]{kudo2018unigram}",
+      "citation_keys": [
+        "kudo2018unigram"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "tokenizerlab-token-cost",
+      "subject": "token-inflation",
+      "predicate": "cost_multiplier",
+      "value": "3–5x",
+      "unit": "name",
+      "quote": "A conversation that runs 3–5× longer in tokens costs 3–5× more API money",
+      "qualifiers": {
+        "approx": true
+      },
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "tokenizerlab-glitch-year",
+      "subject": "glitch-tokens",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "quote": "In 2023, \\citeauthor{rumbelow2023solidgold} collected strings",
+      "citation_keys": [
+        "rumbelow2023solidgold"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "tokenizerlab-solidgold-example",
+      "subject": "glitch-token-solidgoldmagikarp",
+      "predicate": "string",
+      "value": "·SolidGoldMagikarp",
+      "unit": "name",
+      "quote": "`·SolidGoldMagikarp`",
+      "citation_keys": [
+        "rumbelow2023solidgold"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "tokenizerlab-thai-bytes",
+      "subject": "thai-language",
+      "predicate": "token_cost_relative_to_english",
+      "value": "higher",
+      "unit": "name",
+      "quote": "A Thai sentence is still more bytes (hence more tokens) than the same sentence in English",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "tokenizerlab-normalization",
+      "subject": "unicode-normalization",
+      "predicate": "standard",
+      "value": "UAX #15",
+      "unit": "name",
+      "quote": "Normalization forms (NFC, NFD) can therefore change the token sequence without changing the rendered text (\\cite[Unicode Consortium, UAX #15]{unicodeuax15}).",
+      "citation_keys": [
+        "unicodeuax15"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "tokenizerlab-context-window",
+      "subject": "context-window",
+      "predicate": "size_example",
+      "value": 128000,
+      "unit": "token",
+      "quote": "“the context window is 128k tokens” is a statement about a *particular* tokenizer",
+      "qualifiers": {
+        "approx": true
+      },
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "tokenizerlab-byt5-year",
+      "subject": "byt5",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "quote": "\\cite[Xue et al., ByT5 (2022)]{byt52022}",
+      "citation_keys": [
+        "byt52022"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -79,6 +282,198 @@
       "qualifiers": {},
       "quote": "part: 4",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-zipf-law",
+      "from": "zipf-law",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "While \\citeauthor{zipf1949human} (\\citeyear{zipf1949human}) formalized the distribution problem",
+      "citation_keys": [
+        "zipf1949human"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-markov-ngram",
+      "from": "markov-ngram",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This approach of using chains of dependencies was first pioneered by \\citeauthor{markov1913ngram} in \\citeyear{markov1913ngram}",
+      "citation_keys": [
+        "markov1913ngram"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-shannon-communication",
+      "from": "shannon-communication",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "with his works \\cite[Mathematical Theory of Communication]{shannon1948communication} (released in \\citeyear{shannon1948communication})",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-wordpiece",
+      "from": "wordpiece",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The original formulation (Schuster & Nakajima 2012)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-byte-pair-encoding",
+      "from": "byte-pair-encoding",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Modern AIs use **BPE (Byte-Pair Encoding)**.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-gage-bpe-compression",
+      "from": "gage-bpe-compression",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{gage1994bpe} (\\citeyear{gage1994bpe}) developed the technique strictly for data compression",
+      "citation_keys": [
+        "gage1994bpe"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-sennrich-subword",
+      "from": "sennrich-subword",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{sennrich2016subword} (\\citeyear{sennrich2016subword}) adapted the logic into a subword tokenization strategy",
+      "citation_keys": [
+        "sennrich2016subword"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-byte-level-bpe",
+      "from": "byte-level-bpe",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "but **all 256 bytes**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-gpt-2",
+      "from": "gpt-2",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Radford et al., GPT-2 (2019)]{gpt2}",
+      "citation_keys": [
+        "gpt2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-sentencepiece-unigram",
+      "from": "sentencepiece-unigram",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Kudo, 2018]{kudo2018unigram}",
+      "citation_keys": [
+        "kudo2018unigram"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-token-inflation",
+      "from": "token-inflation",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A conversation that runs 3–5× longer in tokens costs 3–5× more API money",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-glitch-tokens",
+      "from": "glitch-tokens",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 2023, \\citeauthor{rumbelow2023solidgold} collected strings",
+      "citation_keys": [
+        "rumbelow2023solidgold"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-glitch-token-solidgoldmagikarp",
+      "from": "glitch-token-solidgoldmagikarp",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "`·SolidGoldMagikarp`",
+      "citation_keys": [
+        "rumbelow2023solidgold"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-thai-language",
+      "from": "thai-language",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A Thai sentence is still more bytes (hence more tokens) than the same sentence in English",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-unicode-normalization",
+      "from": "unicode-normalization",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Normalization forms (NFC, NFD) can therefore change the token sequence without changing the rendered text (\\cite[Unicode Consortium, UAX #15]{unicodeuax15}).",
+      "citation_keys": [
+        "unicodeuax15"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-context-window",
+      "from": "context-window",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "“the context window is 128k tokens” is a statement about a *particular* tokenizer",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-byt5",
+      "from": "byt5",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Xue et al., ByT5 (2022)]{byt52022}",
+      "citation_keys": [
+        "byt52022"
+      ],
       "confidence": "provenance"
     }
   ]

@@ -5,28 +5,19 @@
   "title": "Positional Embeddings",
   "part": 4,
   "order": 7,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "vaswani2017attention",
     "indianastronomer",
-    "indianastronomerconstruction",
     "chester1145",
-    "alkwarizma",
     "gunter1620",
-    "peng2023yarn",
-    "chen2023position",
-    "lstm",
-    "elman1990finding",
-    "gehring2017convs2s",
-    "firstgpt",
     "bert",
     "gpt2",
-    "shaw2018relative",
-    "bahdanau2014",
-    "raffel2020t5",
     "rope2021",
-    "alibi2022"
+    "alibi2022",
+    "shaw2018relative",
+    "raffel2020t5"
   ],
   "claims": [
     {
@@ -67,6 +58,252 @@
       "quote": "order: 7",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "positionalembeddingslab-transformer-year",
+      "subject": "transformer",
+      "predicate": "introduced_by",
+      "value": "Vaswani et al.",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**The “\\citetitle{vaswani2017attention}” Paper:** This landmark work by Vaswani et al. replaced sequential processing with the Transformer architecture.",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-sinusoidal-definition",
+      "subject": "sinusoidal-positional-encoding",
+      "predicate": "definition",
+      "value": "sine and cosine functions at different frequencies",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the authors introduced **Sinusoidal Positional Encodings**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-base",
+      "subject": "sinusoidal-positional-encoding",
+      "predicate": "base",
+      "value": 10000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Vaswani et al. chose the base 10000 so that the wavelengths form a geometric progression",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-slowest-wavelength",
+      "subject": "sinusoidal-positional-encoding",
+      "predicate": "slowest_wavelength",
+      "value": "10000*2*pi",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "the slowest pair completes one cycle every $10000\\cdot 2\\pi$ positions",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-radian-circle",
+      "subject": "radian",
+      "predicate": "full_circle",
+      "value": "2*pi",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "One full circle is $2\\pi$ radians (about $6.28$), so $\\pi$ radians $= 180°$.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-aryabhata",
+      "subject": "aryabhata",
+      "predicate": "lifespan",
+      "value": "476-550 CE",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "Indian Astronomer \\citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* (“bowstring”) for a chord",
+      "citation_keys": [
+        "indianastronomer"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-chester-1145",
+      "subject": "robert-of-chester",
+      "predicate": "year",
+      "value": 1145,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In \\citeyear{chester1145}, \\citeauthor{chester1145} produced the first Latin translation of \\citealternativetitle{alkwarizma}'s foundational work on algebra",
+      "citation_keys": [
+        "chester1145"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-gunter-1620",
+      "subject": "cosine",
+      "predicate": "coined_year",
+      "value": 1620,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Cosine** (“complement's sine”) was later coined by \\citeauthor{gunter1620} in his \\citeyear{gunter1620} work \\citetitle{gunter1620}.",
+      "citation_keys": [
+        "gunter1620"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-pe-formula",
+      "subject": "sinusoidal-positional-encoding",
+      "predicate": "formula",
+      "value": "sin(pos/10000^(2i/d_model))",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "PE_{(\\text{pos}, 2i)} = \\sin\\!\\left(\\frac{\\text{pos}}{10000^{2i/d_\\text{model}}}\\right)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-d-model-4",
+      "subject": "sinusoidal-positional-encoding",
+      "predicate": "d_model_4_slow_cycle",
+      "value": 630,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "For a small $d_\\text{model}$ like 4, the second pair of dimensions (indices 2 and 3) has a much larger divisor ($10000^{2/4}=100$), stretching one full cycle out to $2\\pi\\cdot100\\approx630$ positions.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-rotation-group",
+      "subject": "positional-encoding-rotation-group",
+      "predicate": "group",
+      "value": "SO(2)",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "so it is the **circle group** $SO(2)$, the group of all 2D rotations.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-bert-512",
+      "subject": "bert",
+      "predicate": "max_position",
+      "value": 512,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "BERT used a 512-token table (\\cite{bert}); GPT-2 used 1024 (\\cite{gpt2}).",
+      "citation_keys": [
+        "bert"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-gpt2-1024",
+      "subject": "gpt-2",
+      "predicate": "max_position",
+      "value": 1024,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "BERT used a 512-token table (\\cite{bert}); GPT-2 used 1024 (\\cite{gpt2}).",
+      "citation_keys": [
+        "gpt2"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-rope",
+      "subject": "rope",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**RoPE (2021).** Su et al. (\\citetitle{rope2021}) encode absolute position as a **rotation**",
+      "citation_keys": [
+        "rope2021"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-alibi",
+      "subject": "alibi",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**ALiBi (2022).** Press et al. (\\citetitle{alibi2022}) use no positional embeddings at all",
+      "citation_keys": [
+        "alibi2022"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-position-interpolation",
+      "subject": "position-interpolation",
+      "predicate": "fine_tuning_steps",
+      "value": 1000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Position Interpolation needs about 1,000 fine-tuning steps",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-yarn-dynamic",
+      "subject": "yarn",
+      "predicate": "property",
+      "value": "stretch the window without training",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "YaRN's Dynamic Scaling variant can stretch the window without training",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-relative-2018",
+      "subject": "relative-position-encoding",
+      "predicate": "year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Relative position encodings (2018).** Shaw et al.",
+      "citation_keys": [
+        "shaw2018relative"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-t5-bias",
+      "subject": "t5",
+      "predicate": "mechanism",
+      "value": "learned per-head bias on attention logits",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "T5 later simplified this to a learned per-head bias on the attention logits (\\cite{raffel2020t5}).",
+      "citation_keys": [
+        "raffel2020t5"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-helix",
+      "subject": "sinusoidal-positional-encoding",
+      "predicate": "geometry",
+      "value": "high-dimensional helix",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the PE formula actually maps each position to a point on a **high-dimensional helix**",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -78,6 +315,176 @@
       "qualifiers": {},
       "quote": "part: 4",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-transformer",
+      "from": "transformer",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**The “\\citetitle{vaswani2017attention}” Paper:** This landmark work by Vaswani et al. replaced sequential processing with the Transformer architecture.",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-sinusoidal-positional-encoding",
+      "from": "sinusoidal-positional-encoding",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the authors introduced **Sinusoidal Positional Encodings**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-radian",
+      "from": "radian",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "One full circle is $2\\pi$ radians (about $6.28$), so $\\pi$ radians $= 180°$.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-aryabhata",
+      "from": "aryabhata",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Indian Astronomer \\citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* (“bowstring”) for a chord",
+      "citation_keys": [
+        "indianastronomer"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-robert-of-chester",
+      "from": "robert-of-chester",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citeyear{chester1145}, \\citeauthor{chester1145} produced the first Latin translation of \\citealternativetitle{alkwarizma}'s foundational work on algebra",
+      "citation_keys": [
+        "chester1145"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-cosine",
+      "from": "cosine",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Cosine** (“complement's sine”) was later coined by \\citeauthor{gunter1620} in his \\citeyear{gunter1620} work \\citetitle{gunter1620}.",
+      "citation_keys": [
+        "gunter1620"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-positional-encoding-rotation-group",
+      "from": "positional-encoding-rotation-group",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "so it is the **circle group** $SO(2)$, the group of all 2D rotations.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-bert",
+      "from": "bert",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "BERT used a 512-token table (\\cite{bert}); GPT-2 used 1024 (\\cite{gpt2}).",
+      "citation_keys": [
+        "bert"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-gpt-2",
+      "from": "gpt-2",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "BERT used a 512-token table (\\cite{bert}); GPT-2 used 1024 (\\cite{gpt2}).",
+      "citation_keys": [
+        "gpt2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-rope",
+      "from": "rope",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**RoPE (2021).** Su et al. (\\citetitle{rope2021}) encode absolute position as a **rotation**",
+      "citation_keys": [
+        "rope2021"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-alibi",
+      "from": "alibi",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**ALiBi (2022).** Press et al. (\\citetitle{alibi2022}) use no positional embeddings at all",
+      "citation_keys": [
+        "alibi2022"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-position-interpolation",
+      "from": "position-interpolation",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Position Interpolation needs about 1,000 fine-tuning steps",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-yarn",
+      "from": "yarn",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "YaRN's Dynamic Scaling variant can stretch the window without training",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-relative-position-encoding",
+      "from": "relative-position-encoding",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Relative position encodings (2018).** Shaw et al.",
+      "citation_keys": [
+        "shaw2018relative"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-t5",
+      "from": "t5",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "T5 later simplified this to a learned per-head bias on the attention logits (\\cite{raffel2020t5}).",
+      "citation_keys": [
+        "raffel2020t5"
+      ],
       "confidence": "provenance"
     }
   ]

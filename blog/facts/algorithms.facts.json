@@ -5,26 +5,16 @@
   "title": "How Algorithms Work: From Euclid to the Transformer",
   "part": 4,
   "order": 12,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "euclideanalgorithm",
-    "euclidelements",
-    "knuth1972babylonian",
-    "sieveoferatosthenes",
-    "historyofmath_wikipedia",
     "alkhwarizmi820algebra",
-    "newton1736fluxions",
+    "historyofmath_wikipedia",
     "menabrea_lovelace1843",
     "ada_lovelace_wiki",
     "hilbert1928entscheidung",
     "godel1931incompleteness",
     "churchturing1936",
-    "turing1937",
-    "binarysearch_wiki",
-    "taocp3",
-    "dijkstra1968goto",
-    "hoare1969axiomatic",
     "cook1971complexity",
     "cooklevin_wiki",
     "bellman1957book",
@@ -35,21 +25,8 @@
     "silver2016go",
     "nanda2023grokking",
     "power2022grokking",
-    "garg2022incontext",
-    "olsson2022induction",
     "zhou2022algorithmic",
-    "madaan2022textpatterns",
-    "levy2024numbers",
-    "cacioli2026weber",
-    "fu2024count",
-    "conde2025count",
-    "ding2024fittest",
-    "engels2024multidim",
-    "hahn2020limitations",
-    "katharopoulos2020linear",
-    "adriaensen2024moore",
-    "vonoswald2022indc",
-    "merullo2024talkingheads"
+    "hahn2020limitations"
   ],
   "claims": [
     {
@@ -90,6 +67,255 @@
       "quote": "order: 12",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "algorithms-euclid",
+      "subject": "euclid-algorithm",
+      "predicate": "year",
+      "value": -300,
+      "unit": "year",
+      "quote": "### Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-eratosthenes",
+      "subject": "sieve-of-eratosthenes",
+      "predicate": "year",
+      "value": -240,
+      "unit": "year",
+      "quote": "#### Another shape of algorithm: the Sieve of Eratosthenes (c. 240 BC)",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-al-khwarizmi",
+      "subject": "al-khwarizmi-algebra",
+      "predicate": "year",
+      "value": 820,
+      "unit": "year",
+      "quote": "Al-Khwarizmi's *al-Kitab al-jabr* (c. 820)",
+      "citation_keys": [
+        "alkhwarizmi820algebra",
+        "historyofmath_wikipedia"
+      ],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-lovelace-program",
+      "subject": "lovelace-bernoulli-program",
+      "predicate": "year",
+      "value": 1843,
+      "unit": "year",
+      "quote": "In 1843 Ada Lovelace published a step-by-step program for Babbage's Analytical Engine to compute Bernoulli numbers",
+      "citation_keys": [
+        "menabrea_lovelace1843",
+        "ada_lovelace_wiki"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-hilbert-decision",
+      "subject": "hilbert-entscheidungsproblem",
+      "predicate": "year",
+      "value": 1928,
+      "unit": "year",
+      "quote": "In 1928 the mathematician David Hilbert",
+      "citation_keys": [
+        "hilbert1928entscheidung"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-godel",
+      "subject": "godel-incompleteness",
+      "predicate": "year",
+      "value": 1931,
+      "unit": "year",
+      "quote": "Kurt Gödel had already delivered the first blow in 1931 with his incompleteness theorems",
+      "citation_keys": [
+        "godel1931incompleteness"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-church-turing",
+      "subject": "church-turing-result",
+      "predicate": "year",
+      "value": 1936,
+      "unit": "year",
+      "quote": "In 1936, working independently, **Alonzo Church** and **Alan Turing** each wrote down a rigorous formalism",
+      "citation_keys": [
+        "churchturing1936"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-cook-levin",
+      "subject": "cook-levin-theorem",
+      "predicate": "year",
+      "value": 1971,
+      "unit": "year",
+      "quote": "Cook (1971) and Levin (1973) showed that a single problem -- Boolean satisfiability -- is complete for the class NP",
+      "citation_keys": [
+        "cook1971complexity",
+        "cooklevin_wiki"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-bellman",
+      "subject": "bellman-dynamic-programming",
+      "predicate": "year",
+      "value": 1957,
+      "unit": "year",
+      "quote": "Bellman's *Dynamic Programming* (1957)",
+      "citation_keys": [
+        "bellman1957book"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-dantzig",
+      "subject": "dantzig-simplex",
+      "predicate": "year",
+      "value": 1947,
+      "unit": "year",
+      "quote": "Dantzig's simplex method (1947; book 1963)",
+      "citation_keys": [
+        "dantzig1963linear"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-cooley-tukey",
+      "subject": "cooley-tukey-fft",
+      "predicate": "year",
+      "value": 1965,
+      "unit": "year",
+      "quote": "The fast Fourier transform, rediscovered by Cooley and Tukey in 1965, reduced the cost of a discrete Fourier transform from $O(n^2)$ to $O(n\\log n)$",
+      "citation_keys": [
+        "cooley1965fft",
+        "fft_history_wiki"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-pagerank",
+      "subject": "pagerank",
+      "predicate": "year",
+      "value": 1998,
+      "unit": "year",
+      "quote": "PageRank (1998) treated the web as a Markov chain",
+      "citation_keys": [
+        "brin1998pagerank"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-alphago",
+      "subject": "alphago",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "quote": "AlphaGo (2016) combined a policy network, a value network, and Monte Carlo tree search",
+      "citation_keys": [
+        "silver2016go"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-modulus",
+      "subject": "modular-addition-task",
+      "predicate": "modulus",
+      "value": 113,
+      "unit": "count",
+      "quote": "where $P = 113$ is a prime number",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-frequencies",
+      "subject": "modular-addition-frequencies",
+      "predicate": "frequencies",
+      "value": "{14,35,41,42,52}",
+      "unit": "count",
+      "quote": "\\sum_{k \\in \\{14,35,41,42,52\\}}",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-neuron-logit-rank",
+      "subject": "neuron-logit-map",
+      "predicate": "rank",
+      "value": 10,
+      "unit": "count",
+      "quote": "It is approximately **rank 10**",
+      "citation_keys": [
+        "nanda2023grokking"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-grokking",
+      "subject": "grokking",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "quote": "Originally identified by \\cite[Power et al. (2022)]{power2022grokking}",
+      "citation_keys": [
+        "power2022grokking"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-in-context-accuracy",
+      "subject": "algorithmic-prompting",
+      "predicate": "accuracy",
+      "value": 90.5,
+      "unit": "%",
+      "quote": "**90.5% accuracy on 19-digit addition** vs. 9.5% for few-shot baselines",
+      "citation_keys": [
+        "zhou2022algorithmic"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-hahn-limit",
+      "subject": "hahn-limitation",
+      "predicate": "year",
+      "value": 2020,
+      "unit": "year",
+      "quote": "\\cite[Hahn (2020)]{hahn2020limitations} proved the matching impossibility",
+      "citation_keys": [
+        "hahn2020limitations"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -101,6 +327,230 @@
       "qualifiers": {},
       "quote": "part: 4",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-euclid-algorithm",
+      "from": "euclid-algorithm",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "### Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-sieve-of-eratosthenes",
+      "from": "sieve-of-eratosthenes",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "#### Another shape of algorithm: the Sieve of Eratosthenes (c. 240 BC)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-al-khwarizmi-algebra",
+      "from": "al-khwarizmi-algebra",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Al-Khwarizmi's *al-Kitab al-jabr* (c. 820)",
+      "citation_keys": [
+        "alkhwarizmi820algebra",
+        "historyofmath_wikipedia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-lovelace-bernoulli-program",
+      "from": "lovelace-bernoulli-program",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1843 Ada Lovelace published a step-by-step program for Babbage's Analytical Engine to compute Bernoulli numbers",
+      "citation_keys": [
+        "menabrea_lovelace1843",
+        "ada_lovelace_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-hilbert-entscheidungsproblem",
+      "from": "hilbert-entscheidungsproblem",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1928 the mathematician David Hilbert",
+      "citation_keys": [
+        "hilbert1928entscheidung"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-godel-incompleteness",
+      "from": "godel-incompleteness",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Kurt Gödel had already delivered the first blow in 1931 with his incompleteness theorems",
+      "citation_keys": [
+        "godel1931incompleteness"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-church-turing-result",
+      "from": "church-turing-result",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1936, working independently, **Alonzo Church** and **Alan Turing** each wrote down a rigorous formalism",
+      "citation_keys": [
+        "churchturing1936"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-cook-levin-theorem",
+      "from": "cook-levin-theorem",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Cook (1971) and Levin (1973) showed that a single problem -- Boolean satisfiability -- is complete for the class NP",
+      "citation_keys": [
+        "cook1971complexity",
+        "cooklevin_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-bellman-dynamic-programming",
+      "from": "bellman-dynamic-programming",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Bellman's *Dynamic Programming* (1957)",
+      "citation_keys": [
+        "bellman1957book"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-dantzig-simplex",
+      "from": "dantzig-simplex",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Dantzig's simplex method (1947; book 1963)",
+      "citation_keys": [
+        "dantzig1963linear"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-cooley-tukey-fft",
+      "from": "cooley-tukey-fft",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The fast Fourier transform, rediscovered by Cooley and Tukey in 1965, reduced the cost of a discrete Fourier transform from $O(n^2)$ to $O(n\\log n)$",
+      "citation_keys": [
+        "cooley1965fft",
+        "fft_history_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-pagerank",
+      "from": "pagerank",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "PageRank (1998) treated the web as a Markov chain",
+      "citation_keys": [
+        "brin1998pagerank"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-alphago",
+      "from": "alphago",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "AlphaGo (2016) combined a policy network, a value network, and Monte Carlo tree search",
+      "citation_keys": [
+        "silver2016go"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-modular-addition-task",
+      "from": "modular-addition-task",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "where $P = 113$ is a prime number",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-modular-addition-frequencies",
+      "from": "modular-addition-frequencies",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\sum_{k \\in \\{14,35,41,42,52\\}}",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-neuron-logit-map",
+      "from": "neuron-logit-map",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "It is approximately **rank 10**",
+      "citation_keys": [
+        "nanda2023grokking"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-grokking",
+      "from": "grokking",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Originally identified by \\cite[Power et al. (2022)]{power2022grokking}",
+      "citation_keys": [
+        "power2022grokking"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-algorithmic-prompting",
+      "from": "algorithmic-prompting",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**90.5% accuracy on 19-digit addition** vs. 9.5% for few-shot baselines",
+      "citation_keys": [
+        "zhou2022algorithmic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-hahn-limitation",
+      "from": "hahn-limitation",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Hahn (2020)]{hahn2020limitations} proved the matching impossibility",
+      "citation_keys": [
+        "hahn2020limitations"
+      ],
       "confidence": "provenance"
     }
   ]

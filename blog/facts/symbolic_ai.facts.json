@@ -5,46 +5,23 @@
   "title": "Symbolic AI, Knowledge Graphs & Neuro-Symbolic AI",
   "part": 5,
   "order": 11,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "frege1879",
-    "russell1910pm",
-    "russell_paradox_sep",
-    "hilbert1928entscheidung",
     "godel1931incompleteness",
-    "sep_godel_incompleteness",
     "turing1936",
     "turing1950computing",
     "mccarthy1955dartmouth",
-    "newell1976empirical",
-    "brooks1990elephants",
     "newell1956logictheorist",
     "newell1957gps",
     "mccarthy1960lisp",
-    "lisp_wiki",
     "robinson1965resolution",
     "kowalski1974prolog",
     "colmerauer1973prolog",
-    "bordes2013transe",
-    "yang2015distmult",
-    "sun2019rotate",
-    "hamilton2017graphsage",
-    "schlichtkrull2018rgcn",
-    "feigenbaum1965dendral",
-    "shortliffe1976mycin",
     "crevier1993ai",
-    "winograd1972understanding",
-    "mccarthy1969some",
     "cyc_wiki",
-    "berners2001sw",
-    "singhal2012knowledge",
-    "manhaeve2018deepproblog",
-    "trinh2024alphageometry",
-    "garcez2020neurosymbolic",
-    "deepmind2024alphaproof",
-    "yao2023react",
-    "schick2023toolformer"
+    "deepmind2024alphaproof"
   ],
   "claims": [
     {
@@ -85,6 +62,256 @@
       "quote": "order: 11",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "symbolic_ai-frege-1879",
+      "subject": "begriffsschrift",
+      "predicate": "year",
+      "value": 1879,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Frege's *Begriffsschrift* (1879) invented modern quantifier notation",
+      "citation_keys": [
+        "frege1879"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-godel-1931",
+      "subject": "godel-incompleteness",
+      "predicate": "year",
+      "value": 1931,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Gödel's 1931 theorems ended the dream in its strong form",
+      "citation_keys": [
+        "godel1931incompleteness"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-turing-1936",
+      "subject": "turing-1936",
+      "predicate": "year",
+      "value": 1936,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Turing's 1936 paper supplied the missing negative answer",
+      "citation_keys": [
+        "turing1936"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-turing-test-1950",
+      "subject": "turing-test",
+      "predicate": "year",
+      "value": 1950,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1950 he replaced the question of mechanism with an operational test",
+      "citation_keys": [
+        "turing1950computing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-dartmouth-1956",
+      "subject": "dartmouth-workshop",
+      "predicate": "year",
+      "value": 1956,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Six years later, the 1956 Dartmouth Summer Research Project named the field",
+      "citation_keys": [
+        "mccarthy1955dartmouth"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-physical-symbol-system",
+      "subject": "physical-symbol-system-hypothesis",
+      "predicate": "statement",
+      "value": "a physical symbol system has the necessary and sufficient means for general intelligent action",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "a physical symbol system has the necessary and sufficient means for general intelligent action",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-logic-theory-machine",
+      "subject": "logic-theory-machine",
+      "predicate": "theorems_proved",
+      "value": 38,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "proved 38 of the first 52 theorems in Chapter 2 of *Principia Mathematica*",
+      "citation_keys": [
+        "newell1956logictheorist"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gps-1957",
+      "subject": "general-problem-solver",
+      "predicate": "year",
+      "value": 1957,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Their General Problem Solver (1957) generalized the trick into means-ends analysis",
+      "citation_keys": [
+        "newell1957gps"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-lisp-1960",
+      "subject": "lisp",
+      "predicate": "year",
+      "value": 1960,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "McCarthy's LISP (1960) then gave symbolic AI its own language",
+      "citation_keys": [
+        "mccarthy1960lisp"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-sroiq",
+      "subject": "owl-2-dl",
+      "predicate": "logic",
+      "value": "SROIQ",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The standard **SROIQ** description logic underlies **OWL 2 DL**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-wikidata",
+      "subject": "wikidata",
+      "predicate": "items",
+      "value": 100000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "**Wikidata**: 100M+ items, the open community-edited KG.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-conceptnet",
+      "subject": "conceptnet",
+      "predicate": "assertions",
+      "value": 34000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**ConceptNet**: 34M commonsense assertions.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-robinson-1965",
+      "subject": "resolution-rule",
+      "predicate": "year",
+      "value": 1965,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Robinson's 1965 rule -- resolve two clauses on a complementary literal, with unification handling variables",
+      "citation_keys": [
+        "robinson1965resolution"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-kowalski-1974",
+      "subject": "kowalski-1974",
+      "predicate": "year",
+      "value": 1974,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Kowalski's 1974 \"Predicate Logic as a Programming Language\" turned resolution into computation",
+      "citation_keys": [
+        "kowalski1974prolog"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-prolog-1972",
+      "subject": "prolog",
+      "predicate": "year",
+      "value": "1972-73",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "Colmerauer and Roussel's Prolog (1972-73) implemented that idea",
+      "citation_keys": [
+        "colmerauer1973prolog"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-dendral-search",
+      "subject": "dendral",
+      "predicate": "search_space",
+      "value": "11,000,000 to 22,000 candidate structures",
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "DENDRAL pruned the search for one compound from more than eleven million candidate structures to about twenty-two thousand",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-xcon-rules",
+      "subject": "xcon",
+      "predicate": "rules_growth",
+      "value": "300 in 1979 to 3000+ in 1984",
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "about three hundred rules in 1979 grew to more than three thousand by 1984, and the system configured ten machine models",
+      "citation_keys": [
+        "crevier1993ai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-cyc-1984",
+      "subject": "cyc",
+      "predicate": "year",
+      "value": 1984,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Cyc, begun in 1984, was the maximalist response",
+      "citation_keys": [
+        "cyc_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-alphageometry",
+      "subject": "alphageometry",
+      "predicate": "solved_problems",
+      "value": 25,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Solved 25 of the 30 IMO geometry problems from 2000–2022",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-alphaproof",
+      "subject": "alphaproof",
+      "predicate": "imo_problems_solved",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "reached silver-medal level at IMO 2024, solving four of the six problems",
+      "citation_keys": [
+        "deepmind2024alphaproof"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -96,6 +323,234 @@
       "qualifiers": {},
       "quote": "part: 5",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-begriffsschrift",
+      "from": "begriffsschrift",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Frege's *Begriffsschrift* (1879) invented modern quantifier notation",
+      "citation_keys": [
+        "frege1879"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-godel-incompleteness",
+      "from": "godel-incompleteness",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Gödel's 1931 theorems ended the dream in its strong form",
+      "citation_keys": [
+        "godel1931incompleteness"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-turing-1936",
+      "from": "turing-1936",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Turing's 1936 paper supplied the missing negative answer",
+      "citation_keys": [
+        "turing1936"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-turing-test",
+      "from": "turing-test",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1950 he replaced the question of mechanism with an operational test",
+      "citation_keys": [
+        "turing1950computing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-dartmouth-workshop",
+      "from": "dartmouth-workshop",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Six years later, the 1956 Dartmouth Summer Research Project named the field",
+      "citation_keys": [
+        "mccarthy1955dartmouth"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-physical-symbol-system-hypothesis",
+      "from": "physical-symbol-system-hypothesis",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a physical symbol system has the necessary and sufficient means for general intelligent action",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-logic-theory-machine",
+      "from": "logic-theory-machine",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "proved 38 of the first 52 theorems in Chapter 2 of *Principia Mathematica*",
+      "citation_keys": [
+        "newell1956logictheorist"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-general-problem-solver",
+      "from": "general-problem-solver",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Their General Problem Solver (1957) generalized the trick into means-ends analysis",
+      "citation_keys": [
+        "newell1957gps"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-lisp",
+      "from": "lisp",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "McCarthy's LISP (1960) then gave symbolic AI its own language",
+      "citation_keys": [
+        "mccarthy1960lisp"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-owl-2-dl",
+      "from": "owl-2-dl",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The standard **SROIQ** description logic underlies **OWL 2 DL**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-wikidata",
+      "from": "wikidata",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Wikidata**: 100M+ items, the open community-edited KG.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-conceptnet",
+      "from": "conceptnet",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**ConceptNet**: 34M commonsense assertions.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-resolution-rule",
+      "from": "resolution-rule",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Robinson's 1965 rule -- resolve two clauses on a complementary literal, with unification handling variables",
+      "citation_keys": [
+        "robinson1965resolution"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-kowalski-1974",
+      "from": "kowalski-1974",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Kowalski's 1974 \"Predicate Logic as a Programming Language\" turned resolution into computation",
+      "citation_keys": [
+        "kowalski1974prolog"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-prolog",
+      "from": "prolog",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Colmerauer and Roussel's Prolog (1972-73) implemented that idea",
+      "citation_keys": [
+        "colmerauer1973prolog"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-dendral",
+      "from": "dendral",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "DENDRAL pruned the search for one compound from more than eleven million candidate structures to about twenty-two thousand",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-xcon",
+      "from": "xcon",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "about three hundred rules in 1979 grew to more than three thousand by 1984, and the system configured ten machine models",
+      "citation_keys": [
+        "crevier1993ai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-cyc",
+      "from": "cyc",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Cyc, begun in 1984, was the maximalist response",
+      "citation_keys": [
+        "cyc_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-alphageometry",
+      "from": "alphageometry",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Solved 25 of the 30 IMO geometry problems from 2000–2022",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-alphaproof",
+      "from": "alphaproof",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "reached silver-medal level at IMO 2024, solving four of the six problems",
+      "citation_keys": [
+        "deepmind2024alphaproof"
+      ],
       "confidence": "provenance"
     }
   ]

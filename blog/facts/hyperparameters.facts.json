@@ -5,28 +5,22 @@
   "title": "Hyperparameters: The Numbers You Choose",
   "part": 2,
   "order": 8,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "ruder2016overview",
-    "goyal2017largebatch",
-    "bengio2012practical",
-    "kaplan2020scaling",
-    "hoffmann2022chinchilla",
-    "yang2022mup",
     "bergstra2010random",
     "mockus1978bo",
     "snoek2012practical",
     "bergstra2011algorithms",
-    "bergstra2013science",
-    "jones1998ego",
-    "hyperopt",
-    "akiba2019optuna",
-    "olson2025ax",
     "li2016hyperband",
     "jaderberg2017pbt",
-    "omniopt",
-    "balandat2020botorch"
+    "hoffmann2022chinchilla",
+    "kaplan2020scaling",
+    "yang2022mup",
+    "goyal2017largebatch",
+    "bengio2012practical",
+    "olson2025ax"
   ],
   "claims": [
     {
@@ -67,6 +61,260 @@
       "quote": "order: 8",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "hyperparameters-definition",
+      "subject": "hyperparameter",
+      "predicate": "definition",
+      "value": "fixed during training and chosen by the practitioner before it starts",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A **hyperparameter** is a quantity that stays *fixed* during training and is *chosen* by the practitioner before it starts.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-parameter-definition",
+      "subject": "parameter",
+      "predicate": "definition",
+      "value": "quantity updated by the training algorithm",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A **parameter** is a quantity the training algorithm updates.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-dmodel-values",
+      "subject": "d-model",
+      "predicate": "example_values",
+      "value": "768, 128",
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "$d_{\\text{model}} = 768$ and $d_{\\text{model}} = 128$ are not two settings of the same model; they are two different function classes",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-optimizer-count",
+      "subject": "optimizer-family",
+      "predicate": "count",
+      "value": 12,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "SGD and Adam — are just two of about a dozen in active use",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-ruder-year",
+      "subject": "ruder2016-overview",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{ruder2016overview}'s 2016 overview article (\\citeyear{ruder2016overview})",
+      "citation_keys": [
+        "ruder2016overview"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-grid-cost",
+      "subject": "grid-search",
+      "predicate": "cost",
+      "value": "n^d trainings",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "With $n$ points on each of $d$ axes this costs $n^d$ trainings",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-grid-dimensions",
+      "subject": "grid-search",
+      "predicate": "affordable_dimensions",
+      "value": "2-3",
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "grid search is only affordable for $d \\approx 2$–3",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-random-search-year",
+      "subject": "random-search",
+      "predicate": "year",
+      "value": 2012,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Bergstra & Bengio, 2012]{bergstra2010random}) showed that for a fixed evaluation budget, random search matches or beats grid search",
+      "citation_keys": [
+        "bergstra2010random"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-bayes-year",
+      "subject": "bayesian-optimization",
+      "predicate": "year",
+      "value": 1975,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "introduced by \\cite[Močkus (1975)]{mockus1978bo}",
+      "citation_keys": [
+        "mockus1978bo"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-snoek-year",
+      "subject": "snoek2012-practical",
+      "predicate": "year",
+      "value": 2012,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "made practical for ML by \\cite[Snoek et al. (2012)]{snoek2012practical}",
+      "citation_keys": [
+        "snoek2012practical"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-tpe-year",
+      "subject": "tpe",
+      "predicate": "year",
+      "value": 2011,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**TPE (Tree-structured Parzen Estimators)** — introduced by \\cite[Bergstra et al. (2011)]{bergstra2011algorithms}",
+      "citation_keys": [
+        "bergstra2011algorithms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-hyperband-year",
+      "subject": "hyperband",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Li et al. (2016)]{li2016hyperband} turned this observation into an algorithm.",
+      "citation_keys": [
+        "li2016hyperband"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-pbt-year",
+      "subject": "population-based-training",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Jaderberg et al. (2017)]{jaderberg2017pbt} pushed the idea further with population-based training.",
+      "citation_keys": [
+        "jaderberg2017pbt"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-chinchilla-tokens",
+      "subject": "chinchilla",
+      "predicate": "tokens_per_parameter",
+      "value": 20,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "models should be trained on roughly 20 times as many tokens as they have parameters",
+      "citation_keys": [
+        "hoffmann2022chinchilla"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-kaplan-year",
+      "subject": "kaplan-scaling-laws",
+      "predicate": "year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Kaplan et al., 2020]{kaplan2020scaling}) showed that the loss of a language model depends on the number of parameters $N$, the number of training tokens $D$ and the compute $C$ as smooth power laws.",
+      "citation_keys": [
+        "kaplan2020scaling"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-mup-year",
+      "subject": "mup",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Yang et al. (2022)]{yang2022mup} made this concrete with maximal-update parametrization (muP)",
+      "citation_keys": [
+        "yang2022mup"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-linear-scaling",
+      "subject": "linear-scaling-rule",
+      "predicate": "rule",
+      "value": "doubles learning rate when batch size doubles",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the linear scaling rule doubles it, up to a limit \\cite{goyal2017largebatch}",
+      "citation_keys": [
+        "goyal2017largebatch"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-lr-importance",
+      "subject": "learning-rate",
+      "predicate": "importance",
+      "value": "often the single most important hyperparameter",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the initial learning rate is “often the single most important hyperparameter”",
+      "citation_keys": [
+        "bengio2012practical"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-ax-platform",
+      "subject": "ax",
+      "predicate": "type",
+      "value": "adaptive-experimentation platform",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "\\cite[Ax]{olson2025ax} adaptive-experimentation platform",
+      "citation_keys": [
+        "olson2025ax"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-omniopt2",
+      "subject": "omniopt2",
+      "predicate": "built_on",
+      "value": "Ax",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "it is built on the \\cite[Ax]{olson2025ax} adaptive-experimentation platform",
+      "citation_keys": [
+        "olson2025ax"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -78,6 +326,224 @@
       "qualifiers": {},
       "quote": "part: 2",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-hyperparameter",
+      "from": "hyperparameter",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A **hyperparameter** is a quantity that stays *fixed* during training and is *chosen* by the practitioner before it starts.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-parameter",
+      "from": "parameter",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A **parameter** is a quantity the training algorithm updates.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-d-model",
+      "from": "d-model",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$d_{\\text{model}} = 768$ and $d_{\\text{model}} = 128$ are not two settings of the same model; they are two different function classes",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-optimizer-family",
+      "from": "optimizer-family",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "SGD and Adam — are just two of about a dozen in active use",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-ruder2016-overview",
+      "from": "ruder2016-overview",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{ruder2016overview}'s 2016 overview article (\\citeyear{ruder2016overview})",
+      "citation_keys": [
+        "ruder2016overview"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-grid-search",
+      "from": "grid-search",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "With $n$ points on each of $d$ axes this costs $n^d$ trainings",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-random-search",
+      "from": "random-search",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Bergstra & Bengio, 2012]{bergstra2010random}) showed that for a fixed evaluation budget, random search matches or beats grid search",
+      "citation_keys": [
+        "bergstra2010random"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-bayesian-optimization",
+      "from": "bayesian-optimization",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "introduced by \\cite[Močkus (1975)]{mockus1978bo}",
+      "citation_keys": [
+        "mockus1978bo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-snoek2012-practical",
+      "from": "snoek2012-practical",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "made practical for ML by \\cite[Snoek et al. (2012)]{snoek2012practical}",
+      "citation_keys": [
+        "snoek2012practical"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-tpe",
+      "from": "tpe",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**TPE (Tree-structured Parzen Estimators)** — introduced by \\cite[Bergstra et al. (2011)]{bergstra2011algorithms}",
+      "citation_keys": [
+        "bergstra2011algorithms"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-hyperband",
+      "from": "hyperband",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Li et al. (2016)]{li2016hyperband} turned this observation into an algorithm.",
+      "citation_keys": [
+        "li2016hyperband"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-population-based-training",
+      "from": "population-based-training",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Jaderberg et al. (2017)]{jaderberg2017pbt} pushed the idea further with population-based training.",
+      "citation_keys": [
+        "jaderberg2017pbt"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-chinchilla",
+      "from": "chinchilla",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "models should be trained on roughly 20 times as many tokens as they have parameters",
+      "citation_keys": [
+        "hoffmann2022chinchilla"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-kaplan-scaling-laws",
+      "from": "kaplan-scaling-laws",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Kaplan et al., 2020]{kaplan2020scaling}) showed that the loss of a language model depends on the number of parameters $N$, the number of training tokens $D$ and the compute $C$ as smooth power laws.",
+      "citation_keys": [
+        "kaplan2020scaling"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-mup",
+      "from": "mup",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Yang et al. (2022)]{yang2022mup} made this concrete with maximal-update parametrization (muP)",
+      "citation_keys": [
+        "yang2022mup"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-linear-scaling-rule",
+      "from": "linear-scaling-rule",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the linear scaling rule doubles it, up to a limit \\cite{goyal2017largebatch}",
+      "citation_keys": [
+        "goyal2017largebatch"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-learning-rate",
+      "from": "learning-rate",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the initial learning rate is “often the single most important hyperparameter”",
+      "citation_keys": [
+        "bengio2012practical"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-ax",
+      "from": "ax",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Ax]{olson2025ax} adaptive-experimentation platform",
+      "citation_keys": [
+        "olson2025ax"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-omniopt2",
+      "from": "omniopt2",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it is built on the \\cite[Ax]{olson2025ax} adaptive-experimentation platform",
+      "citation_keys": [
+        "olson2025ax"
+      ],
       "confidence": "provenance"
     }
   ]

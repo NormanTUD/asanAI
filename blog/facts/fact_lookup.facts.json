@@ -5,38 +5,17 @@
   "title": "Where 'Paris' Lives — How an LLM Retrieves a Fact",
   "part": 4,
   "order": 11,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "elhage2021mathematical",
-    "elhage2023privileged",
-    "vaswani2017attention",
-    "olsson2022induction",
-    "keyvalmem",
-    "dai2022knowledgeneurons",
-    "meng2022locating",
     "meng2022memit",
-    "merullo2024talkingheads",
-    "park2024linear",
-    "todd2024functionvectors",
-    "templeton2024scaling",
     "nostalgebraist2020logitlens",
     "belrose2023tunedlens",
-    "ramsauer2020hopfield",
     "hopfield1982",
-    "elhage2022superposition",
-    "cunningham2023sparse",
+    "ramsauer2020hopfield",
     "bricken2023monosemanticity",
-    "elhage2022solu",
-    "lindsey2025biology",
-    "ameisen2025circuit",
-    "li2022othello_iclr",
-    "wang2022interpretability",
     "kohli2026loop",
-    "lakretz2020nested",
-    "lasri2022agree",
-    "hahn2020limitations",
-    "anthropic2023mapping"
+    "hahn2020limitations"
   ],
   "claims": [
     {
@@ -77,6 +56,250 @@
       "quote": "order: 11",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "fact-lookup-vocab-size",
+      "subject": "llm-vocabulary",
+      "predicate": "size_range",
+      "value": "32k-200k",
+      "unit": "count",
+      "quote": "(size $|V| \\approx 32\\text{k} - 200\\text{k}$ depending on the tokenizer)",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-gpt2-config",
+      "subject": "gpt-2-small",
+      "predicate": "d_model",
+      "value": 768,
+      "unit": "count",
+      "quote": "For GPT-2 small ($d = 768$, $d_{\\text{ff}} = 4d = 3072$)",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-gpt2-ffn",
+      "subject": "gpt-2-small",
+      "predicate": "d_ff",
+      "value": 3072,
+      "unit": "count",
+      "quote": "For GPT-2 small ($d = 768$, $d_{\\text{ff}} = 4d = 3072$)",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-gpt2-keyvalues",
+      "subject": "gpt-2-small",
+      "predicate": "key_value_pairs",
+      "value": 37000,
+      "unit": "count",
+      "quote": "Twelve layers gives roughly $12 \\times 3072 \\approx 37{,}000$ key-value pairs.",
+      "qualifiers": {
+        "approx": true
+      },
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-llama2-layers",
+      "subject": "llama-2-70b",
+      "predicate": "layers",
+      "value": 80,
+      "unit": "count",
+      "quote": "Llama-2 70B has $80$ layers with $d_{\\text{ff}} = 28{,}672$",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-llama2-ffn-params",
+      "subject": "llama-2-70b",
+      "predicate": "ffn_parameters",
+      "value": 56000000000,
+      "unit": "count",
+      "quote": "the FFN alone holds roughly 56 billion parameters",
+      "qualifiers": {
+        "approx": true
+      },
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-rome-model",
+      "subject": "rome",
+      "predicate": "study_model",
+      "value": "GPT-J",
+      "unit": "name",
+      "quote": "they studied GPT-J",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-rome-method",
+      "subject": "rome",
+      "predicate": "method",
+      "value": "rank-one update to a mid-layer MLP W2 matrix",
+      "unit": "name",
+      "quote": "**Edit** the fact by applying a rank-one update to the block's $W_2$ matrix",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-memit-scale",
+      "subject": "memit",
+      "predicate": "edit_scale",
+      "value": "thousands of simultaneous edits",
+      "unit": "count",
+      "quote": "scaled the same locality result to thousands of simultaneous edits",
+      "qualifiers": {
+        "approx": true
+      },
+      "citation_keys": [
+        "meng2022memit"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-linear-direction",
+      "subject": "linear-representation-hypothesis",
+      "predicate": "relation",
+      "value": "gamma(Paris)-gamma(France) is approximately gamma(Berlin)-gamma(Germany)",
+      "unit": "formula",
+      "quote": "the *vector* from \"France\" to \"Paris\" is approximately the same vector as the one from \"Germany\" to \"Berlin\"",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-function-vectors",
+      "subject": "function-vectors",
+      "predicate": "definition",
+      "value": "a single residual-stream vector encodes an in-context task",
+      "unit": "name",
+      "quote": "a small number of attention heads in the middle layers carry a *single vector* that encodes",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-claude-features",
+      "subject": "claude-3-sonnet",
+      "predicate": "recovered_features",
+      "value": 34000000,
+      "unit": "count",
+      "quote": "recovered up to 34 million interpretable features",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-logit-lens-year",
+      "subject": "logit-lens",
+      "predicate": "year",
+      "value": 2020,
+      "unit": "year",
+      "quote": "introduced by (\\cite[nostalgebraist, 2020]{nostalgebraist2020logitlens})",
+      "citation_keys": [
+        "nostalgebraist2020logitlens"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-tuned-lens-year",
+      "subject": "tuned-lens",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "quote": "refined into the **tuned lens** by (\\cite[Belrose et al., 2023]{belrose2023tunedlens})",
+      "citation_keys": [
+        "belrose2023tunedlens"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-decision-layer",
+      "subject": "fact-retrieval",
+      "predicate": "decision_layer",
+      "value": "about L/2",
+      "unit": "name",
+      "quote": "By roughly layer $L/2$, the model has usually committed to \"Paris\"",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-hopfield-year",
+      "subject": "hopfield-network",
+      "predicate": "year",
+      "value": 1982,
+      "unit": "year",
+      "quote": "The classical Hopfield network of (\\cite[Hopfield, 1982]{hopfield1982})",
+      "citation_keys": [
+        "hopfield1982"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-hopfield-equivalence",
+      "subject": "transformer-attention",
+      "predicate": "relation_to_hopfield",
+      "value": "exactly the update rule of a continuous-state Hopfield network",
+      "unit": "name",
+      "quote": "is *exactly* the update rule of a continuous-state Hopfield network",
+      "citation_keys": [
+        "ramsauer2020hopfield"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-sae-size",
+      "subject": "sparse-autoencoder",
+      "predicate": "training_neurons",
+      "value": 512,
+      "unit": "count",
+      "quote": "trained SAEs on the MLP of a one-layer transformer with 512 neurons, over 8 billion data points",
+      "citation_keys": [
+        "bricken2023monosemanticity"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-depth-hops",
+      "subject": "transformer-depth",
+      "predicate": "hop_limit_trained",
+      "value": 5,
+      "unit": "count",
+      "quote": "a vanilla transformer trained to compose up to, say, **5 hops fails to extrapolate to 10**",
+      "citation_keys": [
+        "kohli2026loop"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "fact-lookup-hahn-limit",
+      "subject": "self-attention",
+      "predicate": "limitation",
+      "value": "cannot model hierarchical structure unless depth scales with input",
+      "unit": "name",
+      "quote": "fixed-size self-attention **cannot model hierarchical structure at all** unless the depth scales with the input",
+      "citation_keys": [
+        "hahn2020limitations"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -88,6 +311,182 @@
       "qualifiers": {},
       "quote": "part: 4",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-llm-vocabulary",
+      "from": "llm-vocabulary",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(size $|V| \\approx 32\\text{k} - 200\\text{k}$ depending on the tokenizer)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-gpt-2-small",
+      "from": "gpt-2-small",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "For GPT-2 small ($d = 768$, $d_{\\text{ff}} = 4d = 3072$)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-llama-2-70b",
+      "from": "llama-2-70b",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Llama-2 70B has $80$ layers with $d_{\\text{ff}} = 28{,}672$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-rome",
+      "from": "rome",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "they studied GPT-J",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-memit",
+      "from": "memit",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "scaled the same locality result to thousands of simultaneous edits",
+      "citation_keys": [
+        "meng2022memit"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-linear-representation-hypothesis",
+      "from": "linear-representation-hypothesis",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the *vector* from \"France\" to \"Paris\" is approximately the same vector as the one from \"Germany\" to \"Berlin\"",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-function-vectors",
+      "from": "function-vectors",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a small number of attention heads in the middle layers carry a *single vector* that encodes",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-claude-3-sonnet",
+      "from": "claude-3-sonnet",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "recovered up to 34 million interpretable features",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-logit-lens",
+      "from": "logit-lens",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "introduced by (\\cite[nostalgebraist, 2020]{nostalgebraist2020logitlens})",
+      "citation_keys": [
+        "nostalgebraist2020logitlens"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-tuned-lens",
+      "from": "tuned-lens",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "refined into the **tuned lens** by (\\cite[Belrose et al., 2023]{belrose2023tunedlens})",
+      "citation_keys": [
+        "belrose2023tunedlens"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-fact-retrieval",
+      "from": "fact-retrieval",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "By roughly layer $L/2$, the model has usually committed to \"Paris\"",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-hopfield-network",
+      "from": "hopfield-network",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The classical Hopfield network of (\\cite[Hopfield, 1982]{hopfield1982})",
+      "citation_keys": [
+        "hopfield1982"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-transformer-attention",
+      "from": "transformer-attention",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "is *exactly* the update rule of a continuous-state Hopfield network",
+      "citation_keys": [
+        "ramsauer2020hopfield"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-sparse-autoencoder",
+      "from": "sparse-autoencoder",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "trained SAEs on the MLP of a one-layer transformer with 512 neurons, over 8 billion data points",
+      "citation_keys": [
+        "bricken2023monosemanticity"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-transformer-depth",
+      "from": "transformer-depth",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a vanilla transformer trained to compose up to, say, **5 hops fails to extrapolate to 10**",
+      "citation_keys": [
+        "kohli2026loop"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-self-attention",
+      "from": "self-attention",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "fixed-size self-attention **cannot model hierarchical structure at all** unless the depth scales with the input",
+      "citation_keys": [
+        "hahn2020limitations"
+      ],
       "confidence": "provenance"
     }
   ]

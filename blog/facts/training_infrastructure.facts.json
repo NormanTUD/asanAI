@@ -5,15 +5,9 @@
   "title": "Training Infrastructure",
   "part": 5,
   "order": 13,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [
-    "rajbhandari2019zero",
-    "shoeybi2019megatron",
-    "huang2018gpipe",
-    "liu2023ring",
-    "bubeck2023moeoverview"
-  ],
+  "citations": [],
   "claims": [
     {
       "id": "auto-training_infrastructure-title-0-1",

@@ -5,43 +5,14 @@
   "title": "Frontier Topics",
   "part": 6,
   "order": 8,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "ouyang2022instructgpt",
     "anthropic2024goldengate",
-    "redman2024causalscrubbing",
-    "zou2023repeng",
-    "zhang2024mathshepherd",
     "sun2024ttt",
-    "su2021rope",
-    "peng2023yarn",
-    "press2022alibi",
-    "li2023seqparallel",
-    "infllm2024",
-    "mohtashami2023landmark",
-    "raposo2024mod",
-    "elhoushi2024early",
-    "fedus2022switch",
-    "du2023multiagent",
-    "schick2023toolformer",
-    "patil2023gorilla",
-    "hafner2023dreamer",
-    "lecun2022path",
     "deepseek2024v3",
-    "kimi2025k2",
-    "longcat2025",
-    "gptoss2025",
-    "minimax2025lightning",
-    "deepseek2024v2",
-    "guo2025deepseekr1",
-    "qwen2025qwen3",
-    "llama3herd2024",
-    "meta2025llama4",
-    "gemma2025v3",
-    "anthropic2025biology",
-    "pan2024latentqa",
-    "nie2025llada"
+    "kimi2025k2"
   ],
   "claims": [
     {
@@ -82,6 +53,254 @@
       "quote": "order: 8",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "frontier-constitutional-ai-year",
+      "subject": "constitutional-ai",
+      "predicate": "publication_year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Bai et al. (Anthropic, 2022) replaced most of the human labelling used by \\citeauthor{ouyang2022instructgpt} (\\citeyear{ouyang2022instructgpt}) with **AI self-critique against a written constitution**:",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-constitutional-ai-baseline",
+      "subject": "constitutional-ai",
+      "predicate": "comparison_baseline",
+      "value": "RLHF",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the paper compares it with an RLHF baseline rather than with InstructGPT",
+      "citation_keys": [
+        "ouyang2022instructgpt"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-sae-feature-count",
+      "subject": "sparse-autoencoder",
+      "predicate": "feature_count",
+      "value": 100000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "e.g., $d' = 100{,}000$ features",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-claude-3-sonnet",
+      "subject": "claude-3-sonnet",
+      "predicate": "study_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Anthropic's work on Claude 3 Sonnet (2024) found:",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-golden-gate-feature",
+      "subject": "golden-gate-feature",
+      "predicate": "concept",
+      "value": "Golden Gate Bridge",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A single SAE feature activated on **Golden Gate Bridge** references",
+      "citation_keys": [
+        "anthropic2024goldengate"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-prm-cost",
+      "subject": "process-reward-model",
+      "predicate": "inference_cost_multiplier",
+      "value": "2-5x",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "PRMs add 2–5× inference cost.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-test-time-training",
+      "subject": "test-time-training",
+      "predicate": "publication_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Sun et al. (2024)]{sun2024ttt} showed that fine-tuning a small adapter",
+      "citation_keys": [
+        "sun2024ttt"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-gemini-1-5-pro",
+      "subject": "gemini-1-5-pro",
+      "predicate": "context_window",
+      "value": 1000000,
+      "unit": "token",
+      "qualifiers": {
+        "variant": "commercial"
+      },
+      "quote": "Gemini 1.5 Pro: 1M tokens (commercial); 10M in research.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-claude-3-5-sonnet",
+      "subject": "claude-3-5-sonnet",
+      "predicate": "context_window",
+      "value": 200000,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "Claude 3.5 Sonnet: 200K tokens.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-gpt-4o",
+      "subject": "gpt-4o",
+      "predicate": "context_window",
+      "value": 128000,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "GPT-4o: 128K.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-llama-3-1-context",
+      "subject": "llama-3-1",
+      "predicate": "context_window",
+      "value": 128000,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "Llama 3.1: 128K.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-mod-compute",
+      "subject": "mixture-of-depths",
+      "predicate": "compute_reduction",
+      "value": 50,
+      "unit": "%",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Result: ~50% compute reduction at equal quality.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-multi-agent-improvement",
+      "subject": "multi-agent-debate",
+      "predicate": "accuracy_improvement",
+      "value": "5-15",
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "multiple LLMs argue; a judge picks the best. Improves reasoning accuracy 5–15%.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-gaia-agents",
+      "subject": "gaia",
+      "predicate": "frontier_agent_success_rate",
+      "value": 50,
+      "unit": "%",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Frontier agents solve ~50% of these; humans solve 92%.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-gaia-humans",
+      "subject": "gaia",
+      "predicate": "human_success_rate",
+      "value": 92,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "Frontier agents solve ~50% of these; humans solve 92%.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-llama-3-1-english",
+      "subject": "llama-3-1",
+      "predicate": "english_token_share",
+      "value": 90,
+      "unit": "%",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Llama 3.1: ~90% English tokens",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-deepseek-v3-total",
+      "subject": "deepseek-v3",
+      "predicate": "parameters",
+      "value": 671000000000,
+      "unit": "count",
+      "qualifiers": {
+        "parameter_kind": "total"
+      },
+      "quote": "DeepSeek-V3 (671B total, 37B active)",
+      "citation_keys": [
+        "deepseek2024v3"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-deepseek-v3-active",
+      "subject": "deepseek-v3",
+      "predicate": "parameters",
+      "value": 37000000000,
+      "unit": "count",
+      "qualifiers": {
+        "parameter_kind": "active"
+      },
+      "quote": "DeepSeek-V3 (671B total, 37B active)",
+      "citation_keys": [
+        "deepseek2024v3"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-deepseek-v3-cost",
+      "subject": "deepseek-v3",
+      "predicate": "training_cost",
+      "value": 5600000,
+      "unit": "USD",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "reported frontier quality from a disclosed final training run of roughly \\$5.6M",
+      "citation_keys": [
+        "deepseek2024v3"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-kimi-k2-parameters",
+      "subject": "kimi-k2",
+      "predicate": "parameters",
+      "value": 1000000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Kimi K2 pushed open weights to a trillion parameters with the MuonClip optimizer",
+      "citation_keys": [
+        "kimi2025k2"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -93,6 +312,164 @@
       "qualifiers": {},
       "quote": "part: 6",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-constitutional-ai",
+      "from": "constitutional-ai",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Bai et al. (Anthropic, 2022) replaced most of the human labelling used by \\citeauthor{ouyang2022instructgpt} (\\citeyear{ouyang2022instructgpt}) with **AI self-critique against a written constitution**:",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-sparse-autoencoder",
+      "from": "sparse-autoencoder",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "e.g., $d' = 100{,}000$ features",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-claude-3-sonnet",
+      "from": "claude-3-sonnet",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Anthropic's work on Claude 3 Sonnet (2024) found:",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-golden-gate-feature",
+      "from": "golden-gate-feature",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A single SAE feature activated on **Golden Gate Bridge** references",
+      "citation_keys": [
+        "anthropic2024goldengate"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-process-reward-model",
+      "from": "process-reward-model",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "PRMs add 2–5× inference cost.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-test-time-training",
+      "from": "test-time-training",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Sun et al. (2024)]{sun2024ttt} showed that fine-tuning a small adapter",
+      "citation_keys": [
+        "sun2024ttt"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-gemini-1-5-pro",
+      "from": "gemini-1-5-pro",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Gemini 1.5 Pro: 1M tokens (commercial); 10M in research.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-claude-3-5-sonnet",
+      "from": "claude-3-5-sonnet",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Claude 3.5 Sonnet: 200K tokens.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-gpt-4o",
+      "from": "gpt-4o",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "GPT-4o: 128K.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-llama-3-1",
+      "from": "llama-3-1",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Llama 3.1: 128K.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-mixture-of-depths",
+      "from": "mixture-of-depths",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Result: ~50% compute reduction at equal quality.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-multi-agent-debate",
+      "from": "multi-agent-debate",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "multiple LLMs argue; a judge picks the best. Improves reasoning accuracy 5–15%.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-gaia",
+      "from": "gaia",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Frontier agents solve ~50% of these; humans solve 92%.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-deepseek-v3",
+      "from": "deepseek-v3",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "DeepSeek-V3 (671B total, 37B active)",
+      "citation_keys": [
+        "deepseek2024v3"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-kimi-k2",
+      "from": "kimi-k2",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Kimi K2 pushed open weights to a trillion parameters with the MuonClip optimizer",
+      "citation_keys": [
+        "kimi2025k2"
+      ],
       "confidence": "provenance"
     }
   ]

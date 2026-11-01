@@ -5,55 +5,19 @@
   "title": "AI Music & Video Generation",
   "part": 4,
   "order": 16,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "diffusion_astronaut_img",
-    "brooks2024sora",
     "panharmonicon",
-    "strachey1952",
     "illiac_suite",
     "max_mathews",
-    "music_theory",
     "midi",
-    "midi_keyboard_img",
-    "pcm",
-    "nyquist_sampling",
     "cd_digital_audio",
-    "oscilloscope_waveform_img",
-    "vinyl_lp_record_img",
-    "cd_compact_disc_img",
     "mp3",
-    "mdct",
-    "audio_spectrogram_img",
-    "zeghidour2021soundstream",
-    "defossez2022encodec",
-    "vaswani2017attention",
-    "radford2021clip",
-    "oord2016wavenet",
-    "sutton2019bitter",
-    "fan2018topk",
-    "holtzman2019nucleus",
-    "borsos2023audiolm",
+    "brooks2024sora",
     "agostinelli2023musiqlm",
     "copet2023musicgen",
-    "ho2020ddpm",
-    "kingma2014vae",
-    "rombach2022ldm",
-    "ho2022cfg",
-    "peebles2023dit",
-    "film_strip_35mm_img",
-    "vhs_cassette_img",
-    "video_compression",
-    "dct",
-    "h264_coding_structure_img",
-    "h264",
-    "av1",
-    "yan2021videogpt",
-    "vq_vae",
-    "bain2021webvid",
-    "ha2018worldmodels",
-    "liu2023audioldm"
+    "defossez2022encodec"
   ],
   "claims": [
     {
@@ -94,6 +58,250 @@
       "quote": "order: 16",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "music-video-mozart-year",
+      "subject": "mozart-dice-game",
+      "predicate": "year",
+      "value": 1787,
+      "unit": "year",
+      "quote": "In 1787 Mozart wrote down a card game.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-panharmonicon-year",
+      "subject": "panharmonicon",
+      "predicate": "year",
+      "value": 1805,
+      "unit": "year",
+      "quote": "In **1805** the instrument-maker Johann Nepomuk Mälzel built the **Panharmonicon**",
+      "citation_keys": [
+        "panharmonicon"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-csirac-year",
+      "subject": "csirac",
+      "predicate": "year",
+      "value": 1951,
+      "unit": "year",
+      "quote": "In **1951** a machine called **CSIRAC**, then in Sydney, played *Colonel Bogey*",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-illiac-year",
+      "subject": "illiac-suite",
+      "predicate": "year",
+      "value": 1957,
+      "unit": "year",
+      "quote": "In **1957** a composer, Leonard Isaacson, and a mathematician, Lejaren Hiller, wrote the **Illiac Suite** for string quartet on the ILLIAC I",
+      "citation_keys": [
+        "illiac_suite"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-music-lang-year",
+      "subject": "music-lang",
+      "predicate": "year",
+      "value": 1957,
+      "unit": "year",
+      "quote": "**Max Mathews** wrote **MUSIC**, the first computer language for *synthesizing* sound in real time",
+      "citation_keys": [
+        "max_mathews"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-xenakis-year",
+      "subject": "xenakis-st10",
+      "predicate": "year",
+      "value": 1962,
+      "unit": "year",
+      "quote": "in 1962, *ST/10* and *Atrées* realised on an IBM 7090",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-a4-pitch",
+      "subject": "concert-pitch-a4",
+      "predicate": "frequency",
+      "value": "440 Hz",
+      "unit": "name",
+      "quote": "is standardized at **440 Hz**",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-semitone-ratio",
+      "subject": "equal-temperament",
+      "predicate": "semitone_ratio",
+      "value": "2^(1/12) approx 1.0595",
+      "unit": "formula",
+      "quote": "Each semitone multiplies the frequency by $2^{1/12} \\approx 1.0595$",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-midi-year",
+      "subject": "midi",
+      "predicate": "year",
+      "value": 1983,
+      "unit": "year",
+      "quote": "a standard locked in in **1983** by Ikutaro Kakehashi of Roland",
+      "citation_keys": [
+        "midi"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-midi-channels",
+      "subject": "midi",
+      "predicate": "channel_count",
+      "value": 16,
+      "unit": "count",
+      "quote": "It works across 16 channels",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-cd-sample-rate",
+      "subject": "compact-disc",
+      "predicate": "sample_rate",
+      "value": "44,100 samples per second",
+      "unit": "name",
+      "quote": "chose **44,100 samples per second**, each stored as a **16-bit** number",
+      "citation_keys": [
+        "cd_digital_audio"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-hearing-limit",
+      "subject": "human-hearing",
+      "predicate": "upper_frequency",
+      "value": "20 kHz",
+      "unit": "name",
+      "quote": "Human hearing tops out near 20 kHz, so you must sample above 40 kHz.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-mp3-year",
+      "subject": "mp3",
+      "predicate": "year",
+      "value": 1993,
+      "unit": "year",
+      "quote": "standardized in **1993** by the Fraunhofer Society under Karlheinz Brandenburg",
+      "citation_keys": [
+        "mp3"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-mp3-shrink",
+      "subject": "mp3",
+      "predicate": "compression_factor",
+      "value": "10x",
+      "unit": "name",
+      "quote": "The result was a ~10× shrink that *sounded* like the CD",
+      "qualifiers": {
+        "approx": true
+      },
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-sora-year",
+      "subject": "sora",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "quote": "**Sora** (OpenAI, February 2024)",
+      "citation_keys": [
+        "brooks2024sora"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-musiccaps-size",
+      "subject": "musiccaps",
+      "predicate": "pair_count",
+      "value": 5500,
+      "unit": "count",
+      "quote": "MusicCaps is only 5,500 description-and-music pairs",
+      "citation_keys": [
+        "agostinelli2023musiqlm"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-deezer-rate",
+      "subject": "deezer-ai-uploads",
+      "predicate": "tracks_per_day",
+      "value": 50000,
+      "unit": "count",
+      "quote": "on the order of **50,000 AI-generated tracks uploaded a day — about a third of all uploads**",
+      "qualifiers": {
+        "approx": true
+      },
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-neural-codec",
+      "subject": "neural-audio-codec",
+      "predicate": "definition",
+      "value": "end-to-end learned compression that turns a waveform into discrete codes",
+      "unit": "name",
+      "quote": "**they turn the waveform into a short list of discrete codes.**",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-musicgen-year",
+      "subject": "musicgen",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "quote": "**MusicGen** (Meta, 2023) is the lean, open, fast version",
+      "citation_keys": [
+        "copet2023musicgen"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "music-video-encodec-year",
+      "subject": "encodec",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "quote": "**EnCodec** (Meta, 2022)",
+      "citation_keys": [
+        "defossez2022encodec"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -105,6 +313,206 @@
       "qualifiers": {},
       "quote": "part: 4",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-mozart-dice-game",
+      "from": "mozart-dice-game",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1787 Mozart wrote down a card game.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-panharmonicon",
+      "from": "panharmonicon",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In **1805** the instrument-maker Johann Nepomuk Mälzel built the **Panharmonicon**",
+      "citation_keys": [
+        "panharmonicon"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-csirac",
+      "from": "csirac",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In **1951** a machine called **CSIRAC**, then in Sydney, played *Colonel Bogey*",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-illiac-suite",
+      "from": "illiac-suite",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In **1957** a composer, Leonard Isaacson, and a mathematician, Lejaren Hiller, wrote the **Illiac Suite** for string quartet on the ILLIAC I",
+      "citation_keys": [
+        "illiac_suite"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-music-lang",
+      "from": "music-lang",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Max Mathews** wrote **MUSIC**, the first computer language for *synthesizing* sound in real time",
+      "citation_keys": [
+        "max_mathews"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-xenakis-st10",
+      "from": "xenakis-st10",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in 1962, *ST/10* and *Atrées* realised on an IBM 7090",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-concert-pitch-a4",
+      "from": "concert-pitch-a4",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "is standardized at **440 Hz**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-equal-temperament",
+      "from": "equal-temperament",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Each semitone multiplies the frequency by $2^{1/12} \\approx 1.0595$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-midi",
+      "from": "midi",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a standard locked in in **1983** by Ikutaro Kakehashi of Roland",
+      "citation_keys": [
+        "midi"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-compact-disc",
+      "from": "compact-disc",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "chose **44,100 samples per second**, each stored as a **16-bit** number",
+      "citation_keys": [
+        "cd_digital_audio"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-human-hearing",
+      "from": "human-hearing",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Human hearing tops out near 20 kHz, so you must sample above 40 kHz.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-mp3",
+      "from": "mp3",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "standardized in **1993** by the Fraunhofer Society under Karlheinz Brandenburg",
+      "citation_keys": [
+        "mp3"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-sora",
+      "from": "sora",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Sora** (OpenAI, February 2024)",
+      "citation_keys": [
+        "brooks2024sora"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-musiccaps",
+      "from": "musiccaps",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "MusicCaps is only 5,500 description-and-music pairs",
+      "citation_keys": [
+        "agostinelli2023musiqlm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-deezer-ai-uploads",
+      "from": "deezer-ai-uploads",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "on the order of **50,000 AI-generated tracks uploaded a day — about a third of all uploads**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-neural-audio-codec",
+      "from": "neural-audio-codec",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**they turn the waveform into a short list of discrete codes.**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-musicgen",
+      "from": "musicgen",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**MusicGen** (Meta, 2023) is the lean, open, fast version",
+      "citation_keys": [
+        "copet2023musicgen"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-encodec",
+      "from": "encodec",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**EnCodec** (Meta, 2022)",
+      "citation_keys": [
+        "defossez2022encodec"
+      ],
       "confidence": "provenance"
     }
   ]

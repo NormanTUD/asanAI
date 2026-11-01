@@ -5,7 +5,7 @@
   "title": "Derivatives: How AI \"Learns\" to get better",
   "part": 2,
   "order": 2,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "eudoxus_mactutor",
@@ -61,6 +61,251 @@
       "quote": "order: 2",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "derivativelab-eudoxus-lifespan",
+      "subject": "eudoxus-of-cnidus",
+      "predicate": "lifespan",
+      "value": "c. 408-355 BCE",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "Eudoxus of Cnidus (c. 408–355 BCE)",
+      "citation_keys": [
+        "eudoxus_mactutor"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-eudoxus-method",
+      "subject": "eudoxus-of-cnidus",
+      "predicate": "method",
+      "value": "method of exhaustion",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the method of exhaustion, the ancestor of the limit \\cite{eudoxus_mactutor}",
+      "citation_keys": [
+        "eudoxus_mactutor"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-archimedes-lifespan",
+      "subject": "archimedes",
+      "predicate": "lifespan",
+      "value": "c. 287-212 BCE",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "Archimedes of Syracuse (c. 287–212 BCE)",
+      "citation_keys": [
+        "archimedes_works_heath"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-archimedes-spirals",
+      "subject": "archimedes",
+      "predicate": "work",
+      "value": "On Spirals",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "in *On Spirals*, to draw tangents at a point of a curve",
+      "citation_keys": [
+        "archimedes_works_heath"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-cauchy-steepest",
+      "subject": "augustin-louis-cauchy",
+      "predicate": "steepest_descent_year",
+      "value": 1847,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Cauchy proposed the method of steepest descent in 1847",
+      "citation_keys": [
+        "cauchy1847"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-hadamard",
+      "subject": "jacques-hadamard",
+      "predicate": "optimization_year",
+      "value": 1908,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Hadamard's 1908 work made the same idea a practical optimization method",
+      "citation_keys": [
+        "hadamard1908"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-madhava-lifespan",
+      "subject": "madhava-of-sangamagrama",
+      "predicate": "lifespan",
+      "value": "c. 1350-1425",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "Madhava of Sangamagrama (c. 1350–1425)",
+      "citation_keys": [
+        "madhava_mactutor"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-madhava-series",
+      "subject": "madhava-of-sangamagrama",
+      "predicate": "series_year",
+      "value": 1400,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "obtained infinite series for $\\pi$, sine and cosine around 1400",
+      "citation_keys": [
+        "madhava_mactutor"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-yuktibhasha",
+      "subject": "yuktibhasha",
+      "predicate": "publication_year",
+      "value": 1550,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "The *Yuktibhāṣā* (c. 1550) preserves the derivations",
+      "citation_keys": [
+        "madhava"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-condorcet",
+      "subject": "marquis-de-condorcet",
+      "predicate": "partial_symbol_year",
+      "value": 1770,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The symbol $\\partial$ for partial derivatives appears in one of its first known uses in the work of the Marquis de Condorcet in \\citeyear{condorcet1770}",
+      "citation_keys": [
+        "condorcet1770"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-legendre",
+      "subject": "adrien-marie-legendre",
+      "predicate": "partial_notation_year",
+      "value": 1786,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the modern partial-derivative notation $\\partial f/\\partial x$ was created by \\citeauthor{legendre1786} in \\citetitle{legendre1786} (\\citeyear{legendre1786})",
+      "citation_keys": [
+        "legendre1786"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-jacobi",
+      "subject": "carl-gustav-jacobi",
+      "predicate": "partial_notation_reintroduction_year",
+      "value": 1841,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "only popularized after Jacobi reintroduced it in 1841",
+      "citation_keys": [
+        "historyofmathematicalnotation"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-newton-print",
+      "subject": "isaac-newton",
+      "predicate": "fluxions_print_year",
+      "value": 1736,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "his *Method of Fluxions* circulated in manuscript long before it appeared in print in 1736",
+      "citation_keys": [
+        "newton1736fluxions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-leibniz-nova",
+      "subject": "gottfried-leibniz",
+      "predicate": "nova_methodus_year",
+      "value": 1684,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "his *Nova Methodus pro Maximis et Minimis* (1684) announced the algorithm to a wider public",
+      "citation_keys": [
+        "leibniz1684nova"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-cauchy-limit",
+      "subject": "augustin-louis-cauchy",
+      "predicate": "derivative_limit_year",
+      "value": 1823,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Cauchy treated the derivative as the limit of the difference quotient in his 1823 *Résumé des leçons sur le calcul infinitésimal*",
+      "citation_keys": [
+        "cauchy1823resume"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-weierstrass",
+      "subject": "karl-weierstrass",
+      "predicate": "counterexample_year",
+      "value": 1872,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "his 1872 example of a continuous curve with no derivative anywhere showed why the rigor was needed",
+      "citation_keys": [
+        "weierstrass_mactutor"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-gradient-descent",
+      "subject": "gradient-descent",
+      "predicate": "update_formula",
+      "value": "x_new = x_old - learning_rate × slope",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "x_{\\text{new}} = x_{\\text{old}} - (\\text{Learning Rate} \\times \\text{Slope})",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-chain-rule",
+      "subject": "chain-rule",
+      "predicate": "message_passing_formula",
+      "value": "dOutput/dInput = dNodeB/dInput × dOutput/dNodeB",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "\\frac{\\partial \\text{Output}}{\\partial \\text{Input}} = \\frac{\\partial \\text{Node B}}{\\partial \\text{Input}} \\times \\frac{\\partial \\text{Output}}{\\partial \\text{Node B}}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "derivativelab-backpropagation",
+      "subject": "backpropagation",
+      "predicate": "description",
+      "value": "relies on the Chain Rule",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "This is called **Backpropagation**, and it relies on the **Chain Rule**.",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -71,6 +316,180 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 2",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-derivativelab-eudoxus-of-cnidus",
+      "from": "eudoxus-of-cnidus",
+      "to": "derivativelab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Eudoxus of Cnidus (c. 408–355 BCE)",
+      "citation_keys": [
+        "eudoxus_mactutor"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-derivativelab-archimedes",
+      "from": "archimedes",
+      "to": "derivativelab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Archimedes of Syracuse (c. 287–212 BCE)",
+      "citation_keys": [
+        "archimedes_works_heath"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-derivativelab-augustin-louis-cauchy",
+      "from": "augustin-louis-cauchy",
+      "to": "derivativelab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Cauchy proposed the method of steepest descent in 1847",
+      "citation_keys": [
+        "cauchy1847"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-derivativelab-jacques-hadamard",
+      "from": "jacques-hadamard",
+      "to": "derivativelab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hadamard's 1908 work made the same idea a practical optimization method",
+      "citation_keys": [
+        "hadamard1908"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-derivativelab-madhava-of-sangamagrama",
+      "from": "madhava-of-sangamagrama",
+      "to": "derivativelab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Madhava of Sangamagrama (c. 1350–1425)",
+      "citation_keys": [
+        "madhava_mactutor"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-derivativelab-yuktibhasha",
+      "from": "yuktibhasha",
+      "to": "derivativelab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The *Yuktibhāṣā* (c. 1550) preserves the derivations",
+      "citation_keys": [
+        "madhava"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-derivativelab-marquis-de-condorcet",
+      "from": "marquis-de-condorcet",
+      "to": "derivativelab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The symbol $\\partial$ for partial derivatives appears in one of its first known uses in the work of the Marquis de Condorcet in \\citeyear{condorcet1770}",
+      "citation_keys": [
+        "condorcet1770"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-derivativelab-adrien-marie-legendre",
+      "from": "adrien-marie-legendre",
+      "to": "derivativelab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the modern partial-derivative notation $\\partial f/\\partial x$ was created by \\citeauthor{legendre1786} in \\citetitle{legendre1786} (\\citeyear{legendre1786})",
+      "citation_keys": [
+        "legendre1786"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-derivativelab-carl-gustav-jacobi",
+      "from": "carl-gustav-jacobi",
+      "to": "derivativelab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "only popularized after Jacobi reintroduced it in 1841",
+      "citation_keys": [
+        "historyofmathematicalnotation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-derivativelab-isaac-newton",
+      "from": "isaac-newton",
+      "to": "derivativelab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "his *Method of Fluxions* circulated in manuscript long before it appeared in print in 1736",
+      "citation_keys": [
+        "newton1736fluxions"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-derivativelab-gottfried-leibniz",
+      "from": "gottfried-leibniz",
+      "to": "derivativelab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "his *Nova Methodus pro Maximis et Minimis* (1684) announced the algorithm to a wider public",
+      "citation_keys": [
+        "leibniz1684nova"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-derivativelab-karl-weierstrass",
+      "from": "karl-weierstrass",
+      "to": "derivativelab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "his 1872 example of a continuous curve with no derivative anywhere showed why the rigor was needed",
+      "citation_keys": [
+        "weierstrass_mactutor"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-derivativelab-gradient-descent",
+      "from": "gradient-descent",
+      "to": "derivativelab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "x_{\\text{new}} = x_{\\text{old}} - (\\text{Learning Rate} \\times \\text{Slope})",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-derivativelab-chain-rule",
+      "from": "chain-rule",
+      "to": "derivativelab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\frac{\\partial \\text{Output}}{\\partial \\text{Input}} = \\frac{\\partial \\text{Node B}}{\\partial \\text{Input}} \\times \\frac{\\partial \\text{Output}}{\\partial \\text{Node B}}",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-derivativelab-backpropagation",
+      "from": "backpropagation",
+      "to": "derivativelab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This is called **Backpropagation**, and it relies on the **Chain Rule**.",
       "citation_keys": [],
       "confidence": "provenance"
     }

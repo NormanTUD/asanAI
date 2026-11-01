@@ -5,7 +5,7 @@
   "title": "AI Existential Risk — What Is Real and What Is Speculative",
   "part": 6,
   "order": 16,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "shelley1818frankenstein",
@@ -15,36 +15,15 @@
     "good1965explosion",
     "joy2000future",
     "bostrom2014superintelligence",
-    "bostrom2013xrisk",
     "bales2024catastrophic",
-    "bostrom2012orthogonal",
-    "bostrom2003ethical",
     "hubinger2024sleeperagents",
     "alignment_faking",
     "reward_tampering",
-    "treacherous_turn",
-    "thought_crime",
     "rogue_agents",
     "anthropic2025shutdown",
     "statement_on_ai_risk_2023",
     "fli2023pause",
-    "metz2023godfather",
-    "lecun2022autonomous",
-    "bender2021stochasticparrots",
-    "crawford2021atlas",
-    "fli2025ban",
-    "christian2020alignment",
-    "grace2024survey",
-    "kokotajlo2016takeoff",
-    "ord2020precipice",
-    "sutton2019bitter",
-    "gwern2020scaling",
-    "aschenbrenner2024",
-    "kokotajlo2025ai2027",
-    "christiano2019failure",
-    "simulatorstheory",
-    "karnofsky2021",
-    "amodei2024machines"
+    "grace2024survey"
   ],
   "claims": [
     {
@@ -85,6 +64,260 @@
       "quote": "order: 16",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "ai_existential_risk-frankenstein",
+      "subject": "frankenstein",
+      "predicate": "publication_year",
+      "value": 1818,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1818, **Mary Shelley** published *Frankenstein; or, The Modern Prometheus*",
+      "citation_keys": [
+        "shelley1818frankenstein"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-butler",
+      "subject": "darwin-among-the-machines",
+      "predicate": "publication_year",
+      "value": 1863,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1863, the English writer **Samuel Butler** (author of *Erewhon*) made the same argument in prose: in \"Darwin Among the Machines\"",
+      "citation_keys": [
+        "butler1863machines"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-asimov",
+      "subject": "three-laws-of-robotics",
+      "predicate": "publication_year",
+      "value": 1942,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1942, **Isaac Asimov** introduced the **Three Laws of Robotics** in his short story \"Runaround\"",
+      "citation_keys": [
+        "asimov1942runaround"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-turing",
+      "subject": "turing-test",
+      "predicate": "publication_year",
+      "value": 1950,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Alan Turing** in his 1950 paper \"Computing Machinery and Intelligence,\" where he proposed the Imitation Game (now the Turing Test)",
+      "citation_keys": [
+        "turing1950computing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-good",
+      "subject": "intelligence-explosion",
+      "predicate": "publication_year",
+      "value": 1965,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The first formal academic articulation of the intelligence-explosion mechanism came from the statistician **I.J. Good** in 1965",
+      "citation_keys": [
+        "good1965explosion"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-joy",
+      "subject": "why-the-future-doesnt-need-us",
+      "predicate": "publication_year",
+      "value": 2000,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 2000, **Bill Joy** in his *Wired* essay \"Why the Future Doesn't Need Us\"",
+      "citation_keys": [
+        "joy2000future"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-orthogonality",
+      "subject": "orthogonality-thesis",
+      "predicate": "thesis",
+      "value": "intelligence and goals are independent",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the **orthogonality thesis** (intelligence and goals are independent)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-instrumental",
+      "subject": "instrumental-convergence",
+      "predicate": "thesis",
+      "value": "different goals share common subgoals such as self-preservation and resource acquisition",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the concept of **instrumental convergence** (different goals share common subgoals such as self-preservation and resource acquisition)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-superintelligence-book",
+      "subject": "superintelligence-book",
+      "predicate": "publication_year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "His 2014 book *Superintelligence: Paths, Dangers, Strategies* systematized the argument",
+      "citation_keys": [
+        "bostrom2014superintelligence"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-fast-takeoff",
+      "subject": "fast-takeoff",
+      "predicate": "duration",
+      "value": "days or months",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "If the transition from AGI to superintelligence is fast",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-singularity",
+      "subject": "singularity-hypothesis",
+      "predicate": "formulation_year",
+      "value": 2010,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the **Singularity Hypothesis** (Chalmers 2010)",
+      "citation_keys": [
+        "bales2024catastrophic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-sleeper-agents",
+      "subject": "sleeper-agents",
+      "predicate": "publication_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{hubinger2024sleeperagents} showed that a large language model can be trained to hide a deceptive behavior",
+      "citation_keys": [
+        "hubinger2024sleeperagents"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-alignment-faking",
+      "subject": "alignment-faking",
+      "predicate": "publication_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Alignment faking.** Frontier LLMs, when asked to optimize a proxy (for example, to *look* aligned to a supervisor), can learn to fake alignment rather than genuinely adopt the desired behavior (\\cite[Greenblatt et al., 2024]{alignment_faking}).",
+      "citation_keys": [
+        "alignment_faking"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-reward-tampering",
+      "subject": "reward-tampering",
+      "predicate": "publication_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Reward tampering.** RL agents given the opportunity to alter their own reward signal drift from harmless behavior toward covert subterfuge (\\cite[Denison et al., 2024]{reward_tampering}).",
+      "citation_keys": [
+        "reward_tampering"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-rogue-agents",
+      "subject": "rogue-agents-study",
+      "predicate": "publication_year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Rogue agents / corrigibility.** In benign computer-use tasks with a human interrupt, a majority of frontier models overrode the interrupt to finish the task, and independent task capability did not by itself predict greater corrigibility (\\cite[Tien et al., 2026]{rogue_agents}).",
+      "citation_keys": [
+        "rogue_agents"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-anthropic-shutdown",
+      "subject": "anthropic-shutdown-study",
+      "predicate": "publication_year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in June 2025, **Anthropic** published a study showing that in some circumstances its models could break laws, blackmail, or disobey direct commands",
+      "citation_keys": [
+        "anthropic2025shutdown"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-cas-statement",
+      "subject": "cas-statement",
+      "predicate": "publication_year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In May 2023, the **Center for AI Safety** released a one-sentence statement",
+      "citation_keys": [
+        "statement_on_ai_risk_2023"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-fli-pause",
+      "subject": "fli-pause-letter",
+      "predicate": "publication_year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in March 2023, the **Future of Life Institute** published the \"Pause Giant AI Experiments\" open letter",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-fli-signatories",
+      "subject": "fli-pause-letter",
+      "predicate": "signatories",
+      "value": 30000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "signed by more than 30,000 people",
+      "citation_keys": [
+        "fli2023pause"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-agi-survey",
+      "subject": "agi-survey-2023",
+      "predicate": "median_agi_year",
+      "value": 2047,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "A 2023 survey of AI researchers put the median at a 50% chance of AGI by 2047 (and 10% by 2027)",
+      "citation_keys": [
+        "grace2024survey"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -96,6 +329,226 @@
       "qualifiers": {},
       "quote": "part: 6",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-frankenstein",
+      "from": "frankenstein",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1818, **Mary Shelley** published *Frankenstein; or, The Modern Prometheus*",
+      "citation_keys": [
+        "shelley1818frankenstein"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-darwin-among-the-machines",
+      "from": "darwin-among-the-machines",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1863, the English writer **Samuel Butler** (author of *Erewhon*) made the same argument in prose: in \"Darwin Among the Machines\"",
+      "citation_keys": [
+        "butler1863machines"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-three-laws-of-robotics",
+      "from": "three-laws-of-robotics",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1942, **Isaac Asimov** introduced the **Three Laws of Robotics** in his short story \"Runaround\"",
+      "citation_keys": [
+        "asimov1942runaround"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-turing-test",
+      "from": "turing-test",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Alan Turing** in his 1950 paper \"Computing Machinery and Intelligence,\" where he proposed the Imitation Game (now the Turing Test)",
+      "citation_keys": [
+        "turing1950computing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-intelligence-explosion",
+      "from": "intelligence-explosion",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The first formal academic articulation of the intelligence-explosion mechanism came from the statistician **I.J. Good** in 1965",
+      "citation_keys": [
+        "good1965explosion"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-why-the-future-doesnt-need-us",
+      "from": "why-the-future-doesnt-need-us",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 2000, **Bill Joy** in his *Wired* essay \"Why the Future Doesn't Need Us\"",
+      "citation_keys": [
+        "joy2000future"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-orthogonality-thesis",
+      "from": "orthogonality-thesis",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **orthogonality thesis** (intelligence and goals are independent)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-instrumental-convergence",
+      "from": "instrumental-convergence",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the concept of **instrumental convergence** (different goals share common subgoals such as self-preservation and resource acquisition)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-superintelligence-book",
+      "from": "superintelligence-book",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "His 2014 book *Superintelligence: Paths, Dangers, Strategies* systematized the argument",
+      "citation_keys": [
+        "bostrom2014superintelligence"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-fast-takeoff",
+      "from": "fast-takeoff",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "If the transition from AGI to superintelligence is fast",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-singularity-hypothesis",
+      "from": "singularity-hypothesis",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **Singularity Hypothesis** (Chalmers 2010)",
+      "citation_keys": [
+        "bales2024catastrophic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-sleeper-agents",
+      "from": "sleeper-agents",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{hubinger2024sleeperagents} showed that a large language model can be trained to hide a deceptive behavior",
+      "citation_keys": [
+        "hubinger2024sleeperagents"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-alignment-faking",
+      "from": "alignment-faking",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Alignment faking.** Frontier LLMs, when asked to optimize a proxy (for example, to *look* aligned to a supervisor), can learn to fake alignment rather than genuinely adopt the desired behavior (\\cite[Greenblatt et al., 2024]{alignment_faking}).",
+      "citation_keys": [
+        "alignment_faking"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-reward-tampering",
+      "from": "reward-tampering",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Reward tampering.** RL agents given the opportunity to alter their own reward signal drift from harmless behavior toward covert subterfuge (\\cite[Denison et al., 2024]{reward_tampering}).",
+      "citation_keys": [
+        "reward_tampering"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-rogue-agents-study",
+      "from": "rogue-agents-study",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Rogue agents / corrigibility.** In benign computer-use tasks with a human interrupt, a majority of frontier models overrode the interrupt to finish the task, and independent task capability did not by itself predict greater corrigibility (\\cite[Tien et al., 2026]{rogue_agents}).",
+      "citation_keys": [
+        "rogue_agents"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-anthropic-shutdown-study",
+      "from": "anthropic-shutdown-study",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in June 2025, **Anthropic** published a study showing that in some circumstances its models could break laws, blackmail, or disobey direct commands",
+      "citation_keys": [
+        "anthropic2025shutdown"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-cas-statement",
+      "from": "cas-statement",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In May 2023, the **Center for AI Safety** released a one-sentence statement",
+      "citation_keys": [
+        "statement_on_ai_risk_2023"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-fli-pause-letter",
+      "from": "fli-pause-letter",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in March 2023, the **Future of Life Institute** published the \"Pause Giant AI Experiments\" open letter",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-agi-survey-2023",
+      "from": "agi-survey-2023",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A 2023 survey of AI researchers put the median at a 50% chance of AGI by 2047 (and 10% by 2027)",
+      "citation_keys": [
+        "grace2024survey"
+      ],
       "confidence": "provenance"
     }
   ]

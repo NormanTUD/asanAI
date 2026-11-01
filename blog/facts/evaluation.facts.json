@@ -5,34 +5,18 @@
   "title": "Evaluation & Benchmarks",
   "part": 5,
   "order": 16,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "goodhartslaw",
     "hendrycks2021mmlu",
-    "chen2021humaneval",
-    "zheng2023lmsys",
     "wang2024mmlupro",
-    "zellers2019hellaswag",
-    "clark2018arc",
-    "cobbe2021gsm8k",
-    "hendrycks2021math",
+    "chen2021humaneval",
     "austin2021mbpp",
     "srivastava2022bigbench",
-    "dubois2024alpacaeval",
-    "chiang2024arena",
-    "wang2018glue",
-    "wang2019superglue",
+    "hendrycks2021math",
+    "zheng2023lmsys",
     "rein2024gpqa",
-    "chollet2024arcagi",
-    "carlini2021extracting",
-    "shi2024mink",
-    "white2024livebench",
-    "glazer2024frontiermath",
-    "liang2023helm",
-    "cohenkappa",
-    "llmjudge2023",
-    "helm2022"
+    "liang2023helm"
   ],
   "claims": [
     {
@@ -73,6 +57,258 @@
       "quote": "order: 16",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "evaluation-mmlu-questions",
+      "subject": "mmlu",
+      "predicate": "questions",
+      "value": 14042,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "comprises 14,042 multiple-choice questions across 57 subjects",
+      "citation_keys": [
+        "hendrycks2021mmlu"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-mmlu-subjects",
+      "subject": "mmlu",
+      "predicate": "subjects",
+      "value": 57,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "comprises 14,042 multiple-choice questions across 57 subjects",
+      "citation_keys": [
+        "hendrycks2021mmlu"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-mmlu-saturation",
+      "subject": "mmlu",
+      "predicate": "frontier_accuracy_2025",
+      "value": 88,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "By 2025, frontier models exceed 88% on",
+      "citation_keys": [
+        "hendrycks2021mmlu"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-mmlu-pro",
+      "subject": "mmlu-pro",
+      "predicate": "difference",
+      "value": "more options, harder questions, no shortcut hacks",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**MMLU-Pro** (\\cite[Wang et al., 2024]{wang2024mmlupro}) (more options, harder questions, no shortcut hacks)",
+      "citation_keys": [
+        "wang2024mmlupro"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-humaneval-problems",
+      "subject": "humaneval",
+      "predicate": "problems",
+      "value": 164,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "consists of 164 hand-written Python programming problems with unit tests",
+      "citation_keys": [
+        "chen2021humaneval"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-mbpp-problems",
+      "subject": "mbpp",
+      "predicate": "problems",
+      "value": 974,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "comprises 974 Python problems",
+      "citation_keys": [
+        "austin2021mbpp"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-bigbench-tasks",
+      "subject": "big-bench",
+      "predicate": "tasks",
+      "value": 204,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "comprises 204 tasks ranging from linguistics to physics",
+      "citation_keys": [
+        "srivastava2022bigbench"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-bigbench-authors",
+      "subject": "big-bench",
+      "predicate": "authors",
+      "value": 450,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "204 tasks from 450 authors",
+      "citation_keys": [
+        "srivastava2022bigbench"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-math-problems",
+      "subject": "math-benchmark",
+      "predicate": "problems",
+      "value": 12500,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "comprises 12,500 competition math problems from AMC, AIME, etc.",
+      "citation_keys": [
+        "hendrycks2021math"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-mtbench-questions",
+      "subject": "mt-bench",
+      "predicate": "questions",
+      "value": 80,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**MT-Bench**: 80 high-quality multi-turn questions across 8 categories",
+      "citation_keys": [
+        "zheng2023lmsys"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-mtbench-categories",
+      "subject": "mt-bench",
+      "predicate": "categories",
+      "value": 8,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**MT-Bench**: 80 high-quality multi-turn questions across 8 categories",
+      "citation_keys": [
+        "zheng2023lmsys"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-alpacaeval-questions",
+      "subject": "alpacaeval",
+      "predicate": "questions",
+      "value": 805,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "AlpacaEval: 805 questions, judged by GPT-4 Turbo",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-elo-k",
+      "subject": "chatbot-arena",
+      "predicate": "elo_k_factor",
+      "value": 32,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "with $K=32$, $S_{AB} = 1$ if A wins",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-judge-agreement",
+      "subject": "llm-as-judge",
+      "predicate": "human_agreement",
+      "value": "70-80%",
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "Empirical agreement with humans is ~70-80% on chat data.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-gpqa-questions",
+      "subject": "gpqa",
+      "predicate": "questions",
+      "value": 448,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "448 expert-written, Google-proof science questions",
+      "citation_keys": [
+        "rein2024gpqa"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-gpqa-experts",
+      "subject": "gpqa",
+      "predicate": "expert_accuracy",
+      "value": 65,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "on which PhD-level experts score about 65%",
+      "citation_keys": [
+        "rein2024gpqa"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-gpqa-nonexperts",
+      "subject": "gpqa",
+      "predicate": "nonexpert_accuracy",
+      "value": 34,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "and skilled non-experts about 34%",
+      "citation_keys": [
+        "rein2024gpqa"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-helm-core",
+      "subject": "helm",
+      "predicate": "core_scenarios",
+      "value": 16,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "scores **16 core scenarios on 7 metrics**",
+      "citation_keys": [
+        "liang2023helm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-helm-metrics",
+      "subject": "helm",
+      "predicate": "metrics",
+      "value": 7,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "scores **16 core scenarios on 7 metrics**",
+      "citation_keys": [
+        "liang2023helm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-kappa-sound",
+      "subject": "cohens-kappa",
+      "predicate": "sound_threshold",
+      "value": 0.7,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**κ ≥ 0.7** — the rubric is sound enough to measure with",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -83,6 +319,154 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 5",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-mmlu",
+      "from": "mmlu",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "comprises 14,042 multiple-choice questions across 57 subjects",
+      "citation_keys": [
+        "hendrycks2021mmlu"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-mmlu-pro",
+      "from": "mmlu-pro",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**MMLU-Pro** (\\cite[Wang et al., 2024]{wang2024mmlupro}) (more options, harder questions, no shortcut hacks)",
+      "citation_keys": [
+        "wang2024mmlupro"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-humaneval",
+      "from": "humaneval",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "consists of 164 hand-written Python programming problems with unit tests",
+      "citation_keys": [
+        "chen2021humaneval"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-mbpp",
+      "from": "mbpp",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "comprises 974 Python problems",
+      "citation_keys": [
+        "austin2021mbpp"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-big-bench",
+      "from": "big-bench",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "comprises 204 tasks ranging from linguistics to physics",
+      "citation_keys": [
+        "srivastava2022bigbench"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-math-benchmark",
+      "from": "math-benchmark",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "comprises 12,500 competition math problems from AMC, AIME, etc.",
+      "citation_keys": [
+        "hendrycks2021math"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-mt-bench",
+      "from": "mt-bench",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**MT-Bench**: 80 high-quality multi-turn questions across 8 categories",
+      "citation_keys": [
+        "zheng2023lmsys"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-alpacaeval",
+      "from": "alpacaeval",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "AlpacaEval: 805 questions, judged by GPT-4 Turbo",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-chatbot-arena",
+      "from": "chatbot-arena",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "with $K=32$, $S_{AB} = 1$ if A wins",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-llm-as-judge",
+      "from": "llm-as-judge",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Empirical agreement with humans is ~70-80% on chat data.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-gpqa",
+      "from": "gpqa",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "448 expert-written, Google-proof science questions",
+      "citation_keys": [
+        "rein2024gpqa"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-helm",
+      "from": "helm",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "scores **16 core scenarios on 7 metrics**",
+      "citation_keys": [
+        "liang2023helm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-cohens-kappa",
+      "from": "cohens-kappa",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**κ ≥ 0.7** — the rubric is sound enough to measure with",
       "citation_keys": [],
       "confidence": "provenance"
     }

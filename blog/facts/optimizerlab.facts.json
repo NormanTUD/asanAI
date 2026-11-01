@@ -5,36 +5,20 @@
   "title": "The Optimizer: Navigating the Loss Landscape",
   "part": 2,
   "order": 7,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "sgd",
     "momentum",
-    "adam",
-    "ruder2016overview",
     "nesterov1983method",
-    "nesterov2004introductory",
     "duchi2011adagrad",
     "hinton2012rmsprop",
-    "zeiler2012adadelta",
-    "dozat2016nadam",
-    "reddi2018amsgrad",
+    "adam",
     "loshchilov2019adamw",
-    "goyal2017largebatch",
-    "loshchilov2016sgdr",
-    "jordan2024muon",
-    "kimi2025k2",
-    "kiefer1952stochastic",
-    "cauchy1847",
-    "hadamard1908",
     "werbos1974",
-    "rumelhart1986",
-    "zipf1949human",
-    "shazeer2018adafactor",
-    "dettmers2021_8bit",
     "brown2020gpt3",
     "cohen2021edgeofstability",
-    "arora2022edgeofstability"
+    "kimi2025k2",
+    "ruder2016overview"
   ],
   "claims": [
     {
@@ -75,6 +59,239 @@
       "quote": "order: 7",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "optimizerlab-momentum-beta",
+      "subject": "momentum",
+      "predicate": "beta",
+      "value": 0.9,
+      "unit": "count",
+      "quote": "The hyperparameter $\\beta$ (typically 0.9)",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-adam-defaults",
+      "subject": "adam",
+      "predicate": "default_beta2",
+      "value": 0.999,
+      "unit": "count",
+      "quote": "the paper's defaults ($\\beta_1 = 0.9$, $\\beta_2 = 0.999$, $\\epsilon = 10^{-8}$)",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-adam-epsilon",
+      "subject": "adam",
+      "predicate": "epsilon",
+      "value": 1e-08,
+      "unit": "count",
+      "quote": "the paper's defaults ($\\beta_1 = 0.9$, $\\beta_2 = 0.999$, $\\epsilon = 10^{-8}$)",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-polyak-year",
+      "subject": "polyak-heavy-ball",
+      "predicate": "year",
+      "value": 1964,
+      "unit": "year",
+      "quote": "\\cite[Polyak (1964)]{momentum} introduced the heavy-ball method",
+      "citation_keys": [
+        "momentum"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-nesterov-year",
+      "subject": "nesterov-accelerated-gradient",
+      "predicate": "year",
+      "value": 1983,
+      "unit": "year",
+      "quote": "\\cite[Nesterov (1983)]{nesterov1983method} introduced the accelerated method",
+      "citation_keys": [
+        "nesterov1983method"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-nesterov-rate",
+      "subject": "nesterov-accelerated-gradient",
+      "predicate": "convergence_rate",
+      "value": "O(1/k^2)",
+      "unit": "formula",
+      "quote": "proved the $O(1/k^2)$ rate for smooth convex functions, against the $O(1/k)$ of plain gradient descent",
+      "citation_keys": [
+        "nesterov1983method"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-adagrad-year",
+      "subject": "adagrad",
+      "predicate": "year",
+      "value": 2011,
+      "unit": "year",
+      "quote": "In \\citeyear{duchi2011adagrad}, \\citeauthor{duchi2011adagrad} introduced a simple idea",
+      "citation_keys": [
+        "duchi2011adagrad"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-rmsprop-year",
+      "subject": "rmsprop",
+      "predicate": "year",
+      "value": 2012,
+      "unit": "year",
+      "quote": "**RMSprop** (\\citeauthor{hinton2012rmsprop}'s \\citeyear{hinton2012rmsprop} Coursera lecture)",
+      "citation_keys": [
+        "hinton2012rmsprop"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-adam-year",
+      "subject": "adam",
+      "predicate": "year",
+      "value": 2014,
+      "unit": "year",
+      "quote": "Adam was posted in December 2014 and published at ICLR 2015",
+      "citation_keys": [
+        "adam"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-adamw-year",
+      "subject": "adamw",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "quote": "AdamW followed as a 2017 preprint and an ICLR 2019 paper",
+      "citation_keys": [
+        "loshchilov2019adamw"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-werbos-year",
+      "subject": "werbos-backprop",
+      "predicate": "year",
+      "value": 1974,
+      "unit": "year",
+      "quote": "In his PhD thesis, *Beyond Regression*, Werbos first described the process of “Backpropagation.”",
+      "citation_keys": [
+        "werbos1974"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-rumelhart-year",
+      "subject": "rumelhart-backprop",
+      "predicate": "year",
+      "value": 1986,
+      "unit": "year",
+      "quote": "David Rumelhart, Geoffrey Hinton, and Ronald Williams published a landmark paper in *Nature*",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-adam-states",
+      "subject": "adam",
+      "predicate": "optimizer_states_per_parameter",
+      "value": 2,
+      "unit": "count",
+      "quote": "Adam keeps **two optimizer states per parameter**",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-adam-beta2-scale",
+      "subject": "adam",
+      "predicate": "beta2_at_scale",
+      "value": 0.95,
+      "unit": "count",
+      "quote": "the second moment is often relaxed from $\\beta_2 = 0.999$ to $0.95$",
+      "citation_keys": [
+        "brown2020gpt3"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-edge-stability",
+      "subject": "edge-of-stability",
+      "predicate": "sharpness_relation",
+      "value": "lambda_max approx 2/eta",
+      "unit": "formula",
+      "quote": "settling right around $\\lambda_{\\max} \\approx 2/\\eta$ while the loss still drifts downward",
+      "citation_keys": [
+        "cohen2021edgeofstability"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-muon-kimi",
+      "subject": "muonclip",
+      "predicate": "parameter_scale",
+      "value": "1T",
+      "unit": "count",
+      "quote": "making the optimizer stable enough for a 1T-parameter mixture-of-experts run",
+      "citation_keys": [
+        "kimi2025k2"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-adamw-default",
+      "subject": "adamw",
+      "predicate": "status",
+      "value": "default optimizer for training transformers",
+      "unit": "name",
+      "quote": "**AdamW is now the default optimizer for training transformers** in practice",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-adagrad-epsilon",
+      "subject": "adagrad",
+      "predicate": "epsilon",
+      "value": 1e-08,
+      "unit": "count",
+      "quote": "The $\\epsilon$ (usually $10^{-8}$) is just a guard against dividing by zero on the very first step.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-sgd-imagenet",
+      "subject": "sgd-momentum",
+      "predicate": "imagenet_comparison",
+      "value": "matches or beats Adam with a careful schedule",
+      "unit": "name",
+      "quote": "for convolutional networks on ImageNet, SGD with momentum and a careful learning-rate schedule often matches or beats Adam",
+      "citation_keys": [
+        "ruder2016overview"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -86,6 +303,144 @@
       "qualifiers": {},
       "quote": "part: 2",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-momentum",
+      "from": "momentum",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The hyperparameter $\\beta$ (typically 0.9)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-adam",
+      "from": "adam",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the paper's defaults ($\\beta_1 = 0.9$, $\\beta_2 = 0.999$, $\\epsilon = 10^{-8}$)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-polyak-heavy-ball",
+      "from": "polyak-heavy-ball",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Polyak (1964)]{momentum} introduced the heavy-ball method",
+      "citation_keys": [
+        "momentum"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-nesterov-accelerated-gradient",
+      "from": "nesterov-accelerated-gradient",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Nesterov (1983)]{nesterov1983method} introduced the accelerated method",
+      "citation_keys": [
+        "nesterov1983method"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-adagrad",
+      "from": "adagrad",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citeyear{duchi2011adagrad}, \\citeauthor{duchi2011adagrad} introduced a simple idea",
+      "citation_keys": [
+        "duchi2011adagrad"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-rmsprop",
+      "from": "rmsprop",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**RMSprop** (\\citeauthor{hinton2012rmsprop}'s \\citeyear{hinton2012rmsprop} Coursera lecture)",
+      "citation_keys": [
+        "hinton2012rmsprop"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-adamw",
+      "from": "adamw",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "AdamW followed as a 2017 preprint and an ICLR 2019 paper",
+      "citation_keys": [
+        "loshchilov2019adamw"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-werbos-backprop",
+      "from": "werbos-backprop",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In his PhD thesis, *Beyond Regression*, Werbos first described the process of “Backpropagation.”",
+      "citation_keys": [
+        "werbos1974"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-rumelhart-backprop",
+      "from": "rumelhart-backprop",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "David Rumelhart, Geoffrey Hinton, and Ronald Williams published a landmark paper in *Nature*",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-edge-of-stability",
+      "from": "edge-of-stability",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "settling right around $\\lambda_{\\max} \\approx 2/\\eta$ while the loss still drifts downward",
+      "citation_keys": [
+        "cohen2021edgeofstability"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-muonclip",
+      "from": "muonclip",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "making the optimizer stable enough for a 1T-parameter mixture-of-experts run",
+      "citation_keys": [
+        "kimi2025k2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-sgd-momentum",
+      "from": "sgd-momentum",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "for convolutional networks on ImageNet, SGD with momentum and a careful learning-rate schedule often matches or beats Adam",
+      "citation_keys": [
+        "ruder2016overview"
+      ],
       "confidence": "provenance"
     }
   ]

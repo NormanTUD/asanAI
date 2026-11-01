@@ -8,7 +8,6 @@
   "curated": true,
   "citations": [
     "greshake2023injection",
-    "liu2024formalizing",
     "wei2024jailbroken",
     "hubinger2024sleeperagents"
   ],
@@ -236,5 +235,6 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
-  ]
+  ],
+  "deep_audit": true
 }

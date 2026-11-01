@@ -5,50 +5,25 @@
   "title": "The Mirror in the Machine",
   "part": 6,
   "order": 7,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "cajal1888",
-    "golgi1873",
-    "waldeyer1891",
-    "hubelwiesel",
     "adrian1922allornothing",
     "mccullochpitts1943",
     "lapicque1907",
-    "mark_i_perceptron_manual",
     "hartline1956limulus",
-    "lateral_inhibition_wiki",
-    "winner_take_all_wiki",
-    "neocognitron",
-    "lecun1989backpropagation",
     "hebb1949organizationofbehaviour",
     "okeefe1971place",
     "nobel2014spatial",
-    "stachenfeld2017predictivemap",
-    "miller1956magicalnumber",
     "cowan2001magical4",
-    "baddeley1986workingmemory",
+    "miller1956magicalnumber",
     "diekelmann2010sleep",
     "rao1999predictive",
     "clark2013whatevernext",
-    "keller2018canonical",
-    "bastos2012microcircuit",
-    "caucheteux2023predictive",
-    "whittington2019backprop",
-    "kriegeskorte2015dcnn",
-    "wang2025foundation",
     "nishimoto2011reconstruct",
-    "huth2016semanticmaps",
-    "affolter2020brain2word",
-    "lu2025fmritotext",
-    "allen2022nsd",
-    "schwartz2019brainbias",
-    "hosseini2024universality",
-    "raichle2007defaultmode",
-    "simon1955bounded",
-    "schultz1997dopamine",
-    "baars",
-    "dehaene"
+    "kriegeskorte2015dcnn",
+    "wang2025foundation"
   ],
   "claims": [
     {
@@ -89,6 +64,264 @@
       "quote": "order: 7",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "mirror-neuron-doctrine",
+      "subject": "neuron-doctrine",
+      "predicate": "established_by",
+      "value": "Cajal using Golgi's silver stain",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{cajal1888} used \\citeauthor{golgi1873}'s silver stain to show the nervous system is a population of *separate cells* passing messages across gaps",
+      "citation_keys": [
+        "cajal1888"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-all-or-none",
+      "subject": "all-or-none-principle",
+      "predicate": "established_by",
+      "value": "Adrian, 1920s",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "That law, the **all-or-none principle**, was established for sensory nerves by \\citeauthorlastnameand{adrian1922allornothing} in the 1920s",
+      "citation_keys": [
+        "adrian1922allornothing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-mcp-year",
+      "subject": "mcculloch-pitts-neuron",
+      "predicate": "year",
+      "value": 1943,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1943 \\citeauthorlastnameand{mccullochpitts1943} took that law, added the **refractory period**",
+      "citation_keys": [
+        "mccullochpitts1943"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-mcp-capability",
+      "subject": "mcculloch-pitts-neuron",
+      "predicate": "capability",
+      "value": "computes any Boolean function",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "then proved a network of such units computes any Boolean function \\cite{mccullochpitts1943}",
+      "citation_keys": [
+        "mccullochpitts1943"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-integrate-fire-year",
+      "subject": "integrate-and-fire",
+      "predicate": "year",
+      "value": 1907,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Thirty-six years earlier, \\citeauthor{lapicque1907} had modeled the excitable membrane as a capacitor that charges until it crosses a threshold and then resets — the **integrate-and-fire** neuron \\cite{lapicque1907}.",
+      "citation_keys": [
+        "lapicque1907"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-lateral-inhibition",
+      "subject": "lateral-inhibition",
+      "predicate": "year",
+      "value": 1956,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**lateral inhibition**, recorded from the horseshoe-crab retina by \\citeauthorlastnameand{hartline1956limulus}",
+      "citation_keys": [
+        "hartline1956limulus"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-hebb-year",
+      "subject": "hebbian-learning",
+      "predicate": "year",
+      "value": 1949,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1949 \\citeauthor{hebb1949organizationofbehaviour} wrote that neurons which fire together strengthen their connection",
+      "citation_keys": [
+        "hebb1949organizationofbehaviour"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-place-cells-year",
+      "subject": "place-cells",
+      "predicate": "year",
+      "value": 1971,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{okeefe1971place} recorded neurons in a rat's hippocampus that fire only in a particular place — **place cells**",
+      "citation_keys": [
+        "okeefe1971place"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-cognitive-map",
+      "subject": "cognitive-map",
+      "predicate": "definition",
+      "value": "place fields tile the environment into a map",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "whose fields tile the environment into a map",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-grid-cells-nobel",
+      "subject": "grid-cells",
+      "predicate": "nobel_year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The Mosers added **grid cells**, a hexagonal lattice beneath them, and the three shared the 2014 Nobel for the brain's \"GPS\"",
+      "citation_keys": [
+        "nobel2014spatial"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-working-memory-capacity",
+      "subject": "working-memory",
+      "predicate": "capacity",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "The mind holds only about four — not seven, as \\citeauthor{miller1956magicalnumber} claimed — distinct items at once",
+      "citation_keys": [
+        "cowan2001magical4"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-miller-capacity",
+      "subject": "miller-1956",
+      "predicate": "capacity",
+      "value": 7,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "not seven, as \\citeauthor{miller1956magicalnumber} claimed",
+      "citation_keys": [
+        "miller1956magicalnumber"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-sleep-replay-year",
+      "subject": "sleep-replay",
+      "predicate": "year",
+      "value": 2010,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{diekelmann2010sleep} and others documented memories replayed and stabilized during sleep",
+      "citation_keys": [
+        "diekelmann2010sleep"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-predictive-coding-year",
+      "subject": "predictive-coding",
+      "predicate": "year",
+      "value": 1999,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{rao1999predictive} showed the visual cortex works top-down",
+      "citation_keys": [
+        "rao1999predictive"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-predictive-processing",
+      "subject": "predictive-processing",
+      "predicate": "definition",
+      "value": "predictive coding generalized to the whole brain",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "\\citeauthor{clark2013whatevernext} generalized this to the whole brain",
+      "citation_keys": [
+        "clark2013whatevernext"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-nishimoto-year",
+      "subject": "nishimoto-2011",
+      "predicate": "year",
+      "value": 2011,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 2011, a team led by Shinji Nishimoto reconstructed the actual *movie* a person had watched from fMRI in visual cortex",
+      "citation_keys": [
+        "nishimoto2011reconstruct"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-kriegeskorte-year",
+      "subject": "kriegeskorte-2015",
+      "predicate": "year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{kriegeskorte2015dcnn} argued that a pretrained deep convolutional network is now the best computational model of the primate visual ventral stream",
+      "citation_keys": [
+        "kriegeskorte2015dcnn"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-wang-year",
+      "subject": "wang-2025-foundation-model",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Wang and colleagues trained one large model on neural recordings and showed it predicts a single mouse's visual-cortex responses to *novel* stimulus types it never saw during training — zero-shot",
+      "citation_keys": [
+        "wang2025foundation"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-brain-power",
+      "subject": "human-brain",
+      "predicate": "power",
+      "value": "20 watts",
+      "unit": "name",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "your whole mind runs on about twenty watts, not a data centre",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror-winner-take-all",
+      "subject": "winner-take-all",
+      "predicate": "definition",
+      "value": "the strongest unit wins, the rest go quiet",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The rule \"the strongest unit wins, the rest go quiet\" is exactly **competitive, winner-take-all** dynamics",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -99,6 +332,228 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 6",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-neuron-doctrine",
+      "from": "neuron-doctrine",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{cajal1888} used \\citeauthor{golgi1873}'s silver stain to show the nervous system is a population of *separate cells* passing messages across gaps",
+      "citation_keys": [
+        "cajal1888"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-all-or-none-principle",
+      "from": "all-or-none-principle",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "That law, the **all-or-none principle**, was established for sensory nerves by \\citeauthorlastnameand{adrian1922allornothing} in the 1920s",
+      "citation_keys": [
+        "adrian1922allornothing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-mcculloch-pitts-neuron",
+      "from": "mcculloch-pitts-neuron",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1943 \\citeauthorlastnameand{mccullochpitts1943} took that law, added the **refractory period**",
+      "citation_keys": [
+        "mccullochpitts1943"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-integrate-and-fire",
+      "from": "integrate-and-fire",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Thirty-six years earlier, \\citeauthor{lapicque1907} had modeled the excitable membrane as a capacitor that charges until it crosses a threshold and then resets — the **integrate-and-fire** neuron \\cite{lapicque1907}.",
+      "citation_keys": [
+        "lapicque1907"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-lateral-inhibition",
+      "from": "lateral-inhibition",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**lateral inhibition**, recorded from the horseshoe-crab retina by \\citeauthorlastnameand{hartline1956limulus}",
+      "citation_keys": [
+        "hartline1956limulus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-hebbian-learning",
+      "from": "hebbian-learning",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1949 \\citeauthor{hebb1949organizationofbehaviour} wrote that neurons which fire together strengthen their connection",
+      "citation_keys": [
+        "hebb1949organizationofbehaviour"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-place-cells",
+      "from": "place-cells",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{okeefe1971place} recorded neurons in a rat's hippocampus that fire only in a particular place — **place cells**",
+      "citation_keys": [
+        "okeefe1971place"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-cognitive-map",
+      "from": "cognitive-map",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "whose fields tile the environment into a map",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-grid-cells",
+      "from": "grid-cells",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Mosers added **grid cells**, a hexagonal lattice beneath them, and the three shared the 2014 Nobel for the brain's \"GPS\"",
+      "citation_keys": [
+        "nobel2014spatial"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-working-memory",
+      "from": "working-memory",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The mind holds only about four — not seven, as \\citeauthor{miller1956magicalnumber} claimed — distinct items at once",
+      "citation_keys": [
+        "cowan2001magical4"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-miller-1956",
+      "from": "miller-1956",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "not seven, as \\citeauthor{miller1956magicalnumber} claimed",
+      "citation_keys": [
+        "miller1956magicalnumber"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-sleep-replay",
+      "from": "sleep-replay",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{diekelmann2010sleep} and others documented memories replayed and stabilized during sleep",
+      "citation_keys": [
+        "diekelmann2010sleep"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-predictive-coding",
+      "from": "predictive-coding",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{rao1999predictive} showed the visual cortex works top-down",
+      "citation_keys": [
+        "rao1999predictive"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-predictive-processing",
+      "from": "predictive-processing",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{clark2013whatevernext} generalized this to the whole brain",
+      "citation_keys": [
+        "clark2013whatevernext"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-nishimoto-2011",
+      "from": "nishimoto-2011",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 2011, a team led by Shinji Nishimoto reconstructed the actual *movie* a person had watched from fMRI in visual cortex",
+      "citation_keys": [
+        "nishimoto2011reconstruct"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-kriegeskorte-2015",
+      "from": "kriegeskorte-2015",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{kriegeskorte2015dcnn} argued that a pretrained deep convolutional network is now the best computational model of the primate visual ventral stream",
+      "citation_keys": [
+        "kriegeskorte2015dcnn"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-wang-2025-foundation-model",
+      "from": "wang-2025-foundation-model",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Wang and colleagues trained one large model on neural recordings and showed it predicts a single mouse's visual-cortex responses to *novel* stimulus types it never saw during training — zero-shot",
+      "citation_keys": [
+        "wang2025foundation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-human-brain",
+      "from": "human-brain",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "your whole mind runs on about twenty watts, not a data centre",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-winner-take-all",
+      "from": "winner-take-all",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The rule \"the strongest unit wins, the rest go quiet\" is exactly **competitive, winner-take-all** dynamics",
       "citation_keys": [],
       "confidence": "provenance"
     }

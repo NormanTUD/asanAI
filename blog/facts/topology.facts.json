@@ -5,22 +5,21 @@
   "title": "Topology and the Geometry of Thought",
   "part": 3,
   "order": 5,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "keup2022origami",
-    "colah2014manifolds",
     "eulerbridges",
-    "morris2007topology",
     "poincareanalysissitus",
     "brouwer1911invariance",
-    "morse1929foundations",
-    "karpathy2015convnetjs",
+    "morris2007topology",
     "mclarty2006noether",
     "edelsbrunner2002persistent",
     "zomorodian2005",
     "fefferman2016testing",
-    "riek2019neural"
+    "colah2014manifolds",
+    "morse1929foundations",
+    "riek2019neural",
+    "keup2022origami"
   ],
   "claims": [
     {
@@ -61,6 +60,250 @@
       "quote": "order: 5",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "topology-euler-1736",
+      "subject": "euler-seven-bridges",
+      "predicate": "year",
+      "value": 1736,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1736 Euler proved that the seven bridges of Königsberg cannot be crossed once each",
+      "citation_keys": [
+        "eulerbridges"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-poincare-1895",
+      "subject": "poincare-analysis-situs",
+      "predicate": "year",
+      "value": 1895,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Poincaré gave the question its modern form in *Analysis Situs* (1895)",
+      "citation_keys": [
+        "poincareanalysissitus"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-brouwer-1911",
+      "subject": "brouwer-invariance",
+      "predicate": "year",
+      "value": 1911,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Brouwer supplied the fact the width argument quietly leans on: a continuous injective map from an open subset of $\\mathbb{R}^n$ into $\\mathbb{R}^n$ is open",
+      "citation_keys": [
+        "brouwer1911invariance"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-width-lower-bound",
+      "subject": "width-lower-bound",
+      "predicate": "threshold",
+      "value": "width 2 fails, width 3 succeeds",
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "No network of width $\\le 2$ with smooth\n> activations, **at any depth**, can separate $A$ from $B$. Add a **third** hidden unit and\n> a single layer does it.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-two-d-egg-inner",
+      "subject": "two-d-egg",
+      "predicate": "inner_class",
+      "value": "disk ||x|| < 1/3",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Let the inner class be a disk $\\underbrace{A}_{\\text{inner disk}} = \\{x : \\|x\\| < \\tfrac13\\}$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-smooth-layer",
+      "subject": "smooth-layer",
+      "predicate": "property",
+      "value": "homeomorphism",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**homeomorphism** — as \\cite[Morris shows in Topology Without Tears (Ch. 4, p. 75)]{morris2007topology} — it can stretch and squish space",
+      "citation_keys": [
+        "morris2007topology"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-relu-not-homeomorphism",
+      "subject": "relu",
+      "predicate": "property",
+      "value": "not a homeomorphism",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**ReLU is not**: $\\max(0, x)$ flattens its entire negative half onto $0$.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-one-d-egg",
+      "subject": "one-d-egg",
+      "predicate": "classes",
+      "value": "A=[-1/3,1/3], B=[-1,-2/3] union [2/3,1]",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Put one class on the middle of a line — $A = [-\\tfrac13, \\tfrac13]$ — and the other on the\ntwo ends — $B = [-1, -\\tfrac23] \\cup [\\tfrac23, 1]$.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-single-neuron-interval",
+      "subject": "single-neuron",
+      "predicate": "decision_intervals",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "its decision boundary is a\nsingle threshold, so it can carve out *one interval*",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-two-hidden-units",
+      "subject": "two-hidden-unit-egg",
+      "predicate": "thresholds",
+      "value": "x>-1/2 and x>1/2",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "one fires for \"$x > -\\tfrac12$\", the other",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-noether-1925",
+      "subject": "noether-homology",
+      "predicate": "year",
+      "value": 1925,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Noether's 1925 observation turned Betti numbers into homology groups",
+      "citation_keys": [
+        "mclarty2006noether"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-persistent-homology",
+      "subject": "persistent-homology",
+      "predicate": "year",
+      "value": 2002,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Edelsbrunner, Letscher and Zomorodian's persistence algorithm records when each hole is born and when it dies (\\cite[Edelsbrunner et al., 2002]{edelsbrunner2002persistent})",
+      "citation_keys": [
+        "edelsbrunner2002persistent"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-zomorodian-2005",
+      "subject": "persistent-homology-algebraic",
+      "predicate": "year",
+      "value": 2005,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Zomorodian and Carlsson gave the efficient algebraic formulation (\\cite[Zomorodian & Carlsson, 2005]{zomorodian2005})",
+      "citation_keys": [
+        "zomorodian2005"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-manifold-untangle",
+      "subject": "manifold-untangling",
+      "predicate": "extra_dimensions",
+      "value": "2n+2",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "an $n$-dimensional manifold may need up to\n$2n + 2$ dimensions to untangle",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-manifold-hypothesis",
+      "subject": "manifold-hypothesis",
+      "predicate": "claim",
+      "value": "natural data concentrates near a low-dimensional manifold",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "natural data — images, sounds, word vectors — concentrates near a low-dimensional manifold inside its high-dimensional ambient space.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-fefferman-2016",
+      "subject": "manifold-dimension-test",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Fefferman, Mitter and Narayanan give statistical tests for estimating a manifold's dimension and reach from finite samples (\\cite[Fefferman et al., 2016]{fefferman2016testing})",
+      "citation_keys": [
+        "fefferman2016testing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-olah-2014",
+      "subject": "olah-manifolds",
+      "predicate": "year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{colah2014manifolds} asked in \\citeyear{colah2014manifolds}",
+      "citation_keys": [
+        "colah2014manifolds"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-morse-1929",
+      "subject": "morse-theory",
+      "predicate": "year",
+      "value": 1929,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "For a smooth scalar function on a manifold, the topology of its sublevel sets changes only when the gradient vanishes, at a critical point (\\cite[Morse, 1929]{morse1929foundations}).",
+      "citation_keys": [
+        "morse1929foundations"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-neural-persistence",
+      "subject": "neural-persistence",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Neural persistence carries the same tools into trained networks (\\cite[Rieck et al., 2019]{riek2019neural}).",
+      "citation_keys": [
+        "riek2019neural"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-keup-2022",
+      "subject": "keup-helias-origami",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Keup & Helias, 2022]{keup2022origami})",
+      "citation_keys": [
+        "keup2022origami"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -72,6 +315,230 @@
       "qualifiers": {},
       "quote": "part: 3",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-euler-seven-bridges",
+      "from": "euler-seven-bridges",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1736 Euler proved that the seven bridges of Königsberg cannot be crossed once each",
+      "citation_keys": [
+        "eulerbridges"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-poincare-analysis-situs",
+      "from": "poincare-analysis-situs",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Poincaré gave the question its modern form in *Analysis Situs* (1895)",
+      "citation_keys": [
+        "poincareanalysissitus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-brouwer-invariance",
+      "from": "brouwer-invariance",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Brouwer supplied the fact the width argument quietly leans on: a continuous injective map from an open subset of $\\mathbb{R}^n$ into $\\mathbb{R}^n$ is open",
+      "citation_keys": [
+        "brouwer1911invariance"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-width-lower-bound",
+      "from": "width-lower-bound",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "No network of width $\\le 2$ with smooth\n> activations, **at any depth**, can separate $A$ from $B$. Add a **third** hidden unit and\n> a single layer does it.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-two-d-egg",
+      "from": "two-d-egg",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Let the inner class be a disk $\\underbrace{A}_{\\text{inner disk}} = \\{x : \\|x\\| < \\tfrac13\\}$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-smooth-layer",
+      "from": "smooth-layer",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**homeomorphism** — as \\cite[Morris shows in Topology Without Tears (Ch. 4, p. 75)]{morris2007topology} — it can stretch and squish space",
+      "citation_keys": [
+        "morris2007topology"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-relu",
+      "from": "relu",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**ReLU is not**: $\\max(0, x)$ flattens its entire negative half onto $0$.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-one-d-egg",
+      "from": "one-d-egg",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Put one class on the middle of a line — $A = [-\\tfrac13, \\tfrac13]$ — and the other on the\ntwo ends — $B = [-1, -\\tfrac23] \\cup [\\tfrac23, 1]$.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-single-neuron",
+      "from": "single-neuron",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "its decision boundary is a\nsingle threshold, so it can carve out *one interval*",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-two-hidden-unit-egg",
+      "from": "two-hidden-unit-egg",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "one fires for \"$x > -\\tfrac12$\", the other",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-noether-homology",
+      "from": "noether-homology",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Noether's 1925 observation turned Betti numbers into homology groups",
+      "citation_keys": [
+        "mclarty2006noether"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-persistent-homology",
+      "from": "persistent-homology",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Edelsbrunner, Letscher and Zomorodian's persistence algorithm records when each hole is born and when it dies (\\cite[Edelsbrunner et al., 2002]{edelsbrunner2002persistent})",
+      "citation_keys": [
+        "edelsbrunner2002persistent"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-persistent-homology-algebraic",
+      "from": "persistent-homology-algebraic",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Zomorodian and Carlsson gave the efficient algebraic formulation (\\cite[Zomorodian & Carlsson, 2005]{zomorodian2005})",
+      "citation_keys": [
+        "zomorodian2005"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-manifold-untangling",
+      "from": "manifold-untangling",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "an $n$-dimensional manifold may need up to\n$2n + 2$ dimensions to untangle",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-manifold-hypothesis",
+      "from": "manifold-hypothesis",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "natural data — images, sounds, word vectors — concentrates near a low-dimensional manifold inside its high-dimensional ambient space.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-manifold-dimension-test",
+      "from": "manifold-dimension-test",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Fefferman, Mitter and Narayanan give statistical tests for estimating a manifold's dimension and reach from finite samples (\\cite[Fefferman et al., 2016]{fefferman2016testing})",
+      "citation_keys": [
+        "fefferman2016testing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-olah-manifolds",
+      "from": "olah-manifolds",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{colah2014manifolds} asked in \\citeyear{colah2014manifolds}",
+      "citation_keys": [
+        "colah2014manifolds"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-morse-theory",
+      "from": "morse-theory",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "For a smooth scalar function on a manifold, the topology of its sublevel sets changes only when the gradient vanishes, at a critical point (\\cite[Morse, 1929]{morse1929foundations}).",
+      "citation_keys": [
+        "morse1929foundations"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-neural-persistence",
+      "from": "neural-persistence",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Neural persistence carries the same tools into trained networks (\\cite[Rieck et al., 2019]{riek2019neural}).",
+      "citation_keys": [
+        "riek2019neural"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-keup-helias-origami",
+      "from": "keup-helias-origami",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Keup & Helias, 2022]{keup2022origami})",
+      "citation_keys": [
+        "keup2022origami"
+      ],
       "confidence": "provenance"
     }
   ]

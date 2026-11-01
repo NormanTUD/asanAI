@@ -5,24 +5,16 @@
   "title": "Temperature & Sampling",
   "part": 4,
   "order": 8,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "boltzmann",
     "gibbs1902",
-    "geman1984gibbs",
-    "ackley1985boltzmann",
     "fan2018topk",
-    "holtzman2020nucleus",
     "nguyen2025minp",
-    "meister2022typical",
-    "keskar2019ctrl",
     "su2022contrastive",
     "basu2020mirostat",
-    "lowerre1976harpy",
-    "sutskever2014seq2seq",
-    "leviathan2023speculative",
-    "wang2024entropy"
+    "lowerre1976harpy"
   ],
   "claims": [
     {
@@ -63,6 +55,242 @@
       "quote": "order: 8",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "samplinglab-boltzmann-year",
+      "subject": "boltzmann-distribution",
+      "predicate": "year",
+      "value": 1877,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Boltzmann's 1877 memoir gave the combinatorial derivation",
+      "citation_keys": [
+        "boltzmann"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-gibbs-year",
+      "subject": "gibbs-distribution",
+      "predicate": "year",
+      "value": 1902,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Gibbs gave the ensemble formulation in his 1902 treatise",
+      "citation_keys": [
+        "gibbs1902"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-temperature-zero",
+      "subject": "softmax-temperature",
+      "predicate": "t_zero_behaviour",
+      "value": "argmax (greedy)",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "$T \\to 0$: argmax (greedy). Always picks the most likely token.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-temperature-one",
+      "subject": "softmax-temperature",
+      "predicate": "t_one_behaviour",
+      "value": "native distribution",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "$T = 1$: native distribution.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-topk-chat",
+      "subject": "top-k-sampling",
+      "predicate": "typical_k_chat",
+      "value": 50,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "$k = 50$: typical for chat.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-topk-creative",
+      "subject": "top-k-sampling",
+      "predicate": "typical_k_creative",
+      "value": 1000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "$k = 1000+$ for creative writing.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-topk-origin",
+      "subject": "top-k-sampling",
+      "predicate": "introduced_for",
+      "value": "open-ended story generation",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Fan, Lewis, and Dauphin introduced top-$k$ sampling for open-ended story generation",
+      "citation_keys": [
+        "fan2018topk"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-topk-original-k",
+      "subject": "top-k-sampling",
+      "predicate": "original_k",
+      "value": 10,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Their model used $k=10$ together with a temperature",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-topp-default",
+      "subject": "nucleus-sampling",
+      "predicate": "production_default",
+      "value": "0.9 or 0.95",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Most production APIs default to **top-$p$ = 0.9 or 0.95**.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-minp-year",
+      "subject": "min-p-sampling",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "A newer dynamic-truncation method (\\cite[Nguyen et al., 2025]{nguyen2025minp})",
+      "citation_keys": [
+        "nguyen2025minp"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-minp-s01",
+      "subject": "min-p-sampling",
+      "predicate": "threshold_example",
+      "value": "within 10x of max",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "$s = 0.1$: include any token within 10× of the max.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-repetition-mild",
+      "subject": "repetition-penalty",
+      "predicate": "mild_theta",
+      "value": 1.1,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "$\\theta = 1.1$: mild penalty.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-repetition-strong",
+      "subject": "repetition-penalty",
+      "predicate": "strong_theta",
+      "value": 1.3,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "$\\theta = 1.3$: strong penalty.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-dry-ngram",
+      "subject": "dry-sampling",
+      "predicate": "min_ngram_length",
+      "value": 8,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Match n-grams of length $n \\geq n_{\\text{min}}$ (e.g., 8).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-xtc-exclude",
+      "subject": "xtc-sampling",
+      "predicate": "exclusion_probability",
+      "value": 0.1,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "$p_{\\text{exclude}} = 0.1$: 10% of the time, the top token is excluded.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-contrastive-year",
+      "subject": "contrastive-search",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Contrastive search (\\cite[Su et al., 2022]{su2022contrastive})",
+      "citation_keys": [
+        "su2022contrastive"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-mirostat-year",
+      "subject": "mirostat",
+      "predicate": "year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "A sampling scheme (\\cite[Basu et al., 2020]{basu2020mirostat})",
+      "citation_keys": [
+        "basu2020mirostat"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-mirostat-tau",
+      "subject": "mirostat",
+      "predicate": "target_perplexity",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Target perplexity $\\tau$ (e.g., $\\tau = 5$).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-harpy",
+      "subject": "beam-search",
+      "predicate": "early_use",
+      "value": "1970s speech recognition",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "speech recognizers such as Harpy pruned a tree of acoustic hypotheses with it in the 1970s",
+      "citation_keys": [
+        "lowerre1976harpy"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-chat-temp",
+      "subject": "decoding-settings",
+      "predicate": "chat_factual_temperature",
+      "value": 0.7,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "| **Chat (factual)** | 0.7 | 0.9 | 0.0 | 1.1 |",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -73,6 +301,148 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-samplinglab-boltzmann-distribution",
+      "from": "boltzmann-distribution",
+      "to": "samplinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Boltzmann's 1877 memoir gave the combinatorial derivation",
+      "citation_keys": [
+        "boltzmann"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-samplinglab-gibbs-distribution",
+      "from": "gibbs-distribution",
+      "to": "samplinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Gibbs gave the ensemble formulation in his 1902 treatise",
+      "citation_keys": [
+        "gibbs1902"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-samplinglab-softmax-temperature",
+      "from": "softmax-temperature",
+      "to": "samplinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$T \\to 0$: argmax (greedy). Always picks the most likely token.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-samplinglab-top-k-sampling",
+      "from": "top-k-sampling",
+      "to": "samplinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$k = 50$: typical for chat.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-samplinglab-nucleus-sampling",
+      "from": "nucleus-sampling",
+      "to": "samplinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Most production APIs default to **top-$p$ = 0.9 or 0.95**.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-samplinglab-min-p-sampling",
+      "from": "min-p-sampling",
+      "to": "samplinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A newer dynamic-truncation method (\\cite[Nguyen et al., 2025]{nguyen2025minp})",
+      "citation_keys": [
+        "nguyen2025minp"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-samplinglab-repetition-penalty",
+      "from": "repetition-penalty",
+      "to": "samplinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$\\theta = 1.1$: mild penalty.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-samplinglab-dry-sampling",
+      "from": "dry-sampling",
+      "to": "samplinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Match n-grams of length $n \\geq n_{\\text{min}}$ (e.g., 8).",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-samplinglab-xtc-sampling",
+      "from": "xtc-sampling",
+      "to": "samplinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$p_{\\text{exclude}} = 0.1$: 10% of the time, the top token is excluded.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-samplinglab-contrastive-search",
+      "from": "contrastive-search",
+      "to": "samplinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Contrastive search (\\cite[Su et al., 2022]{su2022contrastive})",
+      "citation_keys": [
+        "su2022contrastive"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-samplinglab-mirostat",
+      "from": "mirostat",
+      "to": "samplinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A sampling scheme (\\cite[Basu et al., 2020]{basu2020mirostat})",
+      "citation_keys": [
+        "basu2020mirostat"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-samplinglab-beam-search",
+      "from": "beam-search",
+      "to": "samplinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "speech recognizers such as Harpy pruned a tree of acoustic hypotheses with it in the 1970s",
+      "citation_keys": [
+        "lowerre1976harpy"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-samplinglab-decoding-settings",
+      "from": "decoding-settings",
+      "to": "samplinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| **Chat (factual)** | 0.7 | 0.9 | 0.0 | 1.1 |",
       "citation_keys": [],
       "confidence": "provenance"
     }

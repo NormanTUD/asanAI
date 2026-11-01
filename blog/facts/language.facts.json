@@ -5,78 +5,19 @@
   "title": "The History of Language: From Sanskrit to LLMs",
   "part": 1,
   "order": 9,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "earlylanguage",
     "blombosochre",
-    "sushruta",
-    "alcmaeon",
-    "davinci_anatomical",
-    "hudspeth1989earworks",
-    "schlosser2018senses",
-    "clack1997tetrapod",
-    "maier2016middleear",
-    "kuhne1958morganucodon",
-    "allin1975middleear",
-    "mao2024jawear",
-    "manley2012cochleae",
-    "hemila1995middleear",
-    "edge2008haircell",
-    "pappas1996otology",
-    "deanima",
-    "vesalius1543fabrica",
-    "falloppio1561observationes",
-    "duverney1683traite",
-    "cotugno1760aquaeductibus",
-    "corti1851recherches",
-    "helmholtz1863tonempfindungen",
-    "bekesy1961nobel",
-    "gold1948hearing",
-    "kemp1978emissions",
-    "brownell1985electromotility",
-    "zheng2000prestin",
-    "hepper1994fetalhearing",
-    "kisilevsky2003fetalvoice",
-    "decasper1980mothervoice",
-    "decasper1986prenatal",
-    "partanen2013prenatal",
-    "werker1984crosslanguage",
-    "mehler1988precursor",
-    "moon1993native",
     "lebombobone",
-    "panini_ashtadhyayi",
-    "aristotle_categories",
-    "humboldt1836sprachbau",
-    "winawer2007russianblues",
-    "evanslevinson2009myth",
-    "gleick2011information",
-    "ishangobone",
-    "prehistoriccounting",
     "ancientnumeralsystems",
     "brahmagupta628",
     "shannon1937switching",
     "shannon1948communication",
-    "wilkins_real_character",
-    "kempelen_speaking_machine",
     "nilsson1984qai",
-    "firth_context",
-    "cuevadelasmanos",
-    "kishtablet",
-    "vincasymbols",
-    "rebusprinciple",
-    "cuneiform",
-    "acrophonic",
-    "dualitypattern",
-    "ueberwahrheitundluege",
-    "saussure1916",
-    "zipf1949human",
-    "wadielholinscription_i",
-    "wadielholinscription_ii",
-    "earliestalphabet",
-    "history_of_a",
     "hieroglyphsdeciphered",
-    "zhao2023survey"
+    "hepper1994fetalhearing"
   ],
   "claims": [
     {
@@ -117,6 +58,274 @@
       "quote": "order: 9",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "language-origin-capacity",
+      "subject": "human-language-capacity",
+      "predicate": "age",
+      "value": 135000,
+      "unit": "year",
+      "quote": "was present at least **\\cite[135,000 years ago]{earlylanguage}**",
+      "citation_keys": [
+        "earlylanguage"
+      ],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "language-modern-behavior",
+      "subject": "modern-human-behavior",
+      "predicate": "age",
+      "value": 100000,
+      "unit": "year",
+      "quote": "language may have triggered the widespread appearance of modern human behavior around **100,000 years ago**",
+      "citation_keys": [
+        "earlylanguage"
+      ],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "language-blombos-drawing",
+      "subject": "blombos-cave-drawing",
+      "predicate": "age",
+      "value": 73000,
+      "unit": "year",
+      "quote": "(on a silcrete flake, c. 73,000 years ago)",
+      "citation_keys": [
+        "blombosochre"
+      ],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "language-lebombo",
+      "subject": "lebombo-bone",
+      "predicate": "year",
+      "value": -41000,
+      "unit": "year",
+      "quote": "**\\cite[Lebombo Bone]{lebombobone}** (c. 41,000 BCE)",
+      "citation_keys": [
+        "lebombobone"
+      ],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "language-panini",
+      "subject": "panini-ashtadhyayi",
+      "predicate": "year",
+      "value": -400,
+      "unit": "year",
+      "quote": "Later, scholars like Pāṇini (ca. 4th Century BCE) developed the अष्टाध्यायी",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "language-writing",
+      "subject": "writing-invention",
+      "predicate": "year",
+      "value": -3200,
+      "unit": "year",
+      "quote": "the invention of writing (c. 3200 BCE)",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "language-clay-tokens",
+      "subject": "clay-tokens",
+      "predicate": "year",
+      "value": -8000,
+      "unit": "year",
+      "quote": "In the Near East, beginning around 8000 BCE",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "language-babylonian-sexagesimal",
+      "subject": "babylonian-sexagesimal",
+      "predicate": "year",
+      "value": -2000,
+      "unit": "year",
+      "quote": "The Babylonian sexagesimal (base-60) system, fully developed by the 2nd millennium BCE",
+      "citation_keys": [
+        "ancientnumeralsystems"
+      ],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "language-brahmagupta-zero",
+      "subject": "brahmagupta-zero",
+      "predicate": "year",
+      "value": 628,
+      "unit": "year",
+      "quote": "**Brahmagupta**'s *Brāhmasphuṭasiddhānta* (628 CE), which treated zero as an integer",
+      "citation_keys": [
+        "brahmagupta628"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "language-shannon-switching",
+      "subject": "shannon-switching-circuits",
+      "predicate": "year",
+      "value": 1937,
+      "unit": "year",
+      "quote": "when **Claude Shannon** showed in 1937 that Boolean algebra could be implemented in electrical switching circuits",
+      "citation_keys": [
+        "shannon1937switching"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "language-shannon-information",
+      "subject": "shannon-information-theory",
+      "predicate": "year",
+      "value": 1948,
+      "unit": "year",
+      "quote": "In 1948, Claude Shannon published “A Mathematical Theory of Communication,”",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "language-english-redundancy",
+      "subject": "english-language",
+      "predicate": "redundancy",
+      "value": 50,
+      "unit": "%",
+      "quote": "Shannon estimated that ordinary English is roughly 50 percent redundant",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "language-chomsky",
+      "subject": "chomsky-syntactic-structures",
+      "predicate": "year",
+      "value": 1957,
+      "unit": "year",
+      "quote": "In 1957, **Noam Chomsky**'s *Syntactic Structures* took the syntax level",
+      "citation_keys": [
+        "nilsson1984qai"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "language-phoenician",
+      "subject": "phoenician-alphabet",
+      "predicate": "year",
+      "value": -1050,
+      "unit": "year",
+      "quote": "Around 1050 BCE, Phoenician traders along the eastern Mediterranean coast perfected what would become the most influential writing innovation in human history: a compact alphabet of just 22 consonantal signs.",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "language-greek-vowels",
+      "subject": "greek-alphabet",
+      "predicate": "year",
+      "value": -800,
+      "unit": "year",
+      "quote": "When the Greeks adopted the Phoenician abjad around 800 BCE",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "language-wadi-el-hol",
+      "subject": "wadi-el-hol-inscriptions",
+      "predicate": "year",
+      "value": -1850,
+      "unit": "year",
+      "quote": "may push the invention back to approximately 1850 BCE",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "language-rosetta",
+      "subject": "rosetta-stone",
+      "predicate": "year",
+      "value": -196,
+      "unit": "year",
+      "quote": "The Rosetta Stone (196 BCE) is the first multi-lingual “parallel corpus”",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "language-champollion",
+      "subject": "champollion-decipherment",
+      "predicate": "year",
+      "value": 1822,
+      "unit": "year",
+      "quote": "When \\citeauthor{hieroglyphsdeciphered} deciphered Egyptian hieroglyphics in 1822",
+      "citation_keys": [
+        "hieroglyphsdeciphered"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "language-middle-ear-gain",
+      "subject": "middle-ear",
+      "predicate": "pressure_gain",
+      "value": 26,
+      "unit": "count",
+      "quote": "\\;\\approx\\;26}",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "language-fetal-hearing",
+      "subject": "fetal-hearing",
+      "predicate": "onset",
+      "value": 19,
+      "unit": "count",
+      "quote": "the first response to a pure tone appeared at 19 weeks",
+      "citation_keys": [
+        "hepper1994fetalhearing"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -128,6 +337,230 @@
       "qualifiers": {},
       "quote": "part: 1",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-human-language-capacity",
+      "from": "human-language-capacity",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "was present at least **\\cite[135,000 years ago]{earlylanguage}**",
+      "citation_keys": [
+        "earlylanguage"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-modern-human-behavior",
+      "from": "modern-human-behavior",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "language may have triggered the widespread appearance of modern human behavior around **100,000 years ago**",
+      "citation_keys": [
+        "earlylanguage"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-blombos-cave-drawing",
+      "from": "blombos-cave-drawing",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(on a silcrete flake, c. 73,000 years ago)",
+      "citation_keys": [
+        "blombosochre"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-lebombo-bone",
+      "from": "lebombo-bone",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\cite[Lebombo Bone]{lebombobone}** (c. 41,000 BCE)",
+      "citation_keys": [
+        "lebombobone"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-panini-ashtadhyayi",
+      "from": "panini-ashtadhyayi",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Later, scholars like Pāṇini (ca. 4th Century BCE) developed the अष्टाध्यायी",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-writing-invention",
+      "from": "writing-invention",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the invention of writing (c. 3200 BCE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-clay-tokens",
+      "from": "clay-tokens",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In the Near East, beginning around 8000 BCE",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-babylonian-sexagesimal",
+      "from": "babylonian-sexagesimal",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Babylonian sexagesimal (base-60) system, fully developed by the 2nd millennium BCE",
+      "citation_keys": [
+        "ancientnumeralsystems"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-brahmagupta-zero",
+      "from": "brahmagupta-zero",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Brahmagupta**'s *Brāhmasphuṭasiddhānta* (628 CE), which treated zero as an integer",
+      "citation_keys": [
+        "brahmagupta628"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-shannon-switching-circuits",
+      "from": "shannon-switching-circuits",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "when **Claude Shannon** showed in 1937 that Boolean algebra could be implemented in electrical switching circuits",
+      "citation_keys": [
+        "shannon1937switching"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-shannon-information-theory",
+      "from": "shannon-information-theory",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1948, Claude Shannon published “A Mathematical Theory of Communication,”",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-english-language",
+      "from": "english-language",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Shannon estimated that ordinary English is roughly 50 percent redundant",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-chomsky-syntactic-structures",
+      "from": "chomsky-syntactic-structures",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1957, **Noam Chomsky**'s *Syntactic Structures* took the syntax level",
+      "citation_keys": [
+        "nilsson1984qai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-phoenician-alphabet",
+      "from": "phoenician-alphabet",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Around 1050 BCE, Phoenician traders along the eastern Mediterranean coast perfected what would become the most influential writing innovation in human history: a compact alphabet of just 22 consonantal signs.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-greek-alphabet",
+      "from": "greek-alphabet",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "When the Greeks adopted the Phoenician abjad around 800 BCE",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-wadi-el-hol-inscriptions",
+      "from": "wadi-el-hol-inscriptions",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "may push the invention back to approximately 1850 BCE",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-rosetta-stone",
+      "from": "rosetta-stone",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Rosetta Stone (196 BCE) is the first multi-lingual “parallel corpus”",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-champollion-decipherment",
+      "from": "champollion-decipherment",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "When \\citeauthor{hieroglyphsdeciphered} deciphered Egyptian hieroglyphics in 1822",
+      "citation_keys": [
+        "hieroglyphsdeciphered"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-middle-ear",
+      "from": "middle-ear",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\;\\approx\\;26}",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-fetal-hearing",
+      "from": "fetal-hearing",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the first response to a pure tone appeared at 19 weeks",
+      "citation_keys": [
+        "hepper1994fetalhearing"
+      ],
       "confidence": "provenance"
     }
   ]

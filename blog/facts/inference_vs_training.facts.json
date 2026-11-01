@@ -5,12 +5,12 @@
   "title": "Inference vs Training — the KV-cache and the two regimes",
   "part": 5,
   "order": 19,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "pope2022scaling",
     "flashattention2022",
-    "vllm2023"
+    "vllm2023",
+    "pope2022scaling"
   ],
   "claims": [
     {
@@ -51,6 +51,194 @@
       "quote": "order: 19",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "inference_vs_training-training-compute-bound",
+      "subject": "training",
+      "predicate": "bottleneck",
+      "value": "compute-bound",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Training is **compute-bound** — the bottleneck is the sheer number of floating-point operations.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_vs_training-decode-memory-bound",
+      "subject": "decode",
+      "predicate": "bottleneck",
+      "value": "memory-bandwidth-bound",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "That makes decode **memory-bandwidth-bound**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_vs_training-training-parallel",
+      "subject": "training",
+      "predicate": "sequence_processing",
+      "value": "whole sequence in parallel",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "During **training**, the model sees the *whole* sequence at once — a prompt and its target, as a dense block of $T$ tokens processed in parallel.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_vs_training-inference-autoregressive",
+      "subject": "decode",
+      "predicate": "generation",
+      "value": "one token at a time",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Generation is *autoregressive*: you produce **one token at a time**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_vs_training-attention-naive",
+      "subject": "attention",
+      "predicate": "time_complexity",
+      "value": "O(T^2)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "Attention is $O(T^2)$ in the naive reading",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_vs_training-kv-cache-linear",
+      "subject": "kv-cache",
+      "predicate": "growth",
+      "value": "linear in sequence length",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the cache grows by one key and one value per layer, per head, per new token — **linear** in sequence length",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_vs_training-kv-cache-complexity",
+      "subject": "kv-cache",
+      "predicate": "decode_time_complexity",
+      "value": "O(T)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "decode stays $O(T)$ rather than $O(T^2)$ per step",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_vs_training-kv-cache-purpose",
+      "subject": "kv-cache",
+      "predicate": "definition",
+      "value": "store keys and values of past tokens instead of recomputing them",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the keys and values for each past token are computed *once* and **stored**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_vs_training-32k-context",
+      "subject": "32k-context",
+      "predicate": "context_length",
+      "value": 32000,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "A 32k-token context means every decode step reads a 32k-token cache.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_vs_training-flashattention-year",
+      "subject": "flashattention",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**FlashAttention** (\\cite[Dao et al., 2022]{flashattention2022})",
+      "citation_keys": [
+        "flashattention2022"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_vs_training-flashattention-effect",
+      "subject": "flashattention",
+      "predicate": "effect",
+      "value": "the attention matrix is never materialized in memory",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "reorders the computation so the attention matrix is never materialized in memory, cutting the memory traffic of the attention itself",
+      "citation_keys": [
+        "flashattention2022"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_vs_training-pagedattention-year",
+      "subject": "paged-attention",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**PagedAttention** (\\cite[Kwon et al., vLLM (2023)]{vllm2023})",
+      "citation_keys": [
+        "vllm2023"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_vs_training-pagedattention-method",
+      "subject": "paged-attention",
+      "predicate": "method",
+      "value": "manages the KV-cache in fixed-size blocks like virtual memory",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "manages the KV-cache like an operating system manages virtual memory — in fixed-size *blocks*",
+      "citation_keys": [
+        "vllm2023"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_vs_training-continuous-batching",
+      "subject": "continuous-batching",
+      "predicate": "method",
+      "value": "interleaves many sequences decode steps",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Continuous batching interleaves many sequences' decode steps",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_vs_training-throughput-definition",
+      "subject": "throughput",
+      "predicate": "definition",
+      "value": "the speed of one stream",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "is the speed of *one* stream",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_vs_training-pope-year",
+      "subject": "pope-2022",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Pope et al., 2022]{pope2022scaling})",
+      "citation_keys": [
+        "pope2022scaling"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -62,6 +250,112 @@
       "qualifiers": {},
       "quote": "part: 5",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_vs_training-training",
+      "from": "training",
+      "to": "inference-vs-training",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Training is **compute-bound** — the bottleneck is the sheer number of floating-point operations.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_vs_training-decode",
+      "from": "decode",
+      "to": "inference-vs-training",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "That makes decode **memory-bandwidth-bound**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_vs_training-attention",
+      "from": "attention",
+      "to": "inference-vs-training",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Attention is $O(T^2)$ in the naive reading",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_vs_training-kv-cache",
+      "from": "kv-cache",
+      "to": "inference-vs-training",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the cache grows by one key and one value per layer, per head, per new token — **linear** in sequence length",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_vs_training-32k-context",
+      "from": "32k-context",
+      "to": "inference-vs-training",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A 32k-token context means every decode step reads a 32k-token cache.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_vs_training-flashattention",
+      "from": "flashattention",
+      "to": "inference-vs-training",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**FlashAttention** (\\cite[Dao et al., 2022]{flashattention2022})",
+      "citation_keys": [
+        "flashattention2022"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_vs_training-paged-attention",
+      "from": "paged-attention",
+      "to": "inference-vs-training",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**PagedAttention** (\\cite[Kwon et al., vLLM (2023)]{vllm2023})",
+      "citation_keys": [
+        "vllm2023"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_vs_training-continuous-batching",
+      "from": "continuous-batching",
+      "to": "inference-vs-training",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Continuous batching interleaves many sequences' decode steps",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_vs_training-throughput",
+      "from": "throughput",
+      "to": "inference-vs-training",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "is the speed of *one* stream",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_vs_training-pope-2022",
+      "from": "pope-2022",
+      "to": "inference-vs-training",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Pope et al., 2022]{pope2022scaling})",
+      "citation_keys": [
+        "pope2022scaling"
+      ],
       "confidence": "provenance"
     }
   ]

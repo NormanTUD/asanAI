@@ -5,12 +5,11 @@
   "title": "Reliability — Calibration & Knowing When to Stop",
   "part": 5,
   "order": 17,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "guo2017calibration",
     "kadavath2022selfknowledge",
-    "kendall2017uncertainties",
     "lakshminarayanan2017ensembles",
     "angelopoulos2021conformal",
     "platt1999probabilistic",
@@ -18,9 +17,9 @@
     "vovk2005algorithmic",
     "quach2023conformal",
     "perez2022redteaming",
-    "wei2024jailbroken",
     "mazeika2024harmbench",
-    "weidinger2023sociotechnical"
+    "weidinger2023sociotechnical",
+    "wei2024jailbroken"
   ],
   "claims": [
     {
@@ -61,6 +60,234 @@
       "quote": "order: 17",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "reliability-calibration-definition",
+      "subject": "calibration",
+      "predicate": "definition",
+      "value": "stated confidence matches observed frequency",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A **calibrated** model says $P(\\text{cat}) = 0.9$ only when roughly 90% of its 0.9-cat cases are actually cats.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-temperature-scaling",
+      "subject": "temperature-scaling",
+      "predicate": "parameters",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "learn a single scalar $T$ and divide the logits by it",
+      "citation_keys": [
+        "guo2017calibration"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-guo-2017-finding",
+      "subject": "guo-2017",
+      "predicate": "finding",
+      "value": "temperature scaling is the best simple trade-off between calibration and accuracy",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "found temperature scaling — a single scalar dividing the logits — the best simple trade-off between calibration and accuracy",
+      "citation_keys": [
+        "guo2017calibration"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-kadavath-2022-finding",
+      "subject": "kadavath-2022",
+      "predicate": "finding",
+      "value": "larger models are reasonably calibrated and the signal improves with scale",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "larger models are reasonably calibrated on multiple-choice and true/false items, and the signal improves with scale",
+      "citation_keys": [
+        "kadavath2022selfknowledge"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-aleatoric-definition",
+      "subject": "aleatoric-uncertainty",
+      "predicate": "definition",
+      "value": "irreducible noise in the data",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**Aleatoric** — irreducible noise *in the data* (a blurry photo).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-epistemic-definition",
+      "subject": "epistemic-uncertainty",
+      "predicate": "definition",
+      "value": "the model ignorance",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**Epistemic** — the *model's* ignorance (a species it has never seen).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-deep-ensembles",
+      "subject": "deep-ensembles",
+      "predicate": "method",
+      "value": "train several networks and average them to approximate Bayesian uncertainty",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**Deep ensembles** — train several networks, average them — approximate Bayesian uncertainty at the cost of training $M$ models",
+      "citation_keys": [
+        "lakshminarayanan2017ensembles"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-conformal-coverage",
+      "subject": "conformal-prediction",
+      "predicate": "coverage_guarantee",
+      "value": "1-epsilon",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "a marginal coverage guarantee of at least $1-\\varepsilon$, averaged over exchangeable calibration and test draws",
+      "citation_keys": [
+        "angelopoulos2021conformal"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-conformal-assumption",
+      "subject": "conformal-prediction",
+      "predicate": "assumption",
+      "value": "exchangeability",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "it assumes only exchangeability",
+      "citation_keys": [
+        "angelopoulos2021conformal"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-platt-year",
+      "subject": "platt-scaling",
+      "predicate": "year",
+      "value": 1999,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "learned on held-out data (\\cite[Platt, 1999]{platt1999probabilistic})",
+      "citation_keys": [
+        "platt1999probabilistic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-geifman-year",
+      "subject": "selective-classification",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Geifman and El-Yaniv give a procedure that, given a trained network and a target risk",
+      "citation_keys": [
+        "geifman2017selective"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-vovk-year",
+      "subject": "conformal-prediction",
+      "predicate": "year",
+      "value": 2005,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Conformal prediction was developed by Vovk and colleagues as a way to put finite-sample guarantees on sequential predictions (\\cite[Vovk et al., 2005]{vovk2005algorithmic})",
+      "citation_keys": [
+        "vovk2005algorithmic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-split-conformal-method",
+      "subject": "split-conformal-prediction",
+      "predicate": "method",
+      "value": "hold out a calibration set, compute a nonconformity score, and use its empirical quantile",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Split conformal prediction later made it practical: hold out a calibration set, compute a nonconformity score for each example, and use the empirical quantile of those scores to build the test set",
+      "citation_keys": [
+        "angelopoulos2021conformal"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-quach-2023",
+      "subject": "quach-2023",
+      "predicate": "contribution",
+      "value": "constructs conformal sets of sequences",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Quach et al. construct conformal sets of sequences and show how the coverage–efficiency trade-off behaves in practice",
+      "citation_keys": [
+        "quach2023conformal"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-perez-2022",
+      "subject": "perez-2022",
+      "predicate": "finding",
+      "value": "one language model can generate test cases that make another model produce harmful replies",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Perez et al. showed that one language model can generate test cases that make another model produce harmful replies, scaling the search far beyond hand-written probes",
+      "citation_keys": [
+        "perez2022redteaming"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-mazeika-2024",
+      "subject": "harmbench",
+      "predicate": "purpose",
+      "value": "standardise the attacks and defences so results are comparable across models",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Mazeika et al. standardise the attacks and defences so results are comparable across models",
+      "citation_keys": [
+        "mazeika2024harmbench"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-weidinger-2023",
+      "subject": "weidinger-2023",
+      "predicate": "finding",
+      "value": "measure capability, human interaction and systemic risk together",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Weidinger et al. argue for measuring capability, human interaction and systemic risk together",
+      "citation_keys": [
+        "weidinger2023sociotechnical"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reliability-wei-2024",
+      "subject": "wei-2024",
+      "predicate": "contribution",
+      "value": "taxonomise why safety training fails",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Wei et al. taxonomise why safety training fails — competing objectives and mismatched generalisation",
+      "citation_keys": [
+        "wei2024jailbroken"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -72,6 +299,192 @@
       "qualifiers": {},
       "quote": "part: 5",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-calibration",
+      "from": "calibration",
+      "to": "reliability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A **calibrated** model says $P(\\text{cat}) = 0.9$ only when roughly 90% of its 0.9-cat cases are actually cats.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-temperature-scaling",
+      "from": "temperature-scaling",
+      "to": "reliability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "learn a single scalar $T$ and divide the logits by it",
+      "citation_keys": [
+        "guo2017calibration"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-guo-2017",
+      "from": "guo-2017",
+      "to": "reliability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "found temperature scaling — a single scalar dividing the logits — the best simple trade-off between calibration and accuracy",
+      "citation_keys": [
+        "guo2017calibration"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-kadavath-2022",
+      "from": "kadavath-2022",
+      "to": "reliability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "larger models are reasonably calibrated on multiple-choice and true/false items, and the signal improves with scale",
+      "citation_keys": [
+        "kadavath2022selfknowledge"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-aleatoric-uncertainty",
+      "from": "aleatoric-uncertainty",
+      "to": "reliability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Aleatoric** — irreducible noise *in the data* (a blurry photo).",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-epistemic-uncertainty",
+      "from": "epistemic-uncertainty",
+      "to": "reliability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Epistemic** — the *model's* ignorance (a species it has never seen).",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-deep-ensembles",
+      "from": "deep-ensembles",
+      "to": "reliability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Deep ensembles** — train several networks, average them — approximate Bayesian uncertainty at the cost of training $M$ models",
+      "citation_keys": [
+        "lakshminarayanan2017ensembles"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-conformal-prediction",
+      "from": "conformal-prediction",
+      "to": "reliability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a marginal coverage guarantee of at least $1-\\varepsilon$, averaged over exchangeable calibration and test draws",
+      "citation_keys": [
+        "angelopoulos2021conformal"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-platt-scaling",
+      "from": "platt-scaling",
+      "to": "reliability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "learned on held-out data (\\cite[Platt, 1999]{platt1999probabilistic})",
+      "citation_keys": [
+        "platt1999probabilistic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-selective-classification",
+      "from": "selective-classification",
+      "to": "reliability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Geifman and El-Yaniv give a procedure that, given a trained network and a target risk",
+      "citation_keys": [
+        "geifman2017selective"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-split-conformal-prediction",
+      "from": "split-conformal-prediction",
+      "to": "reliability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Split conformal prediction later made it practical: hold out a calibration set, compute a nonconformity score for each example, and use the empirical quantile of those scores to build the test set",
+      "citation_keys": [
+        "angelopoulos2021conformal"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-quach-2023",
+      "from": "quach-2023",
+      "to": "reliability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Quach et al. construct conformal sets of sequences and show how the coverage–efficiency trade-off behaves in practice",
+      "citation_keys": [
+        "quach2023conformal"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-perez-2022",
+      "from": "perez-2022",
+      "to": "reliability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Perez et al. showed that one language model can generate test cases that make another model produce harmful replies, scaling the search far beyond hand-written probes",
+      "citation_keys": [
+        "perez2022redteaming"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-harmbench",
+      "from": "harmbench",
+      "to": "reliability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Mazeika et al. standardise the attacks and defences so results are comparable across models",
+      "citation_keys": [
+        "mazeika2024harmbench"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-weidinger-2023",
+      "from": "weidinger-2023",
+      "to": "reliability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Weidinger et al. argue for measuring capability, human interaction and systemic risk together",
+      "citation_keys": [
+        "weidinger2023sociotechnical"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-wei-2024",
+      "from": "wei-2024",
+      "to": "reliability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Wei et al. taxonomise why safety training fails — competing objectives and mismatched generalisation",
+      "citation_keys": [
+        "wei2024jailbroken"
+      ],
       "confidence": "provenance"
     }
   ]

@@ -5,18 +5,12 @@
   "title": "Context Windows & Memory: What LLMs Can Hold in Mind",
   "part": 5,
   "order": 7,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "vaswani2017attention",
-    "dao2022flashattention",
-    "ainslie2023gqa",
     "shazeer2019mqa",
-    "liu2023ringattention",
     "liu2023lostmiddle",
-    "merullo2024talkingheads",
-    "kwon2023vllm",
-    "gu2023mamba"
+    "liu2023ringattention"
   ],
   "claims": [
     {
@@ -57,6 +51,238 @@
       "quote": "order: 7",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "contextwindows-gpt-2-context",
+      "subject": "gpt-2",
+      "predicate": "context_window",
+      "value": 1024,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "| GPT-2 (2019) | 1,024 tokens |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gpt-3-context",
+      "subject": "gpt-3",
+      "predicate": "context_window",
+      "value": 2048,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "| GPT-3 (2020) | 2,048 tokens |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gpt-3-5-context",
+      "subject": "gpt-3-5",
+      "predicate": "context_window",
+      "value": 4096,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "| GPT-3.5 (2022) | 4,096 tokens |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gpt-4-context",
+      "subject": "gpt-4",
+      "predicate": "context_window",
+      "value": 8192,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "| GPT-4 (2023) | 8,192 tokens |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gpt-4-turbo-context",
+      "subject": "gpt-4-turbo",
+      "predicate": "context_window",
+      "value": 128000,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "| GPT-4 Turbo (2023) | 128,000 tokens |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-claude-3-context",
+      "subject": "claude-3",
+      "predicate": "context_window",
+      "value": 200000,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "| Claude 3 (2024) | 200,000 tokens |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gemini-1-5-pro-context",
+      "subject": "gemini-1-5-pro",
+      "predicate": "context_window",
+      "value": 1000000,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "| Gemini 1.5 Pro (2024) | 1,000,000 tokens |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gemini-2-5-context",
+      "subject": "gemini-2-5",
+      "predicate": "context_window",
+      "value": 1000000,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| Gemini 2.5 (2025) | 1,000,000+ tokens |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gpt-4-1-context",
+      "subject": "gpt-4-1",
+      "predicate": "context_window",
+      "value": 1000000,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "| GPT-4.1 (2025) | 1,000,000 tokens |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-growth-factor",
+      "subject": "context-window",
+      "predicate": "growth_factor",
+      "value": 1000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "a **1000x increase** in just 6 years",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-attention-matrix-1m",
+      "subject": "attention-matrix-1m",
+      "predicate": "memory",
+      "value": 2,
+      "unit": "TB",
+      "qualifiers": {},
+      "quote": "At 1 million tokens, the naive attention matrix would require **2 terabytes** of memory",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-kv-cache-70b-128k",
+      "subject": "kv-cache-70b-128k",
+      "predicate": "memory",
+      "value": 335,
+      "unit": "GB",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "2 \\times 80 \\times 64 \\times 128 \\times 128{,}000 \\times 2 \\text{ bytes} \\approx 335 \\text{ GB}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-flash-attention-memory",
+      "subject": "flash-attention",
+      "predicate": "memory_complexity",
+      "value": "O(n)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "**exact** attention with $O(n)$ memory instead of $O(n^2)$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gqa-kv-ratio",
+      "subject": "gqa",
+      "predicate": "kv_cache_ratio",
+      "value": 12.5,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "| Grouped-Query (GQA) | 8 | 64 | 12.5% |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-mqa-kv-ratio",
+      "subject": "mqa",
+      "predicate": "kv_cache_ratio",
+      "value": 1.6,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "| Multi-Query (MQA) \\cite{shazeer2019mqa} | 1 | 64 | 1.6% |",
+      "citation_keys": [
+        "shazeer2019mqa"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gqa-reduction",
+      "subject": "gqa",
+      "predicate": "cache_reduction_factor",
+      "value": 8,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "GQA reduces KV cache memory by 8x with minimal quality loss",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-sliding-window",
+      "subject": "sliding-window-attention",
+      "predicate": "window_size",
+      "value": 4096,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "With a window of $w = 4096$, a 128K-token sequence uses $O(n \\cdot w)$ instead of $O(n^2)$, a massive reduction.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-lost-in-middle",
+      "subject": "lost-in-the-middle",
+      "predicate": "attention_pattern",
+      "value": "U-shaped",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Research \\cite{liu2023lostmiddle} consistently shows that LLMs exhibit a **U-shaped attention pattern**",
+      "citation_keys": [
+        "liu2023lostmiddle"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-kv-cache-70b-1m",
+      "subject": "kv-cache-70b-1m",
+      "predicate": "memory",
+      "value": 2.6,
+      "unit": "TB",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| 1M tokens | ~2.6 TB | Requires multi-GPU, very expensive |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-ring-attention",
+      "subject": "ring-attention",
+      "predicate": "distribution",
+      "value": "ring topology across GPUs",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**Ring Attention** \\cite{liu2023ringattention} distributes the sequence across multiple GPUs in a ring topology",
+      "citation_keys": [
+        "liu2023ringattention"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -68,6 +294,202 @@
       "qualifiers": {},
       "quote": "part: 5",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-gpt-2",
+      "from": "gpt-2",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| GPT-2 (2019) | 1,024 tokens |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-gpt-3",
+      "from": "gpt-3",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| GPT-3 (2020) | 2,048 tokens |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-gpt-3-5",
+      "from": "gpt-3-5",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| GPT-3.5 (2022) | 4,096 tokens |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-gpt-4",
+      "from": "gpt-4",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| GPT-4 (2023) | 8,192 tokens |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-gpt-4-turbo",
+      "from": "gpt-4-turbo",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| GPT-4 Turbo (2023) | 128,000 tokens |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-claude-3",
+      "from": "claude-3",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Claude 3 (2024) | 200,000 tokens |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-gemini-1-5-pro",
+      "from": "gemini-1-5-pro",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Gemini 1.5 Pro (2024) | 1,000,000 tokens |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-gemini-2-5",
+      "from": "gemini-2-5",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Gemini 2.5 (2025) | 1,000,000+ tokens |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-gpt-4-1",
+      "from": "gpt-4-1",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| GPT-4.1 (2025) | 1,000,000 tokens |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-context-window",
+      "from": "context-window",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a **1000x increase** in just 6 years",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-attention-matrix-1m",
+      "from": "attention-matrix-1m",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "At 1 million tokens, the naive attention matrix would require **2 terabytes** of memory",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-kv-cache-70b-128k",
+      "from": "kv-cache-70b-128k",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "2 \\times 80 \\times 64 \\times 128 \\times 128{,}000 \\times 2 \\text{ bytes} \\approx 335 \\text{ GB}",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-flash-attention",
+      "from": "flash-attention",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**exact** attention with $O(n)$ memory instead of $O(n^2)$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-gqa",
+      "from": "gqa",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Grouped-Query (GQA) | 8 | 64 | 12.5% |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-mqa",
+      "from": "mqa",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Multi-Query (MQA) \\cite{shazeer2019mqa} | 1 | 64 | 1.6% |",
+      "citation_keys": [
+        "shazeer2019mqa"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-sliding-window-attention",
+      "from": "sliding-window-attention",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "With a window of $w = 4096$, a 128K-token sequence uses $O(n \\cdot w)$ instead of $O(n^2)$, a massive reduction.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-lost-in-the-middle",
+      "from": "lost-in-the-middle",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Research \\cite{liu2023lostmiddle} consistently shows that LLMs exhibit a **U-shaped attention pattern**",
+      "citation_keys": [
+        "liu2023lostmiddle"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-kv-cache-70b-1m",
+      "from": "kv-cache-70b-1m",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| 1M tokens | ~2.6 TB | Requires multi-GPU, very expensive |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-ring-attention",
+      "from": "ring-attention",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Ring Attention** \\cite{liu2023ringattention} distributes the sequence across multiple GPUs in a ring topology",
+      "citation_keys": [
+        "liu2023ringattention"
+      ],
       "confidence": "provenance"
     }
   ]

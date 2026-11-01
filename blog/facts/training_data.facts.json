@@ -5,31 +5,15 @@
   "title": "Training Data Curation",
   "part": 5,
   "order": 12,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "hoffmann2022chinchilla",
-    "rae2021gopher",
-    "raffel2020t5",
     "penedo2024fineweb",
-    "abbas2023semdedup",
-    "chollet2024arcagi",
     "gao2020pile",
-    "commonpile2025",
     "together2024redpajama",
     "chen2021codex",
-    "li2022alphacode",
-    "ma2023codereasoning",
-    "waheed2025codeinduced",
-    "gao2022pal",
-    "wang2024codeact",
-    "roziere2023codellama",
-    "guo2024deepseekcoder",
-    "jimenez2024swebench",
-    "bai2022constitutional",
-    "hendrycks2021math",
-    "shumailov2023modelcollapse",
-    "gage1994bpe"
+    "jimenez2024swebench"
   ],
   "claims": [
     {
@@ -70,6 +54,250 @@
       "quote": "order: 12",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "training_data-frontier-tokens",
+      "subject": "frontier-llm-training-data",
+      "predicate": "token_count",
+      "value": "10-15 trillion",
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Frontier LLMs are trained on **10–15 trillion tokens**.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-curation-advantage",
+      "subject": "training-data-curation",
+      "predicate": "advantage",
+      "value": "1T curated vs 10T unfiltered",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "The same architecture trained on 1 trillion curated tokens outperforms one trained on 10 trillion unfiltered tokens.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-chinchilla-ratio",
+      "subject": "chinchilla-scaling-law",
+      "predicate": "tokens_per_parameter",
+      "value": 20,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "models are best trained when tokens $\\approx 20 \\times$ parameters",
+      "citation_keys": [
+        "hoffmann2022chinchilla"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-70b-tokens",
+      "subject": "model-70b",
+      "predicate": "training_tokens",
+      "value": 1400000000000,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "So a 70B model needs ~1.4T tokens to be “Chinchilla-optimal”",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-common-crawl-year",
+      "subject": "common-crawl",
+      "predicate": "founded_year",
+      "value": 2008,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Common Crawl** (commoncrawl.org) is a non-profit that has been archiving web pages since 2008.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-common-crawl-urls",
+      "subject": "common-crawl",
+      "predicate": "monthly_urls",
+      "value": 3000000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Each month, it crawls ~3 billion URLs, producing ~300 TB of raw HTML.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-common-crawl-text",
+      "subject": "common-crawl",
+      "predicate": "monthly_useful_text",
+      "value": 30,
+      "unit": "TB",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "this yields ~30 TB of useful text per month.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-length-filter",
+      "subject": "quality-filter-length",
+      "predicate": "character_range",
+      "value": "100-100000",
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**Length filter**: drop documents < 100 or > 100,000 characters.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-fineweb-tokens",
+      "subject": "fineweb",
+      "predicate": "token_count",
+      "value": 1300000000000,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "FineWeb (\\cite[Penedo et al., 2024]{penedo2024fineweb}) pushed this further: 1.3T tokens of *English-only* web data",
+      "citation_keys": [
+        "penedo2024fineweb"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-minhash-threshold",
+      "subject": "minhash-deduplication",
+      "predicate": "jaccard_threshold",
+      "value": 0.8,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Threshold of $0.8$ Jaccard catches near-duplicates.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-suffix-array",
+      "subject": "suffix-array-deduplication",
+      "predicate": "minimum_repeat_length",
+      "value": 100,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "identify repeated substrings of length $\\geq k$ (typically $k = 100$ characters)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-decontamination-ngram",
+      "subject": "decontamination-ngram",
+      "predicate": "word_ngram_threshold",
+      "value": 8,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "If $> k$ (typically $k = 8$ for words, $k = 50$ for characters)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-pile-size",
+      "subject": "the-pile",
+      "predicate": "size",
+      "value": 825,
+      "unit": "GB",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "**The Pile** (\\cite[Gao et al., 2020]{gao2020pile}): ~825 GB of diverse text from 22 sources",
+      "citation_keys": [
+        "gao2020pile"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-common-pile-size",
+      "subject": "common-pile",
+      "predicate": "size",
+      "value": 8,
+      "unit": "TB",
+      "qualifiers": {},
+      "quote": "**Common Pile v0.1** (EleutherAI and collaborators, 2025): 8 TB of public-domain and openly licensed text from 30 sources",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-redpajama-tokens",
+      "subject": "redpajama",
+      "predicate": "token_count",
+      "value": 1200000000000,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "**RedPajama** (\\cite[Together, 2023]{together2024redpajama}): open replication of LLaMA's training mix. 1.2T tokens",
+      "citation_keys": [
+        "together2024redpajama"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-slimpajama-tokens",
+      "subject": "slimpajama",
+      "predicate": "token_count",
+      "value": 627000000000,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "**SlimPajama** (Cerebras, 2023): cleaned, deduplicated version of RedPajama. 627B tokens.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-stack-size",
+      "subject": "the-stack",
+      "predicate": "size",
+      "value": 3.1,
+      "unit": "TB",
+      "qualifiers": {},
+      "quote": "**The Stack** (BigCode, 2022): 3.1 TB of source code in 30 programming languages",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-dclm-compute",
+      "subject": "dclm-baseline",
+      "predicate": "compute_reduction_vs_llama_3_8b",
+      "value": 6.6,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "6.6× less compute than Llama 3 8B",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-codex-humaneval",
+      "subject": "codex",
+      "predicate": "humaneval_accuracy",
+      "value": 28.8,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "Codex fine-tuned GPT on GitHub code — 28.8% on HumanEval where GPT-3 got 0%",
+      "citation_keys": [
+        "chen2021codex"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_data-swe-bench-issues",
+      "subject": "swe-bench",
+      "predicate": "issue_count",
+      "value": 2294,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**SWE-bench** (\\cite[Jimenez et al., 2024]{jimenez2024swebench}), 2,294 real GitHub issues",
+      "citation_keys": [
+        "jimenez2024swebench"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -81,6 +309,198 @@
       "qualifiers": {},
       "quote": "part: 5",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-frontier-llm-training-data",
+      "from": "frontier-llm-training-data",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Frontier LLMs are trained on **10–15 trillion tokens**.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-training-data-curation",
+      "from": "training-data-curation",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The same architecture trained on 1 trillion curated tokens outperforms one trained on 10 trillion unfiltered tokens.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-chinchilla-scaling-law",
+      "from": "chinchilla-scaling-law",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "models are best trained when tokens $\\approx 20 \\times$ parameters",
+      "citation_keys": [
+        "hoffmann2022chinchilla"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-model-70b",
+      "from": "model-70b",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "So a 70B model needs ~1.4T tokens to be “Chinchilla-optimal”",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-common-crawl",
+      "from": "common-crawl",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Common Crawl** (commoncrawl.org) is a non-profit that has been archiving web pages since 2008.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-quality-filter-length",
+      "from": "quality-filter-length",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Length filter**: drop documents < 100 or > 100,000 characters.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-fineweb",
+      "from": "fineweb",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "FineWeb (\\cite[Penedo et al., 2024]{penedo2024fineweb}) pushed this further: 1.3T tokens of *English-only* web data",
+      "citation_keys": [
+        "penedo2024fineweb"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-minhash-deduplication",
+      "from": "minhash-deduplication",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Threshold of $0.8$ Jaccard catches near-duplicates.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-suffix-array-deduplication",
+      "from": "suffix-array-deduplication",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "identify repeated substrings of length $\\geq k$ (typically $k = 100$ characters)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-decontamination-ngram",
+      "from": "decontamination-ngram",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "If $> k$ (typically $k = 8$ for words, $k = 50$ for characters)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-the-pile",
+      "from": "the-pile",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**The Pile** (\\cite[Gao et al., 2020]{gao2020pile}): ~825 GB of diverse text from 22 sources",
+      "citation_keys": [
+        "gao2020pile"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-common-pile",
+      "from": "common-pile",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Common Pile v0.1** (EleutherAI and collaborators, 2025): 8 TB of public-domain and openly licensed text from 30 sources",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-redpajama",
+      "from": "redpajama",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**RedPajama** (\\cite[Together, 2023]{together2024redpajama}): open replication of LLaMA's training mix. 1.2T tokens",
+      "citation_keys": [
+        "together2024redpajama"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-slimpajama",
+      "from": "slimpajama",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**SlimPajama** (Cerebras, 2023): cleaned, deduplicated version of RedPajama. 627B tokens.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-the-stack",
+      "from": "the-stack",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**The Stack** (BigCode, 2022): 3.1 TB of source code in 30 programming languages",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-dclm-baseline",
+      "from": "dclm-baseline",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "6.6× less compute than Llama 3 8B",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-codex",
+      "from": "codex",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Codex fine-tuned GPT on GitHub code — 28.8% on HumanEval where GPT-3 got 0%",
+      "citation_keys": [
+        "chen2021codex"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_data-swe-bench",
+      "from": "swe-bench",
+      "to": "training-data",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**SWE-bench** (\\cite[Jimenez et al., 2024]{jimenez2024swebench}), 2,294 real GitHub issues",
+      "citation_keys": [
+        "jimenez2024swebench"
+      ],
       "confidence": "provenance"
     }
   ]

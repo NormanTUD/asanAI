@@ -2272,7 +2272,8 @@
       "value": 70000000000,
       "unit": "count",
       "qualifiers": {
-        "approx": true
+        "approx": true,
+        "variant": "70b-example"
       },
       "quote": "downloading a 70-billion-parameter LLM over a noisy channel",
       "citation_keys": [],
@@ -32829,5 +32830,6 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
-  ]
+  ],
+  "deep_audit": true
 }

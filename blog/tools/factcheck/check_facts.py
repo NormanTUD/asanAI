@@ -129,6 +129,66 @@ def _normalize_source(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip().lower()
 
 
+def _format_conflict(subject: str, predicate: str, scope: str, clusters: list[list[dict]]) -> str:
+    claims = [c for cluster in clusters for c in cluster]
+    first_file = claims[0].get("source", "blog/facts/?")
+    lines = [
+        "=" * 80,
+        "FACT CONFLICT — not globally gluable",
+        "-" * 80,
+        f"subject:   {subject}",
+        f"predicate: {predicate}",
+        f"scope:     {scope}",
+        "why: two claims describe the same functional fact with incompatible normalized values.",
+    ]
+    for index, cluster in enumerate(clusters, 1):
+        for claim in cluster:
+            lines.append(
+                f"claim {index}: id={claim.get('id', '?')} file={claim.get('source', '?')} "
+                f"value={claim['value']!r} unit={claim['unit']} "
+                f"quote={claim.get('quote', '')!r}"
+            )
+    lines.append(
+        "fix: change one value to the verified one, or add a qualifier "
+        "(precision, parameter_kind, variant, event, year) / use a versioned "
+        "subject id so the scopes are legitimately different. Do not delete "
+        "facts, do not add an allowlist, and do not remove qualifiers."
+    )
+    lines.append(
+        "check: uv run blog/tools/factcheck/check_facts.py blog/ "
+        "--strict-relations --strict-quotes --require-claims"
+    )
+    prompt = [
+        "Fix this fact-ledger conflict:",
+        f"- subject: {subject}",
+        f"- predicate: {predicate}",
+        f"- scope: {scope}",
+    ]
+    for index, cluster in enumerate(clusters, 1):
+        for claim in cluster:
+            prompt.append(
+                f"- claim {index}: file={claim.get('source', '?')} id={claim.get('id', '?')} "
+                f"value={claim['value']!r} unit={claim['unit']} quote={claim.get('quote', '')!r}"
+            )
+    prompt.extend([
+        "- Why: the claims share the same (subject, predicate, scope) but normalize to different values.",
+        "- How: correct the wrong value. If both are legitimate, add a qualifier "
+        "(precision/parameter_kind/variant/event/year) or use a versioned subject id. "
+        "Never add an allowlist or delete facts.",
+        "- Then run: uv run blog/tools/factcheck/check_facts.py blog/ "
+        "--strict-relations --strict-quotes --require-claims",
+    ])
+    lines.append("AI FIX PROMPT (copy the block):")
+    lines.append("----- COPY FROM HERE -----")
+    lines.extend(prompt)
+    lines.append("----- COPY TO HERE -----")
+    lines.append(
+        f"::error file=blog/facts/{first_file}::FACT_CONFLICT subject={subject} "
+        f"predicate={predicate} scope={scope} — see the block above for values and fix"
+    )
+    return "\n".join(lines)
+
+
 def check(blog: Path, coverage: bool = True, verbose: bool = False,
           strict_relations: bool = False, strict_temporal: bool = False,
           strict_quotes: bool = False, require_claims: bool = False,
@@ -252,8 +312,8 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
     for slug, (_, norm_source) in source_cache.items():
         if not norm_source:
             continue
-        if not documents.get(slug, {}).get("curated"):
-            continue  # unregistered-year scan is a gate for curated ledgers
+        if not documents.get(slug, {}).get("deep_audit"):
+            continue  # full year-coverage scan is a gate for deep-audited ledgers
         known_years = set()
         for claim in all_claims:
             if claim.get("source") != f"{slug}.facts.json":
@@ -270,14 +330,7 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
     for (subject, predicate, scope), claim_group in sorted(groups.items()):
         clusters = _clusters(claim_group)
         if len(clusters) > 1:
-            lines = [f"conflict: {subject} {predicate} scope={scope}"]
-            for cluster in clusters:
-                lines.append("  value: " + " | ".join(
-                    f"{c['value']!r} {c['unit']} @ "
-                    f"{c.get('source', '?')} — {_describe(c)}"
-                    for c in cluster
-                ))
-            conflicts.append("\n".join(lines))
+            conflicts.append(_format_conflict(subject, predicate, scope, clusters))
 
     # ---- relations: endpoints, cycles, temporal and same_as compatibility ----
     fact_ids = {c["id"]: c for c in all_claims if c.get("id")}
@@ -368,21 +421,20 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
         if rel["kind"] == "same_as":
             union(ref_subject(rel["from"]), ref_subject(rel["to"]))
 
+    root_members: dict[str, set[str]] = defaultdict(set)
+    for claim in all_claims:
+        root_members[find(claim["subject"])].add(claim["subject"])
+
     merged: dict[tuple[str, str, str], list[dict]] = defaultdict(list)
     for claim in all_claims:
         if is_functional(claim):
             merged[(find(claim["subject"]), claim["predicate"], scope_key(claim))].append(claim)
     for (root, predicate, scope), claim_group in sorted(merged.items()):
+        if len(root_members[root]) <= 1:
+            continue  # no same_as merge touched this subject
         clusters = _clusters(claim_group)
         if len(clusters) > 1:
-            lines = [f"conflict after same_as merge: {root} {predicate} scope={scope}"]
-            for cluster in clusters:
-                lines.append("  value: " + " | ".join(
-                    f"{c['value']!r} {c['unit']} @ "
-                    f"{c.get('source', '?')} — {_describe(c)}"
-                    for c in cluster
-                ))
-            conflicts.append("\n".join(lines))
+            conflicts.append(_format_conflict(root, predicate, scope, clusters))
 
     year_claims_by_ref: dict[str, list[dict]] = defaultdict(list)
     for claim in all_claims:
@@ -432,10 +484,11 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
 
     if unregistered:
         print(f"[unregistered] {len(unregistered)} year(s) in prose have no matching fact:")
-        for item in unregistered[:40]:
+        limit = len(unregistered) if (verbose or strict_unregistered) else 5
+        for item in unregistered[:limit]:
             print(f"  ? {item}")
-        if len(unregistered) > 40:
-            print(f"  … and {len(unregistered) - 40} more")
+        if len(unregistered) > limit:
+            print(f"  … and {len(unregistered) - limit} more (use --verbose to list all)")
         if strict_unregistered:
             errors.extend(unregistered)
 

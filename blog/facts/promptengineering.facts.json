@@ -5,27 +5,17 @@
   "title": "Prompt Engineering: How to talk to LLMs",
   "part": 5,
   "order": 18,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "emergentmind_latent_space_steering",
-    "emergentmind_steering_vectors",
-    "emergentmind_representation_steering",
     "wei2022cot",
     "yao2023tot",
     "yao2023react",
-    "wang2023planandexecute",
+    "emergentmind_latent_space_steering",
+    "park2024linear",
     "madaan2023selfrefine",
     "shinn2023reflexion",
-    "emergentmind_latent_steering",
-    "coherent_difference_chapter",
-    "spencerbrown1969form",
-    "topology_wiki",
-    "sheaf_mathematics",
-    "feigenbaum1984expert",
-    "park2024linear",
-    "marks2023geometry",
-    "bricken2023monosemanticity"
+    "spencerbrown1969form"
   ],
   "claims": [
     {
@@ -66,6 +56,190 @@
       "quote": "order: 18",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "promptengineering-cot-year",
+      "subject": "chain-of-thought",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "quote": "The single most important reasoning technique (\\cite[Wei et al., 2022]{wei2022cot})",
+      "citation_keys": [
+        "wei2022cot"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "promptengineering-tot-year",
+      "subject": "tree-of-thought",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "quote": "An extension of CoT (\\cite[Yao et al., 2023]{yao2023tot})",
+      "citation_keys": [
+        "yao2023tot"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "promptengineering-react-year",
+      "subject": "react",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "quote": "(\\cite[Yao et al., 2023]{yao2023react})",
+      "citation_keys": [
+        "yao2023react"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "promptengineering-fewshot-examples",
+      "subject": "few-shot-prompting",
+      "predicate": "example_count",
+      "value": "3-5",
+      "unit": "count",
+      "quote": "Provide 3-5 examples of (input, desired output) pairs",
+      "qualifiers": {
+        "approx": true
+      },
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "promptengineering-causal-mask",
+      "subject": "causal-mask",
+      "predicate": "definition",
+      "value": "each token can attend only to tokens before it",
+      "unit": "name",
+      "quote": "During training, each token can only attend to tokens before it, never after.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "promptengineering-instruction-position",
+      "subject": "prompt-instruction-placement",
+      "predicate": "recommended_position",
+      "value": "beginning or very end",
+      "unit": "name",
+      "quote": "Important instructions should go at the beginning (they influence everything after) or at the very end (they see everything before).",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "promptengineering-injection-definition",
+      "subject": "prompt-injection",
+      "predicate": "definition",
+      "value": "malicious instructions embedded inside data the model processes",
+      "unit": "name",
+      "quote": "**Prompt injection** is when a malicious user embeds instructions inside data the model processes",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "promptengineering-latent-steering",
+      "subject": "latent-steering",
+      "predicate": "update_formula",
+      "value": "h' = h + alpha * Delta",
+      "unit": "formula",
+      "quote": "then add $h' = h + \\alpha \\Delta$ to the hidden state at inference time",
+      "citation_keys": [
+        "emergentmind_latent_space_steering"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "promptengineering-semantic-steering",
+      "subject": "semantic-vector-steering",
+      "predicate": "definition",
+      "value": "specify a region of embedding space rather than a concrete token sequence",
+      "unit": "name",
+      "quote": "This is what has variously been called *semantic vector steering*, *latent-space targeting*, or *semantic latent-space navigation*",
+      "citation_keys": [
+        "emergentmind_latent_space_steering"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "promptengineering-tereshkova",
+      "subject": "valentina-tereshkova",
+      "predicate": "achievement",
+      "value": "first woman in space",
+      "unit": "name",
+      "quote": "If the training data contains “Valentina Tereshkova was the first woman in space,”",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "promptengineering-vector-dim",
+      "subject": "embedding-vector",
+      "predicate": "dimension_example",
+      "value": 4096,
+      "unit": "count",
+      "quote": "You do not literally see the 4096-dimensional vector",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "promptengineering-reversal-curse",
+      "subject": "reversal-curse",
+      "predicate": "definition",
+      "value": "failure to infer B is A from A is B in autoregressive models",
+      "unit": "name",
+      "quote": "**The Reversal Curse is a robust failure mode of autoregressive training.**",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "promptengineering-linear-hypothesis",
+      "subject": "linear-representation-hypothesis",
+      "predicate": "claim",
+      "value": "semantic properties are encoded as linear directions",
+      "unit": "name",
+      "quote": "Many semantic properties are encoded as **linear directions** in activation space \\cite[Linear Representation Hypothesis, geometry of features in LLMs]{park2024linear}.",
+      "citation_keys": [
+        "park2024linear"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "promptengineering-selfrefine-year",
+      "subject": "self-refine",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "quote": "(\\cite[Madaan et al., 2023]{madaan2023selfrefine} \\cite[Shinn et al. (2023)]{shinn2023reflexion})",
+      "citation_keys": [
+        "madaan2023selfrefine",
+        "shinn2023reflexion"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "promptengineering-spencerbrown-year",
+      "subject": "laws-of-form",
+      "predicate": "year",
+      "value": 1969,
+      "unit": "year",
+      "quote": "the first axiom of \\citetitle{spencerbrown1969form}",
+      "citation_keys": [
+        "spencerbrown1969form"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -77,6 +251,173 @@
       "qualifiers": {},
       "quote": "part: 5",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-promptengineering-chain-of-thought",
+      "from": "chain-of-thought",
+      "to": "promptengineering",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The single most important reasoning technique (\\cite[Wei et al., 2022]{wei2022cot})",
+      "citation_keys": [
+        "wei2022cot"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-promptengineering-tree-of-thought",
+      "from": "tree-of-thought",
+      "to": "promptengineering",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "An extension of CoT (\\cite[Yao et al., 2023]{yao2023tot})",
+      "citation_keys": [
+        "yao2023tot"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-promptengineering-react",
+      "from": "react",
+      "to": "promptengineering",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Yao et al., 2023]{yao2023react})",
+      "citation_keys": [
+        "yao2023react"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-promptengineering-few-shot-prompting",
+      "from": "few-shot-prompting",
+      "to": "promptengineering",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Provide 3-5 examples of (input, desired output) pairs",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-promptengineering-causal-mask",
+      "from": "causal-mask",
+      "to": "promptengineering",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "During training, each token can only attend to tokens before it, never after.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-promptengineering-prompt-instruction-placement",
+      "from": "prompt-instruction-placement",
+      "to": "promptengineering",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Important instructions should go at the beginning (they influence everything after) or at the very end (they see everything before).",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-promptengineering-prompt-injection",
+      "from": "prompt-injection",
+      "to": "promptengineering",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Prompt injection** is when a malicious user embeds instructions inside data the model processes",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-promptengineering-latent-steering",
+      "from": "latent-steering",
+      "to": "promptengineering",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "then add $h' = h + \\alpha \\Delta$ to the hidden state at inference time",
+      "citation_keys": [
+        "emergentmind_latent_space_steering"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-promptengineering-semantic-vector-steering",
+      "from": "semantic-vector-steering",
+      "to": "promptengineering",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This is what has variously been called *semantic vector steering*, *latent-space targeting*, or *semantic latent-space navigation*",
+      "citation_keys": [
+        "emergentmind_latent_space_steering"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-promptengineering-valentina-tereshkova",
+      "from": "valentina-tereshkova",
+      "to": "promptengineering",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "If the training data contains “Valentina Tereshkova was the first woman in space,”",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-promptengineering-embedding-vector",
+      "from": "embedding-vector",
+      "to": "promptengineering",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "You do not literally see the 4096-dimensional vector",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-promptengineering-reversal-curse",
+      "from": "reversal-curse",
+      "to": "promptengineering",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**The Reversal Curse is a robust failure mode of autoregressive training.**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-promptengineering-linear-representation-hypothesis",
+      "from": "linear-representation-hypothesis",
+      "to": "promptengineering",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Many semantic properties are encoded as **linear directions** in activation space \\cite[Linear Representation Hypothesis, geometry of features in LLMs]{park2024linear}.",
+      "citation_keys": [
+        "park2024linear"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-promptengineering-self-refine",
+      "from": "self-refine",
+      "to": "promptengineering",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Madaan et al., 2023]{madaan2023selfrefine} \\cite[Shinn et al. (2023)]{shinn2023reflexion})",
+      "citation_keys": [
+        "madaan2023selfrefine",
+        "shinn2023reflexion"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-promptengineering-laws-of-form",
+      "from": "laws-of-form",
+      "to": "promptengineering",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the first axiom of \\citetitle{spencerbrown1969form}",
+      "citation_keys": [
+        "spencerbrown1969form"
+      ],
       "confidence": "provenance"
     }
   ]

@@ -5,73 +5,19 @@
   "title": "Coherent Difference",
   "part": 4,
   "order": 2,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "spencerbrown1969form",
-    "whitehead_process",
-    "bergson1889essai",
-    "lawvere1993categories",
-    "lawvere2007taking",
-    "topology_wiki",
-    "sheaf_mathematics",
-    "higher_category_wiki",
-    "sellars1956empiricism",
-    "brandom1994making",
-    "fiber_bundle_wiki",
-    "laws_of_form_diagram",
-    "gunther1978idee",
-    "gunther2002bewusstsein",
-    "distinction_philosophy",
-    "laozi400taoteching",
-    "typespaces_wiki",
-    "category_diagram_image",
-    "sheaf_sections_image",
-    "sheaf_gluing_image",
-    "anaxagoras450fragments",
-    "spinoza1677ethics",
     "leray1948calcul",
+    "sheaf_mathematics",
     "grothendieck_sheaf",
-    "manifold_wiki",
-    "naturanonfacitsaltus",
-    "heraclitus500fragments",
-    "hottbook",
-    "awodey2010category",
-    "maclane1998categories",
-    "category_theory_wiki",
     "eilenberglane1945",
-    "topos_wiki",
-    "goldblatt1979topoi",
-    "johnstone_elephant",
-    "maclanemoerdijk1992",
-    "caramello2017theories",
-    "nlab_topos",
-    "internal_logic_wiki",
-    "tarski1938topos",
-    "elementary_topos_wiki",
-    "giraud1964descente",
-    "subobject_classifier_wiki",
-    "heyting_algebra_wiki",
     "diaconescu1975",
-    "geometric_morphism_wiki",
-    "barr1974toposes",
-    "schmitz_neo_phenomenology",
-    "whitehead_concept_nature",
-    "merleauponty1945phenomenologie",
+    "subobject_classifier_wiki",
     "saussure1916",
-    "leibniz1714monadology",
-    "hypothesengeometrie",
-    "firth1957distributive",
-    "distributional_hypothesis",
     "nagarjuna150mmk",
-    "deleuze1968difference",
-    "lumpschool",
-    "heraclitus_unity",
-    "parmenides480fragments",
-    "aristotle_metaphysics",
-    "plotinus250enneads",
-    "cusanus1440docta",
-    "wittgenstein1953investigations"
+    "hypothesengeometrie"
   ],
   "claims": [
     {
@@ -112,6 +58,227 @@
       "quote": "order: 2",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "coherent_difference-spencer-brown",
+      "subject": "laws-of-form",
+      "predicate": "year",
+      "value": 1969,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "made this the literal first axiom of his calculus",
+      "citation_keys": [
+        "spencerbrown1969form"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-laws-axiom",
+      "subject": "laws-of-form",
+      "predicate": "axiom",
+      "value": "¬¬x = x",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "\\neg\\neg\\, x \\;=\\; x",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-equivalence",
+      "subject": "equivalence-relation",
+      "predicate": "properties",
+      "value": "reflexive, symmetric, transitive",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A relation with all three is an **equivalence relation**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-partition",
+      "subject": "equivalence-relation",
+      "predicate": "corresponds_to",
+      "value": "partition into disjoint boxes",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "as a partition of } A \\text{ into disjoint boxes.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-gluing",
+      "subject": "sheaf",
+      "predicate": "gluing_axiom",
+      "value": "unique global section from compatible local sections",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "then there is a unique global section $s \\in \\mathcal{F}(U)$ whose restriction to each $U_{i}$ is $s_{i}$.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-leray",
+      "subject": "sheaf-theory",
+      "predicate": "introduced_by",
+      "value": "Jean Leray",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Sheaves (faisceaux) were introduced by Jean Leray in the early 1940s",
+      "citation_keys": [
+        "leray1948calcul",
+        "sheaf_mathematics"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-grothendieck-sheaves",
+      "subject": "sheaf-theory",
+      "predicate": "generalized_by",
+      "value": "Alexander Grothendieck",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "developed into their general form by Alexander Grothendieck",
+      "citation_keys": [
+        "grothendieck_sheaf"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-category",
+      "subject": "category-theory",
+      "predicate": "year",
+      "value": 1945,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "introduced by \\citeauthor{eilenberglane1945} (\\citeyear{eilenberglane1945})",
+      "citation_keys": [
+        "eilenberglane1945"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-topos",
+      "subject": "topos",
+      "predicate": "introduced_period",
+      "value": "early 1960s",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "The concept was introduced by Grothendieck \\cite{grothendieck_sheaf} in the early 1960s",
+      "citation_keys": [
+        "grothendieck_sheaf"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-diaconescu",
+      "subject": "diaconescu-theorem",
+      "predicate": "statement",
+      "value": "axiom of choice implies law of excluded middle",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "in any topos, the axiom of choice implies the law of excluded middle",
+      "citation_keys": [
+        "diaconescu1975"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-omega-set",
+      "subject": "subobject-classifier",
+      "predicate": "value_in_set",
+      "value": "{0, 1}",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "In $\\mathbf{Set}$, $\\Omega = \\{0, 1\\}$",
+      "citation_keys": [
+        "subobject_classifier_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-omega-sheaf",
+      "subject": "subobject-classifier",
+      "predicate": "value_in_sheaves",
+      "value": "open subsets of U",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "$\\Omega(U)$ is the set of all open subsets of $U$",
+      "citation_keys": [
+        "subobject_classifier_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-nno",
+      "subject": "grothendieck-topos",
+      "predicate": "natural_numbers_object",
+      "value": "always exists",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**A natural numbers object** $\\mathbb{N}$ — but only in a Grothendieck topos.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-lem",
+      "subject": "law-of-excluded-middle",
+      "predicate": "fails_in",
+      "value": "every non-Boolean topos",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Fails in every non-Boolean topos (e.g. $\\mathbf{Sh}(\\mathbb{R})$).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-saussure",
+      "subject": "saussure",
+      "predicate": "year",
+      "value": 1916,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{saussure1916} (\\citeyear{saussure1916}) said about language",
+      "citation_keys": [
+        "saussure1916"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-nagarjuna",
+      "subject": "nagarjuna-mmk",
+      "predicate": "verse",
+      "value": "24:18",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "*Mūlamadhyamakakārikā* 24:18",
+      "citation_keys": [
+        "nagarjuna150mmk"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-riemann",
+      "subject": "riemann",
+      "predicate": "manifold_lecture_year",
+      "value": 1854,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in his 1854 habilitation lecture by describing a *Mannigfaltigkeit*",
+      "citation_keys": [
+        "hypothesengeometrie"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-float",
+      "subject": "float-lattice",
+      "predicate": "associativity",
+      "value": "not associative",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Float addition is **not associative**",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -122,6 +289,165 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-laws-of-form",
+      "from": "laws-of-form",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "made this the literal first axiom of his calculus",
+      "citation_keys": [
+        "spencerbrown1969form"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-equivalence-relation",
+      "from": "equivalence-relation",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A relation with all three is an **equivalence relation**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-sheaf",
+      "from": "sheaf",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "then there is a unique global section $s \\in \\mathcal{F}(U)$ whose restriction to each $U_{i}$ is $s_{i}$.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-sheaf-theory",
+      "from": "sheaf-theory",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Sheaves (faisceaux) were introduced by Jean Leray in the early 1940s",
+      "citation_keys": [
+        "leray1948calcul",
+        "sheaf_mathematics"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-category-theory",
+      "from": "category-theory",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "introduced by \\citeauthor{eilenberglane1945} (\\citeyear{eilenberglane1945})",
+      "citation_keys": [
+        "eilenberglane1945"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-topos",
+      "from": "topos",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The concept was introduced by Grothendieck \\cite{grothendieck_sheaf} in the early 1960s",
+      "citation_keys": [
+        "grothendieck_sheaf"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-diaconescu-theorem",
+      "from": "diaconescu-theorem",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in any topos, the axiom of choice implies the law of excluded middle",
+      "citation_keys": [
+        "diaconescu1975"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-subobject-classifier",
+      "from": "subobject-classifier",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In $\\mathbf{Set}$, $\\Omega = \\{0, 1\\}$",
+      "citation_keys": [
+        "subobject_classifier_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-grothendieck-topos",
+      "from": "grothendieck-topos",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**A natural numbers object** $\\mathbb{N}$ — but only in a Grothendieck topos.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-law-of-excluded-middle",
+      "from": "law-of-excluded-middle",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Fails in every non-Boolean topos (e.g. $\\mathbf{Sh}(\\mathbb{R})$).",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-saussure",
+      "from": "saussure",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{saussure1916} (\\citeyear{saussure1916}) said about language",
+      "citation_keys": [
+        "saussure1916"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-nagarjuna-mmk",
+      "from": "nagarjuna-mmk",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Mūlamadhyamakakārikā* 24:18",
+      "citation_keys": [
+        "nagarjuna150mmk"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-riemann",
+      "from": "riemann",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in his 1854 habilitation lecture by describing a *Mannigfaltigkeit*",
+      "citation_keys": [
+        "hypothesengeometrie"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-float-lattice",
+      "from": "float-lattice",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Float addition is **not associative**",
       "citation_keys": [],
       "confidence": "provenance"
     }

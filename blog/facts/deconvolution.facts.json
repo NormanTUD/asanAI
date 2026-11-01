@@ -5,7 +5,7 @@
   "title": "Pixels and Checkerboards",
   "part": 3,
   "order": 8,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "odena2016deconvolution"
@@ -49,6 +49,157 @@
       "quote": "order: 8",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "deconvolution-transposed-definition",
+      "subject": "transposed-convolution",
+      "predicate": "definition",
+      "value": "a convolution run with its input and output swapped",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The standard building block is a **transposed convolution** — a convolution run with its input and output swapped.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deconvolution-checkerboard-source",
+      "subject": "checkerboard-artifact",
+      "predicate": "cause",
+      "value": "kernel size not divisible by the stride",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "whenever the kernel size is **not divisible by the stride**, the upsampling is uneven",
+      "citation_keys": [
+        "odena2016deconvolution"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "deconvolution-1d-pattern",
+      "subject": "transposed-convolution-1d",
+      "predicate": "overlap_pattern",
+      "value": "1, 2, 1, 2",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the 1D pattern alternates **1, 2, 1, 2, …**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deconvolution-2x2-uniform",
+      "subject": "2x2-kernel-stride-2",
+      "predicate": "result",
+      "value": "uniform, no artifact",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "every input pixel's stamp is exactly one output cell — uniform, no artifact.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deconvolution-4x4-uniform",
+      "subject": "4x4-kernel-stride-2",
+      "predicate": "result",
+      "value": "uniform",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "uniform too — divisible.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deconvolution-3x3-5x5-harmful",
+      "subject": "3x3-kernel-stride-2",
+      "predicate": "result",
+      "value": "checkerboard appears with period 2",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the classic harmful sizes — the checkerboard appears with period 2.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deconvolution-checkerboard-tile",
+      "subject": "checkerboard-artifact",
+      "predicate": "tile_size",
+      "value": "2x2",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "you get intensity differences that repeat in a **checkerboard** with a $2\\times 2$ tile",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deconvolution-gradient",
+      "subject": "convolution-gradient",
+      "predicate": "property",
+      "value": "itself a transposed convolution",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the *gradient* of a regular convolution, computed by the backpropagation that trains the network, is itself a transposed convolution",
+      "citation_keys": [
+        "odena2016deconvolution"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "deconvolution-color",
+      "subject": "checkerboard-artifact",
+      "predicate": "color_dependence",
+      "value": "strongest for unusual, saturated colors",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the artifact is strongest for **unusual**, saturated colors",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deconvolution-jitter",
+      "subject": "jitter",
+      "predicate": "method",
+      "value": "shifting the image by a random number of pixels each iteration and averaging",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**jitter**: shifting the image by a random number of pixels each iteration and averaging",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deconvolution-deepdream-shifts",
+      "subject": "deepdream",
+      "predicate": "jitter_shifts",
+      "value": "8x8",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "DeepDream, rendered with 8×8 random shifts per iteration",
+      "citation_keys": [
+        "odena2016deconvolution"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "deconvolution-resize-conv",
+      "subject": "resize-conv",
+      "predicate": "method",
+      "value": "upsample with interpolation then apply a regular 3x3 convolution",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "upsample with an interpolation (nearest-neighbour or bilinear) and then apply a **regular** 3×3 convolution",
+      "citation_keys": [
+        "odena2016deconvolution"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "deconvolution-transposed-not-inverse",
+      "subject": "transposed-convolution",
+      "predicate": "property",
+      "value": "not an inverse of a convolution",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "a transposed convolution is *not* an inverse of a convolution",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -60,6 +211,114 @@
       "qualifiers": {},
       "quote": "part: 3",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deconvolution-transposed-convolution",
+      "from": "transposed-convolution",
+      "to": "deconvolution",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The standard building block is a **transposed convolution** — a convolution run with its input and output swapped.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deconvolution-checkerboard-artifact",
+      "from": "checkerboard-artifact",
+      "to": "deconvolution",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "whenever the kernel size is **not divisible by the stride**, the upsampling is uneven",
+      "citation_keys": [
+        "odena2016deconvolution"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deconvolution-transposed-convolution-1d",
+      "from": "transposed-convolution-1d",
+      "to": "deconvolution",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the 1D pattern alternates **1, 2, 1, 2, …**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deconvolution-2x2-kernel-stride-2",
+      "from": "2x2-kernel-stride-2",
+      "to": "deconvolution",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "every input pixel's stamp is exactly one output cell — uniform, no artifact.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deconvolution-4x4-kernel-stride-2",
+      "from": "4x4-kernel-stride-2",
+      "to": "deconvolution",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "uniform too — divisible.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deconvolution-3x3-kernel-stride-2",
+      "from": "3x3-kernel-stride-2",
+      "to": "deconvolution",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the classic harmful sizes — the checkerboard appears with period 2.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deconvolution-convolution-gradient",
+      "from": "convolution-gradient",
+      "to": "deconvolution",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the *gradient* of a regular convolution, computed by the backpropagation that trains the network, is itself a transposed convolution",
+      "citation_keys": [
+        "odena2016deconvolution"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deconvolution-jitter",
+      "from": "jitter",
+      "to": "deconvolution",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**jitter**: shifting the image by a random number of pixels each iteration and averaging",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deconvolution-deepdream",
+      "from": "deepdream",
+      "to": "deconvolution",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "DeepDream, rendered with 8×8 random shifts per iteration",
+      "citation_keys": [
+        "odena2016deconvolution"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deconvolution-resize-conv",
+      "from": "resize-conv",
+      "to": "deconvolution",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "upsample with an interpolation (nearest-neighbour or bilinear) and then apply a **regular** 3×3 convolution",
+      "citation_keys": [
+        "odena2016deconvolution"
+      ],
       "confidence": "provenance"
     }
   ]

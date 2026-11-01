@@ -5,22 +5,14 @@
   "title": "Beyond Transformers (Mamba, RWKV, RetNet)",
   "part": 4,
   "order": 17,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "colah2015types",
-    "colah2015lstm",
-    "lstm",
     "gu2021s4",
     "gu2023mamba",
     "dao2024mamba2",
-    "choromanski2021performer",
     "peng2023rwkv",
-    "austin2021d3pm",
-    "nie2025llada",
-    "poli2023hyena",
-    "ma2022mega",
-    "raposo2024mod"
+    "poli2023hyena"
   ],
   "claims": [
     {
@@ -61,6 +53,246 @@
       "quote": "order: 17",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "altarch-self-attention-complexity",
+      "subject": "self-attention",
+      "predicate": "compute_complexity",
+      "value": "O(n^2)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "Its $O(n^2)$ attention cost creates a quadratic wall: doubling the context length quadruples compute and memory.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-attention-matrix-memory",
+      "subject": "attention-matrix",
+      "predicate": "memory",
+      "value": 33,
+      "unit": "GB",
+      "qualifiers": {
+        "n": 128000,
+        "precision": "fp16",
+        "approx": true
+      },
+      "quote": "For $n = 128{,}000$, that matrix alone is $128{,}000^2 \\times 2$ bytes $\\approx 33$ GB in fp16.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-ssm-definition",
+      "subject": "state-space-model",
+      "predicate": "definition",
+      "value": "continuous linear dynamical system",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A **state-space model** (SSM) describes a continuous linear dynamical system",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-s4-year",
+      "subject": "s4",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Gu et al. (2021)]{gu2021s4} made training stable by parameterizing $A$ in a **HiPPO structure**",
+      "citation_keys": [
+        "gu2021s4"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-s4-lra-length",
+      "subject": "s4",
+      "predicate": "lra_sequence_length",
+      "value": 16000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "S4 set state-of-the-art on the Long Range Arena benchmark, beating Transformers by a large margin on sequences of length $16{,}000$.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-mamba-year",
+      "subject": "mamba",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Mamba's key contribution (\\cite[Gu & Dao, 2023]{gu2023mamba}) is making the SSM **input-dependent**",
+      "citation_keys": [
+        "gu2023mamba"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-mamba-input-dependent",
+      "subject": "mamba",
+      "predicate": "key_property",
+      "value": "input-dependent SSM",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "making the SSM **input-dependent**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-mamba2-year",
+      "subject": "mamba-2",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Mamba-2 (\\cite[Dao & Gu, 2024]{dao2024mamba2}) reveals that selective SSMs and attention are **algebraically dual**",
+      "citation_keys": [
+        "dao2024mamba2"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-ssd-definition",
+      "subject": "structured-state-space-duality",
+      "predicate": "definition",
+      "value": "algebraic duality between selective SSMs and attention",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**Structured State-Space Duality (SSD)**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-jamba-ratio",
+      "subject": "jamba",
+      "predicate": "mamba_to_attention_ratio",
+      "value": "1:7",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Jamba interleaves Mamba and Transformer blocks in a 1:7 ratio",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-jamba-context",
+      "subject": "jamba-1-5-large",
+      "predicate": "context_window",
+      "value": 256000,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "This hybrid scales to 256K context (Jamba-1.5-Large)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-jamba-memory",
+      "subject": "jamba-1-5-large",
+      "predicate": "memory_fraction",
+      "value": 25,
+      "unit": "%",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "uses ~25% of the memory of an equivalent Transformer",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-retnet-year",
+      "subject": "retnet",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "#### RetNet (Sun et al., Microsoft, 2023)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-retnet-speed",
+      "subject": "retnet",
+      "predicate": "decoding_speedup",
+      "value": 8.4,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "RetNet reports 8.4× faster decoding and about 70% less memory than a vanilla Transformer at inference",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-rwkv-year",
+      "subject": "rwkv",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Peng et al. (2023)]{peng2023rwkv} introduced a linear-attention-with-decay RNN.",
+      "citation_keys": [
+        "peng2023rwkv"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-llada-parameters",
+      "subject": "llada",
+      "predicate": "parameters",
+      "value": 8,
+      "unit": "count",
+      "qualifiers": {
+        "scale": "billion"
+      },
+      "quote": "**LLaDA** (2025), an 8-billion-parameter masked diffusion model trained from scratch",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-striped-hyena-context",
+      "subject": "striped-hyena-7b",
+      "predicate": "context_window",
+      "value": 128000,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "**Striped Hyena-7B** (Together, 2024): Hyena + attention hybrid, 128K context.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-hyena-year",
+      "subject": "hyena",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Hyena** (\\cite[Poli et al., 2023]{poli2023hyena})",
+      "citation_keys": [
+        "poli2023hyena"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-diffusion-lm-definition",
+      "subject": "diffusion-language-model",
+      "predicate": "definition",
+      "value": "refines all positions in parallel over denoising steps",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A **diffusion language model** (dLLM) attacks the serialism itself",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "altarch-linear-attention-definition",
+      "subject": "linear-attention",
+      "predicate": "definition",
+      "value": "softmax replaced by a feature map kernel",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Replace softmax with a feature map $\\phi$",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -71,6 +303,176 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-self-attention",
+      "from": "self-attention",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Its $O(n^2)$ attention cost creates a quadratic wall: doubling the context length quadruples compute and memory.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-attention-matrix",
+      "from": "attention-matrix",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "For $n = 128{,}000$, that matrix alone is $128{,}000^2 \\times 2$ bytes $\\approx 33$ GB in fp16.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-state-space-model",
+      "from": "state-space-model",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A **state-space model** (SSM) describes a continuous linear dynamical system",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-s4",
+      "from": "s4",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Gu et al. (2021)]{gu2021s4} made training stable by parameterizing $A$ in a **HiPPO structure**",
+      "citation_keys": [
+        "gu2021s4"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-mamba",
+      "from": "mamba",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Mamba's key contribution (\\cite[Gu & Dao, 2023]{gu2023mamba}) is making the SSM **input-dependent**",
+      "citation_keys": [
+        "gu2023mamba"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-mamba-2",
+      "from": "mamba-2",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Mamba-2 (\\cite[Dao & Gu, 2024]{dao2024mamba2}) reveals that selective SSMs and attention are **algebraically dual**",
+      "citation_keys": [
+        "dao2024mamba2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-structured-state-space-duality",
+      "from": "structured-state-space-duality",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Structured State-Space Duality (SSD)**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-jamba",
+      "from": "jamba",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Jamba interleaves Mamba and Transformer blocks in a 1:7 ratio",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-jamba-1-5-large",
+      "from": "jamba-1-5-large",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This hybrid scales to 256K context (Jamba-1.5-Large)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-retnet",
+      "from": "retnet",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "#### RetNet (Sun et al., Microsoft, 2023)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-rwkv",
+      "from": "rwkv",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Peng et al. (2023)]{peng2023rwkv} introduced a linear-attention-with-decay RNN.",
+      "citation_keys": [
+        "peng2023rwkv"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-llada",
+      "from": "llada",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**LLaDA** (2025), an 8-billion-parameter masked diffusion model trained from scratch",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-striped-hyena-7b",
+      "from": "striped-hyena-7b",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Striped Hyena-7B** (Together, 2024): Hyena + attention hybrid, 128K context.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-hyena",
+      "from": "hyena",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Hyena** (\\cite[Poli et al., 2023]{poli2023hyena})",
+      "citation_keys": [
+        "poli2023hyena"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-diffusion-language-model",
+      "from": "diffusion-language-model",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A **diffusion language model** (dLLM) attacks the serialism itself",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-linear-attention",
+      "from": "linear-attention",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Replace softmax with a feature map $\\phi$",
       "citation_keys": [],
       "confidence": "provenance"
     }

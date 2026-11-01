@@ -5,26 +5,16 @@
   "title": "An Intuition of how Large Language Models (LLMs) work",
   "part": 1,
   "order": 1,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "glitchtokens",
-    "land2024fishing",
-    "rumbelow2023solidgold",
-    "mikolov2013word2vec",
-    "vaswani2017attention",
-    "elhage2021mathematical",
     "geva2021kv",
     "meng2022locating",
     "elhage2022superposition",
     "bricken2023monosemanticity",
     "cunningham2023sparse",
-    "shazeer2020glu",
-    "fedus2022switch",
-    "keup2022origami",
-    "bender2021stochasticparrots",
-    "gardenfors2000conceptual",
-    "mabrok2026latent"
+    "gardenfors2000conceptual"
   ],
   "claims": [
     {
@@ -65,6 +55,223 @@
       "quote": "order: 1",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "intuition-next-token",
+      "subject": "llm-next-token-prediction",
+      "predicate": "task",
+      "value": "predict the next token",
+      "unit": "name",
+      "quote": "We can think of LLMs as machines that predict the next most likely word, given a context",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-autoregressive",
+      "subject": "autoregressive-loop",
+      "predicate": "mechanism",
+      "value": "append output to input",
+      "unit": "name",
+      "quote": "That word is appended to the input and fed back in, and the loop repeats until a special `|endoftext|` token signals the end.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-fixed-vocabulary",
+      "subject": "token-vocabulary",
+      "predicate": "property",
+      "value": "fixed for model lifetime",
+      "unit": "name",
+      "quote": "once chosen, the vocabulary stays fixed for the life of the model",
+      "citation_keys": [
+        "glitchtokens"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-glitch-token",
+      "subject": "glitch-token",
+      "predicate": "example",
+      "value": "SolidGoldMagikarp",
+      "unit": "name",
+      "quote": "The most famous example is <code>SolidGoldMagikarp</code>.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-word2vec-analogy",
+      "subject": "word2vec",
+      "predicate": "analogy",
+      "value": "king - man + woman ≈ queen",
+      "unit": "formula",
+      "quote": "$$\\vec{\\text{King}} - \\vec{\\text{Man}} + \\vec{\\text{Woman}} \\approx \\vec{\\text{Queen}}$$",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-positional-encoding",
+      "subject": "positional-encoding",
+      "predicate": "role",
+      "value": "adds position to token embedding",
+      "unit": "name",
+      "quote": "So a **positional encoding** is added to each token's embedding",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-layer-count",
+      "subject": "modern-llm",
+      "predicate": "layers",
+      "value": "80+",
+      "unit": "count",
+      "quote": "(modern LLMs can have 80+ layers)",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-residual-stream",
+      "subject": "residual-stream",
+      "predicate": "role",
+      "value": "running added representation",
+      "unit": "name",
+      "quote": "This running vector is called the **residual stream**.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-ffn-share",
+      "subject": "feed-forward-network",
+      "predicate": "parameter_share",
+      "value": "two-thirds",
+      "unit": "count",
+      "quote": "In a modern LLM this block holds about **two-thirds of all the parameters**",
+      "citation_keys": [
+        "geva2021kv"
+      ],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-rome",
+      "subject": "rome",
+      "predicate": "capability",
+      "value": "edit a fact in weights",
+      "unit": "name",
+      "quote": "the ROME method can make a model “believe” a different capital of France without retraining it",
+      "citation_keys": [
+        "meng2022locating"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-superposition",
+      "subject": "superposition",
+      "predicate": "definition",
+      "value": "more features than neurons",
+      "unit": "name",
+      "quote": "a phenomenon called superposition",
+      "citation_keys": [
+        "elhage2022superposition"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-sparse-autoencoders",
+      "subject": "sparse-autoencoders",
+      "predicate": "capability",
+      "value": "extract readable features",
+      "unit": "name",
+      "quote": "Sparse autoencoders can untangle those activations into features a human can actually read",
+      "citation_keys": [
+        "bricken2023monosemanticity",
+        "cunningham2023sparse"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-vocabulary-size",
+      "subject": "llm-vocabulary",
+      "predicate": "size",
+      "value": "50,000+",
+      "unit": "count",
+      "quote": "(often 50,000+ words)",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-temperature",
+      "subject": "temperature",
+      "predicate": "effect",
+      "value": "controls sampling randomness",
+      "unit": "name",
+      "quote": "At T→0 the model always picks the top word (greedy); at high T the distribution flattens and rare words get a chance",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-compression",
+      "subject": "prediction-compression",
+      "predicate": "relation",
+      "value": "prediction and compression are linked",
+      "unit": "name",
+      "quote": "The goal of minimizing cross-entropy loss is not a shallow objective. There is a deep connection between **prediction** and **compression**.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-voronoi",
+      "subject": "word-meadow",
+      "predicate": "structure",
+      "value": "Voronoi partition",
+      "unit": "name",
+      "quote": "The meadow is a **Voronoi partition** of thought space.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-conceptual-spaces",
+      "subject": "conceptual-spaces",
+      "predicate": "year",
+      "value": 2000,
+      "unit": "year",
+      "quote": "the conceptual spaces of \\citeauthor{gardenfors2000conceptual} (\\citeyear{gardenfors2000conceptual})",
+      "citation_keys": [
+        "gardenfors2000conceptual"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-layer-bend",
+      "subject": "layer-space-bend",
+      "predicate": "role",
+      "value": "changes next layer's coordinate system",
+      "unit": "name",
+      "quote": "Read the layer's output as a new coordinate system and the operation looks like a bend of the whole space",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -75,6 +282,199 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 1",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-llm-next-token-prediction",
+      "from": "llm-next-token-prediction",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "We can think of LLMs as machines that predict the next most likely word, given a context",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-autoregressive-loop",
+      "from": "autoregressive-loop",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "That word is appended to the input and fed back in, and the loop repeats until a special `|endoftext|` token signals the end.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-token-vocabulary",
+      "from": "token-vocabulary",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "once chosen, the vocabulary stays fixed for the life of the model",
+      "citation_keys": [
+        "glitchtokens"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-glitch-token",
+      "from": "glitch-token",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The most famous example is <code>SolidGoldMagikarp</code>.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-word2vec",
+      "from": "word2vec",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$$\\vec{\\text{King}} - \\vec{\\text{Man}} + \\vec{\\text{Woman}} \\approx \\vec{\\text{Queen}}$$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-positional-encoding",
+      "from": "positional-encoding",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "So a **positional encoding** is added to each token's embedding",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-modern-llm",
+      "from": "modern-llm",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(modern LLMs can have 80+ layers)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-residual-stream",
+      "from": "residual-stream",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This running vector is called the **residual stream**.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-feed-forward-network",
+      "from": "feed-forward-network",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In a modern LLM this block holds about **two-thirds of all the parameters**",
+      "citation_keys": [
+        "geva2021kv"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-rome",
+      "from": "rome",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the ROME method can make a model “believe” a different capital of France without retraining it",
+      "citation_keys": [
+        "meng2022locating"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-superposition",
+      "from": "superposition",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a phenomenon called superposition",
+      "citation_keys": [
+        "elhage2022superposition"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-sparse-autoencoders",
+      "from": "sparse-autoencoders",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Sparse autoencoders can untangle those activations into features a human can actually read",
+      "citation_keys": [
+        "bricken2023monosemanticity",
+        "cunningham2023sparse"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-llm-vocabulary",
+      "from": "llm-vocabulary",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(often 50,000+ words)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-temperature",
+      "from": "temperature",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "At T→0 the model always picks the top word (greedy); at high T the distribution flattens and rare words get a chance",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-prediction-compression",
+      "from": "prediction-compression",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The goal of minimizing cross-entropy loss is not a shallow objective. There is a deep connection between **prediction** and **compression**.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-word-meadow",
+      "from": "word-meadow",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The meadow is a **Voronoi partition** of thought space.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-conceptual-spaces",
+      "from": "conceptual-spaces",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the conceptual spaces of \\citeauthor{gardenfors2000conceptual} (\\citeyear{gardenfors2000conceptual})",
+      "citation_keys": [
+        "gardenfors2000conceptual"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-layer-space-bend",
+      "from": "layer-space-bend",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Read the layer's output as a new coordinate system and the operation looks like a bend of the whole space",
       "citation_keys": [],
       "confidence": "provenance"
     }

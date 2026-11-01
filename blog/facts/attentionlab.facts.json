@@ -5,31 +5,19 @@
   "title": "The Semantic Tug-of-War: How Transformers 'Think'",
   "part": 4,
   "order": 6,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "colah2015lstm",
     "gage1994bpe",
     "zelligharris",
     "firth1957distributive",
-    "mikolov2013word2vec",
     "bahdanau2014",
     "luong2015attention",
     "vaswani2017attention",
-    "tsai2019kernel",
-    "merullo2024talkingheads",
-    "analyzingmultiheads",
-    "htu2019dependencies",
-    "clark2019bertattention",
     "litman2025sdpaot",
     "cuturi2013sinkhorn",
-    "jaynes1957maxent",
-    "neuralturingmachines",
-    "ramsauer2021hopfield",
-    "xiao2023streaming",
-    "darcet2024registers",
-    "cancedda2024sinks",
-    "wong2025sinks"
+    "clark2019bertattention",
+    "ramsauer2021hopfield"
   ],
   "claims": [
     {
@@ -70,6 +58,228 @@
       "quote": "order: 6",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "attentionlab-rnn-decay",
+      "subject": "rnn-signal-decay",
+      "predicate": "sequential_multiplications",
+      "value": 49,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "a signal from token 1 to token 50 must survive 49 sequential multiplications",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-bpe-year",
+      "subject": "byte-pair-encoding",
+      "predicate": "year",
+      "value": 1994,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "invented by \\citeauthor{gage1994bpe} as a **data-compression** algorithm in \\citeyear{gage1994bpe}",
+      "citation_keys": [
+        "gage1994bpe"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-harris-year",
+      "subject": "distributional-hypothesis",
+      "predicate": "year",
+      "value": 1954,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{zelligharris}'s \\citeyear{zelligharris} paper on distributional structure",
+      "citation_keys": [
+        "zelligharris"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-firth-year",
+      "subject": "firths-maxim",
+      "predicate": "year",
+      "value": 1957,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{firth1957distributive}'s \\citeyear{firth1957distributive} maxim",
+      "citation_keys": [
+        "firth1957distributive"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-bahdanau",
+      "subject": "additive-attention",
+      "predicate": "year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Bahdanau et al., 2014]{bahdanau2014})",
+      "citation_keys": [
+        "bahdanau2014"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-luong",
+      "subject": "multiplicative-attention",
+      "predicate": "year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**multiplicative attention** (\\cite[Luong et al., 2015]{luong2015attention})",
+      "citation_keys": [
+        "luong2015attention"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-vaswani",
+      "subject": "transformer",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Vaswani et al., 2017]{vaswani2017attention})",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-dmodel",
+      "subject": "transformer-original",
+      "predicate": "d_model",
+      "value": 512,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "$d_{\\text{model}} = 512$ in the original paper",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-heads",
+      "subject": "transformer-original",
+      "predicate": "heads",
+      "value": 8,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "In the original paper, $h = 8$, $d_{\\text{model}} = 512$, so each head works in a $d_k = d_v = 64$-dimensional subspace.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-variance",
+      "subject": "scaled-dot-product-attention",
+      "predicate": "variance_dot_product",
+      "value": "d_k",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "$\\text{Var}(Q \\cdot K) = d_k$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-value-shape",
+      "subject": "transformer-original",
+      "predicate": "value_projection_shape",
+      "value": "d_model × d_v",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "$W^V \\in \\mathbb{R}^{d_{\\text{model}} \\times d_v}$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-one-sided-ot",
+      "subject": "softmax-attention",
+      "predicate": "equivalent_to",
+      "value": "one-sided entropic optimal transport",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**The attention row of a single query is the exact, closed-form solution to a *one-sided* entropic optimal transport problem**",
+      "citation_keys": [
+        "litman2025sdpaot"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-sinkhorn-year",
+      "subject": "sinkhorn-algorithm",
+      "predicate": "year",
+      "value": 2013,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the usual method is the Sinkhorn iteration (\\cite[Cuturi, 2013]{cuturi2013sinkhorn})",
+      "citation_keys": [
+        "cuturi2013sinkhorn"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-sink-stream",
+      "subject": "attention-sink",
+      "predicate": "streaming_tokens",
+      "value": "4 million+",
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Llama-2, MPT, Falcon, and Pythia can stream **4 million+ tokens** stably",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-sink-pinned",
+      "subject": "attention-sink",
+      "predicate": "pinned_tokens",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "**keep the KV of the first few tokens** (roughly four)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-bert-sinks",
+      "subject": "bert",
+      "predicate": "attention_sinks",
+      "value": "[CLS] and [SEP]",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "In BERT, attention concentrates on the special `[CLS]` and especially `[SEP]` tokens",
+      "citation_keys": [
+        "clark2019bertattention"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-hopfield",
+      "subject": "modern-hopfield-network",
+      "predicate": "equivalent_to",
+      "value": "attention mechanism",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "proved that the attention mechanism is mathematically equivalent to an energy-based associative memory (a modern Hopfield network)",
+      "citation_keys": [
+        "ramsauer2021hopfield"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-quadratic",
+      "subject": "self-attention",
+      "predicate": "complexity",
+      "value": "O(L^2)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "This costs $O(L^2)$ memory and compute, doubling context quadruples cost.",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -80,6 +290,176 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-rnn-signal-decay",
+      "from": "rnn-signal-decay",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a signal from token 1 to token 50 must survive 49 sequential multiplications",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-byte-pair-encoding",
+      "from": "byte-pair-encoding",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "invented by \\citeauthor{gage1994bpe} as a **data-compression** algorithm in \\citeyear{gage1994bpe}",
+      "citation_keys": [
+        "gage1994bpe"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-distributional-hypothesis",
+      "from": "distributional-hypothesis",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{zelligharris}'s \\citeyear{zelligharris} paper on distributional structure",
+      "citation_keys": [
+        "zelligharris"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-firths-maxim",
+      "from": "firths-maxim",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{firth1957distributive}'s \\citeyear{firth1957distributive} maxim",
+      "citation_keys": [
+        "firth1957distributive"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-additive-attention",
+      "from": "additive-attention",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Bahdanau et al., 2014]{bahdanau2014})",
+      "citation_keys": [
+        "bahdanau2014"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-multiplicative-attention",
+      "from": "multiplicative-attention",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**multiplicative attention** (\\cite[Luong et al., 2015]{luong2015attention})",
+      "citation_keys": [
+        "luong2015attention"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-transformer",
+      "from": "transformer",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Vaswani et al., 2017]{vaswani2017attention})",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-transformer-original",
+      "from": "transformer-original",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$d_{\\text{model}} = 512$ in the original paper",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-scaled-dot-product-attention",
+      "from": "scaled-dot-product-attention",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$\\text{Var}(Q \\cdot K) = d_k$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-softmax-attention",
+      "from": "softmax-attention",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**The attention row of a single query is the exact, closed-form solution to a *one-sided* entropic optimal transport problem**",
+      "citation_keys": [
+        "litman2025sdpaot"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-sinkhorn-algorithm",
+      "from": "sinkhorn-algorithm",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the usual method is the Sinkhorn iteration (\\cite[Cuturi, 2013]{cuturi2013sinkhorn})",
+      "citation_keys": [
+        "cuturi2013sinkhorn"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-attention-sink",
+      "from": "attention-sink",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Llama-2, MPT, Falcon, and Pythia can stream **4 million+ tokens** stably",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-bert",
+      "from": "bert",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In BERT, attention concentrates on the special `[CLS]` and especially `[SEP]` tokens",
+      "citation_keys": [
+        "clark2019bertattention"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-modern-hopfield-network",
+      "from": "modern-hopfield-network",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "proved that the attention mechanism is mathematically equivalent to an energy-based associative memory (a modern Hopfield network)",
+      "citation_keys": [
+        "ramsauer2021hopfield"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-self-attention",
+      "from": "self-attention",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This costs $O(L^2)$ memory and compute, doubling context quadruples cost.",
       "citation_keys": [],
       "confidence": "provenance"
     }

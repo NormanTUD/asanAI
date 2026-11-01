@@ -5,30 +5,21 @@
   "title": "Closing the Loop — AI for Science",
   "part": 6,
   "order": 14,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "jumper2021alphafold",
     "alphafold3",
     "alphamissense",
     "alphafold_db",
-    "alphafold_protein_img",
     "navier_stokes_openai",
-    "navier_stokes_priority",
     "alphatensor",
     "funsearch",
-    "deletion_codes",
     "alphaevolve",
     "imo_wiki",
     "alphageometry2",
     "merchant2023gnome",
-    "pathak2022fourcastnet",
-    "lam2023graphcast",
-    "price2024gencast",
-    "silver2016go",
-    "silver2018zero",
-    "lecun2022jepa",
-    "coherent_difference"
+    "price2024gencast"
   ],
   "claims": [
     {
@@ -69,6 +60,277 @@
       "quote": "order: 14",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "ai_for_science-protein-folding-challenge",
+      "subject": "protein-folding",
+      "predicate": "challenge_duration",
+      "value": 50,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "was a 50-year grand challenge",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-alphafold-casp14",
+      "subject": "alphafold",
+      "predicate": "competition_won",
+      "value": "CASP14",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "winning CASP14 by a wide margin",
+      "citation_keys": [
+        "jumper2021alphafold"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-alphafold-nobel",
+      "subject": "alphafold",
+      "predicate": "nobel_prize_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {
+        "event": "Nobel Prize in Chemistry"
+      },
+      "quote": "its leaders shared the 2024 **Nobel Prize in Chemistry**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-alphafold3-extension",
+      "subject": "alphafold-3",
+      "predicate": "modalities",
+      "value": "proteins, nucleic acids, ligands, ions, and modified residues",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**AlphaFold 3** extended the model to the joint structure of proteins, nucleic acids, ligands, ions, and modified residues",
+      "citation_keys": [
+        "alphafold3"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-alphamissense-canonical",
+      "subject": "alphamissense",
+      "predicate": "variants_scored",
+      "value": 71000000,
+      "unit": "count",
+      "qualifiers": {
+        "scope": "canonical transcripts"
+      },
+      "quote": "scored 71 million single-nucleotide missense variants in canonical transcripts",
+      "citation_keys": [
+        "alphamissense"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-alphamissense-isoforms",
+      "subject": "alphamissense",
+      "predicate": "variants_scored",
+      "value": 216000000,
+      "unit": "count",
+      "qualifiers": {
+        "scope": "isoforms"
+      },
+      "quote": "(216 million across isoforms)",
+      "citation_keys": [
+        "alphamissense"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-afdb-structures",
+      "subject": "alphafold-db",
+      "predicate": "structures_released",
+      "value": 200000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "The AlphaFold Protein Structure Database released ~**200 million** predicted structures",
+      "citation_keys": [
+        "alphafold_db"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-ns-agents",
+      "subject": "navier-stokes-openai-proof",
+      "predicate": "agents",
+      "value": 10000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "an **OpenAI** system of roughly **10,000 coordinating agents**",
+      "citation_keys": [
+        "navier_stokes_openai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-ns-tokens",
+      "subject": "navier-stokes-openai-proof",
+      "predicate": "tokens",
+      "value": 130000000000,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "88 hours, ~130 billion tokens",
+      "citation_keys": [
+        "navier_stokes_openai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-ns-result",
+      "subject": "navier-stokes",
+      "predicate": "result",
+      "value": "finite-time singularity under a smooth external force",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the 3D incompressible **Navier–Stokes** equations can develop a **finite-time singularity** under a smooth external force",
+      "citation_keys": [
+        "navier_stokes_openai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-lean4-role",
+      "subject": "lean-4",
+      "predicate": "role",
+      "value": "proof assistant",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "with a machine-checked Lean 4 formalization",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-alphatensor-year",
+      "subject": "alphatensor",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**AlphaTensor** (\\cite[Fawzi et al., 2022]{alphatensor})",
+      "citation_keys": [
+        "alphatensor"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-alphatensor-improvement",
+      "subject": "alphatensor",
+      "predicate": "improvement",
+      "value": "first improvement over Strassen 4x4 two-level scheme in about 50 years",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Faster, provably-correct matrix-multiplication algorithms (first improvement over Strassen's 4×4 two-level scheme in ~50 years",
+      "citation_keys": [
+        "alphatensor"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-funsearch-year",
+      "subject": "funsearch",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**FunSearch** (\\cite[Romera-Paredes et al., 2024]{funsearch})",
+      "citation_keys": [
+        "funsearch"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-alphaevolve-problems",
+      "subject": "alphaevolve",
+      "predicate": "open_problems_tackled",
+      "value": 67,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "On 67 open problems (with Terence Tao a co-author)",
+      "citation_keys": [
+        "alphaevolve"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-alphaproof-points",
+      "subject": "alphaproof",
+      "predicate": "imo_points",
+      "value": 28,
+      "unit": "count",
+      "qualifiers": {
+        "event": "IMO 2024",
+        "definition": "out of 42"
+      },
+      "quote": "reached the **silver-medal** standard at the 2024 IMO (28/42 points)",
+      "citation_keys": [
+        "imo_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-alphageometry2-gold",
+      "subject": "alphageometry-2",
+      "predicate": "result",
+      "value": "beating an average gold medalist on 25 years of Olympiad geometry",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "with AG2 alone now **beating an average gold medalist** on 25 years of Olympiad geometry",
+      "citation_keys": [
+        "alphageometry2"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-gnome-materials",
+      "subject": "gnome",
+      "predicate": "materials_predicted",
+      "value": 2200000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "predicted **2.2 million** new stable materials",
+      "citation_keys": [
+        "merchant2023gnome"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-gnome-convex-hull",
+      "subject": "gnome",
+      "predicate": "stable_candidates",
+      "value": 380000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "about 380,000 of them on the updated convex hull (stable candidates)",
+      "citation_keys": [
+        "merchant2023gnome"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-gencast-targets",
+      "subject": "gencast",
+      "predicate": "targets_beaten",
+      "value": 97.2,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "beating ENS on 97.2% of targets",
+      "citation_keys": [
+        "price2024gencast"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -80,6 +342,182 @@
       "qualifiers": {},
       "quote": "part: 6",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-protein-folding",
+      "from": "protein-folding",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "was a 50-year grand challenge",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-alphafold",
+      "from": "alphafold",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "winning CASP14 by a wide margin",
+      "citation_keys": [
+        "jumper2021alphafold"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-alphafold-3",
+      "from": "alphafold-3",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**AlphaFold 3** extended the model to the joint structure of proteins, nucleic acids, ligands, ions, and modified residues",
+      "citation_keys": [
+        "alphafold3"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-alphamissense",
+      "from": "alphamissense",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "scored 71 million single-nucleotide missense variants in canonical transcripts",
+      "citation_keys": [
+        "alphamissense"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-alphafold-db",
+      "from": "alphafold-db",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The AlphaFold Protein Structure Database released ~**200 million** predicted structures",
+      "citation_keys": [
+        "alphafold_db"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-navier-stokes-openai-proof",
+      "from": "navier-stokes-openai-proof",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "an **OpenAI** system of roughly **10,000 coordinating agents**",
+      "citation_keys": [
+        "navier_stokes_openai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-navier-stokes",
+      "from": "navier-stokes",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the 3D incompressible **Navier–Stokes** equations can develop a **finite-time singularity** under a smooth external force",
+      "citation_keys": [
+        "navier_stokes_openai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-lean-4",
+      "from": "lean-4",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "with a machine-checked Lean 4 formalization",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-alphatensor",
+      "from": "alphatensor",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**AlphaTensor** (\\cite[Fawzi et al., 2022]{alphatensor})",
+      "citation_keys": [
+        "alphatensor"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-funsearch",
+      "from": "funsearch",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**FunSearch** (\\cite[Romera-Paredes et al., 2024]{funsearch})",
+      "citation_keys": [
+        "funsearch"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-alphaevolve",
+      "from": "alphaevolve",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "On 67 open problems (with Terence Tao a co-author)",
+      "citation_keys": [
+        "alphaevolve"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-alphaproof",
+      "from": "alphaproof",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "reached the **silver-medal** standard at the 2024 IMO (28/42 points)",
+      "citation_keys": [
+        "imo_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-alphageometry-2",
+      "from": "alphageometry-2",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "with AG2 alone now **beating an average gold medalist** on 25 years of Olympiad geometry",
+      "citation_keys": [
+        "alphageometry2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-gnome",
+      "from": "gnome",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "predicted **2.2 million** new stable materials",
+      "citation_keys": [
+        "merchant2023gnome"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-gencast",
+      "from": "gencast",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "beating ENS on 97.2% of targets",
+      "citation_keys": [
+        "price2024gencast"
+      ],
       "confidence": "provenance"
     }
   ]

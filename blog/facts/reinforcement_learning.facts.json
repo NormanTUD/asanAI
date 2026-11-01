@@ -5,24 +5,17 @@
   "title": "Reinforcement Learning",
   "part": 2,
   "order": 12,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "watkins1989qlearning",
     "mnih2013dqn",
     "mnih2015dqn",
-    "sutton2018reinforcement",
-    "williams1992reinforce",
-    "litman2025sdpaot",
     "mnih2016a3c",
     "schulman2017ppo",
     "rafailov2023dpo",
-    "azar2023ipo",
-    "ethayarajh2024kto",
-    "hong2024orpo",
-    "meng2024simpo",
     "shao2024grpo",
-    "du2023multiagent"
+    "williams1992reinforce"
   ],
   "claims": [
     {
@@ -63,6 +56,242 @@
       "quote": "order: 12",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "reinforcement-learning-definition",
+      "subject": "reinforcement-learning",
+      "predicate": "definition",
+      "value": "agent takes actions in an environment to maximize cumulative reward",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "In RL, an **agent** takes **actions** in an **environment** to maximize a cumulative **reward** signal.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-mdp-components",
+      "subject": "markov-decision-process",
+      "predicate": "components",
+      "value": "(S, A, P, R, gamma)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "An MDP is the formal setting for RL: $(\\mathcal{S}, \\mathcal{A}, P, R, \\gamma)$ where",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-mdp-discount",
+      "subject": "markov-decision-process",
+      "predicate": "discount_factor_range",
+      "value": "[0, 1)",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "$\\gamma \\in [0, 1)$: discount factor",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-q-learning-year",
+      "subject": "q-learning",
+      "predicate": "year",
+      "value": 1989,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Q-Learning (\\cite[Watkins, 1989]{watkins1989qlearning}) converges to $Q^*$",
+      "citation_keys": [
+        "watkins1989qlearning"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-dqn-replay-year",
+      "subject": "dqn",
+      "predicate": "year",
+      "value": 2013,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the 2013 paper (\\cite[Mnih et al., 2013]{mnih2013dqn}) added **experience replay**",
+      "citation_keys": [
+        "mnih2013dqn"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-dqn-target-year",
+      "subject": "dqn",
+      "predicate": "target_network_year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the 2015 *Nature* follow-up (\\cite[Mnih et al., 2015]{mnih2015dqn}) added a separate **target network**",
+      "citation_keys": [
+        "mnih2015dqn"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-actor-critic-definition",
+      "subject": "actor-critic",
+      "predicate": "definition",
+      "value": "learns a policy (actor) and a value function (critic)",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**Actor-critic** algorithms learn both a policy (actor) and a value function (critic):",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-a3c-year",
+      "subject": "a3c",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Asynchronous** Advantage Actor-Critic (\\cite[Mnih et al., 2016]{mnih2016a3c})",
+      "citation_keys": [
+        "mnih2016a3c"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-ppo-year",
+      "subject": "ppo",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Proximal Policy Optimization** (\\cite[Schulman et al., 2017]{schulman2017ppo})",
+      "citation_keys": [
+        "schulman2017ppo"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-ppo-clip",
+      "subject": "ppo",
+      "predicate": "update_constraint",
+      "value": "clipped surrogate objective",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "constrains how far the policy can move per update using a **clipped surrogate objective**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-rlhf-sources",
+      "subject": "rlhf",
+      "predicate": "sources",
+      "value": "Christiano et al., 2017; Ouyang et al., 2022",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**RLHF** (Christiano et al., 2017; Ouyang et al., InstructGPT, 2022)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-rlhf-kl",
+      "subject": "rlhf",
+      "predicate": "kl_penalty_purpose",
+      "value": "prevents drift from the reference SFT model",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The **KL penalty** prevents the policy from drifting too far from the reference (SFT) model",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-dpo-year",
+      "subject": "dpo",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Rafailov et al. (2023)]{rafailov2023dpo} showed that the **RLHF** objective has a **closed-form solution**",
+      "citation_keys": [
+        "rafailov2023dpo"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-dpo-components",
+      "subject": "dpo",
+      "predicate": "required_components",
+      "value": "no reward model, no PPO, no rollouts",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**No reward model, no PPO, no rollouts**.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-grpo-year",
+      "subject": "grpo",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "GRPO (\\cite[Shao et al., DeepSeek, 2024]{shao2024grpo}) was the breakthrough",
+      "citation_keys": [
+        "shao2024grpo"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-grpo-advantage",
+      "subject": "grpo",
+      "predicate": "advantage_formula",
+      "value": "(r_i - mean) / std",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "A_i = \\frac{r_i - \\text{mean}(r_1, \\dots, r_G)}{\\text{std}(r_1, \\dots, r_G)}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-coastrunners-year",
+      "subject": "coastrunners",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "CoastRunners (2016): an agent trained to maximize race score learned to turn in circles",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-constitutional-ai-year",
+      "subject": "constitutional-ai",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Constitutional AI** (Bai et al., Anthropic 2022)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-reinforce-year",
+      "subject": "reinforce",
+      "predicate": "year",
+      "value": 1992,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "REINFORCE (\\cite[Williams, 1992]{williams1992reinforce}) has high variance.",
+      "citation_keys": [
+        "williams1992reinforce"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement-verifiable-rewards",
+      "subject": "verifiable-rewards",
+      "predicate": "examples",
+      "value": "math correctness, code test passage",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "RL-train on **verifiable rewards** (math correctness, code test passage)",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -73,6 +302,150 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 2",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reinforcement_learning-markov-decision-process",
+      "from": "markov-decision-process",
+      "to": "reinforcement-learning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "An MDP is the formal setting for RL: $(\\mathcal{S}, \\mathcal{A}, P, R, \\gamma)$ where",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reinforcement_learning-q-learning",
+      "from": "q-learning",
+      "to": "reinforcement-learning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Q-Learning (\\cite[Watkins, 1989]{watkins1989qlearning}) converges to $Q^*$",
+      "citation_keys": [
+        "watkins1989qlearning"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reinforcement_learning-dqn",
+      "from": "dqn",
+      "to": "reinforcement-learning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the 2013 paper (\\cite[Mnih et al., 2013]{mnih2013dqn}) added **experience replay**",
+      "citation_keys": [
+        "mnih2013dqn"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reinforcement_learning-actor-critic",
+      "from": "actor-critic",
+      "to": "reinforcement-learning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Actor-critic** algorithms learn both a policy (actor) and a value function (critic):",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reinforcement_learning-a3c",
+      "from": "a3c",
+      "to": "reinforcement-learning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Asynchronous** Advantage Actor-Critic (\\cite[Mnih et al., 2016]{mnih2016a3c})",
+      "citation_keys": [
+        "mnih2016a3c"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reinforcement_learning-ppo",
+      "from": "ppo",
+      "to": "reinforcement-learning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Proximal Policy Optimization** (\\cite[Schulman et al., 2017]{schulman2017ppo})",
+      "citation_keys": [
+        "schulman2017ppo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reinforcement_learning-rlhf",
+      "from": "rlhf",
+      "to": "reinforcement-learning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**RLHF** (Christiano et al., 2017; Ouyang et al., InstructGPT, 2022)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reinforcement_learning-dpo",
+      "from": "dpo",
+      "to": "reinforcement-learning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Rafailov et al. (2023)]{rafailov2023dpo} showed that the **RLHF** objective has a **closed-form solution**",
+      "citation_keys": [
+        "rafailov2023dpo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reinforcement_learning-grpo",
+      "from": "grpo",
+      "to": "reinforcement-learning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "GRPO (\\cite[Shao et al., DeepSeek, 2024]{shao2024grpo}) was the breakthrough",
+      "citation_keys": [
+        "shao2024grpo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reinforcement_learning-coastrunners",
+      "from": "coastrunners",
+      "to": "reinforcement-learning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "CoastRunners (2016): an agent trained to maximize race score learned to turn in circles",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reinforcement_learning-constitutional-ai",
+      "from": "constitutional-ai",
+      "to": "reinforcement-learning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Constitutional AI** (Bai et al., Anthropic 2022)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reinforcement_learning-reinforce",
+      "from": "reinforce",
+      "to": "reinforcement-learning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "REINFORCE (\\cite[Williams, 1992]{williams1992reinforce}) has high variance.",
+      "citation_keys": [
+        "williams1992reinforce"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reinforcement_learning-verifiable-rewards",
+      "from": "verifiable-rewards",
+      "to": "reinforcement-learning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "RL-train on **verifiable rewards** (math correctness, code test passage)",
       "citation_keys": [],
       "confidence": "provenance"
     }

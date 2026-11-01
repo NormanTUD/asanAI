@@ -5,12 +5,10 @@
   "title": "The Mind That Built Machines",
   "part": 6,
   "order": 5,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "aiellowheeler1995expensivetissue",
-    "wrangham2009catching",
-    "flames_image",
     "dunbar2012socialbrain",
     "friston2010freeenergy",
     "schultz1997dopamine",
@@ -19,76 +17,13 @@
     "chasesimon1973chess",
     "rosch1975familyresemblance",
     "gentner1983structuremapping",
-    "lakoff1993metaphor",
     "shepardmetzler1971",
-    "flavell1979metacognition",
-    "dehaene1997numbersense",
     "subitizing",
     "piraha2004",
-    "picamundurucu2004",
-    "mehta2020play",
-    "loewenstein1994curiosity",
-    "mednick1962creative",
-    "raichle2007defaultmode",
-    "tomasello2014thinking",
-    "emergenceofmodernhumanbehaviour",
-    "cuevadelasmanos_image",
-    "aristotlemetaphysics",
-    "aristotleandplato",
-    "daston1988probability",
-    "galileoassayer1623",
-    "galilei_image",
-    "poincare1910creation",
-    "poincare_image",
-    "polya1945solve",
-    "penrose1989emperor",
-    "sep_godel_incompleteness",
-    "simon1955bounded",
-    "chomsky1959review",
-    "newellsimon1972problemsolving",
-    "minsky1986society",
-    "simonnewell_image",
-    "henrich2016secret",
-    "clarkchalmers1998extended",
-    "simonidesofceos",
-    "methodofloci",
-    "giordanobruno",
-    "brunodeumbris1582",
-    "artofmemoryyates",
-    "libraryofpergamum",
     "universityofbologna",
     "philtrans1665",
     "venicepatent1474",
-    "premackwoodruff1978tom",
-    "chm",
-    "merton1973norms",
-    "axelrod1984cooperation",
-    "raymond1999cathedral",
-    "ietf_open",
-    "benkler2006wealth",
-    "huggingface",
-    "diekelmann2010sleep",
-    "slotmachine_image",
-    "barrett2011religion",
-    "chalmers1995consciousmind",
-    "nagel1974bat",
-    "churchland1981eliminative",
-    "dennett2017bacteria",
-    "descartesmeditations",
-    "kastrup2019ideaworld",
-    "freud1900dreams",
-    "freud_image",
-    "jungpsychologyandreligion",
-    "jung_image",
-    "heidegger1927beingandtime",
-    "heidegger_image",
-    "schmitz_neo_phenomenology",
-    "schmitz_image",
-    "suarezgallup1981mirror",
-    "mirrorselfrecognition_image",
-    "maturavarela1980autopoiesis",
-    "dawkins1976selfishgene",
-    "dawkins_image"
+    "suarezgallup1981mirror"
   ],
   "claims": [
     {
@@ -129,6 +64,268 @@
       "quote": "order: 5",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "human_mind-brain-mass",
+      "subject": "human-brain",
+      "predicate": "mass_fraction",
+      "value": 2,
+      "unit": "%",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "A human brain is roughly two per cent of body mass yet consumes close to a quarter of the body's resting energy.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-brain-energy",
+      "subject": "human-brain",
+      "predicate": "resting_energy_fraction",
+      "value": 25,
+      "unit": "%",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "consumes close to a quarter of the body's resting energy",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-expensive-tissue",
+      "subject": "expensive-tissue-hypothesis",
+      "predicate": "claim",
+      "value": "brain expansion was paid for by a smaller gut",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the brain could only be paid for by *spending less* elsewhere, and the organ that gave up the most was the gut",
+      "citation_keys": [
+        "aiellowheeler1995expensivetissue"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-social-brain",
+      "subject": "social-brain-hypothesis",
+      "predicate": "claim",
+      "value": "neocortex size scales with social group size",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "across primates the size of the neocortex scales with the **size of the social group** an individual must track",
+      "citation_keys": [
+        "dunbar2012socialbrain"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-predictive-brain",
+      "subject": "predictive-processing",
+      "predicate": "claim",
+      "value": "the brain minimizes surprise or prediction error",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the brain maintains an internal generative model of the world and is driven, at every moment, to **minimize the surprise**",
+      "citation_keys": [
+        "friston2010freeenergy"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-dopamine",
+      "subject": "dopamine-neurons",
+      "predicate": "encode",
+      "value": "reward prediction error",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the dopamine neurons of the primate midbrain do not fire when a reward *arrives*, but when a reward is **better or worse than predicted**",
+      "citation_keys": [
+        "schultz1997dopamine"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-miller-seven",
+      "subject": "working-memory",
+      "predicate": "capacity",
+      "value": "7 ± 2",
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "around **seven plus or minus two** chunks",
+      "citation_keys": [
+        "miller1956magicalnumber"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-cowan-four",
+      "subject": "working-memory",
+      "predicate": "revised_raw_capacity",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "later work puts the raw-item limit nearer four",
+      "citation_keys": [
+        "cowan2001magical4"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-chess-chunks",
+      "subject": "chess-chunking-study",
+      "predicate": "finding",
+      "value": "masters see familiar configurations, not thirty-two separate pieces",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "a chess master looks at a board and does not see thirty-two separate pieces but a small number of **familiar configurations**",
+      "citation_keys": [
+        "chasesimon1973chess"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-prototype",
+      "subject": "prototype-theory",
+      "predicate": "claim",
+      "value": "natural categories are graded around a prototype",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the members of a natural category are not separated from non-members by a clean boundary but graded around a **prototype**",
+      "citation_keys": [
+        "rosch1975familyresemblance"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-structure-mapping",
+      "subject": "structure-mapping-theory",
+      "predicate": "claim",
+      "value": "analogy maps relational structure rather than surface features",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "we understand a new thing by **mapping the relational structure** of a thing we already know onto it",
+      "citation_keys": [
+        "gentner1983structuremapping"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-mental-rotation",
+      "subject": "mental-rotation",
+      "predicate": "year",
+      "value": 1971,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the cleanest proof came in 1971",
+      "citation_keys": [
+        "shepardmetzler1971"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-rotation-timing",
+      "subject": "mental-rotation",
+      "predicate": "response_time_scaling",
+      "value": "linear with angle",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "their response time increased **linearly with the angle** between them",
+      "citation_keys": [
+        "shepardmetzler1971"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-subitizing",
+      "subject": "subitizing",
+      "predicate": "limit",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "For a small set of objects — up to about **four** — you do not count at all",
+      "citation_keys": [
+        "subitizing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-piraha",
+      "subject": "piraha",
+      "predicate": "number_words",
+      "value": "no words for specific quantities",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the Pirahã of the Amazon, whose lexicon has no words for specific quantities",
+      "citation_keys": [
+        "piraha2004"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-bologna",
+      "subject": "university-of-bologna",
+      "predicate": "founded_year",
+      "value": 1088,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The **University of Bologna** (1088), the oldest still in operation",
+      "citation_keys": [
+        "universityofbologna"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-philtrans",
+      "subject": "philosophical-transactions",
+      "predicate": "first_year",
+      "value": 1665,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1665 the Royal Society began publishing the *Philosophical Transactions*",
+      "citation_keys": [
+        "philtrans1665"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-venice-patent",
+      "subject": "venetian-patent-statute",
+      "predicate": "year",
+      "value": 1474,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in **1474**, Venice enacted the first statutory patent law",
+      "citation_keys": [
+        "venicepatent1474"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-satisficing",
+      "subject": "satisficing",
+      "predicate": "definition",
+      "value": "search until a solution is good enough, then stop",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "they **satisfice**: they search until they find a solution that is *good enough*, and then they stop",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-mirror-test",
+      "subject": "mirror-test",
+      "predicate": "passing_species",
+      "value": "chimpanzees and orangutans",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Chimpanzees and orangutans pass; gorillas, and most other animals, do not",
+      "citation_keys": [
+        "suarezgallup1981mirror"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -140,6 +337,206 @@
       "qualifiers": {},
       "quote": "part: 6",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-human-brain",
+      "from": "human-brain",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A human brain is roughly two per cent of body mass yet consumes close to a quarter of the body's resting energy.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-expensive-tissue-hypothesis",
+      "from": "expensive-tissue-hypothesis",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the brain could only be paid for by *spending less* elsewhere, and the organ that gave up the most was the gut",
+      "citation_keys": [
+        "aiellowheeler1995expensivetissue"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-social-brain-hypothesis",
+      "from": "social-brain-hypothesis",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "across primates the size of the neocortex scales with the **size of the social group** an individual must track",
+      "citation_keys": [
+        "dunbar2012socialbrain"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-predictive-processing",
+      "from": "predictive-processing",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the brain maintains an internal generative model of the world and is driven, at every moment, to **minimize the surprise**",
+      "citation_keys": [
+        "friston2010freeenergy"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-dopamine-neurons",
+      "from": "dopamine-neurons",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the dopamine neurons of the primate midbrain do not fire when a reward *arrives*, but when a reward is **better or worse than predicted**",
+      "citation_keys": [
+        "schultz1997dopamine"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-working-memory",
+      "from": "working-memory",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "around **seven plus or minus two** chunks",
+      "citation_keys": [
+        "miller1956magicalnumber"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-chess-chunking-study",
+      "from": "chess-chunking-study",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a chess master looks at a board and does not see thirty-two separate pieces but a small number of **familiar configurations**",
+      "citation_keys": [
+        "chasesimon1973chess"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-prototype-theory",
+      "from": "prototype-theory",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the members of a natural category are not separated from non-members by a clean boundary but graded around a **prototype**",
+      "citation_keys": [
+        "rosch1975familyresemblance"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-structure-mapping-theory",
+      "from": "structure-mapping-theory",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "we understand a new thing by **mapping the relational structure** of a thing we already know onto it",
+      "citation_keys": [
+        "gentner1983structuremapping"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-mental-rotation",
+      "from": "mental-rotation",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the cleanest proof came in 1971",
+      "citation_keys": [
+        "shepardmetzler1971"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-subitizing",
+      "from": "subitizing",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "For a small set of objects — up to about **four** — you do not count at all",
+      "citation_keys": [
+        "subitizing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-piraha",
+      "from": "piraha",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Pirahã of the Amazon, whose lexicon has no words for specific quantities",
+      "citation_keys": [
+        "piraha2004"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-university-of-bologna",
+      "from": "university-of-bologna",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **University of Bologna** (1088), the oldest still in operation",
+      "citation_keys": [
+        "universityofbologna"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-philosophical-transactions",
+      "from": "philosophical-transactions",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1665 the Royal Society began publishing the *Philosophical Transactions*",
+      "citation_keys": [
+        "philtrans1665"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-venetian-patent-statute",
+      "from": "venetian-patent-statute",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in **1474**, Venice enacted the first statutory patent law",
+      "citation_keys": [
+        "venicepatent1474"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-satisficing",
+      "from": "satisficing",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "they **satisfice**: they search until they find a solution that is *good enough*, and then they stop",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-mirror-test",
+      "from": "mirror-test",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Chimpanzees and orangutans pass; gorillas, and most other animals, do not",
+      "citation_keys": [
+        "suarezgallup1981mirror"
+      ],
       "confidence": "provenance"
     }
   ]

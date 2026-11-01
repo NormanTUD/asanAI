@@ -5,30 +5,21 @@
   "title": "Networks with Memory",
   "part": 4,
   "order": 5,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "colah2015lstm",
     "hopfield1982",
-    "colah2014conv",
     "jordan1986",
     "elman1990finding",
-    "colah2015backprop",
     "hochreiter1991vanishing",
     "bengio1994learning",
-    "werbos1990bptt",
     "lstm",
-    "lstm_vanilla",
     "cho2014gru",
-    "greff2015lstm",
-    "vaswani2017attention",
     "sutskever2014seq2seq",
-    "bahdanau2014",
-    "williams1989",
-    "bengio2015scheduled",
     "wu2016gnmt",
-    "raffel2020t5",
-    "radford2022whisper"
+    "vaswani2017attention",
+    "williams1989",
+    "bahdanau2014"
   ],
   "claims": [
     {
@@ -69,6 +60,252 @@
       "quote": "order: 5",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "recurrent-rnn-definition",
+      "subject": "rnn",
+      "predicate": "definition",
+      "value": "loop feeding its own hidden state back in",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A **recurrent neural network (RNN)** gives a network the same trick: a loop that feeds its own hidden state back in.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-hopfield-year",
+      "subject": "hopfield-network",
+      "predicate": "year",
+      "value": 1982,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{hopfield1982} showed that a network of symmetrically connected threshold units could store patterns as stable states of an energy landscape",
+      "citation_keys": [
+        "hopfield1982"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-weight-sharing",
+      "subject": "rnn",
+      "predicate": "weight_sharing",
+      "value": "same matrices used at every step",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the *same* weight matrices $\\mathbf{W}_h$, $\\mathbf{W}_x$ are used at **every** step.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-jordan-year",
+      "subject": "jordan-network",
+      "predicate": "year",
+      "value": 1986,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{jordan1986} added *context units* that copied the previous output back into the input",
+      "citation_keys": [
+        "jordan1986"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-elman-year",
+      "subject": "elman-network",
+      "predicate": "year",
+      "value": 1990,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{elman1990finding} made the hidden layer itself recurrent, giving the network a memory of its own internal state",
+      "citation_keys": [
+        "elman1990finding"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-vanishing-condition",
+      "subject": "vanishing-gradient",
+      "predicate": "condition",
+      "value": "Jacobian spectral radius < 1",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "if the Jacobian's spectral radius stays below 1, the signal *shrinks* toward zero",
+      "citation_keys": [
+        "hochreiter1991vanishing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-hochreiter-year",
+      "subject": "hochreiter-1991",
+      "predicate": "year",
+      "value": 1991,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The problem was diagnosed early by \\citeauthor{hochreiter1991vanishing} (\\citeyear{hochreiter1991vanishing})",
+      "citation_keys": [
+        "hochreiter1991vanishing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-bengio-year",
+      "subject": "bengio-1994",
+      "predicate": "year",
+      "value": 1994,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "formalized for recurrent networks by \\citeauthor{bengio1994learning} (\\citeyear{bengio1994learning})",
+      "citation_keys": [
+        "bengio1994learning"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-lstm-year",
+      "subject": "lstm",
+      "predicate": "year",
+      "value": 1997,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "appeared in the 1997 LSTM paper",
+      "citation_keys": [
+        "lstm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-lstm-cell-state",
+      "subject": "lstm",
+      "predicate": "cell_state",
+      "value": "lane not transformed by every gate",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Alongside the ordinary hidden state $\\mathbf{h}_t$ runs a **cell state** $\\mathbf{c}_t$ — a lane that is *not* transformed by every gate.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-lstm-gates",
+      "subject": "lstm",
+      "predicate": "gate_count",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "The modern cell has three:",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-gru-year",
+      "subject": "gru",
+      "predicate": "year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The **gated recurrent unit (GRU)** of \\citeauthor{cho2014gru} (\\citeyear{cho2014gru})",
+      "citation_keys": [
+        "cho2014gru"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-gru-gates",
+      "subject": "gru",
+      "predicate": "gates",
+      "value": "update gate and reset gate",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "merges the forget and input gates into one **update gate**, and weds the memory to the output via a **reset gate**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-seq2seq-year",
+      "subject": "seq2seq",
+      "predicate": "year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Sequence-to-sequence** learning (seq2seq), introduced in 2014 by Sutskever, Vinyals, and Le",
+      "citation_keys": [
+        "sutskever2014seq2seq"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-gnmt-layers",
+      "subject": "gnmt",
+      "predicate": "lstm_layers",
+      "value": 8,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Google's production GNMT system stacked eight LSTM layers per side \\cite{wu2016gnmt}",
+      "citation_keys": [
+        "wu2016gnmt"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-transformer-year",
+      "subject": "transformer",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{vaswani2017attention}'s Transformer kept the encoder–decoder shape and replaced the recurrent chain with **self-attention**",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-self-attention",
+      "subject": "self-attention",
+      "predicate": "definition",
+      "value": "every position attends to every other position in parallel",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "letting every position attend to every other position in parallel",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-teacher-forcing-year",
+      "subject": "teacher-forcing",
+      "predicate": "year",
+      "value": 1989,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the technique goes back to \\citeauthor{williams1989} (\\citeyear{williams1989})",
+      "citation_keys": [
+        "williams1989"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-exposure-bias",
+      "subject": "exposure-bias",
+      "predicate": "definition",
+      "value": "mismatch between teacher-forced training and free-running inference",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the mismatch between the two conditions is called **exposure bias**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-bahdanau-year",
+      "subject": "bahdanau-attention",
+      "predicate": "year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{bahdanau2014} let the decoder compute, at every output step, a weighted sum over *all* encoder states",
+      "citation_keys": [
+        "bahdanau2014"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -80,6 +317,192 @@
       "qualifiers": {},
       "quote": "part: 4",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-rnn",
+      "from": "rnn",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A **recurrent neural network (RNN)** gives a network the same trick: a loop that feeds its own hidden state back in.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-hopfield-network",
+      "from": "hopfield-network",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{hopfield1982} showed that a network of symmetrically connected threshold units could store patterns as stable states of an energy landscape",
+      "citation_keys": [
+        "hopfield1982"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-jordan-network",
+      "from": "jordan-network",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{jordan1986} added *context units* that copied the previous output back into the input",
+      "citation_keys": [
+        "jordan1986"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-elman-network",
+      "from": "elman-network",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{elman1990finding} made the hidden layer itself recurrent, giving the network a memory of its own internal state",
+      "citation_keys": [
+        "elman1990finding"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-vanishing-gradient",
+      "from": "vanishing-gradient",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "if the Jacobian's spectral radius stays below 1, the signal *shrinks* toward zero",
+      "citation_keys": [
+        "hochreiter1991vanishing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-hochreiter-1991",
+      "from": "hochreiter-1991",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The problem was diagnosed early by \\citeauthor{hochreiter1991vanishing} (\\citeyear{hochreiter1991vanishing})",
+      "citation_keys": [
+        "hochreiter1991vanishing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-bengio-1994",
+      "from": "bengio-1994",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "formalized for recurrent networks by \\citeauthor{bengio1994learning} (\\citeyear{bengio1994learning})",
+      "citation_keys": [
+        "bengio1994learning"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-lstm",
+      "from": "lstm",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "appeared in the 1997 LSTM paper",
+      "citation_keys": [
+        "lstm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-gru",
+      "from": "gru",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **gated recurrent unit (GRU)** of \\citeauthor{cho2014gru} (\\citeyear{cho2014gru})",
+      "citation_keys": [
+        "cho2014gru"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-seq2seq",
+      "from": "seq2seq",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Sequence-to-sequence** learning (seq2seq), introduced in 2014 by Sutskever, Vinyals, and Le",
+      "citation_keys": [
+        "sutskever2014seq2seq"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-gnmt",
+      "from": "gnmt",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Google's production GNMT system stacked eight LSTM layers per side \\cite{wu2016gnmt}",
+      "citation_keys": [
+        "wu2016gnmt"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-transformer",
+      "from": "transformer",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{vaswani2017attention}'s Transformer kept the encoder–decoder shape and replaced the recurrent chain with **self-attention**",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-self-attention",
+      "from": "self-attention",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "letting every position attend to every other position in parallel",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-teacher-forcing",
+      "from": "teacher-forcing",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the technique goes back to \\citeauthor{williams1989} (\\citeyear{williams1989})",
+      "citation_keys": [
+        "williams1989"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-exposure-bias",
+      "from": "exposure-bias",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the mismatch between the two conditions is called **exposure bias**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-bahdanau-attention",
+      "from": "bahdanau-attention",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{bahdanau2014} let the decoder compute, at every output step, a weighted sum over *all* encoder states",
+      "citation_keys": [
+        "bahdanau2014"
+      ],
       "confidence": "provenance"
     }
   ]

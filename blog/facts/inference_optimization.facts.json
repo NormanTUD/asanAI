@@ -5,26 +5,14 @@
   "title": "Inference Optimization",
   "part": 5,
   "order": 9,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "frantar2022gptq",
-    "lin2023awq",
-    "xiao2022smoothquant",
-    "dettmers2022llmint8",
-    "ma2024bitnet",
-    "che2024quip",
     "shazeer2019mqa",
     "ainslie2023gqa",
-    "deepseek2024v2",
     "beltagy2020longformer",
-    "xiao2023streaming",
-    "sun2024massive",
-    "dao2022flashattention",
-    "kwon2023vllm",
     "leviathan2023speculative",
-    "cai2024medusa",
-    "li2024eagle",
     "guo2025deepseekr1"
   ],
   "claims": [
@@ -66,6 +54,255 @@
       "quote": "order: 9",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "inference-training-cost",
+      "subject": "frontier-model-training",
+      "predicate": "cost",
+      "value": 100000000,
+      "unit": "USD",
+      "qualifiers": {
+        "comparison": "more_than",
+        "approx": true
+      },
+      "quote": "Training a frontier model costs US Dollar 100M+",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-serving-cost",
+      "subject": "frontier-model-serving",
+      "predicate": "cost_per_day",
+      "value": 1000000,
+      "unit": "USD",
+      "qualifiers": {
+        "comparison": "more_than",
+        "approx": true
+      },
+      "quote": "serving it can cost **US Dollar 1M+ per day at scale**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-weight-read-time",
+      "subject": "70b-model-inference",
+      "predicate": "weight_read_time",
+      "value": 23,
+      "unit": "name",
+      "qualifiers": {
+        "precision": "bf16",
+        "approx": true,
+        "hardware": "2 H100s"
+      },
+      "quote": "70 GB ÷ 3 TB/s ≈ 23 ms",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-fp16-size",
+      "subject": "70b-model",
+      "predicate": "fp16_size",
+      "value": 140,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| FP16 / BF16 | 16 | 140 GB | ~0% |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-int8-size",
+      "subject": "70b-model",
+      "predicate": "int8_size",
+      "value": 70,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| INT8 | 8 | 70 GB | &lt;0.5% |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-int4-size",
+      "subject": "70b-model",
+      "predicate": "int4_size",
+      "value": 35,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| INT4 (GPTQ, AWQ) | 4 | 35 GB | 1–3% |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-bitnet158-size",
+      "subject": "70b-model",
+      "predicate": "bitnet158_size",
+      "value": 13,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| 1.58-bit (BitNet b1.58) | 1.58 | 13 GB | Comparable to FP16 at scale |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-gptq-year",
+      "subject": "gptq",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**GPTQ** (\\cite[Frantar et al., 2022]{frantar2022gptq})",
+      "citation_keys": [
+        "frantar2022gptq"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-mqa-reduction",
+      "subject": "mqa",
+      "predicate": "kv_reduction",
+      "value": 64,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**Multi-Query Attention (MQA)** (\\cite[Shazeer, 2019]{shazeer2019mqa}): all query heads share a single K and V head. 64× KV memory reduction.",
+      "citation_keys": [
+        "shazeer2019mqa"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-gqa-reduction",
+      "subject": "gqa",
+      "predicate": "kv_reduction",
+      "value": 8,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**Grouped-Query Attention (GQA)** (\\cite[Ainslie et al., 2023]{ainslie2023gqa}): middle ground, 8 KV heads for 64 query heads gives 8× reduction",
+      "citation_keys": [
+        "ainslie2023gqa"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-mla-reduction",
+      "subject": "mla",
+      "predicate": "kv_reduction",
+      "value": "order of magnitude",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "DeepSeek-V2 reported a KV cache an order of magnitude smaller than a comparable MHA model",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-sliding-window",
+      "subject": "sliding-window-attention",
+      "predicate": "kv_memory_complexity",
+      "value": "O(w)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "**Sliding Window Attention** (\\cite[Beltagy et al., 2020]{beltagy2020longformer}): only attend to the last $w$ tokens. KV memory is $O(w)$ instead of $O(n)$.",
+      "citation_keys": [
+        "beltagy2020longformer"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-streaming-sinks",
+      "subject": "streamingllm",
+      "predicate": "sink_tokens",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Keeping the KV of roughly four initial tokens alongside the recent window restores stable generation over millions of tokens",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-paged-throughput",
+      "subject": "paged-attention",
+      "predicate": "throughput_improvement",
+      "value": "2-4x",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Effect: **2–4× throughput improvement** over contiguous allocation",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-vllm-throughput",
+      "subject": "vllm",
+      "predicate": "throughput_vs_huggingface",
+      "value": "14-24x",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The vLLM paper showed 14–24× throughput vs. naïve HuggingFace serving at high concurrency.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-flash-memory",
+      "subject": "flashattention",
+      "predicate": "memory_complexity",
+      "value": "O(n)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "Reduces attention memory from $O(n^2)$ to $O(n)$ by **never materializing the full attention matrix**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-speculative-year",
+      "subject": "speculative-decoding",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Speculative decoding** (\\cite[Leviathan et al., 2023]{leviathan2023speculative})",
+      "citation_keys": [
+        "leviathan2023speculative"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-speculative-speedup",
+      "subject": "speculative-decoding",
+      "predicate": "speedup",
+      "value": "2-3x",
+      "unit": "name",
+      "qualifiers": {
+        "k": 5,
+        "acceptance_rate": 0.8
+      },
+      "quote": "Net speedup: **2–3×**.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-continuous-batching",
+      "subject": "continuous-batching",
+      "predicate": "throughput_improvement",
+      "value": "10-20x",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**Throughput improvement: 10–20×** over static batching for chat workloads.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference-r1-distill-params",
+      "subject": "r1-distill-1-5b",
+      "predicate": "parameters",
+      "value": 1.5,
+      "unit": "count",
+      "qualifiers": {
+        "scale": "billion"
+      },
+      "quote": "even a small 1.5B student trained on R1's full reasoning traces captures a large fraction of the teacher's math ability",
+      "citation_keys": [
+        "guo2025deepseekr1"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -77,6 +314,178 @@
       "qualifiers": {},
       "quote": "part: 5",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-frontier-model-training",
+      "from": "frontier-model-training",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Training a frontier model costs US Dollar 100M+",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-frontier-model-serving",
+      "from": "frontier-model-serving",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "serving it can cost **US Dollar 1M+ per day at scale**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-70b-model-inference",
+      "from": "70b-model-inference",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "70 GB ÷ 3 TB/s ≈ 23 ms",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-70b-model",
+      "from": "70b-model",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| FP16 / BF16 | 16 | 140 GB | ~0% |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-gptq",
+      "from": "gptq",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**GPTQ** (\\cite[Frantar et al., 2022]{frantar2022gptq})",
+      "citation_keys": [
+        "frantar2022gptq"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-mqa",
+      "from": "mqa",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Multi-Query Attention (MQA)** (\\cite[Shazeer, 2019]{shazeer2019mqa}): all query heads share a single K and V head. 64× KV memory reduction.",
+      "citation_keys": [
+        "shazeer2019mqa"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-gqa",
+      "from": "gqa",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Grouped-Query Attention (GQA)** (\\cite[Ainslie et al., 2023]{ainslie2023gqa}): middle ground, 8 KV heads for 64 query heads gives 8× reduction",
+      "citation_keys": [
+        "ainslie2023gqa"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-mla",
+      "from": "mla",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "DeepSeek-V2 reported a KV cache an order of magnitude smaller than a comparable MHA model",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-sliding-window-attention",
+      "from": "sliding-window-attention",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Sliding Window Attention** (\\cite[Beltagy et al., 2020]{beltagy2020longformer}): only attend to the last $w$ tokens. KV memory is $O(w)$ instead of $O(n)$.",
+      "citation_keys": [
+        "beltagy2020longformer"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-streamingllm",
+      "from": "streamingllm",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Keeping the KV of roughly four initial tokens alongside the recent window restores stable generation over millions of tokens",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-paged-attention",
+      "from": "paged-attention",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Effect: **2–4× throughput improvement** over contiguous allocation",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-vllm",
+      "from": "vllm",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The vLLM paper showed 14–24× throughput vs. naïve HuggingFace serving at high concurrency.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-flashattention",
+      "from": "flashattention",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Reduces attention memory from $O(n^2)$ to $O(n)$ by **never materializing the full attention matrix**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-speculative-decoding",
+      "from": "speculative-decoding",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Speculative decoding** (\\cite[Leviathan et al., 2023]{leviathan2023speculative})",
+      "citation_keys": [
+        "leviathan2023speculative"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-continuous-batching",
+      "from": "continuous-batching",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Throughput improvement: 10–20×** over static batching for chat workloads.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-r1-distill-1-5b",
+      "from": "r1-distill-1-5b",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "even a small 1.5B student trained on R1's full reasoning traces captures a large fraction of the teacher's math ability",
+      "citation_keys": [
+        "guo2025deepseekr1"
+      ],
       "confidence": "provenance"
     }
   ]

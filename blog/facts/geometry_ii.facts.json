@@ -5,47 +5,24 @@
   "title": "The Shape of the Machine — A Working Geometry for AI",
   "part": 1,
   "order": 8,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "scholkopf2002learning",
-    "svd_wiki",
-    "cauchy1847",
-    "fourier1822",
-    "cooley1965fft",
-    "zaheer2017deepsets",
-    "boyd2018appliedlinearalgebra",
-    "mikolov2013word2vec",
     "grassmann1844ausdehnungslehre",
-    "hamilton1853lectures",
-    "hamilton1865letter",
-    "gibbs_wilson1901",
-    "heaviside1893electromagnetic",
-    "crowe1967vectoranalysis",
-    "axler2024linearalgebra",
-    "mercerno1909",
     "gram1883",
     "legendre1805",
     "gauss1809",
     "stewart1993svd",
-    "schmidt1907",
-    "weyl1912singular",
-    "jacobi1842",
-    "jacobi1846",
     "eckartyoung1936",
     "golubreinsch1970",
-    "hu2021lora",
-    "merullo2024talkingheads",
+    "cauchy1847",
     "hadamard1908",
     "rosen1960",
-    "toeplitz1911",
-    "dalembert1747",
-    "fft_history_wiki",
+    "fourier1822",
+    "cooley1965fft",
     "klein1872erlangen",
     "noether1918",
-    "weyl1939classicalgroups",
-    "bronstein2021geometric",
-    "vaswani2017attention"
+    "zaheer2017deepsets"
   ],
   "claims": [
     {
@@ -86,6 +63,227 @@
       "quote": "order: 8",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "geometry_ii-grassmann-inner",
+      "subject": "grassmann-inner-product",
+      "predicate": "year",
+      "value": 1844,
+      "unit": "year",
+      "quote": "in the *Ausdehnungslehre* of 1844 he coined *inneres Produkt* for exactly this pairing",
+      "citation_keys": [
+        "grassmann1844ausdehnungslehre"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gram-matrix",
+      "subject": "gram-matrix",
+      "predicate": "year",
+      "value": 1883,
+      "unit": "year",
+      "quote": "named for Jørgen Pedersen Gram, whose 1879/1883 work on least-squares series expansions used the determinant of such a matrix",
+      "citation_keys": [
+        "gram1883"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-legendre-least-squares",
+      "subject": "legendre-least-squares",
+      "predicate": "year",
+      "value": 1805,
+      "unit": "year",
+      "quote": "Legendre published it first, in 1805, as a practical rule for fitting comet orbits",
+      "citation_keys": [
+        "legendre1805",
+        "gauss1809"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gauss-least-squares",
+      "subject": "gauss-least-squares",
+      "predicate": "year",
+      "value": 1809,
+      "unit": "year",
+      "quote": "Gauss published it in 1809 and claimed he had used it since 1795",
+      "citation_keys": [
+        "legendre1805",
+        "gauss1809"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-beltrami-svd",
+      "subject": "eugenio-beltrami",
+      "predicate": "year",
+      "value": 1873,
+      "unit": "year",
+      "quote": "Beltrami (1873) and Jordan (1874) independently showed",
+      "citation_keys": [
+        "stewart1993svd"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-jordan-svd",
+      "subject": "camille-jordan",
+      "predicate": "year",
+      "value": 1874,
+      "unit": "year",
+      "quote": "Beltrami (1873) and Jordan (1874) independently showed",
+      "citation_keys": [
+        "stewart1993svd"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-eckart-young",
+      "subject": "eckart-young-theorem",
+      "predicate": "year",
+      "value": 1936,
+      "unit": "year",
+      "quote": "The finite-dimensional theorem is due to Eckart and Young (1936)",
+      "citation_keys": [
+        "eckartyoung1936"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-golub-reinsch",
+      "subject": "golub-reinsch",
+      "predicate": "year",
+      "value": 1970,
+      "unit": "year",
+      "quote": "is Golub and Reinsch's (1970)",
+      "citation_keys": [
+        "golubreinsch1970"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-cauchy-descent",
+      "subject": "cauchy-steepest-descent",
+      "predicate": "year",
+      "value": 1847,
+      "unit": "year",
+      "quote": "Cauchy wrote this down in 1847 as the method of steepest descent",
+      "citation_keys": [
+        "cauchy1847"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-hadamard-descent",
+      "subject": "hadamard-descent",
+      "predicate": "year",
+      "value": 1908,
+      "unit": "year",
+      "quote": "with Hadamard's 1907–08 method",
+      "citation_keys": [
+        "hadamard1908"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-rosen-projection",
+      "subject": "rosen-gradient-projection",
+      "predicate": "year",
+      "value": 1960,
+      "unit": "year",
+      "quote": "is Rosen's gradient-projection method (1960)",
+      "citation_keys": [
+        "rosen1960"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-fourier-heat",
+      "subject": "fourier-heat-theory",
+      "predicate": "year",
+      "value": 1822,
+      "unit": "year",
+      "quote": "In his 1822 *Théorie analytique de la chaleur*",
+      "citation_keys": [
+        "fourier1822"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-cooley-tukey",
+      "subject": "cooley-tukey-fft",
+      "predicate": "year",
+      "value": 1965,
+      "unit": "year",
+      "quote": "Cooley and Tukey's 1965 paper supplied the general composite-length algorithm and the $O(n\\log n)$ analysis",
+      "citation_keys": [
+        "cooley1965fft"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-klein-erlangen",
+      "subject": "klein-erlangen-programme",
+      "predicate": "year",
+      "value": 1872,
+      "unit": "year",
+      "quote": "In the *Erlangen Programme* of 1872 he proposed that a geometry *is* the study of what a group of transformations leaves invariant",
+      "citation_keys": [
+        "klein1872erlangen"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-noether-theorem",
+      "subject": "noether-theorem",
+      "predicate": "year",
+      "value": 1918,
+      "unit": "year",
+      "quote": "Noether's 1918 theorem is the physicist's cousin",
+      "citation_keys": [
+        "noether1918"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-deep-sets",
+      "subject": "deep-sets",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "quote": "**Deep Sets** \\cite{zaheer2017deepsets} proved that any function of a *set* of inputs that is permutation-invariant must factor as",
+      "citation_keys": [
+        "zaheer2017deepsets"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-condition-number",
+      "subject": "condition-number",
+      "predicate": "definition",
+      "value": "sigma_max / sigma_min",
+      "unit": "formula",
+      "quote": "The ratio $\\kappa = \\sigma_{\\max}/\\sigma_{\\min}$, the **condition number**",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -96,6 +294,210 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 1",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-grassmann-inner-product",
+      "from": "grassmann-inner-product",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in the *Ausdehnungslehre* of 1844 he coined *inneres Produkt* for exactly this pairing",
+      "citation_keys": [
+        "grassmann1844ausdehnungslehre"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-gram-matrix",
+      "from": "gram-matrix",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "named for Jørgen Pedersen Gram, whose 1879/1883 work on least-squares series expansions used the determinant of such a matrix",
+      "citation_keys": [
+        "gram1883"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-legendre-least-squares",
+      "from": "legendre-least-squares",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Legendre published it first, in 1805, as a practical rule for fitting comet orbits",
+      "citation_keys": [
+        "legendre1805",
+        "gauss1809"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-gauss-least-squares",
+      "from": "gauss-least-squares",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Gauss published it in 1809 and claimed he had used it since 1795",
+      "citation_keys": [
+        "legendre1805",
+        "gauss1809"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-eugenio-beltrami",
+      "from": "eugenio-beltrami",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Beltrami (1873) and Jordan (1874) independently showed",
+      "citation_keys": [
+        "stewart1993svd"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-camille-jordan",
+      "from": "camille-jordan",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Beltrami (1873) and Jordan (1874) independently showed",
+      "citation_keys": [
+        "stewart1993svd"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-eckart-young-theorem",
+      "from": "eckart-young-theorem",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The finite-dimensional theorem is due to Eckart and Young (1936)",
+      "citation_keys": [
+        "eckartyoung1936"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-golub-reinsch",
+      "from": "golub-reinsch",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "is Golub and Reinsch's (1970)",
+      "citation_keys": [
+        "golubreinsch1970"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-cauchy-steepest-descent",
+      "from": "cauchy-steepest-descent",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Cauchy wrote this down in 1847 as the method of steepest descent",
+      "citation_keys": [
+        "cauchy1847"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-hadamard-descent",
+      "from": "hadamard-descent",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "with Hadamard's 1907–08 method",
+      "citation_keys": [
+        "hadamard1908"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-rosen-gradient-projection",
+      "from": "rosen-gradient-projection",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "is Rosen's gradient-projection method (1960)",
+      "citation_keys": [
+        "rosen1960"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-fourier-heat-theory",
+      "from": "fourier-heat-theory",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In his 1822 *Théorie analytique de la chaleur*",
+      "citation_keys": [
+        "fourier1822"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-cooley-tukey-fft",
+      "from": "cooley-tukey-fft",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Cooley and Tukey's 1965 paper supplied the general composite-length algorithm and the $O(n\\log n)$ analysis",
+      "citation_keys": [
+        "cooley1965fft"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-klein-erlangen-programme",
+      "from": "klein-erlangen-programme",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In the *Erlangen Programme* of 1872 he proposed that a geometry *is* the study of what a group of transformations leaves invariant",
+      "citation_keys": [
+        "klein1872erlangen"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-noether-theorem",
+      "from": "noether-theorem",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Noether's 1918 theorem is the physicist's cousin",
+      "citation_keys": [
+        "noether1918"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-deep-sets",
+      "from": "deep-sets",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Deep Sets** \\cite{zaheer2017deepsets} proved that any function of a *set* of inputs that is permutation-invariant must factor as",
+      "citation_keys": [
+        "zaheer2017deepsets"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-condition-number",
+      "from": "condition-number",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The ratio $\\kappa = \\sigma_{\\max}/\\sigma_{\\min}$, the **condition number**",
       "citation_keys": [],
       "confidence": "provenance"
     }

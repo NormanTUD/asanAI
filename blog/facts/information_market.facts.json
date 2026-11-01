@@ -5,19 +5,18 @@
   "title": "The Market for Information",
   "part": 1,
   "order": 14,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "fuggernews",
     "habermaspublicsphere",
     "isidoreofseville",
     "etymologiae",
-    "wired2002isidore",
     "encyclopedie",
-    "paulotlet",
     "mundaneum",
     "traitededocumentation",
-    "catalogingtheworld"
+    "wired2002isidore",
+    "paulotlet"
   ],
   "claims": [
     {
@@ -58,6 +57,266 @@
       "quote": "order: 14",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "information_market-fugger-century",
+      "subject": "fugger-network",
+      "predicate": "century",
+      "value": 16,
+      "unit": "count",
+      "qualifiers": {
+        "definition": "sixteenth century"
+      },
+      "quote": "In the sixteenth century, in the banking city of Augsburg, the Fugger family ran one of Europe's largest information networks",
+      "citation_keys": [
+        "fuggernews"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-fugger-city",
+      "subject": "fugger-network",
+      "predicate": "location",
+      "value": "Augsburg",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "In the sixteenth century, in the banking city of Augsburg, the Fugger family ran one of Europe's largest information networks",
+      "citation_keys": [
+        "fuggernews"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-relation-year",
+      "subject": "relation-newssheet",
+      "predicate": "year",
+      "value": 1609,
+      "unit": "year",
+      "qualifiers": {
+        "definition": "title page 1605/1609"
+      },
+      "quote": "Strasbourg *Relation* (1605/1609), recognized as the world's first newspaper",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-relation-first",
+      "subject": "relation-newssheet",
+      "predicate": "status",
+      "value": "world first newspaper",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "recognized as the world's first newspaper",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-public-sphere",
+      "subject": "public-sphere",
+      "predicate": "originator",
+      "value": "Habermas",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The sociologist \\citeauthor{habermaspublicsphere} (\\citeyear{habermaspublicsphere}) later named what was happening there: the **public sphere**",
+      "citation_keys": [
+        "habermaspublicsphere"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-isidore-dates",
+      "subject": "isidore-of-seville",
+      "predicate": "life_dates",
+      "value": "c. 560-636",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "archbishop \\cite[Isidore of Seville]{isidoreofseville} (c. 560–636)",
+      "citation_keys": [
+        "isidoreofseville"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-etymologiae-books",
+      "subject": "etymologiae",
+      "predicate": "books",
+      "value": 20,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "a twenty-book encyclopedia that tried to capture the whole of ancient learning in a single ordered work",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-etymologiae-manuscripts",
+      "subject": "etymologiae",
+      "predicate": "surviving_manuscripts",
+      "value": 1000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "copied in nearly a thousand surviving manuscripts",
+      "citation_keys": [
+        "etymologiae"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-encyclopedie-years",
+      "subject": "encyclopedie",
+      "predicate": "publication_period",
+      "value": "1751-1772",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "Between 1751 and 1772, \\citeauthor{encyclopedie} and some hundred and forty contributors set out to put *all* known knowledge into a single work",
+      "citation_keys": [
+        "encyclopedie"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-encyclopedie-contributors",
+      "subject": "encyclopedie",
+      "predicate": "contributors",
+      "value": 140,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "some hundred and forty contributors",
+      "citation_keys": [
+        "encyclopedie"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-mundaneum-year",
+      "subject": "mundaneum",
+      "predicate": "founded_year",
+      "value": 1910,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1910 two Belgian lawyers — \\cite[Paul Otlet]{paulotlet} and Henri La Fontaine — built the **Mundaneum** in Brussels",
+      "citation_keys": [
+        "mundaneum"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-mundaneum-cards",
+      "subject": "mundaneum",
+      "predicate": "cards",
+      "value": 12000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "At its height the building held more than twelve million cards",
+      "citation_keys": [
+        "mundaneum"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-mundaneum-classification",
+      "subject": "mundaneum",
+      "predicate": "classification_system",
+      "value": "Universal Decimal Classification",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "classified by the Universal Decimal Classification and **cross-indexed**",
+      "citation_keys": [
+        "mundaneum"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-otlet-traite-year",
+      "subject": "traite-de-documentation",
+      "predicate": "year",
+      "value": 1934,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1934 Otlet published the \\cite[Traité de Documentation]{traitededocumentation}",
+      "citation_keys": [
+        "traitededocumentation"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-otlet-mundotheque",
+      "subject": "mundotheque",
+      "predicate": "definition",
+      "value": "a world-library that would display any document on demand, from anywhere",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "He called that central repository the **mundotheque** — his word for a \"world-library\" that would display any document on demand, from anywhere",
+      "citation_keys": [
+        "mundaneum"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-otlet-prefigured-memex",
+      "subject": "otlet-1934-vision",
+      "predicate": "influenced",
+      "value": "the Memex",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "His 1934 vision directly prefigured the *Memex* that Vannevar Bush would make famous a decade later",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-memex-year",
+      "subject": "memex",
+      "predicate": "year",
+      "value": 1945,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "whose *Memex* of 1945 carried Otlet's \"read the world from your armchair\" vision into the age of electronics",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-isidore-patron",
+      "subject": "isidore-of-seville",
+      "predicate": "patronage",
+      "value": "patron saint of the internet",
+      "unit": "name",
+      "qualifiers": {
+        "definition": "popular, informal patronage"
+      },
+      "quote": "the Catholic Church has come to regard Isidore as the patron saint of the internet",
+      "citation_keys": [
+        "wired2002isidore"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-otlet-life",
+      "subject": "paul-otlet",
+      "predicate": "life_dates",
+      "value": "1868-1944",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "Paul Otlet (1868–1944)]{paulotlet} at his office, 1937",
+      "citation_keys": [
+        "paulotlet"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-lafontaine-role",
+      "subject": "henri-la-fontaine",
+      "predicate": "role",
+      "value": "co-founder of the Mundaneum",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "and Henri La Fontaine — built the **Mundaneum**",
+      "citation_keys": [
+        "mundaneum"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -69,6 +328,154 @@
       "qualifiers": {},
       "quote": "part: 1",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-information_market-fugger-network",
+      "from": "fugger-network",
+      "to": "information-market",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In the sixteenth century, in the banking city of Augsburg, the Fugger family ran one of Europe's largest information networks",
+      "citation_keys": [
+        "fuggernews"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-information_market-relation-newssheet",
+      "from": "relation-newssheet",
+      "to": "information-market",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Strasbourg *Relation* (1605/1609), recognized as the world's first newspaper",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-information_market-public-sphere",
+      "from": "public-sphere",
+      "to": "information-market",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The sociologist \\citeauthor{habermaspublicsphere} (\\citeyear{habermaspublicsphere}) later named what was happening there: the **public sphere**",
+      "citation_keys": [
+        "habermaspublicsphere"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-information_market-isidore-of-seville",
+      "from": "isidore-of-seville",
+      "to": "information-market",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "archbishop \\cite[Isidore of Seville]{isidoreofseville} (c. 560–636)",
+      "citation_keys": [
+        "isidoreofseville"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-information_market-etymologiae",
+      "from": "etymologiae",
+      "to": "information-market",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a twenty-book encyclopedia that tried to capture the whole of ancient learning in a single ordered work",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-information_market-encyclopedie",
+      "from": "encyclopedie",
+      "to": "information-market",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Between 1751 and 1772, \\citeauthor{encyclopedie} and some hundred and forty contributors set out to put *all* known knowledge into a single work",
+      "citation_keys": [
+        "encyclopedie"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-information_market-mundaneum",
+      "from": "mundaneum",
+      "to": "information-market",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1910 two Belgian lawyers — \\cite[Paul Otlet]{paulotlet} and Henri La Fontaine — built the **Mundaneum** in Brussels",
+      "citation_keys": [
+        "mundaneum"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-information_market-traite-de-documentation",
+      "from": "traite-de-documentation",
+      "to": "information-market",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1934 Otlet published the \\cite[Traité de Documentation]{traitededocumentation}",
+      "citation_keys": [
+        "traitededocumentation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-information_market-mundotheque",
+      "from": "mundotheque",
+      "to": "information-market",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "He called that central repository the **mundotheque** — his word for a \"world-library\" that would display any document on demand, from anywhere",
+      "citation_keys": [
+        "mundaneum"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-information_market-otlet-1934-vision",
+      "from": "otlet-1934-vision",
+      "to": "information-market",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "His 1934 vision directly prefigured the *Memex* that Vannevar Bush would make famous a decade later",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-information_market-memex",
+      "from": "memex",
+      "to": "information-market",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "whose *Memex* of 1945 carried Otlet's \"read the world from your armchair\" vision into the age of electronics",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-information_market-paul-otlet",
+      "from": "paul-otlet",
+      "to": "information-market",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Paul Otlet (1868–1944)]{paulotlet} at his office, 1937",
+      "citation_keys": [
+        "paulotlet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-information_market-henri-la-fontaine",
+      "from": "henri-la-fontaine",
+      "to": "information-market",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "and Henri La Fontaine — built the **Mundaneum**",
+      "citation_keys": [
+        "mundaneum"
+      ],
       "confidence": "provenance"
     }
   ]

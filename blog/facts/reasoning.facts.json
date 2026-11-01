@@ -5,20 +5,16 @@
   "title": "Reasoning & Test-Time Compute",
   "part": 5,
   "order": 15,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "kojima2022zeroshot",
     "wei2022cot",
-    "yao2023tot",
-    "madaan2023selfrefine",
-    "yao2023react",
     "wang2022selfconsistency",
-    "shao2024grpo",
-    "ouyang2022instructgpt",
+    "yao2023tot",
     "zhang2024mathshepherd",
-    "snell2024testtime",
-    "hendrycks2021math"
+    "shao2024grpo",
+    "snell2024testtime"
   ],
   "claims": [
     {
@@ -59,6 +55,213 @@
       "quote": "order: 15",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "reasoning-o1-release",
+      "subject": "o1",
+      "predicate": "release_date",
+      "value": "September 2024",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "OpenAI's o1 (September 2024)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reasoning-r1-release",
+      "subject": "deepseek-r1",
+      "predicate": "release_date",
+      "value": "January 2025",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "DeepSeek's R1 (January 2025)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reasoning-zero-shot-cot-source",
+      "subject": "zero-shot-cot",
+      "predicate": "introduced_by",
+      "value": "Kojima et al., 2022",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The **magic phrase** *“Let's think step by step”*, added to a zero-shot prompt, was introduced by (\\cite[Kojima et al., 2022]{kojima2022zeroshot})",
+      "citation_keys": [
+        "kojima2022zeroshot"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reasoning-few-shot-cot-source",
+      "subject": "few-shot-cot",
+      "predicate": "introduced_by",
+      "value": "Wei et al., 2022",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "(\\cite[Wei et al., 2022]{wei2022cot}) showed that **few-shot** chain-of-thought prompting",
+      "citation_keys": [
+        "wei2022cot"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reasoning-self-consistency-source",
+      "subject": "self-consistency",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The simplest and most reliable inference-time scaling trick (\\cite[Wang et al., 2022]{wang2022selfconsistency})",
+      "citation_keys": [
+        "wang2022selfconsistency"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reasoning-self-consistency-gain",
+      "subject": "self-consistency",
+      "predicate": "accuracy_gain",
+      "value": "10-20",
+      "unit": "%",
+      "qualifiers": {
+        "k": 40
+      },
+      "quote": "Self-consistency gives 10–20% accuracy gains on GSM8K and similar benchmarks at $k=40$.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reasoning-tot-year",
+      "subject": "tree-of-thoughts",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Tree of Thoughts (ToT)** (\\cite[Yao et al., 2023]{yao2023tot})",
+      "citation_keys": [
+        "yao2023tot"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reasoning-tot-complexity",
+      "subject": "tree-of-thoughts",
+      "predicate": "call_complexity",
+      "value": "O(b^d)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "at the cost of $O(b^d)$ model calls for depth $d$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reasoning-prm-definition",
+      "subject": "process-reward-model",
+      "predicate": "scores",
+      "value": "every step of a reasoning trace",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A **Process Reward Model** scores every **step** of a reasoning trace.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reasoning-math-shepherd-year",
+      "subject": "math-shepherd",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The Math-Shepherd method (\\cite[Zhang et al., 2024]{zhang2024mathshepherd})",
+      "citation_keys": [
+        "zhang2024mathshepherd"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reasoning-r1-zero-training",
+      "subject": "deepseek-r1-zero",
+      "predicate": "training_method",
+      "value": "pure RL with GRPO, no SFT",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "DeepSeek's **R1-Zero** was trained purely with RL (no SFT) using a technique called **GRPO**",
+      "citation_keys": [
+        "shao2024grpo"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reasoning-grpo-full-name",
+      "subject": "grpo",
+      "predicate": "full_name",
+      "value": "Group Relative Policy Optimization",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "It is what falls out when you apply **Group Relative Policy Optimization** to a base model",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reasoning-o1-reasoning-tokens",
+      "subject": "o1",
+      "predicate": "reasoning_tokens",
+      "value": "thousands",
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "At inference, the model produces **thousands of tokens of internal reasoning** before answering.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reasoning-test-time-power-law",
+      "subject": "test-time-scaling-law",
+      "predicate": "form",
+      "value": "accuracy(n) = a * n^b",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "**inference-time compute scaling** follows a power law similar to training-time scaling",
+      "citation_keys": [
+        "snell2024testtime"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "reasoning-o1-accuracy-10k",
+      "subject": "o1",
+      "predicate": "accuracy_at_10000_tokens",
+      "value": 72,
+      "unit": "%",
+      "qualifiers": {
+        "n_tokens": 10000
+      },
+      "quote": "$n = 10{,}000$ tokens: 72% accuracy",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reasoning-o1-compute-cost",
+      "subject": "o1",
+      "predicate": "inference_compute_cost",
+      "value": "10-100x",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "| o1-style long thinking | $10{-}100\\times$ | Hard math, code, science |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reasoning-cot-chunks",
+      "subject": "chain-of-thought",
+      "predicate": "chunks_per_100_tokens",
+      "value": 10,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "A 100-token CoT might involve ~10 reasoning “chunks”",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -69,6 +272,140 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 5",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reasoning-o1",
+      "from": "o1",
+      "to": "reasoning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "OpenAI's o1 (September 2024)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reasoning-deepseek-r1",
+      "from": "deepseek-r1",
+      "to": "reasoning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "DeepSeek's R1 (January 2025)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reasoning-zero-shot-cot",
+      "from": "zero-shot-cot",
+      "to": "reasoning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **magic phrase** *“Let's think step by step”*, added to a zero-shot prompt, was introduced by (\\cite[Kojima et al., 2022]{kojima2022zeroshot})",
+      "citation_keys": [
+        "kojima2022zeroshot"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reasoning-few-shot-cot",
+      "from": "few-shot-cot",
+      "to": "reasoning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Wei et al., 2022]{wei2022cot}) showed that **few-shot** chain-of-thought prompting",
+      "citation_keys": [
+        "wei2022cot"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reasoning-self-consistency",
+      "from": "self-consistency",
+      "to": "reasoning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The simplest and most reliable inference-time scaling trick (\\cite[Wang et al., 2022]{wang2022selfconsistency})",
+      "citation_keys": [
+        "wang2022selfconsistency"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reasoning-tree-of-thoughts",
+      "from": "tree-of-thoughts",
+      "to": "reasoning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Tree of Thoughts (ToT)** (\\cite[Yao et al., 2023]{yao2023tot})",
+      "citation_keys": [
+        "yao2023tot"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reasoning-process-reward-model",
+      "from": "process-reward-model",
+      "to": "reasoning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A **Process Reward Model** scores every **step** of a reasoning trace.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reasoning-math-shepherd",
+      "from": "math-shepherd",
+      "to": "reasoning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Math-Shepherd method (\\cite[Zhang et al., 2024]{zhang2024mathshepherd})",
+      "citation_keys": [
+        "zhang2024mathshepherd"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reasoning-deepseek-r1-zero",
+      "from": "deepseek-r1-zero",
+      "to": "reasoning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "DeepSeek's **R1-Zero** was trained purely with RL (no SFT) using a technique called **GRPO**",
+      "citation_keys": [
+        "shao2024grpo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reasoning-grpo",
+      "from": "grpo",
+      "to": "reasoning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "It is what falls out when you apply **Group Relative Policy Optimization** to a base model",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reasoning-test-time-scaling-law",
+      "from": "test-time-scaling-law",
+      "to": "reasoning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**inference-time compute scaling** follows a power law similar to training-time scaling",
+      "citation_keys": [
+        "snell2024testtime"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reasoning-chain-of-thought",
+      "from": "chain-of-thought",
+      "to": "reasoning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A 100-token CoT might involve ~10 reasoning “chunks”",
       "citation_keys": [],
       "confidence": "provenance"
     }

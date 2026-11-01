@@ -5,15 +5,15 @@
   "title": "Semantic Search & Vector Databases: Finding Needles in Haystacks",
   "part": 5,
   "order": 6,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "robertson2009bm25",
     "malkov2018hnsw",
     "jegou2011pq",
     "johnson2017faiss",
-    "kusupati2022matryoshka",
-    "khattab2020colbert"
+    "khattab2020colbert",
+    "kusupati2022matryoshka"
   ],
   "claims": [
     {
@@ -54,6 +54,244 @@
       "quote": "order: 6",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "vectorsearch-query-dimensions",
+      "subject": "vector-search-query",
+      "predicate": "dimensions",
+      "value": 768,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "\\vec{q} \\in \\mathbb{R}^{768}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-bm25-year",
+      "subject": "bm25",
+      "predicate": "publication_year",
+      "value": 2009,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**BM25** (Best Matching 25) \\cite{robertson2009bm25}",
+      "citation_keys": [
+        "robertson2009bm25"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-bm25-name",
+      "subject": "bm25",
+      "predicate": "full_name",
+      "value": "Best Matching 25",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**BM25** (Best Matching 25) \\cite{robertson2009bm25}",
+      "citation_keys": [
+        "robertson2009bm25"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-hnsw-year",
+      "subject": "hnsw",
+      "predicate": "publication_year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "HNSW \\cite{malkov2018hnsw} is the most popular ANN algorithm in production today.",
+      "citation_keys": [
+        "malkov2018hnsw"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-pq-year",
+      "subject": "product-quantization",
+      "predicate": "publication_year",
+      "value": 2011,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "PQ \\cite{jegou2011pq} addresses a different bottleneck: **memory**.",
+      "citation_keys": [
+        "jegou2011pq"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-faiss-year",
+      "subject": "faiss",
+      "predicate": "publication_year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Libraries like FAISS \\cite{johnson2017faiss} support all combinations.",
+      "citation_keys": [
+        "johnson2017faiss"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-colbert-year",
+      "subject": "colbert",
+      "predicate": "publication_year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**ColBERT** sits between them: it encodes separately but keeps every token embedding and scores the pair with late interaction (MaxSim) \\cite{khattab2020colbert}.",
+      "citation_keys": [
+        "khattab2020colbert"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-matryoshka-year",
+      "subject": "matryoshka-embeddings",
+      "predicate": "publication_year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Nomic AI | Open-source, Matryoshka (variable dim) \\cite{kusupati2022matryoshka}",
+      "citation_keys": [
+        "kusupati2022matryoshka"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-memory-footprint",
+      "subject": "vector-memory-footprint",
+      "predicate": "one_billion_768_float32",
+      "value": 3.07,
+      "unit": "TB",
+      "qualifiers": {},
+      "quote": "10^9 \\times 768 \\times 4 \\text{ bytes} = 3.07 \\text{ TB of RAM}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-pq-compressed-size",
+      "subject": "product-quantization-compression",
+      "predicate": "compressed_size",
+      "value": 96,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "Compressed size: $10^9 \\times 96 \\times 1 \\text{ byte} = 96 \\text{ GB}$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-pq-ratio",
+      "subject": "product-quantization-compression",
+      "predicate": "compression_ratio",
+      "value": 32,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "a **32x compression**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-brute-force-flops",
+      "subject": "brute-force-vector-search",
+      "predicate": "flops_per_query",
+      "value": 768000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "For 1 billion vectors at 768 dimensions, that's **768 billion floating-point operations per query**.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-ann-recall",
+      "subject": "approximate-nearest-neighbor",
+      "predicate": "recall",
+      "value": "95-99",
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "sacrifice a tiny amount of recall (typically 95-99%) for dramatic speed improvements (1000x or more)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-ann-speedup",
+      "subject": "approximate-nearest-neighbor",
+      "predicate": "speedup",
+      "value": 1000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "sacrifice a tiny amount of recall (typically 95-99%) for dramatic speed improvements (1000x or more)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-hnsw-complexity",
+      "subject": "hnsw",
+      "predicate": "search_complexity",
+      "value": "O(log N)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "\\text{Search complexity: } O(\\log N) \\quad \\text{vs. brute force } O(N)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-hnsw-hops",
+      "subject": "hnsw",
+      "predicate": "hops_for_billion_vectors",
+      "value": "100-200",
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Searching 1 billion vectors takes ~100-200 “hops” instead of 1 billion comparisons.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-ivf-fraction",
+      "subject": "ivf",
+      "predicate": "searched_fraction",
+      "value": 1,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "If $C = 1000$ and $n_{\\text{probe}} = 10$, you only search 1% of the database.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-reranker-latency",
+      "subject": "reranker",
+      "predicate": "latency",
+      "value": "50-200 ms",
+      "unit": "interval",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "~50-200ms for top 20-50",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-embedding-3-small",
+      "subject": "text-embedding-3-small",
+      "predicate": "dimensions",
+      "value": 1536,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "| `text-embedding-3-small` | 1536 | OpenAI |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-embedding-3-large",
+      "subject": "text-embedding-3-large",
+      "predicate": "dimensions",
+      "value": 3072,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "| `text-embedding-3-large` | 3072 | OpenAI |",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -64,6 +302,168 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 5",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-vector-search-query",
+      "from": "vector-search-query",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\vec{q} \\in \\mathbb{R}^{768}",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-bm25",
+      "from": "bm25",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**BM25** (Best Matching 25) \\cite{robertson2009bm25}",
+      "citation_keys": [
+        "robertson2009bm25"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-hnsw",
+      "from": "hnsw",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "HNSW \\cite{malkov2018hnsw} is the most popular ANN algorithm in production today.",
+      "citation_keys": [
+        "malkov2018hnsw"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-product-quantization",
+      "from": "product-quantization",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "PQ \\cite{jegou2011pq} addresses a different bottleneck: **memory**.",
+      "citation_keys": [
+        "jegou2011pq"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-faiss",
+      "from": "faiss",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Libraries like FAISS \\cite{johnson2017faiss} support all combinations.",
+      "citation_keys": [
+        "johnson2017faiss"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-colbert",
+      "from": "colbert",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**ColBERT** sits between them: it encodes separately but keeps every token embedding and scores the pair with late interaction (MaxSim) \\cite{khattab2020colbert}.",
+      "citation_keys": [
+        "khattab2020colbert"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-matryoshka-embeddings",
+      "from": "matryoshka-embeddings",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Nomic AI | Open-source, Matryoshka (variable dim) \\cite{kusupati2022matryoshka}",
+      "citation_keys": [
+        "kusupati2022matryoshka"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-vector-memory-footprint",
+      "from": "vector-memory-footprint",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "10^9 \\times 768 \\times 4 \\text{ bytes} = 3.07 \\text{ TB of RAM}",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-product-quantization-compression",
+      "from": "product-quantization-compression",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Compressed size: $10^9 \\times 96 \\times 1 \\text{ byte} = 96 \\text{ GB}$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-brute-force-vector-search",
+      "from": "brute-force-vector-search",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "For 1 billion vectors at 768 dimensions, that's **768 billion floating-point operations per query**.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-approximate-nearest-neighbor",
+      "from": "approximate-nearest-neighbor",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "sacrifice a tiny amount of recall (typically 95-99%) for dramatic speed improvements (1000x or more)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-ivf",
+      "from": "ivf",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "If $C = 1000$ and $n_{\\text{probe}} = 10$, you only search 1% of the database.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-reranker",
+      "from": "reranker",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "~50-200ms for top 20-50",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-text-embedding-3-small",
+      "from": "text-embedding-3-small",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| `text-embedding-3-small` | 1536 | OpenAI |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-text-embedding-3-large",
+      "from": "text-embedding-3-large",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| `text-embedding-3-large` | 3072 | OpenAI |",
       "citation_keys": [],
       "confidence": "provenance"
     }

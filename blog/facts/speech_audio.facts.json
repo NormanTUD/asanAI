@@ -5,7 +5,7 @@
   "title": "Speech & Audio Models",
   "part": 4,
   "order": 15,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [],
   "claims": [
@@ -47,6 +47,239 @@
       "quote": "order: 15",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "speech_audio-sampling",
+      "subject": "audio-waveform",
+      "predicate": "sample_rates",
+      "value": "16 kHz, 44.1 kHz",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A raw audio waveform is a 1-D signal sampled at 16 kHz or 44.1 kHz",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-samples-per-second",
+      "subject": "audio-waveform",
+      "predicate": "samples_per_second",
+      "value": 44100,
+      "unit": "count",
+      "qualifiers": {
+        "definition": "range 16,000-44,100 per second"
+      },
+      "quote": "a sequence of 16,000 to 44,100 floats **per second**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-stft-window",
+      "subject": "stft",
+      "predicate": "window_length",
+      "value": "20-40 ms",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "split the waveform into 20–40 ms windows",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-mel-shape",
+      "subject": "mel-spectrogram",
+      "predicate": "shape",
+      "value": "(80, 500)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "A 10-second clip at 16 kHz becomes a mel-spectrogram of shape $(\\text{mel bins}, \\text{time frames}) \\approx (80, 500)$.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-mel-formula",
+      "subject": "mel-scale",
+      "predicate": "formula",
+      "value": "mel(f) = 2595 log10(1 + f/700)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "mel}(f) = 2595 \\log_{10}(1 + f/700)$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-soundstream-year",
+      "subject": "soundstream",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**SoundStream** (Google, 2021): 24 kHz mono audio → discrete codes at 3–18 kbps.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-encodec-year",
+      "subject": "encodec",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**EnCodec** (Meta, 2022): 24 kHz stereo → discrete codes; uses a residual vector quantizer.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-codec-token-rate",
+      "subject": "neural-audio-codec",
+      "predicate": "token_rate",
+      "value": 600,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "With $n_q = 8$ codebooks and 75 frames per second, audio becomes 600 tokens per second",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-wav2vec-rate",
+      "subject": "wav2vec-2-0",
+      "predicate": "output_rate_hz",
+      "value": 50,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "The output is a sequence of 50 Hz contextualized vectors",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-whisper-year",
+      "subject": "whisper",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Whisper** (Radford et al., OpenAI, 2022) is the dominant open ASR model.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-whisper-chunk",
+      "subject": "whisper",
+      "predicate": "input_length",
+      "value": "30-second",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "**Input**: 30-second audio chunks, converted to 80-channel log-mel spectrograms (100 Hz frames; 50 Hz after the conv stem).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-whisper-training-hours",
+      "subject": "whisper",
+      "predicate": "training_audio_hours",
+      "value": 680000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**Training**: 680,000 hours of weakly-supervised multilingual audio with transcribed captions.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-whisper-v3-wer",
+      "subject": "whisper-large-v3",
+      "predicate": "word_error_rate",
+      "value": 3,
+      "unit": "%",
+      "qualifiers": {
+        "scope": "clean English",
+        "definition": "under 3%"
+      },
+      "quote": "Whisper-large-v3 (2023) achieves under 3% word error rate on clean English and ~10% on noisy multilingual.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-whisper-v3-multilingual-wer",
+      "subject": "whisper-large-v3",
+      "predicate": "word_error_rate",
+      "value": 10,
+      "unit": "%",
+      "qualifiers": {
+        "scope": "noisy multilingual",
+        "approx": true
+      },
+      "quote": "Whisper-large-v3 (2023) achieves under 3% word error rate on clean English and ~10% on noisy multilingual.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-conformer-year",
+      "subject": "conformer",
+      "predicate": "year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Conformer** (Gulati et al., Google, 2020) is the dominant architecture for streaming ASR.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-seamless-languages",
+      "subject": "seamlessm4t",
+      "predicate": "languages",
+      "value": 100,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true,
+        "definition": "100+"
+      },
+      "quote": "extend this to 100+ languages",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-tacotron2-year",
+      "subject": "tacotron-2",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Neural spectrogram models** (Tacotron 2, 2017): encoder–decoder produces a mel-spectrogram",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-valle-cloning",
+      "subject": "vall-e",
+      "predicate": "voice_cloning_reference",
+      "value": "3-second",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "Voice cloning from a 3-second reference sample becomes trivial.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-gpt4o-year",
+      "subject": "gpt-4o",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**GPT-4o** (OpenAI, 2024): real-time voice conversation with emotional nuance.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "speech_audio-voxtral",
+      "subject": "voxtral",
+      "predicate": "parameters",
+      "value": 24000000000,
+      "unit": "count",
+      "qualifiers": {
+        "variant": "open-weight audio model"
+      },
+      "quote": "**Voxtral** (Mistral, 2025): open-weight 24B audio model.",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -57,6 +290,166 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-speech_audio-audio-waveform",
+      "from": "audio-waveform",
+      "to": "speech-audio",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A raw audio waveform is a 1-D signal sampled at 16 kHz or 44.1 kHz",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-speech_audio-stft",
+      "from": "stft",
+      "to": "speech-audio",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "split the waveform into 20–40 ms windows",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-speech_audio-mel-spectrogram",
+      "from": "mel-spectrogram",
+      "to": "speech-audio",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A 10-second clip at 16 kHz becomes a mel-spectrogram of shape $(\\text{mel bins}, \\text{time frames}) \\approx (80, 500)$.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-speech_audio-mel-scale",
+      "from": "mel-scale",
+      "to": "speech-audio",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "mel}(f) = 2595 \\log_{10}(1 + f/700)$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-speech_audio-soundstream",
+      "from": "soundstream",
+      "to": "speech-audio",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**SoundStream** (Google, 2021): 24 kHz mono audio → discrete codes at 3–18 kbps.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-speech_audio-encodec",
+      "from": "encodec",
+      "to": "speech-audio",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**EnCodec** (Meta, 2022): 24 kHz stereo → discrete codes; uses a residual vector quantizer.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-speech_audio-neural-audio-codec",
+      "from": "neural-audio-codec",
+      "to": "speech-audio",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "With $n_q = 8$ codebooks and 75 frames per second, audio becomes 600 tokens per second",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-speech_audio-wav2vec-2-0",
+      "from": "wav2vec-2-0",
+      "to": "speech-audio",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The output is a sequence of 50 Hz contextualized vectors",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-speech_audio-whisper",
+      "from": "whisper",
+      "to": "speech-audio",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Whisper** (Radford et al., OpenAI, 2022) is the dominant open ASR model.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-speech_audio-whisper-large-v3",
+      "from": "whisper-large-v3",
+      "to": "speech-audio",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Whisper-large-v3 (2023) achieves under 3% word error rate on clean English and ~10% on noisy multilingual.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-speech_audio-conformer",
+      "from": "conformer",
+      "to": "speech-audio",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Conformer** (Gulati et al., Google, 2020) is the dominant architecture for streaming ASR.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-speech_audio-seamlessm4t",
+      "from": "seamlessm4t",
+      "to": "speech-audio",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "extend this to 100+ languages",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-speech_audio-tacotron-2",
+      "from": "tacotron-2",
+      "to": "speech-audio",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Neural spectrogram models** (Tacotron 2, 2017): encoder–decoder produces a mel-spectrogram",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-speech_audio-vall-e",
+      "from": "vall-e",
+      "to": "speech-audio",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Voice cloning from a 3-second reference sample becomes trivial.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-speech_audio-gpt-4o",
+      "from": "gpt-4o",
+      "to": "speech-audio",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**GPT-4o** (OpenAI, 2024): real-time voice conversation with emotional nuance.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-speech_audio-voxtral",
+      "from": "voxtral",
+      "to": "speech-audio",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Voxtral** (Mistral, 2025): open-weight 24B audio model.",
       "citation_keys": [],
       "confidence": "provenance"
     }

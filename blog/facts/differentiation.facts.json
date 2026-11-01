@@ -5,17 +5,12 @@
   "title": "Differentiation: The Mathematics of Change",
   "part": 2,
   "order": 3,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "newton_portrait",
-    "leibniz_portrait",
     "leibniz1684nova",
-    "historyofmathematicalnotation",
     "oeuvresdeformat",
-    "wallis1655",
     "lagrange1797theorie",
-    "lagrange_portrait",
     "euler1755",
     "cauchy1847",
     "rumelhart1986",
@@ -61,6 +56,222 @@
       "quote": "order: 3",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "differentiation-newton-fluxions",
+      "subject": "isaac-newton",
+      "predicate": "fluxions_period",
+      "value": "1665-1666",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "Newton developed his “method of fluxions” around 1665–1666",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-leibniz-period",
+      "subject": "gottfried-leibniz",
+      "predicate": "calculus_period",
+      "value": "1670s-1680s",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "Leibniz, working independently in the 1670s and 1680s",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-leibniz-nova",
+      "subject": "gottfried-leibniz",
+      "predicate": "publication_year",
+      "value": 1684,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "was published in \\citeyear{leibniz1684nova} in his paper \\citetitle{leibniz1684nova}",
+      "citation_keys": [
+        "leibniz1684nova"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-fermat-tangents",
+      "subject": "pierre-de-fermat",
+      "predicate": "tangent_method_year",
+      "value": 1630,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "had already explored the idea of finding tangent lines to curves using algebraic methods in the 1630s",
+      "citation_keys": [
+        "oeuvresdeformat"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-lagrange-notation",
+      "subject": "joseph-louis-lagrange",
+      "predicate": "prime_notation_year",
+      "value": 1797,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The notation $f'(x)$ (read “f prime of x”) was introduced by \\citeauthor{lagrange1797theorie} in \\citetitle{lagrange1797theorie} (\\citeyear{lagrange1797theorie}).",
+      "citation_keys": [
+        "lagrange1797theorie"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-euler-notation",
+      "subject": "leonhard-euler",
+      "predicate": "notation_year",
+      "value": 1755,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(notably \\citeauthor{euler1755} in \\citetitle{euler1755}, \\citeyear{euler1755}, who systematized much of the notation and theory)",
+      "citation_keys": [
+        "euler1755"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-x-squared",
+      "subject": "derivative-x-squared",
+      "predicate": "derivative",
+      "value": "2x",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "So the derivative of $x^2$ is $2x$.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-power-rule",
+      "subject": "power-rule",
+      "predicate": "formula",
+      "value": "n·x^(n-1)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "$$\\frac{d}{dx}[x^n] = n \\cdot x^{n-1}$$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-chain-rule",
+      "subject": "chain-rule",
+      "predicate": "formula",
+      "value": "f'(g(x))·g'(x)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "$$\\frac{d}{dx}[f(g(x))] = f'(g(x)) \\cdot g'(x)$$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-sigmoid-derivative",
+      "subject": "sigmoid-derivative",
+      "predicate": "formula",
+      "value": "σ(x)(1-σ(x))",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "$\\sigma(x)(1-\\sigma(x))$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-exponential",
+      "subject": "exponential-function",
+      "predicate": "self_derivative",
+      "value": "e^x",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "The fact that $e^x$ is its own derivative is not a coincidence",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-gradient-descent",
+      "subject": "gradient-descent",
+      "predicate": "first_described_year",
+      "value": 1847,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Gradient Descent**, first described for least-squares problems by \\citeauthor{cauchy1847} in \\citeyear{cauchy1847}",
+      "citation_keys": [
+        "cauchy1847"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-backpropagation",
+      "subject": "backpropagation",
+      "predicate": "popularized_year",
+      "value": 1986,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "This algorithm, popularized by \\citeauthor{rumelhart1986} in \\citeyear{rumelhart1986}",
+      "citation_keys": [
+        "rumelhart1986"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-partial-symbol",
+      "subject": "partial-derivative-symbol",
+      "predicate": "introduced_year",
+      "value": 1770,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The symbol $\\partial$ for partial derivatives was introduced by the Marquis de Condorcet in \\citeyear{condorcet1770}",
+      "citation_keys": [
+        "condorcet1770"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-partial-notation",
+      "subject": "partial-derivative-notation",
+      "predicate": "created_year",
+      "value": 1786,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the modern $\\partial/\\mathrm{d}x$ notation was created by \\citeauthor{legendre1786} in \\citetitle{legendre1786} (\\citeyear{legendre1786})",
+      "citation_keys": [
+        "legendre1786"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-jacobi",
+      "subject": "carl-gustav-jacobi",
+      "predicate": "partial_notation_year",
+      "value": 1841,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "only popularized after Jacobi reintroduced it in 1841",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-derivative-definition",
+      "subject": "derivative",
+      "predicate": "definition",
+      "value": "instantaneous rate of change",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The **derivative** is what happens when we let $h$ approach zero.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "differentiation-tangent-line",
+      "subject": "tangent-line",
+      "predicate": "equation",
+      "value": "y = f(a) + f'(a)(x - a)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "$$y = f(a) + f'(a)(x - a)$$",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -71,6 +282,190 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 2",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-isaac-newton",
+      "from": "isaac-newton",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Newton developed his “method of fluxions” around 1665–1666",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-gottfried-leibniz",
+      "from": "gottfried-leibniz",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Leibniz, working independently in the 1670s and 1680s",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-pierre-de-fermat",
+      "from": "pierre-de-fermat",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "had already explored the idea of finding tangent lines to curves using algebraic methods in the 1630s",
+      "citation_keys": [
+        "oeuvresdeformat"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-joseph-louis-lagrange",
+      "from": "joseph-louis-lagrange",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The notation $f'(x)$ (read “f prime of x”) was introduced by \\citeauthor{lagrange1797theorie} in \\citetitle{lagrange1797theorie} (\\citeyear{lagrange1797theorie}).",
+      "citation_keys": [
+        "lagrange1797theorie"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-leonhard-euler",
+      "from": "leonhard-euler",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(notably \\citeauthor{euler1755} in \\citetitle{euler1755}, \\citeyear{euler1755}, who systematized much of the notation and theory)",
+      "citation_keys": [
+        "euler1755"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-derivative-x-squared",
+      "from": "derivative-x-squared",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "So the derivative of $x^2$ is $2x$.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-power-rule",
+      "from": "power-rule",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$$\\frac{d}{dx}[x^n] = n \\cdot x^{n-1}$$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-chain-rule",
+      "from": "chain-rule",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$$\\frac{d}{dx}[f(g(x))] = f'(g(x)) \\cdot g'(x)$$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-sigmoid-derivative",
+      "from": "sigmoid-derivative",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$\\sigma(x)(1-\\sigma(x))$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-exponential-function",
+      "from": "exponential-function",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The fact that $e^x$ is its own derivative is not a coincidence",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-gradient-descent",
+      "from": "gradient-descent",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Gradient Descent**, first described for least-squares problems by \\citeauthor{cauchy1847} in \\citeyear{cauchy1847}",
+      "citation_keys": [
+        "cauchy1847"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-backpropagation",
+      "from": "backpropagation",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This algorithm, popularized by \\citeauthor{rumelhart1986} in \\citeyear{rumelhart1986}",
+      "citation_keys": [
+        "rumelhart1986"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-partial-derivative-symbol",
+      "from": "partial-derivative-symbol",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The symbol $\\partial$ for partial derivatives was introduced by the Marquis de Condorcet in \\citeyear{condorcet1770}",
+      "citation_keys": [
+        "condorcet1770"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-partial-derivative-notation",
+      "from": "partial-derivative-notation",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the modern $\\partial/\\mathrm{d}x$ notation was created by \\citeauthor{legendre1786} in \\citetitle{legendre1786} (\\citeyear{legendre1786})",
+      "citation_keys": [
+        "legendre1786"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-carl-gustav-jacobi",
+      "from": "carl-gustav-jacobi",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "only popularized after Jacobi reintroduced it in 1841",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-derivative",
+      "from": "derivative",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **derivative** is what happens when we let $h$ approach zero.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-tangent-line",
+      "from": "tangent-line",
+      "to": "differentiation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$$y = f(a) + f'(a)(x - a)$$",
       "citation_keys": [],
       "confidence": "provenance"
     }

@@ -5,7 +5,7 @@
   "title": "The Atlas",
   "part": 6,
   "order": 20,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "cosmic_web_image",
@@ -14,7 +14,6 @@
     "perceptronimagedetection",
     "starfield_eso_image",
     "solsys_planet_textures",
-    "earth_moon_cc_textures",
     "earth_night_lights",
     "m87_blackhole_image",
     "crab_nebula_image"
@@ -58,6 +57,180 @@
       "quote": "order: 20",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "atlas-timeline-start",
+      "subject": "atlas-timeline",
+      "predicate": "start_year",
+      "value": -5000,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "min=\"-5000\" max=\"2026\"",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "atlas-timeline-end",
+      "subject": "atlas-timeline",
+      "predicate": "end_year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "min=\"-5000\" max=\"2026\"",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "atlas-dataset-scope",
+      "subject": "atlas-dataset",
+      "predicate": "entity_scope",
+      "value": "person, place, institution, artifact, event and cited author",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Every person, place, institution, artifact, event and cited author in the Atlas dataset is a dot on this globe.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "atlas-title",
+      "subject": "atlas",
+      "predicate": "subtitle",
+      "value": "From Nothing to Large Language Models",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The Atlas<small>From Nothing to Large Language Models</small>",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "atlas-cosmic-web-credit",
+      "subject": "cosmic-web-image",
+      "predicate": "credit",
+      "value": "NASA / ESA / E. Hallman, public domain",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "NASA / ESA / E. Hallman, public domain",
+      "citation_keys": [
+        "cosmic_web_image"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "atlas-budassi-license",
+      "subject": "budassi-universe-image",
+      "predicate": "license",
+      "value": "CC BY-SA 3.0",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Pablo Carlos Budassi's logarithmic radial view of the observable universe, CC BY-SA 3.0",
+      "citation_keys": [
+        "budassi_universe_image"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "atlas-transformer-figure",
+      "subject": "transformer-architecture-figure",
+      "predicate": "publication_year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Figure 1 (the encoder–decoder architecture) from (\\cite[Vaswani et al., 2017]{transformer_attention_figure})",
+      "citation_keys": [
+        "transformer_attention_figure"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "atlas-perceptron-photo",
+      "subject": "mark-i-perceptron-photo",
+      "predicate": "source",
+      "value": "U.S. Navy",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the U.S. Navy photograph of the Mark I Perceptron, public domain",
+      "citation_keys": [
+        "perceptronimagedetection"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "atlas-starfield",
+      "subject": "eso-milky-way-panorama",
+      "predicate": "publication_year",
+      "value": 2009,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "ESO's all-sky panorama of the Milky Way, (\\cite[ESO, 2009]{starfield_eso_image})",
+      "citation_keys": [
+        "starfield_eso_image"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "atlas-planet-textures",
+      "subject": "solar-system-scope-planet-textures",
+      "predicate": "license",
+      "value": "CC BY 4.0",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "equirectangular texture maps from \\cite[Solar System Scope]{solsys_planet_textures} — Solar System Scope (based on NASA imagery), CC BY 4.0.",
+      "citation_keys": [
+        "solsys_planet_textures"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "atlas-earth-night-lights",
+      "subject": "viirs-2012-earth-night-lights",
+      "predicate": "year",
+      "value": 2012,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "*Earth night side (city lights):* \\cite[VIIRS 2012 composite]{earth_night_lights}",
+      "citation_keys": [
+        "earth_night_lights"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "atlas-m87-license",
+      "subject": "m87-black-hole-image",
+      "predicate": "license",
+      "value": "CC BY 4.0",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "*Black hole image (M87*):* \\cite[EHT image of M87*]{m87_blackhole_image} — Event Horizon Telescope Collaboration, CC BY 4.0",
+      "citation_keys": [
+        "m87_blackhole_image"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "atlas-crab-nebula-year",
+      "subject": "crab-nebula-sn-1054",
+      "predicate": "supernova_year",
+      "value": 1054,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "*Crab Nebula (SN 1054 remnant):*",
+      "citation_keys": [
+        "crab_nebula_image"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "atlas-crab-nebula-credit",
+      "subject": "crab-nebula-image",
+      "predicate": "credit",
+      "value": "NASA / ESA / Hubble Space Telescope, Public Domain",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "NASA / ESA / Hubble Space Telescope, Public Domain",
+      "citation_keys": [
+        "crab_nebula_image"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -69,6 +242,146 @@
       "qualifiers": {},
       "quote": "part: 6",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-atlas-atlas-timeline",
+      "from": "atlas-timeline",
+      "to": "atlas",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "min=\"-5000\" max=\"2026\"",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-atlas-atlas-dataset",
+      "from": "atlas-dataset",
+      "to": "atlas",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Every person, place, institution, artifact, event and cited author in the Atlas dataset is a dot on this globe.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-atlas-cosmic-web-image",
+      "from": "cosmic-web-image",
+      "to": "atlas",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "NASA / ESA / E. Hallman, public domain",
+      "citation_keys": [
+        "cosmic_web_image"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-atlas-budassi-universe-image",
+      "from": "budassi-universe-image",
+      "to": "atlas",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Pablo Carlos Budassi's logarithmic radial view of the observable universe, CC BY-SA 3.0",
+      "citation_keys": [
+        "budassi_universe_image"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-atlas-transformer-architecture-figure",
+      "from": "transformer-architecture-figure",
+      "to": "atlas",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Figure 1 (the encoder–decoder architecture) from (\\cite[Vaswani et al., 2017]{transformer_attention_figure})",
+      "citation_keys": [
+        "transformer_attention_figure"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-atlas-mark-i-perceptron-photo",
+      "from": "mark-i-perceptron-photo",
+      "to": "atlas",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the U.S. Navy photograph of the Mark I Perceptron, public domain",
+      "citation_keys": [
+        "perceptronimagedetection"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-atlas-eso-milky-way-panorama",
+      "from": "eso-milky-way-panorama",
+      "to": "atlas",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "ESO's all-sky panorama of the Milky Way, (\\cite[ESO, 2009]{starfield_eso_image})",
+      "citation_keys": [
+        "starfield_eso_image"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-atlas-solar-system-scope-planet-textures",
+      "from": "solar-system-scope-planet-textures",
+      "to": "atlas",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "equirectangular texture maps from \\cite[Solar System Scope]{solsys_planet_textures} — Solar System Scope (based on NASA imagery), CC BY 4.0.",
+      "citation_keys": [
+        "solsys_planet_textures"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-atlas-viirs-2012-earth-night-lights",
+      "from": "viirs-2012-earth-night-lights",
+      "to": "atlas",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Earth night side (city lights):* \\cite[VIIRS 2012 composite]{earth_night_lights}",
+      "citation_keys": [
+        "earth_night_lights"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-atlas-m87-black-hole-image",
+      "from": "m87-black-hole-image",
+      "to": "atlas",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Black hole image (M87*):* \\cite[EHT image of M87*]{m87_blackhole_image} — Event Horizon Telescope Collaboration, CC BY 4.0",
+      "citation_keys": [
+        "m87_blackhole_image"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-atlas-crab-nebula-sn-1054",
+      "from": "crab-nebula-sn-1054",
+      "to": "atlas",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Crab Nebula (SN 1054 remnant):*",
+      "citation_keys": [
+        "crab_nebula_image"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-atlas-crab-nebula-image",
+      "from": "crab-nebula-image",
+      "to": "atlas",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "NASA / ESA / Hubble Space Telescope, Public Domain",
+      "citation_keys": [
+        "crab_nebula_image"
+      ],
       "confidence": "provenance"
     }
   ]

@@ -5,24 +5,20 @@
   "title": "Loss: Teaching through Failure",
   "part": 2,
   "order": 1,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "legendre1805",
     "gauss1809",
     "laplace1810clt",
     "boscovich_mactutor",
-    "laplace1812analytic",
     "huber1964",
     "cortes1995svm",
     "lin2017focal",
     "goodhartslaw",
     "strathern1997",
-    "bender2021stochasticparrots",
-    "hoffmann2022chinchilla",
     "shannon1948communication",
     "kullback1951information",
-    "colah2015visualinfo",
     "hutterprize"
   ],
   "claims": [
@@ -64,6 +60,243 @@
       "quote": "order: 1",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "losslab-mse-formula",
+      "subject": "mean-squared-error",
+      "predicate": "formula",
+      "value": "1/N sum (y_i - yhat_i)^2",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "\\text{MSE} = \\frac{1}{N} \\sum_{i=1}^{N} (y_i - \\hat{y}_i)^2",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-legendre-1805",
+      "subject": "least-squares",
+      "predicate": "year",
+      "value": 1805,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The underlying method of least squares — minimizing the sum of squared errors that MSE averages — was published by \\citeauthor{legendre1805} in \\citeyear{legendre1805} for fitting comet orbits",
+      "citation_keys": [
+        "legendre1805"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-gauss-1809",
+      "subject": "gauss-least-squares",
+      "predicate": "year",
+      "value": 1809,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{gauss1809} claimed to have used it since 1795, published it in \\citeyear{gauss1809} (§ 179)",
+      "citation_keys": [
+        "gauss1809"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-laplace-1810",
+      "subject": "laplace-1810",
+      "predicate": "year",
+      "value": 1810,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Laplace then used the central limit theorem to justify the method for large samples \\cite{laplace1810clt}.",
+      "citation_keys": [
+        "laplace1810clt"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-boscovich",
+      "subject": "boscovich",
+      "predicate": "criterion",
+      "value": "sum of absolute residuals",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Boscovich, fitting the figure of the Earth, minimized the sum of the absolute residuals \\cite{boscovich_mactutor}",
+      "citation_keys": [
+        "boscovich_mactutor"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-huber-1964",
+      "subject": "huber-loss",
+      "predicate": "year",
+      "value": 1964,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Huber's 1964 compromise is quadratic near zero and linear in the tails \\cite{huber1964}.",
+      "citation_keys": [
+        "huber1964"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-cross-entropy-formula",
+      "subject": "cross-entropy",
+      "predicate": "formula",
+      "value": "-ln(P)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "($-\\ln(P)$)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-svm-hinge",
+      "subject": "support-vector-machine",
+      "predicate": "year",
+      "value": 1995,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The support-vector machine of \\citeauthor{cortes1995svm} (\\citeyear{cortes1995svm}) uses the **hinge loss** $\\max(0, 1-y\\,f(x))$",
+      "citation_keys": [
+        "cortes1995svm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-focal-loss",
+      "subject": "focal-loss",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{lin2017focal} (\\citeyear{lin2017focal}) introduced **focal loss**, which multiplies cross-entropy by $(1-p_t)^\\gamma$.",
+      "citation_keys": [
+        "lin2017focal"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-goodhart-law",
+      "subject": "goodharts-law",
+      "predicate": "statement",
+      "value": "any observed statistical regularity will tend to collapse once pressure is placed upon it for control purposes",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "any observed statistical regularity will tend to collapse once pressure is placed upon it for control purposes",
+      "citation_keys": [
+        "goodhartslaw"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-strathern-1997",
+      "subject": "strathern-1997",
+      "predicate": "year",
+      "value": 1997,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The familiar paraphrase — “when a measure becomes a target, it ceases to be a good measure” — is \\citeauthor{strathern1997}’s (\\citeyear{strathern1997}).",
+      "citation_keys": [
+        "strathern1997"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-chinchilla-loss",
+      "subject": "chinchilla-loss",
+      "predicate": "formula",
+      "value": "E + A/N^alpha + B/D^beta",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "L(N, D) = E + \\frac{A}{N^\\alpha} + \\frac{B}{D^\\beta}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-chinchilla-models",
+      "subject": "chinchilla-loss",
+      "predicate": "fitted_models",
+      "value": 400,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "on over 400 models",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-compute-budget",
+      "subject": "compute-budget",
+      "predicate": "formula",
+      "value": "6ND",
+      "unit": "formula",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "C \\approx 6ND",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-shannon-1948",
+      "subject": "shannon-entropy",
+      "predicate": "year",
+      "value": 1948,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Shannon's 1948 paper defined the entropy $H(P)=-\\sum P\\log P$ as the irreducible cost of coding messages from $P$ \\cite{shannon1948communication}.",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-kl-1951",
+      "subject": "kl-divergence",
+      "predicate": "year",
+      "value": 1951,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Kullback and Leibler's 1951 “information for discrimination” is exactly the extra cost $H(P,Q)-H(P)$ \\cite{kullback1951information}.",
+      "citation_keys": [
+        "kullback1951information"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-hutter-prize",
+      "subject": "hutter-prize",
+      "predicate": "year",
+      "value": 2006,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Marcus Hutter's compression prize, launched in 2006 on a 100 MB corpus and expanded in 2020 to a 1 GB text file",
+      "citation_keys": [
+        "hutterprize"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-softmax-cross-entropy-gradient",
+      "subject": "softmax-cross-entropy",
+      "predicate": "gradient",
+      "value": "yhat_i - y_i",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "\\frac{\\partial \\mathcal{L}}{\\partial z_i} = \\hat{y}_i - y_i",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "losslab-mse-gradient",
+      "subject": "mean-squared-error",
+      "predicate": "gradient",
+      "value": "2(yhat-y)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "the gradient is a clean $2(\\hat y-y)$",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -74,6 +307,200 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 2",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-mean-squared-error",
+      "from": "mean-squared-error",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\text{MSE} = \\frac{1}{N} \\sum_{i=1}^{N} (y_i - \\hat{y}_i)^2",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-least-squares",
+      "from": "least-squares",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The underlying method of least squares — minimizing the sum of squared errors that MSE averages — was published by \\citeauthor{legendre1805} in \\citeyear{legendre1805} for fitting comet orbits",
+      "citation_keys": [
+        "legendre1805"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-gauss-least-squares",
+      "from": "gauss-least-squares",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{gauss1809} claimed to have used it since 1795, published it in \\citeyear{gauss1809} (§ 179)",
+      "citation_keys": [
+        "gauss1809"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-laplace-1810",
+      "from": "laplace-1810",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Laplace then used the central limit theorem to justify the method for large samples \\cite{laplace1810clt}.",
+      "citation_keys": [
+        "laplace1810clt"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-boscovich",
+      "from": "boscovich",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Boscovich, fitting the figure of the Earth, minimized the sum of the absolute residuals \\cite{boscovich_mactutor}",
+      "citation_keys": [
+        "boscovich_mactutor"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-huber-loss",
+      "from": "huber-loss",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Huber's 1964 compromise is quadratic near zero and linear in the tails \\cite{huber1964}.",
+      "citation_keys": [
+        "huber1964"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-cross-entropy",
+      "from": "cross-entropy",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "($-\\ln(P)$)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-support-vector-machine",
+      "from": "support-vector-machine",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The support-vector machine of \\citeauthor{cortes1995svm} (\\citeyear{cortes1995svm}) uses the **hinge loss** $\\max(0, 1-y\\,f(x))$",
+      "citation_keys": [
+        "cortes1995svm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-focal-loss",
+      "from": "focal-loss",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{lin2017focal} (\\citeyear{lin2017focal}) introduced **focal loss**, which multiplies cross-entropy by $(1-p_t)^\\gamma$.",
+      "citation_keys": [
+        "lin2017focal"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-goodharts-law",
+      "from": "goodharts-law",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "any observed statistical regularity will tend to collapse once pressure is placed upon it for control purposes",
+      "citation_keys": [
+        "goodhartslaw"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-strathern-1997",
+      "from": "strathern-1997",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The familiar paraphrase — “when a measure becomes a target, it ceases to be a good measure” — is \\citeauthor{strathern1997}’s (\\citeyear{strathern1997}).",
+      "citation_keys": [
+        "strathern1997"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-chinchilla-loss",
+      "from": "chinchilla-loss",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "L(N, D) = E + \\frac{A}{N^\\alpha} + \\frac{B}{D^\\beta}",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-compute-budget",
+      "from": "compute-budget",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "C \\approx 6ND",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-shannon-entropy",
+      "from": "shannon-entropy",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Shannon's 1948 paper defined the entropy $H(P)=-\\sum P\\log P$ as the irreducible cost of coding messages from $P$ \\cite{shannon1948communication}.",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-kl-divergence",
+      "from": "kl-divergence",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Kullback and Leibler's 1951 “information for discrimination” is exactly the extra cost $H(P,Q)-H(P)$ \\cite{kullback1951information}.",
+      "citation_keys": [
+        "kullback1951information"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-hutter-prize",
+      "from": "hutter-prize",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Marcus Hutter's compression prize, launched in 2006 on a 100 MB corpus and expanded in 2020 to a 1 GB text file",
+      "citation_keys": [
+        "hutterprize"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-softmax-cross-entropy",
+      "from": "softmax-cross-entropy",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\frac{\\partial \\mathcal{L}}{\\partial z_i} = \\hat{y}_i - y_i",
       "citation_keys": [],
       "confidence": "provenance"
     }

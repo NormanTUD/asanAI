@@ -5,53 +5,23 @@
   "title": "Basic Math Concepts IV — Affine Maps & the Fold",
   "part": 1,
   "order": 6,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "lang2005basicmath",
     "descartesgeometrie",
     "mobius1827barycentric",
     "grassmann1844ausdehnungslehre",
     "klein1872erlangen",
     "riemann1854raum",
-    "affine_geometry_wiki",
     "euler1748introductio",
-    "klein1948geometry",
     "projective_transformation_wiki",
-    "homography_cv_wiki",
-    "albertidepictura",
-    "desarguesbrouillon",
-    "projective_geometry_wiki",
-    "poncelet1822traite",
-    "mobius_transformation_wiki",
-    "riemann_wiki",
-    "nlab_homeomorphism",
-    "morris2007topology",
     "nlab_invariance_of_domain",
-    "keup2022origami",
-    "nlab_hopf_link",
-    "hopf_link_wiki",
-    "nlab_knot",
-    "nlab_link",
-    "nlab_isotopy",
-    "nlab_unknot",
-    "hopf_link_image",
-    "nlab_linking_number",
-    "linking_number_wiki",
-    "nlab_topological_property",
-    "homeomorphism_wiki",
     "montufar2014regions",
-    "petersen2024mathdl",
+    "keup2022origami",
     "amrami2021depth",
-    "lewandowski2025spacefolds",
-    "listingtopologie",
-    "knot_theory_wiki",
-    "poincareanalysissitus",
-    "foldandcut_wiki",
-    "vaswani2017attention",
     "abel_ruffini_wiki",
-    "galoisgroup",
-    "cayleygroups"
+    "listingtopologie",
+    "knot_theory_wiki"
   ],
   "claims": [
     {
@@ -92,6 +62,245 @@
       "quote": "order: 6",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "math-iv-descartes-year",
+      "subject": "descartes-coordinates",
+      "predicate": "year",
+      "value": 1637,
+      "unit": "year",
+      "quote": "**Descartes** made points into coordinates (1637)",
+      "citation_keys": [
+        "descartesgeometrie"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-mobius-year",
+      "subject": "mobius-barycentric",
+      "predicate": "year",
+      "value": 1827,
+      "unit": "year",
+      "quote": "**Möbius**' *Der barycentrische Calcul* (1827)",
+      "citation_keys": [
+        "mobius1827barycentric"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-grassmann-year",
+      "subject": "grassmann-ausdehnungslehre",
+      "predicate": "year",
+      "value": 1844,
+      "unit": "year",
+      "quote": "**Grassmann**'s *Ausdehnungslehre* (1844)",
+      "citation_keys": [
+        "grassmann1844ausdehnungslehre"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-klein-year",
+      "subject": "klein-erlangen-program",
+      "predicate": "year",
+      "value": 1872,
+      "unit": "year",
+      "quote": "**Klein's** 1872 Erlangen program sorted geometry into a ladder",
+      "citation_keys": [
+        "klein1872erlangen"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-riemann-year",
+      "subject": "riemann-habilitation",
+      "predicate": "year",
+      "value": 1854,
+      "unit": "year",
+      "quote": "Riemann's 1854 habilitation instead founded what became Riemannian geometry",
+      "citation_keys": [
+        "riemann1854raum"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-euler-year",
+      "subject": "euler-introductio",
+      "predicate": "year",
+      "value": 1748,
+      "unit": "year",
+      "quote": "it entered mathematics via **Euler** (1748)",
+      "citation_keys": [
+        "euler1748introductio"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-affine-dof",
+      "subject": "affine-transformation",
+      "predicate": "dof_2d",
+      "value": 6,
+      "unit": "count",
+      "quote": "| Affine | lines, parallelism, ratios | 6 |",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-projective-dof",
+      "subject": "projective-transformation",
+      "predicate": "dof_2d",
+      "value": 8,
+      "unit": "count",
+      "quote": "with 8 degrees of freedom (vs affine's 6)",
+      "citation_keys": [
+        "projective_transformation_wiki"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-checkerboard-size",
+      "subject": "checkerboard-image",
+      "predicate": "grid_size",
+      "value": "8x8",
+      "unit": "name",
+      "quote": "an **8×8 checkerboard**",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-relu-fold",
+      "subject": "relu-fold",
+      "predicate": "definition",
+      "value": "1-D fold with lambda = 1: max(0,x) = x - ReLU(-x)",
+      "unit": "name",
+      "quote": "**The ReLU is a fold.** $\\max(0, x) = x - \\mathrm{ReLU}(-x)$ is the 1-D fold with $\\lambda = 1$.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-brouwer-year",
+      "subject": "brouwer-invariance-of-domain",
+      "predicate": "year",
+      "value": 1910,
+      "unit": "year",
+      "quote": "By **Brouwer's invariance of domain** (~1910)",
+      "qualifiers": {
+        "approx": true
+      },
+      "citation_keys": [
+        "nlab_invariance_of_domain"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-hopf-linking",
+      "subject": "hopf-link",
+      "predicate": "linking_number",
+      "value": 1,
+      "unit": "count",
+      "quote": "with linking number $\\pm 1$",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-montufar-year",
+      "subject": "montufar-linear-regions",
+      "predicate": "year",
+      "value": 2014,
+      "unit": "year",
+      "quote": "(\\cite[Montúfar et al., 2014]{montufar2014regions})",
+      "citation_keys": [
+        "montufar2014regions"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-montufar-growth",
+      "subject": "montufar-linear-regions",
+      "predicate": "region_growth",
+      "value": "exponential with depth",
+      "unit": "name",
+      "quote": "their count grows exponentially with depth",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-keup-year",
+      "subject": "keup-origami",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "quote": "(\\cite[Keup & Helias, 2022]{keup2022origami})",
+      "citation_keys": [
+        "keup2022origami"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-amrami-width",
+      "subject": "amrami-goldberg-depth",
+      "predicate": "width_bound",
+      "value": 4,
+      "unit": "count",
+      "quote": "net of *linear* depth and width $\\le 4$",
+      "citation_keys": [
+        "amrami2021depth"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-ruffini-abel",
+      "subject": "abel-ruffini-theorem",
+      "predicate": "years",
+      "value": "1799, 1824",
+      "unit": "name",
+      "quote": "proved by **Ruffini** (1799, incomplete) and **Abel** (1824)",
+      "citation_keys": [
+        "abel_ruffini_wiki"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-listing-year",
+      "subject": "listing-topologie",
+      "predicate": "year",
+      "value": 1847,
+      "unit": "year",
+      "quote": "**Listing's** *Vorstudien zur Topologie* (1847) is an early topological treatment and coined the word \"topology\"",
+      "citation_keys": [
+        "listingtopologie"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math-iv-tait-crossings",
+      "subject": "tait-knot-table",
+      "predicate": "crossing_count",
+      "value": 10,
+      "unit": "count",
+      "quote": "table to ten crossings, 1885",
+      "citation_keys": [
+        "knot_theory_wiki"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -103,6 +312,214 @@
       "qualifiers": {},
       "quote": "part: 1",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-descartes-coordinates",
+      "from": "descartes-coordinates",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Descartes** made points into coordinates (1637)",
+      "citation_keys": [
+        "descartesgeometrie"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-mobius-barycentric",
+      "from": "mobius-barycentric",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Möbius**' *Der barycentrische Calcul* (1827)",
+      "citation_keys": [
+        "mobius1827barycentric"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-grassmann-ausdehnungslehre",
+      "from": "grassmann-ausdehnungslehre",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Grassmann**'s *Ausdehnungslehre* (1844)",
+      "citation_keys": [
+        "grassmann1844ausdehnungslehre"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-klein-erlangen-program",
+      "from": "klein-erlangen-program",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Klein's** 1872 Erlangen program sorted geometry into a ladder",
+      "citation_keys": [
+        "klein1872erlangen"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-riemann-habilitation",
+      "from": "riemann-habilitation",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Riemann's 1854 habilitation instead founded what became Riemannian geometry",
+      "citation_keys": [
+        "riemann1854raum"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-euler-introductio",
+      "from": "euler-introductio",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it entered mathematics via **Euler** (1748)",
+      "citation_keys": [
+        "euler1748introductio"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-affine-transformation",
+      "from": "affine-transformation",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Affine | lines, parallelism, ratios | 6 |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-projective-transformation",
+      "from": "projective-transformation",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "with 8 degrees of freedom (vs affine's 6)",
+      "citation_keys": [
+        "projective_transformation_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-checkerboard-image",
+      "from": "checkerboard-image",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "an **8×8 checkerboard**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-relu-fold",
+      "from": "relu-fold",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**The ReLU is a fold.** $\\max(0, x) = x - \\mathrm{ReLU}(-x)$ is the 1-D fold with $\\lambda = 1$.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-brouwer-invariance-of-domain",
+      "from": "brouwer-invariance-of-domain",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "By **Brouwer's invariance of domain** (~1910)",
+      "citation_keys": [
+        "nlab_invariance_of_domain"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-hopf-link",
+      "from": "hopf-link",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "with linking number $\\pm 1$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-montufar-linear-regions",
+      "from": "montufar-linear-regions",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Montúfar et al., 2014]{montufar2014regions})",
+      "citation_keys": [
+        "montufar2014regions"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-keup-origami",
+      "from": "keup-origami",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Keup & Helias, 2022]{keup2022origami})",
+      "citation_keys": [
+        "keup2022origami"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-amrami-goldberg-depth",
+      "from": "amrami-goldberg-depth",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "net of *linear* depth and width $\\le 4$",
+      "citation_keys": [
+        "amrami2021depth"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-abel-ruffini-theorem",
+      "from": "abel-ruffini-theorem",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "proved by **Ruffini** (1799, incomplete) and **Abel** (1824)",
+      "citation_keys": [
+        "abel_ruffini_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-listing-topologie",
+      "from": "listing-topologie",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Listing's** *Vorstudien zur Topologie* (1847) is an early topological treatment and coined the word \"topology\"",
+      "citation_keys": [
+        "listingtopologie"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-tait-knot-table",
+      "from": "tait-knot-table",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "table to ten crossings, 1885",
+      "citation_keys": [
+        "knot_theory_wiki"
+      ],
       "confidence": "provenance"
     }
   ]

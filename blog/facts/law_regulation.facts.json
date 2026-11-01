@@ -5,16 +5,11 @@
   "title": "AI Law & Regulation",
   "part": 6,
   "order": 10,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "eu2019dsm",
-    "euaiact2024",
     "edpb2024ai",
-    "pld2024",
-    "china2025labelling",
     "colorado2024ai",
-    "sb53cal2025",
     "oecd2019ai",
     "unesco2021ai",
     "coe2024ai"
@@ -58,6 +53,238 @@
       "quote": "order: 10",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "law_regulation-eu-ai-act-force",
+      "subject": "eu-ai-act",
+      "predicate": "in_force_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The EU AI Act (in force August 2024, with obligations phased through 2028)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-eu-ai-act-penalty",
+      "subject": "eu-ai-act-high-risk-penalty",
+      "predicate": "maximum_penalty",
+      "value": "€15M or 3% of global turnover",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "Penalties: up to **€15M or 3% of global turnover**.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-eu-ai-act-gpai-threshold",
+      "subject": "eu-ai-act-gpai-systemic-risk",
+      "predicate": "compute_threshold",
+      "value": "10^25",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "**Systemic risk**: GPAI models trained with >10^25 FLOPs (essentially GPT-4-class and above) face additional obligations",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-eu-ai-act-prohibitions",
+      "subject": "eu-ai-act-prohibitions",
+      "predicate": "applies_from_year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Prohibitions and AI literacy apply from 2 February 2025",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-eu-ai-act-gpai-duties",
+      "subject": "eu-ai-act-gpai-duties",
+      "predicate": "applies_from_year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "GPAI duties, governance, and most penalties apply from 2 August 2025",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-eu-ai-act-annex-iii",
+      "subject": "eu-ai-act-annex-iii",
+      "predicate": "applies_from_year",
+      "value": 2027,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Annex III high-risk duties from 2 December 2027",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-gdpr-year",
+      "subject": "gdpr",
+      "predicate": "enacted_year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The EU's General Data Protection Regulation (2018)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-garante-chatgpt",
+      "subject": "italian-garante-chatgpt-ban",
+      "predicate": "event_year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Italy's data protection authority briefly **banned ChatGPT** in March 2023",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-aepd-worldcoin",
+      "subject": "spanish-aepd-worldcoin-suspension",
+      "predicate": "event_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Spain's data-protection authority ordered Worldcoin to suspend iris scanning in March 2024 for up to three months",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-authors-guild-google",
+      "subject": "authors-guild-v-google",
+      "predicate": "decision_year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Authors Guild v. Google** (2015): scanning books to enable search is **fair use**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-nyt-openai",
+      "subject": "new-york-times-v-openai",
+      "predicate": "filed_year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**New York Times v. OpenAI** (filed Dec 2023)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-kadrey-meta",
+      "subject": "kadrey-v-meta",
+      "predicate": "summary_judgment_year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In June 2025 the court granted Meta summary judgment on fair use",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-bartz-settlement",
+      "subject": "bartz-v-anthropic",
+      "predicate": "settlement_amount",
+      "value": 1500000000,
+      "unit": "USD",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "**Bartz v. Anthropic** (2024): settled in 2025 for ~$1.5B",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-california-sb1047",
+      "subject": "california-sb-1047",
+      "predicate": "compute_threshold",
+      "value": "10^26",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "would have required safety testing for models trained with >10^26 FLOPs",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-china-interim",
+      "subject": "china-generative-ai-interim-measures",
+      "predicate": "effective_year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Interim Measures for Generative AI Services** (issued July 2023, effective August 2023)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-edpb-opinion",
+      "subject": "edpb-opinion-28-2024",
+      "predicate": "publication_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In December 2024 the EDPB's Opinion 28/2024 set out the three-step test",
+      "citation_keys": [
+        "edpb2024ai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-colorado-ai-act",
+      "subject": "colorado-ai-act",
+      "predicate": "effective_year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Colorado's AI Act (SB 24-205, effective 30 June 2026)",
+      "citation_keys": [
+        "colorado2024ai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-oecd-principles",
+      "subject": "oecd-ai-principles",
+      "predicate": "publication_year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The OECD AI Principles (2019, revised 2024)",
+      "citation_keys": [
+        "oecd2019ai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-unesco-recommendation",
+      "subject": "unesco-ai-ethics-recommendation",
+      "predicate": "adoption_year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "UNESCO's 2021 Recommendation, adopted by 193 states",
+      "citation_keys": [
+        "unesco2021ai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-coe-convention",
+      "subject": "council-of-europe-ai-convention",
+      "predicate": "opened_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The Council of Europe's Framework Convention on AI, opened for signature in Vilnius in September 2024",
+      "citation_keys": [
+        "coe2024ai"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -69,6 +296,216 @@
       "qualifiers": {},
       "quote": "part: 6",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-eu-ai-act",
+      "from": "eu-ai-act",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The EU AI Act (in force August 2024, with obligations phased through 2028)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-eu-ai-act-high-risk-penalty",
+      "from": "eu-ai-act-high-risk-penalty",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Penalties: up to **€15M or 3% of global turnover**.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-eu-ai-act-gpai-systemic-risk",
+      "from": "eu-ai-act-gpai-systemic-risk",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Systemic risk**: GPAI models trained with >10^25 FLOPs (essentially GPT-4-class and above) face additional obligations",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-eu-ai-act-prohibitions",
+      "from": "eu-ai-act-prohibitions",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Prohibitions and AI literacy apply from 2 February 2025",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-eu-ai-act-gpai-duties",
+      "from": "eu-ai-act-gpai-duties",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "GPAI duties, governance, and most penalties apply from 2 August 2025",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-eu-ai-act-annex-iii",
+      "from": "eu-ai-act-annex-iii",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Annex III high-risk duties from 2 December 2027",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-gdpr",
+      "from": "gdpr",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The EU's General Data Protection Regulation (2018)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-italian-garante-chatgpt-ban",
+      "from": "italian-garante-chatgpt-ban",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Italy's data protection authority briefly **banned ChatGPT** in March 2023",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-spanish-aepd-worldcoin-suspension",
+      "from": "spanish-aepd-worldcoin-suspension",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Spain's data-protection authority ordered Worldcoin to suspend iris scanning in March 2024 for up to three months",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-authors-guild-v-google",
+      "from": "authors-guild-v-google",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Authors Guild v. Google** (2015): scanning books to enable search is **fair use**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-new-york-times-v-openai",
+      "from": "new-york-times-v-openai",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**New York Times v. OpenAI** (filed Dec 2023)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-kadrey-v-meta",
+      "from": "kadrey-v-meta",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In June 2025 the court granted Meta summary judgment on fair use",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-bartz-v-anthropic",
+      "from": "bartz-v-anthropic",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Bartz v. Anthropic** (2024): settled in 2025 for ~$1.5B",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-california-sb-1047",
+      "from": "california-sb-1047",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "would have required safety testing for models trained with >10^26 FLOPs",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-china-generative-ai-interim-measures",
+      "from": "china-generative-ai-interim-measures",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Interim Measures for Generative AI Services** (issued July 2023, effective August 2023)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-edpb-opinion-28-2024",
+      "from": "edpb-opinion-28-2024",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In December 2024 the EDPB's Opinion 28/2024 set out the three-step test",
+      "citation_keys": [
+        "edpb2024ai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-colorado-ai-act",
+      "from": "colorado-ai-act",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Colorado's AI Act (SB 24-205, effective 30 June 2026)",
+      "citation_keys": [
+        "colorado2024ai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-oecd-ai-principles",
+      "from": "oecd-ai-principles",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The OECD AI Principles (2019, revised 2024)",
+      "citation_keys": [
+        "oecd2019ai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-unesco-ai-ethics-recommendation",
+      "from": "unesco-ai-ethics-recommendation",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "UNESCO's 2021 Recommendation, adopted by 193 states",
+      "citation_keys": [
+        "unesco2021ai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-council-of-europe-ai-convention",
+      "from": "council-of-europe-ai-convention",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Council of Europe's Framework Convention on AI, opened for signature in Vilnius in September 2024",
+      "citation_keys": [
+        "coe2024ai"
+      ],
       "confidence": "provenance"
     }
   ]

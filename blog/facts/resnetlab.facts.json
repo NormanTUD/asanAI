@@ -5,7 +5,7 @@
   "title": "Deep Learning Mechanics: ResNets & Vanishing Gradients",
   "part": 3,
   "order": 4,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "hochreiter1991vanishing",
@@ -53,6 +53,196 @@
       "quote": "order: 4",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "resnetlab-vanishing-definition",
+      "subject": "vanishing-gradient",
+      "predicate": "definition",
+      "value": "repeated multiplication of small derivatives shrinks the gradient exponentially",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "If the derivatives (gradients) in this chain are small (e.g., $< 1$), multiplying many of them together causes the result to shrink exponentially.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "resnetlab-hochreiter-year",
+      "subject": "hochreiter-1991",
+      "predicate": "year",
+      "value": 1991,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "described by \\citeauthor{hochreiter1991vanishing}",
+      "citation_keys": [
+        "hochreiter1991vanishing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "resnetlab-bengio-year",
+      "subject": "bengio-1994",
+      "predicate": "year",
+      "value": 1994,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "was first coined by Yoshua Bengio et al. in their \\citeyear{bengio1994learning} paper",
+      "citation_keys": [
+        "bengio1994learning"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "resnetlab-resnet-year",
+      "subject": "resnet",
+      "predicate": "year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "ResNet (short for *Residual Network*) was introduced by Kaiming He et al. in \\citeyear{he2015resnet}",
+      "citation_keys": [
+        "he2015resnet"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "resnetlab-resnet-imagenet",
+      "subject": "resnet",
+      "predicate": "competition_won",
+      "value": "ImageNet",
+      "unit": "name",
+      "qualifiers": {
+        "event": "December 2015"
+      },
+      "quote": "won the ImageNet competition in December 2015",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "resnetlab-highway-year",
+      "subject": "highway-networks",
+      "predicate": "year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {
+        "event": "May 2015"
+      },
+      "quote": "**Highway Networks** \\citeyear{highway2015} (May 2015, seven months earlier)",
+      "citation_keys": [
+        "highway2015"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "resnetlab-highway-lead",
+      "subject": "highway-networks",
+      "predicate": "lead_months",
+      "value": 7,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "seven months earlier",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "resnetlab-residual-definition",
+      "subject": "residual-network",
+      "predicate": "block_definition",
+      "value": "y = F(x, {W_i}) + x",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "y = F(x, \\{W_i\\}) + x",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "resnetlab-residual-gradient",
+      "subject": "residual-network",
+      "predicate": "gradient",
+      "value": "dF/dx + I",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "partial F(x)}{\\partial x} + \\mathbf{I}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "resnetlab-residual-jacobian",
+      "subject": "residual-network",
+      "predicate": "backprop_factor",
+      "value": "I + J_F",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "the backpropagation recursion through a residual block involves the factor $\\mathbf{I} + J_F$ (where $J_F$ is the Jacobian of the residual function) rather than $J_F$ alone",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "resnetlab-1x1-conv",
+      "subject": "1x1-convolution",
+      "predicate": "purpose",
+      "value": "project x to the channel count of F(x)",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The most common way to implement $W_s$ is a **$1 \\times 1$ Convolution**.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "resnetlab-1x1-spatial",
+      "subject": "1x1-convolution",
+      "predicate": "spatial_effect",
+      "value": "preserves the spatial height and width with stride 1",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "does not look at neighboring pixels; with stride 1 it preserves the spatial height and width ($H \\times W$).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "resnetlab-petersen-chapter",
+      "subject": "petersen-2024",
+      "predicate": "chapter",
+      "value": "17.1",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The full analysis is in \\citeauthor{petersen2024mathdl} (\\citeyear{petersen2024mathdl}), Ch.\\ 17.1.",
+      "citation_keys": [
+        "petersen2024mathdl"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "resnetlab-plain-decay",
+      "subject": "plain-network",
+      "predicate": "gradient_decay",
+      "value": "0.9 x 0.9 x 0.9 ... approx 0",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "**Plain Network:** $0.9 \\times 0.9 \\times 0.9 \\dots \\approx 0$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "resnetlab-hochreiter-legacy",
+      "subject": "hochreiter-1991",
+      "predicate": "proposed",
+      "value": "constant error flow",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "proposed a *constant error flow* — the idea that became the LSTM's constant error carousel",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "resnetlab-lstm-mechanism",
+      "subject": "lstm",
+      "predicate": "mechanism",
+      "value": "constant error carousel",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "proposed a *constant error flow* — the idea that became the LSTM's constant error carousel",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -63,6 +253,116 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 3",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-resnetlab-vanishing-gradient",
+      "from": "vanishing-gradient",
+      "to": "resnetlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "If the derivatives (gradients) in this chain are small (e.g., $< 1$), multiplying many of them together causes the result to shrink exponentially.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-resnetlab-hochreiter-1991",
+      "from": "hochreiter-1991",
+      "to": "resnetlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "described by \\citeauthor{hochreiter1991vanishing}",
+      "citation_keys": [
+        "hochreiter1991vanishing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-resnetlab-bengio-1994",
+      "from": "bengio-1994",
+      "to": "resnetlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "was first coined by Yoshua Bengio et al. in their \\citeyear{bengio1994learning} paper",
+      "citation_keys": [
+        "bengio1994learning"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-resnetlab-resnet",
+      "from": "resnet",
+      "to": "resnetlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "ResNet (short for *Residual Network*) was introduced by Kaiming He et al. in \\citeyear{he2015resnet}",
+      "citation_keys": [
+        "he2015resnet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-resnetlab-highway-networks",
+      "from": "highway-networks",
+      "to": "resnetlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Highway Networks** \\citeyear{highway2015} (May 2015, seven months earlier)",
+      "citation_keys": [
+        "highway2015"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-resnetlab-residual-network",
+      "from": "residual-network",
+      "to": "resnetlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "y = F(x, \\{W_i\\}) + x",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-resnetlab-1x1-convolution",
+      "from": "1x1-convolution",
+      "to": "resnetlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The most common way to implement $W_s$ is a **$1 \\times 1$ Convolution**.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-resnetlab-petersen-2024",
+      "from": "petersen-2024",
+      "to": "resnetlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The full analysis is in \\citeauthor{petersen2024mathdl} (\\citeyear{petersen2024mathdl}), Ch.\\ 17.1.",
+      "citation_keys": [
+        "petersen2024mathdl"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-resnetlab-plain-network",
+      "from": "plain-network",
+      "to": "resnetlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Plain Network:** $0.9 \\times 0.9 \\times 0.9 \\dots \\approx 0$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-resnetlab-lstm",
+      "from": "lstm",
+      "to": "resnetlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "proposed a *constant error flow* — the idea that became the LSTM's constant error carousel",
       "citation_keys": [],
       "confidence": "provenance"
     }

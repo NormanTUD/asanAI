@@ -5,14 +5,13 @@
   "title": "Understanding Layer Normalization",
   "part": 3,
   "order": 6,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "ba2016layernorm",
     "semianalysis2023gpt4",
     "zhang2019rmsnorm",
-    "touvron2023llama",
-    "wu2018groupnorm"
+    "touvron2023llama"
   ],
   "claims": [
     {
@@ -53,6 +52,240 @@
       "quote": "order: 6",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "normalizationlab-layernorm-year",
+      "subject": "layer-normalization",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Layer Normalization (LN), introduced by Jimmy Lei Ba et al in \\citeyear{ba2016layernorm}",
+      "citation_keys": [
+        "ba2016layernorm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-mean-formula",
+      "subject": "layer-normalization",
+      "predicate": "mean_formula",
+      "value": "1/d sum x_i",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "\\mu = \\frac{1}{d} \\sum_{i=1}^{d} x_i",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-standardization",
+      "subject": "layer-normalization",
+      "predicate": "standardization",
+      "value": "(x_i-mu)/sqrt(sigma^2+epsilon)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "\\hat{x}_i = \\frac{x_i - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-scale-shift",
+      "subject": "layer-normalization",
+      "predicate": "scale_shift",
+      "value": "gamma*xhat + beta",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "y_i = \\gamma \\hat{x}_i + \\beta",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-gpt-3-layers",
+      "subject": "gpt-3",
+      "predicate": "layers",
+      "value": 96,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "The “96 layers” figure is specific to GPT-3 (175B)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-gpt-3-parameters",
+      "subject": "gpt-3",
+      "predicate": "parameters",
+      "value": 175000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "GPT-3 (175B)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-llama-7b-layers",
+      "subject": "llama-7b",
+      "predicate": "layers",
+      "value": 32,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "LLaMA-7B has ~32",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-llama-70b-layers",
+      "subject": "llama-70b",
+      "predicate": "layers",
+      "value": 80,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "LLaMA-70B has ~80",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-gpt-4-layers",
+      "subject": "gpt-4",
+      "predicate": "layers",
+      "value": 120,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "a widely circulated 2023 estimate puts it near 120 layers, but this is unconfirmed (\\cite[SemiAnalysis, 2023]{semianalysis2023gpt4})",
+      "citation_keys": [
+        "semianalysis2023gpt4"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-pre-norm",
+      "subject": "pre-norm",
+      "predicate": "position",
+      "value": "before attention and feed-forward",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "In modern GPT models, LN is applied *before* the Multi-Head Attention and Feed-Forward networks.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-batch-independence",
+      "subject": "layer-normalization",
+      "predicate": "batch_dependence",
+      "value": "independent of batch",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Unlike Batch Norm, LN does not depend on other samples in the batch.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-rmsnorm-year",
+      "subject": "rmsnorm",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Root mean square layer normalization** keeps the rescaling half of LayerNorm and throws away the re-centering half (\\cite[Zhang & Sennrich, 2019]{zhang2019rmsnorm}).",
+      "citation_keys": [
+        "zhang2019rmsnorm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-rmsnorm-formula",
+      "subject": "rmsnorm",
+      "predicate": "rms_formula",
+      "value": "sqrt(1/d sum x_i^2 + epsilon)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "\\mathrm{RMS}(x) = \\sqrt{\\frac{1}{d}\\sum_{i=1}^{d} x_i^2 + \\epsilon}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-gopher-2021",
+      "subject": "gopher",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "RMSNorm appeared at scale in DeepMind's Gopher (2021)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-llama-2023",
+      "subject": "llama",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "its wide adoption dates to \\citeauthor{touvron2023llama}'s LLaMA (2023)",
+      "citation_keys": [
+        "touvron2023llama"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-unet-groups",
+      "subject": "stable-diffusion-unet",
+      "predicate": "group_count",
+      "value": 32,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Stable Diffusion's U-Net uses $G = 32$ with $C = 320$ or $640$ channels, i.e. groups of 10 or 20 channels.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-groupnorm-batch",
+      "subject": "group-normalization",
+      "predicate": "batch_dependence",
+      "value": "independent of batch",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "GN is **independent of the batch**, so it works at batch size 1",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-groupnorm-g1",
+      "subject": "group-normalization",
+      "predicate": "endpoint_g1",
+      "value": "LayerNorm",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "$G = 1$: one group, every channel pooled, exactly **LayerNorm**.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-layernorm-sphere",
+      "subject": "layer-normalization",
+      "predicate": "geometry",
+      "value": "sphere of radius sqrt(d)",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the output vector $\\hat{x}$ lies on the surface of a **sphere of radius $\\sqrt{d}$** in $d$-dimensional space.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "normalizationlab-direction-magnitude",
+      "subject": "layer-normalization",
+      "predicate": "property",
+      "value": "separates direction from magnitude",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**LayerNorm separates direction from magnitude**.",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -63,6 +296,124 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 3",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-normalizationlab-layer-normalization",
+      "from": "layer-normalization",
+      "to": "normalizationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Layer Normalization (LN), introduced by Jimmy Lei Ba et al in \\citeyear{ba2016layernorm}",
+      "citation_keys": [
+        "ba2016layernorm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-normalizationlab-gpt-3",
+      "from": "gpt-3",
+      "to": "normalizationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The “96 layers” figure is specific to GPT-3 (175B)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-normalizationlab-llama-7b",
+      "from": "llama-7b",
+      "to": "normalizationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "LLaMA-7B has ~32",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-normalizationlab-llama-70b",
+      "from": "llama-70b",
+      "to": "normalizationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "LLaMA-70B has ~80",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-normalizationlab-gpt-4",
+      "from": "gpt-4",
+      "to": "normalizationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a widely circulated 2023 estimate puts it near 120 layers, but this is unconfirmed (\\cite[SemiAnalysis, 2023]{semianalysis2023gpt4})",
+      "citation_keys": [
+        "semianalysis2023gpt4"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-normalizationlab-pre-norm",
+      "from": "pre-norm",
+      "to": "normalizationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In modern GPT models, LN is applied *before* the Multi-Head Attention and Feed-Forward networks.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-normalizationlab-rmsnorm",
+      "from": "rmsnorm",
+      "to": "normalizationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Root mean square layer normalization** keeps the rescaling half of LayerNorm and throws away the re-centering half (\\cite[Zhang & Sennrich, 2019]{zhang2019rmsnorm}).",
+      "citation_keys": [
+        "zhang2019rmsnorm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-normalizationlab-gopher",
+      "from": "gopher",
+      "to": "normalizationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "RMSNorm appeared at scale in DeepMind's Gopher (2021)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-normalizationlab-llama",
+      "from": "llama",
+      "to": "normalizationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "its wide adoption dates to \\citeauthor{touvron2023llama}'s LLaMA (2023)",
+      "citation_keys": [
+        "touvron2023llama"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-normalizationlab-stable-diffusion-unet",
+      "from": "stable-diffusion-unet",
+      "to": "normalizationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Stable Diffusion's U-Net uses $G = 32$ with $C = 320$ or $640$ channels, i.e. groups of 10 or 20 channels.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-normalizationlab-group-normalization",
+      "from": "group-normalization",
+      "to": "normalizationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "GN is **independent of the batch**, so it works at batch size 1",
       "citation_keys": [],
       "confidence": "provenance"
     }

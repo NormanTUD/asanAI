@@ -5,28 +5,19 @@
   "title": "Retrieval-Augmented Generation: Giving LLMs a Search Engine",
   "part": 5,
   "order": 3,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "lewis2020rag",
     "malkov2018hnsw",
-    "jegou2011pq",
     "liu2023lostmiddle",
-    "robertson2009bm25",
-    "beir2021",
     "contextualretrieval2024",
-    "ragsurvey2023",
+    "beir2021",
+    "robertson2009bm25",
     "bush1945aswemaythink",
-    "salton1975vectorspace",
-    "salton1988termweighting",
-    "voorhees1999trecqa",
-    "rajpurkar2016squad",
     "karpukhin2020dpr",
-    "guu2020realm",
     "borgeaud2022retro",
-    "izacard2022atlas",
-    "asai2023selfrag",
-    "edge2024graphrag"
+    "rajpurkar2016squad"
   ],
   "claims": [
     {
@@ -67,6 +58,248 @@
       "quote": "order: 3",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "rag-year",
+      "subject": "rag",
+      "predicate": "year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "formalized by \\citeauthor{lewis2020rag} in \\citeyear{lewis2020rag}",
+      "citation_keys": [
+        "lewis2020rag"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-definition",
+      "subject": "rag",
+      "predicate": "definition",
+      "value": "retriever injects passages into prompt",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "a *retriever* finds the most relevant passages from a document store and injects them into the prompt",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-chunk-size",
+      "subject": "rag-chunking",
+      "predicate": "token_range",
+      "value": "200-500",
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "typically 200–500 tokens",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-embedding-small",
+      "subject": "text-embedding-3-small",
+      "predicate": "dimensions",
+      "value": 1536,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "e.g. OpenAI `text-embedding-3-small`, 1,536 dims",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-bge-base",
+      "subject": "bge-base",
+      "predicate": "dimensions",
+      "value": 768,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "open-source `bge-base`, 768 dims",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-hnsw-year",
+      "subject": "hnsw",
+      "predicate": "year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**HNSW** \\cite{malkov2018hnsw}",
+      "citation_keys": [
+        "malkov2018hnsw"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-latency",
+      "subject": "rag",
+      "predicate": "retrieval_latency",
+      "value": "50-200",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "The retrieval step adds ~50–200 ms per query.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-lost-middle",
+      "subject": "lost-in-the-middle",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "often ignoring information buried in the middle \\cite{liu2023lostmiddle}",
+      "citation_keys": [
+        "liu2023lostmiddle"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-rrf-k",
+      "subject": "reciprocal-rank-fusion",
+      "predicate": "k_constant",
+      "value": 60,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "with $k$ a constant (commonly 60).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-gpt4turbo-context",
+      "subject": "gpt-4-turbo",
+      "predicate": "context_window",
+      "value": 128000,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "128K tokens (GPT-4 Turbo)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-claude3-context",
+      "subject": "claude-3",
+      "predicate": "context_window",
+      "value": 200000,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "200K (Claude 3)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-gemini15-context",
+      "subject": "gemini-1-5",
+      "predicate": "context_window",
+      "value": 1000000,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "even 1M+ (Gemini 1.5)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-contextual-retrieval",
+      "subject": "contextual-retrieval",
+      "predicate": "failure_reduction",
+      "value": "roughly half",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Reported to cut the retrieval-failure rate by roughly half",
+      "citation_keys": [
+        "contextualretrieval2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-beir-year",
+      "subject": "beir",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "[BEIR](beir2021) benchmark matters",
+      "citation_keys": [
+        "beir2021"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-bm25-year",
+      "subject": "bm25",
+      "predicate": "survey_year",
+      "value": 2009,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**BM25** (\\cite[Robertson & Zaragoza, 2009]{robertson2009bm25})",
+      "citation_keys": [
+        "robertson2009bm25"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-bush-year",
+      "subject": "memex",
+      "predicate": "year",
+      "value": 1945,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "drawn in 1945 by \\citeauthor{bush1945aswemaythink} (\\citeyear{bush1945aswemaythink})",
+      "citation_keys": [
+        "bush1945aswemaythink"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-dpr-year",
+      "subject": "dpr",
+      "predicate": "year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Dense Passage Retrieval (DPR) replaced sparse term matching with two BERT encoders",
+      "citation_keys": [
+        "karpukhin2020dpr"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-retro-scale",
+      "subject": "retro",
+      "predicate": "retrieval_scale",
+      "value": "trillions of tokens",
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "RETRO retrieved from trillions of tokens at the level of token chunks",
+      "citation_keys": [
+        "borgeaud2022retro"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-squad-year",
+      "subject": "squad",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "SQuAD (2016) then isolated the reading-comprehension half",
+      "citation_keys": [
+        "rajpurkar2016squad"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-ann-speed",
+      "subject": "approximate-nearest-neighbor",
+      "predicate": "query_speed",
+      "value": "tens of milliseconds",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "a billion vectors can be queried in tens of milliseconds on a single machine",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -77,6 +310,194 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 5",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-rag-chunking",
+      "from": "rag-chunking",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "typically 200–500 tokens",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-text-embedding-3-small",
+      "from": "text-embedding-3-small",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "e.g. OpenAI `text-embedding-3-small`, 1,536 dims",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-bge-base",
+      "from": "bge-base",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "open-source `bge-base`, 768 dims",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-hnsw",
+      "from": "hnsw",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**HNSW** \\cite{malkov2018hnsw}",
+      "citation_keys": [
+        "malkov2018hnsw"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-lost-in-the-middle",
+      "from": "lost-in-the-middle",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "often ignoring information buried in the middle \\cite{liu2023lostmiddle}",
+      "citation_keys": [
+        "liu2023lostmiddle"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-reciprocal-rank-fusion",
+      "from": "reciprocal-rank-fusion",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "with $k$ a constant (commonly 60).",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-gpt-4-turbo",
+      "from": "gpt-4-turbo",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "128K tokens (GPT-4 Turbo)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-claude-3",
+      "from": "claude-3",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "200K (Claude 3)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-gemini-1-5",
+      "from": "gemini-1-5",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "even 1M+ (Gemini 1.5)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-contextual-retrieval",
+      "from": "contextual-retrieval",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Reported to cut the retrieval-failure rate by roughly half",
+      "citation_keys": [
+        "contextualretrieval2024"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-beir",
+      "from": "beir",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "[BEIR](beir2021) benchmark matters",
+      "citation_keys": [
+        "beir2021"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-bm25",
+      "from": "bm25",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**BM25** (\\cite[Robertson & Zaragoza, 2009]{robertson2009bm25})",
+      "citation_keys": [
+        "robertson2009bm25"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-memex",
+      "from": "memex",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "drawn in 1945 by \\citeauthor{bush1945aswemaythink} (\\citeyear{bush1945aswemaythink})",
+      "citation_keys": [
+        "bush1945aswemaythink"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-dpr",
+      "from": "dpr",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Dense Passage Retrieval (DPR) replaced sparse term matching with two BERT encoders",
+      "citation_keys": [
+        "karpukhin2020dpr"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-retro",
+      "from": "retro",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "RETRO retrieved from trillions of tokens at the level of token chunks",
+      "citation_keys": [
+        "borgeaud2022retro"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-squad",
+      "from": "squad",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "SQuAD (2016) then isolated the reading-comprehension half",
+      "citation_keys": [
+        "rajpurkar2016squad"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-approximate-nearest-neighbor",
+      "from": "approximate-nearest-neighbor",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a billion vectors can be queried in tens of milliseconds on a single machine",
       "citation_keys": [],
       "confidence": "provenance"
     }

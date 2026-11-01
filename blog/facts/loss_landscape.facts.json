@@ -5,32 +5,18 @@
   "title": "The Loss Landscape",
   "part": 2,
   "order": 6,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "li2018losslandscape",
-    "rumelhart1986learning",
-    "hochreiter1991vanishing",
-    "dinh2017sharpness",
-    "ioffe2015batchnorm",
     "saxe2014deep",
     "kawaguchi2016deep",
-    "lu2017expressive",
     "dauphin2014saddle",
     "smithle2018bayesian",
     "mandt2017variational",
-    "hyperbolic_paraboloid_saddle",
     "keskar2016largebatch",
+    "dinh2017sharpness",
     "foret2021sam",
-    "he2016identity",
-    "choromanska2015loss",
-    "nguyen2017loss",
-    "garipov2018mode",
-    "grokking",
-    "amit1989modeling",
-    "chaudhari2016entropysgd",
-    "wales2003energy",
-    "hopfield1982"
+    "he2016identity"
   ],
   "claims": [
     {
@@ -71,6 +57,254 @@
       "quote": "order: 6",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "loss-landscape-llm-params",
+      "subject": "llm",
+      "predicate": "parameters",
+      "value": 10000000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true,
+        "variant": "modern-typical"
+      },
+      "quote": "A modern LLM has roughly $10^{10}$ parameters.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-resnet56-noskip",
+      "subject": "resnet-56",
+      "predicate": "test_error_without_skip",
+      "value": 13,
+      "unit": "%",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Test error around 13%.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-resnet56-skip",
+      "subject": "resnet-56",
+      "predicate": "test_error_with_skip",
+      "value": 6,
+      "unit": "%",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Test error drops to around 6%.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-slice",
+      "subject": "loss-landscape",
+      "predicate": "slice_formula",
+      "value": "L(theta* + alpha d1 + beta d2)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "g(\\alpha, \\beta) \\;=\\; \\mathcal{L}\\!\\left(\\theta^\\star + \\alpha\\, d_1 + \\beta\\, d_2\\right).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-linear-net",
+      "subject": "deep-linear-network",
+      "predicate": "local_minima",
+      "value": "no spurious local minima",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A purely linear deep network, just stacked matrices with no activation function between them, has a loss surface with no spurious local minima at all.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-saxe-year",
+      "subject": "saxe-2014-study",
+      "predicate": "year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{saxe2014deep} (\\citeyear{saxe2014deep}) showed this analytically for deep linear networks",
+      "citation_keys": [
+        "saxe2014deep"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-kawaguchi-year",
+      "subject": "kawaguchi-2016-study",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{kawaguchi2016deep} (\\citeyear{kawaguchi2016deep}) extended the result to deep nonlinear networks",
+      "citation_keys": [
+        "kawaguchi2016deep"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-saddle-ratio",
+      "subject": "saddle-points",
+      "predicate": "ratio_growth",
+      "value": "exponential with dimension",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the **ratio** of saddle points to local minima grows exponentially with dimension",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-sfn",
+      "subject": "saddle-free-newton",
+      "predicate": "hessian_replacement",
+      "value": "|H|",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "escapes them by replacing the Hessian $H$ with $|H|$",
+      "citation_keys": [
+        "dauphin2014saddle"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-sgd-boltzmann",
+      "subject": "mini-batch-sgd",
+      "predicate": "stationary_distribution",
+      "value": "p(theta) ∝ e^{-L(theta)/T}",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "small-batch SGD is approximately sampling from a Boltzmann-like distribution $p(\\theta) \\propto e^{-\\mathcal{L}(\\theta)/T}$",
+      "citation_keys": [
+        "smithle2018bayesian",
+        "mandt2017variational"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-keskar-year",
+      "subject": "keskar-2016-study",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citetitle{keskar2016largebatch} (\\citeyear{keskar2016largebatch}) sharpened this empirically",
+      "citation_keys": [
+        "keskar2016largebatch"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-keskar-finding",
+      "subject": "keskar-2016-study",
+      "predicate": "finding",
+      "value": "large-batch SGD finds sharper minima",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "large-batch SGD finds sharper minima than small-batch SGD",
+      "citation_keys": [
+        "keskar2016largebatch"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-keskar-datasets",
+      "subject": "keskar-2016-study",
+      "predicate": "datasets",
+      "value": "CIFAR-10, CIFAR-100, MNIST, TIMIT",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "generalize *worse* on CIFAR-10, CIFAR-100, MNIST, and TIMIT",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-dinh-year",
+      "subject": "dinh-2017-study",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{dinh2017sharpness} (\\citeyear{dinh2017sharpness}) exploited this",
+      "citation_keys": [
+        "dinh2017sharpness"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-sam-year",
+      "subject": "sharpness-aware-minimization",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Sharpness-Aware Minimization** \\cite{foret2021sam}",
+      "citation_keys": [
+        "foret2021sam"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-resnet1001",
+      "subject": "resnet-1001",
+      "predicate": "layers",
+      "value": 1001,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "a 1001-layer ResNet trains without difficulty",
+      "citation_keys": [
+        "he2016identity"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-resnet110",
+      "subject": "resnet-110",
+      "predicate": "test_error_without_skip",
+      "value": 16,
+      "unit": "%",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "the 110-layer net can still be trained (to ~16% test error on CIFAR-10)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-resnet156",
+      "subject": "resnet-156",
+      "predicate": "trainability_without_skip",
+      "value": "does not train at all",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "a 156-layer net without skips does not train at all.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-wide-resnet",
+      "subject": "wide-resnet",
+      "predicate": "test_errors_by_width",
+      "value": "5.89, 5.07, 4.34, 3.93",
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "($5.89\\% \\to 5.07\\% \\to 4.34\\% \\to 3.93\\%$ on CIFAR-10)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss-landscape-permutation",
+      "subject": "permutation-symmetry",
+      "predicate": "equivalent_positions",
+      "value": "(256!)^50",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "A 50-layer net with 256 neurons per layer has roughly $(256!)^{50}$ equivalent positions for each minimum",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -81,6 +315,183 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 2",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-llm",
+      "from": "llm",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A modern LLM has roughly $10^{10}$ parameters.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-resnet-56",
+      "from": "resnet-56",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Test error around 13%.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-deep-linear-network",
+      "from": "deep-linear-network",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A purely linear deep network, just stacked matrices with no activation function between them, has a loss surface with no spurious local minima at all.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-saxe-2014-study",
+      "from": "saxe-2014-study",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{saxe2014deep} (\\citeyear{saxe2014deep}) showed this analytically for deep linear networks",
+      "citation_keys": [
+        "saxe2014deep"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-kawaguchi-2016-study",
+      "from": "kawaguchi-2016-study",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{kawaguchi2016deep} (\\citeyear{kawaguchi2016deep}) extended the result to deep nonlinear networks",
+      "citation_keys": [
+        "kawaguchi2016deep"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-saddle-points",
+      "from": "saddle-points",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **ratio** of saddle points to local minima grows exponentially with dimension",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-saddle-free-newton",
+      "from": "saddle-free-newton",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "escapes them by replacing the Hessian $H$ with $|H|$",
+      "citation_keys": [
+        "dauphin2014saddle"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-mini-batch-sgd",
+      "from": "mini-batch-sgd",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "small-batch SGD is approximately sampling from a Boltzmann-like distribution $p(\\theta) \\propto e^{-\\mathcal{L}(\\theta)/T}$",
+      "citation_keys": [
+        "smithle2018bayesian",
+        "mandt2017variational"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-keskar-2016-study",
+      "from": "keskar-2016-study",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citetitle{keskar2016largebatch} (\\citeyear{keskar2016largebatch}) sharpened this empirically",
+      "citation_keys": [
+        "keskar2016largebatch"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-dinh-2017-study",
+      "from": "dinh-2017-study",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{dinh2017sharpness} (\\citeyear{dinh2017sharpness}) exploited this",
+      "citation_keys": [
+        "dinh2017sharpness"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-sharpness-aware-minimization",
+      "from": "sharpness-aware-minimization",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Sharpness-Aware Minimization** \\cite{foret2021sam}",
+      "citation_keys": [
+        "foret2021sam"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-resnet-1001",
+      "from": "resnet-1001",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a 1001-layer ResNet trains without difficulty",
+      "citation_keys": [
+        "he2016identity"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-resnet-110",
+      "from": "resnet-110",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the 110-layer net can still be trained (to ~16% test error on CIFAR-10)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-resnet-156",
+      "from": "resnet-156",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a 156-layer net without skips does not train at all.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-wide-resnet",
+      "from": "wide-resnet",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "($5.89\\% \\to 5.07\\% \\to 4.34\\% \\to 3.93\\%$ on CIFAR-10)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-permutation-symmetry",
+      "from": "permutation-symmetry",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A 50-layer net with 256 neurons per layer has roughly $(256!)^{50}$ equivalent positions for each minimum",
       "citation_keys": [],
       "confidence": "provenance"
     }

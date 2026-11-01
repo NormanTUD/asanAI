@@ -5,26 +5,14 @@
   "title": "Deep Learning",
   "part": 3,
   "order": 1,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "deeplearningfirstuse",
-    "aizenberg2000",
-    "hinton2006",
-    "cybenko1989",
-    "hornik1989universal",
     "petersen2024mathdl",
     "telgarsky2016wars",
     "montufar2014regions",
-    "he2015resnet",
-    "elhage2021framework",
     "li2018losslandscape",
-    "dauphin2014saddle",
-    "ruder2016overview",
-    "grokking",
-    "nanda2023grokking",
-    "davies2023unifying",
-    "belkin2019reconciling"
+    "ruder2016overview"
   ],
   "claims": [
     {
@@ -65,6 +53,229 @@
       "quote": "order: 1",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "deeplearninglab-definition",
+      "subject": "deep-learning",
+      "predicate": "definition",
+      "value": "stacking many neurons in layers",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "is what happens when we stop using one neuron and start **stacking many of them in layers**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-uat-statement",
+      "subject": "universal-approximation-theorem",
+      "predicate": "statement",
+      "value": "a network with one hidden layer can approximate any reasonable continuous function",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A network with just **one hidden layer** can approximate **any reasonable continuous function** as closely as you want, as long as it has enough neurons.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-uat-activation",
+      "subject": "universal-approximation-theorem",
+      "predicate": "activation_condition",
+      "value": "activation is not a polynomial",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the one-hidden-layer network is a universal approximator **if and only if** the activation is not a polynomial",
+      "citation_keys": [
+        "petersen2024mathdl"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-box-shallow",
+      "subject": "box-membership-task",
+      "predicate": "shallow_neurons",
+      "value": "2^n",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "A **shallow** (2-layer) network needs roughly $2^n$ neurons to capture this",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-box-deep",
+      "subject": "box-membership-task",
+      "predicate": "deep_neurons",
+      "value": "O(n)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "A **deep** network with $n$ layers of just a few neurons each does it in $O(n)$ total neurons.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-depth-separation",
+      "subject": "depth-separation",
+      "predicate": "theorem",
+      "value": "deep net O(n) neurons vs shallow 2^{Omega(n)}",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "proved there exist functions a deep net represents with $O(n)$ neurons that a shallow net needs $2^{\\Omega(n)}$ neurons to match",
+      "citation_keys": [
+        "telgarsky2016wars"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-linear-regions",
+      "subject": "relu-network",
+      "predicate": "linear_regions_growth",
+      "value": "exponential with depth",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the number of distinct \"linear regions\" a ReLU network can carve out **grows exponentially with depth**",
+      "citation_keys": [
+        "montufar2014regions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-width-two",
+      "subject": "relu-network",
+      "predicate": "linear_regions_width_two",
+      "value": "2^L",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "a depth-$L$ ReLU network of width 2 produces a \"sawtooth\" with exactly $2^L$ linear regions",
+      "citation_keys": [
+        "petersen2024mathdl"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-vanishing-layers",
+      "subject": "vanishing-gradient",
+      "predicate": "layer_count_example",
+      "value": 100,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "When backprop sends the error signal backward through, say, 100 layers, it gets multiplied by many small numbers along the way.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-skip-derivative",
+      "subject": "residual-connection",
+      "predicate": "skip_gradient_derivative",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "the derivative through the skip path is exactly $1$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-residual-correction",
+      "subject": "residual-connection",
+      "predicate": "function",
+      "value": "computes a correction and adds it to the running state",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "it computes just a **correction** and adds it to the running state",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-residual-flatten",
+      "subject": "residual-connection",
+      "predicate": "effect",
+      "value": "flattens the loss landscape",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Residual connections also **flatten the loss landscape** \\cite[Li et al.]{li2018losslandscape}",
+      "citation_keys": [
+        "li2018losslandscape"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-implicit-bias",
+      "subject": "implicit-bias",
+      "predicate": "preference",
+      "value": "simplest, most compact solution",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "consistently prefers the **simplest, most compact** solution among all the ones that fit",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-weight-decay",
+      "subject": "weight-decay",
+      "predicate": "role",
+      "value": "penalty on weight size",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "combined with a small penalty on weight size (weight decay), consistently prefers the **simplest, most compact** solution",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-grokking-memorize",
+      "subject": "grokking",
+      "predicate": "memorization_test_accuracy",
+      "value": 100,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "Training accuracy shoots to 100%, but test accuracy stays at chance.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-grokking-jump",
+      "subject": "grokking",
+      "predicate": "generalization_test_accuracy",
+      "value": 100,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "Then suddenly, test accuracy jumps to 100%.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-no-spurious",
+      "subject": "single-hidden-layer-network",
+      "predicate": "spurious_valleys",
+      "value": "none with enough neurons",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "for a single-hidden-layer network with at least as many neurons as training samples, the loss landscape has **no spurious valleys at all**",
+      "citation_keys": [
+        "petersen2024mathdl"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-linear-collapse",
+      "subject": "linear-network",
+      "predicate": "equivalence",
+      "value": "mathematically identical to one linear layer",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A stack of pure linear layers is **mathematically identical to one linear layer**.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-ruder-year",
+      "subject": "optimizer-survey",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{ruder2016overview}'s 2016 overview article (\\citeyear{ruder2016overview})",
+      "citation_keys": [
+        "ruder2016overview"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -76,6 +287,144 @@
       "qualifiers": {},
       "quote": "part: 3",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deeplearninglab-deep-learning",
+      "from": "deep-learning",
+      "to": "deeplearninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "is what happens when we stop using one neuron and start **stacking many of them in layers**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deeplearninglab-universal-approximation-theorem",
+      "from": "universal-approximation-theorem",
+      "to": "deeplearninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A network with just **one hidden layer** can approximate **any reasonable continuous function** as closely as you want, as long as it has enough neurons.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deeplearninglab-box-membership-task",
+      "from": "box-membership-task",
+      "to": "deeplearninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A **shallow** (2-layer) network needs roughly $2^n$ neurons to capture this",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deeplearninglab-depth-separation",
+      "from": "depth-separation",
+      "to": "deeplearninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "proved there exist functions a deep net represents with $O(n)$ neurons that a shallow net needs $2^{\\Omega(n)}$ neurons to match",
+      "citation_keys": [
+        "telgarsky2016wars"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deeplearninglab-relu-network",
+      "from": "relu-network",
+      "to": "deeplearninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the number of distinct \"linear regions\" a ReLU network can carve out **grows exponentially with depth**",
+      "citation_keys": [
+        "montufar2014regions"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deeplearninglab-vanishing-gradient",
+      "from": "vanishing-gradient",
+      "to": "deeplearninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "When backprop sends the error signal backward through, say, 100 layers, it gets multiplied by many small numbers along the way.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deeplearninglab-residual-connection",
+      "from": "residual-connection",
+      "to": "deeplearninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the derivative through the skip path is exactly $1$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deeplearninglab-implicit-bias",
+      "from": "implicit-bias",
+      "to": "deeplearninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "consistently prefers the **simplest, most compact** solution among all the ones that fit",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deeplearninglab-weight-decay",
+      "from": "weight-decay",
+      "to": "deeplearninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "combined with a small penalty on weight size (weight decay), consistently prefers the **simplest, most compact** solution",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deeplearninglab-grokking",
+      "from": "grokking",
+      "to": "deeplearninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Training accuracy shoots to 100%, but test accuracy stays at chance.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deeplearninglab-single-hidden-layer-network",
+      "from": "single-hidden-layer-network",
+      "to": "deeplearninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "for a single-hidden-layer network with at least as many neurons as training samples, the loss landscape has **no spurious valleys at all**",
+      "citation_keys": [
+        "petersen2024mathdl"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deeplearninglab-linear-network",
+      "from": "linear-network",
+      "to": "deeplearninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A stack of pure linear layers is **mathematically identical to one linear layer**.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deeplearninglab-optimizer-survey",
+      "from": "optimizer-survey",
+      "to": "deeplearninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{ruder2016overview}'s 2016 overview article (\\citeyear{ruder2016overview})",
+      "citation_keys": [
+        "ruder2016overview"
+      ],
       "confidence": "provenance"
     }
   ]

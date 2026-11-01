@@ -5,26 +5,18 @@
   "title": "Activation Functions: The Neural Decision Makers",
   "part": 2,
   "order": 10,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "rosenblatt1958perceptron",
-    "relufirst",
     "relupaper",
-    "petersen2024mathdl",
+    "glorot2011deep",
+    "krizhevsky2012imagenet",
     "boltzmann_distribution_wiki",
     "luce1959individualchoice",
     "bridle1990softmax",
-    "verhulst1838logistic",
-    "berkson1944logistic",
-    "cox1958logistic",
-    "lecun1989backpropagation",
-    "lecun1998gradientbased",
     "hochreiter1991vanishing",
     "bengio1994learning",
-    "glorot2011deep",
-    "krizhevsky2012imagenet",
-    "frankle2019lottery",
     "hendrycks2016gelu",
     "vaswani2017attention",
     "elfwing2017silu",
@@ -70,6 +62,244 @@
       "quote": "order: 10",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "activationlab-perceptron-activation",
+      "subject": "perceptron",
+      "predicate": "activation",
+      "value": "Heaviside threshold",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the non-differentiable Heaviside threshold $H(x)=\\mathbf{1}_{x>0}$ of the early Perceptron, which \\citeauthor{rosenblatt1958perceptron} trained with a discrete error-correction rule rather than gradient descent",
+      "citation_keys": [
+        "rosenblatt1958perceptron"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-relu-mainstream",
+      "subject": "relu",
+      "predicate": "mainstream_year",
+      "value": 2010,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the unit entered mainstream deep learning in 2010, when \\citeauthorlastnameand{relupaper} showed that rectified units could train better than sigmoid units in restricted Boltzmann machines",
+      "citation_keys": [
+        "relupaper"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-relu-positive-gradient",
+      "subject": "relu",
+      "predicate": "positive_gradient",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "By keeping a constant gradient of 1 for all positive inputs ($x > 0$), ReLU let gradients flow through dozens of layers without fading",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-glorot-2011",
+      "subject": "glorot-2011",
+      "predicate": "result",
+      "value": "demonstrated why deep supervised networks became trainable",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "\\cite[Glorot et al. (2011)]{glorot2011deep} then demonstrated why this made deep supervised networks trainable",
+      "citation_keys": [
+        "glorot2011deep"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-imagenet-2012",
+      "subject": "imagenet-2012",
+      "predicate": "effect",
+      "value": "made rectifier networks the default",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The 2012 ImageNet result \\cite{krizhevsky2012imagenet} made rectifier networks the default",
+      "citation_keys": [
+        "krizhevsky2012imagenet"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-softmax-boltzmann",
+      "subject": "softmax",
+      "predicate": "origin",
+      "value": "Boltzmann distribution",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "it is the **Boltzmann distribution** of statistical mechanics, with the logits playing the role of negative energies \\cite{boltzmann_distribution_wiki}",
+      "citation_keys": [
+        "boltzmann_distribution_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-luce-1959",
+      "subject": "luce-1959",
+      "predicate": "year",
+      "value": 1959,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{luce1959individualchoice} derived it from his choice axiom in \\citeyear{luce1959individualchoice}",
+      "citation_keys": [
+        "luce1959individualchoice"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-softmax-name",
+      "subject": "softmax-name",
+      "predicate": "coined_by",
+      "value": "Bridle",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The name \"softmax\" comes from \\citeauthor{bridle1990softmax}, who used it for a normalised exponential in a 1989 conference paper published in \\citeyear{bridle1990softmax}.",
+      "citation_keys": [
+        "bridle1990softmax"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-attention-temperature",
+      "subject": "attention",
+      "predicate": "temperature",
+      "value": "sqrt(d_k)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "**Attention** uses a fixed temperature $\\tau=\\sqrt{d_k}$ inside every attention head at every layer",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-tanh-range",
+      "subject": "tanh",
+      "predicate": "range",
+      "value": "(-1,1)",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "**Tanh** became preferred over Sigmoid because it is zero-centered, mapping inputs to a range of $(-1, 1)$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-tanh-formula",
+      "subject": "tanh",
+      "predicate": "formula",
+      "value": "2*sigma(2x)-1",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "\\tanh(x) = 2\\sigma(2x)-1",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-hochreiter-1991",
+      "subject": "hochreiter-1991",
+      "predicate": "year",
+      "value": 1991,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{hochreiter1991vanishing}'s \\citeyear{hochreiter1991vanishing} diploma thesis analysed the repeated multiplication of Jacobians",
+      "citation_keys": [
+        "hochreiter1991vanishing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-bengio-1994",
+      "subject": "bengio-1994",
+      "predicate": "year",
+      "value": 1994,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Bengio et al. (1994)]{bengio1994learning} made the result general",
+      "citation_keys": [
+        "bengio1994learning"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-gelu-year",
+      "subject": "gelu",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Gaussian Error Linear Unit (GELU)**, introduced by \\citeauthorlastnameand{hendrycks2016gelu} in \\citeyear{hendrycks2016gelu}",
+      "citation_keys": [
+        "hendrycks2016gelu"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-gelu-formula",
+      "subject": "gelu",
+      "predicate": "formula",
+      "value": "x*Phi(x)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "\\text{GELU}(x) = x \\cdot \\Phi(x)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-transformer-relu",
+      "subject": "transformer",
+      "predicate": "activation",
+      "value": "ReLU",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "although the original Transformer used ReLU \\cite{vaswani2017attention}",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-silu-year",
+      "subject": "silu",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "introduced by \\cite[Elfwing et al. (2017)]{elfwing2017silu} and independently found as **Swish** by \\cite[Ramachandran et al. (2017)]{ramachandran2017swish}",
+      "citation_keys": [
+        "elfwing2017silu",
+        "ramachandran2017swish"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-stable-diffusion-activation",
+      "subject": "stable-diffusion",
+      "predicate": "activation",
+      "value": "SiLU",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "is the activation inside the **U-Net denoiser of Stable Diffusion** \\cite{rombach2022ldm}",
+      "citation_keys": [
+        "rombach2022ldm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "activationlab-relu-sparsity",
+      "subject": "relu",
+      "predicate": "sparsity",
+      "value": 0.5,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "For any given input, roughly half of ReLU's neurons output exactly zero.",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -81,6 +311,183 @@
       "qualifiers": {},
       "quote": "part: 2",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-activationlab-perceptron",
+      "from": "perceptron",
+      "to": "activationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the non-differentiable Heaviside threshold $H(x)=\\mathbf{1}_{x>0}$ of the early Perceptron, which \\citeauthor{rosenblatt1958perceptron} trained with a discrete error-correction rule rather than gradient descent",
+      "citation_keys": [
+        "rosenblatt1958perceptron"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-activationlab-relu",
+      "from": "relu",
+      "to": "activationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the unit entered mainstream deep learning in 2010, when \\citeauthorlastnameand{relupaper} showed that rectified units could train better than sigmoid units in restricted Boltzmann machines",
+      "citation_keys": [
+        "relupaper"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-activationlab-glorot-2011",
+      "from": "glorot-2011",
+      "to": "activationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Glorot et al. (2011)]{glorot2011deep} then demonstrated why this made deep supervised networks trainable",
+      "citation_keys": [
+        "glorot2011deep"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-activationlab-imagenet-2012",
+      "from": "imagenet-2012",
+      "to": "activationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The 2012 ImageNet result \\cite{krizhevsky2012imagenet} made rectifier networks the default",
+      "citation_keys": [
+        "krizhevsky2012imagenet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-activationlab-softmax",
+      "from": "softmax",
+      "to": "activationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it is the **Boltzmann distribution** of statistical mechanics, with the logits playing the role of negative energies \\cite{boltzmann_distribution_wiki}",
+      "citation_keys": [
+        "boltzmann_distribution_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-activationlab-luce-1959",
+      "from": "luce-1959",
+      "to": "activationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{luce1959individualchoice} derived it from his choice axiom in \\citeyear{luce1959individualchoice}",
+      "citation_keys": [
+        "luce1959individualchoice"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-activationlab-softmax-name",
+      "from": "softmax-name",
+      "to": "activationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The name \"softmax\" comes from \\citeauthor{bridle1990softmax}, who used it for a normalised exponential in a 1989 conference paper published in \\citeyear{bridle1990softmax}.",
+      "citation_keys": [
+        "bridle1990softmax"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-activationlab-attention",
+      "from": "attention",
+      "to": "activationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Attention** uses a fixed temperature $\\tau=\\sqrt{d_k}$ inside every attention head at every layer",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-activationlab-tanh",
+      "from": "tanh",
+      "to": "activationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Tanh** became preferred over Sigmoid because it is zero-centered, mapping inputs to a range of $(-1, 1)$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-activationlab-hochreiter-1991",
+      "from": "hochreiter-1991",
+      "to": "activationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{hochreiter1991vanishing}'s \\citeyear{hochreiter1991vanishing} diploma thesis analysed the repeated multiplication of Jacobians",
+      "citation_keys": [
+        "hochreiter1991vanishing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-activationlab-bengio-1994",
+      "from": "bengio-1994",
+      "to": "activationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Bengio et al. (1994)]{bengio1994learning} made the result general",
+      "citation_keys": [
+        "bengio1994learning"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-activationlab-gelu",
+      "from": "gelu",
+      "to": "activationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Gaussian Error Linear Unit (GELU)**, introduced by \\citeauthorlastnameand{hendrycks2016gelu} in \\citeyear{hendrycks2016gelu}",
+      "citation_keys": [
+        "hendrycks2016gelu"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-activationlab-transformer",
+      "from": "transformer",
+      "to": "activationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "although the original Transformer used ReLU \\cite{vaswani2017attention}",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-activationlab-silu",
+      "from": "silu",
+      "to": "activationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "introduced by \\cite[Elfwing et al. (2017)]{elfwing2017silu} and independently found as **Swish** by \\cite[Ramachandran et al. (2017)]{ramachandran2017swish}",
+      "citation_keys": [
+        "elfwing2017silu",
+        "ramachandran2017swish"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-activationlab-stable-diffusion",
+      "from": "stable-diffusion",
+      "to": "activationlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "is the activation inside the **U-Net denoiser of Stable Diffusion** \\cite{rombach2022ldm}",
+      "citation_keys": [
+        "rombach2022ldm"
+      ],
       "confidence": "provenance"
     }
   ]

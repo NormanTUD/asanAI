@@ -5,7 +5,7 @@
   "title": "Basic Math Concepts I — The Numerical Foundations",
   "part": 1,
   "order": 3,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "lebombobone",
@@ -15,40 +15,19 @@
     "macTutorBabylonianNumerals",
     "macTutorEgyptianNumerals",
     "rhindpapyrus",
-    "historyofmathematicalnotation",
-    "lageometrie",
-    "macTutorFunctions",
-    "euler1748introductio",
     "euler1755",
-    "miller_functionsymbols",
-    "lang2005basicmath",
-    "macTutorZero",
-    "brahmagupta_colebrooke",
-    "jiuzhangsuanshu",
-    "macTutorRealNumbers",
-    "euclidelements",
+    "millerOperation",
+    "kramp1808",
+    "historyofmathematicalnotation",
+    "macTutorE",
+    "napier1614",
+    "macTutorBurgi",
+    "wallis1655",
+    "macTutorInfinity",
     "dedekind1872",
     "cantor1895",
     "macTutorSetTheory",
-    "millerOperation",
-    "kramp1808",
-    "euler_portrait",
-    "macTutorE",
-    "madhava",
-    "gregoryachievements",
-    "newtonquadratura",
-    "taylor1715",
-    "maclaurin",
-    "napier1614",
-    "napier_portrait",
-    "macTutorBurgi",
-    "kepler1624chilias",
-    "laplace1821",
-    "mercator1668",
-    "wallis1655",
-    "macTutorInfinity",
-    "aristotlephysics",
-    "grosseteste_on_light"
+    "brahmagupta_colebrooke"
   ],
   "claims": [
     {
@@ -89,6 +68,257 @@
       "quote": "order: 3",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "math_i-lebombo-age",
+      "subject": "lebombo-bone",
+      "predicate": "age",
+      "value": "42,000–43,000",
+      "unit": "year",
+      "quote": "is dated to roughly 42,000–43,000 years ago by 24 radiocarbon measurements",
+      "citation_keys": [
+        "lebombobone"
+      ],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-ishango-age",
+      "subject": "ishango-bone",
+      "predicate": "age",
+      "value": 20000,
+      "unit": "year",
+      "quote": "The **Ishango bone** from the Congo, about 20,000 years old, has 168 marks arranged in three columns",
+      "citation_keys": [
+        "ishangobone",
+        "ishango12"
+      ],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-sumerian-base-60",
+      "subject": "sumerian-numerals",
+      "predicate": "base",
+      "value": 60,
+      "unit": "count",
+      "quote": "Sumerian scribes were counting in base 60 before 3500 BCE",
+      "citation_keys": [
+        "macTutorBabylonianMathematics",
+        "macTutorBabylonianNumerals"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-babylonian-place-value",
+      "subject": "babylonian-numerals",
+      "predicate": "year",
+      "value": -2000,
+      "unit": "year",
+      "quote": "turned that inheritance into a positional sexagesimal system around 2000 BCE",
+      "citation_keys": [
+        "macTutorBabylonianMathematics",
+        "macTutorBabylonianNumerals"
+      ],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-rhind-papyrus",
+      "subject": "rhind-papyrus",
+      "predicate": "year",
+      "value": -1650,
+      "unit": "year",
+      "quote": "the Rhind Papyrus (c. 1650 BCE) works in unit fractions",
+      "citation_keys": [
+        "macTutorEgyptianNumerals",
+        "rhindpapyrus"
+      ],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-euler-sigma",
+      "subject": "euler-sigma",
+      "predicate": "year",
+      "value": 1755,
+      "unit": "year",
+      "quote": "Euler introduced $\\Sigma$ in the *Institutiones calculi differentialis* (1755)",
+      "citation_keys": [
+        "euler1755",
+        "millerOperation"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-factorial-notation",
+      "subject": "factorial-notation",
+      "predicate": "year",
+      "value": 1808,
+      "unit": "year",
+      "quote": "the familiar exclamation point notation $n!$ was introduced by \\citeauthor{kramp1808} in his work",
+      "citation_keys": [
+        "kramp1808",
+        "historyofmathematicalnotation"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-product-sign",
+      "subject": "product-sign",
+      "predicate": "year",
+      "value": 1812,
+      "unit": "year",
+      "quote": "The product sign $\\prod$ is credited by Cajori to Gauss in 1812",
+      "citation_keys": [
+        "millerOperation"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-euler-number-value",
+      "subject": "euler-number",
+      "predicate": "value",
+      "value": 2.71828,
+      "unit": "count",
+      "quote": "Euler's number ($e \\approx 2.71828$)",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-bernoulli-e",
+      "subject": "jacob-bernoulli",
+      "predicate": "year",
+      "value": 1683,
+      "unit": "year",
+      "quote": "Jacob Bernoulli met it in 1683 while studying continuous compound interest",
+      "citation_keys": [
+        "macTutorE"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-hermite-transcendental",
+      "subject": "hermite-transcendental-proof",
+      "predicate": "year",
+      "value": 1873,
+      "unit": "year",
+      "quote": "Hermite proved in 1873 that $e$ is **transcendental**",
+      "citation_keys": [
+        "macTutorE"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-napier-logarithms",
+      "subject": "napier-logarithms",
+      "predicate": "year",
+      "value": 1614,
+      "unit": "year",
+      "quote": "Logarithms were introduced in \\citeyear{napier1614} by the Scottish mathematician John Napier",
+      "citation_keys": [
+        "napier1614"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-burgi-logarithms",
+      "subject": "jost-burgi",
+      "predicate": "year",
+      "value": 1588,
+      "unit": "year",
+      "quote": "Jost Bürgi reached logarithms independently around 1588 and published them in 1620",
+      "citation_keys": [
+        "macTutorBurgi"
+      ],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-wallis-infinity",
+      "subject": "wallis-infinity-symbol",
+      "predicate": "year",
+      "value": 1655,
+      "unit": "year",
+      "quote": "Wallis gave the concept its symbol: he introduced $\\infty$ in 1655",
+      "citation_keys": [
+        "wallis1655",
+        "macTutorInfinity"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-dedekind-cut",
+      "subject": "dedekind-cut",
+      "predicate": "year",
+      "value": 1872,
+      "unit": "year",
+      "quote": "Only in 1872 did Dedekind give the modern definition",
+      "citation_keys": [
+        "dedekind1872"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-cantor-set",
+      "subject": "cantor-set-definition",
+      "predicate": "year",
+      "value": 1895,
+      "unit": "year",
+      "quote": "Cantor's 1895 definition is the source of the modern notation",
+      "citation_keys": [
+        "cantor1895"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-peano-in",
+      "subject": "peano-in-symbol",
+      "predicate": "year",
+      "value": 1889,
+      "unit": "year",
+      "quote": "Peano introduced it in 1889, taking the first letter of the Greek *esti*",
+      "citation_keys": [
+        "macTutorSetTheory"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-brahmagupta-zero",
+      "subject": "brahmagupta-zero",
+      "predicate": "year",
+      "value": 628,
+      "unit": "year",
+      "quote": "Brahmagupta's *Brāhmasphuṭasiddhānta* (628 CE), which gives rules for calculating with zero and negatives",
+      "citation_keys": [
+        "brahmagupta_colebrooke"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -100,6 +330,227 @@
       "qualifiers": {},
       "quote": "part: 1",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-lebombo-bone",
+      "from": "lebombo-bone",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "is dated to roughly 42,000–43,000 years ago by 24 radiocarbon measurements",
+      "citation_keys": [
+        "lebombobone"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-ishango-bone",
+      "from": "ishango-bone",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **Ishango bone** from the Congo, about 20,000 years old, has 168 marks arranged in three columns",
+      "citation_keys": [
+        "ishangobone",
+        "ishango12"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-sumerian-numerals",
+      "from": "sumerian-numerals",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Sumerian scribes were counting in base 60 before 3500 BCE",
+      "citation_keys": [
+        "macTutorBabylonianMathematics",
+        "macTutorBabylonianNumerals"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-babylonian-numerals",
+      "from": "babylonian-numerals",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "turned that inheritance into a positional sexagesimal system around 2000 BCE",
+      "citation_keys": [
+        "macTutorBabylonianMathematics",
+        "macTutorBabylonianNumerals"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-rhind-papyrus",
+      "from": "rhind-papyrus",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Rhind Papyrus (c. 1650 BCE) works in unit fractions",
+      "citation_keys": [
+        "macTutorEgyptianNumerals",
+        "rhindpapyrus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-euler-sigma",
+      "from": "euler-sigma",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Euler introduced $\\Sigma$ in the *Institutiones calculi differentialis* (1755)",
+      "citation_keys": [
+        "euler1755",
+        "millerOperation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-factorial-notation",
+      "from": "factorial-notation",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the familiar exclamation point notation $n!$ was introduced by \\citeauthor{kramp1808} in his work",
+      "citation_keys": [
+        "kramp1808",
+        "historyofmathematicalnotation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-product-sign",
+      "from": "product-sign",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The product sign $\\prod$ is credited by Cajori to Gauss in 1812",
+      "citation_keys": [
+        "millerOperation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-euler-number",
+      "from": "euler-number",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Euler's number ($e \\approx 2.71828$)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-jacob-bernoulli",
+      "from": "jacob-bernoulli",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Jacob Bernoulli met it in 1683 while studying continuous compound interest",
+      "citation_keys": [
+        "macTutorE"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-hermite-transcendental-proof",
+      "from": "hermite-transcendental-proof",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hermite proved in 1873 that $e$ is **transcendental**",
+      "citation_keys": [
+        "macTutorE"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-napier-logarithms",
+      "from": "napier-logarithms",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Logarithms were introduced in \\citeyear{napier1614} by the Scottish mathematician John Napier",
+      "citation_keys": [
+        "napier1614"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-jost-burgi",
+      "from": "jost-burgi",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Jost Bürgi reached logarithms independently around 1588 and published them in 1620",
+      "citation_keys": [
+        "macTutorBurgi"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-wallis-infinity-symbol",
+      "from": "wallis-infinity-symbol",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Wallis gave the concept its symbol: he introduced $\\infty$ in 1655",
+      "citation_keys": [
+        "wallis1655",
+        "macTutorInfinity"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-dedekind-cut",
+      "from": "dedekind-cut",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Only in 1872 did Dedekind give the modern definition",
+      "citation_keys": [
+        "dedekind1872"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-cantor-set-definition",
+      "from": "cantor-set-definition",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Cantor's 1895 definition is the source of the modern notation",
+      "citation_keys": [
+        "cantor1895"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-peano-in-symbol",
+      "from": "peano-in-symbol",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Peano introduced it in 1889, taking the first letter of the Greek *esti*",
+      "citation_keys": [
+        "macTutorSetTheory"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-brahmagupta-zero",
+      "from": "brahmagupta-zero",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Brahmagupta's *Brāhmasphuṭasiddhānta* (628 CE), which gives rules for calculating with zero and negatives",
+      "citation_keys": [
+        "brahmagupta_colebrooke"
+      ],
       "confidence": "provenance"
     }
   ]

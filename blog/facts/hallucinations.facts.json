@@ -5,18 +5,14 @@
   "title": "Hallucinations and Dangers of AI and How to use AI Safely",
   "part": 5,
   "order": 2,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "sharma2023sycophancy",
-    "berglund2023reversal",
     "prakash2021fitness",
     "hoffman2015interface",
-    "unfinishablemap2026fbt",
-    "wei2022cot",
-    "holtzman2019nucleus",
     "bender2021stochasticparrots",
-    "clark1998extended"
+    "wei2022cot",
+    "sharma2023sycophancy"
   ],
   "claims": [
     {
@@ -57,6 +53,238 @@
       "quote": "order: 2",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "hallucinations-definition",
+      "subject": "hallucination",
+      "predicate": "definition",
+      "value": "confident but untrue output",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "they can sound incredibly confident while saying something completely untrue. We call this a **Hallucination**.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-pattern-engine",
+      "subject": "llm",
+      "predicate": "model",
+      "value": "pattern completion engine",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "start thinking of it as a **Pattern Completion Engine**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-low-temp",
+      "subject": "temperature",
+      "predicate": "low_effect",
+      "value": "most likely word gets nearly 100% probability",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**Low Temperature ($T \\to 0$):** The most likely word gets nearly 100% probability.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-high-temp",
+      "subject": "temperature",
+      "predicate": "high_effect",
+      "value": "probabilities flatten out",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**High Temperature ($T \\to \\infty$):** The probabilities flatten out.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-reversal-def",
+      "subject": "reversal-curse",
+      "predicate": "definition",
+      "value": "trained on A is B, fails B is A",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "If a model is trained on a sentence of the form “A is B”, it will not automatically generalize to the reverse direction “B is A”.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-gpt4-parent",
+      "subject": "gpt-4",
+      "predicate": "parent_identification_accuracy",
+      "value": 79,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "even GPT-4, which can identify a celebrity's parent 79% of the time",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-gpt4-child",
+      "subject": "gpt-4",
+      "predicate": "child_identification_accuracy",
+      "value": 33,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "often fails (dropping to 33%) when asked to identify the child of that same parent.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-fbt-year",
+      "subject": "fitness-beats-truth-theorem",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In their \\citeyear{prakash2021fitness} paper",
+      "citation_keys": [
+        "prakash2021fitness"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-fbt-statement",
+      "subject": "fitness-beats-truth-theorem",
+      "predicate": "statement",
+      "value": "fitness-only strategy dominates truth strategy",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "proves that the **fitness-only strategy dominates the truth strategy**",
+      "citation_keys": [
+        "prakash2021fitness"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-interface-year",
+      "subject": "interface-theory-of-perception",
+      "predicate": "year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "This is the formal backbone of the **Interface Theory of Perception** \\cite{hoffman2015interface}",
+      "citation_keys": [
+        "hoffman2015interface"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-interface-review",
+      "subject": "interface-theory-of-perception",
+      "predicate": "review_pages",
+      "value": "1480-1506",
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "(*Psychon. Bull. Rev.*, 22(6), 1480–1506)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-parrot-year",
+      "subject": "stochastic-parrot-hypothesis",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "As Emily Bender's “Stochastic Parrot” (\\citeyear{bender2021stochasticparrots}) theory suggests",
+      "citation_keys": [
+        "bender2021stochasticparrots"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-cot-year",
+      "subject": "chain-of-thought",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "a technique called **Chain of Thought (CoT)** prompting \\citeauthor{wei2022cot} (\\citeyear{wei2022cot})",
+      "citation_keys": [
+        "wei2022cot"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-sycophancy-year",
+      "subject": "sycophancy",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "AI models often exhibit **sycophancy** \\citeauthor{sharma2023sycophancy} (\\citeyear{sharma2023sycophancy})",
+      "citation_keys": [
+        "sharma2023sycophancy"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-context-window",
+      "subject": "context-window",
+      "predicate": "definition",
+      "value": "short-term memory limit",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Imagine the AI has a short-term memory that can only hold a certain number of words (tokens).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-legal-temp",
+      "subject": "decoding-temperature",
+      "predicate": "legal_medical_range",
+      "value": "0.1-0.3",
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "| **Legal/Medical** | Dangerous Error | Low ($0.1 - 0.3$) |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-creative-temp",
+      "subject": "decoding-temperature",
+      "predicate": "creative_writing_range",
+      "value": "0.7-1.2",
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "| **Creative Writing** | “Innovation” / Metaphor | High ($0.7 - 1.2$) |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-fewshot",
+      "subject": "few-shot-prompting",
+      "predicate": "examples",
+      "value": "3-5",
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Provide 3–5 examples of correct Question/Answer pairs",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-fbt-dominance",
+      "subject": "fitness-beats-truth-theorem",
+      "predicate": "dominance",
+      "value": "grows with perceptual space",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "this dominance *grows* with the size of the perceptual space",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hallucinations-strawberry",
+      "subject": "tokenization",
+      "predicate": "example",
+      "value": "straw + berry",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A word like “strawberry” might be seen as the tokens `straw` and `berry`.",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -67,6 +295,156 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 5",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hallucinations-hallucination",
+      "from": "hallucination",
+      "to": "hallucinations",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "they can sound incredibly confident while saying something completely untrue. We call this a **Hallucination**.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hallucinations-llm",
+      "from": "llm",
+      "to": "hallucinations",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "start thinking of it as a **Pattern Completion Engine**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hallucinations-temperature",
+      "from": "temperature",
+      "to": "hallucinations",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Low Temperature ($T \\to 0$):** The most likely word gets nearly 100% probability.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hallucinations-reversal-curse",
+      "from": "reversal-curse",
+      "to": "hallucinations",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "If a model is trained on a sentence of the form “A is B”, it will not automatically generalize to the reverse direction “B is A”.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hallucinations-gpt-4",
+      "from": "gpt-4",
+      "to": "hallucinations",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "even GPT-4, which can identify a celebrity's parent 79% of the time",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hallucinations-fitness-beats-truth-theorem",
+      "from": "fitness-beats-truth-theorem",
+      "to": "hallucinations",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In their \\citeyear{prakash2021fitness} paper",
+      "citation_keys": [
+        "prakash2021fitness"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hallucinations-interface-theory-of-perception",
+      "from": "interface-theory-of-perception",
+      "to": "hallucinations",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This is the formal backbone of the **Interface Theory of Perception** \\cite{hoffman2015interface}",
+      "citation_keys": [
+        "hoffman2015interface"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hallucinations-stochastic-parrot-hypothesis",
+      "from": "stochastic-parrot-hypothesis",
+      "to": "hallucinations",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "As Emily Bender's “Stochastic Parrot” (\\citeyear{bender2021stochasticparrots}) theory suggests",
+      "citation_keys": [
+        "bender2021stochasticparrots"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hallucinations-chain-of-thought",
+      "from": "chain-of-thought",
+      "to": "hallucinations",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a technique called **Chain of Thought (CoT)** prompting \\citeauthor{wei2022cot} (\\citeyear{wei2022cot})",
+      "citation_keys": [
+        "wei2022cot"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hallucinations-sycophancy",
+      "from": "sycophancy",
+      "to": "hallucinations",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "AI models often exhibit **sycophancy** \\citeauthor{sharma2023sycophancy} (\\citeyear{sharma2023sycophancy})",
+      "citation_keys": [
+        "sharma2023sycophancy"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hallucinations-context-window",
+      "from": "context-window",
+      "to": "hallucinations",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Imagine the AI has a short-term memory that can only hold a certain number of words (tokens).",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hallucinations-decoding-temperature",
+      "from": "decoding-temperature",
+      "to": "hallucinations",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| **Legal/Medical** | Dangerous Error | Low ($0.1 - 0.3$) |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hallucinations-few-shot-prompting",
+      "from": "few-shot-prompting",
+      "to": "hallucinations",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Provide 3–5 examples of correct Question/Answer pairs",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hallucinations-tokenization",
+      "from": "tokenization",
+      "to": "hallucinations",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A word like “strawberry” might be seen as the tokens `straw` and `berry`.",
       "citation_keys": [],
       "confidence": "provenance"
     }

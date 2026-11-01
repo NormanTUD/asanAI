@@ -5,14 +5,9 @@
   "title": "Multimodal & Vision-Language Models",
   "part": 4,
   "order": 13,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [
-    "radford2021clip",
-    "dosovitskiy2021vit",
-    "liu2023llava",
-    "alayrac2022flamingo"
-  ],
+  "citations": [],
   "claims": [
     {
       "id": "auto-multimodal-title-0-1",

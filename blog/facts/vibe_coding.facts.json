@@ -5,63 +5,18 @@
   "title": "Vibe Coding: When Software Writes Itself",
   "part": 5,
   "order": 20,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "collins2025woty",
-    "getartcraftapps",
-    "arstechnica2026softwareover",
-    "vibe_coding_wiki",
-    "willison2025vibeengineering",
-    "sarkar2025vibe",
-    "pimenova2025goodvibrations",
-    "meske2025intent",
-    "techcrunch2025yc",
-    "stackoverflow2025ai",
     "merriam2025vibe",
     "peng2025codedigitaltwin",
     "sapkota2025vibeagentic",
     "peng2023copilot",
     "cui2026field",
     "becker2025metr",
-    "dora2025",
     "tran2026vibecodebench",
-    "digitaltrends2026artcraft",
-    "pearce2022asleep",
-    "perry2023insecure",
-    "tihanyi2024secure",
-    "zhao2025susvibes",
-    "veracode2025genai",
-    "spracklen2024slopsquatting",
-    "semafor2025lovable",
-    "register2025replit",
-    "gitclear2025",
-    "asdaque2026review",
-    "github2026photocraft",
-    "anthropic2024mcp",
-    "canva2025affinityfree",
-    "canva2025affinityofficial",
-    "eff_reverse_engineering",
-    "apple_v_microsoft_wiki",
-    "shin2026homogenization",
-    "adobe2025q4",
-    "adobe2025aiarr",
-    "firefly_wiki",
-    "adobe_wiki",
-    "christensen2015disruptive",
-    "figma_wiki",
-    "yahoo2026figma",
-    "thorgeirsson2026skills",
-    "rinja2026helpseeking",
-    "koren2026vibeoss",
-    "gu2025matthew",
-    "enshittification_wiki",
-    "andreessen2011software",
-    "kim2025vibecoding",
-    "ma2026zoro",
-    "wang2026vibecontract",
-    "lipsanen2026shiftup",
-    "hu2026humanguidance"
+    "digitaltrends2026artcraft"
   ],
   "claims": [
     {
@@ -102,6 +57,252 @@
       "quote": "order: 20",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "vibe-coding-named-2025",
+      "subject": "vibe-coding",
+      "predicate": "named_year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In February 2025, Andrej Karpathy gave a name to a way of building software",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-collins",
+      "subject": "vibe-coding",
+      "predicate": "word_of_year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Nine months later, Collins Dictionary made it Word of the Year \\cite{collins2025woty}.",
+      "citation_keys": [
+        "collins2025woty"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-first-post",
+      "subject": "vibe-coding",
+      "predicate": "earliest_documented_post",
+      "value": "2 February 2025, 23:17 UTC",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The earliest documented use of \"vibe coding\" in this sense is Karpathy's post of **2 February 2025, 23:17 UTC**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-merriam",
+      "subject": "vibe-coding",
+      "predicate": "merriam_webster_slang_date",
+      "value": "8 March 2025",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Merriam-Webster listed the term as slang on **8 March 2025**",
+      "citation_keys": [
+        "merriam2025vibe"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-first-abstract",
+      "subject": "vibe-coding",
+      "predicate": "first_arxiv_abstract_date",
+      "value": "11 March",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the first abstract mention is **11 March** (Peng and Wang)",
+      "citation_keys": [
+        "peng2025codedigitaltwin"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-first-title",
+      "subject": "vibe-coding",
+      "predicate": "first_arxiv_title_date",
+      "value": "26 May",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the first title is **26 May** (Sapkota et al.)",
+      "citation_keys": [
+        "sapkota2025vibeagentic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-first-empirical",
+      "subject": "vibe-coding",
+      "predicate": "first_empirical_study_date",
+      "value": "29 June",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the first dedicated empirical study is **29 June** (Sarkar and Drosos).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-artcraft-initial",
+      "subject": "artcraft",
+      "predicate": "initial_adobe_replacements",
+      "value": 7,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "vibe code replacements to 7 of Adobe's apps in Rust",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-artcraft-grown",
+      "subject": "artcraft",
+      "predicate": "apps_after_weeks",
+      "value": 13,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Within weeks it had grown to thirteen apps",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-peng-speed",
+      "subject": "github-copilot",
+      "predicate": "speedup_http_server",
+      "value": 55.8,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "**55.8% faster** on an HTTP-server task",
+      "citation_keys": [
+        "peng2023copilot"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-cui-devs",
+      "subject": "cui-2026-field-study",
+      "predicate": "developers",
+      "value": 4867,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "three field experiments, 4,867 developers",
+      "citation_keys": [
+        "cui2026field"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-cui-tasks",
+      "subject": "cui-2026-field-study",
+      "predicate": "task_completion_increase",
+      "value": 26.08,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "**+26.08%** completed tasks",
+      "citation_keys": [
+        "cui2026field"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-metr-slowdown",
+      "subject": "metr-2025-study",
+      "predicate": "slowdown",
+      "value": 19,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "**19% slower**, while developers believed they were faster",
+      "citation_keys": [
+        "becker2025metr"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-metr-devs",
+      "subject": "metr-2025-study",
+      "predicate": "developers",
+      "value": 16,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "randomized trial with 16 experienced open-source developers",
+      "citation_keys": [
+        "becker2025metr"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-bench-specs",
+      "subject": "vibe-code-bench",
+      "predicate": "specs",
+      "value": 100,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "100 specs, 16 frontier models",
+      "citation_keys": [
+        "tran2026vibecodebench"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-bench-score",
+      "subject": "vibe-code-bench",
+      "predicate": "best_model_score",
+      "value": 61.8,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "Best model **61.8%** on held-out specs",
+      "citation_keys": [
+        "tran2026vibecodebench"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-filmcraft-coverage",
+      "subject": "filmcraft",
+      "predicate": "feature_coverage",
+      "value": 87,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "FilmCraft reported roughly **87% feature-checklist coverage**",
+      "citation_keys": [
+        "digitaltrends2026artcraft"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-filmcraft-readiness",
+      "subject": "filmcraft",
+      "predicate": "production_readiness",
+      "value": "50-60",
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "only **50–60% readiness for real projects**",
+      "citation_keys": [
+        "digitaltrends2026artcraft"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-pearce-vuln",
+      "subject": "copilot-security-study",
+      "predicate": "vulnerable_share",
+      "value": 40,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "Pearce et al. found about **40%** of 1,689 Copilot programs vulnerable.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe-coding-tihanyi-vuln",
+      "subject": "tihanyi-study",
+      "predicate": "vulnerable_share",
+      "value": 62.07,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "Tihanyi et al. found at least **62.07%** of 331,000 generated C programs vulnerable.",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -112,6 +313,96 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 5",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vibe_coding-artcraft",
+      "from": "artcraft",
+      "to": "vibe-coding",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "vibe code replacements to 7 of Adobe's apps in Rust",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vibe_coding-github-copilot",
+      "from": "github-copilot",
+      "to": "vibe-coding",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**55.8% faster** on an HTTP-server task",
+      "citation_keys": [
+        "peng2023copilot"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vibe_coding-cui-2026-field-study",
+      "from": "cui-2026-field-study",
+      "to": "vibe-coding",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "three field experiments, 4,867 developers",
+      "citation_keys": [
+        "cui2026field"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vibe_coding-metr-2025-study",
+      "from": "metr-2025-study",
+      "to": "vibe-coding",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**19% slower**, while developers believed they were faster",
+      "citation_keys": [
+        "becker2025metr"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vibe_coding-vibe-code-bench",
+      "from": "vibe-code-bench",
+      "to": "vibe-coding",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "100 specs, 16 frontier models",
+      "citation_keys": [
+        "tran2026vibecodebench"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vibe_coding-filmcraft",
+      "from": "filmcraft",
+      "to": "vibe-coding",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "FilmCraft reported roughly **87% feature-checklist coverage**",
+      "citation_keys": [
+        "digitaltrends2026artcraft"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vibe_coding-copilot-security-study",
+      "from": "copilot-security-study",
+      "to": "vibe-coding",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Pearce et al. found about **40%** of 1,689 Copilot programs vulnerable.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vibe_coding-tihanyi-study",
+      "from": "tihanyi-study",
+      "to": "vibe-coding",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Tihanyi et al. found at least **62.07%** of 331,000 generated C programs vulnerable.",
       "citation_keys": [],
       "confidence": "provenance"
     }

@@ -5,192 +5,27 @@
   "title": "People of AI",
   "part": 6,
   "order": 19,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "img_ada_lovelace",
-    "img_charles_babbage",
-    "menabrea_lovelace1843",
-    "mccorduck1979machines",
-    "img_alan_turing",
-    "turing1936",
-    "turing1950computing",
-    "hodges1983enigma",
-    "img_claude_shannon",
-    "shannon1948communication",
-    "shannon1951communication",
-    "img_john_von_neumann",
-    "vonneumann",
-    "wiener1948cybernetics",
-    "img_walter_pitts",
     "mccullochpitts1943",
-    "pitts1947universals",
-    "mcculloch1965embodiments",
-    "abraham2016rebelgenius",
-    "img_mcculloch_pitts_neuron",
     "lettvin1959frog",
-    "afflictor2014mcculloch",
-    "afflictor2015mechanistic",
-    "gefter2015pitts",
-    "afflictor_mcculloch_tag",
-    "img_frank_rosenblatt",
-    "rosenblatt1958perceptron",
-    "rosenblatt1962neurodynamics",
-    "lefkowitz2019perceptron",
-    "dobson2025perceptron",
-    "img_ibm_704",
     "samuel1959checkers",
-    "samuel1967checkers",
-    "img_marvin_minsky",
-    "minsky1986society",
-    "img_seymour_papert",
-    "minskyperceptrons",
-    "papert1988oneai",
-    "img_widrow_adaline",
     "widrow1960adaline",
     "crevier1993ai",
-    "feigenbaum1984expert",
-    "shortliffe1976mycin",
-    "cyc_wiki",
-    "img_john_hopfield",
     "hopfield1982",
-    "nobel2024physics",
-    "img_david_rumelhart",
-    "rumelhart1986pasttense",
     "rumelhart1986",
-    "ackley1985boltzmann",
-    "hinton2006",
-    "img_geoffrey_hinton",
-    "krizhevsky2012imagenet",
-    "img_paul_werbos",
     "werbos1974",
     "werbos1990bptt",
-    "img_yann_lecun",
     "lecun1989backpropagation",
-    "lecun2022path",
-    "img_yoshua_bengio",
     "neuralprobabilistic",
-    "bengio2023managing",
-    "img_sepp_hochreiter",
-    "img_juergen_schmidhuber",
     "lstm",
-    "img_alexnet_architecture",
-    "krizhevsky2009cifar",
-    "img_ilya_sutskever_altman",
-    "sutskever2014seq2seq",
-    "sutskever2013thesis",
-    "img_fei_fei_li",
+    "krizhevsky2012imagenet",
     "deng2009imagenet",
-    "img_ian_goodfellow",
     "goodfellow2014gan",
-    "goodfellow2015adversarial",
-    "goodfellow2016deep",
-    "img_andrej_karpathy",
-    "karpathy2015rnn",
-    "karpathy2023zerotohero",
-    "karpathy_ai",
-    "img_andrew_ng",
-    "dean2012large",
-    "blei2003lda",
-    "le2012cat",
-    "img_david_silver",
-    "silver2016alphago",
-    "silver2018zero",
-    "schrittwieser2020muzero",
-    "img_demis_hassabis",
-    "hassabis2007patients",
-    "jumper2021alphafold",
-    "nobel2024chemistry",
-    "deepmind_about",
-    "silver2021reward",
-    "img_john_jumper",
-    "alphafold3",
-    "img_richard_sutton",
-    "sutton1988td",
-    "sutton2018rlbook",
-    "sutton2019bitter",
-    "acm2024turing",
-    "img_transformer_attention_heads",
-    "vaswani2017attention",
-    "shazeer2019mqa",
-    "shazeer2020glu",
     "brown2020gpt3",
     "ouyang2022instructgpt",
-    "img_paul_christiano",
-    "christiano2017rlhf",
-    "bai2022constitutional",
-    "rafailov2023dpo",
-    "img_jared_kaplan",
-    "kaplan2020scaling",
-    "hoffmann2022chinchilla",
-    "olsson2022induction",
-    "anthropic2024goldengate",
-    "anthropic2025biology",
-    "img_francois_chollet",
-    "chollet2016xception",
-    "chollet2019measure",
-    "chollet2024arcagi",
-    "fchollet_site",
-    "img_george_boole",
-    "img_gottlob_frege",
-    "boole1854",
-    "frege1879",
-    "church1936",
-    "img_john_mccarthy",
-    "mccarthy1955dartmouth",
-    "simonnewell_image",
-    "newell1956logic",
-    "ashbyphoto",
-    "ashbydesigndbrain1952",
-    "hebb1949organizationofbehaviour",
-    "he2016resnet",
-    "dosovitskiy2020vit",
-    "ronneberger2015unet",
-    "isola2017pix2pix",
-    "ho2020ddpm",
-    "song2019score",
-    "rombach2022ldm",
-    "ramesh2021dalle",
-    "radford2021clip",
-    "radford2019language",
-    "radford2022whisper",
-    "peebles2023dit",
-    "img_tomas_mikolov",
-    "mikolov2013word2vec",
-    "pennington2014glove",
-    "sennrich2016subword",
-    "kudo2018sentencepiece",
-    "devlin2019bert",
-    "liu2019roberta",
-    "raffel2020t5",
-    "img_jeff_dean",
-    "rajbhandari2020zero",
-    "lepikhin2021gshard",
-    "fedus2022switch",
-    "dao2022flashattention",
-    "kwon2023vllm",
-    "olaha2020zoomin",
-    "elhage2021mathematical",
-    "elhage2022superposition",
-    "bricken2023monosemanticity",
-    "zou2023repeng",
-    "turner2023actadd",
-    "img_dario_amodei",
-    "burns2023weakstrong",
-    "amodei2016concrete",
-    "irving2018debate",
-    "img_stuart_russell",
-    "img_nick_bostrom",
-    "img_eliezer_yudkowsky",
-    "img_toby_ord",
-    "russell2019human",
-    "bostrom2014superintelligence",
-    "yudkowsky2008ai",
-    "ord2020precipice",
-    "tesauro1995tdgammon",
-    "mnih2015dqn",
-    "schulman2017ppo",
-    "shao2024grpo"
+    "hoffmann2022chinchilla"
   ],
   "claims": [
     {
@@ -231,6 +66,269 @@
       "quote": "order: 19",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "people_of_ai-mcculloch-pitts",
+      "subject": "mcculloch-pitts-neuron",
+      "predicate": "year",
+      "value": 1943,
+      "unit": "year",
+      "quote": "In 1943 McCulloch, a neurophysiologist, and Pitts, a self-taught logician, published",
+      "citation_keys": [
+        "mccullochpitts1943"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-frog-eye",
+      "subject": "frog-eye-paper",
+      "predicate": "year",
+      "value": 1959,
+      "unit": "year",
+      "quote": "coauthored **“What the Frog's Eye Tells the Frog's Brain”** (1959)",
+      "citation_keys": [
+        "lettvin1959frog"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-rosenblatt-perceptron",
+      "subject": "rosenblatt-perceptron",
+      "predicate": "year",
+      "value": 1958,
+      "unit": "year",
+      "quote": "The 1958 Navy press conference turned the machine into a sensation",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-samuel-checkers",
+      "subject": "samuel-checkers",
+      "predicate": "year",
+      "value": 1959,
+      "unit": "year",
+      "quote": "His 1959 paper gave the field its name — **machine learning**",
+      "citation_keys": [
+        "samuel1959checkers"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-perceptrons-book",
+      "subject": "minsky-papert-perceptrons",
+      "predicate": "year",
+      "value": 1969,
+      "unit": "year",
+      "quote": "Their 1969 \\citetitle{minskyperceptrons} proved that a single-layer perceptron cannot compute predicates such as parity and connectedness",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-adaline",
+      "subject": "adaline",
+      "predicate": "year",
+      "value": 1960,
+      "unit": "year",
+      "quote": "Their **least-mean-squares** training rule — the Widrow–Hoff rule",
+      "citation_keys": [
+        "widrow1960adaline"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-mycin-rules",
+      "subject": "mycin",
+      "predicate": "rule_count",
+      "value": "few hundred",
+      "unit": "count",
+      "quote": "which diagnosed blood infections from a few hundred IF–THEN rules",
+      "citation_keys": [],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-xcon-rules",
+      "subject": "xcon",
+      "predicate": "rule_count",
+      "value": 3000,
+      "unit": "count",
+      "quote": "grew from about three hundred rules in 1979 to more than three thousand by 1984",
+      "citation_keys": [
+        "crevier1993ai"
+      ],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-hopfield",
+      "subject": "hopfield-network",
+      "predicate": "year",
+      "value": 1982,
+      "unit": "year",
+      "quote": "His 1982 paper treated the network as an energy landscape",
+      "citation_keys": [
+        "hopfield1982"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-backprop-1986",
+      "subject": "rumelhart-backpropagation",
+      "predicate": "year",
+      "value": 1986,
+      "unit": "year",
+      "quote": "Their 1986 Nature paper showed that the chain rule could be applied backward",
+      "citation_keys": [
+        "rumelhart1986"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-werbos",
+      "subject": "werbos-backpropagation",
+      "predicate": "year",
+      "value": 1974,
+      "unit": "year",
+      "quote": "Werbos published the first derivation of backpropagation for neural networks in his 1974 Harvard dissertation",
+      "citation_keys": [
+        "werbos1974",
+        "werbos1990bptt"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-lecun-zip",
+      "subject": "lecun-zip-code-recognition",
+      "predicate": "year",
+      "value": 1989,
+      "unit": "year",
+      "quote": "to recognize handwritten ZIP codes for the U.S. Postal Service in 1989",
+      "citation_keys": [
+        "lecun1989backpropagation"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-bengio-lm",
+      "subject": "bengio-neural-language-model",
+      "predicate": "year",
+      "value": 2003,
+      "unit": "year",
+      "quote": "His 2003 neural probabilistic language model replaced sparse n-gram tables",
+      "citation_keys": [
+        "neuralprobabilistic"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-lstm",
+      "subject": "lstm",
+      "predicate": "year",
+      "value": 1997,
+      "unit": "year",
+      "quote": "Their 1997 **Long Short-Term Memory** introduced the cell state and the gating mechanism",
+      "citation_keys": [
+        "lstm"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-alexnet",
+      "subject": "alexnet",
+      "predicate": "year",
+      "value": 2012,
+      "unit": "year",
+      "quote": "**AlexNet** won the 2012 ImageNet challenge by a margin of more than ten percentage points",
+      "citation_keys": [
+        "krizhevsky2012imagenet"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-imagenet",
+      "subject": "imagenet",
+      "predicate": "image_count",
+      "value": 14000000,
+      "unit": "count",
+      "quote": "**ImageNet** gave vision a benchmark of realistic difficulty: 14 million images",
+      "citation_keys": [
+        "deng2009imagenet"
+      ],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gan",
+      "subject": "gan",
+      "predicate": "year",
+      "value": 2014,
+      "unit": "year",
+      "quote": "Goodfellow's **generative adversarial network** (2014)",
+      "citation_keys": [
+        "goodfellow2014gan"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gpt3",
+      "subject": "gpt-3",
+      "predicate": "parameters",
+      "value": 175000000000,
+      "unit": "count",
+      "quote": "which showed that a 175-billion-parameter decoder",
+      "citation_keys": [
+        "brown2020gpt3"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-instructgpt",
+      "subject": "instructgpt",
+      "predicate": "parameters",
+      "value": 1300000000,
+      "unit": "count",
+      "quote": "showed that a 1.3B aligned model could be preferred by human raters over the 175B base model",
+      "citation_keys": [
+        "ouyang2022instructgpt"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-chinchilla",
+      "subject": "chinchilla",
+      "predicate": "tokens_per_parameter",
+      "value": 20,
+      "unit": "token",
+      "quote": "roughly twenty tokens per parameter was a better target",
+      "citation_keys": [
+        "hoffmann2022chinchilla"
+      ],
+      "qualifiers": {
+        "approx": true
+      },
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -242,6 +340,241 @@
       "qualifiers": {},
       "quote": "part: 6",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-mcculloch-pitts-neuron",
+      "from": "mcculloch-pitts-neuron",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1943 McCulloch, a neurophysiologist, and Pitts, a self-taught logician, published",
+      "citation_keys": [
+        "mccullochpitts1943"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-frog-eye-paper",
+      "from": "frog-eye-paper",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "coauthored **“What the Frog's Eye Tells the Frog's Brain”** (1959)",
+      "citation_keys": [
+        "lettvin1959frog"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-rosenblatt-perceptron",
+      "from": "rosenblatt-perceptron",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The 1958 Navy press conference turned the machine into a sensation",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-samuel-checkers",
+      "from": "samuel-checkers",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "His 1959 paper gave the field its name — **machine learning**",
+      "citation_keys": [
+        "samuel1959checkers"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-minsky-papert-perceptrons",
+      "from": "minsky-papert-perceptrons",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Their 1969 \\citetitle{minskyperceptrons} proved that a single-layer perceptron cannot compute predicates such as parity and connectedness",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-adaline",
+      "from": "adaline",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Their **least-mean-squares** training rule — the Widrow–Hoff rule",
+      "citation_keys": [
+        "widrow1960adaline"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-mycin",
+      "from": "mycin",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "which diagnosed blood infections from a few hundred IF–THEN rules",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-xcon",
+      "from": "xcon",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "grew from about three hundred rules in 1979 to more than three thousand by 1984",
+      "citation_keys": [
+        "crevier1993ai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-hopfield-network",
+      "from": "hopfield-network",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "His 1982 paper treated the network as an energy landscape",
+      "citation_keys": [
+        "hopfield1982"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-rumelhart-backpropagation",
+      "from": "rumelhart-backpropagation",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Their 1986 Nature paper showed that the chain rule could be applied backward",
+      "citation_keys": [
+        "rumelhart1986"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-werbos-backpropagation",
+      "from": "werbos-backpropagation",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Werbos published the first derivation of backpropagation for neural networks in his 1974 Harvard dissertation",
+      "citation_keys": [
+        "werbos1974",
+        "werbos1990bptt"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-lecun-zip-code-recognition",
+      "from": "lecun-zip-code-recognition",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "to recognize handwritten ZIP codes for the U.S. Postal Service in 1989",
+      "citation_keys": [
+        "lecun1989backpropagation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-bengio-neural-language-model",
+      "from": "bengio-neural-language-model",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "His 2003 neural probabilistic language model replaced sparse n-gram tables",
+      "citation_keys": [
+        "neuralprobabilistic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-lstm",
+      "from": "lstm",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Their 1997 **Long Short-Term Memory** introduced the cell state and the gating mechanism",
+      "citation_keys": [
+        "lstm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-alexnet",
+      "from": "alexnet",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**AlexNet** won the 2012 ImageNet challenge by a margin of more than ten percentage points",
+      "citation_keys": [
+        "krizhevsky2012imagenet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-imagenet",
+      "from": "imagenet",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**ImageNet** gave vision a benchmark of realistic difficulty: 14 million images",
+      "citation_keys": [
+        "deng2009imagenet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-gan",
+      "from": "gan",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Goodfellow's **generative adversarial network** (2014)",
+      "citation_keys": [
+        "goodfellow2014gan"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-gpt-3",
+      "from": "gpt-3",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "which showed that a 175-billion-parameter decoder",
+      "citation_keys": [
+        "brown2020gpt3"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-instructgpt",
+      "from": "instructgpt",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "showed that a 1.3B aligned model could be preferred by human raters over the 175B base model",
+      "citation_keys": [
+        "ouyang2022instructgpt"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-chinchilla",
+      "from": "chinchilla",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "roughly twenty tokens per parameter was a better target",
+      "citation_keys": [
+        "hoffmann2022chinchilla"
+      ],
       "confidence": "provenance"
     }
   ]

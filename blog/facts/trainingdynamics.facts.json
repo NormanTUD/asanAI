@@ -5,12 +5,11 @@
   "title": "The Training Run as a Phenomenon",
   "part": 2,
   "order": 13,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "kaplan2020scaling",
     "hoffmann2022chinchilla",
-    "brown2020gpt3",
     "wsd2025",
     "goyal2017largebatch",
     "cohen2021edgeofstability",
@@ -56,6 +55,214 @@
       "quote": "order: 13",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "trainingdynamics-kaplan-year",
+      "subject": "kaplan-scaling-laws",
+      "predicate": "publication_year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Kaplan et al. (2020)]{kaplan2020scaling} fit the held-out loss",
+      "citation_keys": [
+        "kaplan2020scaling"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-chinchilla-year",
+      "subject": "chinchilla-scaling-law",
+      "predicate": "publication_year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Hoffmann et al. (2022)]{hoffmann2022chinchilla} redid the fit",
+      "citation_keys": [
+        "hoffmann2022chinchilla"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-chinchilla-alpha",
+      "subject": "chinchilla-scaling-law",
+      "predicate": "loss_exponent_alpha",
+      "value": 0.34,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "and measured $\\alpha \\approx 0.34$, $\\beta \\approx 0.28$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-chinchilla-beta",
+      "subject": "chinchilla-scaling-law",
+      "predicate": "loss_exponent_beta",
+      "value": 0.28,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "and measured $\\alpha \\approx 0.34$, $\\beta \\approx 0.28$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-compute-formula",
+      "subject": "training-compute",
+      "predicate": "formula",
+      "value": "C ≈ 6ND",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "Compute cost is $C \\approx 6ND$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-allocation-exponents",
+      "subject": "compute-allocation-exponents",
+      "predicate": "value",
+      "value": 0.5,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Hoffmann et al. found that parameters and tokens should grow in equal proportion ($a \\approx b \\approx 0.5$)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-chinchilla-ratio",
+      "subject": "chinchilla-optimal-ratio",
+      "predicate": "tokens_per_parameter",
+      "value": 20,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "N \\;\\approx\\; \\frac{D}{20} \\qquad\\text{(roughly 20 tokens per parameter)}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-wsd-year",
+      "subject": "wsd-schedule",
+      "predicate": "publication_year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Luo et al. (2025)]{wsd2025} fit a multi-power law",
+      "citation_keys": [
+        "wsd2025"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-linear-scaling-year",
+      "subject": "linear-scaling-rule",
+      "predicate": "publication_year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Goyal et al. (2017)]{goyal2017largebatch} made a result",
+      "citation_keys": [
+        "goyal2017largebatch"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-linear-scaling-rule",
+      "subject": "linear-scaling-rule",
+      "predicate": "rule",
+      "value": "double batch -> double learning rate",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "**doubling the batch lets you double the learning rate**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-gradient-noise",
+      "subject": "minibatch-gradient-noise",
+      "predicate": "scaling",
+      "value": "1/sqrt(batch)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "that noise scales as $1/\\sqrt{\\text{batch}}$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-edge-of-stability",
+      "subject": "edge-of-stability",
+      "predicate": "publication_year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "as \\cite[Cohen et al. (2021)]{cohen2021edgeofstability} and \\cite[Arora et al. (2022)]{arora2022edgeofstability} showed",
+      "citation_keys": [
+        "cohen2021edgeofstability",
+        "arora2022edgeofstability"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-mup-year",
+      "subject": "maximal-update-parametrization",
+      "predicate": "publication_year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Yang et al. (2022)]{yang2022mup} introduced **μP**",
+      "citation_keys": [
+        "yang2022mup"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-untrained-loss",
+      "subject": "untrained-model-loss",
+      "predicate": "formula",
+      "value": "ln(vocab)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "it starts at the loss of an untrained model (roughly $\\ln(\\text{vocab})$, a constant independent of size)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-gradient-accumulation",
+      "subject": "gradient-accumulation",
+      "predicate": "effective_batch",
+      "value": "accumulation_steps × per_step_batch",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "Your effective batch is the number of accumulation steps times the per-step batch",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-cosine-decay",
+      "subject": "cosine-decay",
+      "predicate": "behaviour",
+      "value": "decays the learning rate along a cosine down to zero",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "decays it along a cosine down to zero at the end",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-warmup",
+      "subject": "learning-rate-warmup",
+      "predicate": "purpose",
+      "value": "lets Adam moment estimates settle before large steps",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "lets those estimates settle before the model commits to big steps",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -66,6 +273,159 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 2",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-kaplan-scaling-laws",
+      "from": "kaplan-scaling-laws",
+      "to": "trainingdynamics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Kaplan et al. (2020)]{kaplan2020scaling} fit the held-out loss",
+      "citation_keys": [
+        "kaplan2020scaling"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-chinchilla-scaling-law",
+      "from": "chinchilla-scaling-law",
+      "to": "trainingdynamics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Hoffmann et al. (2022)]{hoffmann2022chinchilla} redid the fit",
+      "citation_keys": [
+        "hoffmann2022chinchilla"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-training-compute",
+      "from": "training-compute",
+      "to": "trainingdynamics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Compute cost is $C \\approx 6ND$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-compute-allocation-exponents",
+      "from": "compute-allocation-exponents",
+      "to": "trainingdynamics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hoffmann et al. found that parameters and tokens should grow in equal proportion ($a \\approx b \\approx 0.5$)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-chinchilla-optimal-ratio",
+      "from": "chinchilla-optimal-ratio",
+      "to": "trainingdynamics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "N \\;\\approx\\; \\frac{D}{20} \\qquad\\text{(roughly 20 tokens per parameter)}",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-wsd-schedule",
+      "from": "wsd-schedule",
+      "to": "trainingdynamics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Luo et al. (2025)]{wsd2025} fit a multi-power law",
+      "citation_keys": [
+        "wsd2025"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-linear-scaling-rule",
+      "from": "linear-scaling-rule",
+      "to": "trainingdynamics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Goyal et al. (2017)]{goyal2017largebatch} made a result",
+      "citation_keys": [
+        "goyal2017largebatch"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-minibatch-gradient-noise",
+      "from": "minibatch-gradient-noise",
+      "to": "trainingdynamics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "that noise scales as $1/\\sqrt{\\text{batch}}$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-edge-of-stability",
+      "from": "edge-of-stability",
+      "to": "trainingdynamics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "as \\cite[Cohen et al. (2021)]{cohen2021edgeofstability} and \\cite[Arora et al. (2022)]{arora2022edgeofstability} showed",
+      "citation_keys": [
+        "cohen2021edgeofstability",
+        "arora2022edgeofstability"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-maximal-update-parametrization",
+      "from": "maximal-update-parametrization",
+      "to": "trainingdynamics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Yang et al. (2022)]{yang2022mup} introduced **μP**",
+      "citation_keys": [
+        "yang2022mup"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-untrained-model-loss",
+      "from": "untrained-model-loss",
+      "to": "trainingdynamics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it starts at the loss of an untrained model (roughly $\\ln(\\text{vocab})$, a constant independent of size)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-gradient-accumulation",
+      "from": "gradient-accumulation",
+      "to": "trainingdynamics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Your effective batch is the number of accumulation steps times the per-step batch",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-cosine-decay",
+      "from": "cosine-decay",
+      "to": "trainingdynamics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "decays it along a cosine down to zero at the end",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-learning-rate-warmup",
+      "from": "learning-rate-warmup",
+      "to": "trainingdynamics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "lets those estimates settle before the model commits to big steps",
       "citation_keys": [],
       "confidence": "provenance"
     }

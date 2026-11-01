@@ -5,7 +5,7 @@
   "title": "",
   "part": "",
   "order": "",
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [],
   "claims": [
@@ -21,7 +21,348 @@
       "quote": "search_lib",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "search-lib-result-limit",
+      "subject": "run-search",
+      "predicate": "result_limit",
+      "value": 50,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "$out['results'] = array_slice($results, 0, 50);",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-query-min",
+      "subject": "run-search",
+      "predicate": "minimum_query_length",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "if (mb_strlen($rawQ) < 2) return $out;",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-results-order",
+      "subject": "search-index",
+      "predicate": "results_order",
+      "value": "score descending",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "usort($results, fn($a, $b) => $b['score'] <=> $a['score']);",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-exact-quality",
+      "subject": "find-token-hit",
+      "predicate": "exact_match_quality",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "if (preg_match($wordRe, $normText)) return ['q' => 4];",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-prefix-quality",
+      "subject": "find-token-hit",
+      "predicate": "prefix_match_quality",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "if (preg_match($prefixRe, $normText)) return ['q' => 3];",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-substring-quality",
+      "subject": "find-token-hit",
+      "predicate": "substring_match_quality",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "if (mb_strpos($normText, $tok) !== false) return ['q' => 2];",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-occ-cap",
+      "subject": "block-match",
+      "predicate": "occurrence_cap",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "$occ += min(5, substr_count($normText, $tok));",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-token-min",
+      "subject": "match-query",
+      "predicate": "token_min_length",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "fn($t) => mb_strlen($t) >= 2",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-fuzzy-exact",
+      "subject": "find-best-fuzzy-word",
+      "predicate": "exact_quality",
+      "value": 9,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "$q = 9;",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-fuzzy-prefix",
+      "subject": "find-best-fuzzy-word",
+      "predicate": "prefix_quality",
+      "value": 6,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "$q = 6;",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-fuzzy-divisor",
+      "subject": "fuzzy-match-info",
+      "predicate": "levenshtein_divisor",
+      "value": 4,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "$threshold = max(1, intdiv(strlen($queryF), 4));",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-snippet-fallback",
+      "subject": "make-snippet",
+      "predicate": "fallback_length",
+      "value": 200,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "return mb_substr($text, 0, 200);",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-snippet-para-max",
+      "subject": "make-snippet",
+      "predicate": "paragraph_max_length",
+      "value": 400,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "if ($paraLen > 0 && $paraLen <= 400) {",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-snippet-context",
+      "subject": "make-snippet",
+      "predicate": "context_chars",
+      "value": 80,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "$start = max(0, $pos - 80);",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-heading-base",
+      "subject": "block-score",
+      "predicate": "heading_base_score",
+      "value": 200,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "['heading' => 200, 'caption' => 150, 'content' => 50]",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-caption-base",
+      "subject": "block-score",
+      "predicate": "caption_base_score",
+      "value": 150,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "['heading' => 200, 'caption' => 150, 'content' => 50]",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-cache-file",
+      "subject": "build-index",
+      "predicate": "cache_file",
+      "value": ".search_cache.json",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "$cacheFile = $dir . '/.search_cache.json';",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-cache-hash",
+      "subject": "search-cache-key",
+      "predicate": "hash_algorithm",
+      "value": "sha1",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "return sha1(json_encode($fingerprint));",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-text-min",
+      "subject": "extract-blocks",
+      "predicate": "text_block_min_length",
+      "value": 40,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "if (mb_strlen($text) < 40) continue;",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "search-lib-caption-min",
+      "subject": "extract-blocks",
+      "predicate": "caption_min_length",
+      "value": 15,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "if (mb_strlen($captionText) > 15) {",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
-  "relations": []
+  "relations": [
+    {
+      "id": "prov-search_lib-run-search",
+      "from": "run-search",
+      "to": "search-lib",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$out['results'] = array_slice($results, 0, 50);",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-search_lib-search-index",
+      "from": "search-index",
+      "to": "search-lib",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "usort($results, fn($a, $b) => $b['score'] <=> $a['score']);",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-search_lib-find-token-hit",
+      "from": "find-token-hit",
+      "to": "search-lib",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "if (preg_match($wordRe, $normText)) return ['q' => 4];",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-search_lib-block-match",
+      "from": "block-match",
+      "to": "search-lib",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$occ += min(5, substr_count($normText, $tok));",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-search_lib-match-query",
+      "from": "match-query",
+      "to": "search-lib",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "fn($t) => mb_strlen($t) >= 2",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-search_lib-find-best-fuzzy-word",
+      "from": "find-best-fuzzy-word",
+      "to": "search-lib",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$q = 9;",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-search_lib-fuzzy-match-info",
+      "from": "fuzzy-match-info",
+      "to": "search-lib",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$threshold = max(1, intdiv(strlen($queryF), 4));",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-search_lib-make-snippet",
+      "from": "make-snippet",
+      "to": "search-lib",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "return mb_substr($text, 0, 200);",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-search_lib-block-score",
+      "from": "block-score",
+      "to": "search-lib",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "['heading' => 200, 'caption' => 150, 'content' => 50]",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-search_lib-build-index",
+      "from": "build-index",
+      "to": "search-lib",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$cacheFile = $dir . '/.search_cache.json';",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-search_lib-search-cache-key",
+      "from": "search-cache-key",
+      "to": "search-lib",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "return sha1(json_encode($fingerprint));",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-search_lib-extract-blocks",
+      "from": "extract-blocks",
+      "to": "search-lib",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "if (mb_strlen($text) < 40) continue;",
+      "citation_keys": [],
+      "confidence": "provenance"
+    }
+  ]
 }

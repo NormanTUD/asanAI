@@ -5,172 +5,51 @@
   "title": "Philosophical and societal implications, ethical usage of AI",
   "part": 6,
   "order": 11,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "wikipedia_reason",
-    "aristotle_nicomachean_ethics",
-    "hume_treatise",
-    "ockham",
-    "kant_critique_pure_reason",
-    "brooks1986layered",
-    "brooks1990elephants",
+    "turing1950computing",
     "moravec1988mindchildren",
+    "brooks1990elephants",
+    "brooks1986layered",
     "maturana1980autopoiesis",
-    "mccullochpitts1943",
     "lorentedeno1938cortex",
     "levesque2012winograd",
-    "winograd1972understanding",
-    "levesque2014bestbehaviour",
-    "kocijan2020review",
-    "trinh2018commonsense",
     "sakaguchi2019winogrande",
-    "brown2020gpt3",
-    "hendrycks2020winograd",
-    "kocijan2023defeat",
-    "dreyfus1972what",
-    "turing1950computing",
     "searle1980minds",
-    "wimmer1983belief",
-    "weston2015babi",
-    "johnson2017clevr",
-    "talmor2018commonsenseqa",
-    "zellers2019hellaswag",
-    "chollet2019measure",
-    "plato399apology",
-    "socraticmethod",
-    "rawls1971theoryofjustice",
-    "aurelius180meditations",
-    "nietzsche1882gayscience",
-    "buddha400dhammapada",
-    "kant1785groundwork",
-    "camus1942mythofsisyphus",
-    "sartre1943beingandnothingness",
-    "james1897willtobelieve",
-    "spinoza1677ethics",
-    "harris2012freewill",
+    "bender2021stochasticparrots",
+    "li2022othello",
+    "uexkull1934",
+    "penrose1989emperor",
+    "clark1998extended",
+    "kapp1877grundlinien",
+    "gage1994bpe",
+    "breakingsoftmaxbottleneck",
+    "geometryoftruth",
+    "pierucci2026xenointerpretability",
     "hume1739treatise",
     "frankfurt1969alternatepossibilities",
     "dennett1984elbowroom",
-    "plato380republic",
-    "harris2010morallandscape",
-    "nietzsche1886beyondgoodandevil",
-    "mackie1977inventingrightandwrong",
-    "scanlon1998whatweowtoeachother",
-    "aquinas1274summa",
-    "leibniz1714monadology",
-    "russell1927whyiamnotachristian",
-    "dawkins2006goddelusion",
-    "hume1779dialogues",
-    "jackson1982epiphenomenal",
-    "uexkull1934",
-    "hoffman2015interface",
-    "penrose1989emperor",
-    "li2022othello",
-    "park2024linear",
-    "vanhoucke2024closeencounters",
-    "vaswani2017attention",
-    "topology_wiki",
-    "elhage2022superposition",
-    "emergentmind_representation_steering",
-    "pierucci2026xenointerpretability",
-    "thetacitdimension",
-    "bender2021stochasticparrots",
-    "geometryoftruth",
-    "breakingsoftmaxbottleneck",
-    "kapp1877grundlinien",
-    "gpt2",
-    "gage1994bpe",
-    "baars",
-    "dehaene",
-    "schwitzgebel2026aiconsciousness",
+    "rawls1971theoryofjustice",
     "schwitzgebel2024weirdness",
     "putnam1967functionalism",
     "chalmers1996conscious",
     "chalmers1995hard",
     "nagel1974bat",
     "sep_qualia",
-    "birch2020dimensions",
-    "cambridge2012consciousness",
-    "moroz2014ctenophore",
-    "ma2012fuxianhuia",
-    "metzinger2003being",
-    "barron2016insects",
-    "godfreysmith2016otherminds",
-    "img_octopus_eye",
-    "ginsburg2019sensitive",
+    "jackson1982epiphenomenal",
     "tononi2004iit",
-    "seth2021pp",
-    "rosenthal2005hot",
-    "lamme2000rpt",
-    "lamme2006rpt",
     "craik1943nature",
-    "friston2010freeenergy",
-    "hohwy2020pp",
     "dehaene2017c0c1c2",
-    "graziano2013ast",
-    "hameroff1996orch",
-    "penrose1994shadows",
-    "damasio1999feeling",
-    "damasio2010selfcomestomind",
-    "edelman1989remembered",
-    "edelman2000universe",
-    "cleeremans2011radical",
-    "block1995confusion",
-    "taylor2014sensorimotor",
-    "prinz2012conscious",
-    "seneca64letters",
-    "rumi",
-    "frost1914northofboston",
-    "kierkegaard1849sicknessuntodeath",
-    "epicurus300lettertomenoeceus",
-    "nietzsche1889twilightofidols",
-    "laozi400taoteching",
-    "pascal1670pensees",
-    "heidegger1954whatiscalledthinking",
-    "sartre1946existentialismishumanism",
-    "heraclitus500fragments",
-    "kierkegaard1844conceptofanxiety",
     "bostrom2012orthogonal",
     "waluigi",
-    "perez2022emergent",
-    "simulatorstheory",
-    "reflectionstrustingtrust",
-    "rokosbasilisk",
-    "bostrom2003ethical",
     "hubinger2024sleeperagents",
-    "crawford2021atlas",
-    "preaiinternet",
     "shumailov2023modelcollapse",
-    "truthdecay",
-    "chesney2019deepfakes",
-    "bansal2025syntheticself",
     "lowry1988blot",
     "cre1988admissions",
-    "strubell2019energy",
-    "watergpt3",
-    "li2023thirsty",
-    "oneil2016weapons",
-    "fakeblackstrump",
-    "fakebidenrobocall",
-    "confucius500analects",
-    "heidegger1927beingandtime",
-    "epictetus108enchiridion",
-    "frankl1946manssearch",
-    "tillich1952couragetobe",
-    "macintyre1981aftervirtue",
-    "brooks2015roadtocharacter",
-    "singer2009lifeyoucansave",
-    "mill1863utilitarianism",
-    "macaskill2015doinggoodbetter",
-    "singer1981expandingcircle",
-    "zhuangzi300zhuangzi",
-    "suzuki1970zenmind",
-    "hoff1982taoofpooh",
-    "sandel2009justice",
-    "lucretius50rerumnatura",
-    "wilson2019howtobeanepicurean",
-    "greenblatt2011swerve"
+    "chesney2019deepfakes",
+    "chiang2023blurryjpeg"
   ],
   "claims": [
     {
@@ -211,6 +90,660 @@
       "quote": "order: 11",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "phil-reason-definition",
+      "subject": "reason",
+      "predicate": "definition",
+      "value": "the capacity to consciously apply logic by drawing valid conclusions from new or existing information, with the aim of seeking truth",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**Reason** is the capacity to consciously apply logic by drawing valid conclusions from new or existing information, with the aim of seeking truth.",
+      "citation_keys": [
+        "wikipedia_reason"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-turing-test-year",
+      "subject": "turing-test",
+      "predicate": "year",
+      "value": 1950,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The **Turing Test**, originally proposed by Alan Turing in 1950 as the “Imitation Game,”",
+      "citation_keys": [
+        "turing1950computing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-moravec-paradox-definition",
+      "subject": "moravec-paradox",
+      "predicate": "definition",
+      "value": "high-level reasoning (like chess or math) requires very little computation, while low-level sensorimotor skills (walking, folding laundry, recognizing a face) require enormous computational resources",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**Moravec's Paradox** is the discovery that high-level reasoning (like chess or math) requires very little computation, while low-level sensorimotor skills (walking, folding laundry, recognizing a face) require enormous computational resources.",
+      "citation_keys": [
+        "moravec1988mindchildren"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-brooks-elephants-year",
+      "subject": "brooks-elephants-dont-play-chess",
+      "predicate": "year",
+      "value": 1990,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1990 — building on his 1986 subsumption-architecture paper",
+      "citation_keys": [
+        "brooks1990elephants",
+        "brooks1986layered"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-autopoiesis-definition",
+      "subject": "autopoiesis",
+      "predicate": "definition",
+      "value": "a network of processes of production (transformation and destruction) of components which produce the components which continuously regenerate and realize the network of processes that produced them",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "An autopoietic machine is organized (defined as a unity) as a network of processes of production (transformation and destruction) of components which produce the components which: (i) through their interactions and transformations, continuously regenerate and realize the network of processes (relations) that produced them; and (ii) constitute it (the machine) as a concrete unity in the space in which it exists, by specifying the topological domain of its realization as a network.",
+      "citation_keys": [
+        "maturana1980autopoiesis"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-lorente-de-no-year",
+      "subject": "lorente-de-no-1938-cortex",
+      "predicate": "year",
+      "value": 1938,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "published a chapter in Fulton's *Physiology of the Nervous System* (1938)",
+      "citation_keys": [
+        "lorentedeno1938cortex"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-winograd-schema-year",
+      "subject": "winograd-schema-challenge",
+      "predicate": "year",
+      "value": 2012,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The **Winograd Schema Challenge** (\\cite[Levesque, Davis, Morgenstern, 2012]{levesque2012winograd})",
+      "citation_keys": [
+        "levesque2012winograd"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-winogrande-items",
+      "subject": "winogrande",
+      "predicate": "items",
+      "value": 44000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**WinoGrande**: 44,000 fill-in-the-blank items",
+      "citation_keys": [
+        "sakaguchi2019winogrande"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-chinese-room-year",
+      "subject": "chinese-room",
+      "predicate": "year",
+      "value": 1980,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1980, philosopher John Searle proposed a famous thought experiment called the **Chinese Room**.",
+      "citation_keys": [
+        "searle1980minds"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-liars-paradox-origin",
+      "subject": "liars-paradox",
+      "predicate": "origin_date",
+      "value": "c. 600 BCE",
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The Liar's Paradox, dating to Epimenides of Crete (c. 600 BCE)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-godel-incompleteness",
+      "subject": "godel-incompleteness-theorems",
+      "predicate": "claim",
+      "value": "mathematics will always contain truths it cannot prove",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Kurt Gödel used a formal version of the Liar to prove that mathematics will **always** contain truths it cannot prove, the Incompleteness Theorems.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-church-turing-thesis",
+      "subject": "church-turing-thesis",
+      "predicate": "definition",
+      "value": "any function that can be effectively computed can be computed by a Turing machine",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**The Church-Turing Thesis** (1936) states that any function that can be effectively computed can be computed by a Turing machine.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-stochastic-parrots-year",
+      "subject": "stochastic-parrots",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In a landmark 2021 paper, computational linguist Emily M. Bender and her colleagues described Large Language Models (LLMs) as **“Stochastic Parrots”**.",
+      "citation_keys": [
+        "bender2021stochasticparrots"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-othello-gpt-error-rate",
+      "subject": "othello-gpt",
+      "predicate": "error_rate",
+      "value": 1.7,
+      "unit": "%",
+      "qualifiers": {},
+      "quote": "error rates as low as 1.7% on synthetic data",
+      "citation_keys": [
+        "li2022othello"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-uexkull-umwelt",
+      "subject": "umwelt",
+      "predicate": "definition",
+      "value": "there is no single “objective” world, only a collection of subjective ones",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "He invites us to perform a radical mental experiment to understand that there is no single “objective” world, only a collection of subjective ones:",
+      "citation_keys": [
+        "uexkull1934"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-penrose-argument",
+      "subject": "penrose-godel-argument",
+      "predicate": "claim",
+      "value": "human mathematical understanding is non-algorithmic, and therefore cannot be replicated by any Turing machine",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Roger Penrose argued in \\citetitle{penrose1989emperor} (\\citeyear{penrose1989emperor}) that human mathematical understanding is *non-algorithmic*, and therefore cannot be replicated by any Turing machine.",
+      "citation_keys": [
+        "penrose1989emperor"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-extended-mind-thesis",
+      "subject": "extended-mind-thesis",
+      "predicate": "definition",
+      "value": "the boundary of the “mind” is not the skull",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The **Extended Mind Thesis** suggests that the boundary of the “mind” is not the skull.",
+      "citation_keys": [
+        "clark1998extended"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-organ-projection",
+      "subject": "organ-projection",
+      "predicate": "year",
+      "value": 1877,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In his 1877 work \\citetitle{kapp1877grundlinien}, Kapp",
+      "citation_keys": [
+        "kapp1877grundlinien"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-byte-pair-encoding",
+      "subject": "byte-pair-encoding",
+      "predicate": "year",
+      "value": 1994,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citealternativetitle{gage1994bpe} was invented by \\citeauthor{gage1994bpe} in \\citeyear{gage1994bpe} as a **data-compression** algorithm",
+      "citation_keys": [
+        "gage1994bpe"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-softmax-bottleneck",
+      "subject": "softmax-bottleneck",
+      "predicate": "formula",
+      "value": "\\text{rank}(\\log P_\\theta) \\leq d \\leq |V|",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "$$\\underbrace{\\text{rank}(\\log P_\\theta)}_{\\text{expressiveness of the model}} \\leq \\underbrace{d}_{\\substack{\\text{hidden state} \\\\ \\text{dimension}}} \\leq \\underbrace{|V|}_{\\substack{\\text{vocabulary} \\\\ \\text{size}}}$$",
+      "citation_keys": [
+        "breakingsoftmaxbottleneck"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-truth-direction",
+      "subject": "truth-direction",
+      "predicate": "model_family",
+      "value": "LLaMA-2",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Working with models from the LLaMA-2 family, they showed that at sufficient scale, LLMs develop **linear representations of truth**",
+      "citation_keys": [
+        "geometryoftruth"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-xeno-interpretability",
+      "subject": "xeno-interpretability",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "A 2026 paper by \\citeauthor{pierucci2026xenointerpretability} (\\citeyear{pierucci2026xenointerpretability}) asks a sharper and more unsettling version of the question",
+      "citation_keys": [
+        "pierucci2026xenointerpretability"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-phronesis-definition",
+      "subject": "phronesis",
+      "predicate": "definition",
+      "value": "practical wisdom/ethics",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The Greeks distinguished between **Sophia** (theoretical wisdom) and ***Phronesis*** (practical wisdom/ethics).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-compatibilism-definition",
+      "subject": "compatibilism",
+      "predicate": "definition",
+      "value": "you are free when you act according to your own desires without external coercion, even if those desires were themselves caused",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "you are free when you act according to your own desires without external coercion, even if those desires were themselves caused.",
+      "citation_keys": [
+        "hume1739treatise",
+        "frankfurt1969alternatepossibilities",
+        "dennett1984elbowroom"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-rawls-veil",
+      "subject": "veil-of-ignorance",
+      "predicate": "definition",
+      "value": "imagine you do not know which position you will occupy; design as if you might be anyone, including the least advantaged",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "When designing rules that will affect others, imagine you do not know which position you will occupy; design as if you might be anyone, including the least advantaged",
+      "citation_keys": [
+        "rawls1971theoryofjustice"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-ship-theseus",
+      "subject": "ship-of-theseus",
+      "predicate": "proposed_by",
+      "value": "Plutarch",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Plutarch, writing in the 1st century CE, posed the Ship of Theseus.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-anatta",
+      "subject": "anatta",
+      "predicate": "definition",
+      "value": "doctrine of non-self",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the doctrine of *anattā* (non-self)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-universal-bizarreness",
+      "subject": "universal-bizarreness",
+      "predicate": "definition",
+      "value": "every viable theory is both bizarre and dubious, and we have no reliable method for choosing among them",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "every viable theory is both bizarre and dubious, and we have no reliable method for choosing among them",
+      "citation_keys": [
+        "schwitzgebel2024weirdness"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-excluded-middle",
+      "subject": "design-policy-excluded-middle",
+      "predicate": "definition",
+      "value": "do not create AI systems whose moral status is radically ambiguous",
+      "unit": "name",
+      "qualifiers": {
+        "developed_with": "Mara Garza"
+      },
+      "quote": "do not create AI systems whose moral status is radically ambiguous",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-functionalism",
+      "subject": "functionalism",
+      "predicate": "definition",
+      "value": "mental states are defined not by their physical substrate but by their functional role",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "mental states are defined not by their physical substrate but by their functional role",
+      "citation_keys": [
+        "putnam1967functionalism",
+        "chalmers1996conscious"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-hard-problem",
+      "subject": "hard-problem-of-consciousness",
+      "predicate": "year",
+      "value": 1995,
+      "unit": "year",
+      "qualifiers": {
+        "named_by": "David Chalmers"
+      },
+      "quote": "influentially termed the “Hard Problem” of consciousness in 1995",
+      "citation_keys": [
+        "chalmers1995hard"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-nagel-bat",
+      "subject": "what-is-it-like-to-be-a-bat",
+      "predicate": "year",
+      "value": 1974,
+      "unit": "year",
+      "qualifiers": {
+        "author": "Thomas Nagel"
+      },
+      "quote": "Thomas Nagel's 1974 essay “What Is It Like to Be a Bat?” asks whether we can ever truly understand another being's conscious experience.",
+      "citation_keys": [
+        "nagel1974bat"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-qualia",
+      "subject": "qualia",
+      "predicate": "year",
+      "value": 1929,
+      "unit": "year",
+      "qualifiers": {
+        "introduced_by": "C. I. Lewis"
+      },
+      "quote": "The word was introduced into philosophy by C. I. Lewis in 1929",
+      "citation_keys": [
+        "sep_qualia"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-mary-room",
+      "subject": "marys-room",
+      "predicate": "year",
+      "value": 1982,
+      "unit": "year",
+      "qualifiers": {
+        "author": "Frank Jackson"
+      },
+      "quote": "Frank Jackson's Mary learns every physical fact about colour and still learns something new when she first sees red (\\cite[Jackson, 1982]{jackson1982epiphenomenal}).",
+      "citation_keys": [
+        "jackson1982epiphenomenal"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-iit",
+      "subject": "integrated-information-theory",
+      "predicate": "prediction",
+      "value": "purely feedforward systems have $\\Phi = 0$",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "Purely feedforward systems have $\\Phi = 0$, regardless of complexity, because they lack the recurrent, bidirectional causal structure that integration requires.",
+      "citation_keys": [
+        "tononi2004iit"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-craik-1943",
+      "subject": "craiks-hypothesis",
+      "predicate": "year",
+      "value": 1943,
+      "unit": "year",
+      "qualifiers": {
+        "author": "Kenneth Craik"
+      },
+      "quote": "Its source is a slim 1943 Cambridge monograph",
+      "citation_keys": [
+        "craik1943nature"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-craik-relation-structure",
+      "subject": "relation-structure",
+      "predicate": "definition",
+      "value": "any physical or chemical system which has a similar relation-structure to that of the process it imitates",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "by a model we thus mean any physical or chemical system which has a similar relation-structure to that of the process it imitates",
+      "citation_keys": [
+        "craik1943nature"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-c0-c1-c2",
+      "subject": "c0-c1-c2-framework",
+      "predicate": "levels",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "this framework distinguishes three computational levels of information processing",
+      "citation_keys": [
+        "dehaene2017c0c1c2"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-orthogonality",
+      "subject": "orthogonality-thesis",
+      "predicate": "definition",
+      "value": "intelligence and goals are “orthogonal”",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The **Orthogonality Thesis** argues that intelligence and goals are “orthogonal”, meaning you can have any level of intelligence paired with any goal.",
+      "citation_keys": [
+        "bostrom2012orthogonal"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-waluigi",
+      "subject": "waluigi-effect",
+      "predicate": "definition",
+      "value": "after you train an LLM to satisfy a property P, it becomes easier to elicit the opposite of P",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "after you train an LLM to\nsatisfy a property **P**, it becomes *easier* to elicit the opposite of **P**.",
+      "citation_keys": [
+        "waluigi"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-sleeper-agents",
+      "subject": "sleeper-agents",
+      "predicate": "definition",
+      "value": "models that appear safe and helpful during training and safety evaluations (like RLHF) but harbor hidden, malicious behaviors that only trigger under specific environmental conditions",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "models that appear safe and helpful during training and safety evaluations (like RLHF) but harbor hidden, “malicious” behaviors that only trigger under specific environmental conditions",
+      "citation_keys": [
+        "hubinger2024sleeperagents"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-model-collapse",
+      "subject": "model-collapse",
+      "predicate": "definition",
+      "value": "use of model-generated content in training causes irreversible defects in the resulting models, where tails of the original content distribution disappear",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "use of model-generated content in training causes irreversible defects in the resulting models, where tails of the original content distribution disappear",
+      "citation_keys": [
+        "shumailov2023modelcollapse"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-franglen",
+      "subject": "st-georges-admissions-program",
+      "predicate": "agreement_rate",
+      "value": "90 to 95 percent",
+      "unit": "interval",
+      "qualifiers": {
+        "comparison": "human assessors",
+        "year": 1979
+      },
+      "quote": "the program agreed with their decisions 90 to 95 percent of the time",
+      "citation_keys": [
+        "lowry1988blot",
+        "cre1988admissions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-zeno",
+      "subject": "zenos-dichotomy",
+      "predicate": "proposed_year",
+      "value": -450,
+      "unit": "year",
+      "qualifiers": {
+        "author": "Zeno of Elea"
+      },
+      "quote": "Zeno of Elea, writing around 450 BCE, argued that motion is logically impossible.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-trolley",
+      "subject": "trolley-problem",
+      "predicate": "year",
+      "value": 1967,
+      "unit": "year",
+      "qualifiers": {
+        "author": "Philippa Foot"
+      },
+      "quote": "Philippa Foot introduced the Trolley Problem in 1967.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-popper-tolerance",
+      "subject": "paradox-of-tolerance",
+      "predicate": "year",
+      "value": 1945,
+      "unit": "year",
+      "qualifiers": {
+        "author": "Karl Popper"
+      },
+      "quote": "Karl Popper's 1945 Paradox of Tolerance is concise and uncomfortable",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-liars-dividend",
+      "subject": "liars-dividend",
+      "predicate": "definition",
+      "value": "as the public becomes aware that any video or audio can be faked, malicious actors can claim that real, incriminating evidence is actually an AI-generated deepfake",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "as the public becomes aware that any video or audio can be faked, malicious actors can claim that real, incriminating evidence is actually an AI-generated deepfake",
+      "citation_keys": [
+        "chesney2019deepfakes"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-blurry-jpeg",
+      "subject": "blurry-jpeg",
+      "predicate": "definition",
+      "value": "A large language model is a blurry JPEG of the web",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A large language model is a blurry JPEG of the web.",
+      "citation_keys": [
+        "chiang2023blurryjpeg"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-sheaf-leray",
+      "subject": "sheaf-theory",
+      "predicate": "introduced_by",
+      "value": "Jean Leray",
+      "unit": "name",
+      "qualifiers": {
+        "decade": "1940s"
+      },
+      "quote": "Jean Leray introduced sheaves in the 1940s in his work on intersection multiplicities",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "phil-sheaf-gluing",
+      "subject": "sheaf-gluing-axiom",
+      "predicate": "definition",
+      "value": "If sections agree on every overlap, they fuse into a single, unique global section",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "If sections agree on every overlap, they fuse into a single, unique global section.",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -221,6 +754,641 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 6",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "rel-phil-theseus-anatta",
+      "from": "phil-ship-theseus",
+      "to": "phil-anatta",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "The **identity-is-an-illusion** answer, associated with Buddhist philosophy, holds that identity is a convenient label we put on constantly changing things.",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-phil-nagel-hard-problem",
+      "from": "phil-nagel-bat",
+      "to": "phil-hard-problem",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "it is the same gap the Hard Problem section above delimited from the other side.",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-phil-hard-problem-mary",
+      "from": "phil-hard-problem",
+      "to": "phil-mary-room",
+      "kind": "supports",
+      "qualifiers": {},
+      "quote": "The Hard Problem is what makes the Mary's Room thought experiment bite",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-phil-qualia-nagel",
+      "from": "phil-qualia",
+      "to": "phil-nagel-bat",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "The modern debate is framed by the question Thomas Nagel posed in 1974: what is it like to be a bat?",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-phil-craik-relation-structure",
+      "from": "phil-craik-relation-structure",
+      "to": "phil-craik-1943",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "by a model we thus mean any physical or chemical system which has a similar relation-structure to that of the process it imitates",
+      "citation_keys": []
+    },
+    {
+      "id": "rel-phil-sheaf-gluing",
+      "from": "phil-sheaf-gluing",
+      "to": "phil-sheaf-leray",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "The sheaf is the presheaf that passes one further test: the **gluing axiom**.",
+      "citation_keys": []
+    },
+    {
+      "id": "prov-philosophy-reason",
+      "from": "reason",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Reason** is the capacity to consciously apply logic by drawing valid conclusions from new or existing information, with the aim of seeking truth.",
+      "citation_keys": [
+        "wikipedia_reason"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-turing-test",
+      "from": "turing-test",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **Turing Test**, originally proposed by Alan Turing in 1950 as the “Imitation Game,”",
+      "citation_keys": [
+        "turing1950computing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-moravec-paradox",
+      "from": "moravec-paradox",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Moravec's Paradox** is the discovery that high-level reasoning (like chess or math) requires very little computation, while low-level sensorimotor skills (walking, folding laundry, recognizing a face) require enormous computational resources.",
+      "citation_keys": [
+        "moravec1988mindchildren"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-brooks-elephants-dont-play-chess",
+      "from": "brooks-elephants-dont-play-chess",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1990 — building on his 1986 subsumption-architecture paper",
+      "citation_keys": [
+        "brooks1990elephants",
+        "brooks1986layered"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-autopoiesis",
+      "from": "autopoiesis",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "An autopoietic machine is organized (defined as a unity) as a network of processes of production (transformation and destruction) of components which produce the components which: (i) through their interactions and transformations, continuously regenerate and realize the network of processes (relations) that produced them; and (ii) constitute it (the machine) as a concrete unity in the space in which it exists, by specifying the topological domain of its realization as a network.",
+      "citation_keys": [
+        "maturana1980autopoiesis"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-lorente-de-no-1938-cortex",
+      "from": "lorente-de-no-1938-cortex",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "published a chapter in Fulton's *Physiology of the Nervous System* (1938)",
+      "citation_keys": [
+        "lorentedeno1938cortex"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-winograd-schema-challenge",
+      "from": "winograd-schema-challenge",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **Winograd Schema Challenge** (\\cite[Levesque, Davis, Morgenstern, 2012]{levesque2012winograd})",
+      "citation_keys": [
+        "levesque2012winograd"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-winogrande",
+      "from": "winogrande",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**WinoGrande**: 44,000 fill-in-the-blank items",
+      "citation_keys": [
+        "sakaguchi2019winogrande"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-chinese-room",
+      "from": "chinese-room",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1980, philosopher John Searle proposed a famous thought experiment called the **Chinese Room**.",
+      "citation_keys": [
+        "searle1980minds"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-liars-paradox",
+      "from": "liars-paradox",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Liar's Paradox, dating to Epimenides of Crete (c. 600 BCE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-godel-incompleteness-theorems",
+      "from": "godel-incompleteness-theorems",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Kurt Gödel used a formal version of the Liar to prove that mathematics will **always** contain truths it cannot prove, the Incompleteness Theorems.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-church-turing-thesis",
+      "from": "church-turing-thesis",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**The Church-Turing Thesis** (1936) states that any function that can be effectively computed can be computed by a Turing machine.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-stochastic-parrots",
+      "from": "stochastic-parrots",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In a landmark 2021 paper, computational linguist Emily M. Bender and her colleagues described Large Language Models (LLMs) as **“Stochastic Parrots”**.",
+      "citation_keys": [
+        "bender2021stochasticparrots"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-othello-gpt",
+      "from": "othello-gpt",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "error rates as low as 1.7% on synthetic data",
+      "citation_keys": [
+        "li2022othello"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-umwelt",
+      "from": "umwelt",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "He invites us to perform a radical mental experiment to understand that there is no single “objective” world, only a collection of subjective ones:",
+      "citation_keys": [
+        "uexkull1934"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-penrose-godel-argument",
+      "from": "penrose-godel-argument",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Roger Penrose argued in \\citetitle{penrose1989emperor} (\\citeyear{penrose1989emperor}) that human mathematical understanding is *non-algorithmic*, and therefore cannot be replicated by any Turing machine.",
+      "citation_keys": [
+        "penrose1989emperor"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-extended-mind-thesis",
+      "from": "extended-mind-thesis",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **Extended Mind Thesis** suggests that the boundary of the “mind” is not the skull.",
+      "citation_keys": [
+        "clark1998extended"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-organ-projection",
+      "from": "organ-projection",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In his 1877 work \\citetitle{kapp1877grundlinien}, Kapp",
+      "citation_keys": [
+        "kapp1877grundlinien"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-byte-pair-encoding",
+      "from": "byte-pair-encoding",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citealternativetitle{gage1994bpe} was invented by \\citeauthor{gage1994bpe} in \\citeyear{gage1994bpe} as a **data-compression** algorithm",
+      "citation_keys": [
+        "gage1994bpe"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-softmax-bottleneck",
+      "from": "softmax-bottleneck",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$$\\underbrace{\\text{rank}(\\log P_\\theta)}_{\\text{expressiveness of the model}} \\leq \\underbrace{d}_{\\substack{\\text{hidden state} \\\\ \\text{dimension}}} \\leq \\underbrace{|V|}_{\\substack{\\text{vocabulary} \\\\ \\text{size}}}$$",
+      "citation_keys": [
+        "breakingsoftmaxbottleneck"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-truth-direction",
+      "from": "truth-direction",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Working with models from the LLaMA-2 family, they showed that at sufficient scale, LLMs develop **linear representations of truth**",
+      "citation_keys": [
+        "geometryoftruth"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-xeno-interpretability",
+      "from": "xeno-interpretability",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A 2026 paper by \\citeauthor{pierucci2026xenointerpretability} (\\citeyear{pierucci2026xenointerpretability}) asks a sharper and more unsettling version of the question",
+      "citation_keys": [
+        "pierucci2026xenointerpretability"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-phronesis",
+      "from": "phronesis",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Greeks distinguished between **Sophia** (theoretical wisdom) and ***Phronesis*** (practical wisdom/ethics).",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-compatibilism",
+      "from": "compatibilism",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "you are free when you act according to your own desires without external coercion, even if those desires were themselves caused.",
+      "citation_keys": [
+        "hume1739treatise",
+        "frankfurt1969alternatepossibilities",
+        "dennett1984elbowroom"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-veil-of-ignorance",
+      "from": "veil-of-ignorance",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "When designing rules that will affect others, imagine you do not know which position you will occupy; design as if you might be anyone, including the least advantaged",
+      "citation_keys": [
+        "rawls1971theoryofjustice"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-ship-of-theseus",
+      "from": "ship-of-theseus",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Plutarch, writing in the 1st century CE, posed the Ship of Theseus.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-anatta",
+      "from": "anatta",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the doctrine of *anattā* (non-self)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-universal-bizarreness",
+      "from": "universal-bizarreness",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "every viable theory is both bizarre and dubious, and we have no reliable method for choosing among them",
+      "citation_keys": [
+        "schwitzgebel2024weirdness"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-design-policy-excluded-middle",
+      "from": "design-policy-excluded-middle",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "do not create AI systems whose moral status is radically ambiguous",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-functionalism",
+      "from": "functionalism",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "mental states are defined not by their physical substrate but by their functional role",
+      "citation_keys": [
+        "putnam1967functionalism",
+        "chalmers1996conscious"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-hard-problem-of-consciousness",
+      "from": "hard-problem-of-consciousness",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "influentially termed the “Hard Problem” of consciousness in 1995",
+      "citation_keys": [
+        "chalmers1995hard"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-what-is-it-like-to-be-a-bat",
+      "from": "what-is-it-like-to-be-a-bat",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Thomas Nagel's 1974 essay “What Is It Like to Be a Bat?” asks whether we can ever truly understand another being's conscious experience.",
+      "citation_keys": [
+        "nagel1974bat"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-qualia",
+      "from": "qualia",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The word was introduced into philosophy by C. I. Lewis in 1929",
+      "citation_keys": [
+        "sep_qualia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-marys-room",
+      "from": "marys-room",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Frank Jackson's Mary learns every physical fact about colour and still learns something new when she first sees red (\\cite[Jackson, 1982]{jackson1982epiphenomenal}).",
+      "citation_keys": [
+        "jackson1982epiphenomenal"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-integrated-information-theory",
+      "from": "integrated-information-theory",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Purely feedforward systems have $\\Phi = 0$, regardless of complexity, because they lack the recurrent, bidirectional causal structure that integration requires.",
+      "citation_keys": [
+        "tononi2004iit"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-craiks-hypothesis",
+      "from": "craiks-hypothesis",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Its source is a slim 1943 Cambridge monograph",
+      "citation_keys": [
+        "craik1943nature"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-relation-structure",
+      "from": "relation-structure",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "by a model we thus mean any physical or chemical system which has a similar relation-structure to that of the process it imitates",
+      "citation_keys": [
+        "craik1943nature"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-c0-c1-c2-framework",
+      "from": "c0-c1-c2-framework",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "this framework distinguishes three computational levels of information processing",
+      "citation_keys": [
+        "dehaene2017c0c1c2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-orthogonality-thesis",
+      "from": "orthogonality-thesis",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **Orthogonality Thesis** argues that intelligence and goals are “orthogonal”, meaning you can have any level of intelligence paired with any goal.",
+      "citation_keys": [
+        "bostrom2012orthogonal"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-waluigi-effect",
+      "from": "waluigi-effect",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "after you train an LLM to\nsatisfy a property **P**, it becomes *easier* to elicit the opposite of **P**.",
+      "citation_keys": [
+        "waluigi"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-sleeper-agents",
+      "from": "sleeper-agents",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "models that appear safe and helpful during training and safety evaluations (like RLHF) but harbor hidden, “malicious” behaviors that only trigger under specific environmental conditions",
+      "citation_keys": [
+        "hubinger2024sleeperagents"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-model-collapse",
+      "from": "model-collapse",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "use of model-generated content in training causes irreversible defects in the resulting models, where tails of the original content distribution disappear",
+      "citation_keys": [
+        "shumailov2023modelcollapse"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-st-georges-admissions-program",
+      "from": "st-georges-admissions-program",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the program agreed with their decisions 90 to 95 percent of the time",
+      "citation_keys": [
+        "lowry1988blot",
+        "cre1988admissions"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-zenos-dichotomy",
+      "from": "zenos-dichotomy",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Zeno of Elea, writing around 450 BCE, argued that motion is logically impossible.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-trolley-problem",
+      "from": "trolley-problem",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Philippa Foot introduced the Trolley Problem in 1967.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-paradox-of-tolerance",
+      "from": "paradox-of-tolerance",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Karl Popper's 1945 Paradox of Tolerance is concise and uncomfortable",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-liars-dividend",
+      "from": "liars-dividend",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "as the public becomes aware that any video or audio can be faked, malicious actors can claim that real, incriminating evidence is actually an AI-generated deepfake",
+      "citation_keys": [
+        "chesney2019deepfakes"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-blurry-jpeg",
+      "from": "blurry-jpeg",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A large language model is a blurry JPEG of the web.",
+      "citation_keys": [
+        "chiang2023blurryjpeg"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-sheaf-theory",
+      "from": "sheaf-theory",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Jean Leray introduced sheaves in the 1940s in his work on intersection multiplicities",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-sheaf-gluing-axiom",
+      "from": "sheaf-gluing-axiom",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "If sections agree on every overlap, they fuse into a single, unique global section.",
       "citation_keys": [],
       "confidence": "provenance"
     }

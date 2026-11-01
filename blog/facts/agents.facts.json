@@ -5,28 +5,16 @@
   "title": "AI Agents: Autonomous Reasoning and Tool Use",
   "part": 5,
   "order": 5,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "licklider1960symbiosis",
-    "mccarthy1969some",
-    "shrdlu_image",
-    "alphago_leesedol_image",
     "yao2023react",
-    "winograd1972understanding",
-    "brooks1986layered",
-    "brooks1990elephants",
-    "laird1987soar",
-    "anderson2004actr",
-    "rao1995bdi",
     "schick2023toolformer",
-    "abboud2025opencode",
     "autogpt2023",
     "wang2023voyager",
     "anthropic2024mcp",
-    "du2023multiagent",
-    "wu2023autogen",
-    "wang2023planandexecute",
+    "alphago_leesedol_image",
     "shinn2023reflexion"
   ],
   "claims": [
@@ -68,6 +56,187 @@
       "quote": "order: 5",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "agents-agent-definition",
+      "subject": "ai-agent",
+      "predicate": "definition",
+      "value": "LLM wrapped in an observe-reason-act loop with tools and memory",
+      "unit": "name",
+      "quote": "**controller inside an observe→reason→act loop**",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-licklider-year",
+      "subject": "licklider-man-computer-symbiosis",
+      "predicate": "year",
+      "value": 1960,
+      "unit": "year",
+      "quote": "published \"Man-Computer Symbiosis\" in the IRE Transactions on Human Factors in Electronics while at Bolt, Beranek and Newman",
+      "citation_keys": [
+        "licklider1960symbiosis"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-gps-year",
+      "subject": "gps",
+      "predicate": "year",
+      "value": 1957,
+      "unit": "year",
+      "quote": "<tr><td>GPS (General Problem Solver)</td><td>1957</td>",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-strips-year",
+      "subject": "strips",
+      "predicate": "year",
+      "value": 1971,
+      "unit": "year",
+      "quote": "<tr><td>STRIPS</td><td>1971</td>",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-shrdlu-year",
+      "subject": "shrdlu",
+      "predicate": "year",
+      "value": 1972,
+      "unit": "year",
+      "quote": "<tr><td>SHRDLU</td><td>1972</td>",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-soar-year",
+      "subject": "soar",
+      "predicate": "year",
+      "value": 1983,
+      "unit": "year",
+      "quote": "<tr><td>Soar</td><td>1983</td>",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-bdi-year",
+      "subject": "bdi",
+      "predicate": "year",
+      "value": 1995,
+      "unit": "year",
+      "quote": "<tr><td>BDI (Belief-Desire-Intention)</td><td>1995</td>",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-react-year",
+      "subject": "react",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "quote": "The most influential framework for LLM agents is **ReAct** (\\cite[Yao et al., 2023]{yao2023react})",
+      "citation_keys": [
+        "yao2023react"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-toolformer-base-model",
+      "subject": "toolformer",
+      "predicate": "base_model",
+      "value": "GPT-J",
+      "unit": "name",
+      "quote": "Schick et al. let GPT-J annotate its own corpus by trying API calls",
+      "citation_keys": [
+        "schick2023toolformer"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-autogpt-year",
+      "subject": "autogpt",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "quote": "AutoGPT, released in March 2023",
+      "citation_keys": [
+        "autogpt2023"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-voyager-environment",
+      "subject": "voyager",
+      "predicate": "environment",
+      "value": "Minecraft",
+      "unit": "name",
+      "quote": "Voyager went the other way, embedding an LLM agent in Minecraft",
+      "citation_keys": [
+        "wang2023voyager"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-mcp-year",
+      "subject": "model-context-protocol",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "quote": "The Model Context Protocol (MCP), announced by Anthropic in November 2024",
+      "citation_keys": [
+        "anthropic2024mcp"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-alphago-match-year",
+      "subject": "alphago-lee-sedol-match",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "quote": "during Game 4, March 2016 in Seoul",
+      "citation_keys": [
+        "alphago_leesedol_image"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-alphago-score",
+      "subject": "alphago-lee-sedol-match",
+      "predicate": "match_score",
+      "value": "4–1",
+      "unit": "name",
+      "quote": "AlphaGo won the match 4–1",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-reflexion-definition",
+      "subject": "reflexion",
+      "predicate": "definition",
+      "value": "self-evaluation step that stores reflections for future attempts",
+      "unit": "name",
+      "quote": "adds a self-evaluation step: after completing a task, the agent reflects on what went wrong",
+      "citation_keys": [
+        "shinn2023reflexion"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -79,6 +248,162 @@
       "qualifiers": {},
       "quote": "part: 5",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-ai-agent",
+      "from": "ai-agent",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**controller inside an observe→reason→act loop**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-licklider-man-computer-symbiosis",
+      "from": "licklider-man-computer-symbiosis",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "published \"Man-Computer Symbiosis\" in the IRE Transactions on Human Factors in Electronics while at Bolt, Beranek and Newman",
+      "citation_keys": [
+        "licklider1960symbiosis"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-gps",
+      "from": "gps",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "<tr><td>GPS (General Problem Solver)</td><td>1957</td>",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-strips",
+      "from": "strips",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "<tr><td>STRIPS</td><td>1971</td>",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-shrdlu",
+      "from": "shrdlu",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "<tr><td>SHRDLU</td><td>1972</td>",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-soar",
+      "from": "soar",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "<tr><td>Soar</td><td>1983</td>",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-bdi",
+      "from": "bdi",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "<tr><td>BDI (Belief-Desire-Intention)</td><td>1995</td>",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-react",
+      "from": "react",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The most influential framework for LLM agents is **ReAct** (\\cite[Yao et al., 2023]{yao2023react})",
+      "citation_keys": [
+        "yao2023react"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-toolformer",
+      "from": "toolformer",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Schick et al. let GPT-J annotate its own corpus by trying API calls",
+      "citation_keys": [
+        "schick2023toolformer"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-autogpt",
+      "from": "autogpt",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "AutoGPT, released in March 2023",
+      "citation_keys": [
+        "autogpt2023"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-voyager",
+      "from": "voyager",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Voyager went the other way, embedding an LLM agent in Minecraft",
+      "citation_keys": [
+        "wang2023voyager"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-model-context-protocol",
+      "from": "model-context-protocol",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Model Context Protocol (MCP), announced by Anthropic in November 2024",
+      "citation_keys": [
+        "anthropic2024mcp"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-alphago-lee-sedol-match",
+      "from": "alphago-lee-sedol-match",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "during Game 4, March 2016 in Seoul",
+      "citation_keys": [
+        "alphago_leesedol_image"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-reflexion",
+      "from": "reflexion",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "adds a self-evaluation step: after completing a task, the agent reflects on what went wrong",
+      "citation_keys": [
+        "shinn2023reflexion"
+      ],
       "confidence": "provenance"
     }
   ]

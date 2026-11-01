@@ -5,39 +5,29 @@
   "title": "From World to Model: Coherent Representation",
   "part": 4,
   "order": 3,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "kant_critique_pure_reason",
-    "cartwright1983laws",
-    "cartwright1999dappled",
-    "brandom1994making",
-    "brandom2000articulating",
     "spivak2012ologs",
-    "spivak2014cts",
     "sellars1956empiricism",
     "hacking1983representing",
     "caramello2017theories",
+    "tarski1935wahrheitsbegriff",
+    "tarski1956logic",
     "worrall1989structural",
     "ladyman1998what",
     "ladymanross2007everything",
     "goodman1978ways",
-    "tarski1935wahrheitsbegriff",
-    "tarski1944semantic",
-    "tarski1956logic",
-    "naturanonfacitsaltus",
     "bradley1893appearance",
     "blanshard1939nature",
-    "walker2019coherence",
-    "joachim1906nature",
-    "bonjour1985structure",
+    "rosetta196bc",
     "einstein1916foundation",
     "popper1963conjectures",
+    "cartwright1983laws",
+    "cartwright1999dappled",
     "bertot2013coq",
-    "moura2015lean",
-    "schmitz_neo_phenomenology",
-    "prakash2021fitness",
-    "petersen2024mathdl"
+    "moura2015lean"
   ],
   "claims": [
     {
@@ -78,6 +68,637 @@
       "quote": "order: 3",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "cwm-kant-ding-an-sich",
+      "subject": "kant-ding-an-sich",
+      "predicate": "introduced_in",
+      "value": "Critique of Pure Reason, KrV A26/B40-42",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "first introduced in the *Critique of Pure Reason* at KrV A26/B40–42",
+      "citation_keys": [
+        "kant_critique_pure_reason"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-olog-term",
+      "subject": "olog",
+      "predicate": "named_by",
+      "value": "Spivak & Kent, Ologs: A Categorical Framework for Knowledge Representation",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The term is due to Spivak & Kent's \"Ologs: A Categorical Framework for Knowledge Representation\"",
+      "citation_keys": [
+        "spivak2012ologs"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-olog-commutativity",
+      "subject": "olog",
+      "predicate": "commutativity_rule",
+      "value": "asserted, not assumed",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**Commutativity is asserted, not assumed.**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-trace-sources",
+      "subject": "trace-difference",
+      "predicate": "sources",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "sit at least three independent sources of difference",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-sameness-witness",
+      "subject": "sameness-hierarchy",
+      "predicate": "witness_monotonicity",
+      "value": "a witness of a stronger relation is a witness of every weaker one; the converse is false",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A witness of a stronger relation is automatically a witness of every weaker one (a literal identification trivially gives the invertible map, the deformation, the bound, …); the converse is false",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-univalence",
+      "subject": "univalence-axiom",
+      "predicate": "claim",
+      "value": "(x =_U y) ≃ (x ≃ y)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "Under the **univalence axiom** this becomes literal: for types in a universe $\\mathcal{U}$, an equality in $\\mathcal{U}$ *is* an equivalence, so $(x =_{\\mathcal{U}} y) \\simeq (x \\simeq y)$.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-sheaf-condition",
+      "subject": "sheaf-condition",
+      "predicate": "statement",
+      "value": "for every admissible cover, compatible local sections have one unique global section",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**for every admissible cover and every family of local sections on it that agree on every overlap, there is one and only one global section restricting to them.**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-sheaf-two-patch",
+      "subject": "sheaf-condition",
+      "predicate": "two_patch_form",
+      "value": "F(c) ≃ F(c1) ×_{F(c1×c c2)} F(c2)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "$$F(c) \\;\\simeq\\; F(c_1) \\times_{F(c_1 \\times_c c_2)} F(c_2).$$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-pullback",
+      "subject": "pullback",
+      "predicate": "definition",
+      "value": "object of agreements X ×_Z Y",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The pullback *is* the object of agreements.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-grothendieck-topology",
+      "subject": "grothendieck-topology",
+      "predicate": "definition",
+      "value": "rule for which families count as covers, stable under pullback, closed under refinement and composition",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Equipping $\\mathcal{C}$ with a rule for which families count as covers (one that is stable under pullback, closed under refinement, and closed under composition) is a **Grothendieck topology** $J$; the pair $(\\mathcal{C}, J)$ is a **site**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-cech-nerve",
+      "subject": "cech-nerve",
+      "predicate": "degrees",
+      "value": "degree 0 patches; degree 1 pairwise overlaps; degree 2 triple overlaps",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "a simplicial object that in degree $0$ lists the patches, in degree $1$ lists pairwise overlaps, in degree $2$ lists triple overlaps, and so on",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-infinity-sheaf",
+      "subject": "infinity-sheaf",
+      "predicate": "definition",
+      "value": "sheaf-like object valued in infinity-groupoids with coherent equivalence on overlaps",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "An **$\\infty$-sheaf** is a sheaf-like object valued in $\\infty$-groupoids instead of sets: instead of *equality* on overlaps one requires *coherent equivalence*, with the coherence tracked at every level.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-cover-accessible",
+      "subject": "admissible-cover",
+      "predicate": "coverage_limit",
+      "value": "G is a model of c_acc, not of c",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The limit $G = \\lim F$ over such a cover reconstructs a model of that interface, *not* of $c$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-sellars-myth",
+      "subject": "sellars1956empiricism",
+      "predicate": "thesis",
+      "value": "empirical knowledge is rational because self-correcting, not because it has a foundation",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "For empirical knowledge, like its sophisticated extension, science, is rational, not because it has a foundation but because it is a self-correcting enterprise which can put any claim in jeopardy, though not all at once.",
+      "citation_keys": [
+        "sellars1956empiricism"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-foundationalism",
+      "subject": "foundationalism",
+      "predicate": "picture",
+      "value": "a privileged class of transitions that need no prior justification",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "there *must* be a privileged class of transitions that need no prior justification",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-coherence-truth",
+      "subject": "coherence-theory-of-truth",
+      "predicate": "proponents",
+      "value": "Bradley, Blanshard, BonJour",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "It is the central claim of the coherence theory of truth (Bradley, Blanshard, BonJour)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-bonjour-work",
+      "subject": "bonjour-structure-empirical-knowledge",
+      "predicate": "title",
+      "value": "The Structure of Empirical Knowledge",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "BonJour's *Structure of Empirical Knowledge*",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-wordless-introspection",
+      "subject": "wordless-introspection",
+      "predicate": "definition",
+      "value": "immediate pre-conceptual awareness in which trace and topic coincide",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "In the immediate, pre-conceptual awareness of one's own experience, before it is named, categorised, or compared, the trace and the topic coincide.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-hacking",
+      "subject": "hacking1983representing",
+      "predicate": "thesis",
+      "value": "representing and intervening are the two epistemic relations to the world",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "representing is not the only epistemic relation we have to the world; *intervening* — doing something to the world, observing the difference, and so getting evidence about what is really there — is the other half",
+      "citation_keys": [
+        "hacking1983representing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-residual-update",
+      "subject": "transformer-residual",
+      "predicate": "formula",
+      "value": "H_{l+1} = H_l + F_theta(H_l)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "H_{\\ell+1} = H_\\ell + F_\\theta(H_\\ell)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-attention",
+      "subject": "multi-head-attention",
+      "predicate": "formula",
+      "value": "softmax(QK^T/sqrt(d_k))V",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "\\mathrm{Attn}(Q,K,V) = \\mathrm{softmax}\\!\\Bigl(\\tfrac{QK^\\top}{\\sqrt{d_k}}\\Bigr)V",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-nine-steps",
+      "subject": "coherent-difference-procedure",
+      "predicate": "steps",
+      "value": 9,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Compressed into nine steps you can run through on any dataset, in any domain.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-analogy-status",
+      "subject": "coherent-difference-analogy",
+      "predicate": "status",
+      "value": "a useful analogy is not a theorem",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A useful analogy is not a theorem.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-caramello",
+      "subject": "toposes-as-bridges",
+      "predicate": "claim",
+      "value": "the same topos admits several presentations and invariant facts transfer",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the same topos admits several presentations — as a sheaf topos over different sites, as the classifying topos of a geometric theory — and the facts invariant under that equivalence transfer between them",
+      "citation_keys": [
+        "caramello2017theories"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-tarski",
+      "subject": "tarski-correspondence",
+      "predicate": "role",
+      "value": "a coherent model is true at licensed contact points with the world",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "by joining that discipline to Tarski's correspondence, so that a coherent model is *true* (not merely internally consistent) at every licensed contact point with the world.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-tarski-german-1935",
+      "subject": "tarski-wahrheitsbegriff",
+      "predicate": "publication_year",
+      "value": 1935,
+      "unit": "year",
+      "qualifiers": {
+        "language": "German",
+        "venue": "Studia Philosophica"
+      },
+      "quote": "In 1935 (the German-language paper \"Der Wahrheitsbegriff in den formalisierten Sprachen\", published in *Studia Philosophica*",
+      "citation_keys": [
+        "tarski1935wahrheitsbegriff"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-tarski-polish-1933",
+      "subject": "tarski-wahrheitsbegriff-polish",
+      "predicate": "publication_year",
+      "value": 1933,
+      "unit": "year",
+      "qualifiers": {
+        "language": "Polish",
+        "title": "Pojęcie prawdy w językach nauk dedukcyjnych"
+      },
+      "quote": "the Polish original \"Pojęcie prawdy w językach nauk dedukcyjnych\" had appeared in 1933",
+      "citation_keys": [
+        "tarski1935wahrheitsbegriff"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-convention-t-definition",
+      "subject": "tarski-convention-t",
+      "predicate": "definition",
+      "value": "A sentence x of a language L is true in L if, and only if, p, where p is a meta-language sentence that expresses the same meaning as x.",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "A sentence $\\boldsymbol{x}$ of a language $\\mathcal{L}$ is *true in $\\mathcal{L}$* if, and only if, $p$, where $p$ is any sentence of the meta-language which \"expresses the same meaning\" as $\\boldsymbol{x}$.",
+      "citation_keys": [
+        "tarski1956logic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-anomaly-definition",
+      "subject": "anomaly",
+      "predicate": "definition",
+      "value": "constraints not yet integrated, not defeats",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "\\boxed{\\text{Anomalies are constraints not yet integrated, not defeats.}}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-structural-realism-definition",
+      "subject": "structural-realism",
+      "predicate": "definition",
+      "value": "what is preserved across theory change is the structure of the equations, not the ontology of unobservables",
+      "unit": "name",
+      "qualifiers": {
+        "author": "Worrall"
+      },
+      "quote": "proposed \\emph{structural realism} as the philosophical position that takes seriously the chain's signature fact: across theory change (Fresnel → Maxwell, classical → relativistic), what is preserved is not the ontology of unobservables but the *structure* of the equations that relate them",
+      "citation_keys": [
+        "worrall1989structural"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-ontic-structural-realism-definition",
+      "subject": "ontic-structural-realism",
+      "predicate": "definition",
+      "value": "there is nothing but structure; the world is the chain of admissible cover systems",
+      "unit": "name",
+      "qualifiers": {
+        "author": "Ladyman"
+      },
+      "quote": "not \"we only know the structure\" but \"there *is* nothing but the structure\" — the world *is* the chain of admissible cover systems, not a thing-in-itself behind them",
+      "citation_keys": [
+        "ladyman1998what",
+        "ladymanross2007everything"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-goodman-irrealism-definition",
+      "subject": "goodman-irrealism",
+      "predicate": "definition",
+      "value": "there are no ready-made worlds and no minds constructing them from nothing; there are many worlds made by different symbol systems",
+      "unit": "name",
+      "qualifiers": {
+        "author": "Goodman"
+      },
+      "quote": "there are no \"ready-made worlds\" *and* no minds constructing them from nothing — there are *many* worlds, made by different symbol systems, each as legitimate in its own right as any other",
+      "citation_keys": [
+        "goodman1978ways"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-bradley-1893",
+      "subject": "bradley-appearance-and-reality",
+      "predicate": "publication_year",
+      "value": 1893,
+      "unit": "year",
+      "qualifiers": {
+        "author": "F. H. Bradley"
+      },
+      "quote": "F. H. Bradley's *Appearance and Reality*\\citeauthor{bradley1893appearance} \\citeyear{bradley1893appearance}",
+      "citation_keys": [
+        "bradley1893appearance"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-bradley-truth-definition",
+      "subject": "bradley-coherence-theory",
+      "predicate": "definition",
+      "value": "Truth is the systematic coherence of ideas, determined ultimately by the nature of the idea or the reality it represents.",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Truth, we may say, is the systematic coherence of ideas, such coherence being determined ultimately by the nature of the idea itself, or by the reality which the idea endeavours to represent.",
+      "citation_keys": [
+        "bradley1893appearance"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-blanshard-truth-definition",
+      "subject": "blanshard-coherence-theory",
+      "predicate": "definition",
+      "value": "The truth of a proposition is its coherence with the whole of experience and ultimately with the whole of reality.",
+      "unit": "name",
+      "qualifiers": {
+        "author": "Brand Blanshard",
+        "work": "The Nature of Thought"
+      },
+      "quote": "The truth of a proposition is nothing but its coherence with the whole of experience, and ultimately with the whole of reality.",
+      "citation_keys": [
+        "blanshard1939nature"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-coherence-equals-descent",
+      "subject": "coherence",
+      "predicate": "definition",
+      "value": "descent on admissible covers",
+      "unit": "formula",
+      "qualifiers": {
+        "scope": "working definition in this chapter"
+      },
+      "quote": "\\boxed{\\;\\text{coherence} \\;\\stackrel{\\text{def.}}{=}\\; \\text{descent on admissible covers}.\\;}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-rosetta-stone-196bc",
+      "subject": "rosetta-stone",
+      "predicate": "year",
+      "value": -196,
+      "unit": "year",
+      "qualifiers": {
+        "era": "BC",
+        "decree": "Decree of Memphis"
+      },
+      "quote": "The Rosetta Stone (Decree of Memphis, 196 B.C.)",
+      "citation_keys": [
+        "rosetta196bc"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-mercury-perihelion-43",
+      "subject": "mercury-perihelion-precession",
+      "predicate": "precession_rate",
+      "value": 43,
+      "unit": "count",
+      "qualifiers": {
+        "measure": "arcsecond",
+        "period": "century"
+      },
+      "quote": "the anomalous precession of Mercury's perihelion, about $43$ arcseconds per century",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-general-relativity-1916",
+      "subject": "general-relativity",
+      "predicate": "publication_year",
+      "value": 1916,
+      "unit": "year",
+      "qualifiers": {
+        "author": "Einstein"
+      },
+      "quote": "General relativity — \\citeauthor{einstein1916foundation}'s (\\citeyear{einstein1916foundation}) \\citetitle{einstein1916foundation}",
+      "citation_keys": [
+        "einstein1916foundation"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-compactness-model-existence",
+      "subject": "first-order-model-theory",
+      "predicate": "model_existence",
+      "value": "a consistent first-order theory admits a model",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "by completeness and compactness, a consistent first-order theory admits a model, so \"no contradiction is derivable\" literally guarantees \"there exists a structure in which every theorem holds\"",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-popper-falsificationism-definition",
+      "subject": "popper-falsificationism",
+      "predicate": "definition",
+      "value": "a scientific theory earns its status from risky predictions that would refute it if they failed",
+      "unit": "name",
+      "qualifiers": {
+        "author": "Popper",
+        "work": "Conjectures and Refutations"
+      },
+      "quote": "insisted that a scientific theory earns its status not from the accumulation of confirmations but from *risky* predictions — claims that, if they failed at a contact point, would refute it",
+      "citation_keys": [
+        "popper1963conjectures"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-dappled-world-definition",
+      "subject": "dappled-world",
+      "predicate": "definition",
+      "value": "the clean laws of idealised model setups are only approximately true of the messy, multifactorial world",
+      "unit": "name",
+      "qualifiers": {
+        "author": "Cartwright"
+      },
+      "quote": "the clean laws of the idealised model setups are true of the clean setups and only approximately true of the messy, multifactorial world we actually want to know about",
+      "citation_keys": [
+        "cartwright1983laws",
+        "cartwright1999dappled"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-self-consistent-fantasy-definition",
+      "subject": "self-consistent-fantasy",
+      "predicate": "definition",
+      "value": "coherent model whose Tarski if-and-only-if fails at contact points although every arrow is licensed",
+      "unit": "name",
+      "qualifiers": {
+        "pathology": 1
+      },
+      "quote": "Tarski's if-and-only-if fails at the contact points even though every arrow in the diagram is licensed. Result: a perfectly coherent fiction.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-factbook-definition",
+      "subject": "factbook",
+      "predicate": "definition",
+      "value": "individually true claims with no internal structure; descent fails and there is no global model",
+      "unit": "name",
+      "qualifiers": {
+        "pathology": 2
+      },
+      "quote": "the model has no internal structure: its claims do not fit together, descent fails, the \"global model\" is a heap of disconnected facts. Result: a factbook.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-calibrated-error-definition",
+      "subject": "calibrated-error",
+      "predicate": "definition",
+      "value": "coherent and licensed model with a small, consistent systematic bias in its calibration",
+      "unit": "name",
+      "qualifiers": {
+        "pathology": 4
+      },
+      "quote": "the calibration is systematically, slightly off. The model's outputs track the world closely enough to be useful, but with a small, consistent bias that no single contact point reveals.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-out-of-cover-query-definition",
+      "subject": "out-of-cover-query",
+      "predicate": "definition",
+      "value": "query lies outside the accessible region c_acc, so no licensed contact point exists",
+      "unit": "name",
+      "qualifiers": {
+        "pathology": 5
+      },
+      "quote": "the *query* lies outside $c_{\\mathrm{acc}}$, in a region the cover never reached. There is then *no* licensed bridge to check",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-llm-no-live-observation",
+      "subject": "llm-inference",
+      "predicate": "property",
+      "value": "no live world-to-representation observation arrow at inference; only internal transitions",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "The LLM, *at inference and by default*, has no live $W\\to R_i$ arrow of its own",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-emergent-capabilities-definition",
+      "subject": "emergent-capabilities",
+      "predicate": "definition",
+      "value": "few-shot in-context learning, chain-of-thought reasoning, code generation, and instruction following appear discontinuously at scale",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Some LLM behaviours appear discontinuously at scale: few-shot in-context learning, chain-of-thought reasoning, code generation, instruction following",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-formal-verification-strongest-check",
+      "subject": "formal-verification",
+      "predicate": "property",
+      "value": "type-checking a proof in Coq or Lean is the strongest currently available Tarski check",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the strongest Tarski check currently available is type-checking a proof in an interactive theorem prover: **Coq** \\cite{bertot2013coq} or **Lean** \\cite{moura2015lean}",
+      "citation_keys": [
+        "bertot2013coq",
+        "moura2015lean"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "cwm-rlhf-definition",
+      "subject": "rlhf",
+      "predicate": "definition",
+      "value": "tunes a policy to maximise a reward model that encodes human preference; the rater's preference is a fact in W",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "RLHF adds admissible transitions to *human preferences*. The reward model encodes what humans find helpful and harmless; the policy is tuned to maximise that reward.",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -88,6 +709,517 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 4",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-kant-ding-an-sich",
+      "from": "kant-ding-an-sich",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "first introduced in the *Critique of Pure Reason* at KrV A26/B40–42",
+      "citation_keys": [
+        "kant_critique_pure_reason"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-olog",
+      "from": "olog",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The term is due to Spivak & Kent's \"Ologs: A Categorical Framework for Knowledge Representation\"",
+      "citation_keys": [
+        "spivak2012ologs"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-trace-difference",
+      "from": "trace-difference",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "sit at least three independent sources of difference",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-sameness-hierarchy",
+      "from": "sameness-hierarchy",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A witness of a stronger relation is automatically a witness of every weaker one (a literal identification trivially gives the invertible map, the deformation, the bound, …); the converse is false",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-univalence-axiom",
+      "from": "univalence-axiom",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Under the **univalence axiom** this becomes literal: for types in a universe $\\mathcal{U}$, an equality in $\\mathcal{U}$ *is* an equivalence, so $(x =_{\\mathcal{U}} y) \\simeq (x \\simeq y)$.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-sheaf-condition",
+      "from": "sheaf-condition",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**for every admissible cover and every family of local sections on it that agree on every overlap, there is one and only one global section restricting to them.**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-pullback",
+      "from": "pullback",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The pullback *is* the object of agreements.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-grothendieck-topology",
+      "from": "grothendieck-topology",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Equipping $\\mathcal{C}$ with a rule for which families count as covers (one that is stable under pullback, closed under refinement, and closed under composition) is a **Grothendieck topology** $J$; the pair $(\\mathcal{C}, J)$ is a **site**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-cech-nerve",
+      "from": "cech-nerve",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a simplicial object that in degree $0$ lists the patches, in degree $1$ lists pairwise overlaps, in degree $2$ lists triple overlaps, and so on",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-infinity-sheaf",
+      "from": "infinity-sheaf",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "An **$\\infty$-sheaf** is a sheaf-like object valued in $\\infty$-groupoids instead of sets: instead of *equality* on overlaps one requires *coherent equivalence*, with the coherence tracked at every level.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-admissible-cover",
+      "from": "admissible-cover",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The limit $G = \\lim F$ over such a cover reconstructs a model of that interface, *not* of $c$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-sellars1956empiricism",
+      "from": "sellars1956empiricism",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "For empirical knowledge, like its sophisticated extension, science, is rational, not because it has a foundation but because it is a self-correcting enterprise which can put any claim in jeopardy, though not all at once.",
+      "citation_keys": [
+        "sellars1956empiricism"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-foundationalism",
+      "from": "foundationalism",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "there *must* be a privileged class of transitions that need no prior justification",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-coherence-theory-of-truth",
+      "from": "coherence-theory-of-truth",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "It is the central claim of the coherence theory of truth (Bradley, Blanshard, BonJour)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-wordless-introspection",
+      "from": "wordless-introspection",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In the immediate, pre-conceptual awareness of one's own experience, before it is named, categorised, or compared, the trace and the topic coincide.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-hacking1983representing",
+      "from": "hacking1983representing",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "representing is not the only epistemic relation we have to the world; *intervening* — doing something to the world, observing the difference, and so getting evidence about what is really there — is the other half",
+      "citation_keys": [
+        "hacking1983representing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-transformer-residual",
+      "from": "transformer-residual",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "H_{\\ell+1} = H_\\ell + F_\\theta(H_\\ell)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-multi-head-attention",
+      "from": "multi-head-attention",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\mathrm{Attn}(Q,K,V) = \\mathrm{softmax}\\!\\Bigl(\\tfrac{QK^\\top}{\\sqrt{d_k}}\\Bigr)V",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-coherent-difference-procedure",
+      "from": "coherent-difference-procedure",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Compressed into nine steps you can run through on any dataset, in any domain.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-coherent-difference-analogy",
+      "from": "coherent-difference-analogy",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A useful analogy is not a theorem.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-toposes-as-bridges",
+      "from": "toposes-as-bridges",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the same topos admits several presentations — as a sheaf topos over different sites, as the classifying topos of a geometric theory — and the facts invariant under that equivalence transfer between them",
+      "citation_keys": [
+        "caramello2017theories"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-tarski-correspondence",
+      "from": "tarski-correspondence",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "by joining that discipline to Tarski's correspondence, so that a coherent model is *true* (not merely internally consistent) at every licensed contact point with the world.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-tarski-wahrheitsbegriff",
+      "from": "tarski-wahrheitsbegriff",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1935 (the German-language paper \"Der Wahrheitsbegriff in den formalisierten Sprachen\", published in *Studia Philosophica*",
+      "citation_keys": [
+        "tarski1935wahrheitsbegriff"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-tarski-wahrheitsbegriff-polish",
+      "from": "tarski-wahrheitsbegriff-polish",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Polish original \"Pojęcie prawdy w językach nauk dedukcyjnych\" had appeared in 1933",
+      "citation_keys": [
+        "tarski1935wahrheitsbegriff"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-tarski-convention-t",
+      "from": "tarski-convention-t",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A sentence $\\boldsymbol{x}$ of a language $\\mathcal{L}$ is *true in $\\mathcal{L}$* if, and only if, $p$, where $p$ is any sentence of the meta-language which \"expresses the same meaning\" as $\\boldsymbol{x}$.",
+      "citation_keys": [
+        "tarski1956logic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-anomaly",
+      "from": "anomaly",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\boxed{\\text{Anomalies are constraints not yet integrated, not defeats.}}",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-structural-realism",
+      "from": "structural-realism",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "proposed \\emph{structural realism} as the philosophical position that takes seriously the chain's signature fact: across theory change (Fresnel → Maxwell, classical → relativistic), what is preserved is not the ontology of unobservables but the *structure* of the equations that relate them",
+      "citation_keys": [
+        "worrall1989structural"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-ontic-structural-realism",
+      "from": "ontic-structural-realism",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "not \"we only know the structure\" but \"there *is* nothing but the structure\" — the world *is* the chain of admissible cover systems, not a thing-in-itself behind them",
+      "citation_keys": [
+        "ladyman1998what",
+        "ladymanross2007everything"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-goodman-irrealism",
+      "from": "goodman-irrealism",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "there are no \"ready-made worlds\" *and* no minds constructing them from nothing — there are *many* worlds, made by different symbol systems, each as legitimate in its own right as any other",
+      "citation_keys": [
+        "goodman1978ways"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-bradley-appearance-and-reality",
+      "from": "bradley-appearance-and-reality",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "F. H. Bradley's *Appearance and Reality*\\citeauthor{bradley1893appearance} \\citeyear{bradley1893appearance}",
+      "citation_keys": [
+        "bradley1893appearance"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-bradley-coherence-theory",
+      "from": "bradley-coherence-theory",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Truth, we may say, is the systematic coherence of ideas, such coherence being determined ultimately by the nature of the idea itself, or by the reality which the idea endeavours to represent.",
+      "citation_keys": [
+        "bradley1893appearance"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-blanshard-coherence-theory",
+      "from": "blanshard-coherence-theory",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The truth of a proposition is nothing but its coherence with the whole of experience, and ultimately with the whole of reality.",
+      "citation_keys": [
+        "blanshard1939nature"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-coherence",
+      "from": "coherence",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\boxed{\\;\\text{coherence} \\;\\stackrel{\\text{def.}}{=}\\; \\text{descent on admissible covers}.\\;}",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-rosetta-stone",
+      "from": "rosetta-stone",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Rosetta Stone (Decree of Memphis, 196 B.C.)",
+      "citation_keys": [
+        "rosetta196bc"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-mercury-perihelion-precession",
+      "from": "mercury-perihelion-precession",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the anomalous precession of Mercury's perihelion, about $43$ arcseconds per century",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-general-relativity",
+      "from": "general-relativity",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "General relativity — \\citeauthor{einstein1916foundation}'s (\\citeyear{einstein1916foundation}) \\citetitle{einstein1916foundation}",
+      "citation_keys": [
+        "einstein1916foundation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-first-order-model-theory",
+      "from": "first-order-model-theory",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "by completeness and compactness, a consistent first-order theory admits a model, so \"no contradiction is derivable\" literally guarantees \"there exists a structure in which every theorem holds\"",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-popper-falsificationism",
+      "from": "popper-falsificationism",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "insisted that a scientific theory earns its status not from the accumulation of confirmations but from *risky* predictions — claims that, if they failed at a contact point, would refute it",
+      "citation_keys": [
+        "popper1963conjectures"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-dappled-world",
+      "from": "dappled-world",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the clean laws of the idealised model setups are true of the clean setups and only approximately true of the messy, multifactorial world we actually want to know about",
+      "citation_keys": [
+        "cartwright1983laws",
+        "cartwright1999dappled"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-self-consistent-fantasy",
+      "from": "self-consistent-fantasy",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Tarski's if-and-only-if fails at the contact points even though every arrow in the diagram is licensed. Result: a perfectly coherent fiction.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-factbook",
+      "from": "factbook",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the model has no internal structure: its claims do not fit together, descent fails, the \"global model\" is a heap of disconnected facts. Result: a factbook.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-calibrated-error",
+      "from": "calibrated-error",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the calibration is systematically, slightly off. The model's outputs track the world closely enough to be useful, but with a small, consistent bias that no single contact point reveals.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-out-of-cover-query",
+      "from": "out-of-cover-query",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the *query* lies outside $c_{\\mathrm{acc}}$, in a region the cover never reached. There is then *no* licensed bridge to check",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-llm-inference",
+      "from": "llm-inference",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The LLM, *at inference and by default*, has no live $W\\to R_i$ arrow of its own",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-emergent-capabilities",
+      "from": "emergent-capabilities",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Some LLM behaviours appear discontinuously at scale: few-shot in-context learning, chain-of-thought reasoning, code generation, instruction following",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-formal-verification",
+      "from": "formal-verification",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the strongest Tarski check currently available is type-checking a proof in an interactive theorem prover: **Coq** \\cite{bertot2013coq} or **Lean** \\cite{moura2015lean}",
+      "citation_keys": [
+        "bertot2013coq",
+        "moura2015lean"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-rlhf",
+      "from": "rlhf",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "RLHF adds admissible transitions to *human preferences*. The reward model encodes what humans find helpful and harmless; the policy is tuned to maximise that reward.",
       "citation_keys": [],
       "confidence": "provenance"
     }

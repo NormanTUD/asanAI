@@ -5,7 +5,7 @@
   "title": "The Metaphysics of Artificial Intelligence",
   "part": 6,
   "order": 12,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "olson2018metaphysics",
@@ -13,10 +13,7 @@
     "putnam1967functionalism",
     "sep_multiple_realizability",
     "sep_computational_mind",
-    "floridi2011information",
-    "piccinini2015computation",
     "penrose1989emperor",
-    "sep_godel_incompleteness",
     "parfit1984reasons"
   ],
   "claims": [
@@ -58,6 +55,190 @@
       "quote": "order: 12",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "metaphysics-field-status",
+      "subject": "metaphysics-of-ai",
+      "predicate": "field_status",
+      "value": "not yet a standalone subfield",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "\"the metaphysics of AI\" is **not yet a standalone subfield** with its own journal or a single canonical monograph.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "metaphysics-intersection-fields",
+      "subject": "metaphysics-of-ai",
+      "predicate": "intersection_fields",
+      "value": "philosophy of mind, philosophy of computation, philosophy of information, philosophy of personal identity",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the intersection of four mature fields -- the philosophy of mind, the philosophy of computation, the philosophy of information, and the philosophy of personal identity",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "metaphysics-olson-year",
+      "subject": "olson2018-metaphysics",
+      "predicate": "year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "a chapter by \\citeauthor{olson2018metaphysics} (\\citeyear{olson2018metaphysics}) that literally bears the title in question",
+      "citation_keys": [
+        "olson2018metaphysics"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "metaphysics-chalmers-year",
+      "subject": "chalmers2016-singularity",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "a sustained analysis of the identity questions by \\citeauthor{chalmers2016singularity} (\\citeyear{chalmers2016singularity})",
+      "citation_keys": [
+        "chalmers2016singularity"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "metaphysics-model-size",
+      "subject": "trained-model",
+      "predicate": "parameter_count",
+      "value": "10^12",
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "the arrangement of $N \\approx 10^{12}$ real numbers",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "metaphysics-multiple-realizability",
+      "subject": "multiple-realizability",
+      "predicate": "definition",
+      "value": "one mental or functional kind instantiated by many physically distinct systems",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "This is the doctrine of **multiple realizability**: a single mental or functional kind can be instantiated by many physically distinct systems, the textbook cases being a silicon android, a green-slimed Martian, and a water-flow computer all realizing the same pain or the same belief (\\cite[Putnam, 1967]{putnam1967functionalism}; \\cite[SEP: Multiple Realizability]{sep_multiple_realizability}).",
+      "citation_keys": [
+        "putnam1967functionalism",
+        "sep_multiple_realizability"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "metaphysics-putnam-year",
+      "subject": "putnam-functionalism",
+      "predicate": "year",
+      "value": 1967,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Putnam, 1967]{putnam1967functionalism}",
+      "citation_keys": [
+        "putnam1967functionalism"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "metaphysics-functionalism-definition",
+      "subject": "functionalism",
+      "predicate": "definition",
+      "value": "causal-informational role matters, not the material",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**functionalism**, the view that what matters is the causal and informational *role* a state plays, not the stuff it is made of.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "metaphysics-computational-theory-mind",
+      "subject": "computational-theory-of-mind",
+      "predicate": "definition",
+      "value": "mind as computation, traced from machine functionalism",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The SEP's account of the **computational theory of mind** traces this from Putnam's \"machine functionalism\"",
+      "citation_keys": [
+        "sep_computational_mind"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "metaphysics-triviality-objection",
+      "subject": "triviality-objection",
+      "predicate": "definition",
+      "value": "any physical system implements every finite-state machine",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "That is the **triviality objection**, and it makes \"the machine thinks\" true of everything, which is plainly wrong",
+      "citation_keys": [
+        "sep_computational_mind"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "metaphysics-penrose-year",
+      "subject": "penrose-godelian-argument",
+      "predicate": "year",
+      "value": 1989,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In \\citetitle{penrose1989emperor} (\\citeyear{penrose1989emperor})",
+      "citation_keys": [
+        "penrose1989emperor"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "metaphysics-penrose-thesis",
+      "subject": "penrose-godelian-argument",
+      "predicate": "thesis",
+      "value": "human mathematical insight is non-algorithmic",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Penrose contends that human mathematical insight is non-algorithmic.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "metaphysics-pancomputationalism",
+      "subject": "pancomputationalism",
+      "predicate": "definition",
+      "value": "the universe is a computation",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**pancomputationalism**: the claim that the universe is not merely *describable* as a computation but *is* one",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "metaphysics-parfit-year",
+      "subject": "parfit1984-reasons",
+      "predicate": "year",
+      "value": 1984,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{parfit1984reasons} argued that personal identity is not a \"deep further fact\"",
+      "citation_keys": [
+        "parfit1984reasons"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "metaphysics-weights-space",
+      "subject": "model-weights",
+      "predicate": "representation_space",
+      "value": "R^d",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "the weights are a point (or a cloud of points) in $\\mathbb{R}^d$",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -68,6 +249,143 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 6",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-metaphysics_of_ai-olson2018-metaphysics",
+      "from": "olson2018-metaphysics",
+      "to": "metaphysics-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a chapter by \\citeauthor{olson2018metaphysics} (\\citeyear{olson2018metaphysics}) that literally bears the title in question",
+      "citation_keys": [
+        "olson2018metaphysics"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-metaphysics_of_ai-chalmers2016-singularity",
+      "from": "chalmers2016-singularity",
+      "to": "metaphysics-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a sustained analysis of the identity questions by \\citeauthor{chalmers2016singularity} (\\citeyear{chalmers2016singularity})",
+      "citation_keys": [
+        "chalmers2016singularity"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-metaphysics_of_ai-trained-model",
+      "from": "trained-model",
+      "to": "metaphysics-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the arrangement of $N \\approx 10^{12}$ real numbers",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-metaphysics_of_ai-multiple-realizability",
+      "from": "multiple-realizability",
+      "to": "metaphysics-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This is the doctrine of **multiple realizability**: a single mental or functional kind can be instantiated by many physically distinct systems, the textbook cases being a silicon android, a green-slimed Martian, and a water-flow computer all realizing the same pain or the same belief (\\cite[Putnam, 1967]{putnam1967functionalism}; \\cite[SEP: Multiple Realizability]{sep_multiple_realizability}).",
+      "citation_keys": [
+        "putnam1967functionalism",
+        "sep_multiple_realizability"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-metaphysics_of_ai-putnam-functionalism",
+      "from": "putnam-functionalism",
+      "to": "metaphysics-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Putnam, 1967]{putnam1967functionalism}",
+      "citation_keys": [
+        "putnam1967functionalism"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-metaphysics_of_ai-functionalism",
+      "from": "functionalism",
+      "to": "metaphysics-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**functionalism**, the view that what matters is the causal and informational *role* a state plays, not the stuff it is made of.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-metaphysics_of_ai-computational-theory-of-mind",
+      "from": "computational-theory-of-mind",
+      "to": "metaphysics-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The SEP's account of the **computational theory of mind** traces this from Putnam's \"machine functionalism\"",
+      "citation_keys": [
+        "sep_computational_mind"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-metaphysics_of_ai-triviality-objection",
+      "from": "triviality-objection",
+      "to": "metaphysics-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "That is the **triviality objection**, and it makes \"the machine thinks\" true of everything, which is plainly wrong",
+      "citation_keys": [
+        "sep_computational_mind"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-metaphysics_of_ai-penrose-godelian-argument",
+      "from": "penrose-godelian-argument",
+      "to": "metaphysics-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In \\citetitle{penrose1989emperor} (\\citeyear{penrose1989emperor})",
+      "citation_keys": [
+        "penrose1989emperor"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-metaphysics_of_ai-pancomputationalism",
+      "from": "pancomputationalism",
+      "to": "metaphysics-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**pancomputationalism**: the claim that the universe is not merely *describable* as a computation but *is* one",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-metaphysics_of_ai-parfit1984-reasons",
+      "from": "parfit1984-reasons",
+      "to": "metaphysics-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{parfit1984reasons} argued that personal identity is not a \"deep further fact\"",
+      "citation_keys": [
+        "parfit1984reasons"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-metaphysics_of_ai-model-weights",
+      "from": "model-weights",
+      "to": "metaphysics-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the weights are a point (or a cloud of points) in $\\mathbb{R}^d$",
       "citation_keys": [],
       "confidence": "provenance"
     }

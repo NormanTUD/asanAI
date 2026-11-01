@@ -77,6 +77,9 @@ Das deterministische System ist bereits angelegt:
   expliziten Claim-Prädikaten.
 - `blog/tests/fact_ledger_test.py` — Unit-Tests für Aliase, Einheiten,
   Konflikterkennung, Coverage und Relations-/Pfad-Konsistenz.
+- `blog/tests/content_claims_test.py` — prüft, dass jede Lektion inhaltliche
+  Claims hat, die Geschichtskapitel tief genug sind und Kernfakten vorhanden
+  sind.
 - Ausführliche Regeln: `blog/facts/README.md` und `AGENTS.md`.
 
 Beispiele: `blog/facts/backproplab.facts.json` und

@@ -5,7 +5,7 @@
   "title": "Inceptionism: What the Network Sees",
   "part": 3,
   "order": 9,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "mordvintsev2015inceptionism"
@@ -49,6 +49,137 @@
       "quote": "order: 9",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "inceptionism-deepdream-technique",
+      "subject": "deepdream",
+      "predicate": "technique",
+      "value": "gradient ascent on a class score with frozen weights",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "run gradient *ascent* on one class score",
+      "citation_keys": [
+        "mordvintsev2015inceptionism"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inceptionism-optimized-variable",
+      "subject": "inceptionism",
+      "predicate": "optimized_variable",
+      "value": "input image",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "freeze the weights and adjust the input instead",
+      "citation_keys": [
+        "mordvintsev2015inceptionism"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inceptionism-imagenet-classes",
+      "subject": "imagenet",
+      "predicate": "classes",
+      "value": 1000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "computes a score for each of 1,000 classes",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inceptionism-places205-classes",
+      "subject": "places205",
+      "predicate": "classes",
+      "value": 205,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "the Places205 network used for some of the essay's images has 205",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inceptionism-low-layers",
+      "subject": "convolutional-network",
+      "predicate": "low_layer_output",
+      "value": "edges, curves and simple strokes",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "low layers produce edges, curves and simple strokes",
+      "citation_keys": [
+        "mordvintsev2015inceptionism"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inceptionism-high-layers",
+      "subject": "convolutional-network",
+      "predicate": "high_layer_output",
+      "value": "whole objects",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "high layers assemble **whole objects** from what they represent",
+      "citation_keys": [
+        "mordvintsev2015inceptionism"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inceptionism-dumbbell-weightlifter",
+      "subject": "deepdream-dumbbell",
+      "predicate": "generated_with",
+      "value": "a weightlifter holding a dumbbell",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the network repeatedly produced pictures of a **weightlifter holding one up**",
+      "citation_keys": [
+        "mordvintsev2015inceptionism"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inceptionism-engineered-pareidolia",
+      "subject": "engineered-pareidolia",
+      "predicate": "definition",
+      "value": "machine counterpart of projecting trained patterns onto ambiguous input",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "This is **engineered pareidolia**, the machine counterpart of the face in the [Jupiter photograph](hallucinations.php) or in everyday household objects",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inceptionism-feedback-loop",
+      "subject": "inceptionism-feedback-loop",
+      "predicate": "mechanism",
+      "value": "recognize, amplify, repeat",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "if a cloud looks a little bit like a bird, the network will make it look more like a bird",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inceptionism-dream-map",
+      "subject": "dream-map",
+      "predicate": "finding",
+      "value": "the original image influences which objects form",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The original image influences what kind of objects form in the processed image.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inceptionism-figure-license",
+      "subject": "inceptionism-figures",
+      "predicate": "license",
+      "value": "CC BY 4.0",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "licensed by **Google Inc.** under a [Creative Commons Attribution 4.0 International License]",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -59,6 +190,102 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 3",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inceptionism-deepdream",
+      "from": "deepdream",
+      "to": "inceptionism",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "run gradient *ascent* on one class score",
+      "citation_keys": [
+        "mordvintsev2015inceptionism"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inceptionism-imagenet",
+      "from": "imagenet",
+      "to": "inceptionism",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "computes a score for each of 1,000 classes",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inceptionism-places205",
+      "from": "places205",
+      "to": "inceptionism",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Places205 network used for some of the essay's images has 205",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inceptionism-convolutional-network",
+      "from": "convolutional-network",
+      "to": "inceptionism",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "low layers produce edges, curves and simple strokes",
+      "citation_keys": [
+        "mordvintsev2015inceptionism"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inceptionism-deepdream-dumbbell",
+      "from": "deepdream-dumbbell",
+      "to": "inceptionism",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the network repeatedly produced pictures of a **weightlifter holding one up**",
+      "citation_keys": [
+        "mordvintsev2015inceptionism"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inceptionism-engineered-pareidolia",
+      "from": "engineered-pareidolia",
+      "to": "inceptionism",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This is **engineered pareidolia**, the machine counterpart of the face in the [Jupiter photograph](hallucinations.php) or in everyday household objects",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inceptionism-inceptionism-feedback-loop",
+      "from": "inceptionism-feedback-loop",
+      "to": "inceptionism",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "if a cloud looks a little bit like a bird, the network will make it look more like a bird",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inceptionism-dream-map",
+      "from": "dream-map",
+      "to": "inceptionism",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The original image influences what kind of objects form in the processed image.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inceptionism-inceptionism-figures",
+      "from": "inceptionism-figures",
+      "to": "inceptionism",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "licensed by **Google Inc.** under a [Creative Commons Attribution 4.0 International License]",
       "citation_keys": [],
       "confidence": "provenance"
     }

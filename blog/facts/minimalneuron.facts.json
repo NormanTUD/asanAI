@@ -5,23 +5,19 @@
   "title": "Smallest possible neural network",
   "part": 2,
   "order": 9,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "mccullochpitts1943",
     "rosenblatt1958perceptron",
-    "hebb1949organizationofbehaviour",
     "rosenblattperceptron",
     "rosenblatt1962neurodynamics",
     "newyorktimesperceptron",
     "widrow1960adaline",
-    "minskyperceptrons",
     "werbos1974",
     "rumelhart1986",
-    "rumelhart1986pdp",
     "legendre1805",
     "gauss1809",
-    "galton",
     "conantashby1970",
     "ashbyintrocybernetics1956"
   ],
@@ -64,6 +60,250 @@
       "quote": "order: 9",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "minimalneuron-mcculloch-pitts-year",
+      "subject": "mcculloch-pitts-neuron",
+      "predicate": "year",
+      "value": 1943,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{mccullochpitts1943} modelled the neuron in \\citeyear{mccullochpitts1943} as an all-or-none element",
+      "citation_keys": [
+        "mccullochpitts1943"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-mcculloch-pitts-activation",
+      "subject": "mcculloch-pitts-neuron",
+      "predicate": "activation",
+      "value": "Heaviside step",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "With the Heaviside step $H(x)=\\mathbf{1}_{x>0}$, that neuron computes $\\hat{y}=H(ax+b)$.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-perceptron-year",
+      "subject": "perceptron",
+      "predicate": "year",
+      "value": 1958,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{rosenblatt1958perceptron} turned the idea into a trainable classifier in \\citeyear{rosenblatt1958perceptron}",
+      "citation_keys": [
+        "rosenblatt1958perceptron"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-perceptron-report-year",
+      "subject": "perceptron-report",
+      "predicate": "year",
+      "value": 1957,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Rosenblatt's first report appeared in 1957 as *The Perceptron: A Perceiving and Recognizing Automaton*",
+      "citation_keys": [
+        "rosenblattperceptron"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-mark-i-grid",
+      "subject": "mark-i-perceptron",
+      "predicate": "photocell_grid",
+      "value": "20x20",
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "the Mark I Perceptron used a 20×20 grid of photocells",
+      "citation_keys": [
+        "rosenblatt1962neurodynamics"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-nyt-1958",
+      "subject": "nyt-perceptron-1958",
+      "predicate": "year",
+      "value": 1958,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1958 the *New York Times* reported that the Navy had demonstrated a device that \"learns by doing\"",
+      "citation_keys": [
+        "newyorktimesperceptron"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-adaline-year",
+      "subject": "adaline",
+      "predicate": "year",
+      "value": 1960,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the **ADALINE** (Adaptive Linear Neuron) of \\citeauthor{widrow1960adaline}, built at Stanford in \\citeyear{widrow1960adaline}",
+      "citation_keys": [
+        "widrow1960adaline"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-delta-rule",
+      "subject": "delta-rule",
+      "predicate": "definition",
+      "value": "move each weight in proportion to the error times the input",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "its weights were updated by the **delta rule** — move each weight in proportion to the error times the input.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-perceptrons-xor",
+      "subject": "perceptrons-book",
+      "predicate": "result",
+      "value": "linear threshold unit cannot compute XOR",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "They proved that a linear threshold unit cannot compute exclusive-or",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-werbos-1974",
+      "subject": "backpropagation",
+      "predicate": "year",
+      "value": 1974,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Werbos (1974)]{werbos1974} worked it out in his doctoral thesis",
+      "citation_keys": [
+        "werbos1974"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-rumelhart-1986",
+      "subject": "backpropagation-1986",
+      "predicate": "year",
+      "value": 1986,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{rumelhart1986} showed in \\citeyear{rumelhart1986} that it could learn useful internal representations",
+      "citation_keys": [
+        "rumelhart1986"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-legendre-1805",
+      "subject": "least-squares",
+      "predicate": "year",
+      "value": 1805,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The method of least squares — choosing parameters that minimise the sum of squared errors — was published by \\citeauthor{legendre1805} in \\citeyear{legendre1805}",
+      "citation_keys": [
+        "legendre1805"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-gauss-1809",
+      "subject": "least-squares-probabilistic",
+      "predicate": "year",
+      "value": 1809,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "given its probabilistic justification by \\citeauthor{gauss1809} in \\citeyear{gauss1809}",
+      "citation_keys": [
+        "gauss1809"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-galton-regression",
+      "subject": "francis-galton",
+      "predicate": "coined_term",
+      "value": "regression toward mediocrity",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "and called the phenomenon **regression toward mediocrity**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-he-init",
+      "subject": "he-initialization",
+      "predicate": "variance",
+      "value": "2/n_inputs",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "He initialization, designed for ReLU, uses variance $2/n_\\text{inputs}$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-xavier-init",
+      "subject": "xavier-initialization",
+      "predicate": "variance",
+      "value": "2/(n_inputs+n_outputs)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "typically with variance $2/(n_\\text{inputs}+n_\\text{outputs})$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-good-regulator",
+      "subject": "good-regulator-theorem",
+      "predicate": "year",
+      "value": 1970,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1970, Conant and Ashby proved the **Good Regulator Theorem**",
+      "citation_keys": [
+        "conantashby1970"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-requisite-variety",
+      "subject": "law-of-requisite-variety",
+      "predicate": "statement",
+      "value": "only variety can destroy variety",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "\\citeauthor{ashbyintrocybernetics1956}'s **Law of Requisite Variety** \\cite{ashbyintrocybernetics1956} holds that a controller can cancel the *variety*",
+      "citation_keys": [
+        "ashbyintrocybernetics1956"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-transformer-d-model",
+      "subject": "transformer",
+      "predicate": "d_model",
+      "value": 4096,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "a Transformer with $d_{\\text{model}} = 4096$ processes 4096 numbers simultaneously",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-mnist-output",
+      "subject": "mnist-output-layer",
+      "predicate": "neurons",
+      "value": 784,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "the output layer must contain $784$ neurons",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -74,6 +314,220 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 2",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-mcculloch-pitts-neuron",
+      "from": "mcculloch-pitts-neuron",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{mccullochpitts1943} modelled the neuron in \\citeyear{mccullochpitts1943} as an all-or-none element",
+      "citation_keys": [
+        "mccullochpitts1943"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-perceptron",
+      "from": "perceptron",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{rosenblatt1958perceptron} turned the idea into a trainable classifier in \\citeyear{rosenblatt1958perceptron}",
+      "citation_keys": [
+        "rosenblatt1958perceptron"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-perceptron-report",
+      "from": "perceptron-report",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Rosenblatt's first report appeared in 1957 as *The Perceptron: A Perceiving and Recognizing Automaton*",
+      "citation_keys": [
+        "rosenblattperceptron"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-mark-i-perceptron",
+      "from": "mark-i-perceptron",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Mark I Perceptron used a 20×20 grid of photocells",
+      "citation_keys": [
+        "rosenblatt1962neurodynamics"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-nyt-perceptron-1958",
+      "from": "nyt-perceptron-1958",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1958 the *New York Times* reported that the Navy had demonstrated a device that \"learns by doing\"",
+      "citation_keys": [
+        "newyorktimesperceptron"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-adaline",
+      "from": "adaline",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **ADALINE** (Adaptive Linear Neuron) of \\citeauthor{widrow1960adaline}, built at Stanford in \\citeyear{widrow1960adaline}",
+      "citation_keys": [
+        "widrow1960adaline"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-delta-rule",
+      "from": "delta-rule",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "its weights were updated by the **delta rule** — move each weight in proportion to the error times the input.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-perceptrons-book",
+      "from": "perceptrons-book",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "They proved that a linear threshold unit cannot compute exclusive-or",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-backpropagation",
+      "from": "backpropagation",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Werbos (1974)]{werbos1974} worked it out in his doctoral thesis",
+      "citation_keys": [
+        "werbos1974"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-backpropagation-1986",
+      "from": "backpropagation-1986",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{rumelhart1986} showed in \\citeyear{rumelhart1986} that it could learn useful internal representations",
+      "citation_keys": [
+        "rumelhart1986"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-least-squares",
+      "from": "least-squares",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The method of least squares — choosing parameters that minimise the sum of squared errors — was published by \\citeauthor{legendre1805} in \\citeyear{legendre1805}",
+      "citation_keys": [
+        "legendre1805"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-least-squares-probabilistic",
+      "from": "least-squares-probabilistic",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "given its probabilistic justification by \\citeauthor{gauss1809} in \\citeyear{gauss1809}",
+      "citation_keys": [
+        "gauss1809"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-francis-galton",
+      "from": "francis-galton",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "and called the phenomenon **regression toward mediocrity**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-he-initialization",
+      "from": "he-initialization",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "He initialization, designed for ReLU, uses variance $2/n_\\text{inputs}$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-xavier-initialization",
+      "from": "xavier-initialization",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "typically with variance $2/(n_\\text{inputs}+n_\\text{outputs})$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-good-regulator-theorem",
+      "from": "good-regulator-theorem",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1970, Conant and Ashby proved the **Good Regulator Theorem**",
+      "citation_keys": [
+        "conantashby1970"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-law-of-requisite-variety",
+      "from": "law-of-requisite-variety",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{ashbyintrocybernetics1956}'s **Law of Requisite Variety** \\cite{ashbyintrocybernetics1956} holds that a controller can cancel the *variety*",
+      "citation_keys": [
+        "ashbyintrocybernetics1956"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-transformer",
+      "from": "transformer",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a Transformer with $d_{\\text{model}} = 4096$ processes 4096 numbers simultaneously",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-mnist-output-layer",
+      "from": "mnist-output-layer",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the output layer must contain $784$ neurons",
       "citation_keys": [],
       "confidence": "provenance"
     }

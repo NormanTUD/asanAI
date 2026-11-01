@@ -5,7 +5,7 @@
   "title": "AI and Society: The Cultural Impact of Machines That Create",
   "part": 6,
   "order": 15,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "mccarthy1956dartmouth",
@@ -14,75 +14,13 @@
     "campbell2002deepblue",
     "computerhistory_deepblue",
     "silver2016alphago",
-    "garante2023chatgpt",
-    "fli2023pause",
     "fifteenai",
-    "fcc2024biden",
-    "fcc2024robocall",
-    "odni2024threat",
-    "cisa2024elections",
     "sensity2019deepfakes",
     "ic3_2023",
     "laion2022blog",
-    "rombach2022ldm",
-    "laion5b2022",
-    "waxy2022stable",
-    "christies2018belamy",
-    "verge2018belamy",
-    "usco2023theatre",
-    "coloradostatefair2022",
-    "bbc2023heart",
-    "guardian2023heart",
-    "wga2023mba",
-    "npr2023wga",
-    "bartz2025anthropic",
     "jumper2021alphafold",
-    "alphafold_db",
-    "nobel2024chemistry",
     "merchant2023gnome",
-    "romera2023funsearch",
-    "alphageometry2024",
-    "deepmind2024imo",
-    "bi2023pangu",
-    "clinicaltrials_rentosertib",
-    "insilico2026genesis",
-    "becker2025metr",
-    "peng2023copilot",
-    "brynjolfsson2023genai",
-    "speedup_illusion2025",
-    "stackoverflow2024ai",
-    "sparrow2011google",
-    "caosun2026augmentation",
-    "parasuraman1997automation",
-    "pnas2026khan",
-    "idan2026complementarity",
-    "learnlm2025rct",
-    "prather2023copilot",
-    "georgiou2025lazy",
-    "huti2026jagged",
-    "karpathy2025vibecoding",
-    "ellington2003calculators",
-    "duolingo2025annual",
-    "popel2020cubitt",
-    "kokkas2026evidence",
-    "kubota2026replication",
-    "pew2026ai",
-    "rand2016firehose",
-    "guardian2018ira",
-    "bellingcat2025india",
-    "guardian2018cambridge",
-    "bellingcat2026bjp",
-    "chesney2019deepfakes",
-    "c2pa2024",
-    "eu2024aiact",
-    "beemyeyes2023",
-    "beemyeyes_site",
-    "whisper2022",
-    "google2024translate",
-    "deepl2024press",
-    "silicon2023replika",
-    "characterai",
-    "cbs2024characterai"
+    "peng2023copilot"
   ],
   "claims": [
     {
@@ -123,6 +61,255 @@
       "quote": "order: 15",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "ai_and_society-dartmouth",
+      "subject": "dartmouth-workshop",
+      "predicate": "year",
+      "value": 1956,
+      "unit": "year",
+      "quote": "In 1956, four mathematicians — John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon — proposed a two-month summer workshop at Dartmouth College.",
+      "citation_keys": [
+        "mccarthy1956dartmouth"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-first-winter",
+      "subject": "first-ai-winter",
+      "predicate": "period",
+      "value": "1974–1980",
+      "unit": "interval",
+      "quote": "Then came the first **AI Winter** (1974–1980).",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-lighthill",
+      "subject": "lighthill-report",
+      "predicate": "year",
+      "value": 1973,
+      "unit": "year",
+      "quote": "The trigger was the **Lighthill Report** (1973)",
+      "citation_keys": [
+        "lighthillreport"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-second-winter",
+      "subject": "second-ai-winter",
+      "predicate": "period",
+      "value": "1987–2000",
+      "unit": "interval",
+      "quote": "The second winter (1987–2000) was triggered by the collapse of the **LISP machine market**",
+      "citation_keys": [
+        "cacm2023aiwinter"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-lisp-market",
+      "subject": "lisp-machine-market",
+      "predicate": "value",
+      "value": 500000000,
+      "unit": "USD",
+      "quote": "a 500-million-dollar hardware industry that disappeared in a single year",
+      "citation_keys": [
+        "cacm2023aiwinter"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-deep-blue",
+      "subject": "deep-blue",
+      "predicate": "year",
+      "value": 1997,
+      "unit": "year",
+      "quote": "IBM's **Deep Blue** defeated world chess champion Garry Kasparov in a six-game match (3½–2½)",
+      "citation_keys": [
+        "campbell2002deepblue",
+        "computerhistory_deepblue"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-alphago",
+      "subject": "alphago",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "quote": "DeepMind's **AlphaGo** defeated the South Korean Go master Lee Sedol 4–1 in Seoul",
+      "citation_keys": [
+        "silver2016alphago"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-go-state-space",
+      "subject": "go",
+      "predicate": "state_space",
+      "value": "2×10^170",
+      "unit": "count",
+      "quote": "roughly $2\\times10^{170}$ legal positions in Go versus about $4.8\\times10^{44}$ in chess",
+      "citation_keys": [
+        "silver2016alphago"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-chatgpt",
+      "subject": "chatgpt",
+      "predicate": "release_date",
+      "value": "2022-11-30",
+      "unit": "year",
+      "quote": "But it was **November 30, 2022** — the release of **ChatGPT** — that broke the dam.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-voice-clone",
+      "subject": "voice-cloning",
+      "predicate": "training_audio_seconds",
+      "value": 15,
+      "unit": "count",
+      "quote": "capable of generating high-quality speech from just **15 seconds** of training audio",
+      "citation_keys": [
+        "fifteenai"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-robocall-cost",
+      "subject": "new-hampshire-robocall",
+      "predicate": "cost",
+      "value": 500,
+      "unit": "USD",
+      "quote": "Political consultant **Steve Kramer** admitted commissioning the calls for **500 dollars**.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-fcc-fine",
+      "subject": "fcc-robocall-fine",
+      "predicate": "value",
+      "value": 6000000,
+      "unit": "USD",
+      "quote": "The FCC proposed a **6-million-dollar** fine.",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-sensity",
+      "subject": "sensity-2019-report",
+      "predicate": "sexual_deepfake_share",
+      "value": 96,
+      "unit": "%",
+      "quote": "A **2019 Sensity report** found that **96%** of deepfakes were sexually explicit and depicted women",
+      "citation_keys": [
+        "sensity2019deepfakes"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-romance-losses",
+      "subject": "fbi-ic3-romance-scams",
+      "predicate": "losses",
+      "value": 650000000,
+      "unit": "USD",
+      "quote": "recorded **over 650 million dollars** in losses from romance/relationship scams in 2023",
+      "citation_keys": [
+        "ic3_2023"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-laion",
+      "subject": "laion-5b",
+      "predicate": "image_text_pairs",
+      "value": 5850000000,
+      "unit": "count",
+      "quote": "a dataset of **5.85 billion image-text pairs** scraped from the web",
+      "citation_keys": [
+        "laion2022blog"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-belamy",
+      "subject": "edmond-de-belamy",
+      "predicate": "price",
+      "value": 432500,
+      "unit": "USD",
+      "quote": "sold at Christie's for **432,500 dollars**",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-alphafold-casp14",
+      "subject": "alphafold2",
+      "predicate": "median_gdt",
+      "value": 92.4,
+      "unit": "count",
+      "quote": "with a median Global Distance Test score of **92.4** (out of 100)",
+      "citation_keys": [
+        "jumper2021alphafold"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gnome",
+      "subject": "gnome",
+      "predicate": "new_structures",
+      "value": 2200000,
+      "unit": "count",
+      "quote": "reporting **2.2 million new crystal structures** predicted to be stable",
+      "citation_keys": [
+        "merchant2023gnome"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-metr",
+      "subject": "metr-study",
+      "predicate": "productivity_change",
+      "value": -19,
+      "unit": "%",
+      "quote": "AI made them **19% slower**",
+      "citation_keys": [],
+      "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-copilot",
+      "subject": "github-copilot-study",
+      "predicate": "speedup",
+      "value": 55.8,
+      "unit": "%",
+      "quote": "completed the task **55.8% faster** than the control group",
+      "citation_keys": [
+        "peng2023copilot"
+      ],
+      "qualifiers": {},
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -134,6 +321,235 @@
       "qualifiers": {},
       "quote": "part: 6",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-dartmouth-workshop",
+      "from": "dartmouth-workshop",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1956, four mathematicians — John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon — proposed a two-month summer workshop at Dartmouth College.",
+      "citation_keys": [
+        "mccarthy1956dartmouth"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-first-ai-winter",
+      "from": "first-ai-winter",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Then came the first **AI Winter** (1974–1980).",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-lighthill-report",
+      "from": "lighthill-report",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The trigger was the **Lighthill Report** (1973)",
+      "citation_keys": [
+        "lighthillreport"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-second-ai-winter",
+      "from": "second-ai-winter",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The second winter (1987–2000) was triggered by the collapse of the **LISP machine market**",
+      "citation_keys": [
+        "cacm2023aiwinter"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-lisp-machine-market",
+      "from": "lisp-machine-market",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a 500-million-dollar hardware industry that disappeared in a single year",
+      "citation_keys": [
+        "cacm2023aiwinter"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-deep-blue",
+      "from": "deep-blue",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "IBM's **Deep Blue** defeated world chess champion Garry Kasparov in a six-game match (3½–2½)",
+      "citation_keys": [
+        "campbell2002deepblue",
+        "computerhistory_deepblue"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-alphago",
+      "from": "alphago",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "DeepMind's **AlphaGo** defeated the South Korean Go master Lee Sedol 4–1 in Seoul",
+      "citation_keys": [
+        "silver2016alphago"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-go",
+      "from": "go",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "roughly $2\\times10^{170}$ legal positions in Go versus about $4.8\\times10^{44}$ in chess",
+      "citation_keys": [
+        "silver2016alphago"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-chatgpt",
+      "from": "chatgpt",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "But it was **November 30, 2022** — the release of **ChatGPT** — that broke the dam.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-voice-cloning",
+      "from": "voice-cloning",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "capable of generating high-quality speech from just **15 seconds** of training audio",
+      "citation_keys": [
+        "fifteenai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-new-hampshire-robocall",
+      "from": "new-hampshire-robocall",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Political consultant **Steve Kramer** admitted commissioning the calls for **500 dollars**.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-fcc-robocall-fine",
+      "from": "fcc-robocall-fine",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The FCC proposed a **6-million-dollar** fine.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-sensity-2019-report",
+      "from": "sensity-2019-report",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A **2019 Sensity report** found that **96%** of deepfakes were sexually explicit and depicted women",
+      "citation_keys": [
+        "sensity2019deepfakes"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-fbi-ic3-romance-scams",
+      "from": "fbi-ic3-romance-scams",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "recorded **over 650 million dollars** in losses from romance/relationship scams in 2023",
+      "citation_keys": [
+        "ic3_2023"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-laion-5b",
+      "from": "laion-5b",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a dataset of **5.85 billion image-text pairs** scraped from the web",
+      "citation_keys": [
+        "laion2022blog"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-edmond-de-belamy",
+      "from": "edmond-de-belamy",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "sold at Christie's for **432,500 dollars**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-alphafold2",
+      "from": "alphafold2",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "with a median Global Distance Test score of **92.4** (out of 100)",
+      "citation_keys": [
+        "jumper2021alphafold"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-gnome",
+      "from": "gnome",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "reporting **2.2 million new crystal structures** predicted to be stable",
+      "citation_keys": [
+        "merchant2023gnome"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-metr-study",
+      "from": "metr-study",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "AI made them **19% slower**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-github-copilot-study",
+      "from": "github-copilot-study",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "completed the task **55.8% faster** than the control group",
+      "citation_keys": [
+        "peng2023copilot"
+      ],
       "confidence": "provenance"
     }
   ]

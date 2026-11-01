@@ -5,21 +5,9 @@
   "title": "Mixture of Experts",
   "part": 4,
   "order": 18,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [
-    "mixtral2024",
-    "deepseekv3tech2024",
-    "jacobs1991moe",
-    "jordan1993hme",
-    "shazeer2017moe",
-    "xue2024openmoe",
-    "wang2024auxfree",
-    "lepikhin2021gshard",
-    "switchtransformers2022",
-    "zhou2022expertchoice",
-    "deepseekmoe2024"
-  ],
+  "citations": [],
   "claims": [
     {
       "id": "auto-mixture_of_experts-1",

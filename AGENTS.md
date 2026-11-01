@@ -1012,6 +1012,98 @@ upper bound. Render paths with
 `uv run blog/tools/factcheck/trace_facts.py blog/ --from <id> --to <id>`;
 `--neighbors`, `--dot`, `--undirected` and `--json` are also available.
 
+
+**Content claims — the part that makes a lesson “filled”.** Metadata alone is
+not a fact ledger. Every lesson must carry **at least one non-metadata claim**
+(a structured `subject/predicate/value/unit/quote` row). `--require-claims`
+enforces this; the content audits filled all 99 lesson files. A claim is
+“checkable” when its value is normalised (number + unit, date, versioned
+model spec, definition, formula) and its exact `quote` anchors it in the PHP
+file.
+
+How to fill a lesson's fact file:
+
+1. Read the lesson and list its checkable statements: numbers, dates, model
+   specs, benchmark results, named works/events, definitions, formulas.
+2. Add each as a claim with canonical `subject` / `predicate` / `unit` and an
+   exact `quote`. Do not store line numbers.
+3. If the value depends on a source, put the `\cite` key in
+   `citation_keys`; the key must exist in `literature.js`.
+4. Add explicit relations between entities (`influenced`, `before`, `wrote`,
+   `part_of`, `same_as`, …). `from`/`to` must be subject or fact ids in the
+   ledger. Run `link_provenance.py` afterwards so every entry is reachable.
+5. Run the checks below. If a claim is legitimately different, add a
+   qualifier (`precision`, `parameter_kind`, `variant`, `event`, `year`) or
+   use a versioned subject id; never delete the fact or add an allowlist.
+
+The four history chapters (`history`, `untold_history_i/ii/iii`) are the
+reference for a deep ledger: hundreds of claims each, every claim anchored by
+`quote`, every subject connected by a relation.
+
+**How the content claims are tested.** Two independent gates run in CI:
+
+```bash
+uv run blog/tests/content_claims_test.py
+uv run blog/tools/factcheck/check_facts.py blog/ \
+  --strict-relations --strict-quotes --require-claims
+```
+
+`content_claims_test.py` asserts that every lesson has content claims, the
+four history chapters meet depth thresholds, core facts (GPT-3 175B, backprop
+1986, H100 80 GB / 989 TFLOPS, AlexNet 2012, Transformer 2017, Chinchilla
+20 tokens/parameter) are present, no fact file stores `line`, and every
+content claim has a quote and unit. `check_facts.py` checks the global gluing
+conditions: endpoints, relation cycles, temporal and `same_as` compatibility,
+quote freshness, unique claim ids and every subject connected.
+
+**CI failure contract.** Two claims that share `(subject, predicate, scope)`
+but normalise to incompatible values fail with a block like this:
+
+```text
+================================================================================
+FACT CONFLICT — not globally gluable
+--------------------------------------------------------------------------------
+subject:   gpt-3
+predicate: parameters
+scope:     {}
+why: two claims describe the same functional fact with incompatible normalized values.
+claim 1: id=... file=transformer.facts.json value=175000000000.0 unit=count quote='...'
+claim 2: id=... file=history.facts.json value=170000000000.0 unit=count quote='...'
+fix: change one value to the verified one, or add a qualifier
+     (precision, parameter_kind, variant, event, year) / use a versioned
+     subject id so the scopes are legitimately different. Do not delete
+     facts, do not add an allowlist, and do not remove qualifiers.
+check: uv run blog/tools/factcheck/check_facts.py blog/ \
+       --strict-relations --strict-quotes --require-claims
+AI FIX PROMPT (copy the block):
+----- COPY FROM HERE -----
+Fix this fact-ledger conflict:
+- subject: gpt-3
+- predicate: parameters
+- scope: {}
+- claim 1: file=... value=... quote=...
+- claim 2: file=... value=... quote=...
+- Why: the claims share the same (subject, predicate, scope) but normalize to different values.
+- How: correct the wrong value. If both are legitimate, add a qualifier or a
+  versioned subject id. Never add an allowlist or delete facts.
+- Then run: uv run blog/tools/factcheck/check_facts.py blog/ \
+  --strict-relations --strict-quotes --require-claims
+----- COPY TO HERE -----
+::error file=blog/facts/transformer.facts.json::FACT_CONFLICT subject=gpt-3 ...
+```
+
+The `::error file=…::…` line is a GitHub Actions annotation, so the failing
+fact file is clickable in the CI UI. The `COPY FROM HERE` block is a
+self-contained prompt for an AI agent; a human gets the same information in
+the lines above it.
+
+**Current coverage and backlog.** All 99 lesson files have content claims
+(6,005 claims, 4,470 relations at the time of writing). The
+`--strict-unregistered` scan is limited to `deep_audit: true` files (the four
+history chapters and the curated examples); it currently reports 63
+unregistered years there, mostly citation/access years. `--require-claims`
+is enabled in CI; a new lesson without content claims fails immediately.
+
 ## Validate before you finish
 
 Run from the **repository root**. Python validators self-bootstrap under `uv`
@@ -1032,7 +1124,8 @@ dependency in a header won't resolve for a few days).
 | `uv run blog/tests/lesson_guard.py blog/` | per-lesson static regression guards (currently `math_iv.php`: headings-in-md, citation keys, 3D wiring) — extend the `LESSONS` list per lesson — plus blog-wide citation-integration, quiz-option-balance and site-footer guards | any guard | `blog/**` |
 | `uv run blog/tests/link_checker.py blog/` | every `url:` in `literature.js` returns 2xx; PDFs must start `%PDF`; TLS/bot-block soft-passes never fail | real failures | `blog/**` + weekly cron |
 | `uv run blog/tests/literature_dup_keys.py blog/` | every top-level key in `literature.js` appears exactly once (JS object last-wins would silently hide a duplicate) | **any duplicate** | `blog/**` |
-| `uv run blog/tools/factcheck/check_facts.py blog/ --strict-relations --strict-quotes` | one fact file per lesson; schema; cross-lesson numeric/date/unit/model-spec conflicts; relation endpoints/cycles/temporal; every subject connected; quotes still present | missing/orphan file, malformed claim, conflict, isolated subject, stale quote | `blog/**` (php-validation job) |
+| `uv run blog/tools/factcheck/check_facts.py blog/ --strict-relations --strict-quotes --require-claims` | one fact file per lesson; content claim per lesson; schema; cross-lesson numeric/date/unit/model-spec conflicts; relation endpoints/cycles/temporal; every subject connected; quotes still present | missing/orphan file, metadata-only lesson, malformed claim, conflict, isolated subject, stale quote | `blog/**` (php-validation job) |
+| `uv run blog/tests/content_claims_test.py` | every lesson has content claims; history depth thresholds; core facts; no line fields; quote/unit presence | any missing content claim or core fact | `blog/**` (php-validation job) |
 | `uv run blog/tests/fact_ledger_test.py` | unit tests for aliases, unit normalisation, conflict detection, coverage | any failed test | `blog/**` (php-validation job) |
 | `node blog/tests/{topics,math_alt,keypoint,search_js,semantic_js}_test.js` | DOM-stubbed unit tests of BlogTopics (interests, math dial, learned), math-alts, keypoints, search, semantic ranking | any failed check | `blog/**` |
 | `node blog/tests/rag_chat_test.js` | RAG chat status text, citation links, HTML escaping | any failed check | `blog/**` |

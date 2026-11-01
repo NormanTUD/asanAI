@@ -5,34 +5,18 @@
   "title": "How LLMs Search the Web",
   "part": 5,
   "order": 4,
-  "curated": false,
+  "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
     "schick2023toolformer",
-    "mialon2023augmented",
-    "ma2023queryrewriting",
     "reuters2023chatgptbrowsing",
     "google2025grounding",
     "anthropic2025websearch",
     "perplexityai",
-    "youcom",
-    "searxng",
-    "bravesearchapi",
     "googlecustomsearch",
-    "serper",
-    "tavily",
-    "mozillareadability",
-    "barbaresi2021trafilatura",
-    "beautifulsoup",
-    "playwright",
-    "puppeteer",
-    "jinareader",
-    "reimers2019sentencebert",
-    "robertson2009bm25",
-    "lewis2020rag",
-    "openai2023functioncalling",
     "yao2023react",
-    "greshake2023injection"
+    "greshake2023injection",
+    "openai2023functioncalling"
   ],
   "claims": [
     {
@@ -73,6 +57,256 @@
       "quote": "order: 4",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "websearch-toolformer",
+      "subject": "toolformer",
+      "predicate": "function",
+      "value": "learns when calling a search tool would help",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "an idea popularized by Toolformer, which trains a model to decide autonomously when calling a search tool would help (\\cite[Schick et al., 2023]{schick2023toolformer})",
+      "citation_keys": [
+        "schick2023toolformer"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-chatgpt-bing",
+      "subject": "chatgpt",
+      "predicate": "search_backend",
+      "value": "Bing Search API",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "| OpenAI (ChatGPT) | **Bing Search API** (Microsoft partnership) (\\cite[Reuters, 2023]{reuters2023chatgptbrowsing}) |",
+      "citation_keys": [
+        "reuters2023chatgptbrowsing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-gemini-google",
+      "subject": "gemini",
+      "predicate": "search_backend",
+      "value": "Google Search",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "| Google (Gemini) | **Google Search** (internal) (\\cite[Google, 2025]{google2025grounding}) |",
+      "citation_keys": [
+        "google2025grounding"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-claude-tool",
+      "subject": "claude",
+      "predicate": "search_backend",
+      "value": "Claude web search tool",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "| Anthropic (Claude) | **Claude web search tool** (\\cite[Anthropic, 2025]{anthropic2025websearch}) |",
+      "citation_keys": [
+        "anthropic2025websearch"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-perplexity-backend",
+      "subject": "perplexity",
+      "predicate": "search_backend",
+      "value": "own crawlers + LLM index",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "| Perplexity | **Own crawlers + LLM index** (\\cite[Wikipedia, 2026]{perplexityai}) |",
+      "citation_keys": [
+        "perplexityai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-google-custom-search",
+      "subject": "google-custom-search-api",
+      "predicate": "free_queries",
+      "value": 100,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "| **Google Custom Search API** \\cite[Google]{googlecustomsearch} | Commercial API | 100 free queries/day, then paid |",
+      "citation_keys": [
+        "googlecustomsearch"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-chunk-size",
+      "subject": "chunking",
+      "predicate": "chunk_size",
+      "value": "200-500",
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "**Chunks** the extracted text into passages (200–500 tokens each)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-context-budget",
+      "subject": "websearch-token-budget",
+      "predicate": "context",
+      "value": 128000,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Available context: ~128,000 tokens",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-system-prompt",
+      "subject": "websearch-token-budget",
+      "predicate": "system_prompt",
+      "value": 500,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "System prompt:         ~500 tokens",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-retrieved-content",
+      "subject": "websearch-token-budget",
+      "predicate": "retrieved_content",
+      "value": 4000,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Retrieved content:   ~4,000 tokens  ← carefully budgeted",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-extraction-ratio",
+      "subject": "content-extraction",
+      "predicate": "compression",
+      "value": "50KB HTML to 3KB text",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "\\text{HTML (50KB)} \\;\\xrightarrow{\\text{extract}}\\; \\text{Clean text (3KB)}",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-search-results",
+      "subject": "search-api",
+      "predicate": "results_returned",
+      "value": "5-10",
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "returns top 5-10 results as JSON",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-fetched-urls",
+      "subject": "content-fetcher",
+      "predicate": "urls_fetched",
+      "value": "3-5",
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "HTTP GET to top 3-5 URLs",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-chunker-budget",
+      "subject": "chunker",
+      "predicate": "token_budget",
+      "value": "3000-6000",
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "select top-K (budget ~3000-6000 tokens)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-total-latency",
+      "subject": "websearch-pipeline",
+      "predicate": "latency",
+      "value": "3-10 s",
+      "unit": "interval",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| **Total** | **~3-10s** | This is why search answers take longer |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-react",
+      "subject": "react",
+      "predicate": "role",
+      "value": "defining pattern of LLM agents",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "This interleaving of reasoning and tool calls is the defining pattern of LLM agents (\\cite[Yao et al., 2023]{yao2023react}).",
+      "citation_keys": [
+        "yao2023react"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-prompt-injection",
+      "subject": "indirect-prompt-injection",
+      "predicate": "threat",
+      "value": "malicious instructions in retrieved pages override the system prompt",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**Indirect prompt injection:** Malicious instructions embedded in retrieved web pages can attempt to override the system prompt (\\cite[Greshake et al., 2023]{greshake2023injection})",
+      "citation_keys": [
+        "greshake2023injection"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-searxng",
+      "subject": "searxng",
+      "predicate": "type",
+      "value": "meta-search engine",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "SearXNG queries Google, Bing, DuckDuckGo, Brave, and dozens of other engines simultaneously",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-function-calling",
+      "subject": "function-calling",
+      "predicate": "defined_by",
+      "value": "OpenAI",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "it uses a protocol called **function calling** (or **tool use**) \\cite[OpenAI]{openai2023functioncalling}",
+      "citation_keys": [
+        "openai2023functioncalling"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "websearch-search-api-latency",
+      "subject": "search-api",
+      "predicate": "latency",
+      "value": "200-500 ms",
+      "unit": "interval",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| Search API call | ~200-500ms | Network round-trip to Bing/Google |",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -84,6 +318,194 @@
       "qualifiers": {},
       "quote": "part: 5",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-toolformer",
+      "from": "toolformer",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "an idea popularized by Toolformer, which trains a model to decide autonomously when calling a search tool would help (\\cite[Schick et al., 2023]{schick2023toolformer})",
+      "citation_keys": [
+        "schick2023toolformer"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-chatgpt",
+      "from": "chatgpt",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| OpenAI (ChatGPT) | **Bing Search API** (Microsoft partnership) (\\cite[Reuters, 2023]{reuters2023chatgptbrowsing}) |",
+      "citation_keys": [
+        "reuters2023chatgptbrowsing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-gemini",
+      "from": "gemini",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Google (Gemini) | **Google Search** (internal) (\\cite[Google, 2025]{google2025grounding}) |",
+      "citation_keys": [
+        "google2025grounding"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-claude",
+      "from": "claude",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Anthropic (Claude) | **Claude web search tool** (\\cite[Anthropic, 2025]{anthropic2025websearch}) |",
+      "citation_keys": [
+        "anthropic2025websearch"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-perplexity",
+      "from": "perplexity",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Perplexity | **Own crawlers + LLM index** (\\cite[Wikipedia, 2026]{perplexityai}) |",
+      "citation_keys": [
+        "perplexityai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-google-custom-search-api",
+      "from": "google-custom-search-api",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| **Google Custom Search API** \\cite[Google]{googlecustomsearch} | Commercial API | 100 free queries/day, then paid |",
+      "citation_keys": [
+        "googlecustomsearch"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-chunking",
+      "from": "chunking",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Chunks** the extracted text into passages (200–500 tokens each)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-websearch-token-budget",
+      "from": "websearch-token-budget",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Available context: ~128,000 tokens",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-content-extraction",
+      "from": "content-extraction",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\text{HTML (50KB)} \\;\\xrightarrow{\\text{extract}}\\; \\text{Clean text (3KB)}",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-search-api",
+      "from": "search-api",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "returns top 5-10 results as JSON",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-content-fetcher",
+      "from": "content-fetcher",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "HTTP GET to top 3-5 URLs",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-chunker",
+      "from": "chunker",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "select top-K (budget ~3000-6000 tokens)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-websearch-pipeline",
+      "from": "websearch-pipeline",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| **Total** | **~3-10s** | This is why search answers take longer |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-react",
+      "from": "react",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This interleaving of reasoning and tool calls is the defining pattern of LLM agents (\\cite[Yao et al., 2023]{yao2023react}).",
+      "citation_keys": [
+        "yao2023react"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-indirect-prompt-injection",
+      "from": "indirect-prompt-injection",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Indirect prompt injection:** Malicious instructions embedded in retrieved web pages can attempt to override the system prompt (\\cite[Greshake et al., 2023]{greshake2023injection})",
+      "citation_keys": [
+        "greshake2023injection"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-searxng",
+      "from": "searxng",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "SearXNG queries Google, Bing, DuckDuckGo, Brave, and dozens of other engines simultaneously",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-function-calling",
+      "from": "function-calling",
+      "to": "websearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it uses a protocol called **function calling** (or **tool use**) \\cite[OpenAI]{openai2023functioncalling}",
+      "citation_keys": [
+        "openai2023functioncalling"
+      ],
       "confidence": "provenance"
     }
   ]
