@@ -70,6 +70,16 @@ We love atomic PRs, but if you show up with a mega-PR that slaps — we’re not
 
 All tests must pass.
 
+For changes under `blog/`, run the single blog gate from the repository root:
+
+```bash
+uv run blog/tools/check_all.py
+```
+
+It bootstraps its dependencies through `uv`, runs the fast checks first, builds
+the semantic/RAG/Atlas indexes locally, and stops at the first failure. CI runs
+the same runner with `--ci`, which verifies the indexes but never builds them.
+
 If you add a feature, adding tests is strongly encouraged.  
 If you break a test, fix it or bring chocolate. Chocolate is cheaper.
 

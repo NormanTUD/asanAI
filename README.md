@@ -184,6 +184,22 @@ A series of [video tutorials](https://www.youtube.com/playlist?list=PLZkHu66nUK_
 # Documentation (for advance users)
 A draft of the documentation for advanced users is available [here](https://asanai.scads.ai/manual.html).  
 
+# Blog checks
+The textbook under [`blog/`](blog/) has a single verification gate. It bootstraps
+its own dependencies through `uv` and works from the repository root or from
+inside `blog/`:
+
+```bash
+uv run blog/tools/check_all.py          # local: checks + build indices + verify
+uv run blog/tools/check_all.py --fast   # no builds; quick checks + freshness
+uv run blog/tools/check_all.py --ci     # CI smoke: verify only, never build
+```
+
+`python3 blog/tools/check_all.py` and `./blog/tools/check_all.py` also work; the
+script re-executes itself through `uv` and stops at the first failing stage.
+See [`blog/README.md`](blog/README.md#run-every-check-with-one-command) for the
+profiles and flags.
+
 # Reference
 If you find asanAI useful or relevant to your research, a [preprint](https://doi.org/10.48550/arXiv.2501.06226) with more details is available.
 

@@ -15,28 +15,45 @@ darüber entscheiden, ob eine Aussage falsch ist.
 
 | Prüfung | Datei / Befehl | Was sie findet | In CI? |
 |---|---|---|---|
-| Kurs-Reihenfolge | `blog/tests/course_order_test.py` | doppelte `(part, order)`-Paare, fehlende Teile, Lücken | ja, über `lesson_guard.py` |
-| Querschnitts-Fakten | `blog/tests/fact_consistency_test.py` | bekannte falsche Formulierungen, Bibliographie-Identitäten, Citation-Keys, `literature.js`-Syntax | nein (manuell / Runner) |
+| Ein-Kommando-Runner | `uv run blog/tools/check_all.py [--ci]` | orchestriert alle folgenden Prüfungen, bricht beim ersten Fehler ab | ja |
+| Kurs-Reihenfolge | `blog/tests/course_order_test.py` | doppelte `(part, order)`-Paare, fehlende Teile, Lücken | ja, über `check_all.py` |
+| Querschnitts-Fakten | `blog/tests/fact_consistency_test.py` | bekannte falsche Formulierungen, Bibliographie-Identitäten, Citation-Keys, `literature.js`-Syntax | ja, über `check_all.py` |
 | PHP-Syntax + HTML-Balance | `uv run blog/tests/php_validator.py blog/` | PHP-Fehler, kaputte Tags, BOM | ja |
 | JS-Grundprüfung | `uv run blog/tests/js_validator.py blog/` | Klammern, Strings, `debugger`, DOM-Tippfehler | ja |
 | Lesson-Guards | `uv run blog/tests/lesson_guard.py blog/` | Zitate, Quiz-Balance, Footer, **Order** | ja |
 | Bibliographie-Duplikate | `uv run blog/tests/literature_dup_keys.py blog/` | doppelte Top-Level-Keys | ja |
-| Node-Unit-Tests | `node blog/tests/{topics,math_alt,keypoint,search_js,semantic_js,rag_chat}_test.js` | DOM-/Such-/Quiz-Logik | ja |
+| Node-Unit-Tests | `node blog/tests/{topics,math_alt,keypoint,search_js,semantic_js,rag_chat,math_integrity,youtube}_test.js` | DOM-/Such-/Quiz-Logik | ja |
 | Suchindex-Frische | `uv run blog/tests/{semantic,rag}_index_test.py` | Index passt nicht zum Inhalt | ja |
 | RAG inkrementell | `uv run blog/tests/rag_incremental_test.py` | Builder reused/embedded falsch | ja |
-| Atlas | `python3 blog/atlas_data/atlas_check.py` | Entities/Threads/Bibliographie | manuell |
+| Atlas | `python3 blog/atlas_data/atlas_check.py` | Entities/Threads/Bibliographie | ja, als Frische-Smoke über `check_all.py --ci` |
 | Link-Checker | `uv run blog/tests/link_checker.py blog/` | tote URLs, falsche PDFs | wöchentlich |
 | Render-Validator | `uv run blog/tests/php_render_validator.py blog/ --pages …` | JS-Fehler, LaTeX, Breite | teilweise |
 
 ### Ein-Kommando-Runner
 
+`blog/tools/check_all.py` ist das gemeinsame Gate für alle Blog-Prüfungen. Es
+startet mit den schnellen statischen Checks, läuft dann das Fact-Ledger, baut
+anschließend die semantischen, RAG- und Atlas-Indizes und verifiziert zuletzt
+deren Frische. Der erste Fehler bricht den Lauf ab.
+
 ```bash
-bash blog/tests/run_fact_audit.sh          # schnelle + Index-/Atlas-Prüfungen
-bash blog/tests/run_fact_audit.sh --fast   # nur die schnellen Guards
+uv run blog/tools/check_all.py          # lokal: prüfen + Indizes bauen + verifizieren
+uv run blog/tools/check_all.py --fast   # ohne Builds; schnelle Checks + Frische-Smoke
+uv run blog/tools/check_all.py --ci     # CI-Smoke: nur verifizieren, nie bauen
+uv run blog/tools/check_all.py --full   # zusätzlich Render- und Typo-Checks
 ```
 
-Der Runner bricht beim ersten Fehler ab (`set -euo pipefail`) und gibt die
-rohen Ausgaben der Tests aus.
+Das Skript lässt sich auch direkt oder mit `python3` starten; es startet sich
+intern über `uv` neu und installiert `rich` aus dem PEP-723-Header:
+
+```bash
+python3 blog/tools/check_all.py --fast
+./blog/tools/check_all.py --fast
+```
+
+`bash blog/tests/run_fact_audit.sh` bleibt als Kompatibilitäts-Shim erhalten.
+`--only`, `--skip`, `--list`, `--dry-run`, `--render`, `--links` und `--typos`
+erlauben gezielte Läufe.
 
 ### Order-Test im Detail
 

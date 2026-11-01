@@ -27,10 +27,14 @@ again before reporting done.
   the regenerated `.search_cache.json`, `semantic_index.json`,
   `semantic_vectors.bin`, `blog/rag_data/rag_index.json`,
   `blog/rag_data/rag_vectors.bin`, `blog/rag_data/rag_index_small.json` and
-  `blog/rag_data/rag_vectors_small.bin`. They refresh the lexical cache through
-  PHP, the browser vectors and the two server-side RAG vectors;
-  `blog/tests/semantic_index_test.py` and `blog/tests/rag_index_test.py` fail in
-  CI when they are stale. The RAG builder is incremental for both indexes: it
+  `blog/rag_data/rag_vectors_small.bin`. The one-command gate
+  `uv run blog/tools/check_all.py` (also `python3 blog/tools/check_all.py` or
+  `./blog/tools/check_all.py`) builds both indexes before verifying them;
+  `--fast` and `--ci` skip the build and only check freshness. They refresh the
+  lexical cache through PHP, the browser vectors and the two server-side RAG
+  vectors; `blog/tests/semantic_index_test.py` and
+  `blog/tests/rag_index_test.py` fail in CI when they are stale. The RAG
+  builder is incremental for both indexes: it
   reuses the int8 vector and scale of every unchanged chunk, skips the build
   entirely when the source hash is fresh, and stores per-page hashes in each
   index. The large index keeps 900-character context chunks and bge-small; the
@@ -1159,6 +1163,15 @@ is enabled in CI; a new lesson without content claims fails immediately.
 Run from the **repository root**. Python validators self-bootstrap under `uv`
 (PEP 723 headers; `UV_EXCLUDE_NEWER` pinned to 8 days back — a brand-new
 dependency in a header won't resolve for a few days).
+
+**One command for the blog.** `python3 blog/tools/check_all.py` (or
+`./blog/tools/check_all.py`, or `uv run blog/tools/check_all.py`) bootstraps
+through `uv` and runs the blog gates fastest-first: static → fact ledger →
+index/Atlas builds → freshness/Atlas verification, stopping at the first
+failure. `--fast` skips the builds; `--ci` is the CI smoke profile and never
+builds indexes. `--only`/`--skip`, `--render`, `--links`, `--typos`,
+`--dry-run` and `--list` cover focused runs. The table below remains the
+authoritative list of individual checks; `check_all.py` orchestrates them.
 
 | Command | Checks | Fails on | CI |
 |---|---|---|---|
