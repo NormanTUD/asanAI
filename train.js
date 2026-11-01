@@ -893,6 +893,12 @@ async function get_fit_data () {
 		delete logs["epoch"];
 		delete logs["size"];
 
+		// onTrainEnd runs immediately after the last epoch and refreshes the
+		// same views with the same final weights. Doing it here as well only
+		// repeats the expensive full-data prediction; nothing shown would
+		// differ.
+		var is_last_epoch = current_epoch >= epochs;
+
 		var epochNr = 1;
 		var loss = logs["loss"];
 		if(training_logs_epoch["loss"]["x"].length) {
@@ -937,7 +943,9 @@ async function get_fit_data () {
 			dbg("Error trying to write plotly_epoch_history plot!");
 		}
 
-		await visualize_train();
+		if (!is_last_epoch) {
+			await visualize_train();
+		}
 
 		last_batch_plot_time = false;
 
@@ -961,7 +969,9 @@ async function get_fit_data () {
 		}
 		$("#network_has_seen_msg").show();
 
-		await confusion_matrix_to_page();
+		if (!is_last_epoch) {
+			await confusion_matrix_to_page();
+		}
 
 		confusion_matrix_and_grid_cache = {};
 
@@ -3461,7 +3471,8 @@ function _get_category_overview_batch_predict (tensors_to_predict, tensor_image_
 	if(tensors_to_predict.length > 0) {
 		var batchTensor = tf.concat(tensors_to_predict, 0);
 		var batchRes = tidy(() => {
-			return model.predict(batchTensor);
+			// 128 keeps the (at most ~50 image) grid batch in one graph run.
+			return model.predict(batchTensor, { batchSize: 128 });
 		});
 		var batchResData = array_sync(batchRes);
 		batchTensor.dispose();

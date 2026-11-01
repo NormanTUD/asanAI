@@ -3901,10 +3901,15 @@ async function compute_confusion_table_data() {
 	var y_tensor = xy_data_global["y"];
 	var original_indices = xy_data_global["original_indices"] || Array.from({length: x_tensor.shape[0]}, (_, i) => i);
 
+	// The default prediction batch size is 32, which splits even a small
+	// dataset into four graph executions. A larger batch keeps the full-data
+	// confusion matrix fresh every epoch while cutting that overhead.
+	const PREDICT_BATCH_SIZE = 128;
+
 	var predictions;
 	try {
 		predictions = tidy(() => {
-			var pd = model.predict(x_tensor);
+			var pd = model.predict(x_tensor, { batchSize: PREDICT_BATCH_SIZE });
 			var res = array_sync(pd);
 			dispose(pd);
 			return res;
