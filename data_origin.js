@@ -173,7 +173,7 @@ async function create_and_compile_model_or_show_error () {
 		}
 
 		if (!has_usable_input_shape()) {
-			dbg("[change_data_origin] Deferred model creation because the input shape is empty");
+			debug_input_shape_context("change_data_origin");
 			return;
 		}
 

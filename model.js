@@ -271,7 +271,7 @@ function find_tensors_with_is_disposed_internal(obj, tensorList = []) {
 async function create_model_or_throw () {
 	try {
 		if (!has_usable_input_shape()) {
-			dbg("[create_model_or_throw] Deferred because the input shape is still empty");
+			debug_input_shape_context("create_model_or_throw");
 			return;
 		}
 
@@ -288,7 +288,7 @@ async function recreate_model_if_needed (new_model_config_hash) {
 	}
 
 	if (!has_usable_input_shape()) {
-		dbg("[recreate_model_if_needed] Deferred because the input shape is still empty");
+		debug_input_shape_context("recreate_model_if_needed");
 		return;
 	}
 
@@ -1165,7 +1165,7 @@ async function _add_layers_to_model(model_structure, fake_model_structure, model
 	var inputShape = get_input_shape();
 
 	if (!Array.isArray(inputShape) || inputShape.length === 0) {
-		dbg("[_add_layers_to_model] Deferred because the input shape is empty");
+		debug_input_shape_context("_add_layers_to_model");
 		return null;
 	}
 
@@ -1320,6 +1320,8 @@ async function _add_layer_to_model (type, data, fake_model_structure, model_stru
 			console.error(`[_add_layers_to_model] layer ${model_structure_idx} (${type}) failed: ${original_error}`);
 			console.error(`[_add_layers_to_model] layer data: ${layer_data_json}`);
 			console.error(`[_add_layers_to_model] input shape: ${input_shape_json}`);
+			console.error(`[_add_layers_to_model] raw input shape: ${$("#inputShape").val()}, dataset: ${$("#dataset").val()}, model dataset: ${$("#model_dataset").val()}, data origin: ${$("#data_origin").val()}`);
+			debug_input_shape_context("add_layer_failed");
 
 			if (e && e.stack) {
 				console.error(e.stack);
@@ -1460,6 +1462,34 @@ function remove_layer_warning(layer_idx, msg) {
 	}
 }
 
+function debug_input_shape_context (label) {
+	var context = {
+		label: label,
+		input_shape_raw: $("#inputShape").val(),
+		input_shape: get_input_shape(),
+		dataset: $("#dataset").val(),
+		model_dataset: $("#model_dataset").val(),
+		data_origin: $("#data_origin").val(),
+		layer_types: $(".layer_type").map(function () { return $(this).val(); }).get(),
+		model_layers: model && model.layers ? model.layers.length : null,
+		has_missing_values: typeof has_missing_values !== "undefined" ? has_missing_values : null,
+		finished_loading: typeof finished_loading !== "undefined" ? finished_loading : null,
+		started_training: typeof started_training !== "undefined" ? started_training : null,
+		is_setting_config: typeof is_setting_config !== "undefined" ? is_setting_config : null,
+		running_change_data_origin: typeof currently_running_change_data_origin !== "undefined" ? currently_running_change_data_origin : null
+	};
+
+	try {
+		dbg("[input-shape-guard] " + label + " " + JSON.stringify(context));
+	} catch (e) { /* diagnostics must never throw */ }
+
+	try {
+		if (window.console && console.debug) console.debug("[input-shape-guard]", context);
+	} catch (e) { /* diagnostics must never throw */ }
+
+	return context;
+}
+
 function has_usable_input_shape () {
 	try {
 		var shape = get_input_shape();
@@ -1487,7 +1517,7 @@ async function create_model (old_model = model, fake_model_structure = undefined
 	}
 
 	if(!has_usable_input_shape()) {
-		dbg("[create_model] Deferred because the input shape is still empty");
+		debug_input_shape_context("create_model");
 		return old_model;
 	}
 
@@ -2418,7 +2448,7 @@ function layer_has_multiple_nodes () {
 async function compile_model_if_not_defined () {
 	if(!model) {
 		if (!has_usable_input_shape()) {
-			dbg("[compile_model_if_not_defined] Deferred because the input shape is still empty");
+			debug_input_shape_context("compile_model_if_not_defined");
 			return;
 		}
 
