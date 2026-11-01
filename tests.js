@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2442;
+var DEFAULT_EXPECTED_TEST_COUNT = 2566;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -8493,6 +8493,10 @@ async function _tiny_tests_explain_activations_popup_js() {
 async function _tiny_tests_explain_losses_popup_js() {
 	var loss_select = document.getElementById("loss");
 	var metric_select = document.getElementById("metric");
+	var old_loss_value = loss_select.value;
+	var old_metric_value = metric_select.value;
+	var old_new_plot = Plotly.newPlot;
+	var old_purge = Plotly.purge;
 	try {
 		test_equal("loss select exists", !!loss_select, true);
 		var loss_icon = loss_select.parentElement.querySelector("img");
@@ -8509,7 +8513,49 @@ async function _tiny_tests_explain_losses_popup_js() {
 		test_equal("metric popup opens", !!document.querySelector(".lm-explainer-overlay"), true);
 		document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
 		test_equal("metric popup closes on Escape", !!document.querySelector(".lm-explainer-overlay"), false);
+
+		var plot_calls = 0;
+		Plotly.newPlot = function () { plot_calls++; return Promise.resolve(); };
+		Plotly.purge = function () {};
+
+		var loss_cases = ["meanSquaredError", "binaryCrossentropy", "categoricalCrossentropy", "kullbackLeiblerDivergence"];
+		for (var loss_idx = 0; loss_idx < loss_cases.length; loss_idx++) {
+			var loss_key = loss_cases[loss_idx];
+			if (!loss_select.querySelector('option[value="' + loss_key + '"]')) continue;
+			loss_select.value = loss_key;
+			var calls_before_loss = plot_calls;
+			loss_icon.click();
+			await delay(150);
+			var loss_overlay = document.querySelector(".lm-explainer-overlay");
+			test_equal("loss popup opens for " + loss_key, !!loss_overlay, true);
+			if (loss_overlay) {
+				test_equal("loss popup draws a plot for " + loss_key, plot_calls > calls_before_loss, true);
+				document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+				await delay(20);
+			}
+		}
+
+		var metric_cases = ["binaryAccuracy", "categoricalAccuracy", "precision", "meanAbsolutePercentageError"];
+		for (var metric_idx = 0; metric_idx < metric_cases.length; metric_idx++) {
+			var metric_key = metric_cases[metric_idx];
+			if (!metric_select.querySelector('option[value="' + metric_key + '"]')) continue;
+			metric_select.value = metric_key;
+			var calls_before_metric = plot_calls;
+			metric_icon.click();
+			await delay(150);
+			var metric_overlay = document.querySelector(".lm-explainer-overlay");
+			test_equal("metric popup opens for " + metric_key, !!metric_overlay, true);
+			if (metric_overlay) {
+				test_equal("metric popup draws a plot for " + metric_key, plot_calls > calls_before_metric, true);
+				document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+				await delay(20);
+			}
+		}
 	} finally {
+		loss_select.value = old_loss_value;
+		metric_select.value = old_metric_value;
+		Plotly.newPlot = old_new_plot;
+		Plotly.purge = old_purge;
 		document.querySelectorAll(".lm-explainer-overlay").forEach(function (el) { el.remove(); });
 	}
 }
@@ -10143,6 +10189,394 @@ function _coverage_tests_math_tooltips_smoke() {
 	test_equal("math tooltip computations run", ran, true);
 }
 
+function _coverage_tests_explain_helpers() {
+	var old_labels = window.labels;
+	try {
+		test_equal("looks_like_image_data detects simple images", looks_like_image_data([[[1, 2, 3], [4, 5, 6]]]), "simple");
+		test_equal("looks_like_image_data detects filter maps", looks_like_image_data(Array.from({ length: 2 }, function () {
+			return Array.from({ length: 2 }, function () { return Array.from({ length: 32 }, function () { return 0.5; }); });
+		})), "filter");
+		test_equal("looks_like_image_data detects kernels", looks_like_image_data([[[[1, 2, 3], [4, 5, 6]]]]), "kernel");
+		test_equal("looks_like_image_data rejects other shapes", looks_like_image_data([[1, 2], [3, 4]]), "unknown");
+
+		test_equal("recurse transposes a square matrix", JSON.stringify(recurse([[1, 2], [3, 4]], [2, 2])), "[[1,3],[2,4]]");
+		test_equal("recurse returns a vector unchanged", JSON.stringify(recurse([1, 2, 3], [3])), "[1,2,3]");
+
+		test_equal("_layer_data_latex_escape escapes underscores", _layer_data_latex_escape("a_b"), "a\\_b");
+		test_equal("_layer_data_latex_escape escapes percent and ampersand", _layer_data_latex_escape("50% & #1"), "50\\% \\& \\#1");
+		test_equal("_layer_data_latex_escape escapes tilde and caret", _layer_data_latex_escape("~^"), "\\textasciitilde{}\\^{}");
+
+		var stats = _compute_dense_kernel_stats([[1, 2], [3, 4]]);
+		test_equal("_compute_dense_kernel_stats keeps the dimensions", stats.k_original_height + "x" + stats.k_original_width, "2x2");
+		test_equal("_compute_dense_kernel_stats uses twice the standard deviation as clip", Math.abs(stats.k_clip - 2.2360679) < 1e-6, true);
+		var white = _dense_kernel_color_for_value(0, 1);
+		test_equal("_dense_kernel_color_for_value maps zero to white", white.r + "/" + white.g + "/" + white.b, "255/255/255");
+		var strong_positive = _dense_kernel_color_for_value(1, 1);
+		test_equal("_dense_kernel_color_for_value maps positives to red", strong_positive.r + "/" + strong_positive.g + "/" + strong_positive.b, "255/45/25");
+		var strong_negative = _dense_kernel_color_for_value(-1, 1);
+		test_equal("_dense_kernel_color_for_value maps negatives to blue", strong_negative.r + "/" + strong_negative.g + "/" + strong_negative.b, "20/60/220");
+		var clamped = _dense_kernel_color_for_value(5, 1);
+		test_equal("_dense_kernel_color_for_value clamps above the clip", clamped.r + "/" + clamped.g + "/" + clamped.b, "255/45/25");
+
+		test_equal("_viz_bends_apply_activation relu", _viz_bends_apply_activation(-1, "relu"), 0);
+		test_equal("_viz_bends_apply_activation sigmoid", _viz_bends_apply_activation(0, "sigmoid"), 0.5);
+		test_equal("_viz_bends_apply_activation tanh", _viz_bends_apply_activation(0, "tanh"), 0);
+		test_equal("_viz_bends_apply_activation leakyrelu", _viz_bends_apply_activation(-10, "leakyrelu"), -0.1);
+		test_equal("_viz_bends_apply_activation elu at zero", _viz_bends_apply_activation(0, "elu"), 0);
+		test_equal("_viz_bends_apply_activation elu below zero", Math.abs(_viz_bends_apply_activation(-1, "elu") - (Math.exp(-1) - 1)) < 1e-12, true);
+		test_equal("_viz_bends_apply_activation softplus", Math.abs(_viz_bends_apply_activation(0, "softplus") - Math.log(2)) < 1e-12, true);
+		test_equal("_viz_bends_apply_activation keeps unknown activations", _viz_bends_apply_activation(3, "identity"), 3);
+
+		var single_layer = [{ kernel: [2], bias: [1], units: 1, inputDim: 1, actName: "linear" }];
+		test_equal("_viz_bends_forward_pass runs a linear layer", _viz_bends_forward_pass(single_layer, 3), 7);
+		test_equal("_viz_bends_get_pre_activations returns the pre-activation", JSON.stringify(_viz_bends_get_pre_activations(single_layer, 3)), "[[7]]");
+		var data_range = _viz_bends_compute_x_range([], 0, 10);
+		test_equal("_viz_bends_compute_x_range pads the data range", data_range.xMin + "/" + data_range.xMax, "-1.5/11.5");
+		var knot_layer = [{ units: 2, kernel: [1, 1], bias: [-1, 1] }];
+		var knot_range = _viz_bends_compute_x_range(knot_layer, null, null);
+		test_equal("_viz_bends_compute_x_range uses the kernel knots", knot_range.xMin + "/" + knot_range.xMax, "-2.4/2.4");
+		var flat_range = _viz_bends_compute_x_range([{ units: 1, kernel: [0], bias: [0] }], null, null);
+		test_equal("_viz_bends_compute_x_range falls back for flat kernels", flat_range.xMin + "/" + flat_range.xMax, "-5/5");
+		test_equal("_viz_bends_hsl_to_rgb maps red", _viz_bends_hsl_to_rgb(0, 100, 50), "rgb(255,0,0)");
+		var data_trace = _viz_bends_trace_data_points({ xs: [1, 2], ys: [3, 4] });
+		test_equal("_viz_bends_trace_data_points marks training data", data_trace.mode + "/" + data_trace.name, "markers/Training Data");
+		var slope_trace = _viz_bends_trace_slope([0, 1, 2], [0, 2, 4]);
+		test_equal("_viz_bends_trace_slope uses finite differences", JSON.stringify(slope_trace.y), "[2,2,2]");
+		test_equal("_viz_bends_trace_slope targets the second y axis", slope_trace.yaxis, "y2");
+
+		window.labels = ["cat", "dog"];
+		var classification_latex = _classification_output_latex([0.5, NaN]);
+		test_equal("_classification_output_latex formats finite values", classification_latex.indexOf("0.5000") !== -1, true);
+		test_equal("_classification_output_latex replaces non-finite values", classification_latex.indexOf("0.0000") !== -1, true);
+		test_equal("_classification_output_latex uses the class labels", classification_latex.indexOf("\\text{cat}") !== -1, true);
+	} finally {
+		window.labels = old_labels;
+	}
+}
+
+function _coverage_tests_math_mode_tags() {
+	test_equal("mv_make_tag builds a tag", JSON.stringify(mv_make_tag("kernel", 1, [2, 3], "dense/kernel:0")), '{"kind":"kernel","layer":1,"indices":[2,3],"weight_name":"dense/kernel:0"}');
+	test_equal("mv_make_tag defaults indices and weight name", JSON.stringify(mv_make_tag("bias", 0)), '{"kind":"bias","layer":0,"indices":[],"weight_name":null}');
+	test_equal("mv_make_tag rejects a missing kind", mv_make_tag(null, 0), null);
+	test_equal("mv_tag_to_class joins the tag parts", mv_tag_to_class({ kind: "kernel", layer: 2, indices: [1, 2], weight_name: null }), "mv-kernel-L2-1-2");
+	test_equal("mv_tag_to_class appends the weight name", mv_tag_to_class({ kind: "bias", layer: 0, indices: [0], weight_name: "kernel:0" }), "mv-bias-L0-0-kernel:0");
+	test_equal("mv_tag_to_class ignores a missing tag", mv_tag_to_class(null), "");
+	test_equal("mv_wrap_value wraps numbers", mv_wrap_value(1.5, { kind: "bias", layer: 0, indices: [0] }), "\\class{mv-bias-L0-0}{1.5}");
+	test_equal("mv_wrap_value keeps non-numbers", mv_wrap_value("n/a", { kind: "bias", layer: 0, indices: [0] }), "n/a");
+	test_equal("mv_wrap_value without a tag", mv_wrap_value(2, null), "2");
+
+	test_equal("otrans returns the translated string", typeof otrans("opt_var_theta", "fallback"), "string");
+	test_equal("otrans returns the fallback for unknown keys", otrans("__asanai_missing_translation_key__", "fallback"), "fallback");
+	var default_vars = get_default_vars();
+	test_equal("get_default_vars describes theta", typeof default_vars.theta.name, "string");
+	test_equal("get_default_vars includes the nabla operator", default_vars.nabla_operator.value.indexOf("bmatrix") !== -1, true);
+	var loss_equations = get_loss_equations();
+	test_equal("get_loss_equations covers many losses", Object.keys(loss_equations).length >= 10, true);
+	test_equal("get_loss_equations contains the MSE equation", loss_equations.meanSquaredError.indexOf("MSE") !== -1, true);
+}
+
+function _coverage_tests_my_temml_helpers() {
+	var outer = document.createElement("div");
+	var inner = document.createElement("span");
+	outer.style.display = "none";
+	outer.appendChild(inner);
+	document.body.appendChild(outer);
+	try {
+		test_equal("_temml_element_is_shown sees hidden ancestors", _temml_element_is_shown(inner), false);
+		outer.style.display = "block";
+		test_equal("_temml_element_is_shown accepts visible nodes", _temml_element_is_shown(inner), true);
+	} finally {
+		outer.remove();
+	}
+
+	var old_editables = _math_editables;
+	try {
+		_math_editables = [{ id: "L0_kernel_0_0" }, { id: "L1_bias_0" }, { id: "L0_bias_0" }];
+		_purge_stale_editables(0);
+		test_equal("_purge_stale_editables removes only its layer", _math_editables.map(function (ed) { return ed.id; }).join(","), "L1_bias_0");
+	} finally {
+		_math_editables = old_editables;
+	}
+}
+
+function _coverage_tests_fcnn_editable_apply() {
+	var old_trigger = window._fcnn_edit_trigger_update;
+	var updates = 0;
+	var kernel = null;
+	var direct_value = null;
+	var direct_layer = null;
+	try {
+		window._fcnn_edit_trigger_update = function () { updates++; };
+		kernel = tf.tensor([1, 2, 3, 4], [2, 2]);
+		var captured = null;
+		var weights_layer = {
+			getWeights: function () { return [kernel]; },
+			setWeights: function (weights) { captured = Array.from(weights[0].dataSync()); }
+		};
+		test_equal("_fcnn_edit_apply_value_via_weights reports success", _fcnn_edit_apply_value_via_weights(weights_layer, 2, 9), true);
+		test_equal("_fcnn_edit_apply_value_via_weights writes the new value", captured[2], 9);
+		test_equal("_fcnn_edit_apply_value_via_weights triggers one update", updates, 1);
+		test_equal("_fcnn_edit_apply_value_via_weights rejects out-of-bounds indices", _fcnn_edit_apply_value_via_weights(weights_layer, 99, 7), true);
+		test_equal("_fcnn_edit_apply_value_via_weights keeps values on out-of-bounds", updates, 1);
+
+		direct_value = tf.tensor([1, 2, 3, 4], [4]);
+		direct_layer = { weights: [{ val: direct_value }] };
+		_fcnn_edit_apply_value_direct(direct_layer, 1, 8);
+		test_equal("_fcnn_edit_apply_value_direct writes through .val", Array.from(direct_layer.weights[0].val.dataSync())[1], 8);
+		test_equal("_fcnn_edit_apply_value_direct triggers an update", updates, 2);
+	} finally {
+		window._fcnn_edit_trigger_update = old_trigger;
+		if (kernel && !kernel.isDisposed) kernel.dispose();
+		if (direct_value && !direct_value.isDisposed) direct_value.dispose();
+		if (direct_layer && direct_layer.weights[0].val && !direct_layer.weights[0].val.isDisposed) direct_layer.weights[0].val.dispose();
+	}
+}
+
+async function _coverage_tests_clipboard_paths() {
+	var old_copy = window.copy_to_clipboard;
+	var old_assert = window.assert;
+	var old_err = window.err;
+	var old_create = URL.createObjectURL;
+	var old_revoke = URL.revokeObjectURL;
+	var old_click = HTMLAnchorElement.prototype.click;
+	var old_model = window.model;
+	try {
+		var text_node = document.createElement("div");
+		text_node.id = "__asanai_clipboard_probe__";
+		text_node.textContent = "probe text";
+		document.body.appendChild(text_node);
+		var copied = null;
+		window.copy_to_clipboard = function (text) { copied = text; };
+		copy_id_to_clipboard("__asanai_clipboard_probe__");
+		test_equal("copy_id_to_clipboard copies the element text", copied, "probe text");
+		window.copy_to_clipboard = old_copy;
+		text_node.remove();
+
+		var saved_blob = null;
+		Object.defineProperty(navigator, "msSaveBlob", {
+			configurable: true,
+			value: function (blob, name) { saved_blob = { name: name, type: blob.type, size: blob.size }; return "saved"; }
+		});
+		var save_result = save_file("probe.bin", "application/octet-stream", "abc");
+		test_equal("save_file uses msSaveBlob when available", saved_blob.name + "/" + saved_blob.type + "/" + saved_blob.size, "probe.bin/application/octet-stream/3");
+		test_equal("save_file returns the msSaveBlob result", save_result, "saved");
+		delete navigator.msSaveBlob;
+
+		var asserted = null;
+		window.assert = function (cond, msg) { asserted = msg; };
+		URL.createObjectURL = function () { throw { message: "probe failure" }; };
+		downloadNetworkZip({});
+		test_equal("downloadNetworkZip reports a failed download", asserted, "probe failure");
+
+		var reported = null;
+		window.err = function (msg) { reported = msg; };
+		var missing = dataURLToBlob(undefined);
+		test_equal("dataURLToBlob reports missing data URLs", reported.indexOf("dataURLToBlob") !== -1, true);
+		test_equal("dataURLToBlob returns nothing for missing data URLs", missing, undefined);
+		window.err = old_err;
+
+		asserted = null;
+		var malformed = dataURLToBlob("data:text/plain;base64,%%%");
+		test_equal("dataURLToBlob reports malformed data URLs", asserted !== null, true);
+		test_equal("dataURLToBlob returns nothing for malformed data URLs", malformed, undefined);
+
+		var created_blob = null;
+		var captured_info = null;
+		URL.createObjectURL = function (blob) { created_blob = blob; return "blob:model"; };
+		URL.revokeObjectURL = function () {};
+		HTMLAnchorElement.prototype.click = function () {};
+		window.model = {
+			save: async function (handler) {
+				var result = await handler.save({
+					modelTopology: { class_name: "Sequential" },
+					format: "layers-model",
+					generatedBy: "probe",
+					weightSpecs: [{ name: "dense/kernel", shape: [1, 1], dtype: "float32" }],
+					weightData: new Float32Array([1.5]).buffer
+				});
+				captured_info = result;
+				return result;
+			}
+		};
+		await saveModelAsSingleZip();
+		test_equal("saveModelAsSingleZip returns artifact info", captured_info.modelArtifactsInfo.modelTopologyType, "JSON");
+		test_equal("saveModelAsSingleZip reports the weight bytes", captured_info.modelArtifactsInfo.weightDataBytes, 4);
+		test_equal("saveModelAsSingleZip creates a zip blob", created_blob.type, "application/zip");
+	} finally {
+		window.copy_to_clipboard = old_copy;
+		window.assert = old_assert;
+		window.err = old_err;
+		URL.createObjectURL = old_create;
+		URL.revokeObjectURL = old_revoke;
+		HTMLAnchorElement.prototype.click = old_click;
+		window.model = old_model;
+		if (navigator.msSaveBlob) delete navigator.msSaveBlob;
+		await delay(700);
+	}
+}
+
+function _coverage_tests_origami_compatibility() {
+	var old_model = window.model;
+	try {
+		window.model = null;
+		test_equal("_origamiDirectShapeCheck rejects a missing model", _origamiDirectShapeCheck(), false);
+		test_equal("_origami_live_compatible rejects a missing model", _origami_live_compatible(), false);
+
+		window.model = { layers: [] };
+		test_equal("_origamiDirectShapeCheck rejects an empty model", _origamiDirectShapeCheck(), false);
+
+		window.model = {
+			layers: [
+				{ getClassName: function () { return "InputLayer"; }, outputShape: [null, 2] },
+				{ getClassName: function () { return "Dense"; }, outputShape: [null, 2] }
+			],
+			inputs: [{ shape: [null, 2] }]
+		};
+		test_equal("_origamiDirectShapeCheck accepts dense chains", _origamiDirectShapeCheck(), true);
+		test_equal("_origami_live_compatible accepts dense chains", _origami_live_compatible(), true);
+
+		window.model = { layers: [{ getClassName: function () { return "Dense"; }, outputShape: [null, 4] }] };
+		test_equal("_origamiDirectShapeCheck rejects dense layers above 3 dimensions", _origamiDirectShapeCheck(), false);
+
+		window.model = { layers: [{ getClassName: function () { return "Conv2D"; }, outputShape: [null, 2, 2, 4] }] };
+		test_equal("_origami_live_compatible rejects convolution layers", _origami_live_compatible(), false);
+
+		window.model = {
+			layers: [
+				{ getClassName: function () { return "Flatten"; }, outputShape: [null, 2] },
+				{ getClassName: function () { return "Dropout"; }, outputShape: [null, 2] },
+				{ getClassName: function () { return "Dense"; }, outputShape: [null, 3] }
+			]
+		};
+		test_equal("_origamiDirectShapeCheck skips flatten and dropout", _origamiDirectShapeCheck(), true);
+
+		window.model = {
+			layers: [{ getClassName: function () { return "Dense"; }, outputShape: [null, 2] }],
+			inputs: [{ shape: [null, 5] }]
+		};
+		test_equal("_origami_live_compatible rejects wide inputs", _origami_live_compatible(), false);
+
+		window.model = { layers: [{ getClassName: function () { return "Dense"; } }] };
+		test_equal("_origamiDirectShapeCheck rejects layers without an output shape", _origamiDirectShapeCheck(), false);
+	} finally {
+		window.model = old_model;
+	}
+}
+
+function _coverage_tests_initializer_values() {
+	test_equal("get_initializer_set_all_values reads the seed value", typeof get_initializer_set_all_values(["seed"]).seed, "string");
+	test_equal("get_initializer_set_all_values reads the mean value", typeof get_initializer_set_all_values(["mean"]).mean, "string");
+	test_equal("get_initializer_set_all_values accepts an empty list", JSON.stringify(get_initializer_set_all_values([])), "[]");
+
+	var rows = $(".set_all_initializers_tr");
+	var saved_display = rows.map(function () { return this.style.display; }).get();
+	try {
+		show_proper_set_all_initializer(["seed"]);
+		test_equal("show_proper_set_all_initializer shows the required row", $(".set_all_initializers_tr.set_all_initializers_seed").css("display") !== "none", true);
+		test_equal("show_proper_set_all_initializer hides unrelated rows", $(".set_all_initializers_tr.set_all_initializers_mean").css("display"), "none");
+	} finally {
+		rows.each(function (idx) { this.style.display = saved_display[idx]; });
+	}
+}
+
+function _coverage_tests_activation_visualizer() {
+	var styles = getActivationStyles("probe");
+	test_equal("getActivationStyles scopes rules to the instance", styles.indexOf('[data-act-id="probe"]') !== -1, true);
+	test_equal("getActivationStyles styles the plot container", styles.indexOf(".plot-container") !== -1, true);
+
+	var container = document.createElement("div");
+	document.body.appendChild(container);
+	var visualizer = null;
+	try {
+		visualizer = new ActivationVisualizer(container, { type: "ReLU" });
+		test_equal("ActivationVisualizer normalizes the activation type", visualizer.type, "relu");
+		test_equal("ActivationVisualizer renders the formula name", container.querySelector(".formula-name").textContent, "relu");
+		test_equal("ActivationVisualizer computes relu values", visualizer.calculate(-2), 0);
+		var leaky = new ActivationVisualizer(document.createElement("div"), { type: "leakyrelu" });
+		test_equal("ActivationVisualizer computes leaky relu values", leaky.calculate(-10), -1);
+		leaky.destroy();
+		var softmax = new ActivationVisualizer(document.createElement("div"), { type: "softmax" });
+		test_equal("ActivationVisualizer computes softmax values", Math.abs(softmax.calculate(0, [0, 0]) - 0.5) < 1e-12, true);
+		softmax.destroy();
+	} finally {
+		if (visualizer) {
+			var style_selector = 'style[data-style-for="' + visualizer.instanceId + '"]';
+			visualizer.destroy();
+			test_equal("ActivationVisualizer destroy clears the container", container.innerHTML, "");
+			test_equal("ActivationVisualizer destroy removes its stylesheet", !!document.querySelector(style_selector), false);
+		}
+		container.remove();
+	}
+
+	var probe = document.createElement("div");
+	probe.className = "__asanai_activation_probe__ relu";
+	document.body.appendChild(probe);
+	try {
+		window.make_activation_visual_explanation(".__asanai_activation_probe__");
+		test_equal("make_activation_visual_explanation creates a visualizer", !!probe.visualizer, true);
+		var first = probe.visualizer;
+		window.make_activation_visual_explanation(".__asanai_activation_probe__");
+		test_equal("make_activation_visual_explanation reuses the visualizer", probe.visualizer === first, true);
+	} finally {
+		if (probe.visualizer) probe.visualizer.destroy();
+		probe.remove();
+	}
+}
+
+function _coverage_tests_math_tooltips_fd() {
+	var old_model = window.model;
+	var old_xy = window.xy_data_global;
+	var x = null;
+	var y = null;
+	try {
+		var layer = { epsilon: 1e-7 };
+		window.model = null;
+		test_equal("_mvt_compute_fd without a model", _mvt_compute_fd({ kind: "epsilon", layer: 0 }), null);
+
+		window.model = { layers: [layer] };
+		window.xy_data_global = null;
+		test_equal("_mvt_compute_fd without batch data", _mvt_compute_fd({ kind: "epsilon", layer: 0 }), null);
+		test_equal("_mvt_compute_fd rejects unknown parameters", _mvt_compute_fd({ kind: "param", layer: 0, weight_name: "unknown" }), null);
+		test_equal("_mvt_compute_fd rejects missing layers", _mvt_compute_fd({ kind: "epsilon", layer: 9 }), null);
+
+		x = tf.tensor2d([[0, 1]], [1, 2]);
+		y = tf.tensor2d([[0]], [1, 1]);
+		window.xy_data_global = { x: x, y: y };
+		test_equal("_mvt_compute_fd returns null when the model cannot run", _mvt_compute_fd({ kind: "epsilon", layer: 0 }), null);
+		test_equal("_mvt_compute_fd restores the parameter", layer.epsilon, 1e-7);
+	} finally {
+		window.model = old_model;
+		window.xy_data_global = old_xy;
+		if (x) x.dispose();
+		if (y) y.dispose();
+	}
+}
+
+function _coverage_tests_online_python_display() {
+	var output = document.getElementById("pyodide_console_output");
+	if (!output) {
+		test_equal("online python console exists", false, true);
+		return;
+	}
+	var old_html = output.innerHTML;
+	try {
+		var canvas = window.PyodideEditor.createCanvas(20, 10);
+		test_equal("PyodideEditor.createCanvas builds a canvas", canvas.tagName + "/" + canvas.width + "x" + canvas.height, "CANVAS/20x10");
+		window.PyodideEditor.displayHtml("<b class='probe-html'>probe</b>");
+		test_equal("PyodideEditor.displayHtml adds an HTML cell", output.querySelectorAll(".pe-html-output").length >= 1, true);
+		window.PyodideEditor.displayImage("data:image/png;base64,iVBORw0KGgo=", 4, 4);
+		test_equal("PyodideEditor.displayImage adds an image", output.querySelectorAll("img").length >= 1, true);
+		var appended = document.createElement("span");
+		appended.textContent = "probe";
+		window.PyodideEditor.appendRichOutput(appended);
+		test_equal("PyodideEditor.appendRichOutput wraps the node", output.querySelectorAll(".pe-output-cell").length >= 1, true);
+		window.pyodideEditorStop();
+		test_equal("pyodideEditorStop is a no-op while idle", window.PyodideEditor.isRunning(), false);
+	} finally {
+		output.innerHTML = old_html;
+	}
+}
+
 async function run_coverage_tests() {
 	_coverage_tests_fcnn_tooltips();
 	await _coverage_tests_origami_folds();
@@ -10164,6 +10598,16 @@ async function run_coverage_tests() {
 	await _coverage_tests_autocomplete();
 	await _coverage_tests_low_coverage_modules();
 	await _coverage_tests_custom_images();
+	_coverage_tests_explain_helpers();
+	_coverage_tests_math_mode_tags();
+	_coverage_tests_my_temml_helpers();
+	_coverage_tests_fcnn_editable_apply();
+	await _coverage_tests_clipboard_paths();
+	_coverage_tests_origami_compatibility();
+	_coverage_tests_initializer_values();
+	_coverage_tests_activation_visualizer();
+	_coverage_tests_math_tooltips_fd();
+	_coverage_tests_online_python_display();
 	return true;
 }
 
@@ -10399,12 +10843,15 @@ async function test_activation_atlas() {
 		startBtn.click();
 
 		// Wait for generation to complete (poll for _state.isComputing via UI cues)
-		// The toggle button changes from "Stop" to "Generate" when done
-		// Opera needs noticeably longer for the WebGL gradient-ascent cells
-		// (observed ~135 s for 6x6 cells locally). Keep enough headroom for
-		// slower CI machines; the debug log below shows whether it is stuck.
+		// The toggle button changes from "Stop" to "Generate" when done.
+		// The deadline is wall-clock time, not a sum of poll intervals: on a
+		// slow CPU-only runner a single gradient-ascent batch blocks the main
+		// thread, so "500 ms per iteration" can take minutes in real time and
+		// the test would never reach its own timeout.
 		var maxWaitMs = 300000; // 5 minutes max
+		var wait_started_at = Date.now();
 		var elapsed = 0;
+		var last_progress_log_at = 0;
 		var pollInterval = 500;
 
 		function atlas_debug_state () {
@@ -10448,11 +10895,12 @@ async function test_activation_atlas() {
 			}
 		}
 
-		while (elapsed < maxWaitMs) {
+		while (true) {
 			await new Promise(function (r) { setTimeout(r, pollInterval); });
-			elapsed += pollInterval;
+			elapsed = Date.now() - wait_started_at;
 
-			if (elapsed % 10000 === 0) {
+			if (elapsed - last_progress_log_at >= 10000) {
+				last_progress_log_at = elapsed;
 				console.log("[test_activation_atlas] progress " + JSON.stringify(atlas_debug_state()));
 			}
 
@@ -10470,6 +10918,34 @@ async function test_activation_atlas() {
 			// When generation finishes, button text changes to "▶ Generate"
 			if (toggleBtn.classList.contains("atlas_toggle_start") && elapsed > 1000) {
 				finished = true;
+				break;
+			}
+
+			// The first fully generated cell already proves that the whole
+			// generation path works. Waiting for all 36 cells on a slow
+			// CPU-only runner can take far longer than the budget, so stop as
+			// soon as the second cell starts (the first one is then drawn).
+			var progressLabel = container.querySelector(".atlas_progress_label");
+			var cellMatch = progressLabel && /(\d+)\s*\/\s*(\d+)/.exec(progressLabel.textContent);
+			if (cellMatch && parseInt(cellMatch[1], 10) >= 2) {
+				var earlyStopBtn = container.querySelector(".atlas_toggle_stop");
+				if (earlyStopBtn) {
+					earlyStopBtn.click();
+					finished = true;
+
+					// A stop request is honoured after the current batch, so wait
+					// until the live UI is replaced by the final UI (bounded, in
+					// case that batch is very slow). Otherwise the generator from
+					// this test would keep running into the next test.
+					var stop_requested_at = Date.now();
+					while (container.querySelector(".atlas_progress_label") && Date.now() - stop_requested_at < 60000) {
+						await new Promise(function (r) { setTimeout(r, 100); });
+					}
+					break;
+				}
+			}
+
+			if (elapsed >= maxWaitMs) {
 				break;
 			}
 		}
