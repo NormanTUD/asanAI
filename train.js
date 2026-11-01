@@ -772,6 +772,13 @@ async function get_fit_data () {
 		}; // important for linter
 
 		set_tiny_graph_training_info(tiny_graph_data);
+		reset_training_live_metrics({
+			total_epochs: epochs,
+			started_at: this_training_start_time,
+			train_count: train_val_split_info ? train_val_split_info.train_count : null,
+			val_count: train_val_split_info ? train_val_split_info.val_count : null,
+			total_params: (model && typeof model.countParams === "function") ? model.countParams() : null
+		});
 
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 
@@ -824,6 +831,13 @@ async function get_fit_data () {
 
 		var percentage = parse_int((current_epoch / max_number_epochs) * 100);
 		$("#training_progressbar>div").css("width", percentage + "%");
+		update_training_live_metrics({
+			epoch: current_epoch,
+			total_epochs: max_number_epochs,
+			progress: percentage,
+			eta_ms: seconds_left * 1000,
+			elapsed_ms: current_time - this_training_start_time
+		});
 		confusion_matrix_and_grid_cache = {};
 
 		//visualizeModelOrganism(model, "neural_organism");
@@ -903,6 +917,38 @@ async function get_fit_data () {
 		var loss = logs["loss"];
 		if(training_logs_epoch["loss"]["x"].length) {
 			epochNr = Math.max(...training_logs_epoch["loss"]["x"]) + 1;
+		}
+
+		var live_metric_key = null;
+		Object.keys(logs).forEach(function(key) {
+			if(key === "loss" || key === "val_loss" || key === "epoch" || key === "size" || key === "batch") return;
+			if(key.indexOf("val_") === 0) return;
+			if(!live_metric_key) live_metric_key = key;
+		});
+		if(live_metric_key && _training_metric_is_loss_like(live_metric_key)) {
+			live_metric_key = null;
+		}
+
+		var live_val_metric_key = live_metric_key ? "val_" + live_metric_key : null;
+		var live_val_loss = Object.keys(logs).includes("val_loss") ? logs["val_loss"] : null;
+		var live_metric_value = live_metric_key ? logs[live_metric_key] : null;
+		var live_val_metric_value = (live_val_metric_key && Object.keys(logs).includes(live_val_metric_key)) ? logs[live_val_metric_key] : null;
+
+		update_training_live_metrics({
+			epoch: epochNr,
+			total_epochs: epochs,
+			loss: loss,
+			val_loss: live_val_loss,
+			metric_key: live_metric_key,
+			metric_value: live_metric_value,
+			val_metric_value: live_val_metric_value,
+			elapsed_ms: Date.now() - this_training_start_time,
+			progress: epochs ? Math.round((epochNr / epochs) * 100) : undefined
+		});
+		if(live_metric_key) {
+			_update_training_metric_plot(epochNr, live_metric_key, live_metric_value, live_val_metric_value);
+		} else {
+			_clear_plotly_metric_history();
 		}
 		training_logs_epoch["loss"]["x"].push(epochNr);
 		training_logs_epoch["loss"]["y"].push(loss);
@@ -1021,6 +1067,15 @@ async function get_fit_data () {
 		await confusion_matrix_to_page();
 
 		confusion_matrix_and_grid_cache = {};
+
+		update_training_live_metrics({
+			epoch: current_epoch,
+			total_epochs: epochs,
+			progress: epochs ? Math.round((current_epoch / epochs) * 100) : 100,
+			eta_ms: 0,
+			elapsed_ms: Date.now() - this_training_start_time,
+			done: true
+		});
 
 		_math_interactive_mode = _math_interactive_mode_before;
 
@@ -1302,9 +1357,358 @@ function model_shape_to_string (model_shape) {
 	}
 }
 
+var _training_live_state = {
+	total_epochs: 0,
+	started_at: null,
+	train_count: null,
+	val_count: null,
+	total_params: null,
+	metric_key: null,
+	metric_label: "",
+	last_loss: null,
+	last_val_loss: null,
+	best_loss: null,
+	best_loss_epoch: null,
+	best_uses_val: false
+};
+
+var _training_live_metric_history = {
+	key: null,
+	label: "",
+	epochs: [],
+	train: [],
+	val: [],
+	initialized: false
+};
+
+function _training_live_label (key, fallback) {
+	try {
+		return (language && language[lang] && language[lang][key]) || fallback || key;
+	} catch (e) {
+		return fallback || key;
+	}
+}
+
+function _format_live_number (value, digits=4) {
+	if(value === null || value === undefined || !isFinite(Number(value))) {
+		return "—";
+	}
+
+	var number = Number(value);
+	var abs = Math.abs(number);
+
+	if(abs !== 0 && (abs < 0.001 || abs >= 1000000)) {
+		return number.toExponential(2);
+	}
+
+	return number.toFixed(digits);
+}
+
+function _format_live_metric (key, value) {
+	if(value === null || value === undefined || !isFinite(Number(value))) {
+		return "—";
+	}
+
+	if(key && /acc|accuracy/i.test(key)) {
+		return (Number(value) * 100).toFixed(1) + "%";
+	}
+
+	return _format_live_number(value, 4);
+}
+
+function _format_live_duration (ms) {
+	if(ms === null || ms === undefined || !isFinite(Number(ms))) {
+		return "—";
+	}
+
+	if(typeof format_duration === "function") {
+		return format_duration(ms);
+	}
+
+	return Math.round(Number(ms) / 1000) + " s";
+}
+
+function _training_metric_is_loss_like (key) {
+	if(!key) {
+		return true;
+	}
+
+	try {
+		if(typeof get_loss === "function" && key === get_loss()) {
+			return true;
+		}
+	} catch (e) { /* ignore */ }
+
+	return false;
+}
+
+function _training_metric_display_name (key) {
+	if(!key) {
+		return _training_live_label("training_live_metric", "Metric");
+	}
+
+	var short = key.replace(/^val_/, "");
+
+	if(/acc|accuracy/i.test(short)) {
+		return _training_live_label("accuracy", "Accuracy");
+	}
+
+	return _training_live_label(short, short);
+}
+
+function _clear_plotly_metric_history () {
+	$("#plotly_metric_history_div").hide();
+	$("#plotly_metric_history").html("");
+
+	_training_live_metric_history = {
+		key: null,
+		label: "",
+		epochs: [],
+		train: [],
+		val: [],
+		initialized: false
+	};
+}
+
+function _update_training_metric_plot (epoch, metric_key, metric_value, val_metric_value) {
+	if(!metric_key || metric_value === null || metric_value === undefined) {
+		return;
+	}
+
+	var history = _training_live_metric_history;
+
+	if(history.key !== metric_key) {
+		history.key = metric_key;
+		history.label = _training_metric_display_name(metric_key);
+		history.epochs = [];
+		history.train = [];
+		history.val = [];
+		history.initialized = false;
+		$("#plotly_metric_history").html("");
+	}
+
+	history.epochs.push(epoch);
+	history.train.push(metric_value);
+	history.val.push((val_metric_value === null || val_metric_value === undefined) ? null : val_metric_value);
+
+	var traces = [{
+		x: history.epochs,
+		y: history.train,
+		type: get_scatter_type(),
+		mode: get_plotly_type(),
+		name: history.label
+	}];
+
+	if(history.val.some(function(value) { return value !== null; })) {
+		traces.push({
+			x: history.epochs,
+			y: history.val,
+			type: get_scatter_type(),
+			mode: get_plotly_type(),
+			name: _training_live_label("training_live_val_short", "val") + " " + history.label
+		});
+	}
+
+	var layout = get_plotly_layout(language[lang]["epochs"], history.label);
+
+	try {
+		$("#plotly_metric_history_div").show();
+
+		if(!history.initialized) {
+			Plotly.newPlot("plotly_metric_history", traces, layout, { responsive: true });
+			history.initialized = true;
+		} else {
+			Plotly.update("plotly_metric_history", traces, layout);
+		}
+	} catch (e) {
+		dbg("Error trying to write plotly_metric_history plot: " + e);
+	}
+}
+
+function reset_training_live_metrics (config={}) {
+	var data_count = 0;
+
+	try {
+		if(xy_data_global && xy_data_global.x && xy_data_global.x.shape) {
+			data_count = xy_data_global.x.shape[0] || 0;
+		}
+	} catch (e) { /* ignore */ }
+
+	var val_count = config.val_count;
+	var train_count = config.train_count;
+
+	if((val_count === null || val_count === undefined) && data_count) {
+		val_count = Math.floor(data_count * (parse_float($("#validationSplit").val()) / 100));
+		train_count = data_count - val_count;
+	}
+
+	_training_live_state = {
+		total_epochs: config.total_epochs || 0,
+		started_at: config.started_at || null,
+		train_count: (train_count === undefined ? null : train_count),
+		val_count: (val_count === undefined ? null : val_count),
+		total_params: config.total_params || null,
+		metric_key: null,
+		metric_label: "",
+		last_loss: null,
+		last_val_loss: null,
+		best_loss: null,
+		best_loss_epoch: null,
+		best_uses_val: false
+	};
+
+	_clear_plotly_metric_history();
+
+	$("#training_live_metrics").show();
+	$("#tlm_epoch").text("0 / " + (_training_live_state.total_epochs || "—"));
+	$("#tlm_progress_fill").css("width", "0%");
+	$("#tlm_epoch_sub").text("");
+	$("#tlm_loss").text("—");
+	$("#tlm_loss_sub").text("").removeClass("tlm-better tlm-worse");
+	$("#tlm_val_loss").text("—");
+	$("#tlm_val_loss_sub").text("").removeClass("tlm-better tlm-worse");
+		var configured_metric = get_metric();
+		var show_metric_card = !_training_metric_is_loss_like(configured_metric);
+
+		$("#tlm_metric_card").toggle(show_metric_card);
+		$("#tlm_metric_label").text(show_metric_card ? _training_metric_display_name(configured_metric) : "—");
+		$("#tlm_metric").text("—");
+	$("#tlm_metric_sub").text("").removeClass("tlm-better tlm-worse");
+	$("#tlm_best_label").text(_training_live_label("training_live_best_loss", "Best loss"));
+	$("#tlm_best").text("—");
+	$("#tlm_best_sub").text("");
+	$("#tlm_time_left").text("—");
+	$("#tlm_time_sub").text("");
+
+	var samples_label = (train_count !== null && train_count !== undefined)
+		? (train_count + " / " + ((val_count === null || val_count === undefined) ? 0 : val_count) + " " + _training_live_label("training_live_samples", "samples"))
+		: "—";
+	var params_label = (_training_live_state.total_params !== null)
+		? (Number(_training_live_state.total_params).toLocaleString() + " " + _training_live_label("training_live_params", "params"))
+		: "";
+	var backend_label = "";
+
+	try {
+		if(typeof tf !== "undefined" && typeof tf.getBackend === "function") {
+			backend_label = tf.getBackend();
+		}
+	} catch (e) { /* ignore */ }
+
+	$("#tlm_data_model").text([samples_label, params_label, backend_label].filter(function(part) { return part && part !== "—"; }).join(" · ") || "—");
+}
+
+function _set_training_live_delta ($element, delta, lower_is_better) {
+	$element.removeClass("tlm-better tlm-worse");
+
+	if(delta === null || delta === undefined || !isFinite(delta) || delta === 0) {
+		$element.text("");
+		return;
+	}
+
+	var improved = lower_is_better ? (delta < 0) : (delta > 0);
+
+	$element.addClass(improved ? "tlm-better" : "tlm-worse");
+	$element.text((delta < 0 ? "↓ " : "↑ ") + _format_live_number(Math.abs(delta), 4));
+}
+
+function update_training_live_metrics (state={}) {
+	var live = _training_live_state;
+
+	if(state.total_epochs) {
+		live.total_epochs = state.total_epochs;
+	}
+
+	if(state.epoch !== undefined) {
+		var total = live.total_epochs || "—";
+		var progress = (state.progress !== undefined)
+			? state.progress
+			: (live.total_epochs ? Math.round((state.epoch / live.total_epochs) * 100) : 0);
+
+		$("#tlm_epoch").text(state.epoch + " / " + total);
+		$("#tlm_progress_fill").css("width", Math.max(0, Math.min(100, progress)) + "%");
+
+		if(state.eta_ms !== undefined) {
+			$("#tlm_time_left").text(state.done ? _training_live_label("training_live_done", "Done") : _format_live_duration(state.eta_ms));
+		}
+
+		if(state.elapsed_ms !== undefined && state.epoch > 0) {
+			var epoch_time = state.elapsed_ms / state.epoch;
+			$("#tlm_time_sub").text(_training_live_label("training_live_epoch_time", "Epoch time") + ": " + _format_live_duration(epoch_time));
+			$("#tlm_epoch_sub").text(_format_live_duration(state.elapsed_ms) + " " + _training_live_label("training_live_total_time", "total"));
+		}
+	}
+
+	if(state.loss !== undefined && state.loss !== null) {
+		var loss_delta = (live.last_loss === null) ? null : (state.loss - live.last_loss);
+
+		$("#tlm_loss").text(_format_live_number(state.loss, 4));
+		_set_training_live_delta($("#tlm_loss_sub"), loss_delta, true);
+		live.last_loss = state.loss;
+	}
+
+	if(state.val_loss !== undefined) {
+		if(state.val_loss !== null && state.val_loss !== undefined) {
+			var val_loss_delta = (live.last_val_loss === null) ? null : (state.val_loss - live.last_val_loss);
+
+			$("#tlm_val_loss").text(_format_live_number(state.val_loss, 4));
+			_set_training_live_delta($("#tlm_val_loss_sub"), val_loss_delta, true);
+			live.last_val_loss = state.val_loss;
+		} else {
+			$("#tlm_val_loss").text("—");
+			$("#tlm_val_loss_sub").text("").removeClass("tlm-better tlm-worse");
+		}
+	}
+
+	var best_candidate = null;
+	var best_uses_val = false;
+
+	if(state.val_loss !== undefined && state.val_loss !== null) {
+		best_candidate = state.val_loss;
+		best_uses_val = true;
+	} else if(state.loss !== undefined && state.loss !== null) {
+		best_candidate = state.loss;
+	}
+
+	if(best_candidate !== null && (live.best_loss === null || best_candidate < live.best_loss || (best_uses_val && !live.best_uses_val))) {
+		live.best_loss = best_candidate;
+		live.best_loss_epoch = state.epoch !== undefined ? state.epoch : null;
+		live.best_uses_val = best_uses_val;
+	}
+
+	if(live.best_loss !== null) {
+		$("#tlm_best_label").text(_training_live_label(live.best_uses_val ? "training_live_best_val_loss" : "training_live_best_loss", live.best_uses_val ? "Best val loss" : "Best loss"));
+		$("#tlm_best").text(_format_live_number(live.best_loss, 4));
+		$("#tlm_best_sub").text(live.best_loss_epoch !== null ? (_training_live_label("training_live_epoch", "Epoch") + " " + live.best_loss_epoch) : "");
+	}
+
+	if(state.metric_key === null) {
+		$("#tlm_metric_card").hide();
+	}
+
+	if(state.metric_key) {
+		$("#tlm_metric_card").show();
+		live.metric_key = state.metric_key;
+		live.metric_label = _training_metric_display_name(state.metric_key);
+
+		$("#tlm_metric_label").text(live.metric_label);
+		$("#tlm_metric").text(_format_live_metric(state.metric_key, state.metric_value));
+
+		if(state.val_metric_value !== null && state.val_metric_value !== undefined) {
+			$("#tlm_metric_sub").text(_training_live_label("training_live_val_short", "val") + ": " + _format_live_metric(state.metric_key, state.val_metric_value));
+		} else {
+			$("#tlm_metric_sub").text("");
+		}
+	}
+
+	if(state.done) {
+		$("#tlm_time_left").text(_training_live_label("training_live_done", "Done"));
+	}
+}
+
 function _clear_plotly_epoch_history () {
 	$("#plotly_epoch_history").parent().hide();
 	$("#plotly_epoch_history").html("");
+	_clear_plotly_metric_history();
 }
 
 async function _get_fit_data (x_and_y) {
@@ -2421,6 +2825,11 @@ async function multi_train_neural_network(num_runs) {
 
 	multi_run_data = {};
 	current_multi_run = 0;
+
+	// Multi-run training shows its own aggregate statistics; keep the
+	// single-run live panel from displaying stale values from an earlier run.
+	$("#training_live_metrics").hide();
+	_clear_plotly_metric_history();
 
 	for (var run = 1; run <= num_runs; run++) {
 		l("[multi-train] === Starting run " + run + "/" + num_runs + " ===");

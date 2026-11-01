@@ -7,6 +7,48 @@
 		<span id="canvas_grid_visualization"></span>
 		<br>
 		<div id="training_content">
+			<div id="training_live_metrics" class="training-live-metrics" style="display: none">
+				<div class="tlm-card">
+					<span class="tlm-label TRANSLATEME_training_live_epoch"></span>
+					<span class="tlm-value" id="tlm_epoch">—</span>
+					<div class="tlm-progress"><div id="tlm_progress_fill"></div></div>
+					<span class="tlm-sub" id="tlm_epoch_sub"></span>
+				</div>
+				<div class="tlm-card">
+					<span class="tlm-label TRANSLATEME_loss"></span>
+					<span class="tlm-value" id="tlm_loss">—</span>
+					<span class="tlm-sub" id="tlm_loss_sub"></span>
+				</div>
+				<div class="tlm-card">
+					<span class="tlm-label TRANSLATEME_training_live_val_loss"></span>
+					<span class="tlm-value" id="tlm_val_loss">—</span>
+					<span class="tlm-sub" id="tlm_val_loss_sub"></span>
+				</div>
+				<div class="tlm-card" id="tlm_metric_card">
+					<span class="tlm-label" id="tlm_metric_label">—</span>
+					<span class="tlm-value" id="tlm_metric">—</span>
+					<span class="tlm-sub" id="tlm_metric_sub"></span>
+				</div>
+				<div class="tlm-card">
+					<span class="tlm-label" id="tlm_best_label">—</span>
+					<span class="tlm-value" id="tlm_best">—</span>
+					<span class="tlm-sub" id="tlm_best_sub"></span>
+				</div>
+				<div class="tlm-card">
+					<span class="tlm-label TRANSLATEME_training_live_time_left"></span>
+					<span class="tlm-value" id="tlm_time_left">—</span>
+					<span class="tlm-sub" id="tlm_time_sub"></span>
+				</div>
+				<div class="tlm-card tlm-card-wide">
+					<span class="tlm-label TRANSLATEME_training_live_data_model"></span>
+					<span class="tlm-value tlm-value-small" id="tlm_data_model">—</span>
+				</div>
+			</div>
+
+			<div id="plotly_metric_history_div" style="display: none">
+				<div id="plotly_metric_history"></div>
+			</div>
+
 			<div id="simplest_training_data_visualization" style="display: none"></div>
 
 			<div id="bend_graph"></div>

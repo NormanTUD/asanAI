@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2578;
+var DEFAULT_EXPECTED_TEST_COUNT = 2583;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -3832,6 +3832,67 @@ async function test_image_map_dense () {
 	enable_or_disable_show_layer_data(false);
 
 	return true;
+}
+
+async function test_training_live_metrics_panel () {
+	await show_tab_label("training_tab_label", 1);
+	await delay(300);
+
+	reset_training_live_metrics({
+		total_epochs: 5,
+		train_count: 100,
+		val_count: 20,
+		total_params: 12345,
+		started_at: Date.now()
+	});
+
+	update_training_live_metrics({
+		epoch: 1,
+		loss: 0.5,
+		val_loss: 0.6,
+		elapsed_ms: 2000,
+		eta_ms: 8000,
+		progress: 20
+	});
+	update_training_live_metrics({
+		epoch: 2,
+		loss: 0.4,
+		val_loss: 0.5,
+		elapsed_ms: 4000,
+		eta_ms: 6000,
+		progress: 40
+	});
+
+	var epoch_ok = $("#tlm_epoch").text() === "2 / 5";
+	var loss_ok = $("#tlm_loss").text() === "0.4000" && $("#tlm_loss_sub").text().indexOf("0.1000") !== -1;
+	var val_ok = $("#tlm_val_loss").text() === "0.5000";
+	var time_ok = $("#tlm_time_left").text() !== "—" && $("#tlm_time_sub").text().indexOf(":") !== -1;
+	var best_ok = $("#tlm_best_label").text().length > 0 && $("#tlm_best").text() === "0.5000" && $("#tlm_best_sub").text().indexOf("2") !== -1;
+	var data_ok = $("#tlm_data_model").text().indexOf("100") !== -1 && $("#tlm_data_model").text().indexOf("20") !== -1;
+
+	test_equal("training live metrics show epoch, losses, time and data", epoch_ok && loss_ok && val_ok && time_ok && data_ok, true);
+	test_equal("training live metrics show the best epoch", best_ok, true);
+
+	update_training_live_metrics({
+		epoch: 2,
+		metric_key: "accuracy",
+		metric_value: 0.8,
+		val_metric_value: 0.7
+	});
+
+	var metric_ok = $("#tlm_metric").text() === "80.0%" && $("#tlm_metric_sub").text().indexOf("70.0%") !== -1;
+	test_equal("training live metrics show a real metric", metric_ok, true);
+
+	_update_training_metric_plot(1, "accuracy", 0.8, 0.7);
+	var chart_ok = await wait_until(function () {
+		return $("#plotly_metric_history .plotly").length >= 1;
+	}, 2000, 50);
+	test_equal("training live metrics render the metric chart", chart_ok, true);
+
+	_clear_plotly_metric_history();
+	$("#training_live_metrics").hide();
+
+	return epoch_ok && loss_ok && val_ok && time_ok && data_ok && best_ok && metric_ok && chart_ok;
 }
 
 async function test_model_xor () {
@@ -13089,6 +13150,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_layer_settings()", await test_layer_settings(), true);
 		test_equal("test_show_layer_data_flow()", await test_show_layer_data_flow(), true);
 		test_equal("test_model_xor()", await test_model_xor(), true);
+		test_equal("test_training_live_metrics_panel()", await test_training_live_metrics_panel(), true);
 		test_equal("cycle_through_visualization_tabs()", await cycle_through_visualization_tabs(), true);
 
 		await test_initializer();
