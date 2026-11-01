@@ -50,13 +50,10 @@ def main() -> None:
 
     groups: dict[tuple[str, str, str], list[dict]] = defaultdict(list)
     relation_conflicts: list[str] = []
-    quote_by_subject: dict[str, tuple[str, str]] = {}
     for path in sorted(fact_files(blog).values()):
         document, claims = load_fact_file(path)
         for claim in claims:
             claim["source"] = path.name
-            if claim.get("quote") and claim["subject"] not in quote_by_subject:
-                quote_by_subject[claim["subject"]] = (claim["quote"], _lesson_of(claim))
             if is_functional(claim):
                 groups[(claim["subject"], claim["predicate"], scope_key(claim))].append(claim)
         for raw in iter_relations(document):
@@ -64,11 +61,10 @@ def main() -> None:
             if rel and rel["kind"] == "contradicts":
                 rel["source"] = path.name
                 lesson = rel["source"][: -len(".facts.json")] + ".php"
-                fq = quote_by_subject.get(rel["from"], (rel["from"], lesson))
-                tq = quote_by_subject.get(rel["to"], (rel["to"], lesson))
                 relation_conflicts.append(
-                    f"sentence {fq[0]!r} ({fq[1]}) contradicts sentence {tq[0]!r} ({tq[1]})\n"
-                    f"  because explicit relation {rel['id']!r} in {lesson} ({rel['from']} -> {rel['to']})"
+                    f"relation {rel['id']!r} in {lesson}: "
+                    f"{rel['from']} contradicts {rel['to']}\n"
+                    f"  anchor: {rel['quote']!r}"
                 )
 
     pairs: list[str] = []
@@ -97,16 +93,15 @@ def main() -> None:
     if relation_conflicts and args.include_relations:
         output.append("")
         output.append("=" * 72)
-        output.append("EXPLICIT CONTRADICTS RELATIONS — historical/intellectual opposition")
+        output.append("EXPLICIT CONTRADICTS RELATIONS — entity/theory opposition, NOT sentence pairs")
         output.append("=" * 72)
         output.extend(relation_conflicts)
     print("\n\n".join(output))
-    all_pairs = pairs + (relation_conflicts if args.include_relations else [])
-    if all_pairs:
-        (blog / "facts" / "CONFLICTS.md").write_text(
-            "# Sentence contradictions\n\n" + "\n\n".join(all_pairs) + "\n",
-            encoding="utf-8",
-        )
+    report = ["# Fact contradictions", ""] + pairs
+    if args.include_relations and relation_conflicts:
+        report += ["", "# Explicit contradicts relations (not sentence pairs)", ""] + relation_conflicts
+    if pairs or (args.include_relations and relation_conflicts):
+        (blog / "facts" / "CONFLICTS.md").write_text("\n\n".join(report) + "\n", encoding="utf-8")
         print(f"\n({len(pairs)} factual pair(s), {len(relation_conflicts)} explicit relation(s); "
               f"also written to {blog / 'facts' / 'CONFLICTS.md'})")
     if args.strict and pairs:

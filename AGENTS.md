@@ -901,8 +901,10 @@ uv run blog/tools/factcheck/link_provenance.py blog/
 # Derive additional edges from explicit claim predicates.
 uv run blog/tools/factcheck/derive_relations.py blog/
 
-# Sentence-level contradiction report.
+# Sentence-level factual contradiction report.
 uv run blog/tools/factcheck/check_sentence_conflicts.py blog/ --strict
+# Also list explicit entity/theory `contradicts` relations (not sentence pairs).
+uv run blog/tools/factcheck/check_sentence_conflicts.py blog/ --include-relations
 
 # Unit tests for the ledger itself (aliases, units, conflict detection).
 uv run blog/tests/fact_ledger_test.py

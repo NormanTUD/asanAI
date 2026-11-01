@@ -441,7 +441,8 @@ Provenienzschicht; numerische Konflikte werden über `claims` geprüft.
 # Nur faktische Widersprüche (Claim-Werte)
 uv run blog/tools/factcheck/check_sentence_conflicts.py blog/ --strict
 
-# Zusätzlich explizite `contradicts`-Relationen (historische/ideelle Gegensätze)
+# Zusätzlich explizite `contradicts`-Relationen (Entität/Theorie-Gegensätze,
+# ausdrücklich KEINE Satz-Widersprüche)
 uv run blog/tools/factcheck/check_sentence_conflicts.py blog/ --include-relations
 ```
 
