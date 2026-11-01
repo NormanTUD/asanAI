@@ -225,11 +225,11 @@ A large $\Delta_C$ means component $C$ is critical for the task.
 <div class="md" data-mathlevel="55">
 ### The Logit Lens: Watching Predictions Form Layer by Layer
 
-One powerful tool for peering inside a Transformer is the \cite[**logit lens**]{nostalgebraist2020logitlens}. The idea is beautifully simple: at every layer, take the hidden state of the residual stream and decode it into vocabulary probabilities by applying the unembedding matrix $W_U$. This lets us watch how the model's prediction evolves as it passes through the network, the proverbial “thinking process” laid out layer by layer.
+One powerful diagnostic is the \cite[**logit lens**]{nostalgebraist2020logitlens}. At every layer, apply the unembedding matrix $W_U$ to the residual stream and read out what the next-token distribution *would* look like if the forward pass stopped there. This is not a transcript of the model's thoughts: it is a linear probe of an intermediate state, in a basis the model was not trained to use at that depth. Read it as a diagnostic of how the prediction is forming, not as direct access to internal propositions.
 
 $$\text{logits}^{(\ell)} = W_U \cdot x^{(\ell)}$$
 
-Early layers typically produce diffuse, uncertain predictions. Middle layers begin to converge on the correct semantic neighborhood. Late layers make the final sharp distinction. The \cite[tuned lens]{belrose2023tunedlens} refines this by training a small affine probe for each layer (rather than reusing $W_U$ directly), producing more faithful and less biased decodings. This technique has revealed that models often “change their mind” at specific layers, and that the trajectory of latent predictions can be used to detect malicious inputs.
+Early layers typically produce diffuse, uncertain readouts. Middle layers begin to converge on the correct semantic neighborhood. Late layers make the final sharp distinction. The \cite[tuned lens]{belrose2023tunedlens} refines this by training a small affine probe for each layer (rather than reusing $W_U$ directly), producing more faithful and less biased decodings. The readout can appear to “change its mind” at specific layers, and the trajectory of latent predictions can be used to detect malicious inputs -- but it is still a trajectory of readouts, not a sequence of conscious decisions.
 </div>
 
 <div class="md">
@@ -794,7 +794,7 @@ Mechanistic interpretability is the practice of reverse-engineering neural netwo
 * **Superposition** explains why individual neurons are often uninterpretable: the model packs more features than dimensions by using nearly-orthogonal directions in activation space.
 * **Sparse autoencoders** resolve superposition by learning an overcomplete dictionary of features from the residual stream, giving us monosemantic units to work with.
 * **Activation patching** is the causal scalpel: by swapping activations between runs, we isolate which components are causally necessary for a behavior.
-* **The logit lens** lets us decode the model's “thoughts” at every layer, revealing how predictions evolve from diffuse uncertainty to sharp certainty.
+* **The logit lens** decodes intermediate residual states with the output layer, giving a layer-by-layer diagnostic of how the next-token prediction forms -- not a direct readout of the model's beliefs.
 * **Grokking** shows that generalization can emerge long after memorization, as structured circuits gradually overtake memorized pairs.
 * **The double helix** reveals that positional and semantic information separate through the layers along a helical path.
 * **Sparse autoencoders** turn the uninterpretable neuron into an interpretable **feature** — a linear combination of many neurons, one per concept, recovered by dictionary learning and scaled to *millions* of features in a production model like Claude 3 Sonnet, whose concept space is even *geometric* (the Golden Gate Bridge sits next to Alcatraz, the 1906 earthquake, and *Vertigo*).
