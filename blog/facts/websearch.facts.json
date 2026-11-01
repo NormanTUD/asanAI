@@ -311,16 +311,6 @@
   ],
   "relations": [
     {
-      "id": "prov-websearch-part",
-      "from": "websearch",
-      "to": "part-5",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 5",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "prov-websearch-toolformer",
       "from": "toolformer",
       "to": "websearch",
@@ -506,6 +496,16 @@
       "citation_keys": [
         "openai2023functioncalling"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-websearch-part",
+      "from": "websearch",
+      "to": "part-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 5",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

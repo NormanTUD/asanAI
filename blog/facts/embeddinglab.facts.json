@@ -7,7 +7,25 @@
   "order": 4,
   "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [],
+  "citations": [
+    "hypothesengeometrie",
+    "hypothesengeometrieenglish",
+    "weylriemann",
+    "saussure1916",
+    "whitney1936manifolds",
+    "zelligharris",
+    "firth1957distributive",
+    "grandmotherneuron",
+    "deerwester1990lsa",
+    "mikolov2013word2vec",
+    "mikolov2013negativesampling",
+    "pennington2014glove",
+    "colah2015types",
+    "bojanowski2017fasttext",
+    "elmo",
+    "devlin2019bert",
+    "bronstein2021geometric"
+  ],
   "claims": [
     {
       "id": "auto-embeddinglab-title-1",
@@ -58,19 +76,284 @@
       "quote": "points requires $N \\gg P$ to avoid overfitting. GPT-3 has **175 billion parameters**",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "embeddinglab-gap2-1",
+      "subject": "image-resolution-example",
+      "predicate": "pixels_per_side",
+      "value": 1000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "1000×1000 pixel image of the same scene",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-2",
+      "subject": "bernhard-riemann",
+      "predicate": "manifold_lecture_year",
+      "value": 1854,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "formalized in his landmark **1854 Göttingen inaugural lecture**",
+      "citation_keys": [
+        "hypothesengeometrie"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-3",
+      "subject": "william-kingdon-clifford",
+      "predicate": "manifold_translation_year",
+      "value": 1873,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "into the English word “manifoldness” in his 1873 edition",
+      "citation_keys": [
+        "hypothesengeometrieenglish"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-4",
+      "subject": "hermann-weyl",
+      "predicate": "rigorous_definition_year",
+      "value": 1913,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "one of the first rigorous modern definitions in \\citetitle{weylriemann} (1913)",
+      "citation_keys": [
+        "weylriemann"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-5",
+      "subject": "ferdinand-de-saussure",
+      "predicate": "structural_linguistics_year",
+      "value": 1916,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "was laid as early as 1916 in \\citetitle{saussure1916}",
+      "citation_keys": [
+        "saussure1916"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-6",
+      "subject": "hassler-whitney",
+      "predicate": "embedding_theorems_year",
+      "value": 1936,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Hassler Whitney** (\\citetitle{whitney1936manifolds}, 1936)",
+      "citation_keys": [
+        "whitney1936manifolds"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-7",
+      "subject": "zellig-harris",
+      "predicate": "distributional_structure_year",
+      "value": 1954,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Harris, 1954]{zelligharris})",
+      "citation_keys": [
+        "zelligharris"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-8",
+      "subject": "john-rupert-firth",
+      "predicate": "distributional_maxim_year",
+      "value": 1957,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Firth, 1957, p. 11]{firth1957distributive})",
+      "citation_keys": [
+        "firth1957distributive"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-9",
+      "subject": "grandmother-neuron",
+      "predicate": "concept_coining_year",
+      "value": 1969,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "coined by \\cite[Jerome Lettvin]{grandmotherneuron} in 1969",
+      "citation_keys": [
+        "grandmotherneuron"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-10",
+      "subject": "latent-semantic-analysis",
+      "predicate": "publication_year",
+      "value": 1990,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Deerwester et al., 1990]{deerwester1990lsa})",
+      "citation_keys": [
+        "deerwester1990lsa"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-11",
+      "subject": "word2vec",
+      "predicate": "publication_year",
+      "value": 2013,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Word2vec** (\\cite[Mikolov et al., 2013]{mikolov2013word2vec}) comes in two architectures.",
+      "citation_keys": [
+        "mikolov2013word2vec"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-12",
+      "subject": "word2vec-negative-sampling",
+      "predicate": "citation_year_label",
+      "value": "2013b",
+      "unit": "name",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Mikolov et al., 2013b]{mikolov2013negativesampling})",
+      "citation_keys": [
+        "mikolov2013negativesampling"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-13",
+      "subject": "glove",
+      "predicate": "publication_year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Pennington et al., 2014]{pennington2014glove})",
+      "citation_keys": [
+        "pennington2014glove"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-14",
+      "subject": "christopher-olah",
+      "predicate": "representation_types_essay_year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Olah, 2015]{colah2015types})",
+      "citation_keys": [
+        "colah2015types"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-15",
+      "subject": "fasttext",
+      "predicate": "publication_year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Bojanowski et al., 2017]{bojanowski2017fasttext})",
+      "citation_keys": [
+        "bojanowski2017fasttext"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-16",
+      "subject": "elmo",
+      "predicate": "publication_year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Peters et al., 2018]{elmo})",
+      "citation_keys": [
+        "elmo"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-17",
+      "subject": "bert",
+      "predicate": "publication_year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Devlin et al., 2019]{devlin2019bert})",
+      "citation_keys": [
+        "devlin2019bert"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-18",
+      "subject": "geometric-deep-learning",
+      "predicate": "publication_year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Bronstein et al., 2021]{bronstein2021geometric})",
+      "citation_keys": [
+        "bronstein2021geometric"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-19",
+      "subject": "gpt-3",
+      "predicate": "training_tokens",
+      "value": 300000000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "was trained on **~300 billion tokens**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-20",
+      "subject": "gpt-3",
+      "predicate": "tokens_per_parameter",
+      "value": 1.7,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "roughly **1.7 tokens per parameter**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "embeddinglab-gap2-21",
+      "subject": "gpt-3",
+      "predicate": "training_tokens",
+      "value": 300000000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "for only ~300 billion training tokens",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-embeddinglab-part",
-      "from": "embeddinglab",
-      "to": "part-4",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 4",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-embeddinglab-gpt-3",
       "from": "gpt-3",
@@ -78,6 +361,230 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "points requires $N \\gg P$ to avoid overfitting. GPT-3 has **175 billion parameters**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-image-resolution-example",
+      "from": "image-resolution-example",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "1000×1000 pixel image of the same scene",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-bernhard-riemann",
+      "from": "bernhard-riemann",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "formalized in his landmark **1854 Göttingen inaugural lecture**",
+      "citation_keys": [
+        "hypothesengeometrie"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-william-kingdon-clifford",
+      "from": "william-kingdon-clifford",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "into the English word “manifoldness” in his 1873 edition",
+      "citation_keys": [
+        "hypothesengeometrieenglish"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-hermann-weyl",
+      "from": "hermann-weyl",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "one of the first rigorous modern definitions in \\citetitle{weylriemann} (1913)",
+      "citation_keys": [
+        "weylriemann"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-ferdinand-de-saussure",
+      "from": "ferdinand-de-saussure",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "was laid as early as 1916 in \\citetitle{saussure1916}",
+      "citation_keys": [
+        "saussure1916"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-hassler-whitney",
+      "from": "hassler-whitney",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Hassler Whitney** (\\citetitle{whitney1936manifolds}, 1936)",
+      "citation_keys": [
+        "whitney1936manifolds"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-zellig-harris",
+      "from": "zellig-harris",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Harris, 1954]{zelligharris})",
+      "citation_keys": [
+        "zelligharris"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-john-rupert-firth",
+      "from": "john-rupert-firth",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Firth, 1957, p. 11]{firth1957distributive})",
+      "citation_keys": [
+        "firth1957distributive"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-grandmother-neuron",
+      "from": "grandmother-neuron",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "coined by \\cite[Jerome Lettvin]{grandmotherneuron} in 1969",
+      "citation_keys": [
+        "grandmotherneuron"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-latent-semantic-analysis",
+      "from": "latent-semantic-analysis",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Deerwester et al., 1990]{deerwester1990lsa})",
+      "citation_keys": [
+        "deerwester1990lsa"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-word2vec",
+      "from": "word2vec",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Word2vec** (\\cite[Mikolov et al., 2013]{mikolov2013word2vec}) comes in two architectures.",
+      "citation_keys": [
+        "mikolov2013word2vec"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-word2vec-negative-sampling",
+      "from": "word2vec-negative-sampling",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Mikolov et al., 2013b]{mikolov2013negativesampling})",
+      "citation_keys": [
+        "mikolov2013negativesampling"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-glove",
+      "from": "glove",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Pennington et al., 2014]{pennington2014glove})",
+      "citation_keys": [
+        "pennington2014glove"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-christopher-olah",
+      "from": "christopher-olah",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Olah, 2015]{colah2015types})",
+      "citation_keys": [
+        "colah2015types"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-fasttext",
+      "from": "fasttext",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Bojanowski et al., 2017]{bojanowski2017fasttext})",
+      "citation_keys": [
+        "bojanowski2017fasttext"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-elmo",
+      "from": "elmo",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Peters et al., 2018]{elmo})",
+      "citation_keys": [
+        "elmo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-bert",
+      "from": "bert",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Devlin et al., 2019]{devlin2019bert})",
+      "citation_keys": [
+        "devlin2019bert"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-geometric-deep-learning",
+      "from": "geometric-deep-learning",
+      "to": "embeddinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Bronstein et al., 2021]{bronstein2021geometric})",
+      "citation_keys": [
+        "bronstein2021geometric"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-embeddinglab-part",
+      "from": "embeddinglab",
+      "to": "part-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 4",
       "citation_keys": [],
       "confidence": "provenance"
     }

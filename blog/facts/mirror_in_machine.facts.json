@@ -23,7 +23,10 @@
     "clark2013whatevernext",
     "nishimoto2011reconstruct",
     "kriegeskorte2015dcnn",
-    "wang2025foundation"
+    "wang2025foundation",
+    "waldeyer1891",
+    "mark_i_perceptron_manual",
+    "caucheteux2023predictive"
   ],
   "claims": [
     {
@@ -322,6 +325,63 @@
       "quote": "The rule \"the strongest unit wins, the rest go quiet\" is exactly **competitive, winner-take-all** dynamics",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "mirror_in_machine-gap4-1",
+      "subject": "waldeyer-neuron-term",
+      "predicate": "naming_year",
+      "value": 1891,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "named the cells in 1891",
+      "citation_keys": [
+        "cajal1888",
+        "waldeyer1891"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror_in_machine-gap4-2",
+      "subject": "cajal-cerebellum-drawing",
+      "predicate": "drawing_year",
+      "value": 1905,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Santiago Ramón y Cajal's stained cerebellum, c. 1905",
+      "citation_keys": [
+        "cajal1888",
+        "golgi1873",
+        "waldeyer1891"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror_in_machine-gap4-3",
+      "subject": "mark-i-perceptron",
+      "predicate": "year",
+      "value": 1958,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The Mark I Perceptron, 1958",
+      "citation_keys": [
+        "mark_i_perceptron_manual"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mirror_in_machine-gap4-4",
+      "subject": "caucheteux-2023-predictive-coding",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 2023, \\citeauthorlastnameand{caucheteux2023predictive} fit a hierarchical predictive-coding model",
+      "citation_keys": [
+        "caucheteux2023predictive"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -555,6 +615,57 @@
       "qualifiers": {},
       "quote": "The rule \"the strongest unit wins, the rest go quiet\" is exactly **competitive, winner-take-all** dynamics",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-waldeyer-neuron-term",
+      "from": "waldeyer-neuron-term",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "named the cells in 1891",
+      "citation_keys": [
+        "cajal1888",
+        "waldeyer1891"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-cajal-cerebellum-drawing",
+      "from": "cajal-cerebellum-drawing",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Santiago Ramón y Cajal's stained cerebellum, c. 1905",
+      "citation_keys": [
+        "cajal1888",
+        "golgi1873",
+        "waldeyer1891"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-mark-i-perceptron",
+      "from": "mark-i-perceptron",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Mark I Perceptron, 1958",
+      "citation_keys": [
+        "mark_i_perceptron_manual"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mirror_in_machine-caucheteux-2023-predictive-coding",
+      "from": "caucheteux-2023-predictive-coding",
+      "to": "mirror-in-machine",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 2023, \\citeauthorlastnameand{caucheteux2023predictive} fit a hierarchical predictive-coding model",
+      "citation_keys": [
+        "caucheteux2023predictive"
+      ],
       "confidence": "provenance"
     }
   ],

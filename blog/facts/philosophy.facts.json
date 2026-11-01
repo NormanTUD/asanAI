@@ -22,7 +22,6 @@
     "li2022othello",
     "uexkull1934",
     "penrose1989emperor",
-    "clark1998extended",
     "kapp1877grundlinien",
     "gage1994bpe",
     "breakingsoftmaxbottleneck",
@@ -49,7 +48,21 @@
     "lowry1988blot",
     "cre1988admissions",
     "chesney2019deepfakes",
-    "chiang2023blurryjpeg"
+    "chiang2023blurryjpeg",
+    "kierkegaard1844conceptofanxiety",
+    "sartre1946existentialismishumanism",
+    "heidegger1954whatiscalledthinking",
+    "dreyfus1972what",
+    "wimmer1983belief",
+    "simulatorstheory",
+    "metzinger2003being",
+    "friston2010freeenergy",
+    "cleeremans2011radical",
+    "trinh2018commonsense",
+    "brown2020gpt3",
+    "kocijan2023defeat",
+    "park2024linear",
+    "strubell2019energy"
   ],
   "claims": [
     {
@@ -302,9 +315,7 @@
       "unit": "name",
       "qualifiers": {},
       "quote": "The **Extended Mind Thesis** suggests that the boundary of the “mind” is not the skull.",
-      "citation_keys": [
-        "clark1998extended"
-      ],
+      "citation_keys": [],
       "confidence": "stated"
     },
     {
@@ -744,19 +755,427 @@
       "quote": "If sections agree on every overlap, they fuse into a single, unique global section.",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-1",
+      "subject": "ernst-kapp",
+      "predicate": "birth_year",
+      "value": 1808,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "German philosopher Ernst Kapp (1808-1896)",
+      "citation_keys": [
+        "kapp1877grundlinien"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-2",
+      "subject": "kierkegaard-journals",
+      "predicate": "year",
+      "value": 1843,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "from his journals, 1843",
+      "citation_keys": [
+        "kierkegaard1844conceptofanxiety"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-3",
+      "subject": "ernst-kapp",
+      "predicate": "death_year",
+      "value": 1896,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "German philosopher Ernst Kapp (1808-1896)",
+      "citation_keys": [
+        "kapp1877grundlinien"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-4",
+      "subject": "sartre-existentialism-is-humanism",
+      "predicate": "year",
+      "value": 1946,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Jean-Paul Sartre, from \\citetitle{sartre1946existentialismishumanism}, 1946",
+      "citation_keys": [
+        "sartre1946existentialismishumanism"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-5",
+      "subject": "hebb-learning-rule",
+      "predicate": "year",
+      "value": 1949,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Hebb 1949 (learning rule)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-6",
+      "subject": "heidegger-what-is-called-thinking",
+      "predicate": "year",
+      "value": 1954,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Martin Heidegger, from \\citetitle{heidegger1954whatiscalledthinking}, 1954",
+      "citation_keys": [
+        "heidegger1954whatiscalledthinking"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-7",
+      "subject": "rosenblatt-perceptron",
+      "predicate": "year",
+      "value": 1958,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Rosenblatt 1958 (perceptron)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-8",
+      "subject": "rawls-theory-of-justice",
+      "predicate": "year",
+      "value": 1971,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "John Rawls' 1971 *A Theory of Justice*",
+      "citation_keys": [
+        "rawls1971theoryofjustice"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-9",
+      "subject": "dreyfus-critique",
+      "predicate": "year",
+      "value": 1972,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Dreyfus critique** (\\cite[Dreyfus, 1972]{dreyfus1972what})",
+      "citation_keys": [
+        "dreyfus1972what"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-10",
+      "subject": "franglen-admissions-program",
+      "predicate": "tested_year",
+      "value": 1979,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in 1979 he tested it against them",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-11",
+      "subject": "wimmer-perner-false-belief",
+      "predicate": "year",
+      "value": 1983,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**False-belief (theory of mind)** (\\cite[Wimmer & Perner, 1983]{wimmer1983belief})",
+      "citation_keys": [
+        "wimmer1983belief"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-12",
+      "subject": "orwell-1984",
+      "predicate": "year",
+      "value": 1984,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "each *1984* trope an attack vector",
+      "citation_keys": [
+        "simulatorstheory"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-13",
+      "subject": "moravec-paradox",
+      "predicate": "year",
+      "value": 1988,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Moravec's Paradox** (\\cite[Moravec, 1988]{moravec1988mindchildren})",
+      "citation_keys": [
+        "moravec1988mindchildren"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-14",
+      "subject": "metzinger-self-model-theory",
+      "predicate": "year",
+      "value": 2003,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Metzinger, 2003]{metzinger2003being})",
+      "citation_keys": [
+        "metzinger2003being"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-15",
+      "subject": "integrated-information-theory",
+      "predicate": "year",
+      "value": 2004,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Tononi, 2004]{tononi2004iit}",
+      "citation_keys": [
+        "tononi2004iit"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-16",
+      "subject": "free-energy-principle",
+      "predicate": "formalization_year",
+      "value": 2010,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Friston's 2010 mathematics",
+      "citation_keys": [
+        "friston2010freeenergy"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-17",
+      "subject": "radical-plasticity-thesis",
+      "predicate": "year",
+      "value": 2011,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citetitle{cleeremans2011radical} (\\citeyear{cleeremans2011radical})",
+      "citation_keys": [
+        "cleeremans2011radical"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-18",
+      "subject": "larriva-sahd-review",
+      "predicate": "year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The Larriva-Sahd 2014 review",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-19",
+      "subject": "winograd-schema-challenge",
+      "predicate": "first_formal_challenge_year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**2016.** The first formal challenge, run at IJCAI-16",
+      "citation_keys": [
+        "trinh2018commonsense"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-20",
+      "subject": "winograd-schema-challenge",
+      "predicate": "neural_model_year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**2017.** A neural model that explicitly *acquires* cause-effect knowledge reached ~70% on a 70-item subset.",
+      "citation_keys": [
+        "trinh2018commonsense",
+        "sakaguchi2019winogrande"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-21",
+      "subject": "winograd-schema-challenge",
+      "predicate": "ensemble_year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**2018.** An ensemble of recurrent language models trained on independent corpora hit **63.7%** on the full 273-item set",
+      "citation_keys": [
+        "trinh2018commonsense"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-22",
+      "subject": "winograd-schema-challenge",
+      "predicate": "bert_year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**2019.** Fine-tuning **BERT** on WSC-style data reached **90.1%** on the original set",
+      "citation_keys": [
+        "sakaguchi2019winogrande"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-23",
+      "subject": "winograd-schema-challenge",
+      "predicate": "gpt3_year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**2020.** **GPT-3** hit **88.3%** zero-/few-shot, with no special training",
+      "citation_keys": [
+        "brown2020gpt3"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-24",
+      "subject": "pre-ai-internet",
+      "predicate": "cutoff_year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "human data from the pre-AI era (pre-2022)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-25",
+      "subject": "winograd-schema-challenge",
+      "predicate": "declared_defeated_year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 2023, (\\cite[Kocijan, Davis, Lukasiewicz, Marcus, Morgenstern, 2023]{kocijan2023defeat}) declared the challenge **defeated**",
+      "citation_keys": [
+        "kocijan2023defeat"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-26",
+      "subject": "linear-representation-hypothesis",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Park, Choe & Veitch (2024)]{park2024linear}",
+      "citation_keys": [
+        "park2024linear"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-27",
+      "subject": "lorente-de-no-predictions",
+      "predicate": "review_interval",
+      "value": 80,
+      "unit": "interval",
+      "qualifiers": {
+        "measure": "years"
+      },
+      "quote": "some predictions of Rafael Lorente de Nó 80 years later",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-28",
+      "subject": "craik-small-scale-model",
+      "predicate": "lead_time",
+      "value": 80,
+      "unit": "interval",
+      "qualifiers": {
+        "measure": "years",
+        "approx": true
+      },
+      "quote": "Predictive Processing 80 Years Early",
+      "citation_keys": [
+        "craik1943nature"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-29",
+      "subject": "gpt-3",
+      "predicate": "parameters",
+      "value": 175000000000,
+      "unit": "count",
+      "qualifiers": {
+        "measure": "parameters",
+        "parameter_kind": "total"
+      },
+      "quote": "Training GPT-3 (175B parameters)",
+      "citation_keys": [
+        "strubell2019energy"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-30",
+      "subject": "gpt-3",
+      "predicate": "training_cost",
+      "value": 4600000,
+      "unit": "count",
+      "qualifiers": {
+        "measure": "USD",
+        "approx": true
+      },
+      "quote": "cost approximately 4.6 million dollars in compute time",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-31",
+      "subject": "gpt-4",
+      "predicate": "development_cost",
+      "value": 100000000,
+      "unit": "count",
+      "qualifiers": {
+        "measure": "USD",
+        "approx": true
+      },
+      "quote": "crossed the 100 million Dollar threshold",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "philosophy-gap-32",
+      "subject": "gpt-3",
+      "predicate": "water_consumption",
+      "value": 5000000,
+      "unit": "count",
+      "qualifiers": {
+        "measure": "liters",
+        "scope": "including off-site use"
+      },
+      "quote": "the total can exceed 5 million liters",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-philosophy-part",
-      "from": "philosophy",
-      "to": "part-6",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 6",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "rel-phil-theseus-anatta",
       "from": "phil-ship-theseus",
@@ -773,7 +1192,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "it is the same gap the Hard Problem section above delimited from the other side.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-phil-hard-problem-mary",
@@ -791,7 +1211,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "The modern debate is framed by the question Thomas Nagel posed in 1974: what is it like to be a bat?",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-phil-craik-relation-structure",
@@ -800,7 +1221,8 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "by a model we thus mean any physical or chemical system which has a similar relation-structure to that of the process it imitates",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-phil-sheaf-gluing",
@@ -1389,6 +1811,254 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "If sections agree on every overlap, they fuse into a single, unique global section.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-ernst-kapp",
+      "from": "ernst-kapp",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "German philosopher Ernst Kapp (1808-1896)",
+      "citation_keys": [
+        "kapp1877grundlinien"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-kierkegaard-journals",
+      "from": "kierkegaard-journals",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "from his journals, 1843",
+      "citation_keys": [
+        "kierkegaard1844conceptofanxiety"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-sartre-existentialism-is-humanism",
+      "from": "sartre-existentialism-is-humanism",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Jean-Paul Sartre, from \\citetitle{sartre1946existentialismishumanism}, 1946",
+      "citation_keys": [
+        "sartre1946existentialismishumanism"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-hebb-learning-rule",
+      "from": "hebb-learning-rule",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hebb 1949 (learning rule)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-heidegger-what-is-called-thinking",
+      "from": "heidegger-what-is-called-thinking",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Martin Heidegger, from \\citetitle{heidegger1954whatiscalledthinking}, 1954",
+      "citation_keys": [
+        "heidegger1954whatiscalledthinking"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-rosenblatt-perceptron",
+      "from": "rosenblatt-perceptron",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Rosenblatt 1958 (perceptron)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-rawls-theory-of-justice",
+      "from": "rawls-theory-of-justice",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "John Rawls' 1971 *A Theory of Justice*",
+      "citation_keys": [
+        "rawls1971theoryofjustice"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-dreyfus-critique",
+      "from": "dreyfus-critique",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Dreyfus critique** (\\cite[Dreyfus, 1972]{dreyfus1972what})",
+      "citation_keys": [
+        "dreyfus1972what"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-franglen-admissions-program",
+      "from": "franglen-admissions-program",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in 1979 he tested it against them",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-wimmer-perner-false-belief",
+      "from": "wimmer-perner-false-belief",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**False-belief (theory of mind)** (\\cite[Wimmer & Perner, 1983]{wimmer1983belief})",
+      "citation_keys": [
+        "wimmer1983belief"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-orwell-1984",
+      "from": "orwell-1984",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "each *1984* trope an attack vector",
+      "citation_keys": [
+        "simulatorstheory"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-metzinger-self-model-theory",
+      "from": "metzinger-self-model-theory",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Metzinger, 2003]{metzinger2003being})",
+      "citation_keys": [
+        "metzinger2003being"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-free-energy-principle",
+      "from": "free-energy-principle",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Friston's 2010 mathematics",
+      "citation_keys": [
+        "friston2010freeenergy"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-radical-plasticity-thesis",
+      "from": "radical-plasticity-thesis",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citetitle{cleeremans2011radical} (\\citeyear{cleeremans2011radical})",
+      "citation_keys": [
+        "cleeremans2011radical"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-larriva-sahd-review",
+      "from": "larriva-sahd-review",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Larriva-Sahd 2014 review",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-pre-ai-internet",
+      "from": "pre-ai-internet",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "human data from the pre-AI era (pre-2022)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-linear-representation-hypothesis",
+      "from": "linear-representation-hypothesis",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Park, Choe & Veitch (2024)]{park2024linear}",
+      "citation_keys": [
+        "park2024linear"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-lorente-de-no-predictions",
+      "from": "lorente-de-no-predictions",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "some predictions of Rafael Lorente de Nó 80 years later",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-craik-small-scale-model",
+      "from": "craik-small-scale-model",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Predictive Processing 80 Years Early",
+      "citation_keys": [
+        "craik1943nature"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-gpt-3",
+      "from": "gpt-3",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Training GPT-3 (175B parameters)",
+      "citation_keys": [
+        "strubell2019energy"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-gpt-4",
+      "from": "gpt-4",
+      "to": "philosophy",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "crossed the 100 million Dollar threshold",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-philosophy-part",
+      "from": "philosophy",
+      "to": "part-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 6",
       "citation_keys": [],
       "confidence": "provenance"
     }

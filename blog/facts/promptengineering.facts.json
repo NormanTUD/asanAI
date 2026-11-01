@@ -244,16 +244,6 @@
   ],
   "relations": [
     {
-      "id": "prov-promptengineering-part",
-      "from": "promptengineering",
-      "to": "part-5",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 5",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "prov-promptengineering-chain-of-thought",
       "from": "chain-of-thought",
       "to": "promptengineering",
@@ -418,6 +408,16 @@
       "citation_keys": [
         "spencerbrown1969form"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-promptengineering-part",
+      "from": "promptengineering",
+      "to": "part-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 5",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

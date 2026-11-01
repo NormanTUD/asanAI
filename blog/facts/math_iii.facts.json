@@ -19,7 +19,30 @@
     "lebesgue1902integrale",
     "cauchy1825memoire",
     "hottbook",
-    "templeton2024scaling"
+    "templeton2024scaling",
+    "cavalieri1635geometria",
+    "newton1736fluxions",
+    "frege1879",
+    "russell_paradox_sep",
+    "russell1903principles",
+    "russell1910principia",
+    "whitney1936manifolds",
+    "churchsimplytyped",
+    "bellman1957book",
+    "bellman1961adaptive",
+    "martinlof1984intuitionistic",
+    "intuitionistic_type_theory_sep",
+    "gromov1983isoperimetric",
+    "concentration_of_measure_wiki",
+    "talagrand1995concentration",
+    "beyer1999nearest",
+    "lang2005basicmath",
+    "voevodsky2006hlambda",
+    "voevodsky2010equivalence",
+    "olah2014manifolds",
+    "loaizaganem2024manifoldsurvey",
+    "zhang2017rethinking",
+    "elhage2022superposition"
   ],
   "claims": [
     {
@@ -295,6 +318,439 @@
         "gorban2018blessing"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-1",
+      "subject": "curse-of-dimensionality-demo",
+      "predicate": "max_dimension",
+      "value": 1000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "100, 500, 1000];",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-2",
+      "subject": "face-image-example",
+      "predicate": "pixel_dimension",
+      "value": 1024,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "$1024 \\times 1024$ image",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-3",
+      "subject": "bonaventura-cavalieri",
+      "predicate": "geometria_publication_year",
+      "value": 1635,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Cavalieri's *Geometria indivisibilibus continuorum* (1635)",
+      "citation_keys": [
+        "cavalieri1635geometria"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-4",
+      "subject": "isaac-newton",
+      "predicate": "de_analysi_year",
+      "value": 1669,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Newton used the idea in *De analysi* (1669)",
+      "citation_keys": [
+        "newton1736fluxions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-5",
+      "subject": "isaac-newton",
+      "predicate": "method_of_fluxions_written_year",
+      "value": 1671,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "*Method of Fluxions* (written 1671, published 1736)",
+      "citation_keys": [
+        "newton1736fluxions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-6",
+      "subject": "isaac-newton",
+      "predicate": "method_of_fluxions_published_year",
+      "value": 1736,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(written 1671, published 1736)",
+      "citation_keys": [
+        "newton1736fluxions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-7",
+      "subject": "gottlob-frege",
+      "predicate": "begriffsschrift_year",
+      "value": 1879,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Frege's *Begriffsschrift* (1879)",
+      "citation_keys": [
+        "frege1879",
+        "russell_paradox_sep"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-8",
+      "subject": "bertrand-russell",
+      "predicate": "principles_of_mathematics_year",
+      "value": 1903,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Russell's *Principles of Mathematics* (1903)",
+      "citation_keys": [
+        "russell1903principles",
+        "russell1910principia"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-9",
+      "subject": "principia-mathematica",
+      "predicate": "publication_start_year",
+      "value": 1910,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "*Principia Mathematica* (1910–13)",
+      "citation_keys": [
+        "russell1903principles",
+        "russell1910principia"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-10",
+      "subject": "hassler-whitney",
+      "predicate": "embedding_theorem_year",
+      "value": 1936,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Whitney, 1936]{whitney1936manifolds}",
+      "citation_keys": [
+        "whitney1936manifolds"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-11",
+      "subject": "alonzo-church",
+      "predicate": "simple_theory_of_types_year",
+      "value": 1940,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Church's 1940 simple theory of types",
+      "citation_keys": [
+        "churchsimplytyped"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-12",
+      "subject": "richard-bellman",
+      "predicate": "curse_of_dimensionality_book_year",
+      "value": 1957,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Bellman, 1957]{bellman1957book}",
+      "citation_keys": [
+        "bellman1957book",
+        "bellman1961adaptive"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-13",
+      "subject": "richard-bellman",
+      "predicate": "adaptive_control_book_year",
+      "value": 1961,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Bellman, 1961]{bellman1961adaptive}",
+      "citation_keys": [
+        "bellman1957book",
+        "bellman1961adaptive"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-14",
+      "subject": "per-martin-lof",
+      "predicate": "dependent_type_system_year",
+      "value": 1972,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Martin-Löf's 1972 system made types depend on terms",
+      "citation_keys": [
+        "martinlof1984intuitionistic",
+        "intuitionistic_type_theory_sep"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-15",
+      "subject": "per-martin-lof",
+      "predicate": "identity_types_year",
+      "value": 1973,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "identity types followed in the 1973/75 version",
+      "citation_keys": [
+        "martinlof1984intuitionistic",
+        "intuitionistic_type_theory_sep"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-16",
+      "subject": "gromov-milman",
+      "predicate": "isoperimetric_concentration_year",
+      "value": 1983,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Gromov \\& Milman, 1983]{gromov1983isoperimetric}",
+      "citation_keys": [
+        "gromov1983isoperimetric",
+        "concentration_of_measure_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-17",
+      "subject": "per-martin-lof",
+      "predicate": "bibliopolis_lectures_year",
+      "value": 1984,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the 1984 Bibliopolis lectures became the standard exposition",
+      "citation_keys": [
+        "martinlof1984intuitionistic",
+        "intuitionistic_type_theory_sep"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-18",
+      "subject": "universal-approximation-theorem",
+      "predicate": "proof_year",
+      "value": 1989,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Cybenko, 1989]{cybenko1989}; \\cite[Hornik et al., 1989]{hornik1989}",
+      "citation_keys": [
+        "cybenko1989",
+        "hornik1989"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-19",
+      "subject": "michel-talagrand",
+      "predicate": "product_space_concentration_year",
+      "value": 1995,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Talagrand, 1995]{talagrand1995concentration}",
+      "citation_keys": [
+        "talagrand1995concentration"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-20",
+      "subject": "beyer-et-al",
+      "predicate": "nearest_neighbor_concentration_year",
+      "value": 1999,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Beyer et al., 1999]{beyer1999nearest}",
+      "citation_keys": [
+        "beyer1999nearest"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-21",
+      "subject": "serge-lang",
+      "predicate": "basic_mathematics_publication_year",
+      "value": 2005,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Lang, Basic Mathematics, Ch. 11, p. 250]{lang2005basicmath}",
+      "citation_keys": [
+        "lang2005basicmath"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-22",
+      "subject": "vladimir-voevodsky",
+      "predicate": "homotopy_lambda_calculus_note_year",
+      "value": 2006,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Voevodsky's 2006 note",
+      "citation_keys": [
+        "voevodsky2006hlambda",
+        "voevodsky2010equivalence",
+        "hottbook"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-23",
+      "subject": "vladimir-voevodsky",
+      "predicate": "univalence_axiom_year",
+      "value": 2009,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "by 2009 he had the univalence axiom",
+      "citation_keys": [
+        "voevodsky2006hlambda",
+        "voevodsky2010equivalence",
+        "hottbook"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-24",
+      "subject": "vladimir-voevodsky",
+      "predicate": "equivalence_axiom_paper_year",
+      "value": 2010,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Voevodsky, 2010]{voevodsky2010equivalence}",
+      "citation_keys": [
+        "voevodsky2006hlambda",
+        "voevodsky2010equivalence",
+        "hottbook"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-25",
+      "subject": "chris-olah",
+      "predicate": "manifold_visual_essay_year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Olah, 2014]{olah2014manifolds}",
+      "citation_keys": [
+        "olah2014manifolds",
+        "loaizaganem2024manifoldsurvey"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-26",
+      "subject": "zhang-et-al",
+      "predicate": "generalization_paper_year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Zhang et al., 2017]{zhang2017rethinking}",
+      "citation_keys": [
+        "zhang2017rethinking"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-27",
+      "subject": "gorban-tyukin",
+      "predicate": "blessing_of_dimensionality_year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Gorban \\& Tyukin, 2018]{gorban2018blessing}",
+      "citation_keys": [
+        "gorban2018blessing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-28",
+      "subject": "elhage-et-al",
+      "predicate": "superposition_paper_year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Elhage et al., 2022]{elhage2022superposition}",
+      "citation_keys": [
+        "elhage2022superposition"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-29",
+      "subject": "hybrid-ai-systems",
+      "predicate": "frontier_year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 2025, the frontier is the **hybrid** system",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-30",
+      "subject": "70b-parameter-llm",
+      "predicate": "parameters",
+      "value": 70000000000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "a 70B-parameter LLM can behave reliably on novel inputs",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-31",
+      "subject": "70b-parameter-llm",
+      "predicate": "training_parameters",
+      "value": 70000000000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "training a 70B model on 15T tokens",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iii-gap-32",
+      "subject": "70b-parameter-llm",
+      "predicate": "training_tokens",
+      "value": 15000000000000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "training a 70B model on 15T tokens",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -513,6 +969,271 @@
       "citation_keys": [
         "gorban2018blessing"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-curse-of-dimensionality-demo",
+      "from": "curse-of-dimensionality-demo",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "100, 500, 1000];",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-face-image-example",
+      "from": "face-image-example",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$1024 \\times 1024$ image",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-bonaventura-cavalieri",
+      "from": "bonaventura-cavalieri",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Cavalieri's *Geometria indivisibilibus continuorum* (1635)",
+      "citation_keys": [
+        "cavalieri1635geometria"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-isaac-newton",
+      "from": "isaac-newton",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Newton used the idea in *De analysi* (1669)",
+      "citation_keys": [
+        "newton1736fluxions"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-gottlob-frege",
+      "from": "gottlob-frege",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Frege's *Begriffsschrift* (1879)",
+      "citation_keys": [
+        "frege1879",
+        "russell_paradox_sep"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-bertrand-russell",
+      "from": "bertrand-russell",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Russell's *Principles of Mathematics* (1903)",
+      "citation_keys": [
+        "russell1903principles",
+        "russell1910principia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-principia-mathematica",
+      "from": "principia-mathematica",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Principia Mathematica* (1910–13)",
+      "citation_keys": [
+        "russell1903principles",
+        "russell1910principia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-hassler-whitney",
+      "from": "hassler-whitney",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Whitney, 1936]{whitney1936manifolds}",
+      "citation_keys": [
+        "whitney1936manifolds"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-alonzo-church",
+      "from": "alonzo-church",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Church's 1940 simple theory of types",
+      "citation_keys": [
+        "churchsimplytyped"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-richard-bellman",
+      "from": "richard-bellman",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Bellman, 1957]{bellman1957book}",
+      "citation_keys": [
+        "bellman1957book",
+        "bellman1961adaptive"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-per-martin-lof",
+      "from": "per-martin-lof",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Martin-Löf's 1972 system made types depend on terms",
+      "citation_keys": [
+        "martinlof1984intuitionistic",
+        "intuitionistic_type_theory_sep"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-gromov-milman",
+      "from": "gromov-milman",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Gromov \\& Milman, 1983]{gromov1983isoperimetric}",
+      "citation_keys": [
+        "gromov1983isoperimetric",
+        "concentration_of_measure_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-michel-talagrand",
+      "from": "michel-talagrand",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Talagrand, 1995]{talagrand1995concentration}",
+      "citation_keys": [
+        "talagrand1995concentration"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-beyer-et-al",
+      "from": "beyer-et-al",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Beyer et al., 1999]{beyer1999nearest}",
+      "citation_keys": [
+        "beyer1999nearest"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-serge-lang",
+      "from": "serge-lang",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Lang, Basic Mathematics, Ch. 11, p. 250]{lang2005basicmath}",
+      "citation_keys": [
+        "lang2005basicmath"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-vladimir-voevodsky",
+      "from": "vladimir-voevodsky",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Voevodsky's 2006 note",
+      "citation_keys": [
+        "voevodsky2006hlambda",
+        "voevodsky2010equivalence",
+        "hottbook"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-chris-olah",
+      "from": "chris-olah",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Olah, 2014]{olah2014manifolds}",
+      "citation_keys": [
+        "olah2014manifolds",
+        "loaizaganem2024manifoldsurvey"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-zhang-et-al",
+      "from": "zhang-et-al",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Zhang et al., 2017]{zhang2017rethinking}",
+      "citation_keys": [
+        "zhang2017rethinking"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-gorban-tyukin",
+      "from": "gorban-tyukin",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Gorban \\& Tyukin, 2018]{gorban2018blessing}",
+      "citation_keys": [
+        "gorban2018blessing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-elhage-et-al",
+      "from": "elhage-et-al",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Elhage et al., 2022]{elhage2022superposition}",
+      "citation_keys": [
+        "elhage2022superposition"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-hybrid-ai-systems",
+      "from": "hybrid-ai-systems",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 2025, the frontier is the **hybrid** system",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iii-70b-parameter-llm",
+      "from": "70b-parameter-llm",
+      "to": "math-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a 70B-parameter LLM can behave reliably on novel inputs",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

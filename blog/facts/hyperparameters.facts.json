@@ -20,7 +20,9 @@
     "yang2022mup",
     "goyal2017largebatch",
     "bengio2012practical",
-    "olson2025ax"
+    "olson2025ax",
+    "jones1998ego",
+    "bergstra2013science"
   ],
   "claims": [
     {
@@ -315,19 +317,39 @@
         "olson2025ax"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-gap4-1",
+      "subject": "efficient-global-optimization",
+      "predicate": "year",
+      "value": 1998,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Jones et al. (1998)]{jones1998ego}",
+      "citation_keys": [
+        "jones1998ego"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "hyperparameters-gap4-2",
+      "subject": "tree-structured-parzen-estimators",
+      "predicate": "year",
+      "value": 2013,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "applied at scale by \\cite[Bergstra et al. (2013)]{bergstra2013science}",
+      "citation_keys": [
+        "bergstra2013science"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-hyperparameters-part",
-      "from": "hyperparameters",
-      "to": "part-2",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 2",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-hyperparameters-hyperparameter",
       "from": "hyperparameter",
@@ -543,6 +565,40 @@
       "quote": "it is built on the \\cite[Ax]{olson2025ax} adaptive-experimentation platform",
       "citation_keys": [
         "olson2025ax"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-part",
+      "from": "hyperparameters",
+      "to": "part-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 2",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-efficient-global-optimization",
+      "from": "efficient-global-optimization",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Jones et al. (1998)]{jones1998ego}",
+      "citation_keys": [
+        "jones1998ego"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-hyperparameters-tree-structured-parzen-estimators",
+      "from": "tree-structured-parzen-estimators",
+      "to": "hyperparameters",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "applied at scale by \\cite[Bergstra et al. (2013)]{bergstra2013science}",
+      "citation_keys": [
+        "bergstra2013science"
       ],
       "confidence": "provenance"
     }

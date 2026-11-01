@@ -8,7 +8,9 @@
   "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
-    "dettmers2023qlora"
+    "dettmers2023qlora",
+    "hu2021lora",
+    "lmstudio2024"
   ],
   "claims": [
     {
@@ -281,6 +283,186 @@
         "dettmers2023qlora"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gap2-1",
+      "subject": "cloud-latency",
+      "predicate": "network_latency_max_ms",
+      "value": 1000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "100–1000 ms network + compute",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gap2-2",
+      "subject": "lora",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Hu et al., 2021]{hu2021lora})",
+      "citation_keys": [
+        "hu2021lora"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gap2-3",
+      "subject": "qlora",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Dettmers et al., 2023]{dettmers2023qlora})",
+      "citation_keys": [
+        "dettmers2023qlora"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gap2-4",
+      "subject": "local-llm-ecosystem",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The local-LLM ecosystem in 2025 is mature enough for serious work",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gap2-5",
+      "subject": "local-llm-forecast",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "by 2026, expect frontier-quality 70B models running comfortably on laptops",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gap2-6",
+      "subject": "70b-q6-k",
+      "predicate": "file_size",
+      "value": 60,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| Q6_K | 6.5 | ~1% | 60 GB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gap2-7",
+      "subject": "70b-iq1-s",
+      "predicate": "file_size",
+      "value": 18,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| IQ1_S | 1.5 | Major loss | 18 GB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gap2-8",
+      "subject": "llama-3-1-8b",
+      "predicate": "parameters",
+      "value": 8000000000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "ollama pull llama3.1:8b",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gap2-9",
+      "subject": "llama-3-1-8b",
+      "predicate": "parameters",
+      "value": 8000000000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "ollama run llama3.1:8b",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gap2-10",
+      "subject": "llama-3-1-8b",
+      "predicate": "parameters",
+      "value": 8000000000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "FROM llama3.1:8b",
+      "citation_keys": [
+        "lmstudio2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gap2-11",
+      "subject": "ollama-modelfile-temperature",
+      "predicate": "temperature",
+      "value": 0.7,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "PARAMETER temperature 0.7",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gap2-12",
+      "subject": "llama-3-1-8b",
+      "predicate": "parameters",
+      "value": 8000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Llama 3.1 8B",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gap2-13",
+      "subject": "70b-local",
+      "predicate": "context_window",
+      "value": 32768,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Longer contexts (32K+)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "running_locally-gap2-14",
+      "subject": "local-hardware",
+      "predicate": "price_max",
+      "value": 10000,
+      "unit": "USD",
+      "qualifiers": {
+        "definition": "range 2-10K"
+      },
+      "quote": "$2–10K",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -474,6 +656,108 @@
       "citation_keys": [
         "dettmers2023qlora"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-cloud-latency",
+      "from": "cloud-latency",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "100–1000 ms network + compute",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-lora",
+      "from": "lora",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Hu et al., 2021]{hu2021lora})",
+      "citation_keys": [
+        "hu2021lora"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-local-llm-ecosystem",
+      "from": "local-llm-ecosystem",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The local-LLM ecosystem in 2025 is mature enough for serious work",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-local-llm-forecast",
+      "from": "local-llm-forecast",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "by 2026, expect frontier-quality 70B models running comfortably on laptops",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-70b-q6-k",
+      "from": "70b-q6-k",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Q6_K | 6.5 | ~1% | 60 GB |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-70b-iq1-s",
+      "from": "70b-iq1-s",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| IQ1_S | 1.5 | Major loss | 18 GB |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-llama-3-1-8b",
+      "from": "llama-3-1-8b",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "ollama pull llama3.1:8b",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-ollama-modelfile-temperature",
+      "from": "ollama-modelfile-temperature",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "PARAMETER temperature 0.7",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-70b-local",
+      "from": "70b-local",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Longer contexts (32K+)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-running_locally-local-hardware",
+      "from": "local-hardware",
+      "to": "running-locally",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "$2–10K",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

@@ -292,16 +292,6 @@
   ],
   "relations": [
     {
-      "id": "prov-reliability-part",
-      "from": "reliability",
-      "to": "part-5",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 5",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "prov-reliability-calibration",
       "from": "calibration",
       "to": "reliability",
@@ -485,6 +475,16 @@
       "citation_keys": [
         "wei2024jailbroken"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reliability-part",
+      "from": "reliability",
+      "to": "part-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 5",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

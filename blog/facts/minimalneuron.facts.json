@@ -304,19 +304,33 @@
       "quote": "the output layer must contain $784$ neurons",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-gap3-1",
+      "subject": "minimalneuron-initialization",
+      "predicate": "initial_weight_range",
+      "value": "-1000 to 1000",
+      "unit": "interval",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "If we pick weights from a **Uniform Distribution** between $-1000$ and $1000$, the signal will explode towards infinity (NaN).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "minimalneuron-gap3-2",
+      "subject": "gpu",
+      "predicate": "multiplications_per_operation",
+      "value": 16000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "A modern GPU can execute a $4096 \\times 4096$ matrix times a $4096$-dimensional vector, over 16 million individual multiplications, in a single operation.",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-minimalneuron-part",
-      "from": "minimalneuron",
-      "to": "part-2",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 2",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-minimalneuron-mcculloch-pitts-neuron",
       "from": "mcculloch-pitts-neuron",
@@ -528,6 +542,36 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "the output layer must contain $784$ neurons",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-minimalneuron-initialization",
+      "from": "minimalneuron-initialization",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "If we pick weights from a **Uniform Distribution** between $-1000$ and $1000$, the signal will explode towards infinity (NaN).",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-gpu",
+      "from": "gpu",
+      "to": "minimalneuron",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A modern GPU can execute a $4096 \\times 4096$ matrix times a $4096$-dimensional vector, over 16 million individual multiplications, in a single operation.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-minimalneuron-part",
+      "from": "minimalneuron",
+      "to": "part-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 2",
       "citation_keys": [],
       "confidence": "provenance"
     }

@@ -172,7 +172,9 @@
       "unit": "token",
       "qualifiers": {},
       "quote": "128K tokens (GPT-4 Turbo)",
-      "citation_keys": [],
+      "citation_keys": [
+        "liu2023lostmiddle"
+      ],
       "confidence": "stated"
     },
     {
@@ -183,7 +185,9 @@
       "unit": "token",
       "qualifiers": {},
       "quote": "200K (Claude 3)",
-      "citation_keys": [],
+      "citation_keys": [
+        "liu2023lostmiddle"
+      ],
       "confidence": "stated"
     },
     {
@@ -196,7 +200,9 @@
         "approx": true
       },
       "quote": "even 1M+ (Gemini 1.5)",
-      "citation_keys": [],
+      "citation_keys": [
+        "liu2023lostmiddle"
+      ],
       "confidence": "stated"
     },
     {
@@ -300,19 +306,50 @@
       "quote": "a billion vectors can be queried in tens of milliseconds on a single machine",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "rag-gap3-1",
+      "subject": "transformer",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "The Transformer was introduced in 2017",
+      "citation_keys": [
+        "malkov2018hnsw"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-gap3-2",
+      "subject": "contextual-retrieval",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Contextual retrieval** \\cite[Ford, Anthropic (2024)]{contextualretrieval2024} addresses this at **index time**",
+      "citation_keys": [
+        "contextualretrieval2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rag-gap3-3",
+      "subject": "fixed-size-chunking",
+      "predicate": "example_chunk_size",
+      "value": 400,
+      "unit": "token",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "split by character/token count (say, 400 tokens, 50 overlap)",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-rag-part",
-      "from": "rag",
-      "to": "part-5",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 5",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-rag-rag-chunking",
       "from": "rag-chunking",
@@ -498,6 +535,38 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "a billion vectors can be queried in tens of milliseconds on a single machine",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-transformer",
+      "from": "transformer",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Transformer was introduced in 2017",
+      "citation_keys": [
+        "malkov2018hnsw"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-fixed-size-chunking",
+      "from": "fixed-size-chunking",
+      "to": "rag",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "split by character/token count (say, 400 tokens, 50 overlap)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-rag-part",
+      "from": "rag",
+      "to": "part-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 5",
       "citation_keys": [],
       "confidence": "provenance"
     }

@@ -235,16 +235,6 @@
   ],
   "relations": [
     {
-      "id": "prov-atlas-part",
-      "from": "atlas",
-      "to": "part-6",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 6",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "prov-atlas-atlas-timeline",
       "from": "atlas-timeline",
       "to": "atlas",
@@ -382,6 +372,16 @@
       "citation_keys": [
         "crab_nebula_image"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-atlas-part",
+      "from": "atlas",
+      "to": "part-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 6",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

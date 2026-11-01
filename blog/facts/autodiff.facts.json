@@ -7,7 +7,13 @@
   "order": 4,
   "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [],
+  "citations": [
+    "leibniz1684nova",
+    "linnainmaa1976",
+    "speelpenning1980",
+    "griewank1989",
+    "griewank2008"
+  ],
   "claims": [
     {
       "id": "auto-autodiff-title-1",
@@ -58,19 +64,76 @@
       "quote": "This requires **one forward pass per parameter** to compute each partial derivative. For a model with $n$ parameters, that means $n + 1$ forward passes. GPT-3 has 175 billion parameters, numerical differentiation would require 175 billion forward passes per training step. It is also numerically unst",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "autodiff-gap3-1",
+      "subject": "leibniz-nova-methodus",
+      "predicate": "publication_year",
+      "value": 1684,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Leibniz's *Nova Methodus* of 1684 introduced the differentials $dx$ and $dy$",
+      "citation_keys": [
+        "leibniz1684nova"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "autodiff-gap3-2",
+      "subject": "linnainmaa-1976-thesis",
+      "predicate": "english_version_year",
+      "value": 1976,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the English version appeared in 1976",
+      "citation_keys": [
+        "linnainmaa1976"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "autodiff-gap3-3",
+      "subject": "speelpenning-1980",
+      "predicate": "publication_year",
+      "value": 1980,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in 1980 \\citeauthor{speelpenning1980} turned reverse mode into a compiler technique",
+      "citation_keys": [
+        "speelpenning1980"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "autodiff-gap3-4",
+      "subject": "evaluating-derivatives",
+      "predicate": "publication_year",
+      "value": 2000,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "*Evaluating Derivatives* (2000; 2nd ed. 2008)",
+      "citation_keys": [
+        "griewank1989",
+        "griewank2008"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "autodiff-gap3-5",
+      "subject": "evaluating-derivatives",
+      "predicate": "second_edition_year",
+      "value": 2008,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "*Evaluating Derivatives* (2000; 2nd ed. 2008)",
+      "citation_keys": [
+        "griewank1989",
+        "griewank2008"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-autodiff-part",
-      "from": "autodiff",
-      "to": "part-2",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 2",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-autodiff-gpt-3",
       "from": "gpt-3",
@@ -78,6 +141,65 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "This requires **one forward pass per parameter** to compute each partial derivative. For a model with $n$ parameters, that means $n + 1$ forward passes. GPT-3 has 175 billion parameters, numerical differentiation would require 175 billion forward passes per training step. It is also numerically unst",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-autodiff-leibniz-nova-methodus",
+      "from": "leibniz-nova-methodus",
+      "to": "autodiff",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Leibniz's *Nova Methodus* of 1684 introduced the differentials $dx$ and $dy$",
+      "citation_keys": [
+        "leibniz1684nova"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-autodiff-linnainmaa-1976-thesis",
+      "from": "linnainmaa-1976-thesis",
+      "to": "autodiff",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the English version appeared in 1976",
+      "citation_keys": [
+        "linnainmaa1976"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-autodiff-speelpenning-1980",
+      "from": "speelpenning-1980",
+      "to": "autodiff",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in 1980 \\citeauthor{speelpenning1980} turned reverse mode into a compiler technique",
+      "citation_keys": [
+        "speelpenning1980"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-autodiff-evaluating-derivatives",
+      "from": "evaluating-derivatives",
+      "to": "autodiff",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Evaluating Derivatives* (2000; 2nd ed. 2008)",
+      "citation_keys": [
+        "griewank1989",
+        "griewank2008"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-autodiff-part",
+      "from": "autodiff",
+      "to": "part-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 2",
       "citation_keys": [],
       "confidence": "provenance"
     }

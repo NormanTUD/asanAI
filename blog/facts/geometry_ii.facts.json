@@ -22,7 +22,19 @@
     "cooley1965fft",
     "klein1872erlangen",
     "noether1918",
-    "zaheer2017deepsets"
+    "zaheer2017deepsets",
+    "dalembert1747",
+    "jacobi1846",
+    "jacobi1842",
+    "hamilton1853lectures",
+    "heaviside1893electromagnetic",
+    "gibbs_wilson1901",
+    "fft_history_wiki",
+    "toeplitz1911",
+    "weyl1912singular",
+    "weyl1939classicalgroups",
+    "merullo2024talkingheads",
+    "axler2024linearalgebra"
   ],
   "claims": [
     {
@@ -284,6 +296,331 @@
       "citation_keys": [],
       "qualifiers": {},
       "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-1",
+      "subject": "dalembert-wave-equation",
+      "predicate": "year",
+      "value": 1747,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "D'Alembert solved the one-dimensional wave equation in 1747",
+      "citation_keys": [
+        "dalembert1747"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-2",
+      "subject": "joseph-fourier",
+      "predicate": "birth_year",
+      "value": 1768,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Jean-Baptiste Joseph Fourier (1768–1830)",
+      "citation_keys": [
+        "fourier1822"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-3",
+      "subject": "augustin-louis-cauchy",
+      "predicate": "birth_year",
+      "value": 1789,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Augustin-Louis Cauchy (1789–1857)",
+      "citation_keys": [
+        "cauchy1847"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-4",
+      "subject": "carl-gustav-jacobi",
+      "predicate": "birth_year",
+      "value": 1804,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Carl Gustav Jacobi (1804–1851)",
+      "citation_keys": [
+        "jacobi1846"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-5",
+      "subject": "fourier-heat-memoir",
+      "predicate": "year",
+      "value": 1807,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Fourier's 1807 memoir on heat",
+      "citation_keys": [
+        "fourier1822"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-6",
+      "subject": "dirichlet-fourier-convergence",
+      "predicate": "year",
+      "value": 1829,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "convergence conditions were clarified later, notably by Dirichlet in 1829",
+      "citation_keys": [
+        "dalembert1747",
+        "fourier1822"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-7",
+      "subject": "joseph-fourier",
+      "predicate": "death_year",
+      "value": 1830,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Jean-Baptiste Joseph Fourier (1768–1830)",
+      "citation_keys": [
+        "fourier1822"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-8",
+      "subject": "jacobi-rotation-theory",
+      "predicate": "year",
+      "value": 1842,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1842 he gave the theory of *reducing a quadratic form to its principal axes by successive linear substitutions*",
+      "citation_keys": [
+        "jacobi1842"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-9",
+      "subject": "hamilton-quaternion-multiplication",
+      "predicate": "year",
+      "value": 1843,
+      "unit": "year",
+      "qualifiers": {
+        "range_end": 1846
+      },
+      "quote": "Hamilton hid it inside quaternion multiplication in 1843–46",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-10",
+      "subject": "jacobi-rotation-method",
+      "predicate": "publication_year",
+      "value": 1846,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The published rotation method is Jacobi's 1846 paper in Crelle's Journal 30",
+      "citation_keys": [
+        "jacobi1846"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-11",
+      "subject": "carl-gustav-jacobi",
+      "predicate": "death_year",
+      "value": 1851,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Carl Gustav Jacobi (1804–1851)",
+      "citation_keys": [
+        "jacobi1846"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-12",
+      "subject": "hamilton-lectures",
+      "predicate": "year",
+      "value": 1853,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Hamilton, 1853]{hamilton1853lectures}",
+      "citation_keys": [
+        "hamilton1853lectures"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-13",
+      "subject": "augustin-louis-cauchy",
+      "predicate": "death_year",
+      "value": 1857,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Augustin-Louis Cauchy (1789–1857)",
+      "citation_keys": [
+        "cauchy1847"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-14",
+      "subject": "james-joseph-sylvester",
+      "predicate": "year",
+      "value": 1889,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Sylvester (1889) called them *canonical multipliers*",
+      "citation_keys": [
+        "stewart1993svd"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-15",
+      "subject": "oliver-heaviside",
+      "predicate": "year",
+      "value": 1893,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Heaviside, 1893]{heaviside1893electromagnetic}",
+      "citation_keys": [
+        "heaviside1893electromagnetic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-16",
+      "subject": "gibbs-wilson-vector-analysis",
+      "predicate": "year",
+      "value": 1901,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "made it the dot product of vector calculus in the 1880s–1901",
+      "citation_keys": [
+        "gibbs_wilson1901"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-17",
+      "subject": "carl-runge",
+      "predicate": "year",
+      "value": 1903,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Runge's 1903 trigonometric-interpolation work supplied a precursor",
+      "citation_keys": [
+        "fft_history_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-18",
+      "subject": "toeplitz-matrix",
+      "predicate": "year",
+      "value": 1911,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Toeplitz, 1911]{toeplitz1911}",
+      "citation_keys": [
+        "toeplitz1911"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-19",
+      "subject": "hermann-weyl",
+      "predicate": "year",
+      "value": 1912,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Weyl (1912) proved the eigenvalue–singular-value inequalities",
+      "citation_keys": [
+        "weyl1912singular"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-20",
+      "subject": "weyl-classical-groups",
+      "predicate": "year",
+      "value": 1939,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Weyl's *Classical Groups* (1939) catalogued the invariants themselves",
+      "citation_keys": [
+        "weyl1939classicalgroups"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-21",
+      "subject": "danielson-lanczos",
+      "predicate": "year",
+      "value": 1942,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Danielson and Lanczos used the doubling trick for X-ray crystallography in 1942",
+      "citation_keys": [
+        "fft_history_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-22",
+      "subject": "stewart-svd-history",
+      "predicate": "year",
+      "value": 1993,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Stewart, 1993]{stewart1993svd}",
+      "citation_keys": [
+        "stewart1993svd"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-23",
+      "subject": "merullo-talking-heads",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Merullo et al., 2024]{merullo2024talkingheads}",
+      "citation_keys": [
+        "merullo2024talkingheads"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_ii-gap-24",
+      "subject": "axler-linear-algebra-done-right",
+      "predicate": "section_reference",
+      "value": "7B",
+      "unit": "name",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Ch. 7, §7B, p. 243",
+      "citation_keys": [
+        "axler2024linearalgebra"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -499,6 +836,257 @@
       "qualifiers": {},
       "quote": "The ratio $\\kappa = \\sigma_{\\max}/\\sigma_{\\min}$, the **condition number**",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-dalembert-wave-equation",
+      "from": "dalembert-wave-equation",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "D'Alembert solved the one-dimensional wave equation in 1747",
+      "citation_keys": [
+        "dalembert1747"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-joseph-fourier",
+      "from": "joseph-fourier",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Jean-Baptiste Joseph Fourier (1768–1830)",
+      "citation_keys": [
+        "fourier1822"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-augustin-louis-cauchy",
+      "from": "augustin-louis-cauchy",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Augustin-Louis Cauchy (1789–1857)",
+      "citation_keys": [
+        "cauchy1847"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-carl-gustav-jacobi",
+      "from": "carl-gustav-jacobi",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Carl Gustav Jacobi (1804–1851)",
+      "citation_keys": [
+        "jacobi1846"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-fourier-heat-memoir",
+      "from": "fourier-heat-memoir",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Fourier's 1807 memoir on heat",
+      "citation_keys": [
+        "fourier1822"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-dirichlet-fourier-convergence",
+      "from": "dirichlet-fourier-convergence",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "convergence conditions were clarified later, notably by Dirichlet in 1829",
+      "citation_keys": [
+        "dalembert1747",
+        "fourier1822"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-jacobi-rotation-theory",
+      "from": "jacobi-rotation-theory",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1842 he gave the theory of *reducing a quadratic form to its principal axes by successive linear substitutions*",
+      "citation_keys": [
+        "jacobi1842"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-hamilton-quaternion-multiplication",
+      "from": "hamilton-quaternion-multiplication",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hamilton hid it inside quaternion multiplication in 1843–46",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-jacobi-rotation-method",
+      "from": "jacobi-rotation-method",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The published rotation method is Jacobi's 1846 paper in Crelle's Journal 30",
+      "citation_keys": [
+        "jacobi1846"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-hamilton-lectures",
+      "from": "hamilton-lectures",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Hamilton, 1853]{hamilton1853lectures}",
+      "citation_keys": [
+        "hamilton1853lectures"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-james-joseph-sylvester",
+      "from": "james-joseph-sylvester",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Sylvester (1889) called them *canonical multipliers*",
+      "citation_keys": [
+        "stewart1993svd"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-oliver-heaviside",
+      "from": "oliver-heaviside",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Heaviside, 1893]{heaviside1893electromagnetic}",
+      "citation_keys": [
+        "heaviside1893electromagnetic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-gibbs-wilson-vector-analysis",
+      "from": "gibbs-wilson-vector-analysis",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "made it the dot product of vector calculus in the 1880s–1901",
+      "citation_keys": [
+        "gibbs_wilson1901"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-carl-runge",
+      "from": "carl-runge",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Runge's 1903 trigonometric-interpolation work supplied a precursor",
+      "citation_keys": [
+        "fft_history_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-toeplitz-matrix",
+      "from": "toeplitz-matrix",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Toeplitz, 1911]{toeplitz1911}",
+      "citation_keys": [
+        "toeplitz1911"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-hermann-weyl",
+      "from": "hermann-weyl",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Weyl (1912) proved the eigenvalue–singular-value inequalities",
+      "citation_keys": [
+        "weyl1912singular"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-weyl-classical-groups",
+      "from": "weyl-classical-groups",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Weyl's *Classical Groups* (1939) catalogued the invariants themselves",
+      "citation_keys": [
+        "weyl1939classicalgroups"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-danielson-lanczos",
+      "from": "danielson-lanczos",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Danielson and Lanczos used the doubling trick for X-ray crystallography in 1942",
+      "citation_keys": [
+        "fft_history_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-stewart-svd-history",
+      "from": "stewart-svd-history",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Stewart, 1993]{stewart1993svd}",
+      "citation_keys": [
+        "stewart1993svd"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-merullo-talking-heads",
+      "from": "merullo-talking-heads",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Merullo et al., 2024]{merullo2024talkingheads}",
+      "citation_keys": [
+        "merullo2024talkingheads"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_ii-axler-linear-algebra-done-right",
+      "from": "axler-linear-algebra-done-right",
+      "to": "geometry-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Ch. 7, §7B, p. 243",
+      "citation_keys": [
+        "axler2024linearalgebra"
+      ],
       "confidence": "provenance"
     }
   ],

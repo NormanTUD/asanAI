@@ -13,7 +13,9 @@
     "ainslie2023gqa",
     "beltagy2020longformer",
     "leviathan2023speculative",
-    "guo2025deepseekr1"
+    "guo2025deepseekr1",
+    "ma2024bitnet",
+    "dao2022flashattention"
   ],
   "claims": [
     {
@@ -303,6 +305,232 @@
         "guo2025deepseekr1"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-1",
+      "subject": "bitnet",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**BitNet** (\\cite[Ma et al., 2024]{ma2024bitnet})",
+      "citation_keys": [
+        "ma2024bitnet"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-2",
+      "subject": "deepseek-r1",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "DeepSeek-R1's distillation experiments (\\cite[Guo et al., 2025]{guo2025deepseekr1})",
+      "citation_keys": [
+        "guo2025deepseekr1"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-3",
+      "subject": "70b-model",
+      "predicate": "parameters",
+      "value": 70000000000,
+      "unit": "count",
+      "qualifiers": {
+        "context": "single_token_inference"
+      },
+      "quote": "For a single token generation step on a 70B model (fp16):",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-4",
+      "subject": "70b-model",
+      "predicate": "parameters",
+      "value": 70000000000,
+      "unit": "count",
+      "qualifiers": {
+        "precision": "bf16"
+      },
+      "quote": "| Read all weights from HBM (70B bf16, split over 2 H100s) | 70 GB ÷ 3 TB/s ≈ 23 ms |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-5",
+      "subject": "70b-model",
+      "predicate": "parameters",
+      "value": 70000000000,
+      "unit": "count",
+      "qualifiers": {
+        "context": "weight_quantization_table"
+      },
+      "quote": "| Format | Bits/weight | 70B size | Perplexity increase |",
+      "citation_keys": [
+        "frantar2022gptq"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-6",
+      "subject": "70b-model",
+      "predicate": "parameters",
+      "value": 70000000000,
+      "unit": "count",
+      "qualifiers": {
+        "context": "gqa_int8_prefix_caching"
+      },
+      "quote": "A 70B model with GQA + INT8 KV + prefix caching can serve 128K context",
+      "citation_keys": [
+        "dao2022flashattention"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-7",
+      "subject": "70b-model",
+      "predicate": "parameters",
+      "value": 70000000000,
+      "unit": "count",
+      "qualifiers": {
+        "hardware": "8x H100"
+      },
+      "quote": "For a 70B model on 8x H100:",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-8",
+      "subject": "70b-model-inference",
+      "predicate": "matmul_throughput",
+      "value": 50,
+      "unit": "TFLOPS",
+      "qualifiers": {
+        "batch": 1,
+        "approx": true
+      },
+      "quote": "~10 ms with batch=1, ~50 TFLOPS",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-9",
+      "subject": "70b-model",
+      "predicate": "fp32_size",
+      "value": 280,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| FP32 | 32 | 280 GB | Baseline |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-10",
+      "subject": "70b-model",
+      "predicate": "int3_size",
+      "value": 26,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| INT3 (QuIP, QuIP#) | 3 | 26 GB | 3–7% |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-11",
+      "subject": "70b-model",
+      "predicate": "int2_size",
+      "value": 17,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| INT2 (QuIP#) | 2 | 17 GB | 5–15% |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-12",
+      "subject": "kv-cache-quantization",
+      "predicate": "supported_context_length",
+      "value": 100000,
+      "unit": "token",
+      "qualifiers": {
+        "comparison": "more_than"
+      },
+      "quote": "Critical for serving 100K+ contexts.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-13",
+      "subject": "70b-model-serving",
+      "predicate": "context_length",
+      "value": 128000,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "can serve 128K context to roughly 20–30 concurrent users",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-14",
+      "subject": "70b-model-kv-cache",
+      "predicate": "fp16_kv_size_per_user",
+      "value": 335,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "the 335 GB of fp16 KV per user drops to ~21 GB with GQA and INT8",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-15",
+      "subject": "70b-model-kv-cache",
+      "predicate": "gqa_int8_kv_size_per_user",
+      "value": 21,
+      "unit": "GB",
+      "qualifiers": {
+        "approx": true,
+        "precision": "int8"
+      },
+      "quote": "drops to ~21 GB with GQA and INT8",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-16",
+      "subject": "8xh100-node",
+      "predicate": "memory_capacity",
+      "value": 640,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "an 8xH100 node holds 640 GB",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-17",
+      "subject": "paged-attention",
+      "predicate": "kv_block_size",
+      "value": 16,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "* Allocate KV cache in fixed-size **blocks** (typically 16 tokens).",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "inference_optimization-gap2-18",
+      "subject": "chunked-prefill",
+      "predicate": "prompt_length_example",
+      "value": 100000,
+      "unit": "token",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "A request with a 100K-token prompt would otherwise block the GPU for many seconds.",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -486,6 +714,80 @@
       "citation_keys": [
         "guo2025deepseekr1"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-bitnet",
+      "from": "bitnet",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**BitNet** (\\cite[Ma et al., 2024]{ma2024bitnet})",
+      "citation_keys": [
+        "ma2024bitnet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-deepseek-r1",
+      "from": "deepseek-r1",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "DeepSeek-R1's distillation experiments (\\cite[Guo et al., 2025]{guo2025deepseekr1})",
+      "citation_keys": [
+        "guo2025deepseekr1"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-kv-cache-quantization",
+      "from": "kv-cache-quantization",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Critical for serving 100K+ contexts.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-70b-model-serving",
+      "from": "70b-model-serving",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "can serve 128K context to roughly 20–30 concurrent users",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-70b-model-kv-cache",
+      "from": "70b-model-kv-cache",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the 335 GB of fp16 KV per user drops to ~21 GB with GQA and INT8",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-8xh100-node",
+      "from": "8xh100-node",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "an 8xH100 node holds 640 GB",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inference_optimization-chunked-prefill",
+      "from": "chunked-prefill",
+      "to": "inference-optimization",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A request with a 100K-token prompt would otherwise block the GPU for many seconds.",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

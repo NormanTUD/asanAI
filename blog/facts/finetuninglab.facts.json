@@ -7,7 +7,18 @@
   "order": 1,
   "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [],
+  "citations": [
+    "dettmers2023qlora",
+    "houlsby2019adapters",
+    "rafailov2023dpo",
+    "hu2021lora",
+    "lester2021prompttuning",
+    "liu2022ia3",
+    "liu2024dora",
+    "hinton2015distilling",
+    "wang2022selfinstruct",
+    "lambert2024tulu3"
+  ],
   "claims": [
     {
       "id": "auto-finetuninglab-title-1",
@@ -56,7 +67,10 @@
       "unit": "K",
       "qualifiers": {},
       "quote": "With $r = 16$ on a 4096×4096 weight matrix, LoRA adds ~131K parameters (0.78% of the original).",
-      "citation_keys": [],
+      "citation_keys": [
+        "dettmers2023qlora",
+        "houlsby2019adapters"
+      ],
       "confidence": "extracted"
     },
     {
@@ -69,19 +83,423 @@
       "quote": "For a 7B–13B model with QLoRA on a single consumer GPU (24 GB):",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "finetuninglab-gap-1",
+      "subject": "base-model-pretraining",
+      "predicate": "training_tokens",
+      "value": 10000000000000,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "over ~10T tokens of web text",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-2",
+      "subject": "instructgpt-sft",
+      "predicate": "examples",
+      "value": 13000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "~13K human-written examples",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-3",
+      "subject": "synthetic-sft-dataset",
+      "predicate": "examples",
+      "value": 100000,
+      "unit": "count",
+      "qualifiers": {
+        "range": "100K-1M"
+      },
+      "quote": "Use GPT-4 to generate 100K–1M examples",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-4",
+      "subject": "synthetic-sft-dataset",
+      "predicate": "examples",
+      "value": 1000000,
+      "unit": "count",
+      "qualifiers": {
+        "range": "100K-1M"
+      },
+      "quote": "Use GPT-4 to generate 100K–1M examples",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-5",
+      "subject": "sft-dataset-2025",
+      "predicate": "examples",
+      "value": 100000,
+      "unit": "count",
+      "qualifiers": {
+        "range": "100K-1M"
+      },
+      "quote": "A typical 2025 SFT dataset: 100K–1M examples",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-6",
+      "subject": "sft-dataset-2025",
+      "predicate": "examples",
+      "value": 1000000,
+      "unit": "count",
+      "qualifiers": {
+        "range": "100K-1M"
+      },
+      "quote": "A typical 2025 SFT dataset: 100K–1M examples",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-7",
+      "subject": "llama-3",
+      "predicate": "sft_examples",
+      "value": 10000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Llama 3 used ~10M SFT examples",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-8",
+      "subject": "curated-sft-examples",
+      "predicate": "examples",
+      "value": 10000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "10K carefully curated examples beat 1M noisy ones",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-9",
+      "subject": "noisy-sft-examples",
+      "predicate": "examples",
+      "value": 1000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "10K carefully curated examples beat 1M noisy ones",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-10",
+      "subject": "reward-model-2025",
+      "predicate": "parameters",
+      "value": 70000000000,
+      "unit": "count",
+      "qualifiers": {
+        "range": "7B-70B"
+      },
+      "quote": "A 2025 RM is typically a 7B–70B language model",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-11",
+      "subject": "reward-model-preference-data",
+      "predicate": "preference_pairs",
+      "value": 100000,
+      "unit": "count",
+      "qualifiers": {
+        "range": "100K-1M"
+      },
+      "quote": "It is trained on **100K–1M preference pairs**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-12",
+      "subject": "reward-model-preference-data",
+      "predicate": "preference_pairs",
+      "value": 1000000,
+      "unit": "count",
+      "qualifiers": {
+        "range": "100K-1M"
+      },
+      "quote": "It is trained on **100K–1M preference pairs**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-13",
+      "subject": "ppo-70b-setup",
+      "predicate": "parameters",
+      "value": 70000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "a 70B PPO setup needs ~16 H100s",
+      "citation_keys": [
+        "rafailov2023dpo"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-14",
+      "subject": "model-70b-full-finetuning",
+      "predicate": "parameters",
+      "value": 70000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Full fine-tuning of a 70B model requires ~1 TB of GPU memory",
+      "citation_keys": [
+        "hu2021lora"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-15",
+      "subject": "model-70b-full-finetuning",
+      "predicate": "memory",
+      "value": 1,
+      "unit": "TB",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "requires ~1 TB of GPU memory (params + grads + optimizer)",
+      "citation_keys": [
+        "hu2021lora"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-16",
+      "subject": "qlora-65b",
+      "predicate": "parameters",
+      "value": 65000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "a 65B QLoRA fine-tune on a single 48 GB GPU",
+      "citation_keys": [
+        "houlsby2019adapters",
+        "lester2021prompttuning",
+        "liu2022ia3",
+        "liu2024dora"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-17",
+      "subject": "qlora-65b",
+      "predicate": "gpu_memory",
+      "value": 48,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "on a single 48 GB GPU",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-18",
+      "subject": "qlora-70b",
+      "predicate": "parameters",
+      "value": 70000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "70B is an extrapolation, not a demonstrated headline result",
+      "citation_keys": [
+        "houlsby2019adapters",
+        "lester2021prompttuning",
+        "liu2022ia3",
+        "liu2024dora"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-19",
+      "subject": "qlora-7b-finetune",
+      "predicate": "examples",
+      "value": 10000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "~10K examples",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-20",
+      "subject": "frontier-pretraining",
+      "predicate": "training_tokens",
+      "value": 10000000000000,
+      "unit": "token",
+      "qualifiers": {
+        "bound": "greater_than"
+      },
+      "quote": "Pretrain on 10T+ tokens",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-21",
+      "subject": "frontier-sft",
+      "predicate": "examples",
+      "value": 10000000,
+      "unit": "count",
+      "qualifiers": {
+        "range": "1M-10M"
+      },
+      "quote": "SFT on 1-10M instruction-response pairs",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-22",
+      "subject": "frontier-preference-data",
+      "predicate": "preference_pairs",
+      "value": 100000,
+      "unit": "count",
+      "qualifiers": {
+        "range": "100K-1M"
+      },
+      "quote": "Online DPO / RLHF on 100K-1M preferences",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-23",
+      "subject": "frontier-preference-data",
+      "predicate": "preference_pairs",
+      "value": 1000000,
+      "unit": "count",
+      "qualifiers": {
+        "range": "100K-1M"
+      },
+      "quote": "Online DPO / RLHF on 100K-1M preferences",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-24",
+      "subject": "frontier-post-training-cost",
+      "predicate": "training_cost",
+      "value": 30000000,
+      "unit": "USD",
+      "qualifiers": {
+        "approx": true,
+        "range": "5M-30M"
+      },
+      "quote": "~$5–30M for a frontier model",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-25",
+      "subject": "hinton-distillation-paper",
+      "predicate": "year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Hinton et al., 2015",
+      "citation_keys": [
+        "hinton2015distilling"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-26",
+      "subject": "houlsby-adapters-paper",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Houlsby et al., 2019",
+      "citation_keys": [
+        "houlsby2019adapters"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-27",
+      "subject": "lora-paper",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Hu et al., 2021",
+      "citation_keys": [
+        "hu2021lora"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-28",
+      "subject": "self-instruct-paper",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Wang et al., 2022",
+      "citation_keys": [
+        "wang2022selfinstruct"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-29",
+      "subject": "dpo-paper",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Rafailov et al., 2023",
+      "citation_keys": [
+        "rafailov2023dpo"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-30",
+      "subject": "rlvr",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The recipe above acquired a name in 2024",
+      "citation_keys": [
+        "lambert2024tulu3"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "finetuninglab-gap-31",
+      "subject": "sft-dataset-2025",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "A typical 2025 SFT dataset",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-finetuninglab-part",
-      "from": "finetuninglab",
-      "to": "part-5",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 5",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-finetuninglab-lora",
       "from": "lora",
@@ -99,6 +517,282 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "For a 7B–13B model with QLoRA on a single consumer GPU (24 GB):",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-base-model-pretraining",
+      "from": "base-model-pretraining",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "over ~10T tokens of web text",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-instructgpt-sft",
+      "from": "instructgpt-sft",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "~13K human-written examples",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-synthetic-sft-dataset",
+      "from": "synthetic-sft-dataset",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Use GPT-4 to generate 100K–1M examples",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-sft-dataset-2025",
+      "from": "sft-dataset-2025",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A typical 2025 SFT dataset: 100K–1M examples",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-llama-3",
+      "from": "llama-3",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Llama 3 used ~10M SFT examples",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-curated-sft-examples",
+      "from": "curated-sft-examples",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "10K carefully curated examples beat 1M noisy ones",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-noisy-sft-examples",
+      "from": "noisy-sft-examples",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "10K carefully curated examples beat 1M noisy ones",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-reward-model-2025",
+      "from": "reward-model-2025",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A 2025 RM is typically a 7B–70B language model",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-reward-model-preference-data",
+      "from": "reward-model-preference-data",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "It is trained on **100K–1M preference pairs**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-ppo-70b-setup",
+      "from": "ppo-70b-setup",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a 70B PPO setup needs ~16 H100s",
+      "citation_keys": [
+        "rafailov2023dpo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-model-70b-full-finetuning",
+      "from": "model-70b-full-finetuning",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Full fine-tuning of a 70B model requires ~1 TB of GPU memory",
+      "citation_keys": [
+        "hu2021lora"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-qlora-65b",
+      "from": "qlora-65b",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a 65B QLoRA fine-tune on a single 48 GB GPU",
+      "citation_keys": [
+        "houlsby2019adapters",
+        "lester2021prompttuning",
+        "liu2022ia3",
+        "liu2024dora"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-qlora-70b",
+      "from": "qlora-70b",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "70B is an extrapolation, not a demonstrated headline result",
+      "citation_keys": [
+        "houlsby2019adapters",
+        "lester2021prompttuning",
+        "liu2022ia3",
+        "liu2024dora"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-qlora-7b-finetune",
+      "from": "qlora-7b-finetune",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "~10K examples",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-frontier-pretraining",
+      "from": "frontier-pretraining",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Pretrain on 10T+ tokens",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-frontier-sft",
+      "from": "frontier-sft",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "SFT on 1-10M instruction-response pairs",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-frontier-preference-data",
+      "from": "frontier-preference-data",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Online DPO / RLHF on 100K-1M preferences",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-frontier-post-training-cost",
+      "from": "frontier-post-training-cost",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "~$5–30M for a frontier model",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-hinton-distillation-paper",
+      "from": "hinton-distillation-paper",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hinton et al., 2015",
+      "citation_keys": [
+        "hinton2015distilling"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-houlsby-adapters-paper",
+      "from": "houlsby-adapters-paper",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Houlsby et al., 2019",
+      "citation_keys": [
+        "houlsby2019adapters"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-lora-paper",
+      "from": "lora-paper",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hu et al., 2021",
+      "citation_keys": [
+        "hu2021lora"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-self-instruct-paper",
+      "from": "self-instruct-paper",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Wang et al., 2022",
+      "citation_keys": [
+        "wang2022selfinstruct"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-dpo-paper",
+      "from": "dpo-paper",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Rafailov et al., 2023",
+      "citation_keys": [
+        "rafailov2023dpo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-rlvr",
+      "from": "rlvr",
+      "to": "finetuninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The recipe above acquired a name in 2024",
+      "citation_keys": [
+        "lambert2024tulu3"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-finetuninglab-part",
+      "from": "finetuninglab",
+      "to": "part-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 5",
       "citation_keys": [],
       "confidence": "provenance"
     }

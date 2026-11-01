@@ -183,16 +183,6 @@
   ],
   "relations": [
     {
-      "id": "prov-traininglab-part",
-      "from": "traininglab",
-      "to": "part-2",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 2",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "prov-traininglab-traininglab-optimizer",
       "from": "traininglab-optimizer",
       "to": "traininglab",
@@ -289,6 +279,16 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "These heatmaps show the numerical values inside each layer's weights, updating live as the optimizer turns the knobs.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-traininglab-part",
+      "from": "traininglab",
+      "to": "part-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 2",
       "citation_keys": [],
       "confidence": "provenance"
     }

@@ -10,12 +10,18 @@
   "citations": [
     "hinton1995wakesleep",
     "lloyd1982kmeans",
+    "steinhaus1957division",
+    "macqueen1967kmeans",
+    "forgy1965kmeans",
     "arthur2007kmeanspp",
     "ester1996dbscan",
     "dempster1977em",
     "bishop2006prml",
     "baum1966hmm",
-    "bennett2007netflix"
+    "bennett2007netflix",
+    "hume_treatise",
+    "kant_critique_pure_reason",
+    "morales2021reservoir"
   ],
   "claims": [
     {
@@ -115,7 +121,11 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "before being published as a journal article in 1982",
-      "citation_keys": [],
+      "citation_keys": [
+        "steinhaus1957division",
+        "macqueen1967kmeans",
+        "forgy1965kmeans"
+      ],
       "confidence": "stated"
     },
     {
@@ -286,6 +296,519 @@
       "citation_keys": [
         "bennett2007netflix"
       ],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-1",
+      "subject": "hume-treatise",
+      "predicate": "year",
+      "value": 1739,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Hume, *A Treatise of Human Nature* (1739)",
+      "citation_keys": [
+        "hume_treatise"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-2",
+      "subject": "kant-critique-pure-reason",
+      "predicate": "year",
+      "value": 1781,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Kant, *Critique of Pure Reason* (1781)",
+      "citation_keys": [
+        "kant_critique_pure_reason"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-3",
+      "subject": "linear-regression",
+      "predicate": "year",
+      "value": 1805,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Linear / logistic | 1805/1958 | Supervised | Interpretable |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-4",
+      "subject": "principal-component-analysis",
+      "predicate": "year",
+      "value": 1901,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| PCA | 1901 | Dim. reduction | Linear |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-5",
+      "subject": "thompson-sampling",
+      "predicate": "year",
+      "value": 1933,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| UCB/Thompson | 1933/85 | Bandits | Exploration |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-6",
+      "subject": "metropolis-hastings",
+      "predicate": "year",
+      "value": 1953,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Metropolis–Hastings | 1953 | Bayesian | MCMC |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-7",
+      "subject": "steinhaus-partition",
+      "predicate": "year",
+      "value": 1956,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "had already described an equivalent partition in 1956",
+      "citation_keys": [
+        "steinhaus1957division"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-8",
+      "subject": "logistic-regression",
+      "predicate": "year",
+      "value": 1958,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Linear / logistic | 1805/1958 | Supervised | Interpretable |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-9",
+      "subject": "kalman-filter",
+      "predicate": "year",
+      "value": 1960,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Kalman filter | 1960 | Bayesian, time series | Linear–Gaussian state-space |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-10",
+      "subject": "naive-bayes",
+      "predicate": "year",
+      "value": 1961,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Naive Bayes | 1961 | Supervised | Text baseline |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-11",
+      "subject": "sat-solver",
+      "predicate": "year",
+      "value": 1962,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| SAT solver | 1962 | Symbolic | Boolean satisfiability |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-12",
+      "subject": "hierarchical-clustering",
+      "predicate": "year",
+      "value": 1963,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Hierarchical (Ward) | 1963 | Clustering | Taxonomy building |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-13",
+      "subject": "forgy-kmeans",
+      "predicate": "year",
+      "value": 1965,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "published an essentially identical method in 1965",
+      "citation_keys": [
+        "forgy1965kmeans"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-14",
+      "subject": "hidden-markov-model",
+      "predicate": "year",
+      "value": 1966,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| HMM | 1966 | Bayesian, time series | Sequence labelling |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-15",
+      "subject": "k-nearest-neighbours",
+      "predicate": "year",
+      "value": 1967,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| *k*-NN | 1967 | Supervised | Non-parametric |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-16",
+      "subject": "arima",
+      "predicate": "year",
+      "value": 1970,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| ARIMA | 1970 | Time series | Forecasting baseline |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-17",
+      "subject": "prolog",
+      "predicate": "year",
+      "value": 1973,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Prolog | 1973 | Symbolic | Logic programming |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-18",
+      "subject": "mean-shift",
+      "predicate": "year",
+      "value": 1975,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Mean shift | 1975 | Clustering | Non-parametric |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-19",
+      "subject": "mycin",
+      "predicate": "year",
+      "value": 1976,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| MYCIN/R1 | 1976/82 | Symbolic | Expert system |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-20",
+      "subject": "bayesian-optimisation",
+      "predicate": "year",
+      "value": 1978,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Bayesian optimisation | 1978 | Evolutionary | Hyperparameter search |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-21",
+      "subject": "cart",
+      "predicate": "year",
+      "value": 1984,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Decision tree (CART) | 1984 | Supervised | Interpretable baseline |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-22",
+      "subject": "bayesian-network",
+      "predicate": "year",
+      "value": 1985,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Bayesian network | 1985 | Bayesian | Generative graphical model |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-23",
+      "subject": "id3",
+      "predicate": "year",
+      "value": 1986,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| ID3/C4.5 | 1986 | Supervised | Multiclass |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-24",
+      "subject": "hamiltonian-monte-carlo",
+      "predicate": "year",
+      "value": 1987,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| HMC/NUTS | 1987/2014 | Bayesian | Gradient MCMC |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-25",
+      "subject": "q-learning",
+      "predicate": "year",
+      "value": 1989,
+      "unit": "year",
+      "qualifiers": {
+        "variant": "thesis"
+      },
+      "quote": "| Q-learning | 1989 / 1992 | RL | Off-policy TD (thesis / journal paper) |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-26",
+      "subject": "inductive-logic-programming",
+      "predicate": "year",
+      "value": 1991,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| ILP | 1991 | Symbolic | Rule learning |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-27",
+      "subject": "genetic-programming",
+      "predicate": "year",
+      "value": 1992,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| GP | 1992 | Evolutionary | Symbolic regression |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-28",
+      "subject": "spiking-neural-network",
+      "predicate": "year",
+      "value": 1997,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Spiking NN | 1997 | Neural, special | Neuromorphic hardware |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-29",
+      "subject": "pagerank",
+      "predicate": "year",
+      "value": 1998,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| PageRank | 1998 | Graph | Web search |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-30",
+      "subject": "optics",
+      "predicate": "year",
+      "value": 1999,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| OPTICS | 1999 | Clustering | Hierarchy of densities |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-31",
+      "subject": "spectral-clustering",
+      "predicate": "year",
+      "value": 2000,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Spectral | 2000 | Clustering | Image segmentation |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-32",
+      "subject": "neat",
+      "predicate": "year",
+      "value": 2002,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| NEAT | 2002 | Evolutionary | Neuroevolution |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-33",
+      "subject": "coq",
+      "predicate": "year",
+      "value": 2004,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Lean/Coq | 2015/2004 | Symbolic | Interactive theorem proving |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-34",
+      "subject": "tsne",
+      "predicate": "year",
+      "value": 2008,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| t-SNE | 2008 | Dim. reduction | Visualisation |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-35",
+      "subject": "capsule-network",
+      "predicate": "year",
+      "value": 2011,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Capsule | 2011/17 | Neural, special | Viewpoint-equivariant |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-36",
+      "subject": "hdbscan",
+      "predicate": "year",
+      "value": 2013,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| HDBSCAN | 2013 | Clustering | Density-based, no ε |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-37",
+      "subject": "normalising-flow",
+      "predicate": "year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Normalising flow | 2015 | Generative | Exact likelihood |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-38",
+      "subject": "lightgbm",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| LightGBM | 2017 | Supervised | Large-scale tabular |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-39",
+      "subject": "alphazero",
+      "predicate": "year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| AlphaZero | 2018 | RL | Self-play + MCTS |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-40",
+      "subject": "two-tower-model",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Two-tower | 2019 | Recommender | Retrieval at scale |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-41",
+      "subject": "muzero",
+      "predicate": "year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| MuZero | 2020 | RL | Learned latent model |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-42",
+      "subject": "reservoir-plasticity-study",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Morales, Mirasso & Soriano (2021)",
+      "citation_keys": [
+        "morales2021reservoir"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-43",
+      "subject": "tabular-benchmark-sota",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {
+        "scope": "Kaggle tabular benchmark"
+      },
+      "quote": "The state of the art on a representative Kaggle tabular benchmark in 2025 is a **gradient-boosted decision tree**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-44",
+      "subject": "machine-learning",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Machine learning in 2026 is a thick rainforest of ideas",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "beyond_llms-gap-45",
+      "subject": "k-means",
+      "predicate": "memo_delay",
+      "value": 25,
+      "unit": "count",
+      "qualifiers": {
+        "duration": "years"
+      },
+      "quote": "a Bell Labs internal memo for 25 years before being published as a journal article in 1982",
+      "citation_keys": [],
       "confidence": "stated"
     }
   ],
@@ -476,6 +999,436 @@
       "citation_keys": [
         "bennett2007netflix"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-hume-treatise",
+      "from": "hume-treatise",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hume, *A Treatise of Human Nature* (1739)",
+      "citation_keys": [
+        "hume_treatise"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-kant-critique-pure-reason",
+      "from": "kant-critique-pure-reason",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Kant, *Critique of Pure Reason* (1781)",
+      "citation_keys": [
+        "kant_critique_pure_reason"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-linear-regression",
+      "from": "linear-regression",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Linear / logistic | 1805/1958 | Supervised | Interpretable |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-principal-component-analysis",
+      "from": "principal-component-analysis",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| PCA | 1901 | Dim. reduction | Linear |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-thompson-sampling",
+      "from": "thompson-sampling",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| UCB/Thompson | 1933/85 | Bandits | Exploration |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-metropolis-hastings",
+      "from": "metropolis-hastings",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Metropolis–Hastings | 1953 | Bayesian | MCMC |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-steinhaus-partition",
+      "from": "steinhaus-partition",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "had already described an equivalent partition in 1956",
+      "citation_keys": [
+        "steinhaus1957division"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-logistic-regression",
+      "from": "logistic-regression",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Linear / logistic | 1805/1958 | Supervised | Interpretable |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-kalman-filter",
+      "from": "kalman-filter",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Kalman filter | 1960 | Bayesian, time series | Linear–Gaussian state-space |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-naive-bayes",
+      "from": "naive-bayes",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Naive Bayes | 1961 | Supervised | Text baseline |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-sat-solver",
+      "from": "sat-solver",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| SAT solver | 1962 | Symbolic | Boolean satisfiability |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-hierarchical-clustering",
+      "from": "hierarchical-clustering",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Hierarchical (Ward) | 1963 | Clustering | Taxonomy building |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-forgy-kmeans",
+      "from": "forgy-kmeans",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "published an essentially identical method in 1965",
+      "citation_keys": [
+        "forgy1965kmeans"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-k-nearest-neighbours",
+      "from": "k-nearest-neighbours",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| *k*-NN | 1967 | Supervised | Non-parametric |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-arima",
+      "from": "arima",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| ARIMA | 1970 | Time series | Forecasting baseline |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-prolog",
+      "from": "prolog",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Prolog | 1973 | Symbolic | Logic programming |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-mean-shift",
+      "from": "mean-shift",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Mean shift | 1975 | Clustering | Non-parametric |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-mycin",
+      "from": "mycin",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| MYCIN/R1 | 1976/82 | Symbolic | Expert system |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-bayesian-optimisation",
+      "from": "bayesian-optimisation",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Bayesian optimisation | 1978 | Evolutionary | Hyperparameter search |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-cart",
+      "from": "cart",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Decision tree (CART) | 1984 | Supervised | Interpretable baseline |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-bayesian-network",
+      "from": "bayesian-network",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Bayesian network | 1985 | Bayesian | Generative graphical model |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-id3",
+      "from": "id3",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| ID3/C4.5 | 1986 | Supervised | Multiclass |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-hamiltonian-monte-carlo",
+      "from": "hamiltonian-monte-carlo",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| HMC/NUTS | 1987/2014 | Bayesian | Gradient MCMC |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-q-learning",
+      "from": "q-learning",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Q-learning | 1989 / 1992 | RL | Off-policy TD (thesis / journal paper) |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-inductive-logic-programming",
+      "from": "inductive-logic-programming",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| ILP | 1991 | Symbolic | Rule learning |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-genetic-programming",
+      "from": "genetic-programming",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| GP | 1992 | Evolutionary | Symbolic regression |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-spiking-neural-network",
+      "from": "spiking-neural-network",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Spiking NN | 1997 | Neural, special | Neuromorphic hardware |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-optics",
+      "from": "optics",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| OPTICS | 1999 | Clustering | Hierarchy of densities |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-spectral-clustering",
+      "from": "spectral-clustering",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Spectral | 2000 | Clustering | Image segmentation |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-neat",
+      "from": "neat",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| NEAT | 2002 | Evolutionary | Neuroevolution |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-coq",
+      "from": "coq",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Lean/Coq | 2015/2004 | Symbolic | Interactive theorem proving |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-tsne",
+      "from": "tsne",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| t-SNE | 2008 | Dim. reduction | Visualisation |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-capsule-network",
+      "from": "capsule-network",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Capsule | 2011/17 | Neural, special | Viewpoint-equivariant |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-hdbscan",
+      "from": "hdbscan",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| HDBSCAN | 2013 | Clustering | Density-based, no ε |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-normalising-flow",
+      "from": "normalising-flow",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Normalising flow | 2015 | Generative | Exact likelihood |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-lightgbm",
+      "from": "lightgbm",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| LightGBM | 2017 | Supervised | Large-scale tabular |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-alphazero",
+      "from": "alphazero",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| AlphaZero | 2018 | RL | Self-play + MCTS |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-two-tower-model",
+      "from": "two-tower-model",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Two-tower | 2019 | Recommender | Retrieval at scale |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-muzero",
+      "from": "muzero",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| MuZero | 2020 | RL | Learned latent model |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-reservoir-plasticity-study",
+      "from": "reservoir-plasticity-study",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Morales, Mirasso & Soriano (2021)",
+      "citation_keys": [
+        "morales2021reservoir"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-tabular-benchmark-sota",
+      "from": "tabular-benchmark-sota",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The state of the art on a representative Kaggle tabular benchmark in 2025 is a **gradient-boosted decision tree**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-beyond_llms-machine-learning",
+      "from": "machine-learning",
+      "to": "beyond-llms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Machine learning in 2026 is a thick rainforest of ideas",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

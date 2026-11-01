@@ -23,7 +23,16 @@
     "universityofbologna",
     "philtrans1665",
     "venicepatent1474",
-    "suarezgallup1981mirror"
+    "suarezgallup1981mirror",
+    "giordanobruno",
+    "brunodeumbris1582",
+    "artofmemoryyates",
+    "galileoassayer1623",
+    "galilei_image",
+    "chomsky1959review",
+    "chm",
+    "emergenceofmodernhumanbehaviour",
+    "picamundurucu2004"
   ],
   "claims": [
     {
@@ -326,6 +335,246 @@
         "suarezgallup1981mirror"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-1",
+      "subject": "university-of-bologna",
+      "predicate": "depicted_year",
+      "value": 1497,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "A 1497 miniature of students at the **University of Bologna**",
+      "citation_keys": [
+        "philtrans1665"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-2",
+      "subject": "giordano-bruno",
+      "predicate": "birth_year",
+      "value": 1548,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Giordano Bruno]{giordanobruno} (1548–1600)",
+      "citation_keys": [
+        "giordanobruno"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-3",
+      "subject": "de-umbris-idearum",
+      "predicate": "publication_year",
+      "value": 1582,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[De umbris idearum (1582)]{brunodeumbris1582}",
+      "citation_keys": [
+        "brunodeumbris1582",
+        "giordanobruno"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-4",
+      "subject": "xiguo-jifa",
+      "predicate": "completion_year",
+      "value": 1595,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "completed in 1595",
+      "citation_keys": [
+        "artofmemoryyates"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-5",
+      "subject": "giordano-bruno",
+      "predicate": "death_year",
+      "value": 1600,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Giordano Bruno]{giordanobruno} (1548–1600)",
+      "citation_keys": [
+        "giordanobruno"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-6",
+      "subject": "the-assayer",
+      "predicate": "publication_year",
+      "value": 1623,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in *The Assayer* (*Il Saggiatore*, 1623)",
+      "citation_keys": [
+        "galileoassayer1623"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-7",
+      "subject": "galileo-portrait-sustermans",
+      "predicate": "depiction_year",
+      "value": 1636,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "from Justus Sustermans's 1636 portrait (Uffizi)",
+      "citation_keys": [
+        "galilei_image"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-8",
+      "subject": "giordano-bruno-portrait-gundling",
+      "predicate": "depiction_year",
+      "value": 1715,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "from an 18th-century engraving (N. H. Gundling, *Neue Bibliothec*, 1715)",
+      "citation_keys": [
+        "giordanobruno"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-9",
+      "subject": "frances-yates",
+      "predicate": "birth_year",
+      "value": 1899,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Frances A. Yates (1899–1981)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-10",
+      "subject": "frances-yates-photo-1924",
+      "predicate": "depiction_year",
+      "value": 1924,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Frances A. Yates (1899–1981), 1924.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-11",
+      "subject": "chomsky-review",
+      "predicate": "year",
+      "value": 1959,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the 1959 review in which \\citeauthor{chomsky1959review} demolished the behaviorist idea",
+      "citation_keys": [
+        "chomsky1959review"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-12",
+      "subject": "the-art-of-memory",
+      "predicate": "publication_year",
+      "value": 1966,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "not seriously studied until 1966, when the historian \\citeauthor{artofmemoryyates} (\\citeyear{artofmemoryyates}) published \\cite[The Art of Memory]{artofmemoryyates}",
+      "citation_keys": [
+        "artofmemoryyates"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-13",
+      "subject": "bell-labs",
+      "predicate": "multics_withdrawal_year",
+      "value": 1969,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Bell Labs withdrew in 1969 and its people built Unix on the side",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-14",
+      "subject": "altair",
+      "predicate": "operating_system_race_year",
+      "value": 1975,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the small companies scrambling in 1975 to ship an operating system for the **Altair** microcomputer",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-15",
+      "subject": "ibm-pc",
+      "predicate": "release_year",
+      "value": 1981,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "IBM adopted when it built the first mass-market personal computer in 1981",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-16",
+      "subject": "cowan-working-memory-review",
+      "predicate": "year",
+      "value": 2001,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Cowan, 2001]{cowan2001magical4})",
+      "citation_keys": [
+        "cowan2001magical4"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-17",
+      "subject": "blombos-cave-study",
+      "predicate": "year",
+      "value": 2002,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Henshilwood et al., 2002]{emergenceofmodernhumanbehaviour})",
+      "citation_keys": [
+        "emergenceofmodernhumanbehaviour"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human_mind-gap2-18",
+      "subject": "piraha-mundurucu-number-studies",
+      "predicate": "year",
+      "value": 2004,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Pirahã (Gordon, 2004); Pica et al., Mundurucú (2004)]{piraha2004, picamundurucu2004}",
+      "citation_keys": [
+        "piraha2004",
+        "picamundurucu2004"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -536,6 +785,196 @@
       "quote": "Chimpanzees and orangutans pass; gorillas, and most other animals, do not",
       "citation_keys": [
         "suarezgallup1981mirror"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-giordano-bruno",
+      "from": "giordano-bruno",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Giordano Bruno]{giordanobruno} (1548–1600)",
+      "citation_keys": [
+        "giordanobruno"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-de-umbris-idearum",
+      "from": "de-umbris-idearum",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[De umbris idearum (1582)]{brunodeumbris1582}",
+      "citation_keys": [
+        "brunodeumbris1582",
+        "giordanobruno"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-xiguo-jifa",
+      "from": "xiguo-jifa",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "completed in 1595",
+      "citation_keys": [
+        "artofmemoryyates"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-the-assayer",
+      "from": "the-assayer",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in *The Assayer* (*Il Saggiatore*, 1623)",
+      "citation_keys": [
+        "galileoassayer1623"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-galileo-portrait-sustermans",
+      "from": "galileo-portrait-sustermans",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "from Justus Sustermans's 1636 portrait (Uffizi)",
+      "citation_keys": [
+        "galilei_image"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-giordano-bruno-portrait-gundling",
+      "from": "giordano-bruno-portrait-gundling",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "from an 18th-century engraving (N. H. Gundling, *Neue Bibliothec*, 1715)",
+      "citation_keys": [
+        "giordanobruno"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-frances-yates",
+      "from": "frances-yates",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Frances A. Yates (1899–1981)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-frances-yates-photo-1924",
+      "from": "frances-yates-photo-1924",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Frances A. Yates (1899–1981), 1924.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-chomsky-review",
+      "from": "chomsky-review",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the 1959 review in which \\citeauthor{chomsky1959review} demolished the behaviorist idea",
+      "citation_keys": [
+        "chomsky1959review"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-the-art-of-memory",
+      "from": "the-art-of-memory",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "not seriously studied until 1966, when the historian \\citeauthor{artofmemoryyates} (\\citeyear{artofmemoryyates}) published \\cite[The Art of Memory]{artofmemoryyates}",
+      "citation_keys": [
+        "artofmemoryyates"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-bell-labs",
+      "from": "bell-labs",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Bell Labs withdrew in 1969 and its people built Unix on the side",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-altair",
+      "from": "altair",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the small companies scrambling in 1975 to ship an operating system for the **Altair** microcomputer",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-ibm-pc",
+      "from": "ibm-pc",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "IBM adopted when it built the first mass-market personal computer in 1981",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-cowan-working-memory-review",
+      "from": "cowan-working-memory-review",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Cowan, 2001]{cowan2001magical4})",
+      "citation_keys": [
+        "cowan2001magical4"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-blombos-cave-study",
+      "from": "blombos-cave-study",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Henshilwood et al., 2002]{emergenceofmodernhumanbehaviour})",
+      "citation_keys": [
+        "emergenceofmodernhumanbehaviour"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-piraha-mundurucu-number-studies",
+      "from": "piraha-mundurucu-number-studies",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Pirahã (Gordon, 2004); Pica et al., Mundurucú (2004)]{piraha2004, picamundurucu2004}",
+      "citation_keys": [
+        "piraha2004",
+        "picamundurucu2004"
       ],
       "confidence": "provenance"
     }

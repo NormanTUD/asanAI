@@ -77,7 +77,8 @@
       "to": "course",
       "kind": "part_of",
       "qualifiers": {},
-      "quote": ""
+      "quote": "",
+      "confidence": "inferred"
     },
     {
       "id": "rel-part-2-course",
@@ -85,7 +86,8 @@
       "to": "course",
       "kind": "part_of",
       "qualifiers": {},
-      "quote": ""
+      "quote": "",
+      "confidence": "inferred"
     },
     {
       "id": "rel-part-3-course",
@@ -93,7 +95,8 @@
       "to": "course",
       "kind": "part_of",
       "qualifiers": {},
-      "quote": ""
+      "quote": "",
+      "confidence": "inferred"
     },
     {
       "id": "rel-part-4-course",
@@ -101,7 +104,8 @@
       "to": "course",
       "kind": "part_of",
       "qualifiers": {},
-      "quote": ""
+      "quote": "",
+      "confidence": "inferred"
     },
     {
       "id": "rel-part-5-course",
@@ -109,7 +113,8 @@
       "to": "course",
       "kind": "part_of",
       "qualifiers": {},
-      "quote": ""
+      "quote": "",
+      "confidence": "inferred"
     },
     {
       "id": "rel-part-6-course",
@@ -117,7 +122,8 @@
       "to": "course",
       "kind": "part_of",
       "qualifiers": {},
-      "quote": ""
+      "quote": "",
+      "confidence": "inferred"
     }
   ]
 }

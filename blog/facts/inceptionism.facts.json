@@ -184,16 +184,6 @@
   ],
   "relations": [
     {
-      "id": "prov-inceptionism-part",
-      "from": "inceptionism",
-      "to": "part-3",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 3",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "prov-inceptionism-deepdream",
       "from": "deepdream",
       "to": "inceptionism",
@@ -286,6 +276,16 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "licensed by **Google Inc.** under a [Creative Commons Attribution 4.0 International License]",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-inceptionism-part",
+      "from": "inceptionism",
+      "to": "part-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 3",
       "citation_keys": [],
       "confidence": "provenance"
     }

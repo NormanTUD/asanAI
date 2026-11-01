@@ -17,7 +17,8 @@
     "subobject_classifier_wiki",
     "saussure1916",
     "nagarjuna150mmk",
-    "hypothesengeometrie"
+    "hypothesengeometrie",
+    "barr1974toposes"
   ],
   "claims": [
     {
@@ -279,6 +280,41 @@
       "quote": "Float addition is **not associative**",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-gap3-1",
+      "subject": "alfred-wegener",
+      "predicate": "continental_drift_proposal_year",
+      "value": 1912,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Alfred Wegener proposed in 1912 that the continents had once formed a single landmass",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-gap3-2",
+      "subject": "pangaea",
+      "predicate": "name_adoption_year",
+      "value": 1920,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the name *Pangaea* entered use in the 1920 edition of his book",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_difference-gap3-3",
+      "subject": "barrs-theorem",
+      "predicate": "publication_year",
+      "value": 1974,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(Barr 1974 \\cite{barr1974toposes})",
+      "citation_keys": [
+        "barr1974toposes"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -449,6 +485,38 @@
       "qualifiers": {},
       "quote": "Float addition is **not associative**",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-alfred-wegener",
+      "from": "alfred-wegener",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Alfred Wegener proposed in 1912 that the continents had once formed a single landmass",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-pangaea",
+      "from": "pangaea",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the name *Pangaea* entered use in the 1920 edition of his book",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_difference-barrs-theorem",
+      "from": "barrs-theorem",
+      "to": "coherent-difference",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(Barr 1974 \\cite{barr1974toposes})",
+      "citation_keys": [
+        "barr1974toposes"
+      ],
       "confidence": "provenance"
     }
   ],

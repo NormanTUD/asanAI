@@ -18,9 +18,29 @@
     "sensity2019deepfakes",
     "ic3_2023",
     "laion2022blog",
+    "christies2018belamy",
+    "verge2018belamy",
     "jumper2021alphafold",
     "merchant2023gnome",
-    "peng2023copilot"
+    "peng2023copilot",
+    "ellington2003calculators",
+    "sparrow2011google",
+    "guardian2018ira",
+    "silicon2023replika",
+    "alphafold_db",
+    "nobel2024chemistry",
+    "becker2025metr",
+    "eu2024aiact",
+    "waxy2022stable",
+    "bbc2023heart",
+    "guardian2023heart",
+    "bartz2025anthropic",
+    "romera2023funsearch",
+    "bi2023pangu",
+    "duolingo2025annual",
+    "guardian2018cambridge",
+    "beemyeyes2023",
+    "beemyeyes_site"
   ],
   "claims": [
     {
@@ -257,7 +277,10 @@
       "value": 432500,
       "unit": "USD",
       "quote": "sold at Christie's for **432,500 dollars**",
-      "citation_keys": [],
+      "citation_keys": [
+        "christies2018belamy",
+        "verge2018belamy"
+      ],
       "qualifiers": {},
       "confidence": "stated"
     },
@@ -309,6 +332,547 @@
         "peng2023copilot"
       ],
       "qualifiers": {},
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-1",
+      "subject": "printing-press",
+      "predicate": "year",
+      "value": 1500,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| ca. 1500 | Printing press | First ruler to use print for propaganda: Maximilian I.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-2",
+      "subject": "wwi-propaganda",
+      "predicate": "year",
+      "value": 1914,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| 1914 | Radio + mass print | WWI: first large-scale organized state propaganda",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-3",
+      "subject": "wwii-propaganda",
+      "predicate": "year",
+      "value": 1933,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| 1933 | Radio + film | WWII \"Golden Age\": Goebbels' ministry",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-4",
+      "subject": "cold-war-propaganda",
+      "predicate": "year",
+      "value": 1947,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| 1947 | TV + radio | Cold War: CIA's Bedford Publishing disseminated 1 million+ books to Soviet readers.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-5",
+      "subject": "mccarthy-dartmouth-proposal",
+      "predicate": "year",
+      "value": 1955,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[McCarthy et al., 1955]{mccarthy1956dartmouth})",
+      "citation_keys": [
+        "mccarthy1956dartmouth"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-6",
+      "subject": "fifth-generation-computer-project",
+      "predicate": "start_year",
+      "value": 1982,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Fifth Generation Computer Project** (¥100 billion, 1982–1992)",
+      "citation_keys": [
+        "cacm2023aiwinter"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-7",
+      "subject": "fifth-generation-computer-project",
+      "predicate": "end_year",
+      "value": 1992,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "by 1992 (\\cite[CACM, 2023]{cacm2023aiwinter})",
+      "citation_keys": [
+        "cacm2023aiwinter"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-8",
+      "subject": "campbell-deep-blue-paper",
+      "predicate": "year",
+      "value": 2002,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Campbell et al., 2002]{campbell2002deepblue}",
+      "citation_keys": [
+        "campbell2002deepblue",
+        "computerhistory_deepblue"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-9",
+      "subject": "ellington-calculator-study",
+      "predicate": "year",
+      "value": 2003,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Ellington, 2003]{ellington2003calculators})",
+      "citation_keys": [
+        "ellington2003calculators"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-10",
+      "subject": "google-effect",
+      "predicate": "year",
+      "value": 2011,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In **2011**, Sparrow, Liu, and Wegner described what became known as \"The Google Effect\"",
+      "citation_keys": [
+        "sparrow2011google"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-11",
+      "subject": "internet-research-agency",
+      "predicate": "founded_year",
+      "value": 2013,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "founded in **2013** by Yevgeny Prigozhin",
+      "citation_keys": [
+        "guardian2018ira"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-12",
+      "subject": "replika",
+      "predicate": "founded_year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "launched in **November 2017** by Luka Inc.",
+      "citation_keys": [
+        "silicon2023replika"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-13",
+      "subject": "edmond-de-belamy",
+      "predicate": "sale_year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**October 25, 2018**: A GAN-generated portrait, *Edmond de Belamy*",
+      "citation_keys": [
+        "christies2018belamy",
+        "verge2018belamy"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-14",
+      "subject": "alphafold2",
+      "predicate": "casp14_year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In November 2020, AlphaFold 2 won the **CASP14**",
+      "citation_keys": [
+        "jumper2021alphafold"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-15",
+      "subject": "alphafold-db",
+      "predicate": "release_year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In July 2021, DeepMind and EMBL-EBI released the **AlphaFold Protein Structure Database**",
+      "citation_keys": [
+        "jumper2021alphafold",
+        "alphafold_db"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-16",
+      "subject": "nobel-prize-chemistry-2024",
+      "predicate": "award_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In **October 2024**, the Nobel Prize in Chemistry was awarded",
+      "citation_keys": [
+        "nobel2024chemistry"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-17",
+      "subject": "metr-study",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Becker, Rush, Barnes, and Rein** (METR, July 2025)",
+      "citation_keys": [
+        "becker2025metr"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-18",
+      "subject": "eu-ai-act",
+      "predicate": "article_50_applicability_year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**EU AI Act, Article 50** (applies from **August 2, 2026**)",
+      "citation_keys": [
+        "eu2024aiact"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-19",
+      "subject": "fifth-generation-computer-project",
+      "predicate": "budget",
+      "value": 100000000000,
+      "unit": "count",
+      "qualifiers": {
+        "currency": "JPY",
+        "scale": "billion"
+      },
+      "quote": "¥100 billion, 1982–1992",
+      "citation_keys": [
+        "cacm2023aiwinter"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-20",
+      "subject": "laion-image-subset",
+      "predicate": "images",
+      "value": 12000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "A third-party analysis of a 12 million image subset",
+      "citation_keys": [
+        "waxy2022stable"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-21",
+      "subject": "heart-on-my-sleeve",
+      "predicate": "tiktok_views",
+      "value": 15000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**15 million TikTok views**",
+      "citation_keys": [
+        "bbc2023heart",
+        "guardian2023heart"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-22",
+      "subject": "project-panama",
+      "predicate": "pirated_copies",
+      "value": 7000000,
+      "unit": "count",
+      "qualifiers": {
+        "comparison": "at_least"
+      },
+      "quote": "(Project Panama, 7M+ copies)",
+      "citation_keys": [
+        "bartz2025anthropic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-23",
+      "subject": "alphafold-db",
+      "predicate": "structures",
+      "value": 200000000,
+      "unit": "count",
+      "qualifiers": {
+        "comparison": "at_least",
+        "as_of": 2022
+      },
+      "quote": "expanded to over **200 million** in July 2022",
+      "citation_keys": [
+        "jumper2021alphafold",
+        "alphafold_db"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-24",
+      "subject": "alphamissense",
+      "predicate": "missense_variants",
+      "value": 71000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "predicted pathogenicity for all **71 million** possible human missense variants",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-25",
+      "subject": "funsearch",
+      "predicate": "cap_set_improvement_interval",
+      "value": 20,
+      "unit": "count",
+      "qualifiers": {
+        "duration": "years"
+      },
+      "quote": "described as \"the largest improvement in 20 years\" for that problem",
+      "citation_keys": [
+        "romera2023funsearch"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-26",
+      "subject": "pangu-weather",
+      "predicate": "training_data_years",
+      "value": 40,
+      "unit": "count",
+      "qualifiers": {
+        "duration": "years",
+        "dataset": "ERA5"
+      },
+      "quote": "a 3D neural network trained on 40 years of ERA5 reanalysis data",
+      "citation_keys": [
+        "bi2023pangu"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-27",
+      "subject": "metr-study",
+      "predicate": "codebase_experience_years",
+      "value": 5,
+      "unit": "count",
+      "qualifiers": {
+        "duration": "years",
+        "statistic": "average"
+      },
+      "quote": "(average 5 years on the codebases)",
+      "citation_keys": [
+        "becker2025metr"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-28",
+      "subject": "duolingo",
+      "predicate": "monthly_active_users",
+      "value": 130000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**Duolingo** (130 million monthly active users) launched **Duolingo Max**",
+      "citation_keys": [
+        "duolingo2025annual"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-29",
+      "subject": "cambridge-analytica",
+      "predicate": "facebook_users",
+      "value": 87000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "using 87 million Facebook users' data",
+      "citation_keys": [
+        "guardian2018cambridge"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-30",
+      "subject": "cambridge-analytica",
+      "predicate": "modeled_adults",
+      "value": 230000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "some 230 million people",
+      "citation_keys": [
+        "guardian2018cambridge"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-31",
+      "subject": "bedford-publishing",
+      "predicate": "books_distributed",
+      "value": 1000000,
+      "unit": "count",
+      "qualifiers": {
+        "comparison": "at_least"
+      },
+      "quote": "disseminated 1 million+ books to Soviet readers",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-32",
+      "subject": "goldman-sachs-ai-jobs-report",
+      "predicate": "headline_value",
+      "value": 300000000,
+      "unit": "count",
+      "qualifiers": {
+        "definition": "headline reference"
+      },
+      "quote": "### The \"300 Million\" Headline",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-33",
+      "subject": "goldman-sachs-ai-jobs-report",
+      "predicate": "jobs_exposed",
+      "value": 300000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true,
+        "metric": "full-time jobs"
+      },
+      "quote": "estimating that **ca. 300 million full-time jobs globally** are *exposed* to automation from LLMs",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-34",
+      "subject": "goldman-sachs-ai-jobs-report",
+      "predicate": "layoffs",
+      "value": 300000000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "not a forecast of 300 million layoffs",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-35",
+      "subject": "goldman-sachs-ai-jobs-report",
+      "predicate": "jobs_with_automatable_tasks",
+      "value": 300000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "It means 300 million jobs contain tasks that *could* be automated.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-36",
+      "subject": "be-my-ai",
+      "predicate": "sessions",
+      "value": 1000000,
+      "unit": "count",
+      "qualifiers": {
+        "period": "two weeks"
+      },
+      "quote": "It hit **1 million sessions within two weeks** of its open beta release.",
+      "citation_keys": [
+        "beemyeyes2023",
+        "beemyeyes_site"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-37",
+      "subject": "duolingo",
+      "predicate": "monthly_active_users",
+      "value": 130000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "now has **130 million monthly active users**",
+      "citation_keys": [
+        "duolingo2025annual"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-38",
+      "subject": "duolingo",
+      "predicate": "paying_subscribers",
+      "value": 10900000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**10.9 million paying subscribers**",
+      "citation_keys": [
+        "duolingo2025annual"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-39",
+      "subject": "alphafold-db",
+      "predicate": "structures",
+      "value": 200000000,
+      "unit": "count",
+      "qualifiers": {
+        "comparison": "at_least"
+      },
+      "quote": "200 million+ protein structures",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_and_society-gap-40",
+      "subject": "alphafold-db",
+      "predicate": "structures",
+      "value": 200000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "A researcher in Lagos can access 200 million protein structures.",
+      "citation_keys": [],
       "confidence": "stated"
     }
   ],
@@ -503,7 +1067,10 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "sold at Christie's for **432,500 dollars**",
-      "citation_keys": [],
+      "citation_keys": [
+        "christies2018belamy",
+        "verge2018belamy"
+      ],
       "confidence": "provenance"
     },
     {
@@ -549,6 +1116,296 @@
       "quote": "completed the task **55.8% faster** than the control group",
       "citation_keys": [
         "peng2023copilot"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-printing-press",
+      "from": "printing-press",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| ca. 1500 | Printing press | First ruler to use print for propaganda: Maximilian I.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-wwi-propaganda",
+      "from": "wwi-propaganda",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| 1914 | Radio + mass print | WWI: first large-scale organized state propaganda",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-wwii-propaganda",
+      "from": "wwii-propaganda",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| 1933 | Radio + film | WWII \"Golden Age\": Goebbels' ministry",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-cold-war-propaganda",
+      "from": "cold-war-propaganda",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| 1947 | TV + radio | Cold War: CIA's Bedford Publishing disseminated 1 million+ books to Soviet readers.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-mccarthy-dartmouth-proposal",
+      "from": "mccarthy-dartmouth-proposal",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[McCarthy et al., 1955]{mccarthy1956dartmouth})",
+      "citation_keys": [
+        "mccarthy1956dartmouth"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-fifth-generation-computer-project",
+      "from": "fifth-generation-computer-project",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Fifth Generation Computer Project** (¥100 billion, 1982–1992)",
+      "citation_keys": [
+        "cacm2023aiwinter"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-campbell-deep-blue-paper",
+      "from": "campbell-deep-blue-paper",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Campbell et al., 2002]{campbell2002deepblue}",
+      "citation_keys": [
+        "campbell2002deepblue",
+        "computerhistory_deepblue"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-ellington-calculator-study",
+      "from": "ellington-calculator-study",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Ellington, 2003]{ellington2003calculators})",
+      "citation_keys": [
+        "ellington2003calculators"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-google-effect",
+      "from": "google-effect",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In **2011**, Sparrow, Liu, and Wegner described what became known as \"The Google Effect\"",
+      "citation_keys": [
+        "sparrow2011google"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-internet-research-agency",
+      "from": "internet-research-agency",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "founded in **2013** by Yevgeny Prigozhin",
+      "citation_keys": [
+        "guardian2018ira"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-replika",
+      "from": "replika",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "launched in **November 2017** by Luka Inc.",
+      "citation_keys": [
+        "silicon2023replika"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-alphafold-db",
+      "from": "alphafold-db",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In July 2021, DeepMind and EMBL-EBI released the **AlphaFold Protein Structure Database**",
+      "citation_keys": [
+        "jumper2021alphafold",
+        "alphafold_db"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-nobel-prize-chemistry-2024",
+      "from": "nobel-prize-chemistry-2024",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In **October 2024**, the Nobel Prize in Chemistry was awarded",
+      "citation_keys": [
+        "nobel2024chemistry"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-eu-ai-act",
+      "from": "eu-ai-act",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**EU AI Act, Article 50** (applies from **August 2, 2026**)",
+      "citation_keys": [
+        "eu2024aiact"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-laion-image-subset",
+      "from": "laion-image-subset",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A third-party analysis of a 12 million image subset",
+      "citation_keys": [
+        "waxy2022stable"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-heart-on-my-sleeve",
+      "from": "heart-on-my-sleeve",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**15 million TikTok views**",
+      "citation_keys": [
+        "bbc2023heart",
+        "guardian2023heart"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-project-panama",
+      "from": "project-panama",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(Project Panama, 7M+ copies)",
+      "citation_keys": [
+        "bartz2025anthropic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-alphamissense",
+      "from": "alphamissense",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "predicted pathogenicity for all **71 million** possible human missense variants",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-funsearch",
+      "from": "funsearch",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "described as \"the largest improvement in 20 years\" for that problem",
+      "citation_keys": [
+        "romera2023funsearch"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-pangu-weather",
+      "from": "pangu-weather",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a 3D neural network trained on 40 years of ERA5 reanalysis data",
+      "citation_keys": [
+        "bi2023pangu"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-duolingo",
+      "from": "duolingo",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Duolingo** (130 million monthly active users) launched **Duolingo Max**",
+      "citation_keys": [
+        "duolingo2025annual"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-cambridge-analytica",
+      "from": "cambridge-analytica",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "using 87 million Facebook users' data",
+      "citation_keys": [
+        "guardian2018cambridge"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-bedford-publishing",
+      "from": "bedford-publishing",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "disseminated 1 million+ books to Soviet readers",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-goldman-sachs-ai-jobs-report",
+      "from": "goldman-sachs-ai-jobs-report",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "### The \"300 Million\" Headline",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_and_society-be-my-ai",
+      "from": "be-my-ai",
+      "to": "ai-and-society",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "It hit **1 million sessions within two weeks** of its open beta release.",
+      "citation_keys": [
+        "beemyeyes2023",
+        "beemyeyes_site"
       ],
       "confidence": "provenance"
     }

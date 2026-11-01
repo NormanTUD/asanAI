@@ -292,19 +292,107 @@
       "quote": "| `text-embedding-3-large` | 3072 | OpenAI |",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-gap3-1",
+      "subject": "mxbai-embed-large-v1",
+      "predicate": "dimensions",
+      "value": 1024,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "| `mxbai-embed-large-v1` | 1024 | Mixedbread | Top-tier open-source |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-gap3-2",
+      "subject": "embedding-model-survey",
+      "predicate": "year_start",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Popular Embedding Models (2025-2026)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-gap3-3",
+      "subject": "embedding-model-survey",
+      "predicate": "year_end",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Popular Embedding Models (2025-2026)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-gap3-4",
+      "subject": "metadata-filter-example",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Search only in documents from 2026, tagged as “research”",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-gap3-5",
+      "subject": "brute-force-vector-search",
+      "predicate": "compute_rate_example",
+      "value": 1,
+      "unit": "TFLOPS",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "At even 1 TFLOP/s, that's nearly a second",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-gap3-6",
+      "subject": "e5-mistral-7b-instruct",
+      "predicate": "parameters",
+      "value": 7000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "| `e5-mistral-7b-instruct` | 4096 | Microsoft | LLM-based embeddings, very high quality |",
+      "citation_keys": [
+        "kusupati2022matryoshka"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-gap3-7",
+      "subject": "chunk-overlap",
+      "predicate": "max_overlap",
+      "value": 100,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "each chunk shares 50-100 tokens with its neighbors",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "vectorsearch-gap3-8",
+      "subject": "chunking",
+      "predicate": "passage_size_max",
+      "value": 500,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Splitting documents into 200-500 token passages for indexing",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-vectorsearch-part",
-      "from": "vectorsearch",
-      "to": "part-5",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 5",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-vectorsearch-vector-search-query",
       "from": "vector-search-query",
@@ -464,6 +552,78 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "| `text-embedding-3-large` | 3072 | OpenAI |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-mxbai-embed-large-v1",
+      "from": "mxbai-embed-large-v1",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| `mxbai-embed-large-v1` | 1024 | Mixedbread | Top-tier open-source |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-embedding-model-survey",
+      "from": "embedding-model-survey",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Popular Embedding Models (2025-2026)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-metadata-filter-example",
+      "from": "metadata-filter-example",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Search only in documents from 2026, tagged as “research”",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-e5-mistral-7b-instruct",
+      "from": "e5-mistral-7b-instruct",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| `e5-mistral-7b-instruct` | 4096 | Microsoft | LLM-based embeddings, very high quality |",
+      "citation_keys": [
+        "kusupati2022matryoshka"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-chunk-overlap",
+      "from": "chunk-overlap",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "each chunk shares 50-100 tokens with its neighbors",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-chunking",
+      "from": "chunking",
+      "to": "vectorsearch",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Splitting documents into 200-500 token passages for indexing",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vectorsearch-part",
+      "from": "vectorsearch",
+      "to": "part-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 5",
       "citation_keys": [],
       "confidence": "provenance"
     }

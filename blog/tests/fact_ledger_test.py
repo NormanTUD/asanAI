@@ -191,7 +191,9 @@ class CheckerTests(unittest.TestCase):
             output = buffer.getvalue()
             self.assertEqual(rc, 1)
             for token in ("FACT CONFLICT", "AI FIX PROMPT", "COPY FROM HERE",
-                          "why:", "fix:", "--strict-relations"):
+                          "why:", "fix:", "--strict-relations",
+                          "CONTRADICTION LIST", "contradicts claim",
+                          "a.php", "b.php"):
                 self.assertIn(token, output)
 
     def test_trace_finds_path(self):

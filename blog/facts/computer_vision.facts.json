@@ -14,7 +14,13 @@
     "krizhevsky2012imagenet",
     "colah2014conv",
     "he2021mae",
-    "dosovitskiy2021vit"
+    "dosovitskiy2021vit",
+    "girshick2014rcnn",
+    "he2015resnet",
+    "redmon2016yolo",
+    "he2017maskrcnn",
+    "kirillov2023sam",
+    "darcet2024registers"
   ],
   "claims": [
     {
@@ -303,6 +309,126 @@
       "quote": "\\underbrace{\\text{Vector}}_{76832\\times1}",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "computer_vision-gap2-1",
+      "subject": "r-cnn",
+      "predicate": "publication_year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Girshick et al., 2014]{girshick2014rcnn})",
+      "citation_keys": [
+        "girshick2014rcnn"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer_vision-gap2-2",
+      "subject": "resnet",
+      "predicate": "publication_year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[He et al., 2015]{he2015resnet})",
+      "citation_keys": [
+        "he2015resnet"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer_vision-gap2-3",
+      "subject": "yolo",
+      "predicate": "publication_year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Redmon et al., 2016]{redmon2016yolo})",
+      "citation_keys": [
+        "redmon2016yolo"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer_vision-gap2-4",
+      "subject": "mask-r-cnn",
+      "predicate": "publication_year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[He et al., 2017]{he2017maskrcnn})",
+      "citation_keys": [
+        "he2017maskrcnn"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer_vision-gap2-5",
+      "subject": "vision-transformer",
+      "predicate": "publication_year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Dosovitskiy et al., 2021]{dosovitskiy2021vit})",
+      "citation_keys": [
+        "dosovitskiy2021vit"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer_vision-gap2-6",
+      "subject": "mae",
+      "predicate": "publication_year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[He et al., 2022]{he2021mae})",
+      "citation_keys": [
+        "he2021mae"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer_vision-gap2-7",
+      "subject": "sam",
+      "predicate": "publication_year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Kirillov et al., 2023]{kirillov2023sam})",
+      "citation_keys": [
+        "kirillov2023sam"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "computer_vision-gap2-8",
+      "subject": "register-tokens",
+      "predicate": "publication_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Darcet et al., 2024]{darcet2024registers})",
+      "citation_keys": [
+        "darcet2024registers"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -456,6 +582,66 @@
       "qualifiers": {},
       "quote": "\\underbrace{\\text{Vector}}_{76832\\times1}",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-r-cnn",
+      "from": "r-cnn",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Girshick et al., 2014]{girshick2014rcnn})",
+      "citation_keys": [
+        "girshick2014rcnn"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-resnet",
+      "from": "resnet",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[He et al., 2015]{he2015resnet})",
+      "citation_keys": [
+        "he2015resnet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-yolo",
+      "from": "yolo",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Redmon et al., 2016]{redmon2016yolo})",
+      "citation_keys": [
+        "redmon2016yolo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-mask-r-cnn",
+      "from": "mask-r-cnn",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[He et al., 2017]{he2017maskrcnn})",
+      "citation_keys": [
+        "he2017maskrcnn"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-computer_vision-register-tokens",
+      "from": "register-tokens",
+      "to": "computer-vision",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Darcet et al., 2024]{darcet2024registers})",
+      "citation_keys": [
+        "darcet2024registers"
+      ],
       "confidence": "provenance"
     }
   ],

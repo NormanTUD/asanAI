@@ -23,7 +23,15 @@
     "anthropic2025shutdown",
     "statement_on_ai_risk_2023",
     "fli2023pause",
-    "grace2024survey"
+    "grace2024survey",
+    "bostrom2003ethical",
+    "bostrom2012orthogonal",
+    "bostrom2013xrisk",
+    "kokotajlo2016takeoff",
+    "sutton2019bitter",
+    "ord2020precipice",
+    "bender2021stochasticparrots",
+    "lecun2022autonomous"
   ],
   "claims": [
     {
@@ -288,7 +296,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "in March 2023, the **Future of Life Institute** published the \"Pause Giant AI Experiments\" open letter",
-      "citation_keys": [],
+      "citation_keys": [
+        "fli2023pause"
+      ],
       "confidence": "stated"
     },
     {
@@ -316,6 +326,126 @@
       "quote": "A 2023 survey of AI researchers put the median at a 50% chance of AGI by 2047 (and 10% by 2027)",
       "citation_keys": [
         "grace2024survey"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-gap2-1",
+      "subject": "bostrom-2003-ethical-issues",
+      "predicate": "publication_year",
+      "value": 2003,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Bostrom, 2003]{bostrom2003ethical})",
+      "citation_keys": [
+        "bostrom2003ethical"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-gap2-2",
+      "subject": "bostrom-2012-superintelligent-will",
+      "predicate": "publication_year",
+      "value": 2012,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Bostrom, 2012]{bostrom2012orthogonal})",
+      "citation_keys": [
+        "bostrom2012orthogonal"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-gap2-3",
+      "subject": "bostrom-2013-xrisk",
+      "predicate": "publication_year",
+      "value": 2013,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Bostrom, 2013]{bostrom2013xrisk})",
+      "citation_keys": [
+        "bostrom2013xrisk"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-gap2-4",
+      "subject": "kokotajlo-2016-takeoff",
+      "predicate": "publication_year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Kokotajlo, 2016]{kokotajlo2016takeoff})",
+      "citation_keys": [
+        "kokotajlo2016takeoff"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-gap2-5",
+      "subject": "sutton-2019-bitter-lesson",
+      "predicate": "publication_year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Sutton, 2019]{sutton2019bitter})",
+      "citation_keys": [
+        "sutton2019bitter"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-gap2-6",
+      "subject": "ord-2020-precipice",
+      "predicate": "publication_year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Ord, 2020]{ord2020precipice})",
+      "citation_keys": [
+        "ord2020precipice"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-gap2-7",
+      "subject": "bender-2021-stochastic-parrots",
+      "predicate": "publication_year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Bender et al., 2021]{bender2021stochasticparrots}",
+      "citation_keys": [
+        "bender2021stochasticparrots"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_existential_risk-gap2-8",
+      "subject": "lecun-2022-autonomous",
+      "predicate": "publication_year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[LeCun, 2022]{lecun2022autonomous})",
+      "citation_keys": [
+        "lecun2022autonomous"
       ],
       "confidence": "stated"
     }
@@ -536,7 +666,9 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "in March 2023, the **Future of Life Institute** published the \"Pause Giant AI Experiments\" open letter",
-      "citation_keys": [],
+      "citation_keys": [
+        "fli2023pause"
+      ],
       "confidence": "provenance"
     },
     {
@@ -548,6 +680,102 @@
       "quote": "A 2023 survey of AI researchers put the median at a 50% chance of AGI by 2047 (and 10% by 2027)",
       "citation_keys": [
         "grace2024survey"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-bostrom-2003-ethical-issues",
+      "from": "bostrom-2003-ethical-issues",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Bostrom, 2003]{bostrom2003ethical})",
+      "citation_keys": [
+        "bostrom2003ethical"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-bostrom-2012-superintelligent-will",
+      "from": "bostrom-2012-superintelligent-will",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Bostrom, 2012]{bostrom2012orthogonal})",
+      "citation_keys": [
+        "bostrom2012orthogonal"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-bostrom-2013-xrisk",
+      "from": "bostrom-2013-xrisk",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Bostrom, 2013]{bostrom2013xrisk})",
+      "citation_keys": [
+        "bostrom2013xrisk"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-kokotajlo-2016-takeoff",
+      "from": "kokotajlo-2016-takeoff",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Kokotajlo, 2016]{kokotajlo2016takeoff})",
+      "citation_keys": [
+        "kokotajlo2016takeoff"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-sutton-2019-bitter-lesson",
+      "from": "sutton-2019-bitter-lesson",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Sutton, 2019]{sutton2019bitter})",
+      "citation_keys": [
+        "sutton2019bitter"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-ord-2020-precipice",
+      "from": "ord-2020-precipice",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Ord, 2020]{ord2020precipice})",
+      "citation_keys": [
+        "ord2020precipice"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-bender-2021-stochastic-parrots",
+      "from": "bender-2021-stochastic-parrots",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Bender et al., 2021]{bender2021stochasticparrots}",
+      "citation_keys": [
+        "bender2021stochasticparrots"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_existential_risk-lecun-2022-autonomous",
+      "from": "lecun-2022-autonomous",
+      "to": "ai-existential-risk",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[LeCun, 2022]{lecun2022autonomous})",
+      "citation_keys": [
+        "lecun2022autonomous"
       ],
       "confidence": "provenance"
     }

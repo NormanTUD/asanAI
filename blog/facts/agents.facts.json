@@ -9,13 +9,15 @@
   "generated_by": "extract_facts.py",
   "citations": [
     "licklider1960symbiosis",
+    "shrdlu_image",
     "yao2023react",
     "schick2023toolformer",
     "autogpt2023",
     "wang2023voyager",
     "anthropic2024mcp",
     "alphago_leesedol_image",
-    "shinn2023reflexion"
+    "shinn2023reflexion",
+    "abboud2025opencode"
   ],
   "claims": [
     {
@@ -110,7 +112,9 @@
       "value": 1972,
       "unit": "year",
       "quote": "<tr><td>SHRDLU</td><td>1972</td>",
-      "citation_keys": [],
+      "citation_keys": [
+        "shrdlu_image"
+      ],
       "qualifiers": {},
       "confidence": "stated"
     },
@@ -121,7 +125,9 @@
       "value": 1983,
       "unit": "year",
       "quote": "<tr><td>Soar</td><td>1983</td>",
-      "citation_keys": [],
+      "citation_keys": [
+        "shrdlu_image"
+      ],
       "qualifiers": {},
       "confidence": "stated"
     },
@@ -132,7 +138,9 @@
       "value": 1995,
       "unit": "year",
       "quote": "<tr><td>BDI (Belief-Desire-Intention)</td><td>1995</td>",
-      "citation_keys": [],
+      "citation_keys": [
+        "shrdlu_image"
+      ],
       "qualifiers": {},
       "confidence": "stated"
     },
@@ -237,19 +245,86 @@
       ],
       "qualifiers": {},
       "confidence": "stated"
+    },
+    {
+      "id": "agents-gap3-1",
+      "subject": "ctss",
+      "predicate": "year",
+      "value": 1961,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "time-sharing (MIT's CTSS was running by 1961, and Licklider funded Project MAC from 1963)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-gap3-2",
+      "subject": "project-mac",
+      "predicate": "year",
+      "value": 1963,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Licklider funded Project MAC from 1963",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-gap3-3",
+      "subject": "arpanet",
+      "predicate": "year",
+      "value": 1969,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the ARPANET, built in 1969 by others on the institutional groundwork he laid",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-gap3-4",
+      "subject": "bratman-bdi-theory",
+      "predicate": "year",
+      "value": 1987,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "after Bratman's 1987 theory",
+      "citation_keys": [
+        "shrdlu_image"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-gap3-5",
+      "subject": "agent-symbiosis-realization",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true,
+        "approx": true
+      },
+      "quote": "it actually happened in roughly 2022",
+      "citation_keys": [
+        "licklider1960symbiosis"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "agents-gap3-6",
+      "subject": "opencode-deep-dive",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "A deep dive into the opencode agent (\\cite[Abboud, 2025]{abboud2025opencode})",
+      "citation_keys": [
+        "abboud2025opencode"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-agents-part",
-      "from": "agents",
-      "to": "part-5",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 5",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-agents-ai-agent",
       "from": "ai-agent",
@@ -404,6 +479,82 @@
       "citation_keys": [
         "shinn2023reflexion"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-ctss",
+      "from": "ctss",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "time-sharing (MIT's CTSS was running by 1961, and Licklider funded Project MAC from 1963)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-project-mac",
+      "from": "project-mac",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Licklider funded Project MAC from 1963",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-arpanet",
+      "from": "arpanet",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the ARPANET, built in 1969 by others on the institutional groundwork he laid",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-bratman-bdi-theory",
+      "from": "bratman-bdi-theory",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "after Bratman's 1987 theory",
+      "citation_keys": [
+        "shrdlu_image"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-agent-symbiosis-realization",
+      "from": "agent-symbiosis-realization",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it actually happened in roughly 2022",
+      "citation_keys": [
+        "licklider1960symbiosis"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-opencode-deep-dive",
+      "from": "opencode-deep-dive",
+      "to": "agents",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A deep dive into the opencode agent (\\cite[Abboud, 2025]{abboud2025opencode})",
+      "citation_keys": [
+        "abboud2025opencode"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-agents-part",
+      "from": "agents",
+      "to": "part-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 5",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

@@ -8,11 +8,13 @@
   "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
+    "rungesphenomenon",
     "tibshirani1996lasso",
     "hoerl1970ridge",
     "srivastava2014dropout",
     "petersen2024mathdl",
-    "hornik1989universal"
+    "hornik1989universal",
+    "hoffmann2022chinchilla"
   ],
   "claims": [
     {
@@ -117,7 +119,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "Runge's Original Example (1901)",
-      "citation_keys": [],
+      "citation_keys": [
+        "rungesphenomenon"
+      ],
       "confidence": "stated"
     },
     {
@@ -250,19 +254,24 @@
       "quote": "| **Underfitting** (High Bias) | 1 – 3 | High | High |",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "overandunderfittinglab-gap4-1",
+      "subject": "chinchilla",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla})",
+      "citation_keys": [
+        "hoffmann2022chinchilla"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-overandunderfittinglab-part",
-      "from": "overandunderfittinglab",
-      "to": "part-3",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 3",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-overandunderfittinglab-polynomial-degree-10",
       "from": "polynomial-degree-10",
@@ -421,6 +430,28 @@
       "qualifiers": {},
       "quote": "| **Underfitting** (High Bias) | 1 – 3 | High | High |",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-part",
+      "from": "overandunderfittinglab",
+      "to": "part-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 3",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-overandunderfittinglab-chinchilla",
+      "from": "chinchilla",
+      "to": "overandunderfittinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla})",
+      "citation_keys": [
+        "hoffmann2022chinchilla"
+      ],
       "confidence": "provenance"
     }
   ],

@@ -18,7 +18,13 @@
     "brown2020gpt3",
     "cohen2021edgeofstability",
     "kimi2025k2",
-    "ruder2016overview"
+    "ruder2016overview",
+    "hadamard1908",
+    "kiefer1952stochastic",
+    "nesterov2004introductory",
+    "loshchilov2016sgdr",
+    "arora2022edgeofstability",
+    "jordan2024muon"
   ],
   "claims": [
     {
@@ -292,19 +298,155 @@
       ],
       "qualifiers": {},
       "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-gap2-1",
+      "subject": "hadamard-clamped-plates",
+      "predicate": "start_year",
+      "value": 1907,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The idea surfaced again independently in 1907–1908, when \\cite[Hadamard (1908)]{hadamard1908} used steepest descent in a memoir on clamped elastic plates.",
+      "citation_keys": [
+        "hadamard1908"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-gap2-2",
+      "subject": "hadamard-clamped-plates",
+      "predicate": "end_year",
+      "value": 1908,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The idea surfaced again independently in 1907–1908, when \\cite[Hadamard (1908)]{hadamard1908} used steepest descent in a memoir on clamped elastic plates.",
+      "citation_keys": [
+        "hadamard1908"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-gap2-3",
+      "subject": "kiefer-wolfowitz-stochastic-approximation",
+      "predicate": "publication_year",
+      "value": 1952,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Kiefer & Wolfowitz (1952)]{kiefer1952stochastic}",
+      "citation_keys": [
+        "kiefer1952stochastic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-gap2-4",
+      "subject": "nesterov-2004-book",
+      "predicate": "publication_year",
+      "value": 2004,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "his 2004 book is the standard exposition (\\cite[Nesterov, 2004]{nesterov2004introductory})",
+      "citation_keys": [
+        "nesterov2004introductory"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-gap2-5",
+      "subject": "loshchilov-2016-sgdr",
+      "predicate": "publication_year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Loshchilov & Hutter (2016)]{loshchilov2016sgdr}",
+      "citation_keys": [
+        "loshchilov2016sgdr"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-gap2-6",
+      "subject": "brown-2020-gpt3",
+      "predicate": "publication_year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Brown et al., 2020]{brown2020gpt3})",
+      "citation_keys": [
+        "brown2020gpt3"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-gap2-7",
+      "subject": "cohen-2021-edge-of-stability",
+      "predicate": "publication_year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Cohen et al., 2021]{cohen2021edgeofstability}; \\cite[Arora et al., 2022]{arora2022edgeofstability})",
+      "citation_keys": [
+        "cohen2021edgeofstability",
+        "arora2022edgeofstability"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-gap2-8",
+      "subject": "arora-2022-edge-of-stability",
+      "predicate": "publication_year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Cohen et al., 2021]{cohen2021edgeofstability}; \\cite[Arora et al., 2022]{arora2022edgeofstability})",
+      "citation_keys": [
+        "cohen2021edgeofstability",
+        "arora2022edgeofstability"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-gap2-9",
+      "subject": "jordan-2024-muon",
+      "predicate": "publication_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Jordan, 2024]{jordan2024muon})",
+      "citation_keys": [
+        "jordan2024muon"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-gap2-10",
+      "subject": "kimi-2025-k2",
+      "predicate": "publication_year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Kimi Team, 2025]{kimi2025k2})",
+      "citation_keys": [
+        "kimi2025k2"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-optimizerlab-part",
-      "from": "optimizerlab",
-      "to": "part-2",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 2",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-optimizerlab-momentum",
       "from": "momentum",
@@ -441,6 +583,126 @@
       "citation_keys": [
         "ruder2016overview"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-hadamard-clamped-plates",
+      "from": "hadamard-clamped-plates",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The idea surfaced again independently in 1907–1908, when \\cite[Hadamard (1908)]{hadamard1908} used steepest descent in a memoir on clamped elastic plates.",
+      "citation_keys": [
+        "hadamard1908"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-kiefer-wolfowitz-stochastic-approximation",
+      "from": "kiefer-wolfowitz-stochastic-approximation",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Kiefer & Wolfowitz (1952)]{kiefer1952stochastic}",
+      "citation_keys": [
+        "kiefer1952stochastic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-nesterov-2004-book",
+      "from": "nesterov-2004-book",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "his 2004 book is the standard exposition (\\cite[Nesterov, 2004]{nesterov2004introductory})",
+      "citation_keys": [
+        "nesterov2004introductory"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-loshchilov-2016-sgdr",
+      "from": "loshchilov-2016-sgdr",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Loshchilov & Hutter (2016)]{loshchilov2016sgdr}",
+      "citation_keys": [
+        "loshchilov2016sgdr"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-brown-2020-gpt3",
+      "from": "brown-2020-gpt3",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Brown et al., 2020]{brown2020gpt3})",
+      "citation_keys": [
+        "brown2020gpt3"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-cohen-2021-edge-of-stability",
+      "from": "cohen-2021-edge-of-stability",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Cohen et al., 2021]{cohen2021edgeofstability}; \\cite[Arora et al., 2022]{arora2022edgeofstability})",
+      "citation_keys": [
+        "cohen2021edgeofstability",
+        "arora2022edgeofstability"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-arora-2022-edge-of-stability",
+      "from": "arora-2022-edge-of-stability",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Cohen et al., 2021]{cohen2021edgeofstability}; \\cite[Arora et al., 2022]{arora2022edgeofstability})",
+      "citation_keys": [
+        "cohen2021edgeofstability",
+        "arora2022edgeofstability"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-jordan-2024-muon",
+      "from": "jordan-2024-muon",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Jordan, 2024]{jordan2024muon})",
+      "citation_keys": [
+        "jordan2024muon"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-kimi-2025-k2",
+      "from": "kimi-2025-k2",
+      "to": "optimizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Kimi Team, 2025]{kimi2025k2})",
+      "citation_keys": [
+        "kimi2025k2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-optimizerlab-part",
+      "from": "optimizerlab",
+      "to": "part-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 2",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

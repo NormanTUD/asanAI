@@ -7,7 +7,15 @@
   "order": 18,
   "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [],
+  "citations": [
+    "lepikhin2021gshard",
+    "deepseekmoe2024",
+    "deepseekv3tech2024",
+    "mixtral2024",
+    "jacobs1991moe",
+    "jordan1993hme",
+    "zhou2022expertchoice"
+  ],
   "claims": [
     {
       "id": "auto-mixture_of_experts-1",
@@ -56,7 +64,9 @@
       "unit": "billion",
       "qualifiers": {},
       "quote": "GShard (\\cite[Lepikhin et al., 2021]{lepikhin2021gshard}; arXiv 2020) is the bridge between the 2017 layer and the trillion-parameter runs. It scaled a sparse MoE to 600 billion parameters for multilingual translation, used top-2 gating with a hard **expert capacity** — a limit on how many tokens ea",
-      "citation_keys": [],
+      "citation_keys": [
+        "lepikhin2021gshard"
+      ],
       "confidence": "extracted"
     },
     {
@@ -67,7 +77,9 @@
       "unit": "count",
       "qualifiers": {},
       "quote": "GShard (\\cite[Lepikhin et al., 2021]{lepikhin2021gshard}; arXiv 2020) is the bridge between the 2017 layer and the trillion-parameter runs. It scaled a sparse MoE to 600 billion parameters for multilingual translation, used top-2 gating with a hard **expert capacity** — a limit on how many tokens ea",
-      "citation_keys": [],
+      "citation_keys": [
+        "lepikhin2021gshard"
+      ],
       "confidence": "extracted"
     },
     {
@@ -78,7 +90,10 @@
       "unit": "billion",
       "qualifiers": {},
       "quote": "A cleaner decomposition arrived with DeepSeekMoE (\\cite[DeepSeekMoE, 2024]{deepseekmoe2024}) and was carried into DeepSeek-V3 (\\cite[DeepSeek-V3, 2024]{deepseekv3tech2024}); the design is now the reference. The first is a **shared expert**: one expert is *dense* — every token goes through it — while",
-      "citation_keys": [],
+      "citation_keys": [
+        "deepseekmoe2024",
+        "deepseekv3tech2024"
+      ],
       "confidence": "extracted"
     },
     {
@@ -89,8 +104,168 @@
       "unit": "billion",
       "qualifiers": {},
       "quote": "Mixtral made the arithmetic public. Each layer has eight experts and routes each token to two of them, so the model stores 47 billion parameters but computes with about 13 billion per token (\\cite[Jiang et al., 2024]{mixtral2024}). The saving is real but narrower than the name suggests: every expert",
-      "citation_keys": [],
+      "citation_keys": [
+        "mixtral2024"
+      ],
       "confidence": "extracted"
+    },
+    {
+      "id": "mixture_of_experts-gap2-1",
+      "subject": "jacobs-mixture-of-experts",
+      "predicate": "year",
+      "value": 1991,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Jacobs, Jordan, Nowlan and Hinton introduced adaptive mixtures of local experts in 1991: several small networks compete through a gating network, and the gate learns which expert should own which region of input space (\\cite[Jacobs et al., 1991]{jacobs1991moe}).",
+      "citation_keys": [
+        "jacobs1991moe"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mixture_of_experts-gap2-2",
+      "subject": "jordan-jacobs-hierarchical-mixture",
+      "predicate": "year",
+      "value": 1993,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Jordan and Jacobs then made the gate itself hierarchical and trained the whole tree with expectation–maximization (\\cite[Jordan and Jacobs, 1993]{jordan1993hme}; journal version 1994), so that experts could specialize at several scales.",
+      "citation_keys": [
+        "jordan1993hme"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mixture_of_experts-gap2-3",
+      "subject": "jordan-jacobs-hierarchical-mixture",
+      "predicate": "year",
+      "value": 1994,
+      "unit": "year",
+      "qualifiers": {
+        "variant": "journal version"
+      },
+      "quote": "Jordan and Jacobs then made the gate itself hierarchical and trained the whole tree with expectation–maximization (\\cite[Jordan and Jacobs, 1993]{jordan1993hme}; journal version 1994), so that experts could specialize at several scales.",
+      "citation_keys": [
+        "jordan1993hme"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mixture_of_experts-gap2-4",
+      "subject": "zhou-expert-choice",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Instead of each token choosing its top-$k$ experts, each expert chooses its top-$k$ tokens (\\cite[Zhou et al., 2022]{zhou2022expertchoice}).",
+      "citation_keys": [
+        "zhou2022expertchoice"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mixture_of_experts-gap2-5",
+      "subject": "moe-adoption",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "By 2026 this is not a niche trick; it is how most frontier models are built (\\cite[Jiang et al., 2024]{mixtral2024}; \\cite[DeepSeek-V3, 2024]{deepseekv3tech2024}), and it is the single most important reason the \"size of a model\" question has quietly become two questions: *total* and *active*.",
+      "citation_keys": [
+        "mixtral2024",
+        "deepseekv3tech2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mixture_of_experts-gap2-6",
+      "subject": "deepseek-v3",
+      "predicate": "parameters",
+      "value": 671000000000,
+      "unit": "count",
+      "qualifiers": {
+        "parameter_kind": "total"
+      },
+      "quote": "reported to give a stable run at 671 billion parameters with no irrecoverable loss spikes \\cite[DeepSeek-V3 (2024)]{deepseekv3tech2024}.",
+      "citation_keys": [
+        "deepseekv3tech2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mixture_of_experts-gap2-7",
+      "subject": "moe-model",
+      "predicate": "parameters",
+      "value": 671000000000,
+      "unit": "count",
+      "qualifiers": {
+        "parameter_kind": "total"
+      },
+      "quote": "each accelerator holds a different subset of experts, so a 671B model's weights spread over many chips.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "mixture_of_experts-gap2-8",
+      "subject": "deepseek-v3",
+      "predicate": "parameters",
+      "value": 671000000000,
+      "unit": "count",
+      "qualifiers": {
+        "parameter_kind": "total"
+      },
+      "quote": "**DeepSeek-V3** (\\cite[DeepSeek-V3 (2024)]{deepseekv3tech2024}) — **671B total**, **37B active** per token, with the shared-expert + dynamic-routing design above.",
+      "citation_keys": [
+        "deepseekv3tech2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mixture_of_experts-gap2-9",
+      "subject": "deepseek-v3",
+      "predicate": "parameters",
+      "value": 37000000000,
+      "unit": "count",
+      "qualifiers": {
+        "parameter_kind": "active"
+      },
+      "quote": "**DeepSeek-V3** (\\cite[DeepSeek-V3 (2024)]{deepseekv3tech2024}) — **671B total**, **37B active** per token, with the shared-expert + dynamic-routing design above.",
+      "citation_keys": [
+        "deepseekv3tech2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mixture_of_experts-gap2-10",
+      "subject": "deepseek-v3",
+      "predicate": "parameters",
+      "value": 671000000000,
+      "unit": "count",
+      "qualifiers": {
+        "parameter_kind": "total"
+      },
+      "quote": "The gap between the two — 47B vs 13B, 671B vs 37B — is the MoE dividend: you pay storage for all of them and compute for a fraction.",
+      "citation_keys": [
+        "mixtral2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mixture_of_experts-gap2-11",
+      "subject": "deepseek-v3",
+      "predicate": "parameters",
+      "value": 37000000000,
+      "unit": "count",
+      "qualifiers": {
+        "parameter_kind": "active"
+      },
+      "quote": "The gap between the two — 47B vs 13B, 671B vs 37B — is the MoE dividend: you pay storage for all of them and compute for a fraction.",
+      "citation_keys": [
+        "mixtral2024"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -111,7 +286,9 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "GShard (\\cite[Lepikhin et al., 2021]{lepikhin2021gshard}; arXiv 2020) is the bridge between the 2017 layer and the trillion-parameter runs. It scaled a sparse MoE to 600 billion parameters for multilingual translation, used top-2 gating with a hard **expert capacity** — a limit on how many tokens ea",
-      "citation_keys": [],
+      "citation_keys": [
+        "lepikhin2021gshard"
+      ],
       "confidence": "provenance"
     },
     {
@@ -121,7 +298,10 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "A cleaner decomposition arrived with DeepSeekMoE (\\cite[DeepSeekMoE, 2024]{deepseekmoe2024}) and was carried into DeepSeek-V3 (\\cite[DeepSeek-V3, 2024]{deepseekv3tech2024}); the design is now the reference. The first is a **shared expert**: one expert is *dense* — every token goes through it — while",
-      "citation_keys": [],
+      "citation_keys": [
+        "deepseekmoe2024",
+        "deepseekv3tech2024"
+      ],
       "confidence": "provenance"
     },
     {
@@ -131,6 +311,67 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "Mixtral made the arithmetic public. Each layer has eight experts and routes each token to two of them, so the model stores 47 billion parameters but computes with about 13 billion per token (\\cite[Jiang et al., 2024]{mixtral2024}). The saving is real but narrower than the name suggests: every expert",
+      "citation_keys": [
+        "mixtral2024"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mixture_of_experts-jacobs-mixture-of-experts",
+      "from": "jacobs-mixture-of-experts",
+      "to": "mixture-of-experts",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Jacobs, Jordan, Nowlan and Hinton introduced adaptive mixtures of local experts in 1991: several small networks compete through a gating network, and the gate learns which expert should own which region of input space (\\cite[Jacobs et al., 1991]{jacobs1991moe}).",
+      "citation_keys": [
+        "jacobs1991moe"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mixture_of_experts-jordan-jacobs-hierarchical-mixture",
+      "from": "jordan-jacobs-hierarchical-mixture",
+      "to": "mixture-of-experts",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Jordan and Jacobs then made the gate itself hierarchical and trained the whole tree with expectation–maximization (\\cite[Jordan and Jacobs, 1993]{jordan1993hme}; journal version 1994), so that experts could specialize at several scales.",
+      "citation_keys": [
+        "jordan1993hme"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mixture_of_experts-zhou-expert-choice",
+      "from": "zhou-expert-choice",
+      "to": "mixture-of-experts",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Instead of each token choosing its top-$k$ experts, each expert chooses its top-$k$ tokens (\\cite[Zhou et al., 2022]{zhou2022expertchoice}).",
+      "citation_keys": [
+        "zhou2022expertchoice"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mixture_of_experts-moe-adoption",
+      "from": "moe-adoption",
+      "to": "mixture-of-experts",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "By 2026 this is not a niche trick; it is how most frontier models are built (\\cite[Jiang et al., 2024]{mixtral2024}; \\cite[DeepSeek-V3, 2024]{deepseekv3tech2024}), and it is the single most important reason the \"size of a model\" question has quietly become two questions: *total* and *active*.",
+      "citation_keys": [
+        "mixtral2024",
+        "deepseekv3tech2024"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mixture_of_experts-moe-model",
+      "from": "moe-model",
+      "to": "mixture-of-experts",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "each accelerator holds a different subset of experts, so a 671B model's weights spread over many chips.",
       "citation_keys": [],
       "confidence": "provenance"
     }

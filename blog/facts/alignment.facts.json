@@ -23,7 +23,12 @@
     "bletchley2023",
     "unesco2021ai",
     "euaiact2024",
-    "rafailov2023dpo"
+    "rafailov2023dpo",
+    "ai_safety_debate",
+    "kadavath2022selfknowledge",
+    "thought_crime",
+    "eo14110",
+    "mech_interp_alignment"
   ],
   "claims": [
     {
@@ -320,19 +325,114 @@
         "rafailov2023dpo"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "alignment-gap3-1",
+      "subject": "control-problem",
+      "predicate": "year",
+      "value": 2003,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Bostrom, 2003]{bostrom2003ethical})",
+      "citation_keys": [
+        "bostrom2003ethical"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-gap3-2",
+      "subject": "ai-safety-debate",
+      "predicate": "year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Irving et al., 2018]{ai_safety_debate})",
+      "citation_keys": [
+        "ai_safety_debate"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-gap3-3",
+      "subject": "llm-self-knowledge",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Kadavath et al., 2022]{kadavath2022selfknowledge})",
+      "citation_keys": [
+        "kadavath2022selfknowledge"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-gap3-4",
+      "subject": "thought-crime",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Chua et al., 2025]{thought_crime})",
+      "citation_keys": [
+        "thought_crime"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-gap3-5",
+      "subject": "biden-ai-executive-order-revocation",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {
+        "event": "Biden AI executive order revoked"
+      },
+      "quote": "was revoked in January 2025",
+      "citation_keys": [
+        "eo14110"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-gap3-6",
+      "subject": "corrigibility-study",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Tien et al., 2026]{rogue_agents})",
+      "citation_keys": [
+        "rogue_agents"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-gap3-7",
+      "subject": "mechanistic-interpretability-alignment",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Naseem, 2026]{mech_interp_alignment})",
+      "citation_keys": [
+        "mech_interp_alignment"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-alignment-part",
-      "from": "alignment",
-      "to": "part-6",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 6",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-alignment-orthogonality-thesis",
       "from": "orthogonality-thesis",
@@ -533,6 +633,76 @@
       "citation_keys": [
         "rafailov2023dpo"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-ai-safety-debate",
+      "from": "ai-safety-debate",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Irving et al., 2018]{ai_safety_debate})",
+      "citation_keys": [
+        "ai_safety_debate"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-llm-self-knowledge",
+      "from": "llm-self-knowledge",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Kadavath et al., 2022]{kadavath2022selfknowledge})",
+      "citation_keys": [
+        "kadavath2022selfknowledge"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-thought-crime",
+      "from": "thought-crime",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Chua et al., 2025]{thought_crime})",
+      "citation_keys": [
+        "thought_crime"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-biden-ai-executive-order-revocation",
+      "from": "biden-ai-executive-order-revocation",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "was revoked in January 2025",
+      "citation_keys": [
+        "eo14110"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-mechanistic-interpretability-alignment",
+      "from": "mechanistic-interpretability-alignment",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Naseem, 2026]{mech_interp_alignment})",
+      "citation_keys": [
+        "mech_interp_alignment"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-part",
+      "from": "alignment",
+      "to": "part-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 6",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

@@ -16,7 +16,8 @@
     "mundaneum",
     "traitededocumentation",
     "wired2002isidore",
-    "paulotlet"
+    "paulotlet",
+    "catalogingtheworld"
   ],
   "claims": [
     {
@@ -96,7 +97,9 @@
         "definition": "title page 1605/1609"
       },
       "quote": "Strasbourg *Relation* (1605/1609), recognized as the world's first newspaper",
-      "citation_keys": [],
+      "citation_keys": [
+        "habermaspublicsphere"
+      ],
       "confidence": "stated"
     },
     {
@@ -317,6 +320,61 @@
         "mundaneum"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "information_market-gap4-1",
+      "subject": "london-coffee-house-1674",
+      "predicate": "depiction_year",
+      "value": 1674,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "A London coffee house, 1674",
+      "citation_keys": [
+        "isidoreofseville",
+        "etymologiae"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-gap4-2",
+      "subject": "palais-mondial",
+      "predicate": "photo_year",
+      "value": 1930,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Otlet and Henri La Fontaine at the gates of the Palais Mondial, 1930",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-gap4-3",
+      "subject": "isidore-of-seville",
+      "predicate": "citation_year",
+      "value": 2002,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Shachtman, 2002]{wired2002isidore})",
+      "citation_keys": [
+        "wired2002isidore"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "information_market-gap4-4",
+      "subject": "cataloging-the-world",
+      "predicate": "citation_year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Wright, Cataloging the World (2014)]{catalogingtheworld}",
+      "citation_keys": [
+        "catalogingtheworld"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -349,7 +407,9 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "Strasbourg *Relation* (1605/1609), recognized as the world's first newspaper",
-      "citation_keys": [],
+      "citation_keys": [
+        "habermaspublicsphere"
+      ],
       "confidence": "provenance"
     },
     {
@@ -475,6 +535,41 @@
       "quote": "and Henri La Fontaine — built the **Mundaneum**",
       "citation_keys": [
         "mundaneum"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-information_market-london-coffee-house-1674",
+      "from": "london-coffee-house-1674",
+      "to": "information-market",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A London coffee house, 1674",
+      "citation_keys": [
+        "isidoreofseville",
+        "etymologiae"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-information_market-palais-mondial",
+      "from": "palais-mondial",
+      "to": "information-market",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Otlet and Henri La Fontaine at the gates of the Palais Mondial, 1930",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-information_market-cataloging-the-world",
+      "from": "cataloging-the-world",
+      "to": "information-market",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Wright, Cataloging the World (2014)]{catalogingtheworld}",
+      "citation_keys": [
+        "catalogingtheworld"
       ],
       "confidence": "provenance"
     }

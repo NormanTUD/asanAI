@@ -21,13 +21,13 @@
     "goodman1978ways",
     "bradley1893appearance",
     "blanshard1939nature",
-    "rosetta196bc",
     "einstein1916foundation",
     "popper1963conjectures",
     "cartwright1983laws",
     "cartwright1999dappled",
     "bertot2013coq",
-    "moura2015lean"
+    "moura2015lean",
+    "tarski1944semantic"
   ],
   "claims": [
     {
@@ -524,9 +524,7 @@
         "decree": "Decree of Memphis"
       },
       "quote": "The Rosetta Stone (Decree of Memphis, 196 B.C.)",
-      "citation_keys": [
-        "rosetta196bc"
-      ],
+      "citation_keys": [],
       "confidence": "stated"
     },
     {
@@ -697,6 +695,71 @@
       "unit": "name",
       "qualifiers": {},
       "quote": "RLHF adds admissible transitions to *human preferences*. The reward model encodes what humans find helpful and harmless; the policy is tuned to maximise that reward.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_world_models-gap3-1",
+      "subject": "kant-critique-of-pure-reason",
+      "predicate": "refinement_example_year",
+      "value": 1781,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "from \"European philosophy\" to \"Kant circa 1781\"",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_world_models-gap3-2",
+      "subject": "tarski1944semantic",
+      "predicate": "publication_year",
+      "value": 1944,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "An accessible English rendering is the 1944 lecture \\citetitle{tarski1944semantic}",
+      "citation_keys": [
+        "tarski1944semantic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_world_models-gap3-3",
+      "subject": "tarski1956logic",
+      "predicate": "publication_year",
+      "value": 1956,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the standard English translation appears in the 1956 collection \\citetitle{tarski1956logic}",
+      "citation_keys": [
+        "tarski1956logic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_world_models-gap3-4",
+      "subject": "sellars1956empiricism",
+      "predicate": "publication_year",
+      "value": 1956,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "is exactly the picture \\citeauthor{sellars1956empiricism} (\\citeyear{sellars1956empiricism}) rejects in his critique of the \"myth of the given\" \\cite{sellars1956empiricism}",
+      "citation_keys": [
+        "sellars1956empiricism"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "coherent_world_models-gap3-5",
+      "subject": "smith-2019-citation-example",
+      "predicate": "example_year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "From \"Smith (2019) showed $X$\" you cannot tell",
       "citation_keys": [],
       "confidence": "stated"
     }
@@ -1078,9 +1141,7 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "The Rosetta Stone (Decree of Memphis, 196 B.C.)",
-      "citation_keys": [
-        "rosetta196bc"
-      ],
+      "citation_keys": [],
       "confidence": "provenance"
     },
     {
@@ -1220,6 +1281,50 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "RLHF adds admissible transitions to *human preferences*. The reward model encodes what humans find helpful and harmless; the policy is tuned to maximise that reward.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-kant-critique-of-pure-reason",
+      "from": "kant-critique-of-pure-reason",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "from \"European philosophy\" to \"Kant circa 1781\"",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-tarski1944semantic",
+      "from": "tarski1944semantic",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "An accessible English rendering is the 1944 lecture \\citetitle{tarski1944semantic}",
+      "citation_keys": [
+        "tarski1944semantic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-tarski1956logic",
+      "from": "tarski1956logic",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the standard English translation appears in the 1956 collection \\citetitle{tarski1956logic}",
+      "citation_keys": [
+        "tarski1956logic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-coherent_world_models-smith-2019-citation-example",
+      "from": "smith-2019-citation-example",
+      "to": "coherent-world-models",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "From \"Smith (2019) showed $X$\" you cannot tell",
       "citation_keys": [],
       "confidence": "provenance"
     }

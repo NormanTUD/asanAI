@@ -10,6 +10,7 @@
   "citations": [
     "galileosidereus",
     "leeuwenhoekletters",
+    "img_huygens_aerial_telescope",
     "micrographia",
     "micrographia_wiki",
     "hookecork",
@@ -27,11 +28,13 @@
     "rosenblatt1958perceptron",
     "olaha2020zoomin",
     "laertius",
+    "volta_portrait",
     "volta",
     "voltaic_pile",
     "faraday",
     "teslaelectricmotor",
     "teslacurrent",
+    "faraday_disk",
     "theophrastusstones",
     "plinynaturalhistory",
     "deremetallica",
@@ -41,7 +44,7 @@
     "semiconductor",
     "goodenough1980licoo2",
     "yoshino1985liion",
-    "mendeleev1869",
+    "mendeleev_periodic_table",
     "wolfbone",
     "vogelsang2010apollo11",
     "henshilwood2018blombos",
@@ -243,7 +246,8 @@
     "amazons3_2006",
     "amazonec2_2006",
     "kubernetes_overview",
-    "barroso2013datacenter"
+    "barroso2013datacenter",
+    "img_pacioli_portrait"
   ],
   "claims": [
     {
@@ -304,7 +308,10 @@
       "unit": "interval",
       "qualifiers": {},
       "quote": "The Venetian glassmakers of Murano developed *cristallo*, a clear soda-lime glass, in the 15th century",
-      "citation_keys": [],
+      "citation_keys": [
+        "galileosidereus",
+        "leeuwenhoekletters"
+      ],
       "confidence": "stated"
     },
     {
@@ -380,7 +387,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "the tubeless aerial telescope of Christiaan Huygens, 1684",
-      "citation_keys": [],
+      "citation_keys": [
+        "img_huygens_aerial_telescope"
+      ],
       "confidence": "stated"
     },
     {
@@ -918,7 +927,10 @@
         "approx": true
       },
       "quote": "Around 600 BCE, **Thales of Miletus** noticed",
-      "citation_keys": [],
+      "citation_keys": [
+        "laertius",
+        "volta_portrait"
+      ],
       "confidence": "stated"
     },
     {
@@ -1029,7 +1041,10 @@
       "unit": "interval",
       "qualifiers": {},
       "quote": "**Nikola Tesla** and **George Westinghouse** (1880s–1890s) championed **alternating current (AC)**",
-      "citation_keys": [],
+      "citation_keys": [
+        "teslaelectricmotor",
+        "teslacurrent"
+      ],
       "confidence": "stated"
     },
     {
@@ -1054,7 +1069,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "“A New System of Alternate Current Motors and Transformers” (delivered before the American Institute of Electrical Engineers, May 1888)",
-      "citation_keys": [],
+      "citation_keys": [
+        "faraday_disk"
+      ],
       "confidence": "stated"
     },
     {
@@ -1365,7 +1382,7 @@
       "qualifiers": {},
       "quote": "Dmitri Mendeleev's 1869 periodic table organized the elements by atomic weight and predicted the existence of undiscovered elements",
       "citation_keys": [
-        "mendeleev1869"
+        "mendeleev_periodic_table"
       ],
       "confidence": "stated"
     },
@@ -1378,7 +1395,7 @@
       "qualifiers": {},
       "quote": "organized the elements by atomic weight and predicted the existence of undiscovered elements",
       "citation_keys": [
-        "mendeleev1869"
+        "mendeleev_periodic_table"
       ],
       "confidence": "stated"
     },
@@ -1599,14 +1616,16 @@
     {
       "id": "untold-ii-ishango-year",
       "subject": "ishango-bone",
-      "predicate": "year",
-      "value": -18000,
-      "unit": "year",
+      "predicate": "age",
+      "value": 18000,
+      "unit": "years_before_present",
       "qualifiers": {
         "approx": true
       },
       "quote": "the **Ishango bone** (c. 18,000 BCE, with columns of marks read as a base-12 counting aid)",
-      "citation_keys": [],
+      "citation_keys": [
+        "vogelsang2010apollo11"
+      ],
       "confidence": "stated"
     },
     {
@@ -1716,7 +1735,9 @@
         "approx": true
       },
       "quote": "Around **3300 BCE**, at Uruk, the envelope was dropped and the message was written directly on a flat tablet",
-      "citation_keys": [],
+      "citation_keys": [
+        "chrisomalis2010"
+      ],
       "confidence": "stated"
     },
     {
@@ -2086,7 +2107,9 @@
         "approx": true
       },
       "quote": "Sumerian clay tablets (c. 3400 BCE)",
-      "citation_keys": [],
+      "citation_keys": [
+        "cai_lun_paper"
+      ],
       "confidence": "stated"
     },
     {
@@ -2455,7 +2478,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "The British Board of Longitude, established in 1714 with a prize of £20,000",
-      "citation_keys": [],
+      "citation_keys": [
+        "harrisonh4"
+      ],
       "confidence": "stated"
     },
     {
@@ -2568,7 +2593,10 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "Thomas Edison observed in 1883 that electrons flow from a heated filament to a metal plate inside a vacuum, the \"Edison effect.\"",
-      "citation_keys": [],
+      "citation_keys": [
+        "flemingdiode",
+        "deforestaudion"
+      ],
       "confidence": "stated"
     },
     {
@@ -2605,7 +2633,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "The ENIAC (1946) used 18,000 vacuum tubes",
-      "citation_keys": [],
+      "citation_keys": [
+        "huygenspendulum"
+      ],
       "confidence": "stated"
     },
     {
@@ -2924,7 +2954,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "**Willis Carrier** (1902), who designed the first modern air-conditioning system",
-      "citation_keys": [],
+      "citation_keys": [
+        "psychrometric"
+      ],
       "confidence": "stated"
     },
     {
@@ -2970,7 +3002,10 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "**Charles Babbage** explicitly borrowed the mechanism for his **Analytical Engine** (c. 1837)",
-      "citation_keys": [],
+      "citation_keys": [
+        "lovelacequote",
+        "taocp3"
+      ],
       "confidence": "stated"
     },
     {
@@ -4175,7 +4210,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "This earned Kao the Nobel Prize in Physics in 2009.",
-      "citation_keys": [],
+      "citation_keys": [
+        "radiationlosses"
+      ],
       "confidence": "stated"
     },
     {
@@ -4274,7 +4311,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "by 1845 it was being extruded around copper wire to form the first insulated telegraph conductors",
-      "citation_keys": [],
+      "citation_keys": [
+        "atlantictelegraph"
+      ],
       "confidence": "stated"
     },
     {
@@ -4618,7 +4657,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "**Philo Farnsworth** demonstrated fully electronic television in 1927, adapting the CRT for broadcast entertainment",
-      "citation_keys": [],
+      "citation_keys": [
+        "sketchpad"
+      ],
       "confidence": "stated"
     },
     {
@@ -6419,7 +6460,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "**pipelining** (IBM System/360, 1964)",
-      "citation_keys": [],
+      "citation_keys": [
+        "tomasulo1967"
+      ],
       "confidence": "stated"
     },
     {
@@ -6454,7 +6497,10 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "**multi-core processors** (IBM POWER4, 2001)",
-      "citation_keys": [],
+      "citation_keys": [
+        "edsac1949",
+        "williamstube"
+      ],
       "confidence": "stated"
     },
     {
@@ -6658,7 +6704,11 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "The modern form traces to the **IBM PC** (1981), which established standardized expansion slots.",
-      "citation_keys": [],
+      "citation_keys": [
+        "pciespec",
+        "nvlink",
+        "baran1964"
+      ],
       "confidence": "stated"
     },
     {
@@ -6723,7 +6773,13 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "Donald Davies (1965)",
-      "citation_keys": [],
+      "citation_keys": [
+        "rfc1",
+        "cerfkahn",
+        "metcalfe1976",
+        "infiniband2000",
+        "via1998"
+      ],
       "confidence": "stated"
     },
     {
@@ -7017,7 +7073,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "Programmable shaders (NVIDIA GeForce 3, 2001) made GPUs flexible",
-      "citation_keys": [],
+      "citation_keys": [
+        "cuda"
+      ],
       "confidence": "stated"
     },
     {
@@ -7041,7 +7099,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "* **NVIDIA Tesla (2007)**: first GPU marketed for general-purpose computing.",
-      "citation_keys": [],
+      "citation_keys": [
+        "jouppi2017tpu"
+      ],
       "confidence": "stated"
     },
     {
@@ -7063,7 +7123,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "* **NVIDIA Volta / V100 (2017)**: introduced **Tensor Cores** for mixed-precision matrix operations.",
-      "citation_keys": [],
+      "citation_keys": [
+        "jouppi2017tpu"
+      ],
       "confidence": "stated"
     },
     {
@@ -7074,7 +7136,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "* **NVIDIA A100 (2020)**: third-generation Tensor Cores, sparsity-aware computation, Multi-Instance GPU.",
-      "citation_keys": [],
+      "citation_keys": [
+        "jouppi2017tpu"
+      ],
       "confidence": "stated"
     },
     {
@@ -7085,7 +7149,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "* **NVIDIA H100 (2022)** and **B200 (2024)**: Transformer Engine, FP8 support, NVLink 4.0.",
-      "citation_keys": [],
+      "citation_keys": [
+        "jouppi2017tpu"
+      ],
       "confidence": "stated"
     },
     {
@@ -7096,7 +7162,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "**B200 (2024)**",
-      "citation_keys": [],
+      "citation_keys": [
+        "jouppi2017tpu"
+      ],
       "confidence": "stated"
     },
     {
@@ -7157,7 +7225,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "The 80 PLUS certification program (2004) drove PSU efficiency above 90%",
-      "citation_keys": [],
+      "citation_keys": [
+        "cady1922"
+      ],
       "confidence": "stated"
     },
     {
@@ -8316,6 +8386,190 @@
         "phlogiston"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "untold_history_ii-gap2-1",
+      "subject": "luca-pacioli-portrait",
+      "predicate": "year",
+      "value": 1495,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Portrait of Luca Pacioli (c. 1495)",
+      "citation_keys": [
+        "img_pacioli_portrait",
+        "paciolisumma"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_ii-gap2-2",
+      "subject": "heinrich-hertz",
+      "predicate": "citation_year",
+      "value": 1893,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Hertz, 1893]{hertz1893electricwaves})",
+      "citation_keys": [
+        "hertz1893electricwaves"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_ii-gap2-3",
+      "subject": "ice-cutting-traunsee",
+      "predicate": "citation_year",
+      "value": 1899,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Ice-cutting on Lake Traunsee, 1899]{eisschlagen_traunsee})",
+      "citation_keys": [
+        "eisschlagen_traunsee"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_ii-gap2-4",
+      "subject": "polyethylene-cable-insulation",
+      "predicate": "year",
+      "value": 1940,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "By 1940, however, a different polymer had quietly displaced both rubber and gutta-percha in most cable applications.",
+      "citation_keys": [
+        "polyethylenehistory"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_ii-gap2-5",
+      "subject": "theodore-maiman",
+      "predicate": "citation_year",
+      "value": 1967,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Maiman, 1967]{maiman1967laserpatent})",
+      "citation_keys": [
+        "maiman1967laserpatent"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_ii-gap2-6",
+      "subject": "nasa-image-processing",
+      "predicate": "citation_year",
+      "value": 1988,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Tomayko, 1988]{tomayko1988spaceflight})",
+      "citation_keys": [
+        "tomayko1988spaceflight"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_ii-gap2-7",
+      "subject": "euv-lithography",
+      "predicate": "citation_year",
+      "value": 1989,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Kinoshita et al., 1989]{kinoshita1989euv})",
+      "citation_keys": [
+        "kinoshita1989euv"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_ii-gap2-8",
+      "subject": "positional-numerals",
+      "predicate": "citation_year",
+      "value": 2010,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Chrisomalis, 2010]{chrisomalis2010})",
+      "citation_keys": [
+        "chrisomalis2010"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_ii-gap2-9",
+      "subject": "ultrapure-water",
+      "predicate": "citation_year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Ruth and Berndt, 2016]{ruth2016ultrapure})",
+      "citation_keys": [
+        "ruth2016ultrapure"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_ii-gap2-10",
+      "subject": "tsmc",
+      "predicate": "citation_year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[TSMC, 2026]{tsmc2025annualreport})",
+      "citation_keys": [
+        "tsmc2025annualreport"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_ii-gap2-11",
+      "subject": "cell-theory",
+      "predicate": "interval",
+      "value": 170,
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "It took another 170 years for the cell to become a principle.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_ii-gap2-12",
+      "subject": "youtube-8m",
+      "predicate": "name",
+      "value": "YouTube-8M",
+      "unit": "name",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "ImageNet, Kinetics, Something-Something and YouTube-8M",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_ii-gap2-13",
+      "subject": "fiber-optic-communication",
+      "predicate": "interval",
+      "value": 130,
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "A purely optical phenomenon that, 130 years later, became the physical basis of long-distance data transmission.",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -8328,7 +8582,8 @@
       "quote": "\\citeauthor{micrographia}'s \\citeyear{micrographia} \\citetitle{micrographia}",
       "citation_keys": [
         "micrographia"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-schleiden-cell-theory",
@@ -8350,7 +8605,8 @@
       "quote": "proposing that the tissues of *all* organisms are composed of cells — the birth of **cell theory**",
       "citation_keys": [
         "schwann1839"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-virchow-cell-theory",
@@ -8361,7 +8617,8 @@
       "quote": "later closed the triad with *omnis cellula e cellula*",
       "citation_keys": [
         "virchow1858"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-golgi-invented-stain",
@@ -8372,7 +8629,8 @@
       "quote": "invented a silver-impregnation method he called *la reazione nera*",
       "citation_keys": [
         "golgi1873"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-cajal-uses-golgi",
@@ -8383,7 +8641,8 @@
       "quote": "Starting in 1887, he applied Golgi's method with unmatched skill",
       "citation_keys": [
         "cajal1888"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-cajal-neuron-doctrine",
@@ -8407,7 +8666,8 @@
       "citation_keys": [
         "olaha2020zoomin",
         "schwann1839"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-edvac-derived-mining",
@@ -8418,7 +8678,8 @@
       "quote": "**\\citeauthor{vonneumann}**'s later EDVAC design borrowed directly from the engineering vocabulary of mines",
       "citation_keys": [
         "deremetallica"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-tokens-before-cuneiform",
@@ -8429,7 +8690,8 @@
       "quote": "Around **3300 BCE**, at Uruk, the envelope was dropped and the message was written directly on a flat tablet",
       "citation_keys": [
         "ifrah2000"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-cuneiform-derived-bulla",
@@ -8440,7 +8702,8 @@
       "quote": "the envelope was dropped and the message was written directly on a flat tablet",
       "citation_keys": [
         "ifrah2000"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-indian-derived-brahmi",
@@ -8462,7 +8725,8 @@
       "quote": "The system crossed into the Islamic world in the 8th–9th centuries",
       "citation_keys": [
         "smithkarpinski1911"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-liber-abaci-uses-hindu-arabic",
@@ -8473,7 +8737,8 @@
       "quote": "**Fibonacci**'s 1202 *Liber Abaci* made them a tool of commerce",
       "citation_keys": [
         "fibonacciliber"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-gwalior-before-vigilanus",
@@ -8484,7 +8749,8 @@
       "quote": "Christian Europe first met the digits in the Spanish *Codex Vigilanus* of 976",
       "citation_keys": [
         "smithkarpinski1911"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-qin-uses-rods",
@@ -8495,7 +8761,8 @@
       "quote": "the oldest surviving use of that character for zero is in **Qin Jiushao**'s 1247 treatise",
       "citation_keys": [
         "ifrah2000"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-fabriano-located-italy",
@@ -8526,7 +8793,8 @@
       "quote": "enabled the *Encyclopédie*",
       "citation_keys": [
         "gutenbergpress"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-summa-supports-double-entry",
@@ -8537,7 +8805,8 @@
       "quote": "it was the first printed, systematic exposition of the method",
       "citation_keys": [
         "paciolisumma"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-double-entry-enabled-joint-stock",
@@ -8548,7 +8817,8 @@
       "quote": "The method also enabled the joint-stock company",
       "citation_keys": [
         "paciolisumma"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-dewey-classification-before-card-rules",
@@ -8570,7 +8840,8 @@
       "quote": "Actuarial science is therefore an early example of the full pipeline that later becomes machine learning",
       "citation_keys": [
         "halley1693mortality"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-mercator-supports-longitude",
@@ -8581,7 +8852,8 @@
       "quote": "had already solved the cartographic problem, allowing rhumb-line courses to be plotted as straight lines on a flat sheet",
       "citation_keys": [
         "mercator1569"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-board-supports-harrison",
@@ -8590,7 +8862,8 @@
       "kind": "supports",
       "qualifiers": {},
       "quote": "funded decades of research in astronomy, horology, and precision engineering",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-torricelli-before-geissler",
@@ -8602,7 +8875,8 @@
       "citation_keys": [
         "torricellibarometer",
         "geisslertube"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-magdeburg-before-geissler",
@@ -8614,7 +8888,8 @@
       "citation_keys": [
         "vonguericke",
         "geisslertube"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-edison-supports-fleming",
@@ -8625,7 +8900,8 @@
       "quote": "used this effect to build the first electronic rectifier",
       "citation_keys": [
         "flemingdiode"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-deforest-derived-fleming",
@@ -8648,7 +8924,8 @@
       "quote": "The key innovation was the escapement mechanism",
       "citation_keys": [
         "huygenspendulum"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-meridian-related-ntp",
@@ -8672,7 +8949,8 @@
       "citation_keys": [
         "woodland1952barcode",
         "denso_qr_history"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-watt-derived-newcomen",
@@ -8693,7 +8971,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "**Charles Babbage** explicitly borrowed the mechanism for his **Analytical Engine** (c. 1837)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-hollerith-founded-ibm",
@@ -8702,7 +8981,8 @@
       "kind": "founded",
       "qualifiers": {},
       "quote": "founding the company that became **IBM**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-banu-musa-before-jazari",
@@ -8714,7 +8994,8 @@
       "citation_keys": [
         "koetsier2001programmable",
         "sharkey2007jazari"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-arithmometer-derived-leibniz",
@@ -8725,7 +9006,8 @@
       "quote": "a calculating machine based on Leibniz's stepped drum mechanism",
       "citation_keys": [
         "thomasdcolmar1820"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-animal-locomotion-derived-horse",
@@ -8736,7 +9018,8 @@
       "quote": "Encouraged, the University of Pennsylvania commissioned Muybridge between 1884 and 1887 to extend this approach systematically",
       "citation_keys": [
         "muybridge1887catalogue"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-zoopraxiscope-derived-horse",
@@ -8745,7 +9028,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "He built the **zoöpraxiscope**, a projection device that replayed his sequences as cyclical animations",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-kirsch-uses-seac",
@@ -8756,7 +9040,8 @@
       "quote": "processed on the bureau's SEAC computer",
       "citation_keys": [
         "nilsson1984qai"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-vicar-part-of-jpl",
@@ -8767,7 +9052,8 @@
       "quote": "Nathan's team wrote **VICAR**",
       "citation_keys": [
         "tomayko1988spaceflight"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-erma-uses-micr",
@@ -8800,7 +9086,8 @@
       "quote": "following the maser idea proposed by Schawlow and Townes",
       "citation_keys": [
         "maiman1967laserpatent"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-telegraph-influenced-arpanet",
@@ -8820,7 +9107,8 @@
       "quote": "It is still the basis of every Ethernet cable and telephone line",
       "citation_keys": [
         "twistedpairwiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-tat1-first-transatlantic",
@@ -8842,7 +9130,8 @@
       "quote": "**John Tyndall** independently popularized the same principle",
       "citation_keys": [
         "notesonlight"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-corning-developed-fiber",
@@ -8864,7 +9153,8 @@
       "quote": "2,600 nautical miles of copper conductor had to be wrapped in gutta-percha to survive a mile-deep ocean",
       "citation_keys": [
         "atlantictelegraph"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-polyethylene-insulated-radar-coax",
@@ -8875,7 +9165,8 @@
       "quote": "the perfect insulator for the coaxial cables of radar sets",
       "citation_keys": [
         "polyethylenehistory"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-bakelite-used-in-motors",
@@ -8893,7 +9184,8 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "featuring the **QWERTY** layout",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-teletype-part-of-telegraph",
@@ -8902,7 +9194,8 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "encoding keystrokes as signals over telegraph lines.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-video-terminal-followed-teletype",
@@ -8931,7 +9224,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "During WWII, CRTs were repurposed for **radar displays**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-crt-used-in-whirlwind",
@@ -8940,7 +9234,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "the **Whirlwind** computer (early 1950s) used a CRT for real-time output",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-crt-preceded-sketchpad",
@@ -8951,7 +9246,8 @@
       "quote": "proved a screen could be a medium for direct graphical interaction with a computer.",
       "citation_keys": [
         "sketchpad"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-hertz-authored-electric-waves",
@@ -8973,7 +9269,8 @@
       "quote": "turned the laboratory effect into a signalling system",
       "citation_keys": [
         "marconi1897patent"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-ieee-802-11-supports-wifi",
@@ -8984,7 +9281,8 @@
       "quote": "creating the technical basis for Wi-Fi",
       "citation_keys": [
         "ieee80211_1997"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-arm-low-power-risc",
@@ -8995,7 +9293,8 @@
       "quote": "The processor lineage behind such devices descends from the low-power RISC idea",
       "citation_keys": [
         "furber1987arm"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-3gpp-specifies-cellular",
@@ -9028,7 +9327,8 @@
       "quote": "**Niels Bohr** proposed the quantized atom",
       "citation_keys": [
         "bohr"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-heisenberg-matrix-mechanics",
@@ -9070,7 +9370,8 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "**Band Theory of Solids** (1929–1931)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-bardeen-brattain-transistor",
@@ -9143,7 +9444,8 @@
       "quote": "held all matter to be a mixture of four elements",
       "citation_keys": [
         "empedocles"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-democritus-atomism",
@@ -9155,7 +9457,8 @@
       "citation_keys": [
         "democritus",
         "atomism"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-pseudo-democritus-wrote-papyrus",
@@ -9168,7 +9471,8 @@
       "quote": "Attributed to the mythical **Pseudo-Democritus**",
       "citation_keys": [
         "pseudo_democritus"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-bolus-wrote-papyrus",
@@ -9181,7 +9485,8 @@
       "quote": "the craftsman **Bolus of Mendes**",
       "citation_keys": [
         "bolus_of_mendes"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-hermes-wrote-tablet",
@@ -9194,7 +9499,8 @@
       "quote": "said to have authored the **Emerald Tablet**",
       "citation_keys": [
         "hermes_trismegistus"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-jabir-father-chemistry",
@@ -9205,7 +9511,8 @@
       "quote": "he is often called the father of early chemistry",
       "citation_keys": [
         "jabir_ibn_hayyan"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-aqua-regia-dissolves-gold",
@@ -9216,7 +9523,8 @@
       "quote": "the one mixture that dissolves even gold",
       "citation_keys": [
         "aqua_regia"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-al-razi-wrote-book-of-secrets",
@@ -9307,7 +9615,8 @@
       "quote": "founded **iatrochemistry**",
       "citation_keys": [
         "iatrochemistry"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-sendivogius-discovered-oxygen",
@@ -9320,7 +9629,8 @@
       "quote": "is credited with distilling and recognising, around 1600, a gas that supports both flame and breath — what we now call **oxygen**",
       "citation_keys": [
         "sendivogius"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-john-dee-wrote-monas",
@@ -9331,7 +9641,8 @@
       "quote": "the *Monas Hieroglyphica* (1564)",
       "citation_keys": [
         "alchemy_wiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-boyle-wrote-sceptical-chymist",
@@ -9342,7 +9653,8 @@
       "quote": "In *The Sceptical Chymist* (1661)",
       "citation_keys": [
         "sceptical_chymist"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-lavoisier-contradicts-phlogiston",
@@ -9354,7 +9666,8 @@
       "citation_keys": [
         "lavoisier",
         "phlogiston"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-alphafold-deepmind",
@@ -9376,7 +9689,8 @@
       "quote": "predict the stability of crystalline materials at scale",
       "citation_keys": [
         "merchant2023gnome"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-siemens-process-purifies-silicon",
@@ -9387,7 +9701,8 @@
       "quote": "purifies it through reaction with hydrogen chloride to form trichlorosilane",
       "citation_keys": [
         "semiconductor"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-czochralski-grows-silicon",
@@ -9398,7 +9713,8 @@
       "quote": "grown into single crystals via the Czochralski process",
       "citation_keys": [
         "semiconductor"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-doping-creates-n-type",
@@ -9409,7 +9725,8 @@
       "quote": "Adding phosphorus atoms (Group V) creates n-type silicon",
       "citation_keys": [
         "shockley"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-doping-creates-p-type",
@@ -9420,7 +9737,8 @@
       "quote": "adding boron atoms (Group III) creates p-type silicon",
       "citation_keys": [
         "shockley"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-pn-junction-basis-transistor",
@@ -9440,7 +9758,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "John B. Goodenough's identification of lithium cobalt oxide (LiCoO₂) as a cathode material (1980)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-yoshino-developed-cell",
@@ -9458,7 +9777,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "The CPU descends from wartime code-breaking.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-ram-origin-radar",
@@ -9505,7 +9825,8 @@
       "quote": "NASA never pushed the state of the art",
       "citation_keys": [
         "tomayko1988spaceflight"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-charney-led-first-nwp",
@@ -9516,7 +9837,8 @@
       "quote": "in 1950 his team ran the **first numerical weather forecast on the ENIAC**",
       "citation_keys": [
         "charney1950nwp"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-eniac-first-nwp",
@@ -9538,7 +9860,8 @@
       "quote": "run at gold-standard centres such as ECMWF",
       "citation_keys": [
         "ecmwf"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-onnes-discovered-superconductivity",
@@ -9560,7 +9883,8 @@
       "quote": "the dilution refrigerator (1964) pushed to 2 mK",
       "citation_keys": [
         "dilutionfridge"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-qubits-used-by-ibm-google",
@@ -9595,7 +9919,8 @@
       "quote": "beating ECMWF's model on over 90% of measured variables",
       "citation_keys": [
         "lam2023graphcast"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-z3-before-eniac",
@@ -9618,7 +9943,8 @@
       "citation_keys": [
         "kilbyic",
         "noyceic"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-kilby-invented-ic",
@@ -9629,7 +9955,8 @@
       "quote": "**Jack Kilby** (1958)",
       "citation_keys": [
         "kilbyic"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-noyce-invented-ic",
@@ -9640,7 +9967,8 @@
       "quote": "**Robert Noyce** (1959)",
       "citation_keys": [
         "noyceic"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-ic-preceded-microprocessor",
@@ -9651,7 +9979,8 @@
       "quote": "The leap to the **microprocessor** arrived in 1971",
       "citation_keys": [
         "intel4004"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-pipelines-part-of-system360",
@@ -9669,7 +9998,8 @@
       "kind": "before",
       "qualifiers": {},
       "quote": "the CPU served as the sole training platform until the mid-2000s",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-williams-tube-used-in-baby",
@@ -9680,7 +10010,8 @@
       "quote": "It was used in the Manchester Baby (1948)",
       "citation_keys": [
         "williamstube"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-core-memory-displaced-williams",
@@ -9691,7 +10022,8 @@
       "quote": "**magnetic-core memory**",
       "citation_keys": [
         "wangcore"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-dram-displaced-core",
@@ -9702,7 +10034,8 @@
       "quote": "storing each bit as a charge in a capacitor",
       "citation_keys": [
         "dennard1968"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-intel-1103-displaced-core",
@@ -9713,7 +10046,8 @@
       "quote": "rapidly displaced core memory",
       "citation_keys": [
         "intel1103"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-hbm-supports-gpu",
@@ -9724,7 +10058,8 @@
       "quote": "provides the necessary throughput for GPU-based training",
       "citation_keys": [
         "hbm2013"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-nvlink-connects-gpu",
@@ -9735,7 +10070,8 @@
       "quote": "provide up to 900 GB/s between GPUs",
       "citation_keys": [
         "nvlink"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-packet-switching-in-arpanet",
@@ -9746,7 +10082,8 @@
       "quote": "This was realized in \\cite[ARPANET]{rfc1} (1969)",
       "citation_keys": [
         "rfc1"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-arpanet-preceded-tcp-ip",
@@ -9757,7 +10094,8 @@
       "quote": "universalized through \\cite[TCP/IP]{cerfkahn} (1974)",
       "citation_keys": [
         "cerfkahn"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-metcalfe-invented-ethernet",
@@ -9779,7 +10117,8 @@
       "quote": "built natively into InfiniBand",
       "citation_keys": [
         "via1998"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-horovod-uses-rdma",
@@ -9790,7 +10129,8 @@
       "quote": "critical for gradient synchronization in distributed training frameworks like \\cite[Horovod]{horovod2018}",
       "citation_keys": [
         "horovod2018"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-ramac-first-random-access",
@@ -9801,7 +10141,8 @@
       "quote": "the first random-access magnetic storage",
       "citation_keys": [
         "ibmramac"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-ssd-based-on-nand",
@@ -9812,7 +10153,8 @@
       "quote": "based on \\cite[NAND flash memory]{masuoka1987}",
       "citation_keys": [
         "masuoka1987"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-geforce3-programmable-shaders",
@@ -9832,7 +10174,8 @@
       "quote": "provided the software bridge",
       "citation_keys": [
         "cuda"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-tesla-first-gpgpu",
@@ -9841,7 +10184,8 @@
       "kind": "instance_of",
       "qualifiers": {},
       "quote": "first GPU marketed for general-purpose computing",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-volta-tensor-cores",
@@ -9850,7 +10194,8 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "introduced **Tensor Cores** for mixed-precision matrix operations",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-cady-developed-quartz-oscillator",
@@ -9861,7 +10206,8 @@
       "quote": "developed by \\cite[Walter Cady]{cady1922} in 1921",
       "citation_keys": [
         "cady1922"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-tsmc-foundry-model",
@@ -9872,7 +10218,8 @@
       "quote": "it manufactures semiconductors using its customers' proprietary integrated-circuit designs",
       "citation_keys": [
         "tsmc2025annualreport"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-asml-manufactures-euv",
@@ -9883,7 +10230,8 @@
       "quote": "the world's only manufacturer of EUV systems",
       "citation_keys": [
         "asml2025annualreport"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-soft-xray-preceded-euv",
@@ -9894,7 +10242,8 @@
       "quote": "The industrial machine took another two decades; the physics was already in place.",
       "citation_keys": [
         "kinoshita1989euv"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-cowos-integrates-hbm",
@@ -9905,7 +10254,8 @@
       "quote": "improve HBM3 signal integrity at high data rates",
       "citation_keys": [
         "jeng2022cowos"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-faraday-discovered-induction",
@@ -9927,7 +10277,8 @@
       "quote": "made that current steady and cheap",
       "citation_keys": [
         "siemens1867dynamo"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-parsons-turbine-contribution",
@@ -9938,7 +10289,8 @@
       "quote": "Parsons's 1884 compound steam turbine made it fast and compact",
       "citation_keys": [
         "parsons1911steamturbine"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-edison-pearl-street",
@@ -9949,7 +10301,8 @@
       "quote": "Edison's Pearl Street station (1882)",
       "citation_keys": [
         "electricpowerhistorywiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-westinghouse-tesla-regional-grid",
@@ -9960,7 +10313,8 @@
       "quote": "made the grid regional",
       "citation_keys": [
         "electricpowerhistorywiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-coal-part-of-grid",
@@ -9982,7 +10336,8 @@
       "quote": "the Rankine cycle sets the thermodynamic limit",
       "citation_keys": [
         "rankine1859"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-drake-well-petroleum",
@@ -9994,7 +10349,8 @@
       "citation_keys": [
         "drakewellmuseum",
         "eia_oil"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-seismic-computing-oil",
@@ -10016,7 +10372,8 @@
       "quote": "In 1938 Otto Hahn and Fritz Strassmann bombarded uranium with neutrons",
       "citation_keys": [
         "hahnstrassmann1939fission"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-strassmann-fission",
@@ -10027,7 +10384,8 @@
       "quote": "In 1938 Otto Hahn and Fritz Strassmann bombarded uranium with neutrons",
       "citation_keys": [
         "hahnstrassmann1939fission"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-meitner-frisch-named-fission",
@@ -10040,7 +10398,8 @@
       "quote": "called the process **fission**",
       "citation_keys": [
         "meitnerfrisch1939fission"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-frisch-named-fission",
@@ -10053,7 +10412,8 @@
       "quote": "called the process **fission**",
       "citation_keys": [
         "meitnerfrisch1939fission"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-chicago-pile-fission",
@@ -10064,7 +10424,8 @@
       "quote": "Chicago Pile-1 went critical in 1942",
       "citation_keys": [
         "nuclearpowerwiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-obninsk-nuclear-plant",
@@ -10075,7 +10436,8 @@
       "quote": "was the first grid-connected nuclear plant",
       "citation_keys": [
         "obninskwiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-shippingport-nuclear-plant",
@@ -10086,7 +10448,8 @@
       "quote": "the first in the United States",
       "citation_keys": [
         "worldnuclear"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-tesla-ac-grid",
@@ -10098,7 +10461,8 @@
       "citation_keys": [
         "teslaelectricmotor",
         "teslacurrent"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-s3-part-of-cloud",
@@ -10109,7 +10473,8 @@
       "quote": "Amazon S3, launched on 14 March 2006",
       "citation_keys": [
         "amazons3_2006"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-ec2-part-of-cloud",
@@ -10120,7 +10485,8 @@
       "quote": "Amazon EC2 entered limited beta on 25 August 2006",
       "citation_keys": [
         "amazonec2_2006"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-kubernetes-part-of-cloud",
@@ -10131,7 +10497,8 @@
       "quote": "Kubernetes, open-sourced by Google in 2014",
       "citation_keys": [
         "kubernetes_overview"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-ii-warehouse-scale-part-of-cloud",
@@ -10142,7 +10509,8 @@
       "quote": "describe the modern data center as one massive warehouse-scale computer",
       "citation_keys": [
         "barroso2013datacenter"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "derived-corning-glass-works-invented-glass",
@@ -15045,6 +15413,101 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 6",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-luca-pacioli-portrait",
+      "from": "luca-pacioli-portrait",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Portrait of Luca Pacioli (c. 1495)",
+      "citation_keys": [
+        "img_pacioli_portrait",
+        "paciolisumma"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ice-cutting-traunsee",
+      "from": "ice-cutting-traunsee",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Ice-cutting on Lake Traunsee, 1899]{eisschlagen_traunsee})",
+      "citation_keys": [
+        "eisschlagen_traunsee"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-polyethylene-cable-insulation",
+      "from": "polyethylene-cable-insulation",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "By 1940, however, a different polymer had quietly displaced both rubber and gutta-percha in most cable applications.",
+      "citation_keys": [
+        "polyethylenehistory"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-theodore-maiman",
+      "from": "theodore-maiman",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Maiman, 1967]{maiman1967laserpatent})",
+      "citation_keys": [
+        "maiman1967laserpatent"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-nasa-image-processing",
+      "from": "nasa-image-processing",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Tomayko, 1988]{tomayko1988spaceflight})",
+      "citation_keys": [
+        "tomayko1988spaceflight"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-positional-numerals",
+      "from": "positional-numerals",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Chrisomalis, 2010]{chrisomalis2010})",
+      "citation_keys": [
+        "chrisomalis2010"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-ultrapure-water",
+      "from": "ultrapure-water",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Ruth and Berndt, 2016]{ruth2016ultrapure})",
+      "citation_keys": [
+        "ruth2016ultrapure"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_ii-youtube-8m",
+      "from": "youtube-8m",
+      "to": "untold-history-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "ImageNet, Kinetics, Something-Something and YouTube-8M",
       "citation_keys": [],
       "confidence": "provenance"
     }

@@ -11,8 +11,13 @@
     "ho2020ddpm",
     "sohl2015deep",
     "ramesh2022dalle2",
+    "ramesh2021dalle",
     "ronneberger2015unet",
-    "nie2025llada"
+    "nie2025llada",
+    "kingma2014vae",
+    "song2019score",
+    "zhang2023controlnet",
+    "lipman2023flow"
   ],
   "claims": [
     {
@@ -98,7 +103,10 @@
       "value": 2021,
       "unit": "year",
       "quote": "**DALL·E** (2021) was a 12-billion-parameter autoregressive Transformer over discrete image tokens",
-      "citation_keys": [],
+      "citation_keys": [
+        "ramesh2022dalle2",
+        "ramesh2021dalle"
+      ],
       "qualifiers": {},
       "confidence": "stated"
     },
@@ -109,7 +117,10 @@
       "value": 12000000000,
       "unit": "count",
       "quote": "**DALL·E** (2021) was a 12-billion-parameter autoregressive Transformer over discrete image tokens",
-      "citation_keys": [],
+      "citation_keys": [
+        "ramesh2022dalle2",
+        "ramesh2021dalle"
+      ],
       "qualifiers": {},
       "confidence": "stated"
     },
@@ -286,19 +297,85 @@
         "approx": true
       },
       "confidence": "stated"
+    },
+    {
+      "id": "diffusion-gap3-1",
+      "subject": "vae",
+      "predicate": "year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Autoencoders had long learned compact codes (\\cite[Kingma & Welling, 2014]{kingma2014vae})",
+      "citation_keys": [
+        "kingma2014vae"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-gap3-2",
+      "subject": "score-based-generation",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "score-based generation (\\cite[Song & Ermon, 2019]{song2019score})",
+      "citation_keys": [
+        "song2019score"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-gap3-3",
+      "subject": "controlnet",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "steer outputs with **ControlNet** (\\cite[Zhang et al., 2023]{zhang2023controlnet})",
+      "citation_keys": [
+        "zhang2023controlnet"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-gap3-4",
+      "subject": "flow-matching",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "many new systems use **flow matching** (\\cite[Lipman et al., 2023]{lipman2023flow})",
+      "citation_keys": [
+        "lipman2023flow"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-gap3-5",
+      "subject": "diffusion-models",
+      "predicate": "spread_to_video",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "By 2024 it had spread to video (Sora, Veo), audio, music, and even 3D protein structures.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "diffusion-gap3-6",
+      "subject": "stable-diffusion",
+      "predicate": "training_images",
+      "value": 100000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "So the answer to “do I need to label 100k images?” is: **no** for pretraining",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-diffusion-part",
-      "from": "diffusion",
-      "to": "part-4",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 4",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-diffusion-ddpm",
       "from": "ddpm",
@@ -446,6 +523,84 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "Modern systems generate images in **1–8 network evaluations**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-vae",
+      "from": "vae",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Autoencoders had long learned compact codes (\\cite[Kingma & Welling, 2014]{kingma2014vae})",
+      "citation_keys": [
+        "kingma2014vae"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-score-based-generation",
+      "from": "score-based-generation",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "score-based generation (\\cite[Song & Ermon, 2019]{song2019score})",
+      "citation_keys": [
+        "song2019score"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-controlnet",
+      "from": "controlnet",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "steer outputs with **ControlNet** (\\cite[Zhang et al., 2023]{zhang2023controlnet})",
+      "citation_keys": [
+        "zhang2023controlnet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-flow-matching",
+      "from": "flow-matching",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "many new systems use **flow matching** (\\cite[Lipman et al., 2023]{lipman2023flow})",
+      "citation_keys": [
+        "lipman2023flow"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-diffusion-models",
+      "from": "diffusion-models",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "By 2024 it had spread to video (Sora, Veo), audio, music, and even 3D protein structures.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-stable-diffusion",
+      "from": "stable-diffusion",
+      "to": "diffusion",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "So the answer to “do I need to label 100k images?” is: **no** for pretraining",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-diffusion-part",
+      "from": "diffusion",
+      "to": "part-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 4",
       "citation_keys": [],
       "confidence": "provenance"
     }

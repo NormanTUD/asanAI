@@ -21,7 +21,17 @@
     "colmerauer1973prolog",
     "crevier1993ai",
     "cyc_wiki",
-    "deepmind2024alphaproof"
+    "deepmind2024alphaproof",
+    "russell1910pm",
+    "hilbert1928entscheidung",
+    "mccarthy1969some",
+    "newell1976empirical",
+    "berners2001sw",
+    "singhal2012knowledge",
+    "manhaeve2018deepproblog",
+    "garcez2020neurosymbolic",
+    "schick2023toolformer",
+    "trinh2024alphageometry"
   ],
   "claims": [
     {
@@ -312,6 +322,232 @@
         "deepmind2024alphaproof"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gap2-1",
+      "subject": "principia-mathematica",
+      "predicate": "year",
+      "value": 1910,
+      "unit": "year",
+      "qualifiers": {
+        "definition": "published 1910-13"
+      },
+      "quote": "Russell and Whitehead's *Principia Mathematica* (1910-13) carried the project through",
+      "citation_keys": [
+        "russell1910pm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gap2-2",
+      "subject": "hilbert-ackermann-1928",
+      "predicate": "year",
+      "value": 1928,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Hilbert & Ackermann, 1928]{hilbert1928entscheidung})",
+      "citation_keys": [
+        "hilbert1928entscheidung"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gap2-3",
+      "subject": "dartmouth-workshop-1955",
+      "predicate": "year",
+      "value": 1955,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[McCarthy et al., 1955]{mccarthy1955dartmouth})",
+      "citation_keys": [
+        "mccarthy1955dartmouth"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gap2-4",
+      "subject": "frame-problem",
+      "predicate": "year",
+      "value": 1969,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[McCarthy & Hayes, 1969]{mccarthy1969some})",
+      "citation_keys": [
+        "mccarthy1969some"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gap2-5",
+      "subject": "colmerauer-roussel-1973",
+      "predicate": "year",
+      "value": 1973,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Colmerauer & Roussel, 1973]{colmerauer1973prolog})",
+      "citation_keys": [
+        "colmerauer1973prolog"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gap2-6",
+      "subject": "acm-turing-award-1975",
+      "predicate": "year",
+      "value": 1975,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the 1975 award was given to Newell and Simon jointly",
+      "citation_keys": [
+        "newell1976empirical"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gap2-7",
+      "subject": "newell-simon-1976",
+      "predicate": "year",
+      "value": 1976,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
+      "citation_keys": [
+        "newell1976empirical"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gap2-8",
+      "subject": "semantic-web-scientific-american",
+      "predicate": "year",
+      "value": 2001,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Berners-Lee, Hendler, and Lassila's 2001 *Scientific American* article",
+      "citation_keys": [
+        "berners2001sw"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gap2-9",
+      "subject": "google-knowledge-graph",
+      "predicate": "year",
+      "value": 2012,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Google's 2012 Knowledge Graph showed the industrial version",
+      "citation_keys": [
+        "singhal2012knowledge"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gap2-10",
+      "subject": "logic-tensor-networks",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Logic Tensor Networks (Serafini & Garcez, 2016)",
+      "citation_keys": [
+        "manhaeve2018deepproblog"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gap2-11",
+      "subject": "deepproblog",
+      "predicate": "year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Manhaeve et al., 2018]{manhaeve2018deepproblog})",
+      "citation_keys": [
+        "manhaeve2018deepproblog"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gap2-12",
+      "subject": "garcez-lamb-2020",
+      "predicate": "year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Garcez & Lamb, 2020]{garcez2020neurosymbolic})",
+      "citation_keys": [
+        "garcez2020neurosymbolic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gap2-13",
+      "subject": "toolformer",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Schick et al., 2023]{schick2023toolformer})",
+      "citation_keys": [
+        "schick2023toolformer"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gap2-14",
+      "subject": "imo-2025",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Subsequent work has solved IMO 2025 problems.",
+      "citation_keys": [
+        "trinh2024alphageometry"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gap2-15",
+      "subject": "2026-hardware",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "what Newell and Simon would have predicted if they had known what 2026 hardware looks like",
+      "citation_keys": [
+        "newell1956logictheorist"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-gap2-16",
+      "subject": "umls",
+      "predicate": "concepts",
+      "value": 3000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "**UMLS**: medical KG (3M+ concepts)",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -551,6 +787,196 @@
       "citation_keys": [
         "deepmind2024alphaproof"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-principia-mathematica",
+      "from": "principia-mathematica",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Russell and Whitehead's *Principia Mathematica* (1910-13) carried the project through",
+      "citation_keys": [
+        "russell1910pm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-hilbert-ackermann-1928",
+      "from": "hilbert-ackermann-1928",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Hilbert & Ackermann, 1928]{hilbert1928entscheidung})",
+      "citation_keys": [
+        "hilbert1928entscheidung"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-dartmouth-workshop-1955",
+      "from": "dartmouth-workshop-1955",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[McCarthy et al., 1955]{mccarthy1955dartmouth})",
+      "citation_keys": [
+        "mccarthy1955dartmouth"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-frame-problem",
+      "from": "frame-problem",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[McCarthy & Hayes, 1969]{mccarthy1969some})",
+      "citation_keys": [
+        "mccarthy1969some"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-colmerauer-roussel-1973",
+      "from": "colmerauer-roussel-1973",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Colmerauer & Roussel, 1973]{colmerauer1973prolog})",
+      "citation_keys": [
+        "colmerauer1973prolog"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-acm-turing-award-1975",
+      "from": "acm-turing-award-1975",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the 1975 award was given to Newell and Simon jointly",
+      "citation_keys": [
+        "newell1976empirical"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-newell-simon-1976",
+      "from": "newell-simon-1976",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
+      "citation_keys": [
+        "newell1976empirical"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-semantic-web-scientific-american",
+      "from": "semantic-web-scientific-american",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Berners-Lee, Hendler, and Lassila's 2001 *Scientific American* article",
+      "citation_keys": [
+        "berners2001sw"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-google-knowledge-graph",
+      "from": "google-knowledge-graph",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Google's 2012 Knowledge Graph showed the industrial version",
+      "citation_keys": [
+        "singhal2012knowledge"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-logic-tensor-networks",
+      "from": "logic-tensor-networks",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Logic Tensor Networks (Serafini & Garcez, 2016)",
+      "citation_keys": [
+        "manhaeve2018deepproblog"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-deepproblog",
+      "from": "deepproblog",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Manhaeve et al., 2018]{manhaeve2018deepproblog})",
+      "citation_keys": [
+        "manhaeve2018deepproblog"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-garcez-lamb-2020",
+      "from": "garcez-lamb-2020",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Garcez & Lamb, 2020]{garcez2020neurosymbolic})",
+      "citation_keys": [
+        "garcez2020neurosymbolic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-toolformer",
+      "from": "toolformer",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Schick et al., 2023]{schick2023toolformer})",
+      "citation_keys": [
+        "schick2023toolformer"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-imo-2025",
+      "from": "imo-2025",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Subsequent work has solved IMO 2025 problems.",
+      "citation_keys": [
+        "trinh2024alphageometry"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-2026-hardware",
+      "from": "2026-hardware",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "what Newell and Simon would have predicted if they had known what 2026 hardware looks like",
+      "citation_keys": [
+        "newell1956logictheorist"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-umls",
+      "from": "umls",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**UMLS**: medical KG (3M+ concepts)",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

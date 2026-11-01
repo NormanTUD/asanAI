@@ -7,7 +7,12 @@
   "order": 13,
   "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [],
+  "citations": [
+    "zipf1949human",
+    "he2023sideeffects",
+    "greatwallpaper",
+    "cosmologicalprinciple"
+  ],
   "claims": [
     {
       "id": "auto-foam_of_meaning-title-1",
@@ -58,6 +63,169 @@
       "quote": "- **The gap grows linearly.** For a semantic manifold of intrinsic dimension $k$, the *normalized* expressibility gap $\\eta(\\varepsilon)$ — the fraction of semantic space lying within $\\varepsilon$ of a boundary — satisfies $\\eta(\\varepsilon) = c\\,\\varepsilon + O(\\varepsilon^{2})$ for small $\\vareps",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "foam_of_meaning-gap2-1",
+      "subject": "ps-zoom-canvas",
+      "predicate": "canvas_width",
+      "value": 1000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true,
+        "note": "canvas pixel width, not a year"
+      },
+      "quote": "<canvas id=\"ps-zoom-canvas\" class=\"ps-canvas\" width=\"1000\" height=\"480\"></canvas>",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "foam_of_meaning-gap2-2",
+      "subject": "estoup-rank-frequency-note",
+      "predicate": "year",
+      "value": 1916,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "- \\citeauthor{zipf1949human}, \\citealternativetitle{zipf1949human} (\\citeyear{zipf1949human}) — the book that popularised Zipf's law (the rank–frequency regularity had been noted earlier, by Estoup in 1916 and Condon in 1928).",
+      "citation_keys": [
+        "zipf1949human"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "foam_of_meaning-gap2-3",
+      "subject": "wittgenstein-tractatus",
+      "predicate": "year",
+      "value": 1921,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The philosophical ancestor of a *possible semantic space* is Wittgenstein's **logical space** (Tractatus, 1921): the totality of possible states of affairs arranged in a single Space, with language sharing its logical form, so that thinking is movement constrained to the actual.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "foam_of_meaning-gap2-4",
+      "subject": "condon-rank-frequency-note",
+      "predicate": "year",
+      "value": 1928,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "- \\citeauthor{zipf1949human}, \\citealternativetitle{zipf1949human} (\\citeyear{zipf1949human}) — the book that popularised Zipf's law (the rank–frequency regularity had been noted earlier, by Estoup in 1916 and Condon in 1928).",
+      "citation_keys": [
+        "zipf1949human"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "foam_of_meaning-gap2-5",
+      "subject": "he-tsai-ward-side-effects",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "That underdetermination of the normal directions is not a weakness of the informal picture but a theorem: for data lying on a low-dimensional manifold, gradient descent constrains the learned function on the manifold and leaves its variation in the orthogonal — void — directions free, fixed only by the initialization of parameters the loss never touches (\\cite[He, Tsai & Ward, 2023]{he2023sideeffects}).",
+      "citation_keys": [
+        "he2023sideeffects"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "foam_of_meaning-gap2-6",
+      "subject": "great-wall",
+      "predicate": "length",
+      "value": 500000000,
+      "unit": "count",
+      "qualifiers": {
+        "measure": "light-year"
+      },
+      "quote": "\\cite[Great Wall]{greatwallpaper} is a sheet of galaxies more than 500 million light-years long but only about 15 million light-years thick.",
+      "citation_keys": [
+        "greatwallpaper"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "foam_of_meaning-gap2-7",
+      "subject": "great-wall",
+      "predicate": "thickness",
+      "value": 15000000,
+      "unit": "count",
+      "qualifiers": {
+        "measure": "light-year"
+      },
+      "quote": "\\cite[Great Wall]{greatwallpaper} is a sheet of galaxies more than 500 million light-years long but only about 15 million light-years thick.",
+      "citation_keys": [
+        "greatwallpaper"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "foam_of_meaning-gap2-8",
+      "subject": "giant-void",
+      "predicate": "diameter",
+      "value": 1300000000,
+      "unit": "count",
+      "qualifiers": {
+        "measure": "light-year"
+      },
+      "quote": "And the Giant Void is an almost empty sphere about 1.3 billion light-years in diameter.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "foam_of_meaning-gap2-9",
+      "subject": "cosmological-principle",
+      "predicate": "homogeneity_scale",
+      "value": 300000000,
+      "unit": "count",
+      "qualifiers": {
+        "measure": "light-year"
+      },
+      "quote": "Beyond a scale of roughly 100 megaparsecs (about 300 million light-years) the clumpiness fades, and the universe becomes statistically homogeneous and isotropic, just as \\cite[the cosmological principle]{cosmologicalprinciple} demands.",
+      "citation_keys": [
+        "cosmologicalprinciple"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "foam_of_meaning-gap2-10",
+      "subject": "gpt-vocabulary",
+      "predicate": "context_window",
+      "value": 20,
+      "unit": "token",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "With a GPT-sized vocabulary and a context of only 20 tokens there are already more possible sequences than atoms in the observable universe.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "foam_of_meaning-gap2-11",
+      "subject": "gpt-2-opt-pythia",
+      "predicate": "parameters",
+      "value": 124000000,
+      "unit": "count",
+      "qualifiers": {
+        "parameter_kind": "total",
+        "bound": "lower"
+      },
+      "quote": "Measured across six transformer models (GPT-2, OPT, Pythia; 124M–1.5B parameters), the log-log slope of $\\eta$ against $\\varepsilon$ lands at **0.87–1.12** with $R^{2} > 0.985$ — a near-unit slope is exactly the linear law, confirmed.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "foam_of_meaning-gap2-12",
+      "subject": "gpt-2-opt-pythia",
+      "predicate": "parameters",
+      "value": 1500000000,
+      "unit": "count",
+      "qualifiers": {
+        "parameter_kind": "total",
+        "bound": "upper"
+      },
+      "quote": "Measured across six transformer models (GPT-2, OPT, Pythia; 124M–1.5B parameters), the log-log slope of $\\eta$ against $\\varepsilon$ lands at **0.87–1.12** with $R^{2} > 0.985$ — a near-unit slope is exactly the linear law, confirmed.",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -78,6 +246,116 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "- **The gap grows linearly.** For a semantic manifold of intrinsic dimension $k$, the *normalized* expressibility gap $\\eta(\\varepsilon)$ — the fraction of semantic space lying within $\\varepsilon$ of a boundary — satisfies $\\eta(\\varepsilon) = c\\,\\varepsilon + O(\\varepsilon^{2})$ for small $\\vareps",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-foam_of_meaning-ps-zoom-canvas",
+      "from": "ps-zoom-canvas",
+      "to": "foam-of-meaning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "<canvas id=\"ps-zoom-canvas\" class=\"ps-canvas\" width=\"1000\" height=\"480\"></canvas>",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-foam_of_meaning-estoup-rank-frequency-note",
+      "from": "estoup-rank-frequency-note",
+      "to": "foam-of-meaning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "- \\citeauthor{zipf1949human}, \\citealternativetitle{zipf1949human} (\\citeyear{zipf1949human}) — the book that popularised Zipf's law (the rank–frequency regularity had been noted earlier, by Estoup in 1916 and Condon in 1928).",
+      "citation_keys": [
+        "zipf1949human"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-foam_of_meaning-wittgenstein-tractatus",
+      "from": "wittgenstein-tractatus",
+      "to": "foam-of-meaning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The philosophical ancestor of a *possible semantic space* is Wittgenstein's **logical space** (Tractatus, 1921): the totality of possible states of affairs arranged in a single Space, with language sharing its logical form, so that thinking is movement constrained to the actual.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-foam_of_meaning-condon-rank-frequency-note",
+      "from": "condon-rank-frequency-note",
+      "to": "foam-of-meaning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "- \\citeauthor{zipf1949human}, \\citealternativetitle{zipf1949human} (\\citeyear{zipf1949human}) — the book that popularised Zipf's law (the rank–frequency regularity had been noted earlier, by Estoup in 1916 and Condon in 1928).",
+      "citation_keys": [
+        "zipf1949human"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-foam_of_meaning-he-tsai-ward-side-effects",
+      "from": "he-tsai-ward-side-effects",
+      "to": "foam-of-meaning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "That underdetermination of the normal directions is not a weakness of the informal picture but a theorem: for data lying on a low-dimensional manifold, gradient descent constrains the learned function on the manifold and leaves its variation in the orthogonal — void — directions free, fixed only by the initialization of parameters the loss never touches (\\cite[He, Tsai & Ward, 2023]{he2023sideeffects}).",
+      "citation_keys": [
+        "he2023sideeffects"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-foam_of_meaning-great-wall",
+      "from": "great-wall",
+      "to": "foam-of-meaning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Great Wall]{greatwallpaper} is a sheet of galaxies more than 500 million light-years long but only about 15 million light-years thick.",
+      "citation_keys": [
+        "greatwallpaper"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-foam_of_meaning-giant-void",
+      "from": "giant-void",
+      "to": "foam-of-meaning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "And the Giant Void is an almost empty sphere about 1.3 billion light-years in diameter.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-foam_of_meaning-cosmological-principle",
+      "from": "cosmological-principle",
+      "to": "foam-of-meaning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Beyond a scale of roughly 100 megaparsecs (about 300 million light-years) the clumpiness fades, and the universe becomes statistically homogeneous and isotropic, just as \\cite[the cosmological principle]{cosmologicalprinciple} demands.",
+      "citation_keys": [
+        "cosmologicalprinciple"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-foam_of_meaning-gpt-vocabulary",
+      "from": "gpt-vocabulary",
+      "to": "foam-of-meaning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "With a GPT-sized vocabulary and a context of only 20 tokens there are already more possible sequences than atoms in the observable universe.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-foam_of_meaning-gpt-2-opt-pythia",
+      "from": "gpt-2-opt-pythia",
+      "to": "foam-of-meaning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Measured across six transformer models (GPT-2, OPT, Pythia; 124M–1.5B parameters), the log-log slope of $\\eta$ against $\\varepsilon$ lands at **0.87–1.12** with $R^{2} > 0.985$ — a near-unit slope is exactly the linear law, confirmed.",
       "citation_keys": [],
       "confidence": "provenance"
     }

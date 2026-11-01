@@ -126,6 +126,27 @@ def _normalize_source(text: str) -> str:
     return normalize_source(text)
 
 
+def _lesson_of(claim: dict) -> str:
+    source = str(claim.get("source", ""))
+    return source[: -len(".facts.json")] + ".php" if source.endswith(".facts.json") else source
+
+
+def _conflict_pair_lines(subject: str, predicate: str, scope: str, clusters: list[list[dict]]) -> list[str]:
+    lines = []
+    for i in range(len(clusters)):
+        for j in range(i + 1, len(clusters)):
+            first = clusters[i][0]
+            second = clusters[j][0]
+            extra_a = f" (+{len(clusters[i]) - 1} more)" if len(clusters[i]) > 1 else ""
+            extra_b = f" (+{len(clusters[j]) - 1} more)" if len(clusters[j]) > 1 else ""
+            lines.append(
+                f"claim {first.get('id', '?')!r} in {_lesson_of(first)}{extra_a} "
+                f"contradicts claim {second.get('id', '?')!r} in {_lesson_of(second)}{extra_b} "
+                f"— subject={subject} predicate={predicate}"
+            )
+    return lines
+
+
 def _format_conflict(subject: str, predicate: str, scope: str, clusters: list[list[dict]]) -> str:
     claims = [c for cluster in clusters for c in cluster]
     first_file = claims[0].get("source", "blog/facts/?")
@@ -192,6 +213,7 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
           strict_unregistered: bool = False):
     errors: list[str] = []
     conflicts: list[str] = []
+    conflict_pairs: list[str] = []
 
     lessons = lesson_files(blog)
     facts = fact_files(blog)
@@ -345,6 +367,7 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
         clusters = _clusters(claim_group)
         if len(clusters) > 1:
             conflicts.append(_format_conflict(subject, predicate, scope, clusters))
+            conflict_pairs.extend(_conflict_pair_lines(subject, predicate, scope, clusters))
 
     # ---- relations: endpoints, cycles, temporal and same_as compatibility ----
     fact_ids = {c["id"]: c for c in all_claims if c.get("id")}
@@ -449,6 +472,7 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
         clusters = _clusters(claim_group)
         if len(clusters) > 1:
             conflicts.append(_format_conflict(root, predicate, scope, clusters))
+            conflict_pairs.extend(_conflict_pair_lines(root, predicate, scope, clusters))
 
     year_claims_by_ref: dict[str, list[dict]] = defaultdict(list)
     for claim in all_claims:
@@ -546,6 +570,17 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
         errors.extend(relation_warnings)
     if strict_quotes and quote_warnings:
         errors.extend(quote_warnings)
+    if conflict_pairs:
+        print("=" * 72)
+        print("CONTRADICTION LIST — all incompatible claim pairs")
+        print("=" * 72)
+        for line in dict.fromkeys(conflict_pairs):
+            print(f"  {line}")
+        report = ["# Fact conflicts", ""]
+        report.extend(dict.fromkeys(conflict_pairs))
+        (blog / "facts" / "CONFLICTS.md").write_text("\n".join(report) + "\n", encoding="utf-8")
+        print(f"  (also written to {blog / 'facts' / 'CONFLICTS.md'})")
+
     if errors:
         print("=" * 72)
         print("FACT LEDGER ERRORS")

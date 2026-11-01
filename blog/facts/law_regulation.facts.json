@@ -285,6 +285,65 @@
         "coe2024ai"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-gap4-1",
+      "subject": "california-sb-1047",
+      "predicate": "bill_number",
+      "value": 1047,
+      "unit": "count",
+      "qualifiers": {
+        "definition": "California Senate Bill number"
+      },
+      "quote": "SB 1047 vetoed",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-gap4-2",
+      "subject": "california-ab-2013",
+      "predicate": "bill_number",
+      "value": 2013,
+      "unit": "count",
+      "qualifiers": {
+        "definition": "California Assembly Bill number"
+      },
+      "quote": "AB 2013 training-data transparency",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-gap4-3",
+      "subject": "authors-guild-v-google",
+      "predicate": "cert_denied_year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the Supreme Court declined to review in 2016",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-gap4-4",
+      "subject": "dod-ai-ethical-principles",
+      "predicate": "publication_year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "DoD AI Ethical Principles** (2020)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "law_regulation-gap4-5",
+      "subject": "china-algorithm-recommendation-provisions",
+      "predicate": "publication_year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Algorithm Recommendation Provisions** (2022)",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -506,6 +565,36 @@
       "citation_keys": [
         "coe2024ai"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-california-ab-2013",
+      "from": "california-ab-2013",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "AB 2013 training-data transparency",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-dod-ai-ethical-principles",
+      "from": "dod-ai-ethical-principles",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "DoD AI Ethical Principles** (2020)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-law_regulation-china-algorithm-recommendation-provisions",
+      "from": "china-algorithm-recommendation-provisions",
+      "to": "law-regulation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Algorithm Recommendation Provisions** (2022)",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

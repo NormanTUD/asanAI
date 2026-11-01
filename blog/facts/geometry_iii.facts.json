@@ -11,6 +11,7 @@
     "eulerbridges",
     "eulersolids",
     "poincareanalysissitus",
+    "mclarty2006noether",
     "mayer1929",
     "vietoris1930",
     "hopf1931fibration",
@@ -23,7 +24,24 @@
     "reidemeistertorsion_wiki",
     "edelsbrunner2002persistent",
     "zomorodian2005",
-    "cohensteiner2007"
+    "cohensteiner2007",
+    "historyofmathematicalnotation",
+    "poincareconjecture1904",
+    "perelmanpoincare",
+    "vietorisbio2002",
+    "brouwer1911fixed",
+    "vankampen1933",
+    "freudenthal1937",
+    "eilenbergmaclane1942",
+    "serre1951",
+    "serre1953",
+    "adams1960",
+    "milnor1962additivity",
+    "milnor1966torsion",
+    "brown1967",
+    "hottbook",
+    "riek2019neural",
+    "youvan2024"
   ],
   "claims": [
     {
@@ -100,7 +118,9 @@
       "value": 1871,
       "unit": "year",
       "quote": "**Enrico Betti** (1871) generalized the pattern",
-      "citation_keys": [],
+      "citation_keys": [
+        "poincareanalysissitus"
+      ],
       "qualifiers": {},
       "confidence": "stated"
     },
@@ -124,7 +144,9 @@
       "value": 1925,
       "unit": "year",
       "quote": "The step from counting holes to the algebra of holes happened in 1925",
-      "citation_keys": [],
+      "citation_keys": [
+        "mclarty2006noether"
+      ],
       "qualifiers": {},
       "confidence": "stated"
     },
@@ -318,6 +340,380 @@
       "citation_keys": [],
       "qualifiers": {},
       "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-1",
+      "subject": "leibniz-congruence-notation",
+      "predicate": "year",
+      "value": 1698,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Leibniz's 1698 tilde for congruent triangles",
+      "citation_keys": [
+        "hurewicz1935"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-2",
+      "subject": "isomorphism",
+      "predicate": "coined_year",
+      "value": 1819,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "*isomorphism* was coined in 1819 by the chemist Eilhard Mitscherlich",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-3",
+      "subject": "partial-derivative-notation",
+      "predicate": "jacobi_reintroduced_year",
+      "value": 1841,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Jacobi** reintroduced it in 1841",
+      "citation_keys": [
+        "historyofmathematicalnotation"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-4",
+      "subject": "henri-poincare",
+      "predicate": "birth_year",
+      "value": 1854,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Henri Poincaré (1854–1912)**",
+      "citation_keys": [
+        "poincareanalysissitus",
+        "poincareconjecture1904",
+        "perelmanpoincare"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-5",
+      "subject": "set-theory-notation",
+      "predicate": "peano_glyphs_year",
+      "value": 1889,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Peano gave both their glyphs in 1889",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-6",
+      "subject": "leopold-vietoris",
+      "predicate": "birth_year",
+      "value": 1891,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "born in 1891, he published into his nineties and died in 2002 at 110",
+      "citation_keys": [
+        "vietorisbio2002",
+        "vietoris1930"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-7",
+      "subject": "poincare-conjecture",
+      "predicate": "year",
+      "value": 1904,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in the 1904 fifth complement, after the Poincaré homology sphere showed that homology alone is insufficient",
+      "citation_keys": [
+        "poincareconjecture1904"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-8",
+      "subject": "brouwer-fixed-point-theorem",
+      "predicate": "year",
+      "value": 1911,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**1911 (Brouwer).** Fixed-point theorem and the general definition of degree for maps between manifolds",
+      "citation_keys": [
+        "brouwer1911fixed"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-9",
+      "subject": "henri-poincare",
+      "predicate": "death_year",
+      "value": 1912,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Henri Poincaré (1854–1912)**",
+      "citation_keys": [
+        "poincareanalysissitus",
+        "poincareconjecture1904",
+        "perelmanpoincare"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-10",
+      "subject": "leopold-vietoris",
+      "predicate": "topology_lectures_year",
+      "value": 1926,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Leopold Vietoris**'s topology lectures in 1926–27",
+      "citation_keys": [
+        "mayer1929",
+        "vietoris1930"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-11",
+      "subject": "seifert-van-kampen-theorem",
+      "predicate": "general_theorem_year",
+      "value": 1933,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**van Kampen** (1933) then published the general theorem",
+      "citation_keys": [
+        "vankampen1933"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-12",
+      "subject": "reidemeister-torsion",
+      "predicate": "de_rham_year",
+      "value": 1936,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Franz** (1935) and **de Rham** (1936) reached the same conclusion independently",
+      "citation_keys": [
+        "reidemeistertorsion_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-13",
+      "subject": "suspension-theorem",
+      "predicate": "year",
+      "value": 1937,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Freudenthal** (1937), who proved the **suspension theorem**",
+      "citation_keys": [
+        "freudenthal1937"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-14",
+      "subject": "exact-sequence",
+      "predicate": "noticed_year",
+      "value": 1941,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**1941 (Hurewicz).** Exact sequences (without the name)",
+      "citation_keys": [
+        "eilenbergmaclane1942"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-15",
+      "subject": "eilenberg-maclane",
+      "predicate": "group_extensions_homology_year",
+      "value": 1942,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**1942 / 1945 (Eilenberg, Mac Lane).** Category, functor, natural transformation",
+      "citation_keys": [
+        "eilenberglane1945",
+        "eilenbergmaclane1942"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-16",
+      "subject": "serre-finiteness-theorem",
+      "predicate": "thesis_year",
+      "value": 1951,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Then came **Serre** (1951–1953), who, using **Leray's spectral sequences**, proved the famous **finiteness theorem**",
+      "citation_keys": [
+        "serre1951"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-17",
+      "subject": "serre-finiteness-theorem",
+      "predicate": "publication_year",
+      "value": 1953,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**1951 / 1953 (Serre).** Spectrally computed homotopy; finiteness theorem",
+      "citation_keys": [
+        "serre1953"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-18",
+      "subject": "hopf-invariant-one",
+      "predicate": "adams_theorem_year",
+      "value": 1958,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Adams' theorem on the Hopf invariant** (1958/1960)",
+      "citation_keys": [
+        "adams1960"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-19",
+      "subject": "hopf-invariant-one",
+      "predicate": "adams_theorem_publication_year",
+      "value": 1960,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**1958/1960 (Adams).** Hopf invariant one only in 1, 2, 4, 8",
+      "citation_keys": [
+        "adams1960"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-20",
+      "subject": "eilenberg-steenrod-axioms",
+      "predicate": "additivity_completion_year",
+      "value": 1962,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Milnor** (1962) proved that one more axiom (additivity) upgrades the entire theory",
+      "citation_keys": [
+        "milnor1962additivity"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-21",
+      "subject": "whitehead-torsion",
+      "predicate": "survey_year",
+      "value": 1966,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Milnor's 1966 survey *Whitehead Torsion*",
+      "citation_keys": [
+        "milnor1966torsion"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-22",
+      "subject": "seifert-van-kampen-theorem",
+      "predicate": "groupoid_formulation_year",
+      "value": 1967,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "culminating in the groupoid formulation by **Ronald Brown** (1967)",
+      "citation_keys": [
+        "brown1967"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-23",
+      "subject": "persistent-homology",
+      "predicate": "crystallized_year",
+      "value": 2005,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "crystallized by **Zomorodian and Carlsson** (2005)",
+      "citation_keys": [
+        "zomorodian2005"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-24",
+      "subject": "homotopy-type-theory",
+      "predicate": "book_year",
+      "value": 2013,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**2013 / 2024 (HoTT).** Official book",
+      "citation_keys": [
+        "hottbook"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-25",
+      "subject": "neural-persistence",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**2019 (Rieck et al.).** Neural persistence: topology of a network as data",
+      "citation_keys": [
+        "riek2019neural"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-26",
+      "subject": "homotopy-type-theory",
+      "predicate": "ai_foundation_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**2013 / 2024 (HoTT).** Official book; HoTT as a foundation for AI",
+      "citation_keys": [
+        "hottbook",
+        "youvan2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-27",
+      "subject": "unstable-homotopy-groups",
+      "predicate": "infinite_cyclic_summand_dimension",
+      "value": "4m-1",
+      "unit": "formula",
+      "qualifiers": {
+        "example": true,
+        "symbolic": true
+      },
+      "quote": "the groups $\\pi_{4m-1}(S^{2m})$ contain an infinite cyclic summand",
+      "citation_keys": [
+        "serre1953"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_iii-gap-28",
+      "subject": "unstable-homotopy-groups",
+      "predicate": "target_sphere_dimension",
+      "value": "2m",
+      "unit": "formula",
+      "qualifiers": {
+        "example": true,
+        "symbolic": true
+      },
+      "quote": "the groups $\\pi_{4m-1}(S^{2m})$ contain an infinite cyclic summand",
+      "citation_keys": [
+        "serre1953"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -364,7 +760,9 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "**Enrico Betti** (1871) generalized the pattern",
-      "citation_keys": [],
+      "citation_keys": [
+        "poincareanalysissitus"
+      ],
       "confidence": "provenance"
     },
     {
@@ -386,7 +784,9 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "The step from counting holes to the algebra of holes happened in 1925",
-      "citation_keys": [],
+      "citation_keys": [
+        "mclarty2006noether"
+      ],
       "confidence": "provenance"
     },
     {
@@ -563,6 +963,209 @@
       "qualifiers": {},
       "quote": "so $b_{0}=1$ (one connected piece), $b_{1}=2$ (two independent loops), and $b_{2}=1$ (one cavity)",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-leibniz-congruence-notation",
+      "from": "leibniz-congruence-notation",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Leibniz's 1698 tilde for congruent triangles",
+      "citation_keys": [
+        "hurewicz1935"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-isomorphism",
+      "from": "isomorphism",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*isomorphism* was coined in 1819 by the chemist Eilhard Mitscherlich",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-partial-derivative-notation",
+      "from": "partial-derivative-notation",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Jacobi** reintroduced it in 1841",
+      "citation_keys": [
+        "historyofmathematicalnotation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-henri-poincare",
+      "from": "henri-poincare",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Henri Poincaré (1854–1912)**",
+      "citation_keys": [
+        "poincareanalysissitus",
+        "poincareconjecture1904",
+        "perelmanpoincare"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-set-theory-notation",
+      "from": "set-theory-notation",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Peano gave both their glyphs in 1889",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-poincare-conjecture",
+      "from": "poincare-conjecture",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in the 1904 fifth complement, after the Poincaré homology sphere showed that homology alone is insufficient",
+      "citation_keys": [
+        "poincareconjecture1904"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-brouwer-fixed-point-theorem",
+      "from": "brouwer-fixed-point-theorem",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**1911 (Brouwer).** Fixed-point theorem and the general definition of degree for maps between manifolds",
+      "citation_keys": [
+        "brouwer1911fixed"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-seifert-van-kampen-theorem",
+      "from": "seifert-van-kampen-theorem",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**van Kampen** (1933) then published the general theorem",
+      "citation_keys": [
+        "vankampen1933"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-suspension-theorem",
+      "from": "suspension-theorem",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Freudenthal** (1937), who proved the **suspension theorem**",
+      "citation_keys": [
+        "freudenthal1937"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-exact-sequence",
+      "from": "exact-sequence",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**1941 (Hurewicz).** Exact sequences (without the name)",
+      "citation_keys": [
+        "eilenbergmaclane1942"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-eilenberg-maclane",
+      "from": "eilenberg-maclane",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**1942 / 1945 (Eilenberg, Mac Lane).** Category, functor, natural transformation",
+      "citation_keys": [
+        "eilenberglane1945",
+        "eilenbergmaclane1942"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-serre-finiteness-theorem",
+      "from": "serre-finiteness-theorem",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Then came **Serre** (1951–1953), who, using **Leray's spectral sequences**, proved the famous **finiteness theorem**",
+      "citation_keys": [
+        "serre1951"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-hopf-invariant-one",
+      "from": "hopf-invariant-one",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Adams' theorem on the Hopf invariant** (1958/1960)",
+      "citation_keys": [
+        "adams1960"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-whitehead-torsion",
+      "from": "whitehead-torsion",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Milnor's 1966 survey *Whitehead Torsion*",
+      "citation_keys": [
+        "milnor1966torsion"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-homotopy-type-theory",
+      "from": "homotopy-type-theory",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**2013 / 2024 (HoTT).** Official book",
+      "citation_keys": [
+        "hottbook"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-neural-persistence",
+      "from": "neural-persistence",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**2019 (Rieck et al.).** Neural persistence: topology of a network as data",
+      "citation_keys": [
+        "riek2019neural"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_iii-unstable-homotopy-groups",
+      "from": "unstable-homotopy-groups",
+      "to": "geometry-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the groups $\\pi_{4m-1}(S^{2m})$ contain an infinite cyclic summand",
+      "citation_keys": [
+        "serre1953"
+      ],
       "confidence": "provenance"
     }
   ],

@@ -12,7 +12,11 @@
     "gu2023mamba",
     "dao2024mamba2",
     "peng2023rwkv",
-    "poli2023hyena"
+    "nie2025llada",
+    "raposo2024mod",
+    "poli2023hyena",
+    "colah2015types",
+    "ma2022mega"
   ],
   "claims": [
     {
@@ -208,7 +212,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "#### RetNet (Sun et al., Microsoft, 2023)",
-      "citation_keys": [],
+      "citation_keys": [
+        "peng2023rwkv"
+      ],
       "confidence": "stated"
     },
     {
@@ -245,7 +251,9 @@
         "scale": "billion"
       },
       "quote": "**LLaDA** (2025), an 8-billion-parameter masked diffusion model trained from scratch",
-      "citation_keys": [],
+      "citation_keys": [
+        "nie2025llada"
+      ],
       "confidence": "stated"
     },
     {
@@ -256,7 +264,9 @@
       "unit": "token",
       "qualifiers": {},
       "quote": "**Striped Hyena-7B** (Together, 2024): Hyena + attention hybrid, 128K context.",
-      "citation_keys": [],
+      "citation_keys": [
+        "raposo2024mod"
+      ],
       "confidence": "stated"
     },
     {
@@ -292,6 +302,80 @@
       "qualifiers": {},
       "quote": "Replace softmax with a feature map $\\phi$",
       "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "alternative_architectures-gap3-1",
+      "subject": "neural-network-as-functional-program",
+      "predicate": "year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Olah, 2015]{colah2015types})",
+      "citation_keys": [
+        "colah2015types"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alternative_architectures-gap3-2",
+      "subject": "sub-quadratic-alternatives",
+      "predicate": "year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {
+        "event": "sub-quadratic alternatives emerged"
+      },
+      "quote": "Since 2020, a small but rapidly growing field has produced **sub-quadratic alternatives**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "alternative_architectures-gap3-3",
+      "subject": "mega",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Ma et al., 2022]{ma2022mega})",
+      "citation_keys": [
+        "ma2022mega"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alternative_architectures-gap3-4",
+      "subject": "diffusion-language-model",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {
+        "example": true,
+        "event": "quality parity with autoregressive models still open"
+      },
+      "quote": "remains open as of 2026",
+      "citation_keys": [
+        "poli2023hyena",
+        "ma2022mega",
+        "raposo2024mod"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alternative_architectures-gap3-5",
+      "subject": "llada-8b",
+      "predicate": "parameters",
+      "value": 8000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "an 8-billion-parameter masked diffusion model trained from scratch",
+      "citation_keys": [
+        "nie2025llada"
+      ],
       "confidence": "stated"
     }
   ],
@@ -409,7 +493,9 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "#### RetNet (Sun et al., Microsoft, 2023)",
-      "citation_keys": [],
+      "citation_keys": [
+        "peng2023rwkv"
+      ],
       "confidence": "provenance"
     },
     {
@@ -431,7 +517,9 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "**LLaDA** (2025), an 8-billion-parameter masked diffusion model trained from scratch",
-      "citation_keys": [],
+      "citation_keys": [
+        "nie2025llada"
+      ],
       "confidence": "provenance"
     },
     {
@@ -441,7 +529,9 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "**Striped Hyena-7B** (Together, 2024): Hyena + attention hybrid, 128K context.",
-      "citation_keys": [],
+      "citation_keys": [
+        "raposo2024mod"
+      ],
       "confidence": "provenance"
     },
     {
@@ -474,6 +564,52 @@
       "qualifiers": {},
       "quote": "Replace softmax with a feature map $\\phi$",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-neural-network-as-functional-program",
+      "from": "neural-network-as-functional-program",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Olah, 2015]{colah2015types})",
+      "citation_keys": [
+        "colah2015types"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-sub-quadratic-alternatives",
+      "from": "sub-quadratic-alternatives",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Since 2020, a small but rapidly growing field has produced **sub-quadratic alternatives**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-mega",
+      "from": "mega",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Ma et al., 2022]{ma2022mega})",
+      "citation_keys": [
+        "ma2022mega"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-alternative_architectures-llada-8b",
+      "from": "llada-8b",
+      "to": "alternative-architectures",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "an 8-billion-parameter masked diffusion model trained from scratch",
+      "citation_keys": [
+        "nie2025llada"
+      ],
       "confidence": "provenance"
     }
   ],

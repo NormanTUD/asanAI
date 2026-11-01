@@ -276,19 +276,22 @@
         "ruder2016overview"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "deeplearninglab-gap3-1",
+      "subject": "nn-playground",
+      "predicate": "parameters",
+      "value": 0,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "<span data-nn=\"params\">0</span> parameters",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-deeplearninglab-part",
-      "from": "deeplearninglab",
-      "to": "part-3",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 3",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-deeplearninglab-deep-learning",
       "from": "deep-learning",
@@ -425,6 +428,26 @@
       "citation_keys": [
         "ruder2016overview"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deeplearninglab-nn-playground",
+      "from": "nn-playground",
+      "to": "deeplearninglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "<span data-nn=\"params\">0</span> parameters",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deeplearninglab-part",
+      "from": "deeplearninglab",
+      "to": "part-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 3",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

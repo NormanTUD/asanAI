@@ -21,7 +21,16 @@
     "amrami2021depth",
     "abel_ruffini_wiki",
     "listingtopologie",
-    "knot_theory_wiki"
+    "knot_theory_wiki",
+    "desarguesbrouillon",
+    "poncelet1822traite",
+    "projective_geometry_wiki",
+    "riemann_wiki",
+    "poincareanalysissitus",
+    "klein1948geometry",
+    "hopf_link_wiki",
+    "vaswani2017attention",
+    "lewandowski2025spacefolds"
   ],
   "claims": [
     {
@@ -301,6 +310,172 @@
       ],
       "qualifiers": {},
       "confidence": "stated"
+    },
+    {
+      "id": "math_iv-gap2-1",
+      "subject": "desargues-brouillon",
+      "predicate": "year",
+      "value": 1639,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "This is what makes vanishing points appear — the same object Renaissance painters used for linear perspective \\cite{albertidepictura}, the mathematics of **Desargues**' *Brouillon* (1639) \\cite{desarguesbrouillon} and of **Poncelet**'s founding treatise (1822), \\cite[projective geometry]{projective_geometry_wiki} (\\cite[Poncelet, 1822]{poncelet1822traite}).",
+      "citation_keys": [
+        "desarguesbrouillon"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iv-gap2-2",
+      "subject": "poncelet-traite",
+      "predicate": "year",
+      "value": 1822,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "This is what makes vanishing points appear — the same object Renaissance painters used for linear perspective \\cite{albertidepictura}, the mathematics of **Desargues**' *Brouillon* (1639) \\cite{desarguesbrouillon} and of **Poncelet**'s founding treatise (1822), \\cite[projective geometry]{projective_geometry_wiki} (\\cite[Poncelet, 1822]{poncelet1822traite}).",
+      "citation_keys": [
+        "poncelet1822traite",
+        "projective_geometry_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iv-gap2-3",
+      "subject": "riemann-conformal-dissertation",
+      "predicate": "year",
+      "value": 1851,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Riemann**'s conformal-map work belongs to his 1851 dissertation and an 1859 lecture, not his later life; his last decade was dominated by Riemannian geometry, Abelian functions and the 1859 prime-counting paper (\\cite[Wikipedia: Bernhard Riemann]{riemann_wiki}).",
+      "citation_keys": [
+        "riemann_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iv-gap2-4",
+      "subject": "riemann-prime-counting-paper",
+      "predicate": "year",
+      "value": 1859,
+      "unit": "year",
+      "qualifiers": {
+        "variant": "prime-counting paper"
+      },
+      "quote": "**Riemann**'s conformal-map work belongs to his 1851 dissertation and an 1859 lecture, not his later life; his last decade was dominated by Riemannian geometry, Abelian functions and the 1859 prime-counting paper (\\cite[Wikipedia: Bernhard Riemann]{riemann_wiki}).",
+      "citation_keys": [
+        "riemann_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iv-gap2-5",
+      "subject": "poincare-analysis-situs",
+      "predicate": "year",
+      "value": 1895,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Poincaré's** *Analysis Situs* (1895) founded algebraic topology and introduced the fundamental group; the knot-complement/knot-group viewpoint was developed by **Wirtinger, Dehn and Alexander** in the early 20th century (\\cite[Poincaré, 1895]{poincareanalysissitus}; \\cite[Knot theory]{knot_theory_wiki}).",
+      "citation_keys": [
+        "poincareanalysissitus",
+        "knot_theory_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iv-gap2-6",
+      "subject": "klein-elementarmathematik",
+      "predicate": "year",
+      "value": 1908,
+      "unit": "year",
+      "qualifiers": {
+        "variant": "first edition"
+      },
+      "quote": "and **Klein's** *Elementarmathematik* (1908; 2nd ed. 1924/25; English trans. 1948) credits the name \"affine transformation\" to Möbius and Gauss (\\cite[Klein, 1908/1948]{klein1948geometry}).",
+      "citation_keys": [
+        "klein1948geometry"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iv-gap2-7",
+      "subject": "klein-elementarmathematik",
+      "predicate": "year",
+      "value": 1924,
+      "unit": "year",
+      "qualifiers": {
+        "variant": "2nd edition"
+      },
+      "quote": "and **Klein's** *Elementarmathematik* (1908; 2nd ed. 1924/25; English trans. 1948) credits the name \"affine transformation\" to Möbius and Gauss (\\cite[Klein, 1908/1948]{klein1948geometry}).",
+      "citation_keys": [
+        "klein1948geometry"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iv-gap2-8",
+      "subject": "klein-elementarmathematik-en-translation",
+      "predicate": "year",
+      "value": 1948,
+      "unit": "year",
+      "qualifiers": {
+        "variant": "English translation"
+      },
+      "quote": "and **Klein's** *Elementarmathematik* (1908; 2nd ed. 1924/25; English trans. 1948) credits the name \"affine transformation\" to Möbius and Gauss (\\cite[Klein, 1908/1948]{klein1948geometry}).",
+      "citation_keys": [
+        "klein1948geometry"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iv-gap2-9",
+      "subject": "hopf-link",
+      "predicate": "year",
+      "value": 1931,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The two-ring link was studied by **Hopf** in 1931, while working on what is now the Hopf fibration; Gauss knew it earlier, and a Japanese Buddhist sect (Buzan-ha) had used the motif as a crest centuries before \\cite[Wikipedia, Hopf link]{hopf_link_wiki}.",
+      "citation_keys": [
+        "hopf_link_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iv-gap2-10",
+      "subject": "vaswani-transformer",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Query, key, value, and output projections are all $Wx + b$ (\\cite[Vaswani et al., 2017]{vaswani2017attention}); attention is a learned, input-dependent weighted average on top — the affine parts do the coordinate changes, the attention does the routing.",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iv-gap2-11",
+      "subject": "amrami-goldberg-depth",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Amrami & Goldberg** — problems that need exponentially many parameters at any fixed depth are solved with zero error by a net of *linear* depth and width $\\le 4$, via an explicit space-folding construction (\\cite[Amrami & Goldberg, 2021]{amrami2021depth}).",
+      "citation_keys": [
+        "amrami2021depth"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_iv-gap2-12",
+      "subject": "lewandowski-spacefolds",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Lewandowski et al.** — a straight input line arrives in activation space as a non-convex path (each crease loses convexity), and their space-folding measure grows with depth in well-trained nets (\\cite[Lewandowski et al., 2025]{lewandowski2025spacefolds}).",
+      "citation_keys": [
+        "lewandowski2025spacefolds"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -519,6 +694,116 @@
       "quote": "table to ten crossings, 1885",
       "citation_keys": [
         "knot_theory_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-desargues-brouillon",
+      "from": "desargues-brouillon",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This is what makes vanishing points appear — the same object Renaissance painters used for linear perspective \\cite{albertidepictura}, the mathematics of **Desargues**' *Brouillon* (1639) \\cite{desarguesbrouillon} and of **Poncelet**'s founding treatise (1822), \\cite[projective geometry]{projective_geometry_wiki} (\\cite[Poncelet, 1822]{poncelet1822traite}).",
+      "citation_keys": [
+        "desarguesbrouillon"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-poncelet-traite",
+      "from": "poncelet-traite",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This is what makes vanishing points appear — the same object Renaissance painters used for linear perspective \\cite{albertidepictura}, the mathematics of **Desargues**' *Brouillon* (1639) \\cite{desarguesbrouillon} and of **Poncelet**'s founding treatise (1822), \\cite[projective geometry]{projective_geometry_wiki} (\\cite[Poncelet, 1822]{poncelet1822traite}).",
+      "citation_keys": [
+        "poncelet1822traite",
+        "projective_geometry_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-riemann-conformal-dissertation",
+      "from": "riemann-conformal-dissertation",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Riemann**'s conformal-map work belongs to his 1851 dissertation and an 1859 lecture, not his later life; his last decade was dominated by Riemannian geometry, Abelian functions and the 1859 prime-counting paper (\\cite[Wikipedia: Bernhard Riemann]{riemann_wiki}).",
+      "citation_keys": [
+        "riemann_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-riemann-prime-counting-paper",
+      "from": "riemann-prime-counting-paper",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Riemann**'s conformal-map work belongs to his 1851 dissertation and an 1859 lecture, not his later life; his last decade was dominated by Riemannian geometry, Abelian functions and the 1859 prime-counting paper (\\cite[Wikipedia: Bernhard Riemann]{riemann_wiki}).",
+      "citation_keys": [
+        "riemann_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-poincare-analysis-situs",
+      "from": "poincare-analysis-situs",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Poincaré's** *Analysis Situs* (1895) founded algebraic topology and introduced the fundamental group; the knot-complement/knot-group viewpoint was developed by **Wirtinger, Dehn and Alexander** in the early 20th century (\\cite[Poincaré, 1895]{poincareanalysissitus}; \\cite[Knot theory]{knot_theory_wiki}).",
+      "citation_keys": [
+        "poincareanalysissitus",
+        "knot_theory_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-klein-elementarmathematik",
+      "from": "klein-elementarmathematik",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "and **Klein's** *Elementarmathematik* (1908; 2nd ed. 1924/25; English trans. 1948) credits the name \"affine transformation\" to Möbius and Gauss (\\cite[Klein, 1908/1948]{klein1948geometry}).",
+      "citation_keys": [
+        "klein1948geometry"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-klein-elementarmathematik-en-translation",
+      "from": "klein-elementarmathematik-en-translation",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "and **Klein's** *Elementarmathematik* (1908; 2nd ed. 1924/25; English trans. 1948) credits the name \"affine transformation\" to Möbius and Gauss (\\cite[Klein, 1908/1948]{klein1948geometry}).",
+      "citation_keys": [
+        "klein1948geometry"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-vaswani-transformer",
+      "from": "vaswani-transformer",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Query, key, value, and output projections are all $Wx + b$ (\\cite[Vaswani et al., 2017]{vaswani2017attention}); attention is a learned, input-dependent weighted average on top — the affine parts do the coordinate changes, the attention does the routing.",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_iv-lewandowski-spacefolds",
+      "from": "lewandowski-spacefolds",
+      "to": "math-iv",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Lewandowski et al.** — a straight input line arrives in activation space as a non-convex path (each crease loses convexity), and their space-folding measure grows with depth in well-trained nets (\\cite[Lewandowski et al., 2025]{lewandowski2025spacefolds}).",
+      "citation_keys": [
+        "lewandowski2025spacefolds"
       ],
       "confidence": "provenance"
     }

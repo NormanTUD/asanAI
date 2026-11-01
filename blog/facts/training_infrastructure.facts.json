@@ -7,7 +7,11 @@
   "order": 13,
   "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [],
+  "citations": [
+    "huang2018gpipe",
+    "rajbhandari2019zero",
+    "liu2023ring"
+  ],
   "claims": [
     {
       "id": "auto-training_infrastructure-title-0-1",
@@ -60,6 +64,371 @@
       "quote": "For a 70B model: $W + G + O + M = 140 + 140 + 560 + 280 = 1120$ GB just for bf16 parameters, bf16 gradients, Adam's fp32 moments and the fp32 master weights. An H100 has 80 GB. The model literally does not fit.",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "training_infrastructure-gap-1",
+      "subject": "70b-model",
+      "predicate": "memory",
+      "value": 140,
+      "unit": "GB",
+      "qualifiers": {
+        "component": "weights",
+        "precision": "fp16"
+      },
+      "quote": "**140 GB just for the weights**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-2",
+      "subject": "70b-model",
+      "predicate": "memory",
+      "value": 1,
+      "unit": "TB",
+      "qualifiers": {
+        "component": "training_step",
+        "bound": "lower"
+      },
+      "quote": "**>1 TB** of GPU memory",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-3",
+      "subject": "gpipe",
+      "predicate": "publication_year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Huang et al., 2018]{huang2018gpipe})",
+      "citation_keys": [
+        "huang2018gpipe"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-4",
+      "subject": "zero",
+      "predicate": "publication_year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Rajbhandari et al., 2019]{rajbhandari2019zero})",
+      "citation_keys": [
+        "rajbhandari2019zero"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-5",
+      "subject": "ring-attention",
+      "predicate": "publication_year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Ring Attention (\\cite[Liu et al., 2023]{liu2023ring})",
+      "citation_keys": [
+        "liu2023ring"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-6",
+      "subject": "llama-3",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Llama 3 (Meta, 2024)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-7",
+      "subject": "frontier-model-training",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The frontier in 2025",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-8",
+      "subject": "llama-3-405b-minimum-config",
+      "predicate": "gpus",
+      "value": 1024,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**1024 H100s**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-9",
+      "subject": "h100",
+      "predicate": "cluster_memory",
+      "value": 1280,
+      "unit": "GB",
+      "qualifiers": {
+        "gpus": 16
+      },
+      "quote": "(1280 GB)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-10",
+      "subject": "70b-model",
+      "predicate": "memory",
+      "value": 140,
+      "unit": "GB",
+      "qualifiers": {
+        "component": "weights",
+        "precision": "fp16"
+      },
+      "quote": "e.g. 70B = 140 GB",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-11",
+      "subject": "llama-3-405b",
+      "predicate": "parameters",
+      "value": 405000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "training a 405B model",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-12",
+      "subject": "nvlink-4",
+      "predicate": "bandwidth",
+      "value": 900,
+      "unit": "GB",
+      "qualifiers": {
+        "rate": "per_second",
+        "scope": "per_gpu"
+      },
+      "quote": "a bidirectional aggregate of ca. 900 GB/s per GPU",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-13",
+      "subject": "nvlink-4",
+      "predicate": "bandwidth_per_link",
+      "value": 50,
+      "unit": "GB",
+      "qualifiers": {
+        "rate": "per_second"
+      },
+      "quote": "about 50 GB/s per link in each direction",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-14",
+      "subject": "infiniband-ndr",
+      "predicate": "bandwidth",
+      "value": "400 Gb/s",
+      "unit": "name",
+      "qualifiers": {
+        "rate": "per_second"
+      },
+      "quote": "InfiniBand NDR (400 Gb/s",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-15",
+      "subject": "infiniband-ndr",
+      "predicate": "bandwidth",
+      "value": 50,
+      "unit": "GB",
+      "qualifiers": {
+        "rate": "per_second"
+      },
+      "quote": "$\\approx$ 50 GB/s)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-16",
+      "subject": "100gbe",
+      "predicate": "bandwidth",
+      "value": 12.5,
+      "unit": "GB",
+      "qualifiers": {
+        "rate": "per_second"
+      },
+      "quote": "100GbE Ethernet (ca. 12.5 GB/s)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-17",
+      "subject": "70b-model",
+      "predicate": "context_length",
+      "value": 4096,
+      "unit": "token",
+      "qualifiers": {
+        "notation": "4K"
+      },
+      "quote": "batch size 1 and 4K context",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-18",
+      "subject": "70b-model",
+      "predicate": "memory",
+      "value": 560,
+      "unit": "GB",
+      "qualifiers": {
+        "component": "optimizer"
+      },
+      "quote": "| Optimizer (Adam fp32 moments) | 560 GB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-19",
+      "subject": "70b-model",
+      "predicate": "memory",
+      "value": 280,
+      "unit": "GB",
+      "qualifiers": {
+        "component": "master_weights"
+      },
+      "quote": "| Master weights (fp32) | 280 GB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-20",
+      "subject": "70b-model",
+      "predicate": "memory",
+      "value": 140,
+      "unit": "GB",
+      "qualifiers": {
+        "component": "parameters"
+      },
+      "quote": "| Parameters | 140 GB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-21",
+      "subject": "70b-model",
+      "predicate": "memory",
+      "value": 140,
+      "unit": "GB",
+      "qualifiers": {
+        "component": "gradients"
+      },
+      "quote": "| Gradients (bf16) | 140 GB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-22",
+      "subject": "70b-model",
+      "predicate": "context_length",
+      "value": 8192,
+      "unit": "token",
+      "qualifiers": {
+        "notation": "8K"
+      },
+      "quote": "| Activations (8K seq, bs=1, ckpt) |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-23",
+      "subject": "70b-model",
+      "predicate": "memory",
+      "value": 1.2,
+      "unit": "TB",
+      "qualifiers": {
+        "component": "total",
+        "approx": true
+      },
+      "quote": "**(ca. )1.2 TB**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-24",
+      "subject": "h100-cluster",
+      "predicate": "memory",
+      "value": 640,
+      "unit": "GB",
+      "qualifiers": {
+        "gpus": 8
+      },
+      "quote": "On 8 H100s with 80 GB each = 640 GB total.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-25",
+      "subject": "llama-3-405b",
+      "predicate": "parameters",
+      "value": 405000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "For a 405B model (Llama 3):",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-26",
+      "subject": "llama-3-405b",
+      "predicate": "parameters",
+      "value": 405000000000,
+      "unit": "count",
+      "qualifiers": {
+        "scope": "published_run"
+      },
+      "quote": "for the same 405B run used",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-27",
+      "subject": "frontier-training-run",
+      "predicate": "cost",
+      "value": 100000000,
+      "unit": "USD",
+      "qualifiers": {
+        "bound": "lower"
+      },
+      "quote": "training runs costing $100M–$1B",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "training_infrastructure-gap-28",
+      "subject": "frontier-training-run",
+      "predicate": "cost",
+      "value": 1000000000,
+      "unit": "USD",
+      "qualifiers": {
+        "bound": "upper"
+      },
+      "quote": "training runs costing $100M–$1B",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -80,6 +449,142 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 5",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_infrastructure-70b-model",
+      "from": "70b-model",
+      "to": "training-infrastructure",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**140 GB just for the weights**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_infrastructure-gpipe",
+      "from": "gpipe",
+      "to": "training-infrastructure",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Huang et al., 2018]{huang2018gpipe})",
+      "citation_keys": [
+        "huang2018gpipe"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_infrastructure-zero",
+      "from": "zero",
+      "to": "training-infrastructure",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Rajbhandari et al., 2019]{rajbhandari2019zero})",
+      "citation_keys": [
+        "rajbhandari2019zero"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_infrastructure-ring-attention",
+      "from": "ring-attention",
+      "to": "training-infrastructure",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Ring Attention (\\cite[Liu et al., 2023]{liu2023ring})",
+      "citation_keys": [
+        "liu2023ring"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_infrastructure-llama-3",
+      "from": "llama-3",
+      "to": "training-infrastructure",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Llama 3 (Meta, 2024)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_infrastructure-frontier-model-training",
+      "from": "frontier-model-training",
+      "to": "training-infrastructure",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The frontier in 2025",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_infrastructure-llama-3-405b-minimum-config",
+      "from": "llama-3-405b-minimum-config",
+      "to": "training-infrastructure",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**1024 H100s**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_infrastructure-llama-3-405b",
+      "from": "llama-3-405b",
+      "to": "training-infrastructure",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "training a 405B model",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_infrastructure-nvlink-4",
+      "from": "nvlink-4",
+      "to": "training-infrastructure",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a bidirectional aggregate of ca. 900 GB/s per GPU",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_infrastructure-infiniband-ndr",
+      "from": "infiniband-ndr",
+      "to": "training-infrastructure",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "InfiniBand NDR (400 Gb/s",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_infrastructure-100gbe",
+      "from": "100gbe",
+      "to": "training-infrastructure",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "100GbE Ethernet (ca. 12.5 GB/s)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_infrastructure-h100-cluster",
+      "from": "h100-cluster",
+      "to": "training-infrastructure",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "On 8 H100s with 80 GB each = 640 GB total.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-training_infrastructure-frontier-training-run",
+      "from": "frontier-training-run",
+      "to": "training-infrastructure",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "training runs costing $100M–$1B",
       "citation_keys": [],
       "confidence": "provenance"
     }

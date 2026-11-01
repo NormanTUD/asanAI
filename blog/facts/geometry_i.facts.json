@@ -22,7 +22,61 @@
     "lobachevsky_portrait",
     "hypothesengeometrie",
     "perelmanpoincare",
-    "whitney1936manifolds"
+    "whitney1936manifolds",
+    "alhazenoetic",
+    "alhazen_portrait",
+    "hoyrup2021algebra",
+    "altusitrig",
+    "madhava",
+    "albertidepictura",
+    "descartes_portrait",
+    "si427_image",
+    "keplerastronomianova",
+    "desarguesbrouillon",
+    "newtonprincipia",
+    "astrolabe_image",
+    "sextanthistory",
+    "eulersolids",
+    "humboldtsextant",
+    "gauss_portrait",
+    "mobiusband",
+    "lobachevskygeometry",
+    "bolyaiappendix",
+    "listingtopologie",
+    "bolyai_portrait",
+    "gaussbonnet_wiki",
+    "docarmo",
+    "riemann1857genus",
+    "brouwer1911fixed",
+    "morse1929foundations",
+    "poincareanalysissitus",
+    "hilbert1903grundlagen",
+    "poincareconjecture1904",
+    "mclarty2006noether",
+    "grothedieck_res",
+    "hopf1931fibration",
+    "derham1931",
+    "chern1946",
+    "plimpton322",
+    "weil1949numbers",
+    "milnor1956exotic",
+    "bellman1957dynamic",
+    "smale1961hccobordism",
+    "atiyahsinger1963",
+    "deligne1974weil",
+    "salton1975vectorspace",
+    "thurston1982geometrization",
+    "freedman1982topology",
+    "donaldson1983gauge",
+    "vapnik1963pattern",
+    "boser1992svm",
+    "vapnik1995book",
+    "hinton2006",
+    "vandermaaten2008tsne",
+    "mcinnes2018umap",
+    "bronstein2021geometric",
+    "huh2024platonic",
+    "aristotlephysics"
   ],
   "claims": [
     {
@@ -328,6 +382,1297 @@
         "whitney1936manifolds"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-1",
+      "subject": "ibn-al-haytham-book-of-optics",
+      "predicate": "completion_year",
+      "value": 1021,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "completed c. 1021",
+      "citation_keys": [
+        "alhazenoetic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-2",
+      "subject": "ibn-al-haytham",
+      "predicate": "death_year",
+      "value": 1040,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "c. 965–1040",
+      "citation_keys": [
+        "alhazen_portrait"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-3",
+      "subject": "hebrew-mathematical-handbook",
+      "predicate": "year",
+      "value": 1116,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "handbook dated 1116 CE",
+      "citation_keys": [
+        "hoyrup2021algebra"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-4",
+      "subject": "nasir-al-din-al-tusi",
+      "predicate": "birth_year",
+      "value": 1201,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(1201–1274)",
+      "citation_keys": [
+        "altusitrig"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-5",
+      "subject": "al-tusi-trigonometry-treatise",
+      "predicate": "year",
+      "value": 1265,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "**c. 1265 CE** — al-Tusi: the first independent treatise on trigonometry",
+      "citation_keys": [
+        "altusitrig"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-6",
+      "subject": "nasir-al-din-al-tusi",
+      "predicate": "death_year",
+      "value": 1274,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(1201–1274)",
+      "citation_keys": [
+        "altusitrig"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-7",
+      "subject": "madhava-of-sangamagrama",
+      "predicate": "birth_year",
+      "value": 1340,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "(c. 1340–1425)",
+      "citation_keys": [
+        "madhava"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-8",
+      "subject": "madhava-power-series",
+      "predicate": "year",
+      "value": 1400,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "**c. 1400** — Madhava of Sangamagrama (Kerala): the power series for sine, cosine and tangent",
+      "citation_keys": [
+        "madhava"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-9",
+      "subject": "pi",
+      "predicate": "approximation",
+      "value": 3.1416,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "impressively close to $3.1416$",
+      "citation_keys": [
+        "rhindpapyrus"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-10",
+      "subject": "madhava-of-sangamagrama",
+      "predicate": "death_year",
+      "value": 1425,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "(c. 1340–1425)",
+      "citation_keys": [
+        "madhava"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-11",
+      "subject": "alberti-de-pictura",
+      "predicate": "year",
+      "value": 1435,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in his **\\citealternativetitle{albertidepictura}** (1435), gives the first *mathematical* account of **linear perspective**",
+      "citation_keys": [
+        "albertidepictura"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-12",
+      "subject": "rene-descartes",
+      "predicate": "birth_year",
+      "value": 1596,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "René Descartes (1596–1650)",
+      "citation_keys": [
+        "descartes_portrait"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-13",
+      "subject": "old-babylonian-period",
+      "predicate": "start_year",
+      "value": -1900,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "the Old Babylonian period (c. 1900–1600 BCE)",
+      "citation_keys": [
+        "si427_image"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-14",
+      "subject": "old-babylonian-period",
+      "predicate": "end_year",
+      "value": -1600,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "the Old Babylonian period (c. 1900–1600 BCE)",
+      "citation_keys": [
+        "si427_image"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-15",
+      "subject": "kepler-astronomia-nova",
+      "predicate": "year",
+      "value": 1609,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "it will take **Kepler** (1609) to read the conics back into the sky",
+      "citation_keys": [
+        "keplerastronomianova"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-16",
+      "subject": "desargues-brouillon",
+      "predicate": "year",
+      "value": 1639,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Gérard Desargues**, in his **\\citealternativetitle{desarguesbrouillon}** (1639)",
+      "citation_keys": [
+        "desarguesbrouillon"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-17",
+      "subject": "alhazen-portrait-engraving",
+      "predicate": "year",
+      "value": 1647,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Ibn al-Haytham, 1647",
+      "citation_keys": [
+        "alhazen_portrait"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-18",
+      "subject": "newton-principia",
+      "predicate": "year",
+      "value": 1687,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Newton** (1687) to prove that an inverse-square force",
+      "citation_keys": [
+        "newtonprincipia"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-19",
+      "subject": "leonhard-euler",
+      "predicate": "birth_year",
+      "value": 1707,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{eulerbridges} (1707–1783)",
+      "citation_keys": [
+        "eulerbridges"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-20",
+      "subject": "astrolabe",
+      "predicate": "year",
+      "value": 1715,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "A Persian astrolabe (made 1715)",
+      "citation_keys": [
+        "astrolabe_image"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-21",
+      "subject": "brook-taylor",
+      "predicate": "year",
+      "value": 1715,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "some *three hundred years before Brook Taylor* (1715) lent his name",
+      "citation_keys": [
+        "madhava"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-22",
+      "subject": "sextant",
+      "predicate": "year",
+      "value": 1731,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "invented independently in **1731** by John Hadley in England and Thomas Godfrey in America",
+      "citation_keys": [
+        "sextanthistory"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-23",
+      "subject": "euler-formula",
+      "predicate": "year",
+      "value": 1748,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Euler** (1748) carried the idea to its modern form",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-24",
+      "subject": "euler-polyhedron-formula",
+      "predicate": "year",
+      "value": 1752,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "* **1736 / 1752** — Euler: Königsberg bridges (graph theory) and $V-E+F=2$",
+      "citation_keys": [
+        "eulerbridges",
+        "eulersolids"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-25",
+      "subject": "humboldt-sextant",
+      "predicate": "year",
+      "value": 1773,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "this one made in London, 1773",
+      "citation_keys": [
+        "humboldtsextant"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-26",
+      "subject": "carl-friedrich-gauss",
+      "predicate": "birth_year",
+      "value": 1777,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Carl Friedrich Gauss (1777–1855)",
+      "citation_keys": [
+        "gauss_portrait"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-27",
+      "subject": "leonhard-euler",
+      "predicate": "death_year",
+      "value": 1783,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{eulerbridges} (1707–1783)",
+      "citation_keys": [
+        "eulerbridges"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-28",
+      "subject": "august-ferdinand-mobius",
+      "predicate": "birth_year",
+      "value": 1790,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{mobiusband}** (1790–1868)",
+      "citation_keys": [
+        "mobiusband"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-29",
+      "subject": "nikolai-lobachevsky",
+      "predicate": "birth_year",
+      "value": 1792,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{lobachevskygeometry}** (1792–1856)",
+      "citation_keys": [
+        "lobachevskygeometry"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-30",
+      "subject": "janos-bolyai",
+      "predicate": "birth_year",
+      "value": 1802,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{bolyaiappendix}** (1802–1860)",
+      "citation_keys": [
+        "bolyaiappendix"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-31",
+      "subject": "johann-benedict-listing",
+      "predicate": "birth_year",
+      "value": 1808,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{listingtopologie}** (1808–1882)",
+      "citation_keys": [
+        "listingtopologie"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-32",
+      "subject": "bernhard-riemann",
+      "predicate": "birth_year",
+      "value": 1826,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{hypothesengeometrie} (1826–1866)",
+      "citation_keys": [
+        "hypothesengeometrie"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-33",
+      "subject": "bolyai-appendix",
+      "predicate": "year",
+      "value": 1832,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the same geometry in the 1832 *Appendix* to his father's book",
+      "citation_keys": [
+        "bolyai_portrait"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-34",
+      "subject": "gauss-portrait",
+      "predicate": "year",
+      "value": 1840,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Gauss, 1840",
+      "citation_keys": [
+        "gauss_portrait"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-35",
+      "subject": "listing-vorstudien",
+      "predicate": "year",
+      "value": 1847,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "*Vorstudien zur Topologie* (1847)",
+      "citation_keys": [
+        "listingtopologie"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-36",
+      "subject": "gauss-bonnet-theorem",
+      "predicate": "year",
+      "value": 1848,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the global Gauss–Bonnet theorem for closed surfaces, $\\iint K\\,dA = 2\\pi\\chi$, is Bonnet's (1848)",
+      "citation_keys": [
+        "gaussbonnet_wiki",
+        "docarmo"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-37",
+      "subject": "carl-friedrich-gauss",
+      "predicate": "death_year",
+      "value": 1855,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Carl Friedrich Gauss (1777–1855)",
+      "citation_keys": [
+        "gauss_portrait"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-38",
+      "subject": "nikolai-lobachevsky",
+      "predicate": "death_year",
+      "value": 1856,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{lobachevskygeometry}** (1792–1856)",
+      "citation_keys": [
+        "lobachevskygeometry"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-39",
+      "subject": "riemann-1857-genus",
+      "predicate": "year",
+      "value": 1857,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Riemann (1857)]{riemann1857genus}",
+      "citation_keys": [
+        "riemann1857genus"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-40",
+      "subject": "mobius-strip",
+      "predicate": "year",
+      "value": 1858,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "discovered the one-sided band that bears his name (1858)",
+      "citation_keys": [
+        "mobiusband"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-41",
+      "subject": "janos-bolyai",
+      "predicate": "death_year",
+      "value": 1860,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{bolyaiappendix}** (1802–1860)",
+      "citation_keys": [
+        "bolyaiappendix"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-42",
+      "subject": "bernhard-riemann",
+      "predicate": "death_year",
+      "value": 1866,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthor{hypothesengeometrie} (1826–1866)",
+      "citation_keys": [
+        "hypothesengeometrie"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-43",
+      "subject": "august-ferdinand-mobius",
+      "predicate": "death_year",
+      "value": 1868,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{mobiusband}** (1790–1868)",
+      "citation_keys": [
+        "mobiusband"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-44",
+      "subject": "luitzen-brouwer",
+      "predicate": "birth_year",
+      "value": 1881,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\citeauthorlastnameand{brouwer1911fixed}** (1881–1966)",
+      "citation_keys": [
+        "brouwer1911fixed"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-45",
+      "subject": "johann-benedict-listing",
+      "predicate": "death_year",
+      "value": 1882,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{listingtopologie}** (1808–1882)",
+      "citation_keys": [
+        "listingtopologie"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-46",
+      "subject": "marston-morse",
+      "predicate": "birth_year",
+      "value": 1892,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{morse1929foundations} (1892–1977)",
+      "citation_keys": [
+        "morse1929foundations"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-47",
+      "subject": "poincare-analysis-situs",
+      "predicate": "year",
+      "value": 1895,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\citetitle{poincareanalysissitus}** (1895)",
+      "citation_keys": [
+        "poincareanalysissitus"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-48",
+      "subject": "hilbert-grundlagen",
+      "predicate": "year",
+      "value": 1899,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In his **\\citetitle{hilbert1903grundlagen}** (1899)",
+      "citation_keys": [
+        "hilbert1903grundlagen"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-49",
+      "subject": "hilbert-grundlagen-1903",
+      "predicate": "year",
+      "value": 1903,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "* **1899 / 1903** — Hilbert: *Grundlagen der Geometrie*",
+      "citation_keys": [
+        "hilbert1903grundlagen"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-50",
+      "subject": "poincare-conjecture",
+      "predicate": "year",
+      "value": 1904,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in the 1904 fifth complement",
+      "citation_keys": [
+        "poincareconjecture1904"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-51",
+      "subject": "brouwer-fixed-point-theorem",
+      "predicate": "year",
+      "value": 1911,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "his celebrated **fixed-point theorem** of 1911",
+      "citation_keys": [
+        "brouwer1911fixed"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-52",
+      "subject": "henri-poincare",
+      "predicate": "death_year",
+      "value": 1912,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Henri Poincaré (1854–1912)",
+      "citation_keys": [
+        "perelmanpoincare",
+        "poincareanalysissitus"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-53",
+      "subject": "einstein-field-equation",
+      "predicate": "year",
+      "value": 1915,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Einstein** would use in 1915 to describe gravity",
+      "citation_keys": [
+        "hypothesengeometrie",
+        "newtonprincipia"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-54",
+      "subject": "noether-blaricum-visit",
+      "predicate": "year",
+      "value": 1925,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "visiting Brouwer's home in Blaricum in December 1925",
+      "citation_keys": [
+        "mclarty2006noether"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-55",
+      "subject": "alexander-grothendieck",
+      "predicate": "birth_year",
+      "value": 1928,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\citeauthorlastnameand{grothedieck_res}** (1928–2014)",
+      "citation_keys": [
+        "grothedieck_res"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-56",
+      "subject": "morse-theory",
+      "predicate": "year",
+      "value": 1929,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "### Morse: one function carries the whole shape (1929)",
+      "citation_keys": [
+        "morse1929foundations"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-57",
+      "subject": "morse-theory-1930",
+      "predicate": "year",
+      "value": 1930,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "* **1929 / 1930 / 1934** — Morse: the topology of a space",
+      "citation_keys": [
+        "morse1929foundations"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-58",
+      "subject": "hopf-fibration",
+      "predicate": "year",
+      "value": 1931,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The two theorems of 1931 teach how topology and analysis became one language.",
+      "citation_keys": [
+        "hopf1931fibration",
+        "derham1931"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-59",
+      "subject": "de-rham-theorem",
+      "predicate": "year",
+      "value": 1931,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "That same year **\\citeauthorlastnameand{derham1931}** proved the complementary statement",
+      "citation_keys": [
+        "derham1931"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-60",
+      "subject": "morse-theory-1934",
+      "predicate": "year",
+      "value": 1934,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "* **1929 / 1930 / 1934** — Morse: the topology of a space",
+      "citation_keys": [
+        "morse1929foundations"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-61",
+      "subject": "allendoerfer-weil-gauss-bonnet",
+      "predicate": "year",
+      "value": 1943,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "found independently by Allendoerfer and Weil in 1943",
+      "citation_keys": [
+        "chern1946"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-62",
+      "subject": "chern-gauss-bonnet",
+      "predicate": "year",
+      "value": 1944,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Chern's 1944 paper gave an intrinsic proof of the general Gauss–Bonnet theorem",
+      "citation_keys": [
+        "chern1946"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-63",
+      "subject": "neugebauer-sachs-plimpton-322",
+      "predicate": "year",
+      "value": 1945,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Neugebauer and Sachs (1945) already read it as a table of exact right-triangle ratios",
+      "citation_keys": [
+        "plimpton322"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-64",
+      "subject": "chern-classes",
+      "predicate": "year",
+      "value": 1946,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "* **1944 / 1946** — Chern: characteristic classes, the Gauss–Bonnet theorem made intrinsic",
+      "citation_keys": [
+        "chern1946"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-65",
+      "subject": "weil-conjectures",
+      "predicate": "year",
+      "value": 1949,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Weil (1949) predicted that it satisfies",
+      "citation_keys": [
+        "weil1949numbers"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-66",
+      "subject": "milnor-exotic-spheres",
+      "predicate": "year",
+      "value": 1956,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "* **1956** — Milnor's exotic 7-spheres: homeomorphic but not diffeomorphic",
+      "citation_keys": [
+        "milnor1956exotic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-67",
+      "subject": "bellman-curse-of-dimensionality",
+      "predicate": "year",
+      "value": 1957,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "* **1957** — Bellman coins the \"curse of dimensionality\"",
+      "citation_keys": [
+        "bellman1957dynamic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-68",
+      "subject": "grothendieck-ihes",
+      "predicate": "year",
+      "value": 1959,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "at the IHÉS (1959–1970)",
+      "citation_keys": [
+        "grothedieck_res"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-69",
+      "subject": "smale-h-cobordism-theorem",
+      "predicate": "year",
+      "value": 1961,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "proved, in 1961, the **h-cobordism theorem**",
+      "citation_keys": [
+        "smale1961hccobordism"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-70",
+      "subject": "atiyah-singer-index-theorem",
+      "predicate": "year",
+      "value": 1963,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1963 **\\citeauthorlastnameand{atiyahsinger1963}** proved the **index theorem**",
+      "citation_keys": [
+        "atiyahsinger1963"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-71",
+      "subject": "luitzen-brouwer",
+      "predicate": "death_year",
+      "value": 1966,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\citeauthorlastnameand{brouwer1911fixed}** (1881–1966)",
+      "citation_keys": [
+        "brouwer1911fixed"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-72",
+      "subject": "grothendieck-ihes-departure",
+      "predicate": "year",
+      "value": 1970,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "then left in 1970 in protest over the institute's military funding",
+      "citation_keys": [
+        "grothedieck_res"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-73",
+      "subject": "deligne-weil-conjectures",
+      "predicate": "year",
+      "value": 1974,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "### Deligne: the Riemann hypothesis over finite fields (1974)",
+      "citation_keys": [
+        "deligne1974weil"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-74",
+      "subject": "salton-vector-space-model",
+      "predicate": "year",
+      "value": 1975,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Salton's** vector-space model of information retrieval (1975)",
+      "citation_keys": [
+        "salton1975vectorspace"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-75",
+      "subject": "marston-morse",
+      "predicate": "death_year",
+      "value": 1977,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{morse1929foundations} (1892–1977)",
+      "citation_keys": [
+        "morse1929foundations"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-76",
+      "subject": "thurston-geometrization-program",
+      "predicate": "start_year",
+      "value": 1978,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\citeauthorlastnameand{thurston1982geometrization}** (1978–1982)",
+      "citation_keys": [
+        "thurston1982geometrization"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-77",
+      "subject": "thurston-geometrization-program",
+      "predicate": "end_year",
+      "value": 1982,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\citeauthorlastnameand{thurston1982geometrization}** (1978–1982)",
+      "citation_keys": [
+        "thurston1982geometrization"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-78",
+      "subject": "freedman-four-manifolds",
+      "predicate": "year",
+      "value": 1982,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\citeauthorlastnameand{freedman1982topology}** (1982) classified *topological* closed simply-connected 4-manifolds",
+      "citation_keys": [
+        "freedman1982topology"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-79",
+      "subject": "donaldson-gauge-theory",
+      "predicate": "year",
+      "value": 1983,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "proved in 1983 that among *smooth* 4-manifolds only the diagonal forms occur",
+      "citation_keys": [
+        "donaldson1983gauge"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-80",
+      "subject": "taubes-exotic-r4",
+      "predicate": "year",
+      "value": 1987,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(Taubes, 1987; the first came from Freedman's own ideas)",
+      "citation_keys": [
+        "donaldson1983gauge"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-81",
+      "subject": "grothendieck-crafoord-prize",
+      "predicate": "year",
+      "value": 1988,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "refusing in 1988 the prestigious Crafoord Prize",
+      "citation_keys": [
+        "grothedieck_res"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-82",
+      "subject": "grothendieck-withdrawal",
+      "predicate": "year",
+      "value": 1990,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "By around 1990 he had cut almost every tie to the mathematical world",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-83",
+      "subject": "boser-guyon-vapnik-svm",
+      "predicate": "year",
+      "value": 1992,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "* **1963 / 1992 / 1995** — Vapnik–Chervonenkis, Boser–Guyon–Vapnik, Cortes–Vapnik",
+      "citation_keys": [
+        "vapnik1963pattern",
+        "boser1992svm",
+        "vapnik1995book"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-84",
+      "subject": "cortes-vapnik-svm",
+      "predicate": "year",
+      "value": 1995,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "* **1963 / 1992 / 1995** — Vapnik–Chervonenkis, Boser–Guyon–Vapnik, Cortes–Vapnik",
+      "citation_keys": [
+        "vapnik1963pattern",
+        "boser1992svm",
+        "vapnik1995book"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-85",
+      "subject": "embedding-dimension-example",
+      "predicate": "dimension",
+      "value": 2000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "In an embedding space with $d \\approx 2000$",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-86",
+      "subject": "hinton-autoencoder",
+      "predicate": "year",
+      "value": 2006,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "* **2006 / 2008 / 2018** — bottleneck autoencoders, t-SNE, UMAP",
+      "citation_keys": [
+        "hinton2006",
+        "vandermaaten2008tsne",
+        "mcinnes2018umap"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-87",
+      "subject": "tsne",
+      "predicate": "year",
+      "value": 2008,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "t-SNE (\\citeauthorlastnameand{vandermaaten2008tsne}, \\citeyear{vandermaaten2008tsne})",
+      "citation_keys": [
+        "vandermaaten2008tsne"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-88",
+      "subject": "alexander-grothendieck",
+      "predicate": "death_year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "When he died in 2014, in the hospital at Saint-Girons",
+      "citation_keys": [
+        "grothedieck_res"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-89",
+      "subject": "umap",
+      "predicate": "year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "UMAP (\\citeauthorlastnameand{mcinnes2018umap}, \\citeyear{mcinnes2018umap})",
+      "citation_keys": [
+        "mcinnes2018umap"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-90",
+      "subject": "geometric-deep-learning",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "### Geometric deep learning: the shape of the input dictates the machine (2021)",
+      "citation_keys": [
+        "bronstein2021geometric"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-91",
+      "subject": "platonic-representation-hypothesis",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "* **2024** — Platonic Representation Hypothesis: unrelated models converge on a shared internal geometry of reality",
+      "citation_keys": [
+        "huh2024platonic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-92",
+      "subject": "acheulean-handaxe",
+      "predicate": "age",
+      "value": 1260000,
+      "unit": "years_before_present",
+      "qualifiers": {},
+      "quote": "about 1.26 million years before anyone etched a line",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-93",
+      "subject": "acheulean-industry",
+      "predicate": "age_revision",
+      "value": 350000,
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "pushing the start of the Acheulean back by roughly 350,000 years",
+      "citation_keys": [
+        "achleuleankariandusi"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-94",
+      "subject": "babylonian-diagonal-problem",
+      "predicate": "reappearance_delay",
+      "value": 3000,
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "reappears roughly **2,700–3,000 years later**",
+      "citation_keys": [
+        "hoyrup2021algebra"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-95",
+      "subject": "aristotle-posterior-analytics",
+      "predicate": "passage",
+      "value": "71b–72a",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "(I.2, 71b–72a)",
+      "citation_keys": [
+        "aristotlephysics"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-96",
+      "subject": "euclid-parallel-postulate",
+      "predicate": "resistance_duration",
+      "value": 2000,
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "The parallel postulate had resisted proof for 2,000 years.",
+      "citation_keys": [
+        "lobachevskygeometry",
+        "bolyaiappendix"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "geometry_i-gap-97",
+      "subject": "hilbert-grundlagen",
+      "predicate": "rebuild_span",
+      "value": 2200,
+      "unit": "interval",
+      "qualifiers": {},
+      "quote": "the first complete, rigorous rebuild of the *Elements* in 2,200 years",
+      "citation_keys": [
+        "hilbert1903grundlagen"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -557,6 +1902,972 @@
       "quote": "theorem (1936) that any smooth $d$-dimensional manifold can be embedded in $\\mathbb{R}^{2d+1}$",
       "citation_keys": [
         "whitney1936manifolds"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-ibn-al-haytham-book-of-optics",
+      "from": "ibn-al-haytham-book-of-optics",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "completed c. 1021",
+      "citation_keys": [
+        "alhazenoetic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-ibn-al-haytham",
+      "from": "ibn-al-haytham",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "c. 965–1040",
+      "citation_keys": [
+        "alhazen_portrait"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-hebrew-mathematical-handbook",
+      "from": "hebrew-mathematical-handbook",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "handbook dated 1116 CE",
+      "citation_keys": [
+        "hoyrup2021algebra"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-nasir-al-din-al-tusi",
+      "from": "nasir-al-din-al-tusi",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(1201–1274)",
+      "citation_keys": [
+        "altusitrig"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-al-tusi-trigonometry-treatise",
+      "from": "al-tusi-trigonometry-treatise",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**c. 1265 CE** — al-Tusi: the first independent treatise on trigonometry",
+      "citation_keys": [
+        "altusitrig"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-madhava-of-sangamagrama",
+      "from": "madhava-of-sangamagrama",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(c. 1340–1425)",
+      "citation_keys": [
+        "madhava"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-madhava-power-series",
+      "from": "madhava-power-series",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**c. 1400** — Madhava of Sangamagrama (Kerala): the power series for sine, cosine and tangent",
+      "citation_keys": [
+        "madhava"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-pi",
+      "from": "pi",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "impressively close to $3.1416$",
+      "citation_keys": [
+        "rhindpapyrus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-alberti-de-pictura",
+      "from": "alberti-de-pictura",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in his **\\citealternativetitle{albertidepictura}** (1435), gives the first *mathematical* account of **linear perspective**",
+      "citation_keys": [
+        "albertidepictura"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-rene-descartes",
+      "from": "rene-descartes",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "René Descartes (1596–1650)",
+      "citation_keys": [
+        "descartes_portrait"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-old-babylonian-period",
+      "from": "old-babylonian-period",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Old Babylonian period (c. 1900–1600 BCE)",
+      "citation_keys": [
+        "si427_image"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-kepler-astronomia-nova",
+      "from": "kepler-astronomia-nova",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it will take **Kepler** (1609) to read the conics back into the sky",
+      "citation_keys": [
+        "keplerastronomianova"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-desargues-brouillon",
+      "from": "desargues-brouillon",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Gérard Desargues**, in his **\\citealternativetitle{desarguesbrouillon}** (1639)",
+      "citation_keys": [
+        "desarguesbrouillon"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-alhazen-portrait-engraving",
+      "from": "alhazen-portrait-engraving",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Ibn al-Haytham, 1647",
+      "citation_keys": [
+        "alhazen_portrait"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-newton-principia",
+      "from": "newton-principia",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Newton** (1687) to prove that an inverse-square force",
+      "citation_keys": [
+        "newtonprincipia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-leonhard-euler",
+      "from": "leonhard-euler",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{eulerbridges} (1707–1783)",
+      "citation_keys": [
+        "eulerbridges"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-astrolabe",
+      "from": "astrolabe",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A Persian astrolabe (made 1715)",
+      "citation_keys": [
+        "astrolabe_image"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-brook-taylor",
+      "from": "brook-taylor",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "some *three hundred years before Brook Taylor* (1715) lent his name",
+      "citation_keys": [
+        "madhava"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-sextant",
+      "from": "sextant",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "invented independently in **1731** by John Hadley in England and Thomas Godfrey in America",
+      "citation_keys": [
+        "sextanthistory"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-euler-formula",
+      "from": "euler-formula",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Euler** (1748) carried the idea to its modern form",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-euler-polyhedron-formula",
+      "from": "euler-polyhedron-formula",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **1736 / 1752** — Euler: Königsberg bridges (graph theory) and $V-E+F=2$",
+      "citation_keys": [
+        "eulerbridges",
+        "eulersolids"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-humboldt-sextant",
+      "from": "humboldt-sextant",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "this one made in London, 1773",
+      "citation_keys": [
+        "humboldtsextant"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-carl-friedrich-gauss",
+      "from": "carl-friedrich-gauss",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Carl Friedrich Gauss (1777–1855)",
+      "citation_keys": [
+        "gauss_portrait"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-august-ferdinand-mobius",
+      "from": "august-ferdinand-mobius",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{mobiusband}** (1790–1868)",
+      "citation_keys": [
+        "mobiusband"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-nikolai-lobachevsky",
+      "from": "nikolai-lobachevsky",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{lobachevskygeometry}** (1792–1856)",
+      "citation_keys": [
+        "lobachevskygeometry"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-janos-bolyai",
+      "from": "janos-bolyai",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{bolyaiappendix}** (1802–1860)",
+      "citation_keys": [
+        "bolyaiappendix"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-johann-benedict-listing",
+      "from": "johann-benedict-listing",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\citeauthor{listingtopologie}** (1808–1882)",
+      "citation_keys": [
+        "listingtopologie"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-bernhard-riemann",
+      "from": "bernhard-riemann",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{hypothesengeometrie} (1826–1866)",
+      "citation_keys": [
+        "hypothesengeometrie"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-bolyai-appendix",
+      "from": "bolyai-appendix",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the same geometry in the 1832 *Appendix* to his father's book",
+      "citation_keys": [
+        "bolyai_portrait"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-gauss-portrait",
+      "from": "gauss-portrait",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Gauss, 1840",
+      "citation_keys": [
+        "gauss_portrait"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-listing-vorstudien",
+      "from": "listing-vorstudien",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Vorstudien zur Topologie* (1847)",
+      "citation_keys": [
+        "listingtopologie"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-gauss-bonnet-theorem",
+      "from": "gauss-bonnet-theorem",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the global Gauss–Bonnet theorem for closed surfaces, $\\iint K\\,dA = 2\\pi\\chi$, is Bonnet's (1848)",
+      "citation_keys": [
+        "gaussbonnet_wiki",
+        "docarmo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-riemann-1857-genus",
+      "from": "riemann-1857-genus",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Riemann (1857)]{riemann1857genus}",
+      "citation_keys": [
+        "riemann1857genus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-mobius-strip",
+      "from": "mobius-strip",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "discovered the one-sided band that bears his name (1858)",
+      "citation_keys": [
+        "mobiusband"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-luitzen-brouwer",
+      "from": "luitzen-brouwer",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\citeauthorlastnameand{brouwer1911fixed}** (1881–1966)",
+      "citation_keys": [
+        "brouwer1911fixed"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-marston-morse",
+      "from": "marston-morse",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthorlastnameand{morse1929foundations} (1892–1977)",
+      "citation_keys": [
+        "morse1929foundations"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-poincare-analysis-situs",
+      "from": "poincare-analysis-situs",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\citetitle{poincareanalysissitus}** (1895)",
+      "citation_keys": [
+        "poincareanalysissitus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-hilbert-grundlagen",
+      "from": "hilbert-grundlagen",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In his **\\citetitle{hilbert1903grundlagen}** (1899)",
+      "citation_keys": [
+        "hilbert1903grundlagen"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-hilbert-grundlagen-1903",
+      "from": "hilbert-grundlagen-1903",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **1899 / 1903** — Hilbert: *Grundlagen der Geometrie*",
+      "citation_keys": [
+        "hilbert1903grundlagen"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-brouwer-fixed-point-theorem",
+      "from": "brouwer-fixed-point-theorem",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "his celebrated **fixed-point theorem** of 1911",
+      "citation_keys": [
+        "brouwer1911fixed"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-henri-poincare",
+      "from": "henri-poincare",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Henri Poincaré (1854–1912)",
+      "citation_keys": [
+        "perelmanpoincare",
+        "poincareanalysissitus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-einstein-field-equation",
+      "from": "einstein-field-equation",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Einstein** would use in 1915 to describe gravity",
+      "citation_keys": [
+        "hypothesengeometrie",
+        "newtonprincipia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-noether-blaricum-visit",
+      "from": "noether-blaricum-visit",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "visiting Brouwer's home in Blaricum in December 1925",
+      "citation_keys": [
+        "mclarty2006noether"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-alexander-grothendieck",
+      "from": "alexander-grothendieck",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\citeauthorlastnameand{grothedieck_res}** (1928–2014)",
+      "citation_keys": [
+        "grothedieck_res"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-morse-theory",
+      "from": "morse-theory",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "### Morse: one function carries the whole shape (1929)",
+      "citation_keys": [
+        "morse1929foundations"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-morse-theory-1930",
+      "from": "morse-theory-1930",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **1929 / 1930 / 1934** — Morse: the topology of a space",
+      "citation_keys": [
+        "morse1929foundations"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-hopf-fibration",
+      "from": "hopf-fibration",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The two theorems of 1931 teach how topology and analysis became one language.",
+      "citation_keys": [
+        "hopf1931fibration",
+        "derham1931"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-de-rham-theorem",
+      "from": "de-rham-theorem",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "That same year **\\citeauthorlastnameand{derham1931}** proved the complementary statement",
+      "citation_keys": [
+        "derham1931"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-morse-theory-1934",
+      "from": "morse-theory-1934",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **1929 / 1930 / 1934** — Morse: the topology of a space",
+      "citation_keys": [
+        "morse1929foundations"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-allendoerfer-weil-gauss-bonnet",
+      "from": "allendoerfer-weil-gauss-bonnet",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "found independently by Allendoerfer and Weil in 1943",
+      "citation_keys": [
+        "chern1946"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-chern-gauss-bonnet",
+      "from": "chern-gauss-bonnet",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Chern's 1944 paper gave an intrinsic proof of the general Gauss–Bonnet theorem",
+      "citation_keys": [
+        "chern1946"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-neugebauer-sachs-plimpton-322",
+      "from": "neugebauer-sachs-plimpton-322",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Neugebauer and Sachs (1945) already read it as a table of exact right-triangle ratios",
+      "citation_keys": [
+        "plimpton322"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-chern-classes",
+      "from": "chern-classes",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **1944 / 1946** — Chern: characteristic classes, the Gauss–Bonnet theorem made intrinsic",
+      "citation_keys": [
+        "chern1946"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-weil-conjectures",
+      "from": "weil-conjectures",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Weil (1949) predicted that it satisfies",
+      "citation_keys": [
+        "weil1949numbers"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-milnor-exotic-spheres",
+      "from": "milnor-exotic-spheres",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **1956** — Milnor's exotic 7-spheres: homeomorphic but not diffeomorphic",
+      "citation_keys": [
+        "milnor1956exotic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-bellman-curse-of-dimensionality",
+      "from": "bellman-curse-of-dimensionality",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **1957** — Bellman coins the \"curse of dimensionality\"",
+      "citation_keys": [
+        "bellman1957dynamic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-grothendieck-ihes",
+      "from": "grothendieck-ihes",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "at the IHÉS (1959–1970)",
+      "citation_keys": [
+        "grothedieck_res"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-smale-h-cobordism-theorem",
+      "from": "smale-h-cobordism-theorem",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "proved, in 1961, the **h-cobordism theorem**",
+      "citation_keys": [
+        "smale1961hccobordism"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-atiyah-singer-index-theorem",
+      "from": "atiyah-singer-index-theorem",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1963 **\\citeauthorlastnameand{atiyahsinger1963}** proved the **index theorem**",
+      "citation_keys": [
+        "atiyahsinger1963"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-grothendieck-ihes-departure",
+      "from": "grothendieck-ihes-departure",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "then left in 1970 in protest over the institute's military funding",
+      "citation_keys": [
+        "grothedieck_res"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-deligne-weil-conjectures",
+      "from": "deligne-weil-conjectures",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "### Deligne: the Riemann hypothesis over finite fields (1974)",
+      "citation_keys": [
+        "deligne1974weil"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-salton-vector-space-model",
+      "from": "salton-vector-space-model",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Salton's** vector-space model of information retrieval (1975)",
+      "citation_keys": [
+        "salton1975vectorspace"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-thurston-geometrization-program",
+      "from": "thurston-geometrization-program",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\citeauthorlastnameand{thurston1982geometrization}** (1978–1982)",
+      "citation_keys": [
+        "thurston1982geometrization"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-freedman-four-manifolds",
+      "from": "freedman-four-manifolds",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\citeauthorlastnameand{freedman1982topology}** (1982) classified *topological* closed simply-connected 4-manifolds",
+      "citation_keys": [
+        "freedman1982topology"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-donaldson-gauge-theory",
+      "from": "donaldson-gauge-theory",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "proved in 1983 that among *smooth* 4-manifolds only the diagonal forms occur",
+      "citation_keys": [
+        "donaldson1983gauge"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-taubes-exotic-r4",
+      "from": "taubes-exotic-r4",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(Taubes, 1987; the first came from Freedman's own ideas)",
+      "citation_keys": [
+        "donaldson1983gauge"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-grothendieck-crafoord-prize",
+      "from": "grothendieck-crafoord-prize",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "refusing in 1988 the prestigious Crafoord Prize",
+      "citation_keys": [
+        "grothedieck_res"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-grothendieck-withdrawal",
+      "from": "grothendieck-withdrawal",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "By around 1990 he had cut almost every tie to the mathematical world",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-boser-guyon-vapnik-svm",
+      "from": "boser-guyon-vapnik-svm",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **1963 / 1992 / 1995** — Vapnik–Chervonenkis, Boser–Guyon–Vapnik, Cortes–Vapnik",
+      "citation_keys": [
+        "vapnik1963pattern",
+        "boser1992svm",
+        "vapnik1995book"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-cortes-vapnik-svm",
+      "from": "cortes-vapnik-svm",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **1963 / 1992 / 1995** — Vapnik–Chervonenkis, Boser–Guyon–Vapnik, Cortes–Vapnik",
+      "citation_keys": [
+        "vapnik1963pattern",
+        "boser1992svm",
+        "vapnik1995book"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-embedding-dimension-example",
+      "from": "embedding-dimension-example",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In an embedding space with $d \\approx 2000$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-hinton-autoencoder",
+      "from": "hinton-autoencoder",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **2006 / 2008 / 2018** — bottleneck autoencoders, t-SNE, UMAP",
+      "citation_keys": [
+        "hinton2006",
+        "vandermaaten2008tsne",
+        "mcinnes2018umap"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-tsne",
+      "from": "tsne",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "t-SNE (\\citeauthorlastnameand{vandermaaten2008tsne}, \\citeyear{vandermaaten2008tsne})",
+      "citation_keys": [
+        "vandermaaten2008tsne"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-umap",
+      "from": "umap",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "UMAP (\\citeauthorlastnameand{mcinnes2018umap}, \\citeyear{mcinnes2018umap})",
+      "citation_keys": [
+        "mcinnes2018umap"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-geometric-deep-learning",
+      "from": "geometric-deep-learning",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "### Geometric deep learning: the shape of the input dictates the machine (2021)",
+      "citation_keys": [
+        "bronstein2021geometric"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-platonic-representation-hypothesis",
+      "from": "platonic-representation-hypothesis",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "* **2024** — Platonic Representation Hypothesis: unrelated models converge on a shared internal geometry of reality",
+      "citation_keys": [
+        "huh2024platonic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-acheulean-industry",
+      "from": "acheulean-industry",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "pushing the start of the Acheulean back by roughly 350,000 years",
+      "citation_keys": [
+        "achleuleankariandusi"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-babylonian-diagonal-problem",
+      "from": "babylonian-diagonal-problem",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "reappears roughly **2,700–3,000 years later**",
+      "citation_keys": [
+        "hoyrup2021algebra"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-aristotle-posterior-analytics",
+      "from": "aristotle-posterior-analytics",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(I.2, 71b–72a)",
+      "citation_keys": [
+        "aristotlephysics"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-geometry_i-euclid-parallel-postulate",
+      "from": "euclid-parallel-postulate",
+      "to": "geometry-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The parallel postulate had resisted proof for 2,000 years.",
+      "citation_keys": [
+        "lobachevskygeometry",
+        "bolyaiappendix"
       ],
       "confidence": "provenance"
     }

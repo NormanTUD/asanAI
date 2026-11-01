@@ -34,6 +34,7 @@ uv run blog/tests/fact_ledger_test.py
 uv run blog/tests/content_claims_test.py
 uv run blog/tools/factcheck/extract_statements.py blog/ --check
 uv run blog/tools/factcheck/check_facts.py blog/ --strict-relations --strict-quotes --require-claims
+uv run blog/tools/factcheck/deep_audit.py blog/ --strict
 
 echo "== node unit tests"
 for test in topics math_alt keypoint search_js semantic_js rag_chat; do

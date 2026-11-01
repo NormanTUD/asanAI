@@ -7,7 +7,21 @@
   "order": 1,
   "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [],
+  "citations": [
+    "longcat2025",
+    "deepseekv3tech2024",
+    "qwen2024qwen25",
+    "deepseek2024v3",
+    "insta2023",
+    "ssi2024",
+    "arcee2025",
+    "technologyinnovation2024",
+    "gptoss2025",
+    "black2022gptneox",
+    "scao2022bloom",
+    "biderman2023pythia",
+    "tml2025"
+  ],
   "claims": [
     {
       "id": "auto-global_ai_ecosystem-1",
@@ -56,8 +70,361 @@
       "unit": "B",
       "qualifiers": {},
       "quote": "* **Meituan / LongCat**: **LongCat-Flash**, a 560B-parameter mixture-of-experts model with roughly 27B active parameters that was reported as trained on Chinese-made accelerators (\\cite[LongCat Team, 2025]{longcat2025}).",
-      "citation_keys": [],
+      "citation_keys": [
+        "longcat2025"
+      ],
       "confidence": "extracted"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-1",
+      "subject": "deepseek-v3",
+      "predicate": "parameters",
+      "value": 671000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "(671B MoE)",
+      "citation_keys": [
+        "deepseekv3tech2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-2",
+      "subject": "deepseek-v3",
+      "predicate": "training_cost",
+      "value": 6000000,
+      "unit": "USD",
+      "qualifiers": {
+        "approx": true,
+        "range": "5M-6M"
+      },
+      "quote": "\\$5–6M on H800s",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-3",
+      "subject": "qwen-2-5-family",
+      "predicate": "parameter_range",
+      "value": "0.5B–72B",
+      "unit": "name",
+      "qualifiers": {
+        "range": "0.5B-72B"
+      },
+      "quote": "(0.5B–72B)",
+      "citation_keys": [
+        "qwen2024qwen25"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-5",
+      "subject": "deepseek-api",
+      "predicate": "tokens_priced",
+      "value": 1000000,
+      "unit": "token",
+      "qualifiers": {
+        "price_usd": 0.27
+      },
+      "quote": "\\$0.27/1M tokens",
+      "citation_keys": [
+        "deepseek2024v3"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-6",
+      "subject": "india",
+      "predicate": "population",
+      "value": 1400000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "India's 1.4 billion population",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-7",
+      "subject": "indian-agriculture-ai",
+      "predicate": "beneficiaries",
+      "value": 100000000,
+      "unit": "count",
+      "qualifiers": {
+        "bound": "greater_than"
+      },
+      "quote": "100M+ smallholder farmers",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-8",
+      "subject": "indian-education-ai",
+      "predicate": "beneficiaries",
+      "value": 250000000,
+      "unit": "count",
+      "qualifiers": {
+        "bound": "greater_than"
+      },
+      "quote": "250M+ students",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-9",
+      "subject": "india-upi",
+      "predicate": "transactions_per_month",
+      "value": 10000000000,
+      "unit": "count",
+      "qualifiers": {
+        "bound": "greater_than"
+      },
+      "quote": "10B+ transactions/month",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-10",
+      "subject": "instadeep-acquisition",
+      "predicate": "acquisition_price",
+      "value": 680000000,
+      "unit": "USD",
+      "qualifiers": {},
+      "quote": "\\$680M",
+      "citation_keys": [
+        "insta2023"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-11",
+      "subject": "african-language-data",
+      "predicate": "digital_text",
+      "value": 0.001,
+      "unit": "GB",
+      "qualifiers": {
+        "as_written": "1 MB",
+        "bound": "less_than"
+      },
+      "quote": "< 1 MB of digital text",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-12",
+      "subject": "safe-superintelligence-inc",
+      "predicate": "funding",
+      "value": 2000000000,
+      "unit": "USD",
+      "qualifiers": {},
+      "quote": "\\$2 billion",
+      "citation_keys": [
+        "ssi2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-13",
+      "subject": "safe-superintelligence-inc",
+      "predicate": "valuation",
+      "value": 32000000000,
+      "unit": "USD",
+      "qualifiers": {},
+      "quote": "roughly \\$32 billion valuation",
+      "citation_keys": [
+        "ssi2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-14",
+      "subject": "arcee-trinity-family",
+      "predicate": "parameter_range",
+      "value": "6B–400B",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "line spans 6B, 26B, and 400B",
+      "citation_keys": [
+        "arcee2025"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-17",
+      "subject": "falcon-3",
+      "predicate": "parameters",
+      "value": 180000000000,
+      "unit": "count",
+      "qualifiers": {
+        "range": "7B-180B"
+      },
+      "quote": "Falcon 3, 7B–180B",
+      "citation_keys": [
+        "technologyinnovation2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-18",
+      "subject": "horizon-europe",
+      "predicate": "annual_funding",
+      "value": 1000000000,
+      "unit": "USD",
+      "qualifiers": {
+        "currency": "EUR"
+      },
+      "quote": "€1B/year for AI research",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-19",
+      "subject": "llama-3-1-70b",
+      "predicate": "parameters",
+      "value": 70000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "fine-tune Llama 3.1 70B on consumer hardware",
+      "citation_keys": [
+        "deepseekv3tech2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-20",
+      "subject": "hugging-face-hub",
+      "predicate": "models_hosted",
+      "value": 1000000,
+      "unit": "count",
+      "qualifiers": {
+        "bound": "greater_than"
+      },
+      "quote": "hosts 1M+ models",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-21",
+      "subject": "gpt-oss-120b",
+      "predicate": "parameters",
+      "value": 120000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "pair (120B and 20B mixture-of-experts models",
+      "citation_keys": [
+        "gptoss2025"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-22",
+      "subject": "gpt-oss-20b",
+      "predicate": "parameters",
+      "value": 20000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "pair (120B and 20B mixture-of-experts models",
+      "citation_keys": [
+        "gptoss2025"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-23",
+      "subject": "gpt-neox-20b",
+      "predicate": "parameters",
+      "value": 20000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**GPT-NeoX-20B** was, at release, the largest dense model",
+      "citation_keys": [
+        "black2022gptneox"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-24",
+      "subject": "bloom",
+      "predicate": "parameters",
+      "value": 176000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**BLOOM** was a 176B multilingual collaboration",
+      "citation_keys": [
+        "scao2022bloom"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-25",
+      "subject": "open-model-good-enough-tier",
+      "predicate": "parameters",
+      "value": 70000000000,
+      "unit": "count",
+      "qualifiers": {
+        "range": "7B-70B"
+      },
+      "quote": "they need a 7B–70B open model fine-tuned on local data",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-26",
+      "subject": "gpt-neox-paper",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Black et al., 2022",
+      "citation_keys": [
+        "black2022gptneox"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-27",
+      "subject": "pythia-paper",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Biderman et al., 2023",
+      "citation_keys": [
+        "biderman2023pythia"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-28",
+      "subject": "safe-superintelligence-inc",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "founded in 2024 by Ilya Sutskever",
+      "citation_keys": [
+        "ssi2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "global_ai_ecosystem-gap-29",
+      "subject": "us-ai-startup-wave",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {
+        "range": "2024-2026"
+      },
+      "quote": "the 2024–2026 wave",
+      "citation_keys": [
+        "ssi2024",
+        "tml2025"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -78,7 +445,270 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "* **Meituan / LongCat**: **LongCat-Flash**, a 560B-parameter mixture-of-experts model with roughly 27B active parameters that was reported as trained on Chinese-made accelerators (\\cite[LongCat Team, 2025]{longcat2025}).",
+      "citation_keys": [
+        "longcat2025"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-deepseek-v3",
+      "from": "deepseek-v3",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(671B MoE)",
+      "citation_keys": [
+        "deepseekv3tech2024"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-qwen-2-5-family",
+      "from": "qwen-2-5-family",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(0.5B–72B)",
+      "citation_keys": [
+        "qwen2024qwen25"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-deepseek-api",
+      "from": "deepseek-api",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\$0.27/1M tokens",
+      "citation_keys": [
+        "deepseek2024v3"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-india",
+      "from": "india",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "India's 1.4 billion population",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-indian-agriculture-ai",
+      "from": "indian-agriculture-ai",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "100M+ smallholder farmers",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-indian-education-ai",
+      "from": "indian-education-ai",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "250M+ students",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-india-upi",
+      "from": "india-upi",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "10B+ transactions/month",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-instadeep-acquisition",
+      "from": "instadeep-acquisition",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\$680M",
+      "citation_keys": [
+        "insta2023"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-african-language-data",
+      "from": "african-language-data",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "< 1 MB of digital text",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-safe-superintelligence-inc",
+      "from": "safe-superintelligence-inc",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\$2 billion",
+      "citation_keys": [
+        "ssi2024"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-arcee-trinity-family",
+      "from": "arcee-trinity-family",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "line spans 6B, 26B, and 400B",
+      "citation_keys": [
+        "arcee2025"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-falcon-3",
+      "from": "falcon-3",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Falcon 3, 7B–180B",
+      "citation_keys": [
+        "technologyinnovation2024"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-horizon-europe",
+      "from": "horizon-europe",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "€1B/year for AI research",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-llama-3-1-70b",
+      "from": "llama-3-1-70b",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "fine-tune Llama 3.1 70B on consumer hardware",
+      "citation_keys": [
+        "deepseekv3tech2024"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-hugging-face-hub",
+      "from": "hugging-face-hub",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "hosts 1M+ models",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-gpt-oss-120b",
+      "from": "gpt-oss-120b",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "pair (120B and 20B mixture-of-experts models",
+      "citation_keys": [
+        "gptoss2025"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-gpt-oss-20b",
+      "from": "gpt-oss-20b",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "pair (120B and 20B mixture-of-experts models",
+      "citation_keys": [
+        "gptoss2025"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-gpt-neox-20b",
+      "from": "gpt-neox-20b",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**GPT-NeoX-20B** was, at release, the largest dense model",
+      "citation_keys": [
+        "black2022gptneox"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-bloom",
+      "from": "bloom",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**BLOOM** was a 176B multilingual collaboration",
+      "citation_keys": [
+        "scao2022bloom"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-open-model-good-enough-tier",
+      "from": "open-model-good-enough-tier",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "they need a 7B–70B open model fine-tuned on local data",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-gpt-neox-paper",
+      "from": "gpt-neox-paper",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Black et al., 2022",
+      "citation_keys": [
+        "black2022gptneox"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-pythia-paper",
+      "from": "pythia-paper",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Biderman et al., 2023",
+      "citation_keys": [
+        "biderman2023pythia"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-global_ai_ecosystem-us-ai-startup-wave",
+      "from": "us-ai-startup-wave",
+      "to": "global-ai-ecosystem",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the 2024–2026 wave",
+      "citation_keys": [
+        "ssi2024",
+        "tml2025"
+      ],
       "confidence": "provenance"
     }
   ],

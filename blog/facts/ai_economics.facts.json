@@ -7,7 +7,10 @@
   "order": 21,
   "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [],
+  "citations": [
+    "kaplan2020scaling",
+    "hoffmann2022chinchilla"
+  ],
   "claims": [
     {
       "id": "auto-ai_economics-title-1",
@@ -86,6 +89,114 @@
       "quote": "H100 BF16 (~989 TFLOP/s)",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "ai_economics-gap2-1",
+      "subject": "kaplan-2020-scaling-laws",
+      "predicate": "publication_year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Kaplan et al. (2020)]{kaplan2020scaling}",
+      "citation_keys": [
+        "kaplan2020scaling"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_economics-gap2-2",
+      "subject": "chinchilla-2022",
+      "predicate": "publication_year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}",
+      "citation_keys": [
+        "hoffmann2022chinchilla"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_economics-gap2-3",
+      "subject": "deepseek-v3",
+      "predicate": "parameters",
+      "value": 37000000000,
+      "unit": "count",
+      "qualifiers": {
+        "parameter_kind": "active"
+      },
+      "quote": "DeepSeek-V3 costs its serving on **37B**, not its **671B**.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_economics-gap2-4",
+      "subject": "deepseek-v3",
+      "predicate": "parameters",
+      "value": 671000000000,
+      "unit": "count",
+      "qualifiers": {
+        "parameter_kind": "total"
+      },
+      "quote": "DeepSeek-V3 costs its serving on **37B**, not its **671B**.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_economics-gap2-5",
+      "subject": "prompt-caching-example",
+      "predicate": "system_prompt_tokens",
+      "value": 4000,
+      "unit": "token",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "say 4,000 tokens of system prompt",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_economics-gap2-6",
+      "subject": "prompt-caching-example",
+      "predicate": "uncached_session_tokens",
+      "value": 4400,
+      "unit": "token",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "uncached you pay for all 4,400 tokens' prefill+decode",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_economics-gap2-7",
+      "subject": "local-7b-model",
+      "predicate": "parameters",
+      "value": 7000000000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "a GPU that holds a 7B model",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_economics-gap2-8",
+      "subject": "laptop-vs-api-breakeven",
+      "predicate": "model_size",
+      "value": 7000000000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "7B on a laptop, or the API",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -116,6 +227,70 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "H100 (~495 TFLOP/s TF32)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_economics-kaplan-2020-scaling-laws",
+      "from": "kaplan-2020-scaling-laws",
+      "to": "ai-economics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Kaplan et al. (2020)]{kaplan2020scaling}",
+      "citation_keys": [
+        "kaplan2020scaling"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_economics-chinchilla-2022",
+      "from": "chinchilla-2022",
+      "to": "ai-economics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}",
+      "citation_keys": [
+        "hoffmann2022chinchilla"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_economics-deepseek-v3",
+      "from": "deepseek-v3",
+      "to": "ai-economics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "DeepSeek-V3 costs its serving on **37B**, not its **671B**.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_economics-prompt-caching-example",
+      "from": "prompt-caching-example",
+      "to": "ai-economics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "say 4,000 tokens of system prompt",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_economics-local-7b-model",
+      "from": "local-7b-model",
+      "to": "ai-economics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a GPU that holds a 7B model",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_economics-laptop-vs-api-breakeven",
+      "from": "laptop-vs-api-breakeven",
+      "to": "ai-economics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "7B on a laptop, or the API",
       "citation_keys": [],
       "confidence": "provenance"
     }

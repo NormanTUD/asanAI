@@ -9,6 +9,7 @@
   "generated_by": "extract_facts.py",
   "citations": [
     "panharmonicon",
+    "strachey1952",
     "illiac_suite",
     "max_mathews",
     "midi",
@@ -17,7 +18,17 @@
     "brooks2024sora",
     "agostinelli2023musiqlm",
     "copet2023musicgen",
-    "defossez2022encodec"
+    "defossez2022encodec",
+    "film_strip_35mm_img",
+    "h264",
+    "av1",
+    "yan2021videogpt",
+    "vq_vae",
+    "oord2016wavenet",
+    "vaswani2017attention",
+    "holtzman2019nucleus",
+    "ho2020ddpm",
+    "zeghidour2021soundstream"
   ],
   "claims": [
     {
@@ -90,7 +101,10 @@
       "value": 1951,
       "unit": "year",
       "quote": "In **1951** a machine called **CSIRAC**, then in Sydney, played *Colonel Bogey*",
-      "citation_keys": [],
+      "citation_keys": [
+        "strachey1952",
+        "illiac_suite"
+      ],
       "qualifiers": {},
       "confidence": "stated"
     },
@@ -302,6 +316,361 @@
       ],
       "qualifiers": {},
       "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-1",
+      "subject": "wellingtons-victory",
+      "predicate": "composition_year",
+      "value": 1813,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "*Wellington's Victory* (1813)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-2",
+      "subject": "phonograph",
+      "predicate": "invention_year",
+      "value": 1877,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**phonograph** (Thomas Edison, 1877)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-3",
+      "subject": "cinema",
+      "predicate": "year",
+      "value": 1895,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "paid screenings in 1895",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-4",
+      "subject": "magnetophon",
+      "predicate": "year",
+      "value": 1935,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "AEG's Magnetophon, 1935",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-5",
+      "subject": "ampex-200",
+      "predicate": "year",
+      "value": 1948,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Ampex 200 in the US, 1948",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-6",
+      "subject": "pithoprakta",
+      "predicate": "composition_year",
+      "value": 1955,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "*Pithoprakta* (1955)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-7",
+      "subject": "compact-cassette",
+      "predicate": "year",
+      "value": 1963,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**compact cassette** (Philips, 1963)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-8",
+      "subject": "betamax",
+      "predicate": "year",
+      "value": 1975,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Betamax** (Sony, 1975)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-9",
+      "subject": "vhs",
+      "predicate": "year",
+      "value": 1976,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**VHS** (JVC, 1976)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-10",
+      "subject": "laserdisc",
+      "predicate": "year",
+      "value": 1978,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**LaserDisc** followed in 1978",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-11",
+      "subject": "red-book",
+      "predicate": "year",
+      "value": 1980,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "governed by the 1980 **Red Book** standard",
+      "citation_keys": [
+        "cd_digital_audio"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-12",
+      "subject": "compact-disc",
+      "predicate": "release_year",
+      "value": 1982,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "launched in **1982** by Sony and Philips",
+      "citation_keys": [
+        "cd_digital_audio"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-13",
+      "subject": "dat",
+      "predicate": "year",
+      "value": 1987,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**DAT** (Digital Audio Tape, Sony, 1987)",
+      "citation_keys": [
+        "cd_digital_audio"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-14",
+      "subject": "dvd",
+      "predicate": "year",
+      "value": 1996,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the **DVD** (1996)",
+      "citation_keys": [
+        "film_strip_35mm_img"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-15",
+      "subject": "h264",
+      "predicate": "year",
+      "value": 2003,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**H.264/AVC** (2003",
+      "citation_keys": [
+        "h264",
+        "av1",
+        "yan2021videogpt",
+        "vq_vae"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-16",
+      "subject": "h265",
+      "predicate": "year",
+      "value": 2013,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**H.265/HEVC** (2013",
+      "citation_keys": [
+        "h264",
+        "av1",
+        "yan2021videogpt",
+        "vq_vae"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-17",
+      "subject": "vp9",
+      "predicate": "year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**VP9** (2014)",
+      "citation_keys": [
+        "h264",
+        "av1",
+        "yan2021videogpt",
+        "vq_vae"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-18",
+      "subject": "wavenet",
+      "predicate": "publication_year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[van den Oord et al., 2016]{oord2016wavenet})",
+      "citation_keys": [
+        "oord2016wavenet"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-19",
+      "subject": "transformer",
+      "predicate": "publication_year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Vaswani et al., 2017]{vaswani2017attention})",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-20",
+      "subject": "av1",
+      "predicate": "year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**AV1** (2018",
+      "citation_keys": [
+        "h264",
+        "av1",
+        "yan2021videogpt",
+        "vq_vae"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-21",
+      "subject": "top-p-sampling",
+      "predicate": "publication_year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Holtzman et al., 2019]{holtzman2019nucleus})",
+      "citation_keys": [
+        "holtzman2019nucleus"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-22",
+      "subject": "ddpm",
+      "predicate": "publication_year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Ho et al., 2020]{ho2020ddpm}",
+      "citation_keys": [
+        "ho2020ddpm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-23",
+      "subject": "soundstream",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**SoundStream** (Google, 2021)",
+      "citation_keys": [
+        "zeghidour2021soundstream",
+        "defossez2022encodec"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-24",
+      "subject": "deezer",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "By late 2025, Deezer reported",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-25",
+      "subject": "cd-quality-audio-minute",
+      "predicate": "sample_count",
+      "value": 2600000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "about **2.6 million numbers**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-26",
+      "subject": "cd-quality-audio-minute",
+      "predicate": "sample_count",
+      "value": 2600000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "2.6 million numbers a minute was too big",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-27",
+      "subject": "cd-quality-audio-minute",
+      "predicate": "sample_count",
+      "value": 2600000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "2.6 million waveform numbers",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "music_video_generation-gap-28",
+      "subject": "webvid-10m",
+      "predicate": "video_text_pairs",
+      "value": 10000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**WebVid-10M** (2021) scraped about ten million weakly-labelled video-text pairs",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -344,7 +713,10 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "In **1951** a machine called **CSIRAC**, then in Sydney, played *Colonel Bogey*",
-      "citation_keys": [],
+      "citation_keys": [
+        "strachey1952",
+        "illiac_suite"
+      ],
       "confidence": "provenance"
     },
     {
@@ -513,6 +885,293 @@
       "citation_keys": [
         "defossez2022encodec"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-wellingtons-victory",
+      "from": "wellingtons-victory",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Wellington's Victory* (1813)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-phonograph",
+      "from": "phonograph",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**phonograph** (Thomas Edison, 1877)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-cinema",
+      "from": "cinema",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "paid screenings in 1895",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-magnetophon",
+      "from": "magnetophon",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "AEG's Magnetophon, 1935",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-ampex-200",
+      "from": "ampex-200",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Ampex 200 in the US, 1948",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-pithoprakta",
+      "from": "pithoprakta",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Pithoprakta* (1955)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-compact-cassette",
+      "from": "compact-cassette",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**compact cassette** (Philips, 1963)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-betamax",
+      "from": "betamax",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Betamax** (Sony, 1975)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-vhs",
+      "from": "vhs",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**VHS** (JVC, 1976)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-laserdisc",
+      "from": "laserdisc",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**LaserDisc** followed in 1978",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-red-book",
+      "from": "red-book",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "governed by the 1980 **Red Book** standard",
+      "citation_keys": [
+        "cd_digital_audio"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-dat",
+      "from": "dat",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**DAT** (Digital Audio Tape, Sony, 1987)",
+      "citation_keys": [
+        "cd_digital_audio"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-dvd",
+      "from": "dvd",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **DVD** (1996)",
+      "citation_keys": [
+        "film_strip_35mm_img"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-h264",
+      "from": "h264",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**H.264/AVC** (2003",
+      "citation_keys": [
+        "h264",
+        "av1",
+        "yan2021videogpt",
+        "vq_vae"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-h265",
+      "from": "h265",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**H.265/HEVC** (2013",
+      "citation_keys": [
+        "h264",
+        "av1",
+        "yan2021videogpt",
+        "vq_vae"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-vp9",
+      "from": "vp9",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**VP9** (2014)",
+      "citation_keys": [
+        "h264",
+        "av1",
+        "yan2021videogpt",
+        "vq_vae"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-wavenet",
+      "from": "wavenet",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[van den Oord et al., 2016]{oord2016wavenet})",
+      "citation_keys": [
+        "oord2016wavenet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-transformer",
+      "from": "transformer",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Vaswani et al., 2017]{vaswani2017attention})",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-av1",
+      "from": "av1",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**AV1** (2018",
+      "citation_keys": [
+        "h264",
+        "av1",
+        "yan2021videogpt",
+        "vq_vae"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-top-p-sampling",
+      "from": "top-p-sampling",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Holtzman et al., 2019]{holtzman2019nucleus})",
+      "citation_keys": [
+        "holtzman2019nucleus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-ddpm",
+      "from": "ddpm",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Ho et al., 2020]{ho2020ddpm}",
+      "citation_keys": [
+        "ho2020ddpm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-soundstream",
+      "from": "soundstream",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**SoundStream** (Google, 2021)",
+      "citation_keys": [
+        "zeghidour2021soundstream",
+        "defossez2022encodec"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-deezer",
+      "from": "deezer",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "By late 2025, Deezer reported",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-cd-quality-audio-minute",
+      "from": "cd-quality-audio-minute",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "about **2.6 million numbers**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-music_video_generation-webvid-10m",
+      "from": "webvid-10m",
+      "to": "music-video-generation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**WebVid-10M** (2021) scraped about ten million weakly-labelled video-text pairs",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

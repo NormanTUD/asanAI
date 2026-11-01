@@ -17,7 +17,11 @@
     "rope2021",
     "alibi2022",
     "shaw2018relative",
-    "raffel2020t5"
+    "raffel2020t5",
+    "gehring2017convs2s",
+    "firstgpt",
+    "chen2023position",
+    "peng2023yarn"
   ],
   "claims": [
     {
@@ -304,19 +308,112 @@
       "quote": "the PE formula actually maps each position to a point on a **high-dimensional helix**",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-gap3-1",
+      "subject": "time-delay-neural-network",
+      "predicate": "year",
+      "value": 1989,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Time-Delay Neural Networks** (Waibel et al., 1989) hard-coded local temporal structure through fixed delay windows",
+      "citation_keys": [
+        "gehring2017convs2s",
+        "vaswani2017attention"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-gap3-2",
+      "subject": "sinusoidal-positional-encoding",
+      "predicate": "example_position",
+      "value": 2000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "whether you start at position 2 or position 2000",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-gap3-3",
+      "subject": "learned-absolute-position-embedding",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {
+        "definition": "upper end of 2018-2019 range"
+      },
+      "quote": "**Learned absolute embeddings (2018–2019).** \\citealternativetitle{firstgpt}, \\citealternativetitle{bert}, and \\citealternativetitle{gpt2} replaced sinusoids with a trainable embedding matrix",
+      "citation_keys": [
+        "firstgpt",
+        "bert",
+        "gpt2"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-gap3-4",
+      "subject": "positional-encoding-rotation",
+      "predicate": "example_offset",
+      "value": 3,
+      "unit": "token",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "generalise “3 tokens apart” to any location it has never seen",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-gap3-5",
+      "subject": "context-length-extension",
+      "predicate": "base_context_window",
+      "value": 4096,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "let models trained on 4K tokens operate over 32K–128K by rescaling or frequency-adjusting existing positional schemes",
+      "citation_keys": [
+        "chen2023position",
+        "peng2023yarn"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-gap3-6",
+      "subject": "context-length-extension",
+      "predicate": "extended_context_window_min",
+      "value": 32768,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "let models trained on 4K tokens operate over 32K–128K by rescaling or frequency-adjusting existing positional schemes",
+      "citation_keys": [
+        "chen2023position",
+        "peng2023yarn"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "positionalembeddingslab-gap3-7",
+      "subject": "context-length-extension",
+      "predicate": "extended_context_window_max",
+      "value": 131072,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "let models trained on 4K tokens operate over 32K–128K by rescaling or frequency-adjusting existing positional schemes",
+      "citation_keys": [
+        "chen2023position",
+        "peng2023yarn"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-positionalembeddingslab-part",
-      "from": "positionalembeddingslab",
-      "to": "part-4",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 4",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-positionalembeddingslab-transformer",
       "from": "transformer",
@@ -485,6 +582,66 @@
       "citation_keys": [
         "raffel2020t5"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-time-delay-neural-network",
+      "from": "time-delay-neural-network",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Time-Delay Neural Networks** (Waibel et al., 1989) hard-coded local temporal structure through fixed delay windows",
+      "citation_keys": [
+        "gehring2017convs2s",
+        "vaswani2017attention"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-learned-absolute-position-embedding",
+      "from": "learned-absolute-position-embedding",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Learned absolute embeddings (2018–2019).** \\citealternativetitle{firstgpt}, \\citealternativetitle{bert}, and \\citealternativetitle{gpt2} replaced sinusoids with a trainable embedding matrix",
+      "citation_keys": [
+        "firstgpt",
+        "bert",
+        "gpt2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-positional-encoding-rotation",
+      "from": "positional-encoding-rotation",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "generalise “3 tokens apart” to any location it has never seen",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-context-length-extension",
+      "from": "context-length-extension",
+      "to": "positionalembeddingslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "let models trained on 4K tokens operate over 32K–128K by rescaling or frequency-adjusting existing positional schemes",
+      "citation_keys": [
+        "chen2023position",
+        "peng2023yarn"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-positionalembeddingslab-part",
+      "from": "positionalembeddingslab",
+      "to": "part-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 4",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

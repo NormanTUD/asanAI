@@ -1112,7 +1112,10 @@ Fix this fact-ledger conflict:
 The `::error file=…::…` line is a GitHub Actions annotation, so the failing
 fact file is clickable in the CI UI. The `COPY FROM HERE` block is a
 self-contained prompt for an AI agent; a human gets the same information in
-the lines above it.
+the lines above it. A final `CONTRADICTION LIST` names every incompatible
+pair directly, e.g.: `claim 'a-params' in a.php contradicts claim 'b-params'
+in b.php — subject=gpt-3 predicate=parameters`, and the same list is written
+to `blog/facts/CONFLICTS.md`.
 
 **Current coverage and backlog.** All 99 lesson files have content claims
 (6,005 claims, 4,470 relations at the time of writing). The
@@ -1144,6 +1147,7 @@ dependency in a header won't resolve for a few days).
 | `uv run blog/tools/factcheck/check_facts.py blog/ --strict-relations --strict-quotes --require-claims` | one fact file per lesson; content claim per lesson; schema; cross-lesson numeric/date/unit/model-spec conflicts; relation endpoints/cycles/temporal; every subject connected; quotes still present | missing/orphan file, metadata-only lesson, malformed claim, conflict, isolated subject, stale quote | `blog/**` (php-validation job) |
 | `uv run blog/tests/content_claims_test.py` | every lesson has content claims and statements; history depth thresholds; core facts; no line fields; quote/unit presence | any missing content claim, statement or core fact | `blog/**` (php-validation job) |
 | `uv run blog/tools/factcheck/extract_statements.py blog/ --check` | every prose sentence is protocolled in the lesson's fact file (`statements` array) | stale statement ledger | `blog/**` (php-validation job) |
+| `uv run blog/tools/factcheck/deep_audit.py blog/ --strict` | quote/citation grounding, uncovered years/quantities, uncited claims, relations, ranges, normalised year conflicts | bad citations, range errors, year conflicts | `blog/**` (php-validation job) |
 | `uv run blog/tests/fact_ledger_test.py` | unit tests for aliases, unit normalisation, conflict detection, coverage | any failed test | `blog/**` (php-validation job) |
 | `node blog/tests/{topics,math_alt,keypoint,search_js,semantic_js}_test.js` | DOM-stubbed unit tests of BlogTopics (interests, math dial, learned), math-alts, keypoints, search, semantic ranking | any failed check | `blog/**` |
 | `node blog/tests/rag_chat_test.js` | RAG chat status text, citation links, HTML escaping | any failed check | `blog/**` |

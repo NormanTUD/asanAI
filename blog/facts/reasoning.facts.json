@@ -14,7 +14,8 @@
     "yao2023tot",
     "zhang2024mathshepherd",
     "shao2024grpo",
-    "snell2024testtime"
+    "snell2024testtime",
+    "hendrycks2021math"
   ],
   "claims": [
     {
@@ -262,19 +263,24 @@
       "quote": "A 100-token CoT might involve ~10 reasoning “chunks”",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "reasoning-gap4-1",
+      "subject": "math-benchmark",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Quick win on MATH (\\cite[Hendrycks et al., 2021]{hendrycks2021math})",
+      "citation_keys": [
+        "hendrycks2021math"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-reasoning-part",
-      "from": "reasoning",
-      "to": "part-5",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 5",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-reasoning-o1",
       "from": "o1",
@@ -407,6 +413,28 @@
       "qualifiers": {},
       "quote": "A 100-token CoT might involve ~10 reasoning “chunks”",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reasoning-part",
+      "from": "reasoning",
+      "to": "part-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 5",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reasoning-math-benchmark",
+      "from": "math-benchmark",
+      "to": "reasoning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Quick win on MATH (\\cite[Hendrycks et al., 2021]{hendrycks2021math})",
+      "citation_keys": [
+        "hendrycks2021math"
+      ],
       "confidence": "provenance"
     }
   ],

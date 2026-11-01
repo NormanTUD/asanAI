@@ -275,16 +275,6 @@
   ],
   "relations": [
     {
-      "id": "prov-tokenizerlab-part",
-      "from": "tokenizerlab",
-      "to": "part-4",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 4",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "prov-tokenizerlab-zipf-law",
       "from": "zipf-law",
       "to": "tokenizerlab",
@@ -474,6 +464,16 @@
       "citation_keys": [
         "byt52022"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-part",
+      "from": "tokenizerlab",
+      "to": "part-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 4",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

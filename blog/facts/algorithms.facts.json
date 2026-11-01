@@ -8,6 +8,10 @@
   "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
+    "euclideanalgorithm",
+    "euclidelements",
+    "knuth1972babylonian",
+    "sieveoferatosthenes",
     "alkhwarizmi820algebra",
     "historyofmath_wikipedia",
     "menabrea_lovelace1843",
@@ -26,7 +30,16 @@
     "nanda2023grokking",
     "power2022grokking",
     "zhou2022algorithmic",
-    "hahn2020limitations"
+    "hahn2020limitations",
+    "cacioli2026weber",
+    "newton1736fluxions",
+    "binarysearch_wiki",
+    "taocp3",
+    "dijkstra1968goto",
+    "hoare1969axiomatic",
+    "levy2024numbers",
+    "conde2025count",
+    "garg2022incontext"
   ],
   "claims": [
     {
@@ -75,7 +88,11 @@
       "value": -300,
       "unit": "year",
       "quote": "### Euclid's algorithm (c. 300 BC): the first with a surviving proof",
-      "citation_keys": [],
+      "citation_keys": [
+        "euclideanalgorithm",
+        "euclidelements",
+        "knuth1972babylonian"
+      ],
       "qualifiers": {
         "approx": true
       },
@@ -88,7 +105,9 @@
       "value": -240,
       "unit": "year",
       "quote": "#### Another shape of algorithm: the Sieve of Eratosthenes (c. 240 BC)",
-      "citation_keys": [],
+      "citation_keys": [
+        "sieveoferatosthenes"
+      ],
       "qualifiers": {
         "approx": true
       },
@@ -316,19 +335,281 @@
       ],
       "qualifiers": {},
       "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-1",
+      "subject": "weber-law-example",
+      "predicate": "indistinguishable_magnitude_example",
+      "value": 1000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "You tell 10 from 11 instantly, but not 1000 from 1001",
+      "citation_keys": [
+        "cacioli2026weber"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-2",
+      "subject": "weber-law-example",
+      "predicate": "indistinguishable_magnitude_example",
+      "value": 1001,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "You tell 10 from 11 instantly, but not 1000 from 1001",
+      "citation_keys": [
+        "cacioli2026weber"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-3",
+      "subject": "newton-method",
+      "predicate": "publication_year",
+      "value": 1736,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Newton, 1736]{newton1736fluxions})",
+      "citation_keys": [
+        "newton1736fluxions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-4",
+      "subject": "carl-friedrich-gauss",
+      "predicate": "fft_precursor_year",
+      "value": 1805,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Gauss had used the same idea in 1805",
+      "citation_keys": [
+        "cooley1965fft",
+        "fft_history_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-5",
+      "subject": "david-hilbert",
+      "predicate": "birth_year",
+      "value": 1862,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "David Hilbert (1862–1943), 1907",
+      "citation_keys": [
+        "godel1931incompleteness"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-6",
+      "subject": "david-hilbert",
+      "predicate": "portrait_year",
+      "value": 1907,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "David Hilbert (1862–1943), 1907",
+      "citation_keys": [
+        "godel1931incompleteness"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-7",
+      "subject": "david-hilbert",
+      "predicate": "death_year",
+      "value": 1943,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "David Hilbert (1862–1943), 1907",
+      "citation_keys": [
+        "godel1931incompleteness"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-8",
+      "subject": "binary-search",
+      "predicate": "described_year",
+      "value": 1946,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "was described by John Mauchly in 1946",
+      "citation_keys": [
+        "binarysearch_wiki",
+        "taocp3"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-9",
+      "subject": "goto-statement-letter",
+      "predicate": "publication_year",
+      "value": 1968,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Dijkstra's 1968 letter against the `goto` statement",
+      "citation_keys": [
+        "dijkstra1968goto"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-10",
+      "subject": "hoare-logic",
+      "predicate": "axioms_year",
+      "value": 1969,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Hoare's 1969 axioms gave a formal logic for assignments and while-loops",
+      "citation_keys": [
+        "hoare1969axiomatic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-11",
+      "subject": "donald-knuth",
+      "predicate": "babylonian_algorithms_year",
+      "value": 1972,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Knuth, 1972]{knuth1972babylonian})",
+      "citation_keys": [
+        "knuth1972babylonian"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-12",
+      "subject": "grokking-fourier-circuit",
+      "predicate": "publication_year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Nanda et al., 2023]{nanda2023grokking})",
+      "citation_keys": [
+        "nanda2023grokking"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-13",
+      "subject": "levy-geva-numbers",
+      "predicate": "publication_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Levy & Geva, 2024]{levy2024numbers})",
+      "citation_keys": [
+        "levy2024numbers"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-14",
+      "subject": "conde-counting",
+      "predicate": "publication_year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Conde et al., 2025]{conde2025count})",
+      "citation_keys": [
+        "conde2025count"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-15",
+      "subject": "cacioli-weber",
+      "predicate": "publication_year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Cacioli (2026)]{cacioli2026weber}",
+      "citation_keys": [
+        "cacioli2026weber"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-16",
+      "subject": "in-context-learning",
+      "predicate": "memorized_vectors",
+      "value": 32000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "the best memorized weight vector from 32M training vectors",
+      "citation_keys": [
+        "garg2022incontext"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-17",
+      "subject": "digit-rotation-intervention",
+      "predicate": "success_rate",
+      "value": 15,
+      "unit": "%",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "the exact intended result appears in only about 10–15% of cases",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-18",
+      "subject": "algorithmic-prompting",
+      "predicate": "figure_label",
+      "value": "3b",
+      "unit": "name",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Figure 3b]{zhou2022algorithmic}",
+      "citation_keys": [
+        "zhou2022algorithmic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-19",
+      "subject": "llama-3-8b",
+      "predicate": "parameters",
+      "value": 8000000000,
+      "unit": "count",
+      "qualifiers": {
+        "parameter_kind": "total"
+      },
+      "quote": "probed and intervened on Llama-3-8B and Mistral-7B",
+      "citation_keys": [
+        "levy2024numbers"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "algorithms-gap2-20",
+      "subject": "mistral-7b",
+      "predicate": "parameters",
+      "value": 7000000000,
+      "unit": "count",
+      "qualifiers": {
+        "parameter_kind": "total"
+      },
+      "quote": "probed and intervened on Llama-3-8B and Mistral-7B",
+      "citation_keys": [
+        "levy2024numbers"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-algorithms-part",
-      "from": "algorithms",
-      "to": "part-4",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 4",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-algorithms-euclid-algorithm",
       "from": "euclid-algorithm",
@@ -551,6 +832,208 @@
       "citation_keys": [
         "hahn2020limitations"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-weber-law-example",
+      "from": "weber-law-example",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "You tell 10 from 11 instantly, but not 1000 from 1001",
+      "citation_keys": [
+        "cacioli2026weber"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-newton-method",
+      "from": "newton-method",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Newton, 1736]{newton1736fluxions})",
+      "citation_keys": [
+        "newton1736fluxions"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-carl-friedrich-gauss",
+      "from": "carl-friedrich-gauss",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Gauss had used the same idea in 1805",
+      "citation_keys": [
+        "cooley1965fft",
+        "fft_history_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-david-hilbert",
+      "from": "david-hilbert",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "David Hilbert (1862–1943), 1907",
+      "citation_keys": [
+        "godel1931incompleteness"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-binary-search",
+      "from": "binary-search",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "was described by John Mauchly in 1946",
+      "citation_keys": [
+        "binarysearch_wiki",
+        "taocp3"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-goto-statement-letter",
+      "from": "goto-statement-letter",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Dijkstra's 1968 letter against the `goto` statement",
+      "citation_keys": [
+        "dijkstra1968goto"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-hoare-logic",
+      "from": "hoare-logic",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hoare's 1969 axioms gave a formal logic for assignments and while-loops",
+      "citation_keys": [
+        "hoare1969axiomatic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-donald-knuth",
+      "from": "donald-knuth",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Knuth, 1972]{knuth1972babylonian})",
+      "citation_keys": [
+        "knuth1972babylonian"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-grokking-fourier-circuit",
+      "from": "grokking-fourier-circuit",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Nanda et al., 2023]{nanda2023grokking})",
+      "citation_keys": [
+        "nanda2023grokking"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-levy-geva-numbers",
+      "from": "levy-geva-numbers",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Levy & Geva, 2024]{levy2024numbers})",
+      "citation_keys": [
+        "levy2024numbers"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-conde-counting",
+      "from": "conde-counting",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Conde et al., 2025]{conde2025count})",
+      "citation_keys": [
+        "conde2025count"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-cacioli-weber",
+      "from": "cacioli-weber",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Cacioli (2026)]{cacioli2026weber}",
+      "citation_keys": [
+        "cacioli2026weber"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-in-context-learning",
+      "from": "in-context-learning",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the best memorized weight vector from 32M training vectors",
+      "citation_keys": [
+        "garg2022incontext"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-digit-rotation-intervention",
+      "from": "digit-rotation-intervention",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the exact intended result appears in only about 10–15% of cases",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-llama-3-8b",
+      "from": "llama-3-8b",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "probed and intervened on Llama-3-8B and Mistral-7B",
+      "citation_keys": [
+        "levy2024numbers"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-mistral-7b",
+      "from": "mistral-7b",
+      "to": "algorithms",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "probed and intervened on Llama-3-8B and Mistral-7B",
+      "citation_keys": [
+        "levy2024numbers"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-algorithms-part",
+      "from": "algorithms",
+      "to": "part-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 4",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

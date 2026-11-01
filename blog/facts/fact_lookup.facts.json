@@ -15,7 +15,13 @@
     "ramsauer2020hopfield",
     "bricken2023monosemanticity",
     "kohli2026loop",
-    "hahn2020limitations"
+    "hahn2020limitations",
+    "olsson2022induction",
+    "vaswani2017attention",
+    "elhage2021mathematical",
+    "templeton2024scaling",
+    "lindsey2025biology",
+    "ameisen2025circuit"
   ],
   "claims": [
     {
@@ -300,6 +306,202 @@
       ],
       "qualifiers": {},
       "confidence": "stated"
+    },
+    {
+      "id": "fact_lookup-gap2-1",
+      "subject": "frontier-models",
+      "predicate": "size_ratio_vs_small",
+      "value": 1000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "100× to 1000× larger",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "fact_lookup-gap2-2",
+      "subject": "batman-1989",
+      "predicate": "year",
+      "value": 1989,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the wife of the actor who played Batman in 1989 is",
+      "citation_keys": [
+        "olsson2022induction"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "fact_lookup-gap2-3",
+      "subject": "transformer-paper",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Vaswani et al., 2017]{vaswani2017attention})",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "fact_lookup-gap2-4",
+      "subject": "elhage-2021-mathematical",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Elhage et al., 2021]{elhage2021mathematical})",
+      "citation_keys": [
+        "elhage2021mathematical"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "fact_lookup-gap2-5",
+      "subject": "induction-heads",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Olsson et al., 2022]{olsson2022induction})",
+      "citation_keys": [
+        "olsson2022induction"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "fact_lookup-gap2-6",
+      "subject": "templeton-2024-scaling",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Templeton et al., 2024]{templeton2024scaling})",
+      "citation_keys": [
+        "templeton2024scaling"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "fact_lookup-gap2-7",
+      "subject": "frontier-models",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {
+        "variant": "2025-2026"
+      },
+      "quote": "Frontier models in 2025–2026 are 100× to 1000× larger.",
+      "citation_keys": [
+        "templeton2024scaling",
+        "lindsey2025biology",
+        "ameisen2025circuit"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "fact_lookup-gap2-8",
+      "subject": "kohli-2026-loop",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Kohli et al., 2026]{kohli2026loop})",
+      "citation_keys": [
+        "kohli2026loop"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "fact_lookup-gap2-9",
+      "subject": "400b-model",
+      "predicate": "parameters",
+      "value": 400000000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "at 400B it reaches a few hundred billion",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "fact_lookup-gap2-10",
+      "subject": "100m-7b-model-range",
+      "predicate": "parameters_lower_bound",
+      "value": 100000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "the 100M–7B toys",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "fact_lookup-gap2-11",
+      "subject": "100m-7b-model-range",
+      "predicate": "parameters_upper_bound",
+      "value": 7000000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "the 100M–7B toys",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "fact_lookup-gap2-12",
+      "subject": "small-production-model",
+      "predicate": "parameters_lower_bound",
+      "value": 100000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "models in the 100M–7B parameter range",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "fact_lookup-gap2-13",
+      "subject": "small-production-model",
+      "predicate": "parameters_upper_bound",
+      "value": 7000000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "models in the 100M–7B parameter range",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "fact_lookup-gap2-14",
+      "subject": "small-production-model",
+      "predicate": "parameters_upper_bound",
+      "value": 7000000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "well-supported for \"small\" production models (≤ 7B)",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -487,6 +689,118 @@
       "citation_keys": [
         "hahn2020limitations"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-frontier-models",
+      "from": "frontier-models",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "100× to 1000× larger",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-batman-1989",
+      "from": "batman-1989",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the wife of the actor who played Batman in 1989 is",
+      "citation_keys": [
+        "olsson2022induction"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-transformer-paper",
+      "from": "transformer-paper",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Vaswani et al., 2017]{vaswani2017attention})",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-elhage-2021-mathematical",
+      "from": "elhage-2021-mathematical",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Elhage et al., 2021]{elhage2021mathematical})",
+      "citation_keys": [
+        "elhage2021mathematical"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-induction-heads",
+      "from": "induction-heads",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Olsson et al., 2022]{olsson2022induction})",
+      "citation_keys": [
+        "olsson2022induction"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-templeton-2024-scaling",
+      "from": "templeton-2024-scaling",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Templeton et al., 2024]{templeton2024scaling})",
+      "citation_keys": [
+        "templeton2024scaling"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-kohli-2026-loop",
+      "from": "kohli-2026-loop",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Kohli et al., 2026]{kohli2026loop})",
+      "citation_keys": [
+        "kohli2026loop"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-400b-model",
+      "from": "400b-model",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "at 400B it reaches a few hundred billion",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-100m-7b-model-range",
+      "from": "100m-7b-model-range",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the 100M–7B toys",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-fact_lookup-small-production-model",
+      "from": "small-production-model",
+      "to": "fact-lookup",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "models in the 100M–7B parameter range",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

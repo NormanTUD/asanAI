@@ -15,7 +15,22 @@
     "multics_plan9",
     "unix_ts",
     "plan9_9front",
-    "garmisch1968"
+    "windows_ms",
+    "garmisch1968",
+    "lovelacequote",
+    "fortran2",
+    "algol60",
+    "goto_harmful",
+    "codd1970",
+    "gnu_make",
+    "haskell",
+    "isocpp",
+    "smalltalk",
+    "git",
+    "python",
+    "python_zen",
+    "go_lang",
+    "rust_lang"
   ],
   "claims": [
     {
@@ -141,7 +156,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "The ENIAC, first general-purpose electronic digital computer (1945).",
-      "citation_keys": [],
+      "citation_keys": [
+        "chm"
+      ],
       "confidence": "stated"
     },
     {
@@ -269,7 +286,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "written in 1974 by **Gary Kildall** at **Digital Research**",
-      "citation_keys": [],
+      "citation_keys": [
+        "chm"
+      ],
       "confidence": "stated"
     },
     {
@@ -293,7 +312,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "**Windows NT** (1993), the “New Technology” kernel",
-      "citation_keys": [],
+      "citation_keys": [
+        "windows_ms"
+      ],
       "confidence": "stated"
     },
     {
@@ -308,19 +329,536 @@
         "garmisch1968"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "software-gap-1",
+      "subject": "ada-lovelace-first-algorithm",
+      "predicate": "year",
+      "value": 1843,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "who in 1843 wrote what is recognized as the first algorithm intended for a machine",
+      "citation_keys": [
+        "lovelacequote"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-2",
+      "subject": "zuse-z1",
+      "predicate": "year",
+      "value": 1938,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "built the **Z1** in 1938",
+      "citation_keys": [
+        "zusebook"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-3",
+      "subject": "hand-programming-era",
+      "predicate": "start_year",
+      "value": 1943,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Programming by Hand (1943–1950)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-4",
+      "subject": "hand-programming-era",
+      "predicate": "end_year",
+      "value": 1950,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Programming by Hand (1943–1950)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-5",
+      "subject": "a-0-compiler",
+      "predicate": "year",
+      "value": 1952,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Hopper's **A-0** system (1952) was the **first compiler**",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-6",
+      "subject": "fortran",
+      "predicate": "year",
+      "value": 1957,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1957, a team at IBM led by **John Backus** built **FORTRAN**",
+      "citation_keys": [
+        "fortran2"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-7",
+      "subject": "lisp",
+      "predicate": "year",
+      "value": 1958,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In **1958**, **John McCarthy** at MIT invented **Lisp** (LISt Processing)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-8",
+      "subject": "algol-60",
+      "predicate": "year",
+      "value": 1960,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the **ALGOL 60** report of 1960",
+      "citation_keys": [
+        "algol60"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-9",
+      "subject": "algol-60",
+      "predicate": "revised_report_year",
+      "value": 1963,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "its revised report of 1963",
+      "citation_keys": [
+        "algol60"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-10",
+      "subject": "bohm-jacopini-theorem",
+      "predicate": "year",
+      "value": 1966,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "proved in 1966 by **Böhm and Jacopini**",
+      "citation_keys": [
+        "goto_harmful"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-11",
+      "subject": "simula",
+      "predicate": "year",
+      "value": 1967,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Simula (1967, Norway): the first object-oriented language.**",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-12",
+      "subject": "relational-model",
+      "predicate": "year",
+      "value": 1970,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1970, **Edgar Codd** at IBM published",
+      "citation_keys": [
+        "codd1970"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-13",
+      "subject": "unix",
+      "predicate": "ritchie_join_year",
+      "value": 1971,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(from about 1971) **Dennis Ritchie**",
+      "citation_keys": [
+        "unix_ts"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-14",
+      "subject": "altair-basic",
+      "predicate": "year",
+      "value": 1975,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Altair BASIC** (1975, written by Bill Gates and Paul Allen for the first personal computer kit)",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-15",
+      "subject": "make",
+      "predicate": "year",
+      "value": 1976,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In **1976**, **Stuart Feldman** at Bell Labs wrote **`make`**",
+      "citation_keys": [
+        "gnu_make"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-16",
+      "subject": "vax-vms",
+      "predicate": "year",
+      "value": 1977,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**VAX/VMS (1977, DEC).**",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-17",
+      "subject": "hindley-milner-type-inference",
+      "predicate": "year",
+      "value": 1978,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1978, **Robin Milner** (with **Hindley**)",
+      "citation_keys": [
+        "haskell"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-18",
+      "subject": "c-plus-plus",
+      "predicate": "start_year",
+      "value": 1979,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "began in 1979 with “C with Classes”",
+      "citation_keys": [
+        "isocpp"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-19",
+      "subject": "ada-language",
+      "predicate": "year",
+      "value": 1980,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Ada (1980): the language with a *mandate*.**",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-20",
+      "subject": "ibm-pc",
+      "predicate": "year",
+      "value": 1981,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The **IBM PC**, released in August 1981, used it.",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-21",
+      "subject": "psos",
+      "predicate": "year",
+      "value": 1982,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "created around 1982 by Alfred Chao",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-22",
+      "subject": "apple-lisa",
+      "predicate": "year",
+      "value": 1983,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Apple Lisa (1983)",
+      "citation_keys": [
+        "smalltalk"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-23",
+      "subject": "macintosh",
+      "predicate": "year",
+      "value": 1984,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Macintosh** (1984)",
+      "citation_keys": [
+        "smalltalk"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-24",
+      "subject": "windows-1-0",
+      "predicate": "year",
+      "value": 1985,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Windows 1.0** (1985) was a graphical shell over DOS",
+      "citation_keys": [
+        "windows_ms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-25",
+      "subject": "cvs",
+      "predicate": "year",
+      "value": 1986,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**CVS** (1986, **Dick Grune**)",
+      "citation_keys": [
+        "git"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-26",
+      "subject": "os-2",
+      "predicate": "year",
+      "value": 1987,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**OS/2**, released in 1987",
+      "citation_keys": [
+        "windows_ms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-27",
+      "subject": "nextstep",
+      "predicate": "year",
+      "value": 1989,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**NeXTSTEP** (1989)",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-28",
+      "subject": "windows-3-0",
+      "predicate": "year",
+      "value": 1990,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Windows 3.0** (1990)",
+      "citation_keys": [
+        "windows_ms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-29",
+      "subject": "python",
+      "predicate": "year",
+      "value": 1991,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Python (1991, Guido van Rossum): the language that *won* machine learning.**",
+      "citation_keys": [
+        "python"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-30",
+      "subject": "windows-3-1",
+      "predicate": "year",
+      "value": 1992,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**3.1** (1992)",
+      "citation_keys": [
+        "windows_ms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-31",
+      "subject": "os-2-warp",
+      "predicate": "year",
+      "value": 1994,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**OS/2 Warp** (1994)",
+      "citation_keys": [
+        "windows_ms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-32",
+      "subject": "apple-next-acquisition",
+      "predicate": "year",
+      "value": 1997,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "when Apple bought NeXT in 1997",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-33",
+      "subject": "subversion",
+      "predicate": "year",
+      "value": 2000,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Subversion** (2000, **CollabNet**)",
+      "citation_keys": [
+        "git"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-34",
+      "subject": "windows-xp",
+      "predicate": "year",
+      "value": 2001,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Windows XP** (2001)",
+      "citation_keys": [
+        "windows_ms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-35",
+      "subject": "zen-of-python",
+      "predicate": "year",
+      "value": 2004,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(**PEP 20**, 2004)",
+      "citation_keys": [
+        "python_zen"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-36",
+      "subject": "git",
+      "predicate": "year",
+      "value": 2005,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Git** (2005, **Linus Torvalds**)",
+      "citation_keys": [
+        "git"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-37",
+      "subject": "go-language",
+      "predicate": "year",
+      "value": 2009,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 2009, **Robert Griesemer**, **Rob Pike**, and **Ken Thompson**",
+      "citation_keys": [
+        "go_lang"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-38",
+      "subject": "rust-language",
+      "predicate": "start_year",
+      "value": 2010,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Rust (2010–2015, Graydon Hoare, Mozilla): the language that *solves* the *crash*.**",
+      "citation_keys": [
+        "rust_lang"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-39",
+      "subject": "trained-model-era",
+      "predicate": "start_year",
+      "value": 2012,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**The model** (2012–now)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-40",
+      "subject": "rust-language",
+      "predicate": "release_1_0_year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "It reached **1.0** in 2015",
+      "citation_keys": [
+        "rust_lang"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "software-gap-41",
+      "subject": "post-c-software",
+      "predicate": "span",
+      "value": 50,
+      "unit": "count",
+      "qualifiers": {
+        "duration": "years"
+      },
+      "quote": "the next 50 years of software",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-software-part",
-      "from": "software",
-      "to": "part-6",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 6",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-software-hero-of-alexandria",
       "from": "hero-of-alexandria",
@@ -539,6 +1077,452 @@
       "citation_keys": [
         "garmisch1968"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-ada-lovelace-first-algorithm",
+      "from": "ada-lovelace-first-algorithm",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "who in 1843 wrote what is recognized as the first algorithm intended for a machine",
+      "citation_keys": [
+        "lovelacequote"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-zuse-z1",
+      "from": "zuse-z1",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "built the **Z1** in 1938",
+      "citation_keys": [
+        "zusebook"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-hand-programming-era",
+      "from": "hand-programming-era",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Programming by Hand (1943–1950)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-a-0-compiler",
+      "from": "a-0-compiler",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hopper's **A-0** system (1952) was the **first compiler**",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-fortran",
+      "from": "fortran",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1957, a team at IBM led by **John Backus** built **FORTRAN**",
+      "citation_keys": [
+        "fortran2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-lisp",
+      "from": "lisp",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In **1958**, **John McCarthy** at MIT invented **Lisp** (LISt Processing)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-algol-60",
+      "from": "algol-60",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **ALGOL 60** report of 1960",
+      "citation_keys": [
+        "algol60"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-bohm-jacopini-theorem",
+      "from": "bohm-jacopini-theorem",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "proved in 1966 by **Böhm and Jacopini**",
+      "citation_keys": [
+        "goto_harmful"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-simula",
+      "from": "simula",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Simula (1967, Norway): the first object-oriented language.**",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-relational-model",
+      "from": "relational-model",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1970, **Edgar Codd** at IBM published",
+      "citation_keys": [
+        "codd1970"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-altair-basic",
+      "from": "altair-basic",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Altair BASIC** (1975, written by Bill Gates and Paul Allen for the first personal computer kit)",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-make",
+      "from": "make",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In **1976**, **Stuart Feldman** at Bell Labs wrote **`make`**",
+      "citation_keys": [
+        "gnu_make"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-vax-vms",
+      "from": "vax-vms",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**VAX/VMS (1977, DEC).**",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-hindley-milner-type-inference",
+      "from": "hindley-milner-type-inference",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1978, **Robin Milner** (with **Hindley**)",
+      "citation_keys": [
+        "haskell"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-c-plus-plus",
+      "from": "c-plus-plus",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "began in 1979 with “C with Classes”",
+      "citation_keys": [
+        "isocpp"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-ada-language",
+      "from": "ada-language",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Ada (1980): the language with a *mandate*.**",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-ibm-pc",
+      "from": "ibm-pc",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **IBM PC**, released in August 1981, used it.",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-psos",
+      "from": "psos",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "created around 1982 by Alfred Chao",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-apple-lisa",
+      "from": "apple-lisa",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Apple Lisa (1983)",
+      "citation_keys": [
+        "smalltalk"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-macintosh",
+      "from": "macintosh",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Macintosh** (1984)",
+      "citation_keys": [
+        "smalltalk"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-windows-1-0",
+      "from": "windows-1-0",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Windows 1.0** (1985) was a graphical shell over DOS",
+      "citation_keys": [
+        "windows_ms"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-cvs",
+      "from": "cvs",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**CVS** (1986, **Dick Grune**)",
+      "citation_keys": [
+        "git"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-os-2",
+      "from": "os-2",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**OS/2**, released in 1987",
+      "citation_keys": [
+        "windows_ms"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-nextstep",
+      "from": "nextstep",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**NeXTSTEP** (1989)",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-windows-3-0",
+      "from": "windows-3-0",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Windows 3.0** (1990)",
+      "citation_keys": [
+        "windows_ms"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-python",
+      "from": "python",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Python (1991, Guido van Rossum): the language that *won* machine learning.**",
+      "citation_keys": [
+        "python"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-windows-3-1",
+      "from": "windows-3-1",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**3.1** (1992)",
+      "citation_keys": [
+        "windows_ms"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-os-2-warp",
+      "from": "os-2-warp",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**OS/2 Warp** (1994)",
+      "citation_keys": [
+        "windows_ms"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-apple-next-acquisition",
+      "from": "apple-next-acquisition",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "when Apple bought NeXT in 1997",
+      "citation_keys": [
+        "chm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-subversion",
+      "from": "subversion",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Subversion** (2000, **CollabNet**)",
+      "citation_keys": [
+        "git"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-windows-xp",
+      "from": "windows-xp",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Windows XP** (2001)",
+      "citation_keys": [
+        "windows_ms"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-zen-of-python",
+      "from": "zen-of-python",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(**PEP 20**, 2004)",
+      "citation_keys": [
+        "python_zen"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-git",
+      "from": "git",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Git** (2005, **Linus Torvalds**)",
+      "citation_keys": [
+        "git"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-go-language",
+      "from": "go-language",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 2009, **Robert Griesemer**, **Rob Pike**, and **Ken Thompson**",
+      "citation_keys": [
+        "go_lang"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-rust-language",
+      "from": "rust-language",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Rust (2010–2015, Graydon Hoare, Mozilla): the language that *solves* the *crash*.**",
+      "citation_keys": [
+        "rust_lang"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-trained-model-era",
+      "from": "trained-model-era",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**The model** (2012–now)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-post-c-software",
+      "from": "post-c-software",
+      "to": "software",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the next 50 years of software",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-software-part",
+      "from": "software",
+      "to": "part-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 6",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

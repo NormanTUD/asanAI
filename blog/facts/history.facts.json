@@ -8,7 +8,6 @@
   "curated": true,
   "generated_by": "subagent-fact-audit",
   "citations": [
-    "wheelerindirection",
     "kleinetymology",
     "lomekwi",
     "livingdolls",
@@ -70,6 +69,7 @@
     "domarus1930logicalstructure",
     "domarus1944specificlaws",
     "woodger1937axiomatic",
+    "northrop1931sciencefirstprinciples",
     "gefter2015pitts",
     "smalheiser2000pitts",
     "mcculloch1945heterarchy",
@@ -77,7 +77,6 @@
     "salminictablesource",
     "aristotleandplato",
     "bochenski",
-    "northrop1931sciencefirstprinciples",
     "carnap1938logicalsyntax",
     "hilbert1928entscheidung",
     "russell1910principia",
@@ -96,17 +95,18 @@
     "mechanicalturkimage",
     "mechanicalturk",
     "standage2002turk",
-    "zusetoolazy",
-    "zusez1",
     "zusebook",
+    "zusez1",
     "turingimage",
     "turing1937",
     "shannon1937switching",
     "hnfmarki2019",
+    "ibm702image",
     "ibm702",
     "univac1951",
     "img_elektro_sparko",
     "marsh2018elektro",
+    "img_walter_tortoise",
     "nilsson1984qai",
     "minsky1954",
     "beurle1956wave",
@@ -339,9 +339,7 @@
       "unit": "name",
       "qualifiers": {},
       "quote": "We can solve any problem by introducing an extra level of indirection.",
-      "citation_keys": [
-        "wheelerindirection"
-      ],
+      "citation_keys": [],
       "confidence": "stated"
     },
     {
@@ -2756,7 +2754,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "Even with Hodgkin and Huxley's 1952 conductance-based models available",
-      "citation_keys": [],
+      "citation_keys": [
+        "abbott1999lapicque"
+      ],
       "confidence": "stated"
     },
     {
@@ -3255,7 +3255,10 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "When Dusser died in 1940",
-      "citation_keys": [],
+      "citation_keys": [
+        "abraham2002physio",
+        "abraham2003mcculloch"
+      ],
       "confidence": "stated"
     },
     {
@@ -3296,7 +3299,11 @@
         "approx": true
       },
       "quote": "Around 1929 he realized that the all-or-none impulse of a neuron fit the description",
-      "citation_keys": [],
+      "citation_keys": [
+        "mccullochpitts1943",
+        "mcculloch1965embodiments",
+        "abraham2002physio"
+      ],
       "confidence": "stated"
     },
     {
@@ -3324,7 +3331,10 @@
         "institution": "Rockland State Hospital"
       },
       "quote": "In 1932 McCulloch was training at Rockland State Hospital",
-      "citation_keys": [],
+      "citation_keys": [
+        "domarus1930logicalstructure",
+        "domarus1944specificlaws"
+      ],
       "confidence": "stated"
     },
     {
@@ -3409,7 +3419,11 @@
         "institution": "Yale"
       },
       "quote": "he also attended Clark Hull's Wednesday-evening seminar at Yale in 1936",
-      "citation_keys": [],
+      "citation_keys": [
+        "mccullochpitts1943",
+        "northrop1931sciencefirstprinciples",
+        "abraham2002physio"
+      ],
       "confidence": "stated"
     },
     {
@@ -5861,7 +5875,7 @@
       "qualifiers": {},
       "quote": "I was too lazy to calculate by hand.",
       "citation_keys": [
-        "zusetoolazy"
+        "zusebook"
       ],
       "confidence": "stated"
     },
@@ -6397,7 +6411,11 @@
         "description": "IBM's first business computer"
       },
       "quote": "### IBM 702: IBM's First Business Computer (1953)",
-      "citation_keys": [],
+      "citation_keys": [
+        "ibm702image",
+        "ibm702",
+        "univac1951"
+      ],
       "confidence": "stated"
     },
     {
@@ -6512,7 +6530,9 @@
         "description": "robot as theatre"
       },
       "quote": "### Elektro the Moto-Man: the robot as theatre (1939)",
-      "citation_keys": [],
+      "citation_keys": [
+        "img_elektro_sparko"
+      ],
       "confidence": "stated"
     },
     {
@@ -6659,7 +6679,9 @@
         "builder": "W. Grey Walter"
       },
       "quote": "### The Electric Tortoise: Machina speculatrix (1948)",
-      "citation_keys": [],
+      "citation_keys": [
+        "img_walter_tortoise"
+      ],
       "confidence": "stated"
     },
     {
@@ -6776,7 +6798,9 @@
         "description": "first physical neural network"
       },
       "quote": "### The SNARC: The First Physical Neural Network (1951)",
-      "citation_keys": [],
+      "citation_keys": [
+        "mccullochpitts1943"
+      ],
       "confidence": "stated"
     },
     {
@@ -6916,7 +6940,9 @@
         "contribution": "re-introduced recurrent attractor networks"
       },
       "quote": "Hopfield's 1982 paper re-introduced the field to recurrent attractor networks",
-      "citation_keys": [],
+      "citation_keys": [
+        "beurle1956wave"
+      ],
       "confidence": "stated"
     },
     {
@@ -8285,7 +8311,10 @@
         "description": "perceptron-like pattern-recognition device"
       },
       "quote": "#### Farley and Clark: The Network That Came First (1954)",
-      "citation_keys": [],
+      "citation_keys": [
+        "farleyclark1954",
+        "joseph1961perceptron"
+      ],
       "confidence": "stated"
     },
     {
@@ -10962,7 +10991,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "the *associative-memory* idea was already an engineering project in 1961, two decades before the cognitive-science revival made it famous",
-      "citation_keys": [],
+      "citation_keys": [
+        "joseph1961perceptron"
+      ],
       "confidence": "stated"
     },
     {
@@ -13786,7 +13817,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "Minsky and Papert's Critique (1969)",
-      "citation_keys": [],
+      "citation_keys": [
+        "minskyperceptrons"
+      ],
       "confidence": "stated"
     },
     {
@@ -14078,7 +14111,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "The Lighthill Report (1973) and the Collapse (1974–1980)",
-      "citation_keys": [],
+      "citation_keys": [
+        "lighthillreport"
+      ],
       "confidence": "stated"
     },
     {
@@ -14504,7 +14539,9 @@
       "predicate": "publication_year",
       "value": 1972,
       "unit": "year",
-      "qualifiers": {},
+      "qualifiers": {
+        "variant": "1972-book"
+      },
       "quote": "attacked symbolic AI from the side of phenomenology",
       "citation_keys": [
         "dreyfus1972what"
@@ -14517,7 +14554,9 @@
       "predicate": "publication_year",
       "value": 1992,
       "unit": "year",
-      "qualifiers": {},
+      "qualifiers": {
+        "variant": "1992-book"
+      },
       "quote": "Dreyfus's 1992 *What Computers Still Can't Do*, written after the second AI winter, was widely read as a vindication.",
       "citation_keys": [],
       "confidence": "stated"
@@ -14607,7 +14646,10 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "it was printed in the *New York Times* in 1967.",
-      "citation_keys": [],
+      "citation_keys": [
+        "harmon1973faces",
+        "harmonwiki"
+      ],
       "confidence": "stated"
     },
     {
@@ -14706,7 +14748,10 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "#### Fukushima's Neocognitron (1980)",
-      "citation_keys": [],
+      "citation_keys": [
+        "hubelwiesel",
+        "neocognitron"
+      ],
       "confidence": "stated"
     },
     {
@@ -14776,7 +14821,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "#### Backpropagation Before Backpropagation: Rosenblatt's 1961 Report",
-      "citation_keys": [],
+      "citation_keys": [
+        "rosenblattbackprop"
+      ],
       "confidence": "stated"
     },
     {
@@ -14870,7 +14917,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "#### Rumelhart, Hinton, and Williams (1986)",
-      "citation_keys": [],
+      "citation_keys": [
+        "rumelhart1986"
+      ],
       "confidence": "stated"
     },
     {
@@ -15205,7 +15254,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "#### The “Vanishing Gradient” Problem (1991)",
-      "citation_keys": [],
+      "citation_keys": [
+        "hochreiter1991vanishing"
+      ],
       "confidence": "stated"
     },
     {
@@ -15938,7 +15989,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "This arrived with NVIDIA's release of **CUDA** in 2006",
-      "citation_keys": [],
+      "citation_keys": [
+        "raina2009large"
+      ],
       "confidence": "stated"
     },
     {
@@ -16332,7 +16385,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "#### Highway Networks: The First Very Deep Feedforward NNs (2015)",
-      "citation_keys": [],
+      "citation_keys": [
+        "highway2015"
+      ],
       "confidence": "stated"
     },
     {
@@ -16457,7 +16512,9 @@
       "predicate": "milestone_year",
       "value": 1997,
       "unit": "year",
-      "qualifiers": {},
+      "qualifiers": {
+        "variant": "milestone-1997"
+      },
       "quote": "**1997:** LSTM introduces plain recurrent residual connections (weight 1.0)",
       "citation_keys": [],
       "confidence": "stated"
@@ -16479,9 +16536,13 @@
       "predicate": "milestone_year",
       "value": 2005,
       "unit": "year",
-      "qualifiers": {},
+      "qualifiers": {
+        "variant": "milestone-2005"
+      },
       "quote": "**2005:** Unfolding LSTM leads from recurrent to feedforward residual NNs",
-      "citation_keys": [],
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
       "confidence": "stated"
     },
     {
@@ -16555,7 +16616,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "### The Transformer and Attention (2017)",
-      "citation_keys": [],
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
       "confidence": "stated"
     },
     {
@@ -16647,7 +16710,9 @@
       "predicate": "publication_year",
       "value": 1948,
       "unit": "year",
-      "qualifiers": {},
+      "qualifiers": {
+        "variant": "1948-paper"
+      },
       "quote": "His 1948 paper laid the mathematical foundation",
       "citation_keys": [
         "shannon1948communication"
@@ -16660,7 +16725,9 @@
       "predicate": "publication_year",
       "value": 1951,
       "unit": "year",
-      "qualifiers": {},
+      "qualifiers": {
+        "variant": "1951-paper"
+      },
       "quote": "his 1951 paper on the entropy of printed English made the prediction view explicit",
       "citation_keys": [
         "shannon1951communication"
@@ -18297,6 +18364,45 @@
       "quote": "fulfills the trajectory started by Lovelace: reducing the mechanics of thought to a manageable, symbolic architecture.",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "history-gap3-1",
+      "subject": "thomas2008torres",
+      "predicate": "citation_year",
+      "value": 2008,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Thomas, 2008]{thomas2008torres})",
+      "citation_keys": [
+        "thomas2008torres"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "history-gap3-2",
+      "subject": "chinese-room-question",
+      "predicate": "unresolved_as_of",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "LLMs in 2026 have not answered it; they have only made the question louder.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "history-gap3-3",
+      "subject": "dependency-grammar",
+      "predicate": "predates_modern_nlp_by",
+      "value": 40,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Predates Modern NLP by 40 Years",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -18313,18 +18419,6 @@
       "confidence": "inferred"
     },
     {
-      "id": "derived-skull-of-balsamo-invented-copper",
-      "from": "skull-of-balsamo",
-      "to": "copper",
-      "kind": "invented",
-      "qualifiers": {},
-      "quote": "a copper skull that “answered” by clicking its teeth",
-      "citation_keys": [
-        "brazenheadwiki"
-      ],
-      "confidence": "inferred"
-    },
-    {
       "id": "derived-blanquerna-wrote-ramon-llull",
       "from": "blanquerna",
       "to": "ramon-llull",
@@ -18332,18 +18426,6 @@
       "qualifiers": {},
       "quote": "One of the earliest novels in medieval Europe after antiquity, *Blanquerna*",
       "citation_keys": [],
-      "confidence": "inferred"
-    },
-    {
-      "id": "derived-george-boole-wrote-laws-of-thought",
-      "from": "george-boole",
-      "to": "laws-of-thought",
-      "kind": "wrote",
-      "qualifiers": {},
-      "quote": "In \\citetitle{bool1854}, he reduced Aristotelian logic to algebraic equations",
-      "citation_keys": [
-        "bool1854"
-      ],
       "confidence": "inferred"
     },
     {
@@ -18369,16 +18451,6 @@
       "citation_keys": [
         "hnfweizenbaum2023"
       ],
-      "confidence": "inferred"
-    },
-    {
-      "id": "derived-m-warshaw-wrote-compute",
-      "from": "m-warshaw",
-      "to": "compute",
-      "kind": "wrote",
-      "qualifiers": {},
-      "quote": "**M. Warshaw** at RAND computed the *actual* distribution of the output unit's input on a high-speed computer",
-      "citation_keys": [],
       "confidence": "inferred"
     },
     {
@@ -18471,7 +18543,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "later led to the invention of the wheel",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-wolf-bone-venus",
@@ -18480,7 +18553,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "a fragment of the head of an ivory Venus figurine lay right next to it",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-brahmagupta-zero",
@@ -18492,7 +18566,8 @@
       "citation_keys": [
         "brahmagupta628",
         "historyofmath_wikipedia"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-jiuzhang-negative",
@@ -18503,7 +18578,8 @@
       "quote": "the first use of negative numbers anywhere",
       "citation_keys": [
         "historyofmath_wikipedia"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-uqlidisi-decimals",
@@ -18525,7 +18601,8 @@
       "quote": "some two millennia before \\citeauthor{leibniz1686calculus} formalized binary notation",
       "citation_keys": [
         "historyofmath_wikipedia"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-salamis-analytical-store",
@@ -18534,7 +18611,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "Like the “Store” in **Babbage's** designs, the slab functioned as an external memory bank for intermediate sums.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-salamis-roman-abacus",
@@ -18543,7 +18621,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "it paved the way for the portable **Roman Hand Abacus** and the eventual bead-and-wire **Suanpan** (China) and **Soroban** (Japan)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-salamis-suanpan",
@@ -18552,7 +18631,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "it paved the way for the portable **Roman Hand Abacus** and the eventual bead-and-wire **Suanpan** (China) and **Soroban** (Japan)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-salamis-soroban",
@@ -18561,7 +18641,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "it paved the way for the portable **Roman Hand Abacus** and the eventual bead-and-wire **Suanpan** (China) and **Soroban** (Japan)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-zeno-aristotle",
@@ -18572,7 +18653,8 @@
       "quote": "his work was the culmination of a tradition beginning with **Zeno of Elea**",
       "citation_keys": [
         "aristotleanalytics"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-socrates-plato-aristotle",
@@ -18583,7 +18665,8 @@
       "quote": "Aristotle synthesized these influences to create the **Syllogism**",
       "citation_keys": [
         "bochenski"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-aristotle-syllogism",
@@ -18601,7 +18684,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "are the direct heirs of Pāṇini's eight chapters",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-zuse-antikythera",
@@ -18632,7 +18716,8 @@
       "quote": "who collected the rumors about the polymath **Pope Sylvester II**",
       "citation_keys": [
         "brazenheadwiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-brazen-head-roger-bacon",
@@ -18652,7 +18737,8 @@
       "quote": "like the Norse wisdom-head of **Mímir** or the bronze guardian **Talos** of Crete",
       "citation_keys": [
         "brazenheadwiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-brazen-head-talos",
@@ -18674,7 +18760,8 @@
       "quote": "in 1837 the Viennese magician **Joseffy** built a real mechanical descendant",
       "citation_keys": [
         "brazenheadwiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-skull-brazen-head",
@@ -18685,7 +18772,8 @@
       "quote": "built a real mechanical descendant, the singing, jaw-clicking **Skull of Balsamo**",
       "citation_keys": [
         "brazenheadwiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-zairja-volvelle",
@@ -18696,7 +18784,8 @@
       "quote": "inspired by the early-arabic astrological Zairja",
       "citation_keys": [
         "volvelles"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-llull-volvelle",
@@ -18707,7 +18796,8 @@
       "quote": "he designed a system of rotating, concentric paper circles inscribed with letters representing fundamental philosophical and theological concepts",
       "citation_keys": [
         "arsmagna"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-llull-blanquerna",
@@ -18716,7 +18806,8 @@
       "kind": "wrote",
       "qualifiers": {},
       "quote": "One of the earliest novels in medieval Europe after antiquity, *Blanquerna* (\\citetitle{blanquerna}), was by him",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-zhao-llull",
@@ -18739,7 +18830,8 @@
       "citation_keys": [
         "arsmagna",
         "leibniz1686calculus"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-analytical-difference",
@@ -18757,7 +18849,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "The transition from Leibniz's theoretical calculus to physical machinery found its most ambitious expression in the work of **Charles Babbage**.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-analytical-jacquard",
@@ -18766,7 +18859,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "a technique borrowed from the Jacquard loom",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-lovelace-analytical",
@@ -18786,7 +18880,8 @@
       "quote": "he reduced Aristotelian logic to algebraic equations",
       "citation_keys": [
         "bool1854"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-boole-leibniz",
@@ -18797,7 +18892,8 @@
       "quote": "achieved what Leibniz had only dreamed of: a formal calculus of the mind",
       "citation_keys": [
         "bool1854"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-cajal-neuron-doctrine",
@@ -18808,7 +18904,8 @@
       "quote": "thereby establishing the **Neuron Doctrine**",
       "citation_keys": [
         "neuron_doctrine_wiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-neuron-reticular-contradicts",
@@ -18819,7 +18916,8 @@
       "quote": "the **Reticular Theory** was the opposing view, defended by Golgi",
       "citation_keys": [
         "neuron_doctrine_wiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-golgi-reticular",
@@ -18861,7 +18959,8 @@
       "quote": "the paper that introduced what we now call the **integrate-and-fire** neuron",
       "citation_keys": [
         "lapicque1907"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-amari-lenz-ising",
@@ -18872,7 +18971,8 @@
       "quote": "made this recurrent architecture <b>adaptive</b>",
       "citation_keys": [
         "amari1972"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-hopfield-amari",
@@ -18892,7 +18992,8 @@
       "quote": "the paper grew out of a specific Chicago milieu — Rashevsky's mathematical biophysics",
       "citation_keys": [
         "abraham2002physio"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-rashevsky-pitts",
@@ -18901,7 +19002,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "around him gathered Alston S. Householder, Herbert D. Landahl, and the young Walter Pitts",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-rashevsky-bulletin",
@@ -18910,7 +19012,8 @@
       "kind": "founded",
       "qualifiers": {},
       "quote": "In 1939 he founded the *Bulletin of Mathematical Biophysics*",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-mcculloch-pitts-bulletin",
@@ -18928,7 +19031,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "McCulloch co-authored more than twenty papers with him",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-domarus-northrop",
@@ -18950,7 +19054,8 @@
       "quote": "biology, he thought, was making that transition through J. H. Woodger's *The Axiomatic Method in Biology*",
       "citation_keys": [
         "woodger1937axiomatic"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-mcculloch-domarus",
@@ -18959,7 +19064,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "where he met Eilhard von Domarus",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-mcculloch-pitts-met",
@@ -18968,7 +19074,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "where he met Jerome Lettvin and Walter Pitts",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-pair-leibniz",
@@ -18979,7 +19086,8 @@
       "quote": "What they discovered in their first conversation was a shared hero: Gottfried Leibniz",
       "citation_keys": [
         "gefter2015pitts"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-pitts-mcculloch-pitts",
@@ -19012,7 +19120,8 @@
       "quote": "by Lettvin, Maturana, McCulloch and Pitts",
       "citation_keys": [
         "lettvin1959frog"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-mcculloch-frog-paper",
@@ -19023,7 +19132,8 @@
       "quote": "by Lettvin, Maturana, McCulloch and Pitts",
       "citation_keys": [
         "lettvin1959frog"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-mcculloch-after-pitts",
@@ -19036,7 +19146,8 @@
       "quote": "McCulloch died four months later, in September 1969",
       "citation_keys": [
         "gefter2015pitts"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-wiener-pitts",
@@ -19058,7 +19169,8 @@
       "quote": "Two blows deepened the depression: a break with Norbert Wiener, who had been a father figure, and the frog's-eye experiments",
       "citation_keys": [
         "gefter2015pitts"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-mcculloch-pitts-psychon",
@@ -19078,7 +19190,8 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "the small wartime group around Wiener and von Neumann — McCulloch, Pitts, Rosenblueth, Bigelow and others",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-teleological-mcculloch-member",
@@ -19087,7 +19200,8 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "the small wartime group around Wiener and von Neumann — McCulloch, Pitts, Rosenblueth, Bigelow and others",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-teleological-wiener-member",
@@ -19096,7 +19210,8 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "the small wartime group around Wiener and von Neumann",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-edvac-cites-mcp",
@@ -19105,7 +19220,8 @@
       "kind": "cites",
       "qualifiers": {},
       "quote": "cited exactly one paper — “A Logical Calculus”",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-edvac-uses-mcp-gates",
@@ -19114,7 +19230,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "proposed building the machine from McCulloch–Pitts-style logic gates",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-pitts-loops-influence-von-neumann",
@@ -19123,7 +19240,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "he supplied the loops that became memory",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-von-neumann-critique-mcp",
@@ -19132,7 +19250,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "the paper had shown, “in absolute and hopeless generality,” that any behaviour could be produced by some neural mechanism",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-universals-pitts-author",
@@ -19159,7 +19278,8 @@
       "kind": "contradicts",
       "qualifiers": {},
       "quote": "Karl Lashley objected that the theory explained a behaviour “that never occurs in the intact organism”",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-kohler-contradicts-universals",
@@ -19168,7 +19288,8 @@
       "kind": "contradicts",
       "qualifiers": {},
       "quote": "Wolfgang Köhler called its histological assumptions ad hoc",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-mackay-contradicts-universals",
@@ -19177,7 +19298,8 @@
       "kind": "contradicts",
       "qualifiers": {},
       "quote": "by McCulloch's account it should have destroyed the ability to perceive form, and it did not",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-wiener-bridge-von-neumann",
@@ -19195,7 +19317,8 @@
       "kind": "founded",
       "qualifiers": {},
       "quote": "and his circle coined it in the summer of 1947",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-torres-invent-el-ajedrecista",
@@ -19204,7 +19327,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "invented by Leonardo Torres Quevedo",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-turing-test-descends-turk",
@@ -19213,7 +19337,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "is the ancestor of the challenge-based test that would, a century and a half later, be formalized as the **Turing test**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-babbage-played-turk",
@@ -19222,7 +19347,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "In **1819** he played the machine twice and lost both matches.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-z3-descends-z1",
@@ -19231,7 +19357,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "His Z-series evolved from the mechanical **Z1**, which used sliding metal plates but suffered from frequent jams, to the **Z3** (1941)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-zuse-invent-plankalkul",
@@ -19240,7 +19367,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "He even pioneered the first high-level programming language, **Plankalkül**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-zuse-follows-babbage",
@@ -19249,7 +19377,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "based on earlier ideas of Leibniz, Babbage, Llull, and, in parts, of Aristotle",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-turing-designed-ace",
@@ -19258,7 +19387,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "he designed the Automatic Computing Engine (ACE)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-turing-uses-bombe",
@@ -19267,7 +19397,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "led the cryptanalysis at Bletchley Park using the “Bombe.”",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-turing-invent-turing-test",
@@ -19285,7 +19416,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "was said to have passed a version of the test by playing a thirteen-year-old with English as a second language",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-shannon-uses-boolean-algebra",
@@ -19294,7 +19426,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "were isomorphic to the truth values of Boolean logic",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-shannon-invent-theseus",
@@ -19312,7 +19445,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "Inspired by Babbage's Analytical Engine",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-von-neumann-uses-mark-i",
@@ -19321,7 +19455,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "on 29 March 1944, **John von Neumann** had already used it for calculations for the secret atomic-bomb project",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-von-neumann-invent-architecture",
@@ -19339,7 +19474,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "a direct response to Remington Rand's UNIVAC",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-sparko-companion-elektro",
@@ -19357,7 +19493,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "built small wheeled machines whose \"brains\" were simple vacuum-tube circuits",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-brooks-follows-machina",
@@ -19366,7 +19503,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "Rodney Brooks's behavior-based robotics of the 1980s explicitly drew on the same approach",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-minsky-invent-snarc",
@@ -19384,7 +19522,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "Inspired directly by the theoretical logic calculus",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-beurle-before-hopfield",
@@ -19393,7 +19532,8 @@
       "kind": "before",
       "qualifiers": {},
       "quote": "A decade before Hopfield's 1982 paper re-introduced the field to recurrent attractor networks",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-neural-field-follows-beurle",
@@ -19402,7 +19542,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "it anticipates the **continuum-field** model of cortical activity that modern neural-field theories (Amari 1977, Wilson–Cowan 1972/73, Jirsa–Kelso 2000) all descend from",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-mcp-before-hebb",
@@ -19438,7 +19579,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "he knew he was reaching back to Ampère's term",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-ampere-invent-cybernetique",
@@ -19447,7 +19589,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "one of which he called **cybernétique**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-ashby-invent-homeostat",
@@ -19456,7 +19599,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "His **Homeostat** (1948) wired four scrapped Royal-Air-Force bomb-control units",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-good-regulator-follows-requisite-variety",
@@ -19465,7 +19609,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "Conant and Ashby sharpened this in 1970 into the **Good Regulator Theorem**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-bateson-invent-double-bind",
@@ -19474,7 +19619,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "With Jackson, Haley and Weakland he worked out the **double bind**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-bateson-shapes-second-order",
@@ -19483,7 +19629,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "he turned the lens onto the observer and helped shape **second-order cybernetics**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-mead-second-order",
@@ -19492,7 +19639,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "with Margaret Mead's 1967 address as a defining moment",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-dartmouth-splits-cybernetics",
@@ -19501,7 +19649,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "it split off from cybernetics",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-bain-grounds-hebb",
@@ -19510,7 +19659,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "laying the groundwork for what modern neuroscience would eventually call **Hebbian Theory**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-farley-clark-before-perceptron",
@@ -19519,7 +19669,8 @@
       "kind": "before",
       "qualifiers": {},
       "quote": "had already built a perceptron-like pattern-recognition device",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-farley-clark-influences-rosenblatt",
@@ -19528,7 +19679,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "the same basic skeleton that Rosenblatt later scaled up",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-rosenblatt-invent-perceptron",
@@ -19537,7 +19689,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "introduced the **Perceptron**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-perceptron-follows-hebb",
@@ -19546,7 +19699,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "published that neurons in the brain get a stronger connection to each other when they often fire together",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-perceptron-follows-mcp-neuron",
@@ -19555,7 +19709,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "the idea of neurons proposed by",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-rosenblatt-invent-mark-i",
@@ -19564,7 +19719,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "His physical implementation, the **Mark I Perceptron**, was a massive hardware system",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-rosenblatt-invent-tobermory",
@@ -19573,7 +19729,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "his follow-on machine, **Tobermory**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-minsky-critiques-perceptron",
@@ -19582,7 +19739,8 @@
       "kind": "contradicts",
       "qualifiers": {},
       "quote": "two years after Minsky and Papert's critique appeared",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-newell-simon-write-logic-theorist",
@@ -19591,7 +19749,8 @@
       "kind": "wrote",
       "qualifiers": {},
       "quote": "presented the **Logic Theorist** (LT)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-herbert-simon-write-logic-theorist",
@@ -19600,7 +19759,8 @@
       "kind": "wrote",
       "qualifiers": {},
       "quote": "presented the **Logic Theorist** (LT)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-gps-follows-logic-theorist",
@@ -19627,7 +19787,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "Two programs from the years after Dartmouth showed that the Logic Theorist's search machinery could be pointed at more than logic",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-saint-follows-logic-theorist",
@@ -19636,7 +19797,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "Two programs from the years after Dartmouth showed that the Logic Theorist's search machinery could be pointed at more than logic",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-macsyma-follows-saint",
@@ -19663,7 +19825,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "traced their intellectual lineage to",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-proceduralists-around-minsky",
@@ -19681,7 +19844,8 @@
       "kind": "contradicts",
       "qualifiers": {},
       "quote": "was the scruffy camp's counter-move to pure logic",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-llm-acting-rationally",
@@ -19699,7 +19863,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "the **Logic Theorist** and **GPS** imitated human problem-solving",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-gps-thinking-humanly",
@@ -19708,7 +19873,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "the **Logic Theorist** and **GPS** imitated human problem-solving",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-mccarthy-coins-ai-term",
@@ -19726,7 +19892,8 @@
       "kind": "wrote",
       "qualifiers": {},
       "quote": "when **John McCarthy**, along with Marvin Minsky, Nathaniel Rochester, and Claude Shannon, submitted it",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-minsky-writes-dartmouth-proposal",
@@ -19735,7 +19902,8 @@
       "kind": "wrote",
       "qualifiers": {},
       "quote": "when **John McCarthy**, along with Marvin Minsky, Nathaniel Rochester, and Claude Shannon, submitted it",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-shannon-writes-dartmouth-proposal",
@@ -19744,7 +19912,8 @@
       "kind": "wrote",
       "qualifiers": {},
       "quote": "when **John McCarthy**, along with Marvin Minsky, Nathaniel Rochester, and Claude Shannon, submitted it",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-rosenblatt-invented-perceptron",
@@ -19766,7 +19935,8 @@
       "quote": "He wrote it across the Cornell Aeronautical Laboratory in Buffalo and Cornell University in Ithaca",
       "citation_keys": [
         "rosenblatt1962neurodynamics"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-perceptron-derived-hebb",
@@ -19775,7 +19945,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "it is Hebb's rule made precise by adding an error signal",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-rosenblatt-derived-hebb",
@@ -19784,7 +19955,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "he gave Hebb's intuitive idea a mathematical error-correction mechanism",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-mcculloch-pitts-instance-monotypic",
@@ -19795,7 +19967,8 @@
       "quote": "the McCulloch–Pitts logical neuron and the automata built on it are the canonical case",
       "citation_keys": [
         "rosenblatt1962neurodynamics"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-rosenblatt-uses-genotypic",
@@ -19806,7 +19979,8 @@
       "quote": "That was the road Rosenblatt took",
       "citation_keys": [
         "rosenblatt1962neurodynamics"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-hebb-influenced-rosenblatt",
@@ -19861,7 +20035,8 @@
       "quote": "his probabilistic outlook as shared with Ashby, Uttley, Minsky, MacKay, and von Neumann",
       "citation_keys": [
         "rosenblatt1962neurodynamics"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-lashley-influenced-perceptron",
@@ -19894,7 +20069,8 @@
         "rosenblatt1962neurodynamics",
         "block1962perceptron",
         "novikoff1963convergence"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-widrow-related-adaline",
@@ -19905,7 +20081,8 @@
       "quote": "His **ADALINE** (ADaptive LInear NEtwork) was a single neural element",
       "citation_keys": [
         "widrow1960adaline"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-widrow-related-hoff",
@@ -19916,7 +20093,8 @@
       "quote": "he and one of his students, **Marcian \"Ted\" Hoff Jr.**",
       "citation_keys": [
         "widrow1960adaline"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-madaline-derived-adaline",
@@ -19938,7 +20116,8 @@
       "quote": "The training procedure was a perceptron-style error-correction rule",
       "citation_keys": [
         "roberts1960perceptron"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-roberts-before-ivakhnenko",
@@ -19947,7 +20126,8 @@
       "kind": "before",
       "qualifiers": {},
       "quote": "the *fully* trainable version came later, with Ivakhnenko's GMDH (1965)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-steinbuch-invented-lernmatrix",
@@ -19976,7 +20156,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "Like the perceptron, it learns input–output associations from examples",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-steinbuch-related-kybernetik",
@@ -19994,7 +20175,8 @@
       "kind": "contradicts",
       "qualifiers": {},
       "quote": "The statistician **I. J. Good** gave an IBM lecture, \"Speculations on Perceptrons and Other Automata,\" that criticized the work",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-rosenblatt-influenced-warshaw",
@@ -20021,7 +20203,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "and the probabilist **H. Kesten** sharpened that bound",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-bledsoe-browning-related-ntuple",
@@ -20043,7 +20226,8 @@
       "quote": "rivaled the perceptron for a decade",
       "citation_keys": [
         "nilsson1984qai"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-charles-rosen-related-rosenblatt",
@@ -20072,7 +20256,8 @@
       "quote": "Their method, known as the **Group Method of Data Handling (GMDH)**",
       "citation_keys": [
         "ivakhnenko1965"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-ivakhnenko-before-bongard",
@@ -20083,7 +20268,8 @@
       "quote": "A year after Ivakhnenko's GMDH, the Moscow Institute for Information Transmission Problems",
       "citation_keys": [
         "bongard1966pattern"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-ivakhnenko-part-soviet-ai",
@@ -20121,7 +20307,8 @@
       "quote": "Two years after Ivakhnenko's layer-by-layer approach (so around 1967)",
       "citation_keys": [
         "adaptivepattern"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-saito-related-amari",
@@ -20132,7 +20319,8 @@
       "quote": "His student Saito implemented this",
       "citation_keys": [
         "adaptivepattern"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-weaver-related-wiener",
@@ -20154,7 +20342,8 @@
       "quote": "Wiener, who had spent the war predicting where aircraft would be, was unconvinced",
       "citation_keys": [
         "nilsson1984qai"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-weaver-founded-machine-translation",
@@ -20165,7 +20354,8 @@
       "quote": "which is generally credited with initiating the field of **machine translation (MT)**",
       "citation_keys": [
         "nilsson1984qai"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-ibm-georgetown-part-machine-translation",
@@ -20176,7 +20366,8 @@
       "quote": "a collaboration between **IBM** and **Georgetown University**, running on the IBM 701, translated short Russian sentences into English",
       "citation_keys": [
         "georgetown_ibm_1954"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-bar-hillel-contradicts-machine-translation",
@@ -20187,7 +20378,8 @@
       "quote": "He concluded that fully automatic high-quality translation was infeasible \"not only in the near future but altogether\"",
       "citation_keys": [
         "nilsson1984qai"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-alpac-contradicts-machine-translation",
@@ -20207,7 +20399,8 @@
       "quote": "the basic unit of syntactic description is not the **phrase** (as in Pāṇini's phrase-structure rules and in Chomsky's later constituent-structure trees) but the **dependency relation**",
       "citation_keys": [
         "tesniere1959deps"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-nlp-derived-tesniere",
@@ -20216,7 +20409,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "how much modern NLP silently inherits from it",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-dependency-parsing-derived-tesniere",
@@ -20225,7 +20419,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "The Stanford, Universal Dependencies, spaCy, and Stanza parsers all produce exactly Tesnière's dependency trees",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-dependency-tree-related-constituent-structure",
@@ -20243,7 +20438,8 @@
       "kind": "before",
       "qualifiers": {},
       "quote": "only two years after Chomsky's *Syntactic Structures* (1957)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-strachey-before-racter",
@@ -20265,7 +20461,8 @@
       "quote": "These experiments predate\nRacter by decades",
       "citation_keys": [
         "lutz1959"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-shannon-influenced-lutz",
@@ -20287,7 +20484,8 @@
       "quote": "the paper that introduced the **VC dimension** and the **VC inequality**",
       "citation_keys": [
         "vapnik1964vc"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-vapnik-related-cortes",
@@ -20296,7 +20494,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "his joint work with Cortes on the **support vector machine** (1995)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-vapnik-related-ivakhnenko",
@@ -20318,7 +20517,8 @@
       "quote": "anticipating the core logic of the algorithm that would later be generalized by \\citeauthor{linnainmaa1970} in \\citeyear{linnainmaa1970}",
       "citation_keys": [
         "linnainmaa1970"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-dreyfus-bryson-related-kelley",
@@ -20327,7 +20527,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "See also the related early 1960s work of Stuart Dreyfus and Arthur E. Bryson in control theory.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-ibm-invented-gemini-computer",
@@ -20384,7 +20585,8 @@
       "citation_keys": [
         "ibmpc",
         "historyofpc"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-compaq-related-ibm",
@@ -20407,7 +20609,8 @@
       "quote": "reconstructs the Mark I from the perspective of Thomas Osborn",
       "citation_keys": [
         "jensen2026perceptron"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-osborn-related-mark-i",
@@ -20418,7 +20621,8 @@
       "quote": "Thomas Osborn, a Cornell undergraduate hired as a “worker bee” at the Cornell Aeronautical Laboratory in Buffalo to solder its six-foot racks in the fall of 1959",
       "citation_keys": [
         "jensen2026perceptron"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-minos-iii-uses-sds-910",
@@ -20427,7 +20631,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "the net now ran alongside an SDS 910",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-hebb-related-milner",
@@ -20438,7 +20643,8 @@
       "quote": "His students included Brenda Milner",
       "citation_keys": [
         "hebbwiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-minsky-papert-book",
@@ -20465,7 +20671,8 @@
       "kind": "caused",
       "qualifiers": {},
       "quote": "This limitation contributed to the **First AI Winter**.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-backprop-connectionism",
@@ -20474,7 +20681,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "which reignited interest in connectionist models",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-mcculloch-rosenblatt",
@@ -20483,7 +20691,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "The neurons Rosenblatt studied only had discrete outputs, as suggested by",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-lighthill-first-winter",
@@ -20492,7 +20701,8 @@
       "kind": "caused",
       "qualifiers": {},
       "quote": "It led to a “deep freeze” in the field known as the **First AI Winter**.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-lighthill-freddy",
@@ -20501,7 +20711,8 @@
       "kind": "caused",
       "qualifiers": {},
       "quote": "His FREDDY robot and other Edinburgh AI work were among its casualties",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-dreyfus-symbolic",
@@ -20510,7 +20721,8 @@
       "kind": "contradicts",
       "qualifiers": {},
       "quote": "attacked symbolic AI from the side of phenomenology",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-second-winter-dreyfus",
@@ -20519,7 +20731,8 @@
       "kind": "before",
       "qualifiers": {},
       "quote": "written after the second AI winter",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-fukushima-neocognitron",
@@ -20528,7 +20741,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "he developed the **\\citealternativetitle{neocognitron}**, a hierarchical network inspired by the visual cortex.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-rosenblatt-report",
@@ -20546,7 +20760,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "The combination of Fukushima's architecture and Rumelhart's training algorithm set the stage for the deep learning revolution.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-backprop-deeplearning",
@@ -20555,7 +20770,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "The combination of Fukushima's architecture and Rumelhart's training algorithm set the stage for the deep learning revolution.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-lecun-cnn",
@@ -20564,7 +20780,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "revolutionized computer vision by developing the first practical **Convolutional Neural Network (CNN)**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-lecun-backprop",
@@ -20582,7 +20799,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "he introduced **LeNet-5**, the refined architecture for recognizing handwritten digits",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-waibel-backprop",
@@ -20591,7 +20809,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "on Linnainmaa's 1970 backpropagation",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-zhang-before-lecun",
@@ -20600,7 +20819,8 @@
       "kind": "before",
       "qualifiers": {},
       "quote": "one year *before* LeCun's 1989 Bell Labs paper",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-lenet-zhang-lineage",
@@ -20609,7 +20829,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "The lineage runs from Fukushima's biological inspiration, through Zhang's and Waibel's first end-to-end CNNs, to LeCun's production-grade system",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-lenet-waibel-lineage",
@@ -20618,7 +20839,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "The lineage runs from Fukushima's biological inspiration, through Zhang's and Waibel's first end-to-end CNNs, to LeCun's production-grade system",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-fastweight-transformer",
@@ -20627,7 +20849,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "an abstraction Schmidhuber's group has connected to the learned key-query-value projections of the modern **Transformer**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-hochreiter-vanishing",
@@ -20663,7 +20886,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "Building on this analysis",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-vanilla-instance-lstm",
@@ -20699,7 +20923,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "was based on two connected LSTMs.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-facebook-lstm",
@@ -20753,7 +20978,8 @@
       "kind": "before",
       "qualifiers": {},
       "quote": "it had lost the 1996 match",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-bengio-backprop",
@@ -20771,7 +20997,8 @@
       "kind": "supports",
       "qualifiers": {},
       "quote": "This hardware shift validates the core thesis of \\citetitle{sutton2019bitter}",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-raina-gpu",
@@ -20780,7 +21007,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "off-the-shelf consumer GPUs (like the NVIDIA GeForce GTX 280) could train Deep Belief Networks",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-gtx280-instance-gpu",
@@ -20834,7 +21062,8 @@
       "kind": "caused",
       "qualifiers": {},
       "quote": "The result was the birth of the third AI boom",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-alexnet-bitter-lesson",
@@ -20843,7 +21072,8 @@
       "kind": "supports",
       "qualifiers": {},
       "quote": "scale and computation ultimately triumph over hand-coded human intuition",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-selfattention-attention",
@@ -20861,7 +21091,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "They achieved this by transferring the 1999 LSTM principle of gated residual connections (gates initially open at 1.0) from recurrent to feedforward architectures.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-resnet-highway",
@@ -20879,7 +21110,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "is a direct descendant of the most cited neural network of the 20th century (LSTM), connected through the Highway Network.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-lstm-residual",
@@ -20906,7 +21138,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "Its descendants — learned position vectors, and later **rotary** embeddings (RoPE)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-weizenbaum-eliza",
@@ -20924,7 +21157,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "the very insight Shannon's n-grams would formalize a thousand years later",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-bengio-schmidhuber-nplm",
@@ -20933,7 +21167,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "The basic concepts of this approach were later reused and extended in the more widely known 2003 work by Bengio et al.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-schmidhuber-nplm",
@@ -20951,7 +21186,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "used the Transformer's *encoder*",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-gpt-transformer",
@@ -20960,7 +21196,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "autoregressive next-token prediction over a large Transformer",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-roberta-bert",
@@ -20969,7 +21206,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "was a replication study that found BERT significantly undertrained",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-chinchilla-llama",
@@ -20978,7 +21216,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "This insight directly influenced the design of models like LLaMA",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-chatgpt-instructgpt",
@@ -20996,7 +21235,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "By introducing **Reinforcement Learning from Human Feedback (RLHF)**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-gpt2-bpe",
@@ -21005,7 +21245,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "whose byte-level BPE vocabulary of ~50,000 tokens set the pattern",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-sennrich-bpe",
@@ -21014,7 +21255,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "noticed that the same iterative merging builds a vocabulary",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-searle-chinese-room",
@@ -21023,7 +21265,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "had proposed the **Chinese Room** thought experiment",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-gpt-instance-llm",
@@ -21068,7 +21311,8 @@
       "kind": "caused",
       "qualifiers": {},
       "quote": "triggered the first wave of DARPA defunding",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-minskypapert-connectionism",
@@ -21077,7 +21321,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "was a contributing factor in the academic credibility of connectionism",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-lighthill-bsrc",
@@ -21086,7 +21331,8 @@
       "kind": "caused",
       "qualifiers": {},
       "quote": "convinced the British Science Research Council to cut AI funding in most UK universities within a year",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-expert-systems-second-winter",
@@ -21095,7 +21341,8 @@
       "kind": "caused",
       "qualifiers": {},
       "quote": "unfulfilled promises led to a second winter by the early 1990s",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-mcculloch-neural-networks",
@@ -21104,7 +21351,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "the seed of artificial neural networks",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-history-bbc-debate-report",
@@ -27074,6 +27322,28 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "Abstracting away the non-human interaction part of using computers by simulating *meaning*",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-history-thomas2008torres",
+      "from": "thomas2008torres",
+      "to": "history",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Thomas, 2008]{thomas2008torres})",
+      "citation_keys": [
+        "thomas2008torres"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-history-chinese-room-question",
+      "from": "chinese-room-question",
+      "to": "history",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "LLMs in 2026 have not answered it; they have only made the question louder.",
       "citation_keys": [],
       "confidence": "provenance"
     },

@@ -91,7 +91,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "**Nyquist (1928).**",
-      "citation_keys": [],
+      "citation_keys": [
+        "nyquist_sampling"
+      ],
       "confidence": "stated"
     },
     {
@@ -115,7 +117,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "**Hartley (1928).** In the same year, Ralph Hartley made the first information-theoretic paper",
-      "citation_keys": [],
+      "citation_keys": [
+        "hartley1928transmission"
+      ],
       "confidence": "stated"
     },
     {
@@ -139,7 +143,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "**Szilard (1929).** The decisive turn came from physics.",
-      "citation_keys": [],
+      "citation_keys": [
+        "szilard1929entropy"
+      ],
       "confidence": "stated"
     },
     {
@@ -340,7 +346,9 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "**Nyquist (1928).**",
-      "citation_keys": [],
+      "citation_keys": [
+        "nyquist_sampling"
+      ],
       "confidence": "provenance"
     },
     {
@@ -350,7 +358,9 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "**Hartley (1928).** In the same year, Ralph Hartley made the first information-theoretic paper",
-      "citation_keys": [],
+      "citation_keys": [
+        "hartley1928transmission"
+      ],
       "confidence": "provenance"
     },
     {
@@ -360,7 +370,9 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "**Szilard (1929).** The decisive turn came from physics.",
-      "citation_keys": [],
+      "citation_keys": [
+        "szilard1929entropy"
+      ],
       "confidence": "provenance"
     },
     {

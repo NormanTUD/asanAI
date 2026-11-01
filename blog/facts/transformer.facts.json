@@ -7,7 +7,23 @@
   "order": 9,
   "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [],
+  "citations": [
+    "kaplan2020scaling",
+    "brown2020gpt3",
+    "pytorch",
+    "bahdanau2014",
+    "ba2016layernorm",
+    "bert",
+    "su2021rope",
+    "vonoswald2022indc",
+    "shazeer2020glu",
+    "touvron2023llama",
+    "deepseek2024v2",
+    "merzouk2026remaining",
+    "nanogpt",
+    "gpt2",
+    "safetyheads"
+  ],
   "claims": [
     {
       "id": "auto-transformer-1",
@@ -56,7 +72,9 @@
       "unit": "count",
       "qualifiers": {},
       "quote": "**The parameter budget is mostly FFN.** For a LLaMA-class layer with $d_{\\text{model}} = 4096$ and $d_{\\text{ff}} = 11008$, the three SwiGLU matrices hold $3 \\times 4096 \\times 11008 \\approx 1.35 \\times 10^{8}$ parameters. Across 32 layers that is roughly $4.3 \\times 10^{9}$ of the model's $6.7 \\tim",
-      "citation_keys": [],
+      "citation_keys": [
+        "kaplan2020scaling"
+      ],
       "confidence": "extracted"
     },
     {
@@ -67,21 +85,279 @@
       "unit": "billion",
       "qualifiers": {},
       "quote": "Scaling became a science in 2020. \\cite[Kaplan et al. (2020)]{kaplan2020scaling} measured how language-model loss falls as parameters, data and compute grow, and found smooth power laws across several orders of magnitude (\\cite[Kaplan et al., 2020]{kaplan2020scaling}). That turned “make it bigger” f",
-      "citation_keys": [],
+      "citation_keys": [
+        "kaplan2020scaling",
+        "brown2020gpt3"
+      ],
       "confidence": "extracted"
+    },
+    {
+      "id": "transformer-gap2-1",
+      "subject": "transformer-input-sequence",
+      "predicate": "example_length",
+      "value": 1024,
+      "unit": "token",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Whether $t = 1$ or $t = 1024$, the weight matrix has the same shape",
+      "citation_keys": [
+        "pytorch"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-2",
+      "subject": "mnist-batch-example",
+      "predicate": "double_batch_input_count",
+      "value": 1568,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Each neuron sees 784 inputs, not 1568.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-3",
+      "subject": "bahdanau-attention",
+      "predicate": "year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Bahdanau et al. (2014)]{bahdanau2014} attacked that bottleneck",
+      "citation_keys": [
+        "bahdanau2014"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-4",
+      "subject": "soft-attention",
+      "predicate": "general_primitive_year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "By 2015, soft attention over a set of vectors was a general computational primitive.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-5",
+      "subject": "layernorm",
+      "predicate": "introduced_year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Ba et al. (2016)]{ba2016layernorm} introduced it in 2016",
+      "citation_keys": [
+        "ba2016layernorm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-6",
+      "subject": "transformer",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The equations above describe the 2017 Transformer.",
+      "citation_keys": [
+        "bert"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-7",
+      "subject": "bert",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Devlin et al. (2019)]{bert} kept the encoder and trained it bidirectionally",
+      "citation_keys": [
+        "bert"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-8",
+      "subject": "rope",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Su et al., 2021]{su2021rope})",
+      "citation_keys": [
+        "su2021rope"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-9",
+      "subject": "von-oswald-in-context-learning",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[von Oswald et al., 2022]{vonoswald2022indc})",
+      "citation_keys": [
+        "vonoswald2022indc"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-10",
+      "subject": "llama",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Shazeer, 2020]{shazeer2020glu}; \\cite[Touvron et al., 2023]{touvron2023llama})",
+      "citation_keys": [
+        "shazeer2020glu",
+        "touvron2023llama"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-11",
+      "subject": "deepseek-v2",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[DeepSeek-AI, 2024]{deepseek2024v2})",
+      "citation_keys": [
+        "deepseek2024v2"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-12",
+      "subject": "frontier-models",
+      "predicate": "kv_architecture_choice_year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "By 2025 the choice among MHA, GQA, and MLA had become one of the few architecture decisions still visibly separating frontier models.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-13",
+      "subject": "merzouk-remaining-length",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Merzouk et al., 2026]{merzouk2026remaining})",
+      "citation_keys": [
+        "merzouk2026remaining"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-14",
+      "subject": "transformer-input-sequence",
+      "predicate": "example_length",
+      "value": 1,
+      "unit": "token",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "If the input grows from 1 token to $t$ tokens",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-15",
+      "subject": "transformer-input-sequence",
+      "predicate": "example_length",
+      "value": 1,
+      "unit": "token",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "The entire parameter set is the same whether the input is 1 token or 1024 tokens.",
+      "citation_keys": [
+        "nanogpt"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-16",
+      "subject": "transformer-input-sequence",
+      "predicate": "example_length",
+      "value": 1024,
+      "unit": "token",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "The entire parameter set is the same whether the input is 1 token or 1024 tokens.",
+      "citation_keys": [
+        "nanogpt"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-17",
+      "subject": "attention-toy-example",
+      "predicate": "sequence_length",
+      "value": 2,
+      "unit": "token",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "**Concrete: 2 tokens, $d_v = 3$ (toy).**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-18",
+      "subject": "gpt-2-small-shape-walkthrough",
+      "predicate": "sequence_length",
+      "value": 2,
+      "unit": "token",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "**Shape walkthrough: GPT-2-small** ($d=768$, $d_k=64$, $h=12$ heads, $N=12$ layers \\cite[Radford et al., 2019]{gpt2}), 2 tokens, batch 1:",
+      "citation_keys": [
+        "gpt2"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-19",
+      "subject": "llama-2-7b-chat",
+      "predicate": "parameters",
+      "value": 7000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Recent research by \\cite[Zhou et al.]{safetyheads} identifies specific heads that act as “gatekeepers” for safety alignment. Ablating a *single* such head in Llama-2-7b-chat",
+      "citation_keys": [
+        "safetyheads"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gap2-20",
+      "subject": "gpt-3",
+      "predicate": "parameters",
+      "value": 175000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "GPT-3 followed the curve to 175 billion parameters",
+      "citation_keys": [
+        "brown2020gpt3"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-transformer-part",
-      "from": "transformer",
-      "to": "part-4",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 4",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-transformer-quantization",
       "from": "quantization",
@@ -99,6 +375,189 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "Scaling became a science in 2020. \\cite[Kaplan et al. (2020)]{kaplan2020scaling} measured how language-model loss falls as parameters, data and compute grow, and found smooth power laws across several orders of magnitude (\\cite[Kaplan et al., 2020]{kaplan2020scaling}). That turned “make it bigger” f",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-transformer-input-sequence",
+      "from": "transformer-input-sequence",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Whether $t = 1$ or $t = 1024$, the weight matrix has the same shape",
+      "citation_keys": [
+        "pytorch"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-mnist-batch-example",
+      "from": "mnist-batch-example",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Each neuron sees 784 inputs, not 1568.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-bahdanau-attention",
+      "from": "bahdanau-attention",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Bahdanau et al. (2014)]{bahdanau2014} attacked that bottleneck",
+      "citation_keys": [
+        "bahdanau2014"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-soft-attention",
+      "from": "soft-attention",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "By 2015, soft attention over a set of vectors was a general computational primitive.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-layernorm",
+      "from": "layernorm",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Ba et al. (2016)]{ba2016layernorm} introduced it in 2016",
+      "citation_keys": [
+        "ba2016layernorm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-bert",
+      "from": "bert",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Devlin et al. (2019)]{bert} kept the encoder and trained it bidirectionally",
+      "citation_keys": [
+        "bert"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-rope",
+      "from": "rope",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Su et al., 2021]{su2021rope})",
+      "citation_keys": [
+        "su2021rope"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-von-oswald-in-context-learning",
+      "from": "von-oswald-in-context-learning",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[von Oswald et al., 2022]{vonoswald2022indc})",
+      "citation_keys": [
+        "vonoswald2022indc"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-llama",
+      "from": "llama",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Shazeer, 2020]{shazeer2020glu}; \\cite[Touvron et al., 2023]{touvron2023llama})",
+      "citation_keys": [
+        "shazeer2020glu",
+        "touvron2023llama"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-deepseek-v2",
+      "from": "deepseek-v2",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[DeepSeek-AI, 2024]{deepseek2024v2})",
+      "citation_keys": [
+        "deepseek2024v2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-frontier-models",
+      "from": "frontier-models",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "By 2025 the choice among MHA, GQA, and MLA had become one of the few architecture decisions still visibly separating frontier models.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-merzouk-remaining-length",
+      "from": "merzouk-remaining-length",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Merzouk et al., 2026]{merzouk2026remaining})",
+      "citation_keys": [
+        "merzouk2026remaining"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-attention-toy-example",
+      "from": "attention-toy-example",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Concrete: 2 tokens, $d_v = 3$ (toy).**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-gpt-2-small-shape-walkthrough",
+      "from": "gpt-2-small-shape-walkthrough",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Shape walkthrough: GPT-2-small** ($d=768$, $d_k=64$, $h=12$ heads, $N=12$ layers \\cite[Radford et al., 2019]{gpt2}), 2 tokens, batch 1:",
+      "citation_keys": [
+        "gpt2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-llama-2-7b-chat",
+      "from": "llama-2-7b-chat",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Recent research by \\cite[Zhou et al.]{safetyheads} identifies specific heads that act as “gatekeepers” for safety alignment. Ablating a *single* such head in Llama-2-7b-chat",
+      "citation_keys": [
+        "safetyheads"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-part",
+      "from": "transformer",
+      "to": "part-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 4",
       "citation_keys": [],
       "confidence": "provenance"
     }

@@ -14,7 +14,11 @@
     "elhage2022superposition",
     "bricken2023monosemanticity",
     "cunningham2023sparse",
-    "gardenfors2000conceptual"
+    "gardenfors2000conceptual",
+    "vaswani2017attention",
+    "shazeer2020glu",
+    "elhage2021mathematical",
+    "land2024fishing"
   ],
   "claims": [
     {
@@ -272,19 +276,114 @@
       "citation_keys": [],
       "qualifiers": {},
       "confidence": "stated"
+    },
+    {
+      "id": "intuition-gap3-1",
+      "subject": "vaswani2017attention",
+      "predicate": "publication_year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "This is the heart of the model — the **Transformer architecture** (\\cite[Vaswani et al., 2017]{vaswani2017attention})",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-gap3-2",
+      "subject": "shazeer2020glu",
+      "predicate": "publication_year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Many current models swap the hard ReLU for a gated activation such as SwiGLU, where one branch controls how much of another passes through (\\cite[Shazeer, 2020]{shazeer2020glu})",
+      "citation_keys": [
+        "shazeer2020glu"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-gap3-3",
+      "subject": "elhage2021mathematical",
+      "predicate": "publication_year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "A head may look like it reacts to nouns or verbs while in reality it is just a pattern learned from statistics — not programmed to react to those words, and not \"knowing\" what they are (\\cite[Elhage et al., 2021]{elhage2021mathematical})",
+      "citation_keys": [
+        "elhage2021mathematical"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-gap3-4",
+      "subject": "meng2022locating",
+      "predicate": "publication_year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "the ROME method can make a model “believe” a different capital of France without retraining it (\\cite[Meng et al., 2022]{meng2022locating})",
+      "citation_keys": [
+        "meng2022locating"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-gap3-5",
+      "subject": "bricken2023monosemanticity",
+      "predicate": "publication_year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Sparse autoencoders can untangle those activations into features a human can actually read (\\cite[Bricken et al., 2023]{bricken2023monosemanticity}; \\cite[Cunningham et al., 2023]{cunningham2023sparse})",
+      "citation_keys": [
+        "bricken2023monosemanticity",
+        "cunningham2023sparse"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-gap3-6",
+      "subject": "glitchtokens",
+      "predicate": "publication_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Researchers call them <b>glitch tokens</b> (\\cite[Land &amp; Bartolo, 2024]{land2024fishing}; \\cite[Li et al., 2024]{glitchtokens})",
+      "citation_keys": [
+        "land2024fishing",
+        "glitchtokens"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "intuition-gap3-7",
+      "subject": "feed-forward-network",
+      "predicate": "section_label",
+      "value": "4b",
+      "unit": "name",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "4b: Feed-Forward Network",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-intuition-part",
-      "from": "intuition",
-      "to": "part-1",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 1",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-intuition-llm-next-token-prediction",
       "from": "llm-next-token-prediction",
@@ -475,6 +574,90 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "Read the layer's output as a new coordinate system and the operation looks like a bend of the whole space",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-vaswani2017attention",
+      "from": "vaswani2017attention",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This is the heart of the model — the **Transformer architecture** (\\cite[Vaswani et al., 2017]{vaswani2017attention})",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-shazeer2020glu",
+      "from": "shazeer2020glu",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Many current models swap the hard ReLU for a gated activation such as SwiGLU, where one branch controls how much of another passes through (\\cite[Shazeer, 2020]{shazeer2020glu})",
+      "citation_keys": [
+        "shazeer2020glu"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-elhage2021mathematical",
+      "from": "elhage2021mathematical",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A head may look like it reacts to nouns or verbs while in reality it is just a pattern learned from statistics — not programmed to react to those words, and not \"knowing\" what they are (\\cite[Elhage et al., 2021]{elhage2021mathematical})",
+      "citation_keys": [
+        "elhage2021mathematical"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-meng2022locating",
+      "from": "meng2022locating",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the ROME method can make a model “believe” a different capital of France without retraining it (\\cite[Meng et al., 2022]{meng2022locating})",
+      "citation_keys": [
+        "meng2022locating"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-bricken2023monosemanticity",
+      "from": "bricken2023monosemanticity",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Sparse autoencoders can untangle those activations into features a human can actually read (\\cite[Bricken et al., 2023]{bricken2023monosemanticity}; \\cite[Cunningham et al., 2023]{cunningham2023sparse})",
+      "citation_keys": [
+        "bricken2023monosemanticity",
+        "cunningham2023sparse"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-glitchtokens",
+      "from": "glitchtokens",
+      "to": "intuition",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Researchers call them <b>glitch tokens</b> (\\cite[Land &amp; Bartolo, 2024]{land2024fishing}; \\cite[Li et al., 2024]{glitchtokens})",
+      "citation_keys": [
+        "land2024fishing",
+        "glitchtokens"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-intuition-part",
+      "from": "intuition",
+      "to": "part-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 1",
       "citation_keys": [],
       "confidence": "provenance"
     }

@@ -7,7 +7,16 @@
   "order": 14,
   "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [],
+  "citations": [
+    "leviathan2023speculative",
+    "ainslie2023gqa",
+    "kwon2023vllm",
+    "ma2024bitnet",
+    "lin2023awq",
+    "frantar2022gptq",
+    "hinton2015distilling",
+    "react2022"
+  ],
   "claims": [
     {
       "id": "auto-production_serving-title-0-1",
@@ -58,8 +67,449 @@
         "precision": "bf16"
       },
       "quote": "LLM decoding is **memory-bound**, not compute-bound. Each token requires reading all model weights once. A 70B model in bf16 cannot fit on a single 80 GB H100 at all; split across two H100s it tops out near ~40 tokens/s, and in FP8 on one H100 near the same order, regardless of FLOPs.",
-      "citation_keys": [],
+      "citation_keys": [
+        "leviathan2023speculative"
+      ],
       "confidence": "extracted"
+    },
+    {
+      "id": "production_serving-gap-1",
+      "subject": "frontier-llm-training-cost",
+      "predicate": "training_cost",
+      "value": 100000000,
+      "unit": "USD",
+      "qualifiers": {},
+      "quote": "A frontier LLM might be trained for $100M",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-2",
+      "subject": "frontier-serving-throughput",
+      "predicate": "tokens_per_second_per_user",
+      "value": 30,
+      "unit": "token",
+      "qualifiers": {
+        "per": "user"
+      },
+      "quote": "~30 tokens/sec each",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-3",
+      "subject": "model-70b-bf16",
+      "predicate": "memory",
+      "value": 140,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "The weights are 140 GB",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-4",
+      "subject": "h100",
+      "predicate": "memory",
+      "value": 70,
+      "unit": "GB",
+      "qualifiers": {
+        "configuration": "two_gpu_shard"
+      },
+      "quote": "70 GB per GPU",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-5",
+      "subject": "h100",
+      "predicate": "memory_bandwidth",
+      "value": 3,
+      "unit": "TB",
+      "qualifiers": {
+        "rate": "per_second_per_gpu"
+      },
+      "quote": "~3 TB/s per GPU",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-6",
+      "subject": "model-70b-kv-cache",
+      "predicate": "context_window",
+      "value": 4096,
+      "unit": "token",
+      "qualifiers": {
+        "as_written": "4K"
+      },
+      "quote": "For 4K context: 10.5 GB",
+      "citation_keys": [
+        "ainslie2023gqa",
+        "kwon2023vllm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-7",
+      "subject": "model-70b-kv-cache",
+      "predicate": "memory",
+      "value": 10.5,
+      "unit": "GB",
+      "qualifiers": {
+        "context_window": 4096
+      },
+      "quote": "For 4K context: 10.5 GB",
+      "citation_keys": [
+        "ainslie2023gqa",
+        "kwon2023vllm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-8",
+      "subject": "model-70b-kv-cache",
+      "predicate": "context_window",
+      "value": 131072,
+      "unit": "token",
+      "qualifiers": {
+        "as_written": "128K"
+      },
+      "quote": "for 128K context: **335 GB**",
+      "citation_keys": [
+        "ainslie2023gqa",
+        "kwon2023vllm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-9",
+      "subject": "model-70b-kv-cache",
+      "predicate": "memory",
+      "value": 335,
+      "unit": "GB",
+      "qualifiers": {
+        "context_window": 131072
+      },
+      "quote": "**335 GB**",
+      "citation_keys": [
+        "ainslie2023gqa",
+        "kwon2023vllm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-10",
+      "subject": "paged-attention-request",
+      "predicate": "requested_tokens",
+      "value": 4096,
+      "unit": "token",
+      "qualifiers": {
+        "example": true,
+        "as_written": "4K"
+      },
+      "quote": "if a request needs 4K tokens",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-11",
+      "subject": "paged-attention-request",
+      "predicate": "used_tokens",
+      "value": 2048,
+      "unit": "token",
+      "qualifiers": {
+        "example": true,
+        "as_written": "2K"
+      },
+      "quote": "only 2K are used",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-12",
+      "subject": "paged-attention",
+      "predicate": "kv_block_size",
+      "value": 16,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "typically 16 tokens each",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-13",
+      "subject": "speculative-decoding-draft-model",
+      "predicate": "parameters",
+      "value": 1000000000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "e.g., 1B",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-14",
+      "subject": "model-70b-fp32",
+      "predicate": "memory",
+      "value": 280,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| fp32 | 32 | 280 GB | Baseline |",
+      "citation_keys": [
+        "ma2024bitnet",
+        "lin2023awq",
+        "frantar2022gptq"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-15",
+      "subject": "model-70b-fp16",
+      "predicate": "memory",
+      "value": 140,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| fp16 / bf16 | 16 | 140 GB | Negligible |",
+      "citation_keys": [
+        "ma2024bitnet",
+        "lin2023awq",
+        "frantar2022gptq"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-16",
+      "subject": "model-70b-int8",
+      "predicate": "memory",
+      "value": 70,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| int8 (weights only) | 8 | 70 GB | ~0.5% on benchmarks |",
+      "citation_keys": [
+        "ma2024bitnet",
+        "lin2023awq",
+        "frantar2022gptq"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-17",
+      "subject": "model-70b-int4",
+      "predicate": "memory",
+      "value": 35,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| int4 (GPTQ, AWQ) | 4 | 35 GB | 1–3% |",
+      "citation_keys": [
+        "ma2024bitnet",
+        "lin2023awq",
+        "frantar2022gptq"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-18",
+      "subject": "model-70b-int2-int3",
+      "predicate": "memory",
+      "value": 26,
+      "unit": "GB",
+      "qualifiers": {
+        "approx": true,
+        "range": "17-26 GB"
+      },
+      "quote": "| int3 / int2 (QuIP, QuIP#) | 2–3 | ~17–26 GB | 3–10% |",
+      "citation_keys": [
+        "ma2024bitnet",
+        "lin2023awq",
+        "frantar2022gptq"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-19",
+      "subject": "model-70b-1bit",
+      "predicate": "memory",
+      "value": 13,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "| 1-bit (BitNet \\cite[Ma et al., 2024]{ma2024bitnet}) | 1.58 | 13 GB | Comparable to fp16 at scale |",
+      "citation_keys": [
+        "ma2024bitnet",
+        "lin2023awq",
+        "frantar2022gptq"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-20",
+      "subject": "deepseek-r1-distill",
+      "predicate": "parameters",
+      "value": 1500000000,
+      "unit": "count",
+      "qualifiers": {
+        "range": "1.5B-70B"
+      },
+      "quote": "1.5B–70B student models trained on R1 outputs",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-21",
+      "subject": "llama-3-1-405b",
+      "predicate": "parameters",
+      "value": 405000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "partly synthesized by the Llama 3.1-405B",
+      "citation_keys": [
+        "kwon2023vllm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-22",
+      "subject": "phi-3-mini",
+      "predicate": "parameters",
+      "value": 3800000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "**Phi-3-mini** (3.8B)",
+      "citation_keys": [
+        "kwon2023vllm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-23",
+      "subject": "phi-3-mini",
+      "predicate": "training_tokens",
+      "value": 3300000000000,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "trained on about 3.3T tokens",
+      "citation_keys": [
+        "kwon2023vllm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-24",
+      "subject": "gpt-4-class",
+      "predicate": "parameters",
+      "value": 1000000000000,
+      "unit": "count",
+      "qualifiers": {
+        "bound": "greater_than"
+      },
+      "quote": "Frontier (GPT-4-class, 1T+ params)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-25",
+      "subject": "llama-8b",
+      "predicate": "parameters",
+      "value": 8000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Edge (Llama 8B)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-26",
+      "subject": "mobile-model",
+      "predicate": "parameters",
+      "value": 3000000000,
+      "unit": "count",
+      "qualifiers": {
+        "bound": "less_than"
+      },
+      "quote": "Mobile (sub-3B)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-27",
+      "subject": "amd-mi300x",
+      "predicate": "memory",
+      "value": 192,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "AMD MI300X | 192 GB HBM3 per card",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-28",
+      "subject": "hinton-distillation-paper",
+      "predicate": "year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Hinton et al., 2015",
+      "citation_keys": [
+        "hinton2015distilling"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-29",
+      "subject": "react-paper",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Yao et al., 2022",
+      "citation_keys": [
+        "react2022"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-30",
+      "subject": "gqa-paper",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Ainslie et al., 2023",
+      "citation_keys": [
+        "ainslie2023gqa"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-31",
+      "subject": "llama-3-1-instruct",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Llama 3.1-Instruct (2024)",
+      "citation_keys": [
+        "kwon2023vllm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "production_serving-gap-32",
+      "subject": "frontier-serving",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The frontier in 2025",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -80,6 +530,295 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 5",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-frontier-llm-training-cost",
+      "from": "frontier-llm-training-cost",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A frontier LLM might be trained for $100M",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-frontier-serving-throughput",
+      "from": "frontier-serving-throughput",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "~30 tokens/sec each",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-model-70b-bf16",
+      "from": "model-70b-bf16",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The weights are 140 GB",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-model-70b-kv-cache",
+      "from": "model-70b-kv-cache",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "For 4K context: 10.5 GB",
+      "citation_keys": [
+        "ainslie2023gqa",
+        "kwon2023vllm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-paged-attention-request",
+      "from": "paged-attention-request",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "if a request needs 4K tokens",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-paged-attention",
+      "from": "paged-attention",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "typically 16 tokens each",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-speculative-decoding-draft-model",
+      "from": "speculative-decoding-draft-model",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "e.g., 1B",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-model-70b-fp32",
+      "from": "model-70b-fp32",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| fp32 | 32 | 280 GB | Baseline |",
+      "citation_keys": [
+        "ma2024bitnet",
+        "lin2023awq",
+        "frantar2022gptq"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-model-70b-fp16",
+      "from": "model-70b-fp16",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| fp16 / bf16 | 16 | 140 GB | Negligible |",
+      "citation_keys": [
+        "ma2024bitnet",
+        "lin2023awq",
+        "frantar2022gptq"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-model-70b-int8",
+      "from": "model-70b-int8",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| int8 (weights only) | 8 | 70 GB | ~0.5% on benchmarks |",
+      "citation_keys": [
+        "ma2024bitnet",
+        "lin2023awq",
+        "frantar2022gptq"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-model-70b-int4",
+      "from": "model-70b-int4",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| int4 (GPTQ, AWQ) | 4 | 35 GB | 1–3% |",
+      "citation_keys": [
+        "ma2024bitnet",
+        "lin2023awq",
+        "frantar2022gptq"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-model-70b-int2-int3",
+      "from": "model-70b-int2-int3",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| int3 / int2 (QuIP, QuIP#) | 2–3 | ~17–26 GB | 3–10% |",
+      "citation_keys": [
+        "ma2024bitnet",
+        "lin2023awq",
+        "frantar2022gptq"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-model-70b-1bit",
+      "from": "model-70b-1bit",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| 1-bit (BitNet \\cite[Ma et al., 2024]{ma2024bitnet}) | 1.58 | 13 GB | Comparable to fp16 at scale |",
+      "citation_keys": [
+        "ma2024bitnet",
+        "lin2023awq",
+        "frantar2022gptq"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-deepseek-r1-distill",
+      "from": "deepseek-r1-distill",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "1.5B–70B student models trained on R1 outputs",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-llama-3-1-405b",
+      "from": "llama-3-1-405b",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "partly synthesized by the Llama 3.1-405B",
+      "citation_keys": [
+        "kwon2023vllm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-phi-3-mini",
+      "from": "phi-3-mini",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Phi-3-mini** (3.8B)",
+      "citation_keys": [
+        "kwon2023vllm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-gpt-4-class",
+      "from": "gpt-4-class",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Frontier (GPT-4-class, 1T+ params)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-llama-8b",
+      "from": "llama-8b",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Edge (Llama 8B)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-mobile-model",
+      "from": "mobile-model",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Mobile (sub-3B)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-amd-mi300x",
+      "from": "amd-mi300x",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "AMD MI300X | 192 GB HBM3 per card",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-hinton-distillation-paper",
+      "from": "hinton-distillation-paper",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hinton et al., 2015",
+      "citation_keys": [
+        "hinton2015distilling"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-react-paper",
+      "from": "react-paper",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Yao et al., 2022",
+      "citation_keys": [
+        "react2022"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-gqa-paper",
+      "from": "gqa-paper",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Ainslie et al., 2023",
+      "citation_keys": [
+        "ainslie2023gqa"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-llama-3-1-instruct",
+      "from": "llama-3-1-instruct",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Llama 3.1-Instruct (2024)",
+      "citation_keys": [
+        "kwon2023vllm"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-production_serving-frontier-serving",
+      "from": "frontier-serving",
+      "to": "production-serving",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The frontier in 2025",
       "citation_keys": [],
       "confidence": "provenance"
     }

@@ -14,7 +14,10 @@
     "nguyen2025minp",
     "su2022contrastive",
     "basu2020mirostat",
-    "lowerre1976harpy"
+    "lowerre1976harpy",
+    "keskar2019ctrl",
+    "leviathan2023speculative",
+    "wang2024entropy"
   ],
   "claims": [
     {
@@ -291,19 +294,98 @@
       "quote": "| **Chat (factual)** | 0.7 | 0.9 | 0.0 | 1.1 |",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-gap3-1",
+      "subject": "top-k-sampling",
+      "predicate": "year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Restrict to the $k$ tokens with highest probability, then renormalize (\\cite[Fan et al., 2018]{fan2018topk})",
+      "citation_keys": [
+        "fan2018topk"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-gap3-2",
+      "subject": "repetition-penalty",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Penalize tokens that have already appeared in the context (\\cite[Keskar et al., 2019]{keskar2019ctrl})",
+      "citation_keys": [
+        "keskar2019ctrl"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-gap3-3",
+      "subject": "dry-sampling",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "A smarter repetition penalty (Cohere, 2023) that detects repeated n-grams",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-gap3-4",
+      "subject": "speculative-sampling",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The sampling rule at the heart of speculative decoding (\\cite[Leviathan et al., 2023]{leviathan2023speculative})",
+      "citation_keys": [
+        "leviathan2023speculative"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-gap3-5",
+      "subject": "xtc-sampling",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "A 2024 technique: randomly exclude the top token from sampling with some probability",
+      "citation_keys": [
+        "su2022contrastive"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-gap3-6",
+      "subject": "dynamic-temperature",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "A 2024 idea: adjust temperature based on the entropy of the predicted distribution",
+      "citation_keys": [
+        "wang2024entropy"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "samplinglab-gap3-7",
+      "subject": "top-k-sampling",
+      "predicate": "example_meaningful_tokens",
+      "value": 3,
+      "unit": "token",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Sometimes only 3 tokens have meaningful probability; sometimes 100",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-samplinglab-part",
-      "from": "samplinglab",
-      "to": "part-4",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 4",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-samplinglab-boltzmann-distribution",
       "from": "boltzmann-distribution",
@@ -443,6 +525,40 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "| **Chat (factual)** | 0.7 | 0.9 | 0.0 | 1.1 |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-samplinglab-speculative-sampling",
+      "from": "speculative-sampling",
+      "to": "samplinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The sampling rule at the heart of speculative decoding (\\cite[Leviathan et al., 2023]{leviathan2023speculative})",
+      "citation_keys": [
+        "leviathan2023speculative"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-samplinglab-dynamic-temperature",
+      "from": "dynamic-temperature",
+      "to": "samplinglab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A 2024 idea: adjust temperature based on the entropy of the predicted distribution",
+      "citation_keys": [
+        "wang2024entropy"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-samplinglab-part",
+      "from": "samplinglab",
+      "to": "part-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 4",
       "citation_keys": [],
       "confidence": "provenance"
     }

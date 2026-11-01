@@ -15,7 +15,8 @@
     "cauchy1847",
     "rumelhart1986",
     "condorcet1770",
-    "legendre1786"
+    "legendre1786",
+    "historyofmathematicalnotation"
   ],
   "claims": [
     {
@@ -248,7 +249,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "only popularized after Jacobi reintroduced it in 1841",
-      "citation_keys": [],
+      "citation_keys": [
+        "historyofmathematicalnotation"
+      ],
       "confidence": "stated"
     },
     {
@@ -275,16 +278,6 @@
     }
   ],
   "relations": [
-    {
-      "id": "prov-differentiation-part",
-      "from": "differentiation",
-      "to": "part-2",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 2",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-differentiation-isaac-newton",
       "from": "isaac-newton",
@@ -466,6 +459,16 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "$$y = f(a) + f'(a)(x - a)$$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-differentiation-part",
+      "from": "differentiation",
+      "to": "part-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 2",
       "citation_keys": [],
       "confidence": "provenance"
     }

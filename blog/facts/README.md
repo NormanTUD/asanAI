@@ -435,6 +435,27 @@ uv run blog/tools/factcheck/extract_statements.py blog/ --check
 Statement-Liste veraltet ist. Statements sind die Vollständigkeits- und
 Provenienzschicht; numerische Konflikte werden über `claims` geprüft.
 
+## Tiefen-Audit und Konfliktliste
+
+```bash
+uv run blog/tools/factcheck/deep_audit.py blog/ --strict
+```
+
+Prüft zusätzlich: jedes Jahr/jede Quantity in der Prosa, Citation-Grounding,
+ungestützte spezifische Claims, Relations-Grounding, Wertebereiche und
+normalisierte `*_year`-Konflikte. Der Report landet in
+`blog/facts/DEEP_AUDIT.md`.
+
+Bei einem Claim-Konflikt endet `check_facts.py` mit einer
+`CONTRADICTION LIST`, z. B.:
+
+```text
+claim 'a-params' in a.php contradicts claim 'b-params' in b.php — subject=gpt-3 predicate=parameters
+```
+
+Dieselbe Liste steht in `blog/facts/CONFLICTS.md` (generiert, nicht
+committen).
+
 ### CI-Fehler sind kopierbar
 
 Zwei nicht verklebbare Claims erzeugen einen Block mit `FACT CONFLICT`,

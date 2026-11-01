@@ -3195,7 +3195,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "The word *paleontology* itself was coined only a few years earlier, in 1822.",
-      "citation_keys": [],
+      "citation_keys": [
+        "paleontology_history_wiki"
+      ],
       "confidence": "stated"
     },
     {
@@ -3206,7 +3208,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "In 1861 a Bavarian quarry yielded *Archaeopteryx*",
-      "citation_keys": [],
+      "citation_keys": [
+        "paleontology_history_wiki"
+      ],
       "confidence": "stated"
     },
     {
@@ -5211,7 +5215,10 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "the Royal Society, founded in 1660",
-      "citation_keys": [],
+      "citation_keys": [
+        "descartes1637discours",
+        "descartesgeometrie"
+      ],
       "confidence": "stated"
     },
     {
@@ -6686,6 +6693,197 @@
         "canfora1990vanished"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "untold_history_i-gap2-1",
+      "subject": "joseph-priestley",
+      "predicate": "citation_year",
+      "value": 1772,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Priestley, 1772]{priestley1771airs})",
+      "citation_keys": [
+        "priestley1771airs"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_i-gap2-2",
+      "subject": "plate-tectonics",
+      "predicate": "year",
+      "value": 1967,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Plate tectonics** was a fact by 1967",
+      "citation_keys": [
+        "img_pangaea_200ma"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_i-gap2-3",
+      "subject": "moon-formation",
+      "predicate": "citation_year",
+      "value": 1975,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Hartmann and Davis, 1975]{hartmann1975satellite})",
+      "citation_keys": [
+        "hartmann1975satellite"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_i-gap2-4",
+      "subject": "rnase-p",
+      "predicate": "citation_year",
+      "value": 1976,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Altman and Polisky, 1976]{altman1976rnasep})",
+      "citation_keys": [
+        "altman1976rnasep"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_i-gap2-5",
+      "subject": "schmandt-besserat-1992",
+      "predicate": "citation_year",
+      "value": 1992,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Schmandt-Besserat 1992]{schmandtbesserat1992}",
+      "citation_keys": [
+        "schmandtbesserat1992"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_i-gap2-6",
+      "subject": "camera-eye-evolution",
+      "predicate": "citation_year",
+      "value": 1994,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Nilsson and Pelger, 1994]{nilsson1994eye})",
+      "citation_keys": [
+        "nilsson1994eye"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_i-gap2-7",
+      "subject": "schmandt-besserat-1996",
+      "predicate": "citation_year",
+      "value": 1996,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Schmandt-Besserat 1996]{schmandtbesserat1996}",
+      "citation_keys": [
+        "schmandtbesserat1996"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_i-gap2-8",
+      "subject": "giant-impact-hypothesis",
+      "predicate": "citation_year",
+      "value": 2001,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Canup and Asphaug, 2001]{canupasphaug2001moon})",
+      "citation_keys": [
+        "canupasphaug2001moon"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_i-gap2-9",
+      "subject": "modern-human-behaviour",
+      "predicate": "citation_year",
+      "value": 2002,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Henshilwood et al., 2002]{emergenceofmodernhumanbehaviour})",
+      "citation_keys": [
+        "emergenceofmodernhumanbehaviour"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_i-gap2-10",
+      "subject": "nice-model",
+      "predicate": "citation_year",
+      "value": 2005,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Gomes et al., 2005]{gomes2005nice})",
+      "citation_keys": [
+        "gomes2005nice"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_i-gap2-11",
+      "subject": "catalhoyuk",
+      "predicate": "citation_year",
+      "value": 2006,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Hodder 2006]{hodder2006leopard})",
+      "citation_keys": [
+        "hodder2006leopard"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_i-gap2-12",
+      "subject": "earth-magnetic-field",
+      "predicate": "citation_year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Earth's magnetic field (Wikipedia contributors, 2026)]{magnetic_field_wiki})",
+      "citation_keys": [
+        "magnetic_field_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold_history_i-gap2-13",
+      "subject": "first-cells",
+      "predicate": "age",
+      "value": 3500000000,
+      "unit": "years_before_present",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "**The First Cells: 3.8–3.5 Billion Years Ago.**",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -6710,7 +6908,8 @@
       "quote": "nearly all the hydrogen in every atom on Earth, including the hydrogen in your body and in every drop of water, was made not inside any star but in those first twenty minutes",
       "citation_keys": [
         "weinberg1977first"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-cmb-supports-big-bang",
@@ -6721,7 +6920,8 @@
       "quote": "The discovery of the cosmic microwave background radiation provided strong empirical support for this model",
       "citation_keys": [
         "penzias1965measurement"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-weizsacker-before-cno",
@@ -6732,7 +6932,8 @@
       "quote": "Carl Friedrich von Weizsäcker had already derived independently the year before, in 1938",
       "citation_keys": [
         "bethe1939energy"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-kilonova-from-gw170817",
@@ -6754,7 +6955,8 @@
       "quote": "analysis concluded that such mergers are a dominant cosmic factory for the r-process elements",
       "citation_keys": [
         "kasen2017kilonova"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-rprocess-from-neutron-stars",
@@ -6796,7 +6998,8 @@
       "quote": "first proposed that the Solar System had formed by the gravitational settling of a nebula",
       "citation_keys": [
         "kant1755heavens"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-solar-system-from-molecular-cloud",
@@ -6807,7 +7010,8 @@
       "quote": "began when a fragment of a giant molecular cloud collapsed roughly **4.57 billion years ago** to make a protostar, the Sun",
       "citation_keys": [
         "amelin2010solarsystem"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-theia-part-of-giant-impact",
@@ -6818,7 +7022,8 @@
       "quote": "a Mars-sized protoplanet, conventionally named **Theia**, struck the proto-Earth",
       "citation_keys": [
         "hartmann1975satellite"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-nice-supports-lhb",
@@ -6829,7 +7034,8 @@
       "quote": "is associated in the Nice model with the final migration of the giant planets",
       "citation_keys": [
         "gomes2005nice"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-gilbert-invented-electricus",
@@ -6840,7 +7046,8 @@
       "quote": "gave us the Neo-Latin *electricus* (from the Greek word for amber)",
       "citation_keys": [
         "gilbert1600magnete"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-halley-invented-chart",
@@ -6849,7 +7056,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "produced the first *chart of magnetic variation*",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-mars-dynamo-before-atmosphere",
@@ -6880,7 +7088,8 @@
       "kind": "before",
       "qualifiers": {},
       "quote": "more than a century before the gas itself was identified",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-cyanobacteria-caused-goe",
@@ -6902,7 +7111,8 @@
       "quote": "early Earth was probably CO₂- and N₂-rich, not the CH₄–NH₃ of the 1953 flask",
       "citation_keys": [
         "cleaves2012prebiotic"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-cech-caused-nobel",
@@ -6946,7 +7156,8 @@
       "quote": "reported that the Murchison meteorite, which fell in Australia in 1969, carried a rich, partly extraterrestrial suite of amino acids",
       "citation_keys": [
         "orgelparris1979murchison"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-sutherland-supports-rna-world",
@@ -6957,7 +7168,8 @@
       "quote": "Sutherland's Manchester group built the pyrimidine nucleotides cytidine and uridine from small two- and three-carbon fragments",
       "citation_keys": [
         "sutherland2009pyrimidine"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-polymerase-supports-rna-world",
@@ -7013,7 +7225,8 @@
       "quote": "reconstructed approximately 355 gene families that LUCA must have possessed",
       "citation_keys": [
         "weiss2016luca"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-frei-supports-pulses",
@@ -7024,7 +7237,8 @@
       "quote": "that chromium isotope ratios in banded iron formations record pre-GOE oxygen pulses as early as 3.5 Ga",
       "citation_keys": [
         "frei2009chromium"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-goe-caused-aerobic",
@@ -7033,7 +7247,8 @@
       "kind": "caused",
       "qualifiers": {},
       "quote": "but it also unlocked the energy yields of aerobic respiration, roughly eighteen times more efficient than anaerobic metabolism",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-euk-multicell-before-cambrian",
@@ -7044,7 +7259,8 @@
       "quote": "preceded the Cambrian Explosion by over a billion years",
       "citation_keys": [
         "zhu2016multicellular"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-dickinsonia-before-cambrian",
@@ -7055,7 +7271,8 @@
       "quote": "predating the Cambrian Explosion by more than 20 million years",
       "citation_keys": [
         "bobrovskiy2018dickinsonia"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-brain-supports-otavia",
@@ -7077,7 +7294,8 @@
       "quote": "argued that the structures are non-biological concretions",
       "citation_keys": [
         "antcliffe2014otavia"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-brocks-supports-animal-emergence",
@@ -7088,7 +7306,8 @@
       "quote": "indicates that the rise of eukaryotic algae and the emergence of animals were coupled, with animals appearing in the Ediacaran",
       "citation_keys": [
         "brocks2017rise"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-whittington-supports-burgess-locality",
@@ -7099,7 +7318,8 @@
       "quote": "established the Burgess Shale as the type locality for the Cambrian Explosion",
       "citation_keys": [
         "whittington1979burgess"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-dinosaur-dominance-part-of-mesozoic",
@@ -7108,7 +7328,8 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "The next 165 million years, the **Mesozoic** (252–66 Ma), belonged to the reptiles.",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-buckland-discovered-megalosaurus",
@@ -7119,7 +7340,8 @@
       "quote": "described a lower jaw from the Jurassic of Stonesfield, England, and named it *Megalosaurus*",
       "citation_keys": [
         "buckland1824megalosaurus"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-mantell-discovered-hylaeosaurus",
@@ -7141,7 +7363,8 @@
       "quote": "carved them out into a new order, the **Dinosauria**",
       "citation_keys": [
         "owen1842dinosauria"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-megalosaurus-part-of-dinosauria",
@@ -7174,7 +7397,8 @@
       "quote": "laid down the **laws of stratigraphy** (superposition, horizontality)",
       "citation_keys": [
         "steno1669solido"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-xenophanes-before-ancient-chinese",
@@ -7185,7 +7409,8 @@
       "quote": "a millennium later the ancient Chinese read the same kind of stone as **dragon bones**",
       "citation_keys": [
         "paleontology_history_wiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-ortelius-influenced-wegener",
@@ -7196,7 +7421,8 @@
       "quote": "The suspicion goes back to the cartographer Abraham Ortelius in 1596, who saw that the coasts of the Americas looked \"torn away\" from Europe and Africa",
       "citation_keys": [
         "continental_drift_wiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-wegener-supports-pangaea",
@@ -7207,7 +7433,8 @@
       "quote": "assembled the evidence into a theory: the continents had once formed a single **Pangaea** and drifted apart",
       "citation_keys": [
         "wegener1915origin"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-vine-supports-hess",
@@ -7218,7 +7445,8 @@
       "quote": "showed the ocean floor carries mirror-symmetric bands of reversed magnetism, the \"conveyor belt\" explicable only if new crust is continually born at the ridge",
       "citation_keys": [
         "vinematthews1963magnetic"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-alvarez-discovered-iridium",
@@ -7229,7 +7457,8 @@
       "quote": "measured the element **iridium** in the thin clay that marks the K–Pg boundary at Gubbio, Italy, and found it running about a hundred and sixty times above background",
       "citation_keys": [
         "alvarez1980extinction"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-iridium-located-in-kpg",
@@ -7240,7 +7469,8 @@
       "quote": "in the thin clay that marks the K–Pg boundary at Gubbio, Italy",
       "citation_keys": [
         "alvarez1980extinction"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-smit-supports-iridium",
@@ -7251,7 +7481,8 @@
       "quote": "Jan Smit and Jan Hertogen reported the same boundary spike from Spain",
       "citation_keys": [
         "smit1980boundary"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-impactor-caused-crater",
@@ -7262,7 +7493,8 @@
       "quote": "the scar of a ten-kilometre asteroid striking at about twenty kilometres per second",
       "citation_keys": [
         "chicxulub1991crater"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-crater-caused-extinction",
@@ -7273,7 +7505,8 @@
       "quote": "The impact vaporized sulfur-rich rock, choked the sky with dust and sulfate for years, halted photosynthesis, and collapsed the food chain; the climate disruption, not the blast, is what finished the dinosaurs",
       "citation_keys": [
         "chicxulub_wiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-survivors-caused-primates",
@@ -7313,7 +7546,8 @@
       "quote": "the human lineage (Hominini) diverged from the lineage leading to chimpanzees and bonobos between approximately 6 and 8 million years ago",
       "citation_keys": [
         "begun2003planet"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-sahel-before-ardipithecus",
@@ -7353,7 +7587,8 @@
       "quote": "argue that limits to maternal metabolism, not the pelvis, are the primary constraint on gestation length and fetal growth",
       "citation_keys": [
         "dunsworth2012altriciality"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-warrener-contradicts-obstetrical",
@@ -7364,7 +7599,8 @@
       "quote": "found that a wider pelvis does not raise the metabolic cost of walking or running, removing one of the assumed locomotor costs of a roomier birth canal",
       "citation_keys": [
         "warrener2015pelvis"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-xu-supports-birth-canal-dimensions",
@@ -7375,7 +7611,8 @@
       "quote": "found that birth-canal dimensions are highly heritable",
       "citation_keys": [
         "xu2025pelvis"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-xu-supports-birth-canal-width",
@@ -7386,7 +7623,8 @@
       "quote": "birth-canal width is genetically correlated with head width",
       "citation_keys": [
         "xu2025pelvis"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-xu-supports-wide-birth-canal",
@@ -7397,7 +7635,8 @@
       "quote": "wider birth canals were associated with slower walking and higher hip-osteoarthritis risk",
       "citation_keys": [
         "xu2025pelvis"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-darwin-supports-camera-eye",
@@ -7408,7 +7647,8 @@
       "quote": "if the eye can vary in every generation, and if every small improvement helps, then a camera eye can be built by natural selection from a simple light-sensitive spot",
       "citation_keys": [
         "darwin1859origin"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-hard-problem-from-nagel",
@@ -7420,7 +7660,8 @@
       "citation_keys": [
         "chalmers1995hard",
         "nagel1974bat"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-goe-caused-eukaryotes",
@@ -7429,7 +7670,8 @@
       "kind": "caused",
       "qualifiers": {},
       "quote": "no oxygen, no eukaryotes; no eukaryotes, no multicellularity",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-eukaryotes-caused-multicell",
@@ -7478,7 +7720,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "Archaic humans including Neanderthals and Denisovans diverged from the lineage leading to modern humans",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-agriculture-before-civilisations",
@@ -7487,7 +7730,8 @@
       "kind": "before",
       "qualifiers": {},
       "quote": "The development of agriculture approximately 10,000–12,000 years ago and the subsequent rise of civilizations",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-great-chain-from-aristotle",
@@ -7496,7 +7740,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "The medieval synthesis of Aristotelian biology and Christian theology produced the **Great Chain of Being**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-aquinas-integrated-chain",
@@ -7507,7 +7752,8 @@
       "quote": "integrated this hierarchy into Christian doctrine",
       "citation_keys": [
         "thomas1274summa"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-linnaeus-chain-logic",
@@ -7518,7 +7764,8 @@
       "quote": "he was still working within the chain's logic",
       "citation_keys": [
         "linnaeus1758systema"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-darwin-replaced-chain",
@@ -7529,7 +7776,8 @@
       "quote": "the ladder was replaced by a **branching tree**",
       "citation_keys": [
         "darwin1859origin"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-aristotelian-cosmology-blocked-revolution",
@@ -7540,7 +7788,8 @@
       "quote": "This cosmology blocked the scientific revolution for two millennia",
       "citation_keys": [
         "aristotle1685meteorologica"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-aristotle-created-syllogistic-logic",
@@ -7580,7 +7829,8 @@
       "quote": "a work that gave the discipline its name (al-jabr, \"the reunion of broken parts\")",
       "citation_keys": [
         "alkhwarizmi820algebra"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-algorithm-name-from-alkhwarizmi",
@@ -7591,7 +7841,8 @@
       "quote": "(a Latinization of al-Khwarizmi's name)",
       "citation_keys": [
         "alkhwarizmi820algebra"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-ibnalhaytham-wrote-optics",
@@ -7613,7 +7864,8 @@
       "quote": "is the method that the Royal Society would formalize three centuries later",
       "citation_keys": [
         "ibnalhaytham1021optics"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-copernicus-wrote-de-revolutionibus",
@@ -7635,7 +7887,8 @@
       "quote": "the Great Chain of Being, which had placed humanity at the navel of creation, is broken",
       "citation_keys": [
         "copernicus1543revolutionibus"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-kepler-used-tycho-observations",
@@ -7646,7 +7899,8 @@
       "quote": "spent seventeen years analysing the observations of the Danish astronomer Tycho Brahe",
       "citation_keys": [
         "keplerastronomianova"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-kepler-announced-first-two-laws",
@@ -7657,7 +7911,8 @@
       "quote": "he announced his first two laws",
       "citation_keys": [
         "keplerastronomianova"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-kepler-announced-third-law",
@@ -7668,7 +7923,8 @@
       "quote": "he announced the third law",
       "citation_keys": [
         "kepler1619harmonices"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-galileo-wrote-sidereus-nuncius",
@@ -7690,7 +7946,8 @@
       "quote": "Galileo argued for the Copernican system",
       "citation_keys": [
         "galileodialogo"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-galileo-dialogue-against-aristotle",
@@ -7701,7 +7958,8 @@
       "quote": "against the Aristotelian physics of natural places and uniform circular motion",
       "citation_keys": [
         "galileodialogo"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-bacon-ideal-royal-society",
@@ -7710,7 +7968,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "an ideal that the Royal Society, founded in 1660, was created to institutionalize",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-la-geometrie-part-of-discourse",
@@ -7732,7 +7991,8 @@
       "quote": "The step from \"the body is a machine\" to \"the brain is a computer\" was taken, in mathematics, by \\citeauthorlastnameand{mccullochpitts1943}",
       "citation_keys": [
         "mccullochpitts1943"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-kepler-first-two-laws-from-principia",
@@ -7743,7 +8003,8 @@
       "quote": "Kepler's empirical laws became *consequences* of a deeper principle.",
       "citation_keys": [
         "newtonprincipia"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-kepler-third-law-from-principia",
@@ -7754,7 +8015,8 @@
       "quote": "Kepler's empirical laws became *consequences* of a deeper principle.",
       "citation_keys": [
         "newtonprincipia"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-laplace-demon-in-essai",
@@ -7778,7 +8040,8 @@
       "quote": "the first rigorous formulation of **calculus** (independent of Leibniz's)",
       "citation_keys": [
         "newtonprincipia"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-leibniz-before-principia",
@@ -7787,7 +8050,8 @@
       "kind": "before",
       "qualifiers": {},
       "quote": "in 1684, three years before Newton's *Principia*",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-mere-question-pascal-fermat",
@@ -7798,7 +8062,8 @@
       "quote": "posed a question to \\citeauthorlastnameand{pascalfirmat1654}: how should the stakes in an interrupted game of dice be fairly divided? The correspondence that followed, between Pascal and Fermat",
       "citation_keys": [
         "pascalfirmat1654"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-bayes-wrote-essay",
@@ -7809,7 +8074,8 @@
       "quote": "leaving behind a manuscript, \"An Essay towards Solving a Problem in the Doctrine of Chances,\"",
       "citation_keys": [
         "bayes1763essay"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-laplace-generalized-bayes",
@@ -7820,7 +8086,8 @@
       "quote": "independently derived and generalized Bayes's result",
       "citation_keys": [
         "laplace1812analytic"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-central-limit-theorem-in-essai",
@@ -7853,7 +8120,8 @@
       "quote": "comes from **V. Gordon Childe**",
       "citation_keys": [
         "childe1936man"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-childe-neolithic-revolution",
@@ -7864,7 +8132,8 @@
       "quote": "He later labelled two of those kinks the **Neolithic Revolution** and the **Urban Revolution**",
       "citation_keys": [
         "childe1950urban"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-childe-urban-revolution",
@@ -7875,7 +8144,8 @@
       "quote": "He later labelled two of those kinks the **Neolithic Revolution** and the **Urban Revolution**",
       "citation_keys": [
         "childe1950urban"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-sedentarisation-before-agriculture",
@@ -7895,7 +8165,8 @@
       "quote": "earlier than full cereal domestication",
       "citation_keys": [
         "kenyon1957digging"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-jericho-tower-part-of-jericho",
@@ -7906,7 +8177,8 @@
       "quote": "Its Neolithic tower (c. 8000 BCE, ~8.5 m tall) is one of the oldest stone monuments on Earth",
       "citation_keys": [
         "kenyon1957digging"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-jericho-wall-part-of-jericho",
@@ -7917,7 +8189,8 @@
       "quote": "its surrounding wall and ditch are the earliest known example of **fortification**",
       "citation_keys": [
         "kenyon1957digging"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-younger-dryas-before-holocene",
@@ -7946,7 +8219,8 @@
       "kind": "located_in",
       "qualifiers": {},
       "quote": "comes from sites in the Fertile Crescent at roughly 9500 BCE",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-emmer-einkorn-part-of-founder-crops",
@@ -7957,7 +8231,8 @@
       "quote": "the cereals emmer, einkorn, and barley",
       "citation_keys": [
         "zoharyhopf2000domestication"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-cereals-before-domesticated-animals",
@@ -7966,7 +8241,8 @@
       "kind": "before",
       "qualifiers": {},
       "quote": "Sheep, goats, cattle, and pigs followed",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-uruk-period-instance-urban-revolution",
@@ -7977,7 +8253,8 @@
       "quote": "the small farming villages of the Uruk period coalesced into cities",
       "citation_keys": [
         "childe1950urban"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-childe-wrote-1950-paper",
@@ -8044,7 +8321,8 @@
       "kind": "before",
       "qualifiers": {},
       "quote": "Cuneiform was the first of five independent inventions of writing",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-cuneiform-before-indus-script",
@@ -8053,7 +8331,8 @@
       "kind": "before",
       "qualifiers": {},
       "quote": "Cuneiform was the first of five independent inventions of writing",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-cuneiform-before-oracle-bone",
@@ -8062,7 +8341,8 @@
       "kind": "before",
       "qualifiers": {},
       "quote": "Cuneiform was the first of five independent inventions of writing",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-cuneiform-before-maya",
@@ -8080,7 +8360,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "because they were inside the libraries that writing built",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-library-from-agriculture",
@@ -8089,7 +8370,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "that agriculture made possible",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-i-library-sustained-by-urban-revolution",
@@ -8098,7 +8380,8 @@
       "kind": "supports",
       "qualifiers": {},
       "quote": "that the cities of the first urban revolution sustained",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "prov-untold_history_i-leibniz-characteristica-universalis",
@@ -12286,6 +12569,88 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "part: 6",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-joseph-priestley",
+      "from": "joseph-priestley",
+      "to": "untold-history-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Priestley, 1772]{priestley1771airs})",
+      "citation_keys": [
+        "priestley1771airs"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-plate-tectonics",
+      "from": "plate-tectonics",
+      "to": "untold-history-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Plate tectonics** was a fact by 1967",
+      "citation_keys": [
+        "img_pangaea_200ma"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-moon-formation",
+      "from": "moon-formation",
+      "to": "untold-history-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Hartmann and Davis, 1975]{hartmann1975satellite})",
+      "citation_keys": [
+        "hartmann1975satellite"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-schmandt-besserat-1992",
+      "from": "schmandt-besserat-1992",
+      "to": "untold-history-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Schmandt-Besserat 1992]{schmandtbesserat1992}",
+      "citation_keys": [
+        "schmandtbesserat1992"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-schmandt-besserat-1996",
+      "from": "schmandt-besserat-1996",
+      "to": "untold-history-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Schmandt-Besserat 1996]{schmandtbesserat1996}",
+      "citation_keys": [
+        "schmandtbesserat1996"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-earth-magnetic-field",
+      "from": "earth-magnetic-field",
+      "to": "untold-history-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Earth's magnetic field (Wikipedia contributors, 2026)]{magnetic_field_wiki})",
+      "citation_keys": [
+        "magnetic_field_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_i-first-cells",
+      "from": "first-cells",
+      "to": "untold-history-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**The First Cells: 3.8–3.5 Billion Years Ago.**",
       "citation_keys": [],
       "confidence": "provenance"
     }

@@ -263,19 +263,48 @@
       "quote": "lets those estimates settle before the model commits to big steps",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-gap3-1",
+      "subject": "trainingdynamics-simulator",
+      "predicate": "default_parameters",
+      "value": 1000000000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "<span id=\"td-n-val\" style=\"font-family: monospace;\">1B</span>",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-gap3-2",
+      "subject": "trainingdynamics-simulator",
+      "predicate": "default_training_tokens",
+      "value": 10000000000,
+      "unit": "token",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "<span id=\"td-d-val\" style=\"font-family: monospace;\">10B</span>",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "trainingdynamics-gap3-3",
+      "subject": "mup-transfer",
+      "predicate": "example_model_parameters",
+      "value": 100000000,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "the answer I already have from the 0.1B model",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-trainingdynamics-part",
-      "from": "trainingdynamics",
-      "to": "part-2",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 2",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-trainingdynamics-kaplan-scaling-laws",
       "from": "kaplan-scaling-laws",
@@ -426,6 +455,36 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "lets those estimates settle before the model commits to big steps",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-trainingdynamics-simulator",
+      "from": "trainingdynamics-simulator",
+      "to": "trainingdynamics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "<span id=\"td-n-val\" style=\"font-family: monospace;\">1B</span>",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-mup-transfer",
+      "from": "mup-transfer",
+      "to": "trainingdynamics",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the answer I already have from the 0.1B model",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-trainingdynamics-part",
+      "from": "trainingdynamics",
+      "to": "part-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 2",
       "citation_keys": [],
       "confidence": "provenance"
     }

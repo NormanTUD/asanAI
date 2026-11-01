@@ -12,6 +12,7 @@
     "hamilton1844quaternions",
     "grassmann1844ausdehnungslehre",
     "sylvester1850matrix",
+    "cayleymemoirmatrices",
     "mactutor_matrices_determinants",
     "einstein1916annalen",
     "bridle1990softmax",
@@ -19,9 +20,22 @@
     "kullback1951information",
     "hadamard1899series",
     "schur1911bilinear",
-    "cayleymemoirmatrices",
     "hamilton1846quaternions",
-    "voigt1898krystalle"
+    "voigt1898krystalle",
+    "macTutorFunctions",
+    "etymonline_tensor",
+    "miller_functionsymbols",
+    "cramer1750introduction",
+    "etymonline_vector",
+    "hamiltonextensionsquaternions",
+    "etymonline_scalar",
+    "boltzmann_distribution_wiki",
+    "frobenius1878linear",
+    "frobenius1879differential",
+    "riccilevicivita1900",
+    "good1952rational",
+    "luce1959individualchoice",
+    "colah2015types"
   ],
   "claims": [
     {
@@ -134,7 +148,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "Cayley's 1858 memoir changed its status.",
-      "citation_keys": [],
+      "citation_keys": [
+        "cayleymemoirmatrices"
+      ],
       "confidence": "stated"
     },
     {
@@ -279,6 +295,286 @@
         "voigt1898krystalle"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-1",
+      "subject": "gottfried-wilhelm-leibniz",
+      "predicate": "function_term_manuscript_year",
+      "value": 1673,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Leibniz used it in a 1673 manuscript",
+      "citation_keys": [
+        "macTutorFunctions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-2",
+      "subject": "gottfried-wilhelm-leibniz",
+      "predicate": "determinant_letter_year",
+      "value": 1693,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in a letter of 1693",
+      "citation_keys": [
+        "mactutor_matrices_determinants"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-3",
+      "subject": "johann-bernoulli",
+      "predicate": "function_definition_year",
+      "value": 1694,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Johann Bernoulli described it in 1694",
+      "citation_keys": [
+        "macTutorFunctions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-4",
+      "subject": "tensor",
+      "predicate": "english_word_attestation_year",
+      "value": 1704,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the English word dates to 1704",
+      "citation_keys": [
+        "etymonline_tensor"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-5",
+      "subject": "leonhard-euler",
+      "predicate": "function_symbol_year",
+      "value": 1734,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Euler introduced the symbol $f(x)$ in 1734",
+      "citation_keys": [
+        "miller_functionsymbols"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-6",
+      "subject": "leonhard-euler",
+      "predicate": "introductio_year",
+      "value": 1748,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "made the function the central object of analysis in his 1748 *Introductio*",
+      "citation_keys": [
+        "miller_functionsymbols"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-7",
+      "subject": "gabriel-cramer",
+      "predicate": "cramers_rule_year",
+      "value": 1750,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Gabriel Cramer stated the general rule for solving $n$ linear equations with determinants in 1750",
+      "citation_keys": [
+        "cramer1750introduction"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-8",
+      "subject": "augustin-louis-cauchy",
+      "predicate": "determinant_term_year",
+      "value": 1812,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Cauchy gave the word its modern sense only in 1812.",
+      "citation_keys": [
+        "etymonline_vector",
+        "hamiltonextensionsquaternions",
+        "etymonline_scalar"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-9",
+      "subject": "william-rowan-hamilton",
+      "predicate": "vector_term_year",
+      "value": 1854,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Hamilton, 1854]{hamiltonextensionsquaternions})",
+      "citation_keys": [
+        "hamiltonextensionsquaternions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-10",
+      "subject": "ludwig-boltzmann",
+      "predicate": "boltzmann_distribution_year",
+      "value": 1868,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Boltzmann's 1868 paper",
+      "citation_keys": [
+        "boltzmann_distribution_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-11",
+      "subject": "ferdinand-georg-frobenius",
+      "predicate": "rank_invariant_memoir_year",
+      "value": 1878,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Frobenius isolated that invariant in his 1878 memoir on linear substitutions",
+      "citation_keys": [
+        "frobenius1878linear"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-12",
+      "subject": "ferdinand-georg-frobenius",
+      "predicate": "rang_term_year",
+      "value": 1879,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "used the German word *Rang* in an 1879 paper",
+      "citation_keys": [
+        "frobenius1879differential"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-13",
+      "subject": "james-joseph-sylvester",
+      "predicate": "nullity_term_year",
+      "value": 1884,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Sylvester supplied the complementary notion of *nullity* in 1884",
+      "citation_keys": [
+        "mactutor_matrices_determinants"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-14",
+      "subject": "jacques-hadamard",
+      "predicate": "thesis_year",
+      "value": 1892,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Hadamard's 1892 thesis was about Taylor series and analytic continuation",
+      "citation_keys": [
+        "hadamard1899series"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-15",
+      "subject": "tullio-ricci-curbastro",
+      "predicate": "tensor_calculus_year",
+      "value": 1900,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Ricci-Curbastro and Levi-Civita then built the calculus that makes tensors work, 1900",
+      "citation_keys": [
+        "riccilevicivita1900",
+        "einstein1916annalen"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-16",
+      "subject": "josiah-willard-gibbs",
+      "predicate": "textbook_year",
+      "value": 1902,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Gibbs's textbook of 1902",
+      "citation_keys": [
+        "boltzmann_distribution_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-17",
+      "subject": "irving-john-good",
+      "predicate": "rational_decisions_year",
+      "value": 1952,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Good's 1952",
+      "citation_keys": [
+        "good1952rational"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-18",
+      "subject": "r-duncan-luce",
+      "predicate": "choice_axiom_year",
+      "value": 1959,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "R. Duncan Luce derived it from his choice axiom in 1959",
+      "citation_keys": [
+        "luce1959individualchoice"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-19",
+      "subject": "christopher-olah",
+      "predicate": "representation_types_essay_year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[Olah, 2015]{colah2015types})",
+      "citation_keys": [
+        "colah2015types"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-20",
+      "subject": "axler-linear-algebra-done-right",
+      "predicate": "basis_section",
+      "value": "2B",
+      "unit": "name",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "unique combination of them (\\cite[Axler, Linear Algebra Done Right, §2B, p. 39]{axler2024linearalgebra})",
+      "citation_keys": [
+        "axler2024linearalgebra"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_ii-gap2-21",
+      "subject": "axler-linear-algebra-done-right",
+      "predicate": "basis_section",
+      "value": "2B",
+      "unit": "name",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "with the standard basis (\\cite[Axler, Linear Algebra Done Right, §2B, p. 39]{axler2024linearalgebra})",
+      "citation_keys": [
+        "axler2024linearalgebra"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -357,7 +653,9 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "Cayley's 1858 memoir changed its status.",
-      "citation_keys": [],
+      "citation_keys": [
+        "cayleymemoirmatrices"
+      ],
       "confidence": "provenance"
     },
     {
@@ -487,6 +785,201 @@
       "quote": "his \"Tensoren,\" 1898",
       "citation_keys": [
         "voigt1898krystalle"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-gottfried-wilhelm-leibniz",
+      "from": "gottfried-wilhelm-leibniz",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Leibniz used it in a 1673 manuscript",
+      "citation_keys": [
+        "macTutorFunctions"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-johann-bernoulli",
+      "from": "johann-bernoulli",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Johann Bernoulli described it in 1694",
+      "citation_keys": [
+        "macTutorFunctions"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-leonhard-euler",
+      "from": "leonhard-euler",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Euler introduced the symbol $f(x)$ in 1734",
+      "citation_keys": [
+        "miller_functionsymbols"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-gabriel-cramer",
+      "from": "gabriel-cramer",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Gabriel Cramer stated the general rule for solving $n$ linear equations with determinants in 1750",
+      "citation_keys": [
+        "cramer1750introduction"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-augustin-louis-cauchy",
+      "from": "augustin-louis-cauchy",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Cauchy gave the word its modern sense only in 1812.",
+      "citation_keys": [
+        "etymonline_vector",
+        "hamiltonextensionsquaternions",
+        "etymonline_scalar"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-william-rowan-hamilton",
+      "from": "william-rowan-hamilton",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Hamilton, 1854]{hamiltonextensionsquaternions})",
+      "citation_keys": [
+        "hamiltonextensionsquaternions"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-ludwig-boltzmann",
+      "from": "ludwig-boltzmann",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Boltzmann's 1868 paper",
+      "citation_keys": [
+        "boltzmann_distribution_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-ferdinand-georg-frobenius",
+      "from": "ferdinand-georg-frobenius",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Frobenius isolated that invariant in his 1878 memoir on linear substitutions",
+      "citation_keys": [
+        "frobenius1878linear"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-james-joseph-sylvester",
+      "from": "james-joseph-sylvester",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Sylvester supplied the complementary notion of *nullity* in 1884",
+      "citation_keys": [
+        "mactutor_matrices_determinants"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-jacques-hadamard",
+      "from": "jacques-hadamard",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Hadamard's 1892 thesis was about Taylor series and analytic continuation",
+      "citation_keys": [
+        "hadamard1899series"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-tullio-ricci-curbastro",
+      "from": "tullio-ricci-curbastro",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Ricci-Curbastro and Levi-Civita then built the calculus that makes tensors work, 1900",
+      "citation_keys": [
+        "riccilevicivita1900",
+        "einstein1916annalen"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-josiah-willard-gibbs",
+      "from": "josiah-willard-gibbs",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Gibbs's textbook of 1902",
+      "citation_keys": [
+        "boltzmann_distribution_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-irving-john-good",
+      "from": "irving-john-good",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Good's 1952",
+      "citation_keys": [
+        "good1952rational"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-r-duncan-luce",
+      "from": "r-duncan-luce",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "R. Duncan Luce derived it from his choice axiom in 1959",
+      "citation_keys": [
+        "luce1959individualchoice"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-christopher-olah",
+      "from": "christopher-olah",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Olah, 2015]{colah2015types})",
+      "citation_keys": [
+        "colah2015types"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_ii-axler-linear-algebra-done-right",
+      "from": "axler-linear-algebra-done-right",
+      "to": "math-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "unique combination of them (\\cite[Axler, Linear Algebra Done Right, §2B, p. 39]{axler2024linearalgebra})",
+      "citation_keys": [
+        "axler2024linearalgebra"
       ],
       "confidence": "provenance"
     }

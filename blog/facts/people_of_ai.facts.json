@@ -10,7 +10,13 @@
   "citations": [
     "mccullochpitts1943",
     "lettvin1959frog",
+    "rosenblatt1958perceptron",
+    "rosenblatt1962neurodynamics",
+    "lefkowitz2019perceptron",
     "samuel1959checkers",
+    "minskyperceptrons",
+    "papert1988oneai",
+    "mccorduck1979machines",
     "widrow1960adaline",
     "crevier1993ai",
     "hopfield1982",
@@ -25,7 +31,43 @@
     "goodfellow2014gan",
     "brown2020gpt3",
     "ouyang2022instructgpt",
-    "hoffmann2022chinchilla"
+    "hoffmann2022chinchilla",
+    "img_alexnet_architecture",
+    "menabrea_lovelace1843",
+    "boole1854",
+    "img_charles_babbage",
+    "frege1879",
+    "church1936",
+    "abraham2016rebelgenius",
+    "vonneumann",
+    "pitts1947universals",
+    "turing1950computing",
+    "shannon1951communication",
+    "turing1936",
+    "hodges1983enigma",
+    "img_claude_shannon",
+    "mccarthy1955dartmouth",
+    "newell1956logic",
+    "img_ibm_704",
+    "samuel1967checkers",
+    "dobson2025perceptron",
+    "shortliffe1976mycin",
+    "ackley1985boltzmann",
+    "img_david_rumelhart",
+    "hinton2006",
+    "hassabis2007patients",
+    "yudkowsky2008ai",
+    "sutskever2013thesis",
+    "ronneberger2015unet",
+    "silver2016alphago",
+    "lecun2022path",
+    "img_yoshua_bengio",
+    "devlin2019bert",
+    "jumper2021alphafold",
+    "radford2021clip",
+    "nobel2024physics",
+    "img_geoffrey_hinton",
+    "anthropic2025biology"
   ],
   "claims": [
     {
@@ -100,7 +142,11 @@
       "value": 1958,
       "unit": "year",
       "quote": "The 1958 Navy press conference turned the machine into a sensation",
-      "citation_keys": [],
+      "citation_keys": [
+        "rosenblatt1958perceptron",
+        "rosenblatt1962neurodynamics",
+        "lefkowitz2019perceptron"
+      ],
       "qualifiers": {},
       "confidence": "stated"
     },
@@ -124,7 +170,11 @@
       "value": 1969,
       "unit": "year",
       "quote": "Their 1969 \\citetitle{minskyperceptrons} proved that a single-layer perceptron cannot compute predicates such as parity and connectedness",
-      "citation_keys": [],
+      "citation_keys": [
+        "minskyperceptrons",
+        "papert1988oneai",
+        "mccorduck1979machines"
+      ],
       "qualifiers": {},
       "confidence": "stated"
     },
@@ -329,6 +379,654 @@
         "approx": true
       },
       "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-1",
+      "subject": "alexnet",
+      "predicate": "softmax_classes",
+      "value": 1000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "five convolutional layers, three fully connected layers, and a 1000-way softmax",
+      "citation_keys": [
+        "img_alexnet_architecture"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-2",
+      "subject": "menabrea-lovelace-notes",
+      "predicate": "year",
+      "value": 1843,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Menabrea & Lovelace, 1843]{menabrea_lovelace1843}; \\cite[McCorduck, 1979]{mccorduck1979machines})",
+      "citation_keys": [
+        "menabrea_lovelace1843"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-3",
+      "subject": "george-boole-laws-of-thought",
+      "predicate": "published",
+      "value": 1854,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Boole's **Laws of Thought** (1854) turned Aristotle's syllogisms into algebra",
+      "citation_keys": [
+        "boole1854"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-4",
+      "subject": "charles-babbage-portrait",
+      "predicate": "photograph_year",
+      "value": 1860,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Charles Babbage, 1860.",
+      "citation_keys": [
+        "img_charles_babbage"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-5",
+      "subject": "frege-begriffsschrift",
+      "predicate": "published",
+      "value": 1879,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Frege's **Begriffsschrift** (1879) went further, inventing predicate logic",
+      "citation_keys": [
+        "frege1879"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-6",
+      "subject": "frank-rosenblatt",
+      "predicate": "birth_year",
+      "value": 1928,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Rosenblatt was born in New Rochelle in 1928",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-7",
+      "subject": "warren-mcculloch",
+      "predicate": "psychiatry_assistant_start_year",
+      "value": 1932,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Psychiatry assistant** — Rockland State Hospital, 1932–34",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-8",
+      "subject": "alonzo-church",
+      "predicate": "entscheidungsproblem_proof_year",
+      "value": 1936,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "his 1936 proof that the Entscheidungsproblem is unsolvable",
+      "citation_keys": [
+        "church1936"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-9",
+      "subject": "old-lyme-farm",
+      "predicate": "barn_built_year",
+      "value": 1938,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "built a large barn in 1938",
+      "citation_keys": [
+        "abraham2016rebelgenius"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-10",
+      "subject": "old-lyme-farm",
+      "predicate": "stone_mill_built_year",
+      "value": 1940,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "a stone mill building in 1940",
+      "citation_keys": [
+        "abraham2016rebelgenius"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-11",
+      "subject": "mcculloch-pitts-collaboration",
+      "predicate": "meeting_year",
+      "value": 1941,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "with Walter Pitts, from their meeting in 1941",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-12",
+      "subject": "von-neumann-edvac-report",
+      "predicate": "year",
+      "value": 1945,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[von Neumann, 1945]{vonneumann}",
+      "citation_keys": [
+        "vonneumann"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-13",
+      "subject": "pitts-mcculloch-how-we-know-universals",
+      "predicate": "published",
+      "value": 1947,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Their 1947 follow-up, **“How We Know Universals,”**",
+      "citation_keys": [
+        "pitts1947universals"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-14",
+      "subject": "mcculloch-caltech-talk",
+      "predicate": "year",
+      "value": 1948,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "At the September 1948 Caltech symposium on cerebral mechanisms",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-15",
+      "subject": "alan-turing-imitation-game",
+      "predicate": "year",
+      "value": 1950,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1950 he replaced “Can machines think?” with an operational question",
+      "citation_keys": [
+        "turing1950computing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-16",
+      "subject": "claude-shannon-1951-paper",
+      "predicate": "year",
+      "value": 1951,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "His 1951 paper framed language as a prediction problem",
+      "citation_keys": [
+        "shannon1951communication"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-17",
+      "subject": "alan-turing",
+      "predicate": "prosecution_year",
+      "value": 1952,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "He was prosecuted in 1952 for homosexuality",
+      "citation_keys": [
+        "turing1936",
+        "turing1950computing",
+        "hodges1983enigma",
+        "img_claude_shannon"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-18",
+      "subject": "alan-turing",
+      "predicate": "death_year",
+      "value": 1954,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "died in 1954 at 41",
+      "citation_keys": [
+        "turing1936",
+        "turing1950computing",
+        "hodges1983enigma",
+        "img_claude_shannon"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-19",
+      "subject": "dartmouth-workshop",
+      "predicate": "year",
+      "value": 1955,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The 1955 **Dartmouth proposal** named the field",
+      "citation_keys": [
+        "mccarthy1955dartmouth"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-20",
+      "subject": "newell-simon-logic-theory-machine",
+      "predicate": "year",
+      "value": 1956,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Newell & Simon, 1956]{newell1956logic}",
+      "citation_keys": [
+        "newell1956logic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-21",
+      "subject": "ibm-704-nasa-langley",
+      "predicate": "year",
+      "value": 1957,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "An IBM 704 at NASA Langley, 1957",
+      "citation_keys": [
+        "img_ibm_704"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-22",
+      "subject": "rosenblatt-1962-book",
+      "predicate": "year",
+      "value": 1962,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "his 1962 book framed the programme as a science of brain mechanisms",
+      "citation_keys": [
+        "rosenblatt1962neurodynamics"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-23",
+      "subject": "samuel-checkers-1967",
+      "predicate": "year",
+      "value": 1967,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "An eleven-page follow-up in 1967 reported the later, stronger version",
+      "citation_keys": [
+        "samuel1967checkers"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-24",
+      "subject": "frank-rosenblatt",
+      "predicate": "death_year",
+      "value": 1971,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "He died in 1971, on his 43rd birthday",
+      "citation_keys": [
+        "rosenblatt1958perceptron",
+        "rosenblatt1962neurodynamics",
+        "lefkowitz2019perceptron",
+        "dobson2025perceptron"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-25",
+      "subject": "mycin",
+      "predicate": "publication_year",
+      "value": 1976,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Shortliffe & Buchanan, 1976]{shortliffe1976mycin}",
+      "citation_keys": [
+        "shortliffe1976mycin"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-26",
+      "subject": "hodges-enigma-biography",
+      "predicate": "year",
+      "value": 1983,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Hodges, 1983]{hodges1983enigma}",
+      "citation_keys": [
+        "hodges1983enigma"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-27",
+      "subject": "boltzmann-machine",
+      "predicate": "year",
+      "value": 1985,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Ackley et al., 1985]{ackley1985boltzmann}",
+      "citation_keys": [
+        "ackley1985boltzmann"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-28",
+      "subject": "papert-one-ai-or-many",
+      "predicate": "year",
+      "value": 1988,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Papert, 1988]{papert1988oneai}",
+      "citation_keys": [
+        "papert1988oneai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-29",
+      "subject": "werbos-bptt",
+      "predicate": "year",
+      "value": 1990,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Werbos, 1990]{werbos1990bptt}",
+      "citation_keys": [
+        "werbos1990bptt"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-30",
+      "subject": "david-rumelhart-1991-portrait",
+      "predicate": "photograph_year",
+      "value": 1991,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "David Rumelhart at IJCNN Seattle, 1991",
+      "citation_keys": [
+        "img_david_rumelhart"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-31",
+      "subject": "manuel-blum",
+      "predicate": "turing_award_year",
+      "value": 1995,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Manuel Blum, who would win the Turing Award in 1995",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-32",
+      "subject": "deep-belief-network-revival",
+      "predicate": "year",
+      "value": 2006,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "lead the deep-belief-network revival of 2006",
+      "citation_keys": [
+        "hinton2006"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-33",
+      "subject": "hassabis-hippocampal-amnesia",
+      "predicate": "year",
+      "value": 2007,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Hassabis et al., 2007]{hassabis2007patients}",
+      "citation_keys": [
+        "hassabis2007patients"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-34",
+      "subject": "yudkowsky-ai-risk",
+      "predicate": "year",
+      "value": 2008,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Yudkowsky, 2008]{yudkowsky2008ai}",
+      "citation_keys": [
+        "yudkowsky2008ai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-35",
+      "subject": "imagenet",
+      "predicate": "publication_year",
+      "value": 2009,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Deng et al., 2009]{deng2009imagenet}",
+      "citation_keys": [
+        "deng2009imagenet"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-36",
+      "subject": "imagenet-challenge",
+      "predicate": "start_year",
+      "value": 2010,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "with a 1,000-class challenge that ran from 2010 to 2017",
+      "citation_keys": [
+        "deng2009imagenet"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-37",
+      "subject": "ilya-sutskever-thesis",
+      "predicate": "year",
+      "value": 2013,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "His 2013 thesis on training recurrent networks remains one of the clearest early statements",
+      "citation_keys": [
+        "sutskever2013thesis"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-38",
+      "subject": "u-net",
+      "predicate": "year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Ronneberger et al., 2015]{ronneberger2015unet}",
+      "citation_keys": [
+        "ronneberger2015unet"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-39",
+      "subject": "alphago-lee-sedol-match",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "to beat Lee Sedol in 2016",
+      "citation_keys": [
+        "silver2016alphago"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-40",
+      "subject": "turing-award-2018",
+      "predicate": "year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "He shared the 2018 Turing Award with Hinton and Bengio",
+      "citation_keys": [
+        "lecun1989backpropagation",
+        "lecun2022path",
+        "img_yoshua_bengio"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-41",
+      "subject": "bert",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Devlin et al., 2019]{devlin2019bert}",
+      "citation_keys": [
+        "devlin2019bert"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-42",
+      "subject": "alphafold2-casp14",
+      "predicate": "year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "AlphaFold 2's accuracy at CASP14 in 2020 turned a decades-old grand challenge into a practical tool",
+      "citation_keys": [
+        "jumper2021alphafold"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-43",
+      "subject": "clip",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Radford et al., 2021]{radford2021clip}",
+      "citation_keys": [
+        "radford2021clip"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-44",
+      "subject": "chinchilla",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}",
+      "citation_keys": [
+        "hoffmann2022chinchilla"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-45",
+      "subject": "geoffrey-hinton",
+      "predicate": "left_google_year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "left Google in 2023 to warn about risk",
+      "citation_keys": [
+        "rumelhart1986",
+        "ackley1985boltzmann",
+        "hinton2006",
+        "nobel2024physics",
+        "img_geoffrey_hinton"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-46",
+      "subject": "nobel-prize-physics-2024",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "He shared the 2024 Nobel Prize in Physics with Geoffrey Hinton for these foundations",
+      "citation_keys": [
+        "nobel2024physics"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-gap-47",
+      "subject": "lindsey-attribution-graphs",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Lindsey et al., 2025]{anthropic2025biology}",
+      "citation_keys": [
+        "anthropic2025biology"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -373,7 +1071,11 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "The 1958 Navy press conference turned the machine into a sensation",
-      "citation_keys": [],
+      "citation_keys": [
+        "rosenblatt1958perceptron",
+        "rosenblatt1962neurodynamics",
+        "lefkowitz2019perceptron"
+      ],
       "confidence": "provenance"
     },
     {
@@ -395,7 +1097,11 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "Their 1969 \\citetitle{minskyperceptrons} proved that a single-layer perceptron cannot compute predicates such as parity and connectedness",
-      "citation_keys": [],
+      "citation_keys": [
+        "minskyperceptrons",
+        "papert1988oneai",
+        "mccorduck1979machines"
+      ],
       "confidence": "provenance"
     },
     {
@@ -574,6 +1280,485 @@
       "quote": "roughly twenty tokens per parameter was a better target",
       "citation_keys": [
         "hoffmann2022chinchilla"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-menabrea-lovelace-notes",
+      "from": "menabrea-lovelace-notes",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Menabrea & Lovelace, 1843]{menabrea_lovelace1843}; \\cite[McCorduck, 1979]{mccorduck1979machines})",
+      "citation_keys": [
+        "menabrea_lovelace1843"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-george-boole-laws-of-thought",
+      "from": "george-boole-laws-of-thought",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Boole's **Laws of Thought** (1854) turned Aristotle's syllogisms into algebra",
+      "citation_keys": [
+        "boole1854"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-charles-babbage-portrait",
+      "from": "charles-babbage-portrait",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Charles Babbage, 1860.",
+      "citation_keys": [
+        "img_charles_babbage"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-frege-begriffsschrift",
+      "from": "frege-begriffsschrift",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Frege's **Begriffsschrift** (1879) went further, inventing predicate logic",
+      "citation_keys": [
+        "frege1879"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-frank-rosenblatt",
+      "from": "frank-rosenblatt",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Rosenblatt was born in New Rochelle in 1928",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-warren-mcculloch",
+      "from": "warren-mcculloch",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Psychiatry assistant** — Rockland State Hospital, 1932–34",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-alonzo-church",
+      "from": "alonzo-church",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "his 1936 proof that the Entscheidungsproblem is unsolvable",
+      "citation_keys": [
+        "church1936"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-old-lyme-farm",
+      "from": "old-lyme-farm",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "built a large barn in 1938",
+      "citation_keys": [
+        "abraham2016rebelgenius"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-mcculloch-pitts-collaboration",
+      "from": "mcculloch-pitts-collaboration",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "with Walter Pitts, from their meeting in 1941",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-von-neumann-edvac-report",
+      "from": "von-neumann-edvac-report",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[von Neumann, 1945]{vonneumann}",
+      "citation_keys": [
+        "vonneumann"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-pitts-mcculloch-how-we-know-universals",
+      "from": "pitts-mcculloch-how-we-know-universals",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Their 1947 follow-up, **“How We Know Universals,”**",
+      "citation_keys": [
+        "pitts1947universals"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-mcculloch-caltech-talk",
+      "from": "mcculloch-caltech-talk",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "At the September 1948 Caltech symposium on cerebral mechanisms",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-alan-turing-imitation-game",
+      "from": "alan-turing-imitation-game",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1950 he replaced “Can machines think?” with an operational question",
+      "citation_keys": [
+        "turing1950computing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-claude-shannon-1951-paper",
+      "from": "claude-shannon-1951-paper",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "His 1951 paper framed language as a prediction problem",
+      "citation_keys": [
+        "shannon1951communication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-alan-turing",
+      "from": "alan-turing",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "He was prosecuted in 1952 for homosexuality",
+      "citation_keys": [
+        "turing1936",
+        "turing1950computing",
+        "hodges1983enigma",
+        "img_claude_shannon"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-dartmouth-workshop",
+      "from": "dartmouth-workshop",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The 1955 **Dartmouth proposal** named the field",
+      "citation_keys": [
+        "mccarthy1955dartmouth"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-newell-simon-logic-theory-machine",
+      "from": "newell-simon-logic-theory-machine",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Newell & Simon, 1956]{newell1956logic}",
+      "citation_keys": [
+        "newell1956logic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-ibm-704-nasa-langley",
+      "from": "ibm-704-nasa-langley",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "An IBM 704 at NASA Langley, 1957",
+      "citation_keys": [
+        "img_ibm_704"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-rosenblatt-1962-book",
+      "from": "rosenblatt-1962-book",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "his 1962 book framed the programme as a science of brain mechanisms",
+      "citation_keys": [
+        "rosenblatt1962neurodynamics"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-samuel-checkers-1967",
+      "from": "samuel-checkers-1967",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "An eleven-page follow-up in 1967 reported the later, stronger version",
+      "citation_keys": [
+        "samuel1967checkers"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-hodges-enigma-biography",
+      "from": "hodges-enigma-biography",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Hodges, 1983]{hodges1983enigma}",
+      "citation_keys": [
+        "hodges1983enigma"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-boltzmann-machine",
+      "from": "boltzmann-machine",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Ackley et al., 1985]{ackley1985boltzmann}",
+      "citation_keys": [
+        "ackley1985boltzmann"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-papert-one-ai-or-many",
+      "from": "papert-one-ai-or-many",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Papert, 1988]{papert1988oneai}",
+      "citation_keys": [
+        "papert1988oneai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-werbos-bptt",
+      "from": "werbos-bptt",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Werbos, 1990]{werbos1990bptt}",
+      "citation_keys": [
+        "werbos1990bptt"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-david-rumelhart-1991-portrait",
+      "from": "david-rumelhart-1991-portrait",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "David Rumelhart at IJCNN Seattle, 1991",
+      "citation_keys": [
+        "img_david_rumelhart"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-manuel-blum",
+      "from": "manuel-blum",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Manuel Blum, who would win the Turing Award in 1995",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-deep-belief-network-revival",
+      "from": "deep-belief-network-revival",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "lead the deep-belief-network revival of 2006",
+      "citation_keys": [
+        "hinton2006"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-hassabis-hippocampal-amnesia",
+      "from": "hassabis-hippocampal-amnesia",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Hassabis et al., 2007]{hassabis2007patients}",
+      "citation_keys": [
+        "hassabis2007patients"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-yudkowsky-ai-risk",
+      "from": "yudkowsky-ai-risk",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Yudkowsky, 2008]{yudkowsky2008ai}",
+      "citation_keys": [
+        "yudkowsky2008ai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-imagenet-challenge",
+      "from": "imagenet-challenge",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "with a 1,000-class challenge that ran from 2010 to 2017",
+      "citation_keys": [
+        "deng2009imagenet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-ilya-sutskever-thesis",
+      "from": "ilya-sutskever-thesis",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "His 2013 thesis on training recurrent networks remains one of the clearest early statements",
+      "citation_keys": [
+        "sutskever2013thesis"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-u-net",
+      "from": "u-net",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Ronneberger et al., 2015]{ronneberger2015unet}",
+      "citation_keys": [
+        "ronneberger2015unet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-alphago-lee-sedol-match",
+      "from": "alphago-lee-sedol-match",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "to beat Lee Sedol in 2016",
+      "citation_keys": [
+        "silver2016alphago"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-turing-award-2018",
+      "from": "turing-award-2018",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "He shared the 2018 Turing Award with Hinton and Bengio",
+      "citation_keys": [
+        "lecun1989backpropagation",
+        "lecun2022path",
+        "img_yoshua_bengio"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-bert",
+      "from": "bert",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Devlin et al., 2019]{devlin2019bert}",
+      "citation_keys": [
+        "devlin2019bert"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-alphafold2-casp14",
+      "from": "alphafold2-casp14",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "AlphaFold 2's accuracy at CASP14 in 2020 turned a decades-old grand challenge into a practical tool",
+      "citation_keys": [
+        "jumper2021alphafold"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-clip",
+      "from": "clip",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Radford et al., 2021]{radford2021clip}",
+      "citation_keys": [
+        "radford2021clip"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-geoffrey-hinton",
+      "from": "geoffrey-hinton",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "left Google in 2023 to warn about risk",
+      "citation_keys": [
+        "rumelhart1986",
+        "ackley1985boltzmann",
+        "hinton2006",
+        "nobel2024physics",
+        "img_geoffrey_hinton"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-nobel-prize-physics-2024",
+      "from": "nobel-prize-physics-2024",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "He shared the 2024 Nobel Prize in Physics with Geoffrey Hinton for these foundations",
+      "citation_keys": [
+        "nobel2024physics"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-lindsey-attribution-graphs",
+      "from": "lindsey-attribution-graphs",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Lindsey et al., 2025]{anthropic2025biology}",
+      "citation_keys": [
+        "anthropic2025biology"
       ],
       "confidence": "provenance"
     }

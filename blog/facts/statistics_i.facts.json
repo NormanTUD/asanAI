@@ -7,7 +7,28 @@
   "order": 10,
   "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [],
+  "citations": [
+    "devetula",
+    "liberludo",
+    "quetelet1835",
+    "oeuvresdeformat",
+    "graunt1662",
+    "fisher1935design",
+    "lind1747scurvy",
+    "scurvy_wiki",
+    "legendre1805",
+    "gauss1809",
+    "galton_eugenics",
+    "karl_pearson_wiki",
+    "pearson1895correlation",
+    "pearson1990studentbio",
+    "studentstest_wiki",
+    "student1907haemocytometer",
+    "zipf_law_wiki",
+    "zipf1949human",
+    "design_of_experiments_wiki",
+    "rct1948"
+  ],
   "claims": [
     {
       "id": "auto-statistics_i-1",
@@ -58,6 +79,626 @@
       "quote": "**Why This Matters for AI:** The Gumbel distribution is the secret ingredient behind the **Gumbel-Softmax trick** (also called the Concrete distribution). In neural networks, we often need to *sample* from a categorical distribution (e.g., “pick one of 50,000 tokens”), but sampling is a discrete ope",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "statistics_i-gap-1",
+      "subject": "de-vetula",
+      "predicate": "earliest_mention_year",
+      "value": 1250,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "##### The Medieval Insight (c. 1250)",
+      "citation_keys": [
+        "devetula"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-2",
+      "subject": "gerolamo-cardano",
+      "predicate": "liber-de-ludo_written_year",
+      "value": 1564,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "In *\\citetitle{liberludo}* (written c. 1564, published in the 1663 *Opera Omnia*",
+      "citation_keys": [
+        "liberludo"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-3",
+      "subject": "john-graunt",
+      "predicate": "birth_year",
+      "value": 1620,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "John Graunt (1620–1674)",
+      "citation_keys": [
+        "quetelet1835"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-4",
+      "subject": "pascal-fermat-correspondence",
+      "predicate": "year",
+      "value": 1654,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "##### The Great Correspondence: Pascal & Fermat (1654)",
+      "citation_keys": [
+        "oeuvresdeformat"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-5",
+      "subject": "john-graunt",
+      "predicate": "bills_of_mortality_year",
+      "value": 1662,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1662, the London haberdasher John Graunt took the city's weekly Bills of Mortality",
+      "citation_keys": [
+        "graunt1662"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-6",
+      "subject": "liber-de-ludo",
+      "predicate": "opera_omnia_publication_year",
+      "value": 1663,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "published in the 1663 *Opera Omnia*",
+      "citation_keys": [
+        "liberludo"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-7",
+      "subject": "john-graunt",
+      "predicate": "death_year",
+      "value": 1674,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "John Graunt (1620–1674)",
+      "citation_keys": [
+        "quetelet1835"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-8",
+      "subject": "james-lind",
+      "predicate": "birth_year",
+      "value": 1716,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "James Lind (1716–1794)",
+      "citation_keys": [
+        "fisher1935design"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-9",
+      "subject": "james-lind",
+      "predicate": "scurvy_trial_year",
+      "value": 1747,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1747, the Royal Navy surgeon James Lind split twelve scorbutic sailors",
+      "citation_keys": [
+        "lind1747scurvy",
+        "scurvy_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-10",
+      "subject": "james-lind",
+      "predicate": "treatise_publication_year",
+      "value": 1753,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Lind, *A Treatise of the Scurvy* (1753)]{lind1747scurvy}",
+      "citation_keys": [
+        "lind1747scurvy",
+        "scurvy_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-11",
+      "subject": "chalmers-lind-portrait",
+      "predicate": "engraving_year",
+      "value": 1783,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Public domain (Chalmers, 1783)",
+      "citation_keys": [
+        "fisher1935design"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-12",
+      "subject": "james-lind",
+      "predicate": "death_year",
+      "value": 1794,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "James Lind (1716–1794)",
+      "citation_keys": [
+        "fisher1935design"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-13",
+      "subject": "carl-friedrich-gauss",
+      "predicate": "least_squares_use_start_year",
+      "value": 1795,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Gauss maintained he had used it since 1795",
+      "citation_keys": [
+        "legendre1805",
+        "gauss1809"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-14",
+      "subject": "adolphe-quetelet",
+      "predicate": "birth_year",
+      "value": 1796,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Adolphe Quetelet (1796–1874)",
+      "citation_keys": [
+        "galton_eugenics"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-15",
+      "subject": "carl-friedrich-gauss",
+      "predicate": "ceres_least_squares_year",
+      "value": 1801,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1801, \\citeauthor{gauss1809} used least squares to find a planet",
+      "citation_keys": [
+        "gauss1809"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-16",
+      "subject": "adrien-marie-legendre",
+      "predicate": "least_squares_publication_year",
+      "value": 1805,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Legendre had published the method first in 1805",
+      "citation_keys": [
+        "legendre1805",
+        "gauss1809"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-17",
+      "subject": "carl-friedrich-gauss",
+      "predicate": "theoria_motus_publication_year",
+      "value": 1809,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "published his account in *Theoria motus* (1809)",
+      "citation_keys": [
+        "legendre1805",
+        "gauss1809"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-18",
+      "subject": "francis-galton",
+      "predicate": "birth_year",
+      "value": 1822,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Francis Galton (1822–1911)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-19",
+      "subject": "adolphe-quetelet",
+      "predicate": "social_physics_year",
+      "value": 1835,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Quetelet, *social physics* (1835)]{quetelet1835}",
+      "citation_keys": [
+        "quetelet1835"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-20",
+      "subject": "auguste-bravais",
+      "predicate": "correlation_coefficient_derivation_year",
+      "value": 1846,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the coefficient itself had been derived by Bravais (1846)",
+      "citation_keys": [
+        "karl_pearson_wiki",
+        "pearson1895correlation"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-21",
+      "subject": "adolphe-quetelet",
+      "predicate": "death_year",
+      "value": 1874,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Adolphe Quetelet (1796–1874)",
+      "citation_keys": [
+        "galton_eugenics"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-22",
+      "subject": "william-sealy-gosset",
+      "predicate": "birth_year",
+      "value": 1876,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**William Sealy Gosset** (1876–1937)",
+      "citation_keys": [
+        "pearson1990studentbio"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-23",
+      "subject": "francis-galton",
+      "predicate": "eugenics_term_coined_year",
+      "value": 1883,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "He coined the word **eugenics** in 1883",
+      "citation_keys": [
+        "galton_eugenics"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-24",
+      "subject": "francis-galton",
+      "predicate": "correlation_development_year",
+      "value": 1888,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "correlation developed by Galton (1888)",
+      "citation_keys": [
+        "karl_pearson_wiki",
+        "pearson1895correlation"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-25",
+      "subject": "karl-pearson",
+      "predicate": "correlation_heredity_study_year",
+      "value": 1895,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in 1895, \\citeauthor{pearson1895correlation} used correlation to study human heredity",
+      "citation_keys": [
+        "pearson1895correlation"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-26",
+      "subject": "william-sealy-gosset",
+      "predicate": "guinness_employment_start_year",
+      "value": 1899,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "a chemist who joined the Arthur Guinness & Son brewery in Dublin in 1899",
+      "citation_keys": [
+        "pearson1990studentbio"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-27",
+      "subject": "william-sealy-gosset",
+      "predicate": "small_sample_report_year",
+      "value": 1904,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In an internal report from 1904 he noticed",
+      "citation_keys": [
+        "studentstest_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-28",
+      "subject": "william-sealy-gosset",
+      "predicate": "pearson_laboratory_visit_start_year",
+      "value": 1906,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in 1906–07 the company sent him for two terms",
+      "citation_keys": [
+        "studentstest_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-29",
+      "subject": "william-sealy-gosset",
+      "predicate": "poisson_rediscovery_year",
+      "value": 1907,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in 1907, \"Student\" had already published a counting-paper",
+      "citation_keys": [
+        "student1907haemocytometer"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-30",
+      "subject": "francis-galton",
+      "predicate": "death_year",
+      "value": 1911,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Francis Galton (1822–1911)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-31",
+      "subject": "gosset-fisher-correspondence",
+      "predicate": "start_year",
+      "value": 1912,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "whom Gosset corresponded with in more than 150 letters between 1912 and 1934",
+      "citation_keys": [
+        "studentstest_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-32",
+      "subject": "auerbach",
+      "predicate": "city_size_regularity_year",
+      "value": 1913,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Auerbach (1913) had noted the analogous city-size regularity",
+      "citation_keys": [
+        "zipf_law_wiki",
+        "zipf1949human"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-33",
+      "subject": "estoup",
+      "predicate": "zipf_priority_year",
+      "value": 1916,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "crediting Estoup, 1916",
+      "citation_keys": [
+        "zipf_law_wiki",
+        "zipf1949human"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-34",
+      "subject": "student-t-tables",
+      "predicate": "metron_publication_year",
+      "value": 1925,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the corrected **Student's t** tables appeared in a 1925 special issue of *Metron*",
+      "citation_keys": [
+        "studentstest_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-35",
+      "subject": "ronald-fisher",
+      "predicate": "arrangement_of_field_experiments_year",
+      "value": 1926,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\"The Arrangement of Field Experiments\" (1926)",
+      "citation_keys": [
+        "design_of_experiments_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-36",
+      "subject": "george-kingsley-zipf",
+      "predicate": "zipf_law_description_year",
+      "value": 1932,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "which Zipf had already described in 1932",
+      "citation_keys": [
+        "zipf_law_wiki",
+        "zipf1949human"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-37",
+      "subject": "gosset-fisher-correspondence",
+      "predicate": "end_year",
+      "value": 1934,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "between 1912 and 1934",
+      "citation_keys": [
+        "studentstest_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-38",
+      "subject": "ronald-fisher",
+      "predicate": "design_of_experiments_publication_year",
+      "value": 1935,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Ronald Fisher, *The Design of Experiments* (1935)]{fisher1935design}",
+      "citation_keys": [
+        "fisher1935design"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-39",
+      "subject": "william-sealy-gosset",
+      "predicate": "death_year",
+      "value": 1937,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**William Sealy Gosset** (1876–1937)",
+      "citation_keys": [
+        "pearson1990studentbio"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-40",
+      "subject": "streptomycin-trials",
+      "predicate": "year",
+      "value": 1948,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the 1948 streptomycin studies that set the template for medical evidence",
+      "citation_keys": [
+        "rct1948"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-41",
+      "subject": "george-kingsley-zipf",
+      "predicate": "human_behavior_book_year",
+      "value": 1949,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "1949 is the date of *Human Behavior and the Principle of Least Effort*",
+      "citation_keys": [
+        "zipf_law_wiki",
+        "zipf1949human"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-42",
+      "subject": "emil-gumbel",
+      "predicate": "gumbel_distribution_year",
+      "value": 1958,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Emil Gumbel** (1958)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-43",
+      "subject": "standard-normal-rectangle-table",
+      "predicate": "rectangle_area_at_t_1_0",
+      "value": 0.121,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "<td style=\"padding: 6px 12px; text-align: center; font-family: monospace;\">$0.1210$</td>",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-44",
+      "subject": "standard-normal-table",
+      "predicate": "phi_at_minus_1_0",
+      "value": 0.1587,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "<td style=\"padding: 8px 16px; text-align: center; font-family: monospace;\">$0.1587$</td>",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-45",
+      "subject": "standard-normal-rectangle-table",
+      "predicate": "rectangle_area_at_t_0_5",
+      "value": 0.176,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "<td style=\"padding: 6px 12px; text-align: center; font-family: monospace; font-weight: 700; color: #b45309;\">$0.1760$</td>",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-46",
+      "subject": "standard-normal-rectangle-table",
+      "predicate": "rectangle_area_at_t_0_0",
+      "value": 0.1995,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "<td style=\"padding: 6px 12px; text-align: center; font-family: monospace; font-weight: 700;\">$0.1995$</td>",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics_i-gap-47",
+      "subject": "gumbel-river-level-example",
+      "predicate": "observation_span",
+      "value": 50,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "If you record the maximum river level every year for 50 years",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -78,6 +719,302 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "**Why This Matters for AI:** The Gumbel distribution is the secret ingredient behind the **Gumbel-Softmax trick** (also called the Concrete distribution). In neural networks, we often need to *sample* from a categorical distribution (e.g., “pick one of 50,000 tokens”), but sampling is a discrete ope",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-de-vetula",
+      "from": "de-vetula",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "##### The Medieval Insight (c. 1250)",
+      "citation_keys": [
+        "devetula"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-gerolamo-cardano",
+      "from": "gerolamo-cardano",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In *\\citetitle{liberludo}* (written c. 1564, published in the 1663 *Opera Omnia*",
+      "citation_keys": [
+        "liberludo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-john-graunt",
+      "from": "john-graunt",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "John Graunt (1620–1674)",
+      "citation_keys": [
+        "quetelet1835"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-pascal-fermat-correspondence",
+      "from": "pascal-fermat-correspondence",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "##### The Great Correspondence: Pascal & Fermat (1654)",
+      "citation_keys": [
+        "oeuvresdeformat"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-liber-de-ludo",
+      "from": "liber-de-ludo",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "published in the 1663 *Opera Omnia*",
+      "citation_keys": [
+        "liberludo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-james-lind",
+      "from": "james-lind",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "James Lind (1716–1794)",
+      "citation_keys": [
+        "fisher1935design"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-chalmers-lind-portrait",
+      "from": "chalmers-lind-portrait",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Public domain (Chalmers, 1783)",
+      "citation_keys": [
+        "fisher1935design"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-carl-friedrich-gauss",
+      "from": "carl-friedrich-gauss",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Gauss maintained he had used it since 1795",
+      "citation_keys": [
+        "legendre1805",
+        "gauss1809"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-adolphe-quetelet",
+      "from": "adolphe-quetelet",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Adolphe Quetelet (1796–1874)",
+      "citation_keys": [
+        "galton_eugenics"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-adrien-marie-legendre",
+      "from": "adrien-marie-legendre",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Legendre had published the method first in 1805",
+      "citation_keys": [
+        "legendre1805",
+        "gauss1809"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-francis-galton",
+      "from": "francis-galton",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Francis Galton (1822–1911)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-auguste-bravais",
+      "from": "auguste-bravais",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the coefficient itself had been derived by Bravais (1846)",
+      "citation_keys": [
+        "karl_pearson_wiki",
+        "pearson1895correlation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-william-sealy-gosset",
+      "from": "william-sealy-gosset",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**William Sealy Gosset** (1876–1937)",
+      "citation_keys": [
+        "pearson1990studentbio"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-karl-pearson",
+      "from": "karl-pearson",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in 1895, \\citeauthor{pearson1895correlation} used correlation to study human heredity",
+      "citation_keys": [
+        "pearson1895correlation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-gosset-fisher-correspondence",
+      "from": "gosset-fisher-correspondence",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "whom Gosset corresponded with in more than 150 letters between 1912 and 1934",
+      "citation_keys": [
+        "studentstest_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-auerbach",
+      "from": "auerbach",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Auerbach (1913) had noted the analogous city-size regularity",
+      "citation_keys": [
+        "zipf_law_wiki",
+        "zipf1949human"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-estoup",
+      "from": "estoup",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "crediting Estoup, 1916",
+      "citation_keys": [
+        "zipf_law_wiki",
+        "zipf1949human"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-student-t-tables",
+      "from": "student-t-tables",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the corrected **Student's t** tables appeared in a 1925 special issue of *Metron*",
+      "citation_keys": [
+        "studentstest_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-ronald-fisher",
+      "from": "ronald-fisher",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\"The Arrangement of Field Experiments\" (1926)",
+      "citation_keys": [
+        "design_of_experiments_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-george-kingsley-zipf",
+      "from": "george-kingsley-zipf",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "which Zipf had already described in 1932",
+      "citation_keys": [
+        "zipf_law_wiki",
+        "zipf1949human"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-streptomycin-trials",
+      "from": "streptomycin-trials",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the 1948 streptomycin studies that set the template for medical evidence",
+      "citation_keys": [
+        "rct1948"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-emil-gumbel",
+      "from": "emil-gumbel",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Emil Gumbel** (1958)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-standard-normal-rectangle-table",
+      "from": "standard-normal-rectangle-table",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "<td style=\"padding: 6px 12px; text-align: center; font-family: monospace;\">$0.1210$</td>",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-standard-normal-table",
+      "from": "standard-normal-table",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "<td style=\"padding: 8px 16px; text-align: center; font-family: monospace;\">$0.1587$</td>",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_i-gumbel-river-level-example",
+      "from": "gumbel-river-level-example",
+      "to": "statistics-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "If you record the maximum river level every year for 50 years",
       "citation_keys": [],
       "confidence": "provenance"
     }

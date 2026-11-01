@@ -19,7 +19,8 @@
     "strathern1997",
     "shannon1948communication",
     "kullback1951information",
-    "hutterprize"
+    "hutterprize",
+    "hoffmann2022chinchilla"
   ],
   "claims": [
     {
@@ -297,19 +298,24 @@
       "quote": "the gradient is a clean $2(\\hat y-y)$",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "losslab-gap4-1",
+      "subject": "chinchilla",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla})",
+      "citation_keys": [
+        "hoffmann2022chinchilla"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-losslab-part",
-      "from": "losslab",
-      "to": "part-2",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 2",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-losslab-mean-squared-error",
       "from": "mean-squared-error",
@@ -502,6 +508,28 @@
       "qualifiers": {},
       "quote": "\\frac{\\partial \\mathcal{L}}{\\partial z_i} = \\hat{y}_i - y_i",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-part",
+      "from": "losslab",
+      "to": "part-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 2",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-losslab-chinchilla",
+      "from": "chinchilla",
+      "to": "losslab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla})",
+      "citation_keys": [
+        "hoffmann2022chinchilla"
+      ],
       "confidence": "provenance"
     }
   ],

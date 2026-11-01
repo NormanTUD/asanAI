@@ -17,7 +17,15 @@
     "litman2025sdpaot",
     "cuturi2013sinkhorn",
     "clark2019bertattention",
-    "ramsauer2021hopfield"
+    "ramsauer2021hopfield",
+    "tsai2019kernel",
+    "analyzingmultiheads",
+    "htu2019dependencies",
+    "merullo2024talkingheads",
+    "xiao2023streaming",
+    "darcet2024registers",
+    "cancedda2024sinks",
+    "wong2025sinks"
   ],
   "claims": [
     {
@@ -280,19 +288,159 @@
       "quote": "This costs $O(L^2)$ memory and compute, doubling context quadruples cost.",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-gap3-1",
+      "subject": "nadaraya-watson-kernel-smoothing",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Tsai et al., 2019]{tsai2019kernel})",
+      "citation_keys": [
+        "tsai2019kernel"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-gap3-2",
+      "subject": "multi-head-pruning",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Voita et al., 2019]{analyzingmultiheads})",
+      "citation_keys": [
+        "analyzingmultiheads"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-gap3-3",
+      "subject": "bert-head-dependency-specialization",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Htut et al., 2019]{htu2019dependencies})",
+      "citation_keys": [
+        "htu2019dependencies"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-gap3-4",
+      "subject": "bert-attention-explanation",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Clark et al., 2019]{clark2019bertattention})",
+      "citation_keys": [
+        "clark2019bertattention"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-gap3-5",
+      "subject": "talking-heads",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Merullo et al., 2024]{merullo2024talkingheads})",
+      "citation_keys": [
+        "merullo2024talkingheads"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-gap3-6",
+      "subject": "attention-sink-streaming",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Xiao et al. (2024)]{xiao2023streaming} found the sink",
+      "citation_keys": [
+        "xiao2023streaming"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-gap3-7",
+      "subject": "vision-transformer-registers",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Darcet et al., 2024]{darcet2024registers})",
+      "citation_keys": [
+        "darcet2024registers"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-gap3-8",
+      "subject": "attention-sink-spectrum",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Cancedda, 2024]{cancedda2024sinks})",
+      "citation_keys": [
+        "cancedda2024sinks"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-gap3-9",
+      "subject": "softmax-attention",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Litman, 2025]{litman2025sdpaot})",
+      "citation_keys": [
+        "litman2025sdpaot"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "attentionlab-gap3-10",
+      "subject": "attention-sink-circuits",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Wong et al., 2025]{wong2025sinks})",
+      "citation_keys": [
+        "wong2025sinks"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-attentionlab-part",
-      "from": "attentionlab",
-      "to": "part-4",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 4",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-attentionlab-rnn-signal-decay",
       "from": "rnn-signal-decay",
@@ -460,6 +608,124 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "This costs $O(L^2)$ memory and compute, doubling context quadruples cost.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-nadaraya-watson-kernel-smoothing",
+      "from": "nadaraya-watson-kernel-smoothing",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Tsai et al., 2019]{tsai2019kernel})",
+      "citation_keys": [
+        "tsai2019kernel"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-multi-head-pruning",
+      "from": "multi-head-pruning",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Voita et al., 2019]{analyzingmultiheads})",
+      "citation_keys": [
+        "analyzingmultiheads"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-bert-head-dependency-specialization",
+      "from": "bert-head-dependency-specialization",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Htut et al., 2019]{htu2019dependencies})",
+      "citation_keys": [
+        "htu2019dependencies"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-bert-attention-explanation",
+      "from": "bert-attention-explanation",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Clark et al., 2019]{clark2019bertattention})",
+      "citation_keys": [
+        "clark2019bertattention"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-talking-heads",
+      "from": "talking-heads",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Merullo et al., 2024]{merullo2024talkingheads})",
+      "citation_keys": [
+        "merullo2024talkingheads"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-attention-sink-streaming",
+      "from": "attention-sink-streaming",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Xiao et al. (2024)]{xiao2023streaming} found the sink",
+      "citation_keys": [
+        "xiao2023streaming"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-vision-transformer-registers",
+      "from": "vision-transformer-registers",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Darcet et al., 2024]{darcet2024registers})",
+      "citation_keys": [
+        "darcet2024registers"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-attention-sink-spectrum",
+      "from": "attention-sink-spectrum",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Cancedda, 2024]{cancedda2024sinks})",
+      "citation_keys": [
+        "cancedda2024sinks"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-attention-sink-circuits",
+      "from": "attention-sink-circuits",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Wong et al., 2025]{wong2025sinks})",
+      "citation_keys": [
+        "wong2025sinks"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-part",
+      "from": "attentionlab",
+      "to": "part-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 4",
       "citation_keys": [],
       "confidence": "provenance"
     }

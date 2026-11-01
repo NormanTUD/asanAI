@@ -16,7 +16,13 @@
     "cui2026field",
     "becker2025metr",
     "tran2026vibecodebench",
-    "digitaltrends2026artcraft"
+    "digitaltrends2026artcraft",
+    "adobe_wiki",
+    "gitclear2025",
+    "adobe2025q4",
+    "adobe2025aiarr",
+    "figma_wiki",
+    "yahoo2026figma"
   ],
   "claims": [
     {
@@ -66,7 +72,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "In February 2025, Andrej Karpathy gave a name to a way of building software",
-      "citation_keys": [],
+      "citation_keys": [
+        "collins2025woty"
+      ],
       "confidence": "stated"
     },
     {
@@ -303,19 +311,171 @@
       "quote": "Tihanyi et al. found at least **62.07%** of 331,000 generated C programs vulnerable.",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "vibe_coding-gap2-1",
+      "subject": "creative-cloud",
+      "predicate": "subscription_only_year",
+      "value": 2013,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Creative Cloud moved to subscription-only pricing in 2013",
+      "citation_keys": [
+        "adobe_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe_coding-gap2-2",
+      "subject": "gitclear-dataset",
+      "predicate": "start_year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "211 million changed lines from 2020–2024",
+      "citation_keys": [
+        "gitclear2025"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe_coding-gap2-3",
+      "subject": "adobe-ftc-doj-lawsuit",
+      "predicate": "filing_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the FTC and DOJ sued Adobe in 2024 over hidden cancellation fees and a difficult cancellation flow",
+      "citation_keys": [
+        "adobe_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe_coding-gap2-4",
+      "subject": "adobe-ftc-doj-lawsuit",
+      "predicate": "settlement_year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the case settled in 2026",
+      "citation_keys": [
+        "adobe_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe_coding-gap2-5",
+      "subject": "gitclear-dataset",
+      "predicate": "end_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "211 million changed lines from 2020–2024",
+      "citation_keys": [
+        "gitclear2025"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe_coding-gap2-6",
+      "subject": "gitclear-dataset",
+      "predicate": "changed_lines",
+      "value": 211000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "211 million changed lines from 2020–2024",
+      "citation_keys": [
+        "gitclear2025"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe_coding-gap2-7",
+      "subject": "adobe",
+      "predicate": "revenue",
+      "value": 23770000000,
+      "unit": "USD",
+      "qualifiers": {},
+      "quote": "**USD 23.77 billion** in revenue",
+      "citation_keys": [
+        "adobe2025q4",
+        "adobe2025aiarr"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe_coding-gap2-8",
+      "subject": "adobe",
+      "predicate": "annual_recurring_revenue",
+      "value": 25200000000,
+      "unit": "USD",
+      "qualifiers": {},
+      "quote": "**USD 25.2 billion** in ARR",
+      "citation_keys": [
+        "adobe2025q4",
+        "adobe2025aiarr"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe_coding-gap2-9",
+      "subject": "adobe",
+      "predicate": "operating_cash_flow",
+      "value": 10000000000,
+      "unit": "USD",
+      "qualifiers": {},
+      "quote": "more than **USD 10 billion** in operating cash flow",
+      "citation_keys": [
+        "adobe2025q4",
+        "adobe2025aiarr"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe_coding-gap2-10",
+      "subject": "adobe",
+      "predicate": "ai_influenced_arr",
+      "value": 5000000000,
+      "unit": "USD",
+      "qualifiers": {},
+      "quote": "AI-influenced ARR was above **USD 5 billion**",
+      "citation_keys": [
+        "adobe2025q4",
+        "adobe2025aiarr"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe_coding-gap2-11",
+      "subject": "adobe",
+      "predicate": "ai_first_arr",
+      "value": 250000000,
+      "unit": "USD",
+      "qualifiers": {},
+      "quote": "AI-first ARR above **USD 250 million**",
+      "citation_keys": [
+        "adobe2025q4",
+        "adobe2025aiarr"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "vibe_coding-gap2-12",
+      "subject": "figma",
+      "predicate": "valuation",
+      "value": 56000000000,
+      "unit": "USD",
+      "qualifiers": {},
+      "quote": "It went public in July 2025 at a valuation above **USD 56 billion**",
+      "citation_keys": [
+        "figma_wiki",
+        "yahoo2026figma"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-vibe_coding-part",
-      "from": "vibe-coding",
-      "to": "part-5",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 5",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-vibe_coding-artcraft",
       "from": "artcraft",
@@ -403,6 +563,78 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "Tihanyi et al. found at least **62.07%** of 331,000 generated C programs vulnerable.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vibe_coding-creative-cloud",
+      "from": "creative-cloud",
+      "to": "vibe-coding",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Creative Cloud moved to subscription-only pricing in 2013",
+      "citation_keys": [
+        "adobe_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vibe_coding-gitclear-dataset",
+      "from": "gitclear-dataset",
+      "to": "vibe-coding",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "211 million changed lines from 2020–2024",
+      "citation_keys": [
+        "gitclear2025"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vibe_coding-adobe-ftc-doj-lawsuit",
+      "from": "adobe-ftc-doj-lawsuit",
+      "to": "vibe-coding",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the FTC and DOJ sued Adobe in 2024 over hidden cancellation fees and a difficult cancellation flow",
+      "citation_keys": [
+        "adobe_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vibe_coding-adobe",
+      "from": "adobe",
+      "to": "vibe-coding",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**USD 23.77 billion** in revenue",
+      "citation_keys": [
+        "adobe2025q4",
+        "adobe2025aiarr"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vibe_coding-figma",
+      "from": "figma",
+      "to": "vibe-coding",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "It went public in July 2025 at a valuation above **USD 56 billion**",
+      "citation_keys": [
+        "figma_wiki",
+        "yahoo2026figma"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-vibe_coding-part",
+      "from": "vibe-coding",
+      "to": "part-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 5",
       "citation_keys": [],
       "confidence": "provenance"
     }

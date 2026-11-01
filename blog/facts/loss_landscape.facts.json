@@ -16,7 +16,8 @@
     "keskar2016largebatch",
     "dinh2017sharpness",
     "foret2021sam",
-    "he2016identity"
+    "he2016identity",
+    "wales2003energy"
   ],
   "claims": [
     {
@@ -305,19 +306,35 @@
       "quote": "A 50-layer net with 256 neurons per layer has roughly $(256!)^{50}$ equivalent positions for each minimum",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "loss_landscape-gap4-1",
+      "subject": "energy-landscape",
+      "predicate": "first_suggested_year",
+      "value": 1913,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "suggested by René Marcelin in 1913",
+      "citation_keys": [
+        "wales2003energy"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "loss_landscape-gap4-2",
+      "subject": "potential-energy-surface",
+      "predicate": "year",
+      "value": 1931,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "given its first quantitative potential-energy surface for H + H₂ by Eyring and Polanyi in 1931",
+      "citation_keys": [
+        "wales2003energy"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-loss_landscape-part",
-      "from": "loss-landscape",
-      "to": "part-2",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 2",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-loss_landscape-llm",
       "from": "llm",
@@ -493,6 +510,40 @@
       "qualifiers": {},
       "quote": "A 50-layer net with 256 neurons per layer has roughly $(256!)^{50}$ equivalent positions for each minimum",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-part",
+      "from": "loss-landscape",
+      "to": "part-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 2",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-energy-landscape",
+      "from": "energy-landscape",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "suggested by René Marcelin in 1913",
+      "citation_keys": [
+        "wales2003energy"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-loss_landscape-potential-energy-surface",
+      "from": "potential-energy-surface",
+      "to": "loss-landscape",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "given its first quantitative potential-energy surface for H + H₂ by Eyring and Polanyi in 1931",
+      "citation_keys": [
+        "wales2003energy"
+      ],
       "confidence": "provenance"
     }
   ],

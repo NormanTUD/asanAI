@@ -11,8 +11,16 @@
     "ouyang2022instructgpt",
     "anthropic2024goldengate",
     "sun2024ttt",
+    "su2021rope",
+    "peng2023yarn",
+    "press2022alibi",
+    "li2023seqparallel",
     "deepseek2024v3",
-    "kimi2025k2"
+    "kimi2025k2",
+    "hafner2023dreamer",
+    "longcat2025",
+    "llama3herd2024",
+    "nie2025llada"
   ],
   "claims": [
     {
@@ -62,7 +70,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "Bai et al. (Anthropic, 2022) replaced most of the human labelling used by \\citeauthor{ouyang2022instructgpt} (\\citeyear{ouyang2022instructgpt}) with **AI self-critique against a written constitution**:",
-      "citation_keys": [],
+      "citation_keys": [
+        "ouyang2022instructgpt"
+      ],
       "confidence": "stated"
     },
     {
@@ -97,7 +107,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "Anthropic's work on Claude 3 Sonnet (2024) found:",
-      "citation_keys": [],
+      "citation_keys": [
+        "anthropic2024goldengate"
+      ],
       "confidence": "stated"
     },
     {
@@ -147,7 +159,12 @@
         "variant": "commercial"
       },
       "quote": "Gemini 1.5 Pro: 1M tokens (commercial); 10M in research.",
-      "citation_keys": [],
+      "citation_keys": [
+        "su2021rope",
+        "peng2023yarn",
+        "press2022alibi",
+        "li2023seqparallel"
+      ],
       "confidence": "stated"
     },
     {
@@ -158,7 +175,12 @@
       "unit": "token",
       "qualifiers": {},
       "quote": "Claude 3.5 Sonnet: 200K tokens.",
-      "citation_keys": [],
+      "citation_keys": [
+        "su2021rope",
+        "peng2023yarn",
+        "press2022alibi",
+        "li2023seqparallel"
+      ],
       "confidence": "stated"
     },
     {
@@ -169,7 +191,12 @@
       "unit": "token",
       "qualifiers": {},
       "quote": "GPT-4o: 128K.",
-      "citation_keys": [],
+      "citation_keys": [
+        "su2021rope",
+        "peng2023yarn",
+        "press2022alibi",
+        "li2023seqparallel"
+      ],
       "confidence": "stated"
     },
     {
@@ -180,7 +207,12 @@
       "unit": "token",
       "qualifiers": {},
       "quote": "Llama 3.1: 128K.",
-      "citation_keys": [],
+      "citation_keys": [
+        "su2021rope",
+        "peng2023yarn",
+        "press2022alibi",
+        "li2023seqparallel"
+      ],
       "confidence": "stated"
     },
     {
@@ -301,19 +333,118 @@
         "kimi2025k2"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "frontier-gap3-1",
+      "subject": "rope",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**RoPE scaling** (\\cite[Su et al., 2021]{su2021rope})",
+      "citation_keys": [
+        "su2021rope"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-gap3-2",
+      "subject": "dreamer-v3",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Dreamer V3** (\\cite[Hafner et al., 2023]{hafner2023dreamer})",
+      "citation_keys": [
+        "hafner2023dreamer"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-gap3-3",
+      "subject": "frontier-research",
+      "predicate": "survey_year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "This chapter surveys the research frontier of 2025, the techniques and ideas that are emerging from labs but not yet standardized.",
+      "citation_keys": [
+        "ouyang2022instructgpt"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-gap3-4",
+      "subject": "frontier-snapshot",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "## The 2026 Snapshot: Which Ideas Stuck",
+      "citation_keys": [
+        "deepseek2024v3",
+        "kimi2025k2"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-gap3-5",
+      "subject": "longcat-flash",
+      "predicate": "parameters",
+      "value": 560000000000,
+      "unit": "count",
+      "qualifiers": {
+        "parameter_kind": "total"
+      },
+      "quote": "LongCat-Flash reached 560B with about 27B active and was reported as trained on Chinese accelerators (\\cite[LongCat Team, 2025]{longcat2025}).",
+      "citation_keys": [
+        "longcat2025"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-gap3-6",
+      "subject": "longcat-flash",
+      "predicate": "parameters",
+      "value": 27000000000,
+      "unit": "count",
+      "qualifiers": {
+        "parameter_kind": "active"
+      },
+      "quote": "LongCat-Flash reached 560B with about 27B active and was reported as trained on Chinese accelerators (\\cite[LongCat Team, 2025]{longcat2025}).",
+      "citation_keys": [
+        "longcat2025"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-gap3-7",
+      "subject": "llama-3-405b",
+      "predicate": "parameters",
+      "value": 405000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Llama 3 405B was **one of the first** open-weight models widely described as competitive with closed frontier systems (\\cite[Grattafiori et al., 2024]{llama3herd2024})",
+      "citation_keys": [
+        "llama3herd2024"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "frontier-gap3-8",
+      "subject": "llada",
+      "predicate": "parameters",
+      "value": 8000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "LLaDA showed that masked diffusion could train an 8B instruction-following model from scratch, and Mercury and Gemini Diffusion brought parallel decoding to products (\\cite[Nie et al., 2025]{nie2025llada}).",
+      "citation_keys": [
+        "nie2025llada"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-frontier-part",
-      "from": "frontier",
-      "to": "part-6",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 6",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-frontier-constitutional-ai",
       "from": "constitutional-ai",
@@ -470,6 +601,101 @@
       "citation_keys": [
         "kimi2025k2"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-rope",
+      "from": "rope",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**RoPE scaling** (\\cite[Su et al., 2021]{su2021rope})",
+      "citation_keys": [
+        "su2021rope"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-dreamer-v3",
+      "from": "dreamer-v3",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Dreamer V3** (\\cite[Hafner et al., 2023]{hafner2023dreamer})",
+      "citation_keys": [
+        "hafner2023dreamer"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-frontier-research",
+      "from": "frontier-research",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "This chapter surveys the research frontier of 2025, the techniques and ideas that are emerging from labs but not yet standardized.",
+      "citation_keys": [
+        "ouyang2022instructgpt"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-frontier-snapshot",
+      "from": "frontier-snapshot",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "## The 2026 Snapshot: Which Ideas Stuck",
+      "citation_keys": [
+        "deepseek2024v3",
+        "kimi2025k2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-longcat-flash",
+      "from": "longcat-flash",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "LongCat-Flash reached 560B with about 27B active and was reported as trained on Chinese accelerators (\\cite[LongCat Team, 2025]{longcat2025}).",
+      "citation_keys": [
+        "longcat2025"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-llama-3-405b",
+      "from": "llama-3-405b",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Llama 3 405B was **one of the first** open-weight models widely described as competitive with closed frontier systems (\\cite[Grattafiori et al., 2024]{llama3herd2024})",
+      "citation_keys": [
+        "llama3herd2024"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-llada",
+      "from": "llada",
+      "to": "frontier",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "LLaDA showed that masked diffusion could train an 8B instruction-following model from scratch, and Mercury and Gemini Diffusion brought parallel decoding to products (\\cite[Nie et al., 2025]{nie2025llada}).",
+      "citation_keys": [
+        "nie2025llada"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-frontier-part",
+      "from": "frontier",
+      "to": "part-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 6",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

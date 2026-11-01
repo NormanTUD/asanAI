@@ -15,7 +15,9 @@
     "schulman2017ppo",
     "rafailov2023dpo",
     "shao2024grpo",
-    "williams1992reinforce"
+    "du2023multiagent",
+    "williams1992reinforce",
+    "sutton2018reinforcement"
   ],
   "claims": [
     {
@@ -266,7 +268,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "**Constitutional AI** (Bai et al., Anthropic 2022)",
-      "citation_keys": [],
+      "citation_keys": [
+        "du2023multiagent"
+      ],
       "confidence": "stated"
     },
     {
@@ -292,19 +296,35 @@
       "quote": "RL-train on **verifiable rewards** (math correctness, code test passage)",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "reinforcement_learning-gap4-1",
+      "subject": "reasoning-chain",
+      "predicate": "tokens",
+      "value": 1000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "a 1000-token reasoning chain has sparse final reward",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "reinforcement_learning-gap4-2",
+      "subject": "sutton-barto",
+      "predicate": "year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "The **policy gradient theorem** (\\cite[Sutton & Barto, 2018]{sutton2018reinforcement})",
+      "citation_keys": [
+        "sutton2018reinforcement"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-reinforcement_learning-part",
-      "from": "reinforcement-learning",
-      "to": "part-2",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 2",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-reinforcement_learning-markov-decision-process",
       "from": "markov-decision-process",
@@ -447,6 +467,38 @@
       "qualifiers": {},
       "quote": "RL-train on **verifiable rewards** (math correctness, code test passage)",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reinforcement_learning-part",
+      "from": "reinforcement-learning",
+      "to": "part-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 2",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reinforcement_learning-reasoning-chain",
+      "from": "reasoning-chain",
+      "to": "reinforcement-learning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a 1000-token reasoning chain has sparse final reward",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-reinforcement_learning-sutton-barto",
+      "from": "sutton-barto",
+      "to": "reinforcement-learning",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **policy gradient theorem** (\\cite[Sutton & Barto, 2018]{sutton2018reinforcement})",
+      "citation_keys": [
+        "sutton2018reinforcement"
+      ],
       "confidence": "provenance"
     }
   ],

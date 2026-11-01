@@ -20,7 +20,27 @@
     "papyan2020neuralcollapse",
     "beloch_fold_wiki",
     "hull2011beloch",
-    "math_paper_folding_wiki"
+    "math_paper_folding_wiki",
+    "houdini_portrait_img",
+    "houdini1922papermagic",
+    "cover1965",
+    "spencerbrown1969form",
+    "johnson1984lindenstrauss",
+    "huzita_justin_wiki",
+    "robert_lang_wiki",
+    "hull1997origametry",
+    "tenenbaum2000isomap",
+    "carlsson2009topologydata",
+    "origami_cranes_img",
+    "montufar2014regions",
+    "he2015resnet",
+    "friedman2018folding",
+    "hanin2019linearregions",
+    "amrami2021depth",
+    "keup2022origami",
+    "lee2023topologywidth",
+    "ergengrillo2024topological",
+    "lewandowski2025spacefolds"
   ],
   "claims": [
     {
@@ -308,19 +328,349 @@
       ],
       "qualifiers": {},
       "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-1",
+      "subject": "harry-houdini",
+      "predicate": "birth_year",
+      "value": 1874,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Harry Houdini (1874–1926)",
+      "citation_keys": [
+        "houdini_portrait_img"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-2",
+      "subject": "t-sundara-row",
+      "predicate": "year",
+      "value": 1893,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**T. Sundara Row** (1893) collected the first paper constructions",
+      "citation_keys": [
+        "math_paper_folding_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-3",
+      "subject": "houdini-paper-magic",
+      "predicate": "year",
+      "value": 1922,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Houdini** (1922) turned them into stage tricks",
+      "citation_keys": [
+        "houdini1922papermagic"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-4",
+      "subject": "harry-houdini",
+      "predicate": "death_year",
+      "value": 1926,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Harry Houdini (1874–1926)",
+      "citation_keys": [
+        "houdini_portrait_img"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-5",
+      "subject": "covers-counting-function",
+      "predicate": "year",
+      "value": 1965,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Cover, 1965]{cover1965}",
+      "citation_keys": [
+        "cover1965"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-6",
+      "subject": "laws-of-form",
+      "predicate": "year",
+      "value": 1969,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Spencer-Brown, 1969]{spencerbrown1969form}",
+      "citation_keys": [
+        "spencerbrown1969form"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-7",
+      "subject": "johnson-lindenstrauss-lemma",
+      "predicate": "year",
+      "value": 1984,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Johnson & Lindenstrauss, 1984]{johnson1984lindenstrauss}",
+      "citation_keys": [
+        "johnson1984lindenstrauss"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-8",
+      "subject": "huzita-justin-axioms",
+      "predicate": "year",
+      "value": 1986,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "written by **Justin** (1986)",
+      "citation_keys": [
+        "huzita_justin_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-9",
+      "subject": "robert-lang",
+      "predicate": "year",
+      "value": 1990,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Around 1990 **Robert J. Lang** started *designing* folds by code instead of by hand",
+      "citation_keys": [
+        "robert_lang_wiki"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-10",
+      "subject": "hull-origametry",
+      "predicate": "year",
+      "value": 1997,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Hull, 1997]{hull1997origametry}",
+      "citation_keys": [
+        "hull1997origametry"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-11",
+      "subject": "isomap",
+      "predicate": "year",
+      "value": 2000,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Tenenbaum et al., 2000]{tenenbaum2000isomap}",
+      "citation_keys": [
+        "tenenbaum2000isomap"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-12",
+      "subject": "carlsson-topology-data",
+      "predicate": "year",
+      "value": 2009,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Carlsson, 2009]{carlsson2009topologydata}",
+      "citation_keys": [
+        "carlsson2009topologydata"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-13",
+      "subject": "brighton-origami-cranes-image",
+      "predicate": "year",
+      "value": 2011,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Origami_made_by_Brighton_University_to_support_Japan%3B_April_2011.jpg",
+      "citation_keys": [
+        "origami_cranes_img"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-14",
+      "subject": "montufar-linear-regions",
+      "predicate": "year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Montúfar et al., 2014]{montufar2014regions}",
+      "citation_keys": [
+        "montufar2014regions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-15",
+      "subject": "he-resnet",
+      "predicate": "year",
+      "value": 2015,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite{he2015resnet}",
+      "citation_keys": [
+        "he2015resnet"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-16",
+      "subject": "friedman-folding",
+      "predicate": "year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Friedman (2018)]{friedman2018folding}",
+      "citation_keys": [
+        "friedman2018folding"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-17",
+      "subject": "hanin-rolnick-linear-regions",
+      "predicate": "year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Hanin & Rolnick, 2019]{hanin2019linearregions}",
+      "citation_keys": [
+        "hanin2019linearregions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-18",
+      "subject": "amrami-depth",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(2021) \\cite{amrami2021depth}",
+      "citation_keys": [
+        "amrami2021depth"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-19",
+      "subject": "keup-helias",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "*Keup & Helias (2022)* ask exactly this",
+      "citation_keys": [
+        "keup2022origami"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-20",
+      "subject": "lee-ye-topology-width",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Lee & Ye, 2023]{lee2023topologywidth}",
+      "citation_keys": [
+        "lee2023topologywidth"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-21",
+      "subject": "ergen-grillo-topological",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Ergen & Grillo, 2024]{ergengrillo2024topological}",
+      "citation_keys": [
+        "ergengrillo2024topological"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-22",
+      "subject": "lewandowski-space-folds",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Lewandowski et al. (2025)**",
+      "citation_keys": [
+        "lewandowski2025spacefolds"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-23",
+      "subject": "origami-shear-lab",
+      "predicate": "layer_increment",
+      "value": 1,
+      "unit": "count",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Step +1 layer",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "origami-gap-24",
+      "subject": "origami-shear-lab",
+      "predicate": "layer_label",
+      "value": "1 layer",
+      "unit": "name",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Step +1 layer",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-origami-part",
-      "from": "origami",
-      "to": "part-3",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 3",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-origami-fold-and-cut-theorem",
       "from": "fold-and-cut-theorem",
@@ -522,6 +872,254 @@
       "citation_keys": [
         "math_paper_folding_wiki"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-harry-houdini",
+      "from": "harry-houdini",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Harry Houdini (1874–1926)",
+      "citation_keys": [
+        "houdini_portrait_img"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-t-sundara-row",
+      "from": "t-sundara-row",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**T. Sundara Row** (1893) collected the first paper constructions",
+      "citation_keys": [
+        "math_paper_folding_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-houdini-paper-magic",
+      "from": "houdini-paper-magic",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Houdini** (1922) turned them into stage tricks",
+      "citation_keys": [
+        "houdini1922papermagic"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-laws-of-form",
+      "from": "laws-of-form",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Spencer-Brown, 1969]{spencerbrown1969form}",
+      "citation_keys": [
+        "spencerbrown1969form"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-huzita-justin-axioms",
+      "from": "huzita-justin-axioms",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "written by **Justin** (1986)",
+      "citation_keys": [
+        "huzita_justin_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-robert-lang",
+      "from": "robert-lang",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Around 1990 **Robert J. Lang** started *designing* folds by code instead of by hand",
+      "citation_keys": [
+        "robert_lang_wiki"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-hull-origametry",
+      "from": "hull-origametry",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Hull, 1997]{hull1997origametry}",
+      "citation_keys": [
+        "hull1997origametry"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-isomap",
+      "from": "isomap",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Tenenbaum et al., 2000]{tenenbaum2000isomap}",
+      "citation_keys": [
+        "tenenbaum2000isomap"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-carlsson-topology-data",
+      "from": "carlsson-topology-data",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Carlsson, 2009]{carlsson2009topologydata}",
+      "citation_keys": [
+        "carlsson2009topologydata"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-brighton-origami-cranes-image",
+      "from": "brighton-origami-cranes-image",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Origami_made_by_Brighton_University_to_support_Japan%3B_April_2011.jpg",
+      "citation_keys": [
+        "origami_cranes_img"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-montufar-linear-regions",
+      "from": "montufar-linear-regions",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Montúfar et al., 2014]{montufar2014regions}",
+      "citation_keys": [
+        "montufar2014regions"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-he-resnet",
+      "from": "he-resnet",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite{he2015resnet}",
+      "citation_keys": [
+        "he2015resnet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-friedman-folding",
+      "from": "friedman-folding",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Friedman (2018)]{friedman2018folding}",
+      "citation_keys": [
+        "friedman2018folding"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-hanin-rolnick-linear-regions",
+      "from": "hanin-rolnick-linear-regions",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Hanin & Rolnick, 2019]{hanin2019linearregions}",
+      "citation_keys": [
+        "hanin2019linearregions"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-amrami-depth",
+      "from": "amrami-depth",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(2021) \\cite{amrami2021depth}",
+      "citation_keys": [
+        "amrami2021depth"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-keup-helias",
+      "from": "keup-helias",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "*Keup & Helias (2022)* ask exactly this",
+      "citation_keys": [
+        "keup2022origami"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-lee-ye-topology-width",
+      "from": "lee-ye-topology-width",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Lee & Ye, 2023]{lee2023topologywidth}",
+      "citation_keys": [
+        "lee2023topologywidth"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-ergen-grillo-topological",
+      "from": "ergen-grillo-topological",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Ergen & Grillo, 2024]{ergengrillo2024topological}",
+      "citation_keys": [
+        "ergengrillo2024topological"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-lewandowski-space-folds",
+      "from": "lewandowski-space-folds",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Lewandowski et al. (2025)**",
+      "citation_keys": [
+        "lewandowski2025spacefolds"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-origami-shear-lab",
+      "from": "origami-shear-lab",
+      "to": "origami",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Step +1 layer",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-origami-part",
+      "from": "origami",
+      "to": "part-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 3",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

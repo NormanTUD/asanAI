@@ -304,19 +304,33 @@
         "keup2022origami"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "topology-gap3-1",
+      "subject": "mclarty-noether-commentary",
+      "predicate": "year",
+      "value": 2006,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "(\\cite[McLarty, 2006]{mclarty2006noether})",
+      "citation_keys": [
+        "mclarty2006noether"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "topology-gap3-2",
+      "subject": "topology-egg-demo",
+      "predicate": "layers",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "train a 2-layer tanh net on the egg with **two** hidden units",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-topology-part",
-      "from": "topology",
-      "to": "part-3",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 3",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-topology-euler-seven-bridges",
       "from": "euler-seven-bridges",
@@ -539,6 +553,38 @@
       "citation_keys": [
         "keup2022origami"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-mclarty-noether-commentary",
+      "from": "mclarty-noether-commentary",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[McLarty, 2006]{mclarty2006noether})",
+      "citation_keys": [
+        "mclarty2006noether"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-topology-egg-demo",
+      "from": "topology-egg-demo",
+      "to": "topology",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "train a 2-layer tanh net on the egg with **two** hidden units",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-topology-part",
+      "from": "topology",
+      "to": "part-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 3",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

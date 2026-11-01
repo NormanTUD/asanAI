@@ -8,9 +8,11 @@
   "curated": true,
   "generated_by": "extract_facts.py",
   "citations": [
+    "dao2022flashattention",
     "shazeer2019mqa",
     "liu2023lostmiddle",
-    "liu2023ringattention"
+    "liu2023ringattention",
+    "gu2023mamba"
   ],
   "claims": [
     {
@@ -185,7 +187,9 @@
         "approx": true
       },
       "quote": "2 \\times 80 \\times 64 \\times 128 \\times 128{,}000 \\times 2 \\text{ bytes} \\approx 335 \\text{ GB}",
-      "citation_keys": [],
+      "citation_keys": [
+        "dao2022flashattention"
+      ],
       "confidence": "stated"
     },
     {
@@ -283,19 +287,402 @@
         "liu2023ringattention"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-1",
+      "subject": "future-context-approaches",
+      "predicate": "status_year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "| Approach | Status (2026) | How it works |",
+      "citation_keys": [
+        "gu2023mamba"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-2",
+      "subject": "gpt-4",
+      "predicate": "words_equivalent",
+      "value": 6000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| GPT-4 (2023) | 8,192 tokens | ~6K words |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-3",
+      "subject": "gpt-4-32k",
+      "predicate": "context_window_label",
+      "value": "32k",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "| GPT-4-32k (2023) | 32,000 tokens | ~24K words |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-4",
+      "subject": "gpt-4-32k",
+      "predicate": "context_window",
+      "value": 32000,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "| GPT-4-32k (2023) | 32,000 tokens | ~24K words |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-5",
+      "subject": "gpt-4-32k",
+      "predicate": "words_equivalent",
+      "value": 24000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| GPT-4-32k (2023) | 32,000 tokens | ~24K words |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-6",
+      "subject": "gpt-4-turbo",
+      "predicate": "words_equivalent",
+      "value": 96000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| GPT-4 Turbo (2023) | 128,000 tokens | ~96K words / 1 novel |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-7",
+      "subject": "gemini-1-5-pro",
+      "predicate": "words_equivalent",
+      "value": 750000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| Gemini 1.5 Pro (2024) | 1,000,000 tokens | ~750K words / 5 novels |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-8",
+      "subject": "gemini-2-5",
+      "predicate": "words_equivalent",
+      "value": 750000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true,
+        "comparison": "at_least"
+      },
+      "quote": "| Gemini 2.5 (2025) | 1,000,000+ tokens | ~750K+ words |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-9",
+      "subject": "claude-3",
+      "predicate": "words_equivalent",
+      "value": 150000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| Claude 3 (2024) | 200,000 tokens | ~150K words / 1 novel |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-10",
+      "subject": "gpt-4-1",
+      "predicate": "words_equivalent",
+      "value": 750000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| GPT-4.1 (2025) | 1,000,000 tokens | ~750K words |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-11",
+      "subject": "context-window-growth",
+      "predicate": "start_value",
+      "value": 1000,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "The growth has been exponential: from 1K tokens in 2019 to 1M+ tokens in 2025",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-12",
+      "subject": "english-text",
+      "predicate": "words_per_token",
+      "value": 0.75,
+      "unit": "count",
+      "qualifiers": {
+        "per": "token"
+      },
+      "quote": "- **English:** 1 token ≈ 0.75 words (or ~4 characters)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-13",
+      "subject": "code-text",
+      "predicate": "words_per_token",
+      "value": 0.4,
+      "unit": "count",
+      "qualifiers": {
+        "per": "token"
+      },
+      "quote": "- **Code:** 1 token ≈ 0.4 words (more tokens per “word” due to syntax)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-14",
+      "subject": "attention-matrix-1024",
+      "predicate": "memory",
+      "value": 2,
+      "unit": "MB",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| 1,024 | 1M entries | ~2 MB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-15",
+      "subject": "attention-matrix-8192",
+      "predicate": "entries",
+      "value": 67000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "| 8,192 | 67M entries | ~134 MB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-16",
+      "subject": "attention-matrix-8192",
+      "predicate": "memory",
+      "value": 134,
+      "unit": "MB",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| 8,192 | 67M entries | ~134 MB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-17",
+      "subject": "attention-matrix-32768",
+      "predicate": "entries",
+      "value": 1000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "| 32,768 | 1B entries | ~2 GB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-18",
+      "subject": "attention-matrix-32768",
+      "predicate": "memory",
+      "value": 2,
+      "unit": "GB",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| 32,768 | 1B entries | ~2 GB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-19",
+      "subject": "attention-matrix-128000",
+      "predicate": "entries",
+      "value": 16000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "| 128,000 | 16B entries | ~32 GB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-20",
+      "subject": "attention-matrix-128000",
+      "predicate": "memory",
+      "value": 32,
+      "unit": "GB",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| 128,000 | 16B entries | ~32 GB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-21",
+      "subject": "attention-matrix-1000000",
+      "predicate": "entries",
+      "value": 1000000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "| 1,000,000 | 1T entries | ~2 TB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-22",
+      "subject": "attention-matrix-1000000",
+      "predicate": "memory",
+      "value": 2,
+      "unit": "TB",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| 1,000,000 | 1T entries | ~2 TB |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-23",
+      "subject": "model-70b",
+      "predicate": "parameters",
+      "value": 70000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "For a 70B parameter model with 128K context:",
+      "citation_keys": [
+        "dao2022flashattention"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-24",
+      "subject": "long-context-model",
+      "predicate": "context_window",
+      "value": 200000,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true,
+        "example": true
+      },
+      "quote": "Even if a model *can* process 200K tokens",
+      "citation_keys": [
+        "liu2023lostmiddle"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-25",
+      "subject": "model-70b",
+      "predicate": "parameters",
+      "value": 70000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "| Context used | KV Cache (70B model) | Effect |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-26",
+      "subject": "kv-cache-70b-4k",
+      "predicate": "context_length",
+      "value": 4000,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| 4K tokens | ~10 GB | Fast, cheap |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-27",
+      "subject": "kv-cache-70b-4k",
+      "predicate": "memory",
+      "value": 10,
+      "unit": "GB",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| 4K tokens | ~10 GB | Fast, cheap |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-28",
+      "subject": "kv-cache-70b-32k",
+      "predicate": "context_length",
+      "value": 32000,
+      "unit": "token",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| 32K tokens | ~84 GB | Moderate cost |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-29",
+      "subject": "kv-cache-70b-32k",
+      "predicate": "memory",
+      "value": 84,
+      "unit": "GB",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| 32K tokens | ~84 GB | Moderate cost |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-30",
+      "subject": "kv-cache-70b-128k",
+      "predicate": "memory",
+      "value": 335,
+      "unit": "GB",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "| 128K tokens | ~335 GB | Expensive, slower |",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "contextwindows-gap-31",
+      "subject": "1m-token-context",
+      "predicate": "words_equivalent",
+      "value": 750000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Could fit ~750K words, but costs $$$, is slow, and suffers from lost-in-the-middle",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-contextwindows-part",
-      "from": "contextwindows",
-      "to": "part-5",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 5",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-contextwindows-gpt-2",
       "from": "gpt-2",
@@ -490,6 +877,172 @@
       "citation_keys": [
         "liu2023ringattention"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-future-context-approaches",
+      "from": "future-context-approaches",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| Approach | Status (2026) | How it works |",
+      "citation_keys": [
+        "gu2023mamba"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-gpt-4-32k",
+      "from": "gpt-4-32k",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| GPT-4-32k (2023) | 32,000 tokens | ~24K words |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-context-window-growth",
+      "from": "context-window-growth",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The growth has been exponential: from 1K tokens in 2019 to 1M+ tokens in 2025",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-english-text",
+      "from": "english-text",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "- **English:** 1 token ≈ 0.75 words (or ~4 characters)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-code-text",
+      "from": "code-text",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "- **Code:** 1 token ≈ 0.4 words (more tokens per “word” due to syntax)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-attention-matrix-1024",
+      "from": "attention-matrix-1024",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| 1,024 | 1M entries | ~2 MB |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-attention-matrix-8192",
+      "from": "attention-matrix-8192",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| 8,192 | 67M entries | ~134 MB |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-attention-matrix-32768",
+      "from": "attention-matrix-32768",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| 32,768 | 1B entries | ~2 GB |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-attention-matrix-128000",
+      "from": "attention-matrix-128000",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| 128,000 | 16B entries | ~32 GB |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-attention-matrix-1000000",
+      "from": "attention-matrix-1000000",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| 1,000,000 | 1T entries | ~2 TB |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-model-70b",
+      "from": "model-70b",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "For a 70B parameter model with 128K context:",
+      "citation_keys": [
+        "dao2022flashattention"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-long-context-model",
+      "from": "long-context-model",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Even if a model *can* process 200K tokens",
+      "citation_keys": [
+        "liu2023lostmiddle"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-kv-cache-70b-4k",
+      "from": "kv-cache-70b-4k",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| 4K tokens | ~10 GB | Fast, cheap |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-kv-cache-70b-32k",
+      "from": "kv-cache-70b-32k",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "| 32K tokens | ~84 GB | Moderate cost |",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-1m-token-context",
+      "from": "1m-token-context",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Could fit ~750K words, but costs $$$, is slow, and suffers from lost-in-the-middle",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-contextwindows-part",
+      "from": "contextwindows",
+      "to": "part-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 5",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

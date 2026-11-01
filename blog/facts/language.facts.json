@@ -11,13 +11,53 @@
     "earlylanguage",
     "blombosochre",
     "lebombobone",
+    "acrophonic",
     "ancientnumeralsystems",
     "brahmagupta628",
     "shannon1937switching",
     "shannon1948communication",
     "nilsson1984qai",
+    "history_of_a",
     "hieroglyphsdeciphered",
-    "hepper1994fetalhearing"
+    "hepper1994fetalhearing",
+    "davinci_anatomical",
+    "vesalius1543fabrica",
+    "falloppio1561observationes",
+    "wilkins_real_character",
+    "duverney1683traite",
+    "earliestalphabet",
+    "cotugno1760aquaeductibus",
+    "kempelen_speaking_machine",
+    "humboldt1836sprachbau",
+    "maier2016middleear",
+    "corti1851recherches",
+    "helmholtz1863tonempfindungen",
+    "saussure1916",
+    "dualitypattern",
+    "kuhne1958morganucodon",
+    "bekesy1961nobel",
+    "allin1975middleear",
+    "kemp1978emissions",
+    "decasper1980mothervoice",
+    "werker1984crosslanguage",
+    "brownell1985electromotility",
+    "decasper1986prenatal",
+    "mehler1988precursor",
+    "hudspeth1989earworks",
+    "hemila1995middleear",
+    "pappas1996otology",
+    "clack1997tetrapod",
+    "kisilevsky2003fetalvoice",
+    "winawer2007russianblues",
+    "edge2008haircell",
+    "evanslevinson2009myth",
+    "gleick2011information",
+    "manley2012cochleae",
+    "partanen2013prenatal",
+    "schlosser2018senses",
+    "zhao2023survey",
+    "mao2024jawear",
+    "cuevadelasmanos"
   ],
   "claims": [
     {
@@ -107,9 +147,9 @@
     {
       "id": "language-lebombo",
       "subject": "lebombo-bone",
-      "predicate": "year",
-      "value": -41000,
-      "unit": "year",
+      "predicate": "age",
+      "value": 41000,
+      "unit": "years_before_present",
       "quote": "**\\cite[Lebombo Bone]{lebombobone}** (c. 41,000 BCE)",
       "citation_keys": [
         "lebombobone"
@@ -126,7 +166,9 @@
       "value": -400,
       "unit": "year",
       "quote": "Later, scholars like Pāṇini (ca. 4th Century BCE) developed the अष्टाध्यायी",
-      "citation_keys": [],
+      "citation_keys": [
+        "acrophonic"
+      ],
       "qualifiers": {
         "approx": true
       },
@@ -148,11 +190,13 @@
     {
       "id": "language-clay-tokens",
       "subject": "clay-tokens",
-      "predicate": "year",
-      "value": -8000,
-      "unit": "year",
+      "predicate": "age",
+      "value": 8000,
+      "unit": "years_before_present",
       "quote": "In the Near East, beginning around 8000 BCE",
-      "citation_keys": [],
+      "citation_keys": [
+        "ancientnumeralsystems"
+      ],
       "qualifiers": {
         "approx": true
       },
@@ -271,7 +315,9 @@
       "value": -1850,
       "unit": "year",
       "quote": "may push the invention back to approximately 1850 BCE",
-      "citation_keys": [],
+      "citation_keys": [
+        "history_of_a"
+      ],
       "qualifiers": {
         "approx": true
       },
@@ -284,7 +330,9 @@
       "value": -196,
       "unit": "year",
       "quote": "The Rosetta Stone (196 BCE) is the first multi-lingual “parallel corpus”",
-      "citation_keys": [],
+      "citation_keys": [
+        "hieroglyphsdeciphered"
+      ],
       "qualifiers": {},
       "confidence": "stated"
     },
@@ -326,19 +374,748 @@
       ],
       "qualifiers": {},
       "confidence": "stated"
+    },
+    {
+      "id": "language-gap-1",
+      "subject": "leonardo-da-vinci-larynx-anatomy",
+      "predicate": "year",
+      "value": 1510,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "The most precise early mapping of this “vocal machine” came from **\\cite[Leonardo da Vinci]{davinci_anatomical}** (c. 1510).",
+      "citation_keys": [
+        "davinci_anatomical"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-2",
+      "subject": "vesalius-de-humani-corporis-fabrica",
+      "predicate": "published",
+      "value": 1543,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Vesalius's *De humani corporis fabrica* (1543) put the ear into the printed anatomical atlas",
+      "citation_keys": [
+        "vesalius1543fabrica"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-3",
+      "subject": "proto-sinaitic-script",
+      "predicate": "date_range",
+      "value": "c. 1850–1550 BCE",
+      "unit": "interval",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-4",
+      "subject": "falloppio-observationes-anatomicae",
+      "predicate": "published",
+      "value": 1561,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Falloppio's *Observationes anatomicae* (1561) described the tympanum",
+      "citation_keys": [
+        "falloppio1561observationes"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-5",
+      "subject": "john-wilkins-real-character",
+      "predicate": "published",
+      "value": 1668,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\cite[John Wilkins]{wilkins_real_character}** (1668) attempted to create a universal language",
+      "citation_keys": [
+        "wilkins_real_character"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-6",
+      "subject": "duverney-traite-organe-ouie",
+      "predicate": "published",
+      "value": 1683,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Duverney's *Traité de l'organe de l'ouïe* (1683) was one of the first comprehensive treatises on the ear",
+      "citation_keys": [
+        "duverney1683traite"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-7",
+      "subject": "serabit-el-khadim",
+      "predicate": "date_range",
+      "value": "c. 1700–1550 BCE",
+      "unit": "interval",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "the turquoise mines at Serabit el-Khadim in the Sinai (c. 1700–1550 BCE)",
+      "citation_keys": [
+        "earliestalphabet"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-8",
+      "subject": "cotugno-de-aquaeductibus",
+      "predicate": "published",
+      "value": 1760,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Cotugno's *De aquaeductibus* (1760) demonstrated the labyrinthine fluid",
+      "citation_keys": [
+        "cotugno1760aquaeductibus"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-9",
+      "subject": "kempelen-speaking-machine",
+      "predicate": "built",
+      "value": 1791,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**\\cite[Wolfgang von Kempelen]{kempelen_speaking_machine}** (1791) took the mechanical route",
+      "citation_keys": [
+        "kempelen_speaking_machine"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-10",
+      "subject": "humboldt-sprachbau",
+      "predicate": "year",
+      "value": 1836,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Humboldt (1836)]{humboldt1836sprachbau} described this most memorably",
+      "citation_keys": [
+        "humboldt1836sprachbau"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-11",
+      "subject": "reichert-gaupp-theory",
+      "predicate": "year",
+      "value": 1837,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The homology was first established from embryology by Karl Bogislaus Reichert in 1837",
+      "citation_keys": [
+        "maier2016middleear"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-12",
+      "subject": "corti-organ-of-corti",
+      "predicate": "discovered",
+      "value": 1851,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Corti's microscope found the sensory epithelium in 1851",
+      "citation_keys": [
+        "corti1851recherches"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-13",
+      "subject": "helmholtz-tonempfindungen",
+      "predicate": "published",
+      "value": 1863,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Helmholtz's *Die Lehre von den Tonempfindungen* (1863) turned the cochlea into a frequency analyzer",
+      "citation_keys": [
+        "helmholtz1863tonempfindungen"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-14",
+      "subject": "reichert-gaupp-theory",
+      "predicate": "synthesis_year",
+      "value": 1913,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "synthesized by Ernst Gaupp in 1913",
+      "citation_keys": [
+        "maier2016middleear"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-15",
+      "subject": "saussure-cours-linguistique-generale",
+      "predicate": "year",
+      "value": 1916,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\citeauthor{saussure1916} in \\citeyear{saussure1916}",
+      "citation_keys": [
+        "saussure1916"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-16",
+      "subject": "edward-sapir-language",
+      "predicate": "year",
+      "value": 1921,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Edward Sapir** wrote in 1921 that \"no language is tyrannically consistent. All grammars leak.\"",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-17",
+      "subject": "martinet-elements-linguistique-generale",
+      "predicate": "year",
+      "value": 1949,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "First introduced by \\citeauthor{dualitypattern} in 1949",
+      "citation_keys": [
+        "dualitypattern"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-18",
+      "subject": "morganucodon",
+      "predicate": "description_year",
+      "value": 1958,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Kühne (1958)]{kuhne1958morganucodon} described *Morganucodon*",
+      "citation_keys": [
+        "kuhne1958morganucodon"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-19",
+      "subject": "georg-von-bekesy",
+      "predicate": "nobel_prize_year",
+      "value": 1961,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "he received the Nobel Prize in 1961",
+      "citation_keys": [
+        "bekesy1961nobel"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-20",
+      "subject": "amtcl",
+      "predicate": "first_meeting_year",
+      "value": 1962,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the Association for Machine Translation and Computational Linguistics (AMTCL) held its first meeting in 1962",
+      "citation_keys": [
+        "nilsson1984qai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-21",
+      "subject": "association-for-computational-linguistics",
+      "predicate": "founding_year",
+      "value": 1968,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in 1968 it became the **Association for Computational Linguistics (ACL)**",
+      "citation_keys": [
+        "nilsson1984qai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-22",
+      "subject": "probabilistic-context-free-grammar",
+      "predicate": "introduced",
+      "value": 1969,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the **probabilistic context-free grammars** of Taylor Booth, 1969",
+      "citation_keys": [
+        "nilsson1984qai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-23",
+      "subject": "allin-middle-ear",
+      "predicate": "year",
+      "value": 1975,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Allin, 1975]{allin1975middleear})",
+      "citation_keys": [
+        "allin1975middleear"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-24",
+      "subject": "otoacoustic-emissions",
+      "predicate": "demonstrated",
+      "value": 1978,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "David Kemp demonstrated otoacoustic emissions in 1978",
+      "citation_keys": [
+        "kemp1978emissions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-25",
+      "subject": "decasper-fifer-mother-voice",
+      "predicate": "year",
+      "value": 1980,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[DeCasper and Fifer, 1980]{decasper1980mothervoice})",
+      "citation_keys": [
+        "decasper1980mothervoice"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-26",
+      "subject": "werker-tees-cross-language",
+      "predicate": "year",
+      "value": 1984,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Werker and Tees, 1984]{werker1984crosslanguage})",
+      "citation_keys": [
+        "werker1984crosslanguage"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-27",
+      "subject": "electromotility",
+      "predicate": "demonstrated",
+      "value": 1985,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "electromotility, shown in isolated cells in 1985",
+      "citation_keys": [
+        "brownell1985electromotility"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-28",
+      "subject": "decasper-spence-prenatal-story",
+      "predicate": "year",
+      "value": 1986,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[DeCasper and Spence, 1986]{decasper1986prenatal})",
+      "citation_keys": [
+        "decasper1986prenatal"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-29",
+      "subject": "mehler-precursor",
+      "predicate": "year",
+      "value": 1988,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Mehler et al., 1988]{mehler1988precursor}; \\cite[Moon et al., 1993]{moon1993native})",
+      "citation_keys": [
+        "mehler1988precursor"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-30",
+      "subject": "hudspeth-ear-works",
+      "predicate": "year",
+      "value": 1989,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Hudspeth, 1989]{hudspeth1989earworks})",
+      "citation_keys": [
+        "hudspeth1989earworks"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-31",
+      "subject": "wadi-el-hol-inscriptions",
+      "predicate": "discovery_year",
+      "value": 1993,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**Wadi el-Hol inscriptions**, discovered in 1993 on a military road in Upper Egypt,",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-32",
+      "subject": "hepper-shahidullah-fetal-hearing",
+      "predicate": "year",
+      "value": 1994,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Hepper and Shahidullah, 1994]{hepper1994fetalhearing})",
+      "citation_keys": [
+        "hepper1994fetalhearing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-33",
+      "subject": "hemila-middle-ear",
+      "predicate": "year",
+      "value": 1995,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Hemilä et al., 1995]{hemila1995middleear})",
+      "citation_keys": [
+        "hemila1995middleear"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-34",
+      "subject": "pappas-otology",
+      "predicate": "year",
+      "value": 1996,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Pappas, 1996]{pappas1996otology})",
+      "citation_keys": [
+        "pappas1996otology"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-35",
+      "subject": "clack-tetrapod",
+      "predicate": "year",
+      "value": 1997,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Clack, 1997]{clack1997tetrapod})",
+      "citation_keys": [
+        "clack1997tetrapod"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-36",
+      "subject": "kisilevsky-fetal-voice",
+      "predicate": "year",
+      "value": 2003,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Kisilevsky et al., 2003]{kisilevsky2003fetalvoice})",
+      "citation_keys": [
+        "kisilevsky2003fetalvoice"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-37",
+      "subject": "winawer-russian-blues",
+      "predicate": "year",
+      "value": 2007,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Winawer et al., 2007]{winawer2007russianblues})",
+      "citation_keys": [
+        "winawer2007russianblues"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-38",
+      "subject": "edge-chen-hair-cell",
+      "predicate": "year",
+      "value": 2008,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Edge and Chen, 2008]{edge2008haircell})",
+      "citation_keys": [
+        "edge2008haircell"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-39",
+      "subject": "evans-levinson-myth",
+      "predicate": "year",
+      "value": 2009,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Evans and Levinson, 2009]{evanslevinson2009myth})",
+      "citation_keys": [
+        "evanslevinson2009myth"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-40",
+      "subject": "gleick-information",
+      "predicate": "year",
+      "value": 2011,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Gleick, 2011]{gleick2011information})",
+      "citation_keys": [
+        "gleick2011information"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-41",
+      "subject": "manley-cochleae",
+      "predicate": "year",
+      "value": 2012,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Manley, 2012]{manley2012cochleae})",
+      "citation_keys": [
+        "manley2012cochleae"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-42",
+      "subject": "partanen-prenatal",
+      "predicate": "year",
+      "value": 2013,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Partanen et al., 2013]{partanen2013prenatal})",
+      "citation_keys": [
+        "partanen2013prenatal"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-43",
+      "subject": "bahdanau-attention",
+      "predicate": "year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Bahdanau, Cho & Bengio (2014)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-44",
+      "subject": "maier-ruf-middle-ear",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Maier and Ruf, 2016]{maier2016middleear})",
+      "citation_keys": [
+        "maier2016middleear"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-45",
+      "subject": "transformer",
+      "predicate": "year",
+      "value": 2017,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The **Transformer architecture** (Vaswani et al., 2017) introduced **self-attention**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-46",
+      "subject": "schlosser-senses",
+      "predicate": "year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Schlosser, 2018]{schlosser2018senses})",
+      "citation_keys": [
+        "schlosser2018senses"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-47",
+      "subject": "zhao-survey",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Zhao et al., 2023]{zhao2023survey})",
+      "citation_keys": [
+        "zhao2023survey"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-48",
+      "subject": "dianoconodon",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "in 2024 two Jurassic mammaliaforms -- *Dianoconodon* and a shuotheriid",
+      "citation_keys": [
+        "mao2024jawear"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-49",
+      "subject": "earlylanguage-study",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Miyagawa et al., 2025]{earlylanguage})",
+      "citation_keys": [
+        "earlylanguage"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-50",
+      "subject": "mammalian-high-frequency-hearing",
+      "predicate": "age",
+      "value": 125000000,
+      "unit": "years_before_present",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "around 125 million years ago",
+      "citation_keys": [
+        "manley2012cochleae"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-51",
+      "subject": "blombos-cave-engraved-ochre",
+      "predicate": "age",
+      "value": 77000,
+      "unit": "years_before_present",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "the engraved ochres from the same cave are roughly 77,000 years old",
+      "citation_keys": [
+        "blombosochre"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-52",
+      "subject": "oral-tradition",
+      "predicate": "span_years",
+      "value": 95000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "there stretches an immense span of roughly 95,000 years",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "language-gap-53",
+      "subject": "cueva-de-las-manos-pigment-spraying",
+      "predicate": "age",
+      "value": 9000,
+      "unit": "years_before_present",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "a Patagonian cliff face 9,000 years ago",
+      "citation_keys": [
+        "cuevadelasmanos"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-language-part",
-      "from": "language",
-      "to": "part-1",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 1",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-language-human-language-capacity",
       "from": "human-language-capacity",
@@ -561,6 +1338,618 @@
       "citation_keys": [
         "hepper1994fetalhearing"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-leonardo-da-vinci-larynx-anatomy",
+      "from": "leonardo-da-vinci-larynx-anatomy",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The most precise early mapping of this “vocal machine” came from **\\cite[Leonardo da Vinci]{davinci_anatomical}** (c. 1510).",
+      "citation_keys": [
+        "davinci_anatomical"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-vesalius-de-humani-corporis-fabrica",
+      "from": "vesalius-de-humani-corporis-fabrica",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Vesalius's *De humani corporis fabrica* (1543) put the ear into the printed anatomical atlas",
+      "citation_keys": [
+        "vesalius1543fabrica"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-proto-sinaitic-script",
+      "from": "proto-sinaitic-script",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-falloppio-observationes-anatomicae",
+      "from": "falloppio-observationes-anatomicae",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Falloppio's *Observationes anatomicae* (1561) described the tympanum",
+      "citation_keys": [
+        "falloppio1561observationes"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-john-wilkins-real-character",
+      "from": "john-wilkins-real-character",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\cite[John Wilkins]{wilkins_real_character}** (1668) attempted to create a universal language",
+      "citation_keys": [
+        "wilkins_real_character"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-duverney-traite-organe-ouie",
+      "from": "duverney-traite-organe-ouie",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Duverney's *Traité de l'organe de l'ouïe* (1683) was one of the first comprehensive treatises on the ear",
+      "citation_keys": [
+        "duverney1683traite"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-serabit-el-khadim",
+      "from": "serabit-el-khadim",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the turquoise mines at Serabit el-Khadim in the Sinai (c. 1700–1550 BCE)",
+      "citation_keys": [
+        "earliestalphabet"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-cotugno-de-aquaeductibus",
+      "from": "cotugno-de-aquaeductibus",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Cotugno's *De aquaeductibus* (1760) demonstrated the labyrinthine fluid",
+      "citation_keys": [
+        "cotugno1760aquaeductibus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-kempelen-speaking-machine",
+      "from": "kempelen-speaking-machine",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**\\cite[Wolfgang von Kempelen]{kempelen_speaking_machine}** (1791) took the mechanical route",
+      "citation_keys": [
+        "kempelen_speaking_machine"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-humboldt-sprachbau",
+      "from": "humboldt-sprachbau",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Humboldt (1836)]{humboldt1836sprachbau} described this most memorably",
+      "citation_keys": [
+        "humboldt1836sprachbau"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-reichert-gaupp-theory",
+      "from": "reichert-gaupp-theory",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The homology was first established from embryology by Karl Bogislaus Reichert in 1837",
+      "citation_keys": [
+        "maier2016middleear"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-corti-organ-of-corti",
+      "from": "corti-organ-of-corti",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Corti's microscope found the sensory epithelium in 1851",
+      "citation_keys": [
+        "corti1851recherches"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-helmholtz-tonempfindungen",
+      "from": "helmholtz-tonempfindungen",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Helmholtz's *Die Lehre von den Tonempfindungen* (1863) turned the cochlea into a frequency analyzer",
+      "citation_keys": [
+        "helmholtz1863tonempfindungen"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-saussure-cours-linguistique-generale",
+      "from": "saussure-cours-linguistique-generale",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{saussure1916} in \\citeyear{saussure1916}",
+      "citation_keys": [
+        "saussure1916"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-edward-sapir-language",
+      "from": "edward-sapir-language",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Edward Sapir** wrote in 1921 that \"no language is tyrannically consistent. All grammars leak.\"",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-martinet-elements-linguistique-generale",
+      "from": "martinet-elements-linguistique-generale",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "First introduced by \\citeauthor{dualitypattern} in 1949",
+      "citation_keys": [
+        "dualitypattern"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-morganucodon",
+      "from": "morganucodon",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Kühne (1958)]{kuhne1958morganucodon} described *Morganucodon*",
+      "citation_keys": [
+        "kuhne1958morganucodon"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-georg-von-bekesy",
+      "from": "georg-von-bekesy",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "he received the Nobel Prize in 1961",
+      "citation_keys": [
+        "bekesy1961nobel"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-amtcl",
+      "from": "amtcl",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Association for Machine Translation and Computational Linguistics (AMTCL) held its first meeting in 1962",
+      "citation_keys": [
+        "nilsson1984qai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-association-for-computational-linguistics",
+      "from": "association-for-computational-linguistics",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in 1968 it became the **Association for Computational Linguistics (ACL)**",
+      "citation_keys": [
+        "nilsson1984qai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-probabilistic-context-free-grammar",
+      "from": "probabilistic-context-free-grammar",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the **probabilistic context-free grammars** of Taylor Booth, 1969",
+      "citation_keys": [
+        "nilsson1984qai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-allin-middle-ear",
+      "from": "allin-middle-ear",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Allin, 1975]{allin1975middleear})",
+      "citation_keys": [
+        "allin1975middleear"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-otoacoustic-emissions",
+      "from": "otoacoustic-emissions",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "David Kemp demonstrated otoacoustic emissions in 1978",
+      "citation_keys": [
+        "kemp1978emissions"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-decasper-fifer-mother-voice",
+      "from": "decasper-fifer-mother-voice",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[DeCasper and Fifer, 1980]{decasper1980mothervoice})",
+      "citation_keys": [
+        "decasper1980mothervoice"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-werker-tees-cross-language",
+      "from": "werker-tees-cross-language",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Werker and Tees, 1984]{werker1984crosslanguage})",
+      "citation_keys": [
+        "werker1984crosslanguage"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-electromotility",
+      "from": "electromotility",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "electromotility, shown in isolated cells in 1985",
+      "citation_keys": [
+        "brownell1985electromotility"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-decasper-spence-prenatal-story",
+      "from": "decasper-spence-prenatal-story",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[DeCasper and Spence, 1986]{decasper1986prenatal})",
+      "citation_keys": [
+        "decasper1986prenatal"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-mehler-precursor",
+      "from": "mehler-precursor",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Mehler et al., 1988]{mehler1988precursor}; \\cite[Moon et al., 1993]{moon1993native})",
+      "citation_keys": [
+        "mehler1988precursor"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-hudspeth-ear-works",
+      "from": "hudspeth-ear-works",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Hudspeth, 1989]{hudspeth1989earworks})",
+      "citation_keys": [
+        "hudspeth1989earworks"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-hepper-shahidullah-fetal-hearing",
+      "from": "hepper-shahidullah-fetal-hearing",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Hepper and Shahidullah, 1994]{hepper1994fetalhearing})",
+      "citation_keys": [
+        "hepper1994fetalhearing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-hemila-middle-ear",
+      "from": "hemila-middle-ear",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Hemilä et al., 1995]{hemila1995middleear})",
+      "citation_keys": [
+        "hemila1995middleear"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-pappas-otology",
+      "from": "pappas-otology",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Pappas, 1996]{pappas1996otology})",
+      "citation_keys": [
+        "pappas1996otology"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-clack-tetrapod",
+      "from": "clack-tetrapod",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Clack, 1997]{clack1997tetrapod})",
+      "citation_keys": [
+        "clack1997tetrapod"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-kisilevsky-fetal-voice",
+      "from": "kisilevsky-fetal-voice",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Kisilevsky et al., 2003]{kisilevsky2003fetalvoice})",
+      "citation_keys": [
+        "kisilevsky2003fetalvoice"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-winawer-russian-blues",
+      "from": "winawer-russian-blues",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Winawer et al., 2007]{winawer2007russianblues})",
+      "citation_keys": [
+        "winawer2007russianblues"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-edge-chen-hair-cell",
+      "from": "edge-chen-hair-cell",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Edge and Chen, 2008]{edge2008haircell})",
+      "citation_keys": [
+        "edge2008haircell"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-evans-levinson-myth",
+      "from": "evans-levinson-myth",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Evans and Levinson, 2009]{evanslevinson2009myth})",
+      "citation_keys": [
+        "evanslevinson2009myth"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-gleick-information",
+      "from": "gleick-information",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Gleick, 2011]{gleick2011information})",
+      "citation_keys": [
+        "gleick2011information"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-manley-cochleae",
+      "from": "manley-cochleae",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Manley, 2012]{manley2012cochleae})",
+      "citation_keys": [
+        "manley2012cochleae"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-partanen-prenatal",
+      "from": "partanen-prenatal",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Partanen et al., 2013]{partanen2013prenatal})",
+      "citation_keys": [
+        "partanen2013prenatal"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-bahdanau-attention",
+      "from": "bahdanau-attention",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Bahdanau, Cho & Bengio (2014)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-maier-ruf-middle-ear",
+      "from": "maier-ruf-middle-ear",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Maier and Ruf, 2016]{maier2016middleear})",
+      "citation_keys": [
+        "maier2016middleear"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-transformer",
+      "from": "transformer",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The **Transformer architecture** (Vaswani et al., 2017) introduced **self-attention**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-schlosser-senses",
+      "from": "schlosser-senses",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Schlosser, 2018]{schlosser2018senses})",
+      "citation_keys": [
+        "schlosser2018senses"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-zhao-survey",
+      "from": "zhao-survey",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Zhao et al., 2023]{zhao2023survey})",
+      "citation_keys": [
+        "zhao2023survey"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-dianoconodon",
+      "from": "dianoconodon",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in 2024 two Jurassic mammaliaforms -- *Dianoconodon* and a shuotheriid",
+      "citation_keys": [
+        "mao2024jawear"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-earlylanguage-study",
+      "from": "earlylanguage-study",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Miyagawa et al., 2025]{earlylanguage})",
+      "citation_keys": [
+        "earlylanguage"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-mammalian-high-frequency-hearing",
+      "from": "mammalian-high-frequency-hearing",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "around 125 million years ago",
+      "citation_keys": [
+        "manley2012cochleae"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-blombos-cave-engraved-ochre",
+      "from": "blombos-cave-engraved-ochre",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the engraved ochres from the same cave are roughly 77,000 years old",
+      "citation_keys": [
+        "blombosochre"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-oral-tradition",
+      "from": "oral-tradition",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "there stretches an immense span of roughly 95,000 years",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-cueva-de-las-manos-pigment-spraying",
+      "from": "cueva-de-las-manos-pigment-spraying",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a Patagonian cliff face 9,000 years ago",
+      "citation_keys": [
+        "cuevadelasmanos"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-part",
+      "from": "language",
+      "to": "part-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 1",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

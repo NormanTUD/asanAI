@@ -243,16 +243,6 @@
   ],
   "relations": [
     {
-      "id": "prov-metaphysics_of_ai-part",
-      "from": "metaphysics-of-ai",
-      "to": "part-6",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 6",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "prov-metaphysics_of_ai-olson2018-metaphysics",
       "from": "olson2018-metaphysics",
       "to": "metaphysics-of-ai",
@@ -386,6 +376,16 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "the weights are a point (or a cloud of points) in $\\mathbb{R}^d$",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-metaphysics_of_ai-part",
+      "from": "metaphysics-of-ai",
+      "to": "part-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 6",
       "citation_keys": [],
       "confidence": "provenance"
     }

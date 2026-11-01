@@ -80,7 +80,9 @@
       "value": 2020,
       "unit": "year",
       "quote": "### Few-Shot In-Context Learning (GPT-3, 2020)",
-      "citation_keys": [],
+      "citation_keys": [
+        "brown2020gpt3"
+      ],
       "qualifiers": {},
       "confidence": "stated"
     },

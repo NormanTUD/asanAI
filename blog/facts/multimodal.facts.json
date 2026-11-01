@@ -7,7 +7,11 @@
   "order": 13,
   "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [],
+  "citations": [
+    "radford2021clip",
+    "alayrac2022flamingo",
+    "liu2023llava"
+  ],
   "claims": [
     {
       "id": "auto-multimodal-title-0-1",
@@ -80,6 +84,110 @@
       "quote": "For a $224 \\times 224$ image with $P=16$: $n = 196$ patches. ViT-L/14 processes this with 24 layers, 16 heads, $d=1024$, yielding ~304M parameters. Modern ViTs (EVA-02, SigLIP) push to $P=14$ patches on $448 \\times 448$ inputs, yielding $>1000$ tokens per image.",
       "citation_keys": [],
       "confidence": "extracted"
+    },
+    {
+      "id": "multimodal-gap3-1",
+      "subject": "clip",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Published by \\cite[Radford et al. (OpenAI), 2021]{radford2021clip}, CLIP trains two encoders simultaneously on ~400 million (image, text) pairs scraped from the public web:",
+      "citation_keys": [
+        "radford2021clip"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "multimodal-gap3-2",
+      "subject": "flamingo",
+      "predicate": "year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Flamingo (\\cite[Alayrac et al., 2022]{alayrac2022flamingo}) interleaved gated cross-attention layers between frozen Transformer blocks",
+      "citation_keys": [
+        "alayrac2022flamingo"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "multimodal-gap3-3",
+      "subject": "llava-1.5",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "LLaVA-1.5 (\\cite[Liu et al., 2023]{liu2023llava}) used a 7B Vicuna LLM + CLIP-ViT-L/14 + a 2-layer MLP projector.",
+      "citation_keys": [
+        "liu2023llava"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "multimodal-gap3-4",
+      "subject": "multimodal-generation-2024",
+      "predicate": "year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {
+        "variant": "2024-2025 generation"
+      },
+      "quote": "The 2024–2025 generation (GPT-4o, Claude 3.5 Sonnet, Gemini 1.5, InternVL-2, LLaVA-OneVision) is multimodal by default",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "multimodal-gap3-5",
+      "subject": "multimodal-leaderboard",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "By 2025, top models (GPT-4o, Claude 3.5, Gemini 1.5 Pro) exceed 70%, and on VQA v2 they exceed 85%.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "multimodal-gap3-6",
+      "subject": "clip",
+      "predicate": "training_pairs",
+      "value": 400000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "CLIP trains two encoders simultaneously on ~400 million (image, text) pairs scraped from the public web:",
+      "citation_keys": [
+        "radford2021clip"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "multimodal-gap3-7",
+      "subject": "llava-1.5",
+      "predicate": "parameters",
+      "value": 7000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "LLaVA-1.5 (\\cite[Liu et al., 2023]{liu2023llava}) used a 7B Vicuna LLM + CLIP-ViT-L/14 + a 2-layer MLP projector.",
+      "citation_keys": [
+        "liu2023llava"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "multimodal-gap3-8",
+      "subject": "llava-1.5",
+      "predicate": "training_samples",
+      "value": 600000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "With ~600k image-instruction pairs, it reached 78.5% on VQAv2, competitive with GPT-4 on several multimodal benchmarks.",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -90,6 +198,62 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "For a $224 \\times 224$ image with $P=16$: $n = 196$ patches. ViT-L/14 processes this with 24 layers, 16 heads, $d=1024$, yielding ~304M parameters. Modern ViTs (EVA-02, SigLIP) push to $P=14$ patches on $448 \\times 448$ inputs, yielding $>1000$ tokens per image.",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-multimodal-clip",
+      "from": "clip",
+      "to": "multimodal",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Published by \\cite[Radford et al. (OpenAI), 2021]{radford2021clip}, CLIP trains two encoders simultaneously on ~400 million (image, text) pairs scraped from the public web:",
+      "citation_keys": [
+        "radford2021clip"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-multimodal-flamingo",
+      "from": "flamingo",
+      "to": "multimodal",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Flamingo (\\cite[Alayrac et al., 2022]{alayrac2022flamingo}) interleaved gated cross-attention layers between frozen Transformer blocks",
+      "citation_keys": [
+        "alayrac2022flamingo"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-multimodal-llava-1.5",
+      "from": "llava-1.5",
+      "to": "multimodal",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "LLaVA-1.5 (\\cite[Liu et al., 2023]{liu2023llava}) used a 7B Vicuna LLM + CLIP-ViT-L/14 + a 2-layer MLP projector.",
+      "citation_keys": [
+        "liu2023llava"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-multimodal-multimodal-generation-2024",
+      "from": "multimodal-generation-2024",
+      "to": "multimodal",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The 2024–2025 generation (GPT-4o, Claude 3.5 Sonnet, Gemini 1.5, InternVL-2, LLaVA-OneVision) is multimodal by default",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-multimodal-multimodal-leaderboard",
+      "from": "multimodal-leaderboard",
+      "to": "multimodal",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "By 2025, top models (GPT-4o, Claude 3.5, Gemini 1.5 Pro) exceed 70%, and on VQA v2 they exceed 85%.",
       "citation_keys": [],
       "confidence": "provenance"
     },

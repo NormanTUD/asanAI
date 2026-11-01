@@ -119,7 +119,8 @@
       "to": "backpropagation",
       "kind": "influenced",
       "qualifiers": {},
-      "quote": "The Chain Rule Is All You Need"
+      "quote": "The Chain Rule Is All You Need",
+      "confidence": "inferred"
     },
     {
       "id": "rel-backprop-demo",
@@ -127,7 +128,8 @@
       "to": "backproplab-demo",
       "kind": "influenced",
       "qualifiers": {},
-      "quote": "a **4-layer network**"
+      "quote": "a **4-layer network**",
+      "confidence": "inferred"
     },
     {
       "id": "rel-sigmoid-demo",
@@ -135,7 +137,8 @@
       "to": "backproplab-demo",
       "kind": "used_by",
       "qualifiers": {},
-      "quote": "The **sigmoid** squashes any real number"
+      "quote": "The **sigmoid** squashes any real number",
+      "confidence": "inferred"
     },
     {
       "id": "prov-backproplab-backpropagation",

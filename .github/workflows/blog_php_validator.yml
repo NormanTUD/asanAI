@@ -91,6 +91,12 @@ jobs:
         run: |
           uv run blog/tools/factcheck/extract_statements.py blog/ --check
 
+      - name: Run Deep Fact Audit
+        # Quote/citation grounding, uncovered numbers/years, relation
+        # grounding, ranges and normalised year conflicts.
+        run: |
+          uv run blog/tools/factcheck/deep_audit.py blog/ --strict
+
       - name: Run Literature Link Checker
         run: |
           mkdir -p link-report

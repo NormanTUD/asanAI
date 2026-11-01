@@ -20,8 +20,8 @@
     "img_john_mccarthy",
     "img_marvin_minsky",
     "nilsson1984shakey",
-    "shakey_robot_image",
     "klatt1977sur",
+    "shakey_robot_image",
     "lee1989sphinx",
     "crevier1993ai",
     "kurzweil2010darpasingular",
@@ -143,9 +143,9 @@
     "harder1983transactions",
     "richardson1922weather",
     "claerbout1992earth",
+    "augmentinghumanintellect",
     "aswemaythink",
     "memex",
-    "augmentinghumanintellect",
     "motherofalldemos",
     "tednelson",
     "tednelsonhypertext",
@@ -736,7 +736,10 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "renamed DARPA in 1972",
-      "citation_keys": [],
+      "citation_keys": [
+        "nilsson1984shakey",
+        "klatt1977sur"
+      ],
       "confidence": "stated"
     },
     {
@@ -889,7 +892,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "**ARPANET** (1969), which became the modern Internet",
-      "citation_keys": [],
+      "citation_keys": [
+        "shakey_robot_image"
+      ],
       "confidence": "stated"
     },
     {
@@ -2276,7 +2281,10 @@
         "variant": "70b-example"
       },
       "quote": "downloading a 70-billion-parameter LLM over a noisy channel",
-      "citation_keys": [],
+      "citation_keys": [
+        "kalman1960filter",
+        "parkinson1996gps"
+      ],
       "confidence": "stated"
     },
     {
@@ -3190,7 +3198,12 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "**C** (1972): notoriously lacked a dedicated Boolean type",
-      "citation_keys": [],
+      "citation_keys": [
+        "c99standard",
+        "pep285",
+        "russell1910principia",
+        "churchsimplytyped"
+      ],
       "confidence": "stated"
     },
     {
@@ -5591,7 +5604,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "Apple's Mac Roman (1984)",
-      "citation_keys": [],
+      "citation_keys": [
+        "latin1_wiki"
+      ],
       "confidence": "stated"
     },
     {
@@ -7270,7 +7285,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "Joachim Hohmann's 1975 dissertation",
-      "citation_keys": [],
+      "citation_keys": [
+        "backus1957fortran"
+      ],
       "confidence": "stated"
     },
     {
@@ -7303,7 +7320,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "**Short Code**, designed by John Mauchly in 1949",
-      "citation_keys": [],
+      "citation_keys": [
+        "backus1957fortran"
+      ],
       "confidence": "stated"
     },
     {
@@ -7879,7 +7898,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "**BASIC**, designed by **John Kemeny** and **Thomas Kurtz** at Dartmouth in 1964",
-      "citation_keys": [],
+      "citation_keys": [
+        "sammet1969programming"
+      ],
       "confidence": "stated"
     },
     {
@@ -8759,7 +8780,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "| 2015 | WHATWG Encoding | -- | Browser decoding rules for legacy labels |",
-      "citation_keys": [],
+      "citation_keys": [
+        "unicode_history"
+      ],
       "confidence": "stated"
     },
     {
@@ -13678,7 +13701,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "Vannevar Bush (1890–1974)",
-      "citation_keys": [],
+      "citation_keys": [
+        "augmentinghumanintellect"
+      ],
       "confidence": "stated"
     },
     {
@@ -13689,7 +13714,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "Vannevar Bush (1890–1974)",
-      "citation_keys": [],
+      "citation_keys": [
+        "augmentinghumanintellect"
+      ],
       "confidence": "stated"
     },
     {
@@ -20573,7 +20600,8 @@
       "quote": "built by Tommy Flowers",
       "citation_keys": [
         "copeland2006colossus"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-colossus-bletchley",
@@ -20584,7 +20612,8 @@
       "quote": "for Bletchley Park",
       "citation_keys": [
         "copeland2006colossus"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-eniac-penn",
@@ -20595,7 +20624,8 @@
       "quote": "built at the University of Pennsylvania",
       "citation_keys": [
         "eniac1946"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-vonneumann-eniac",
@@ -20606,7 +20636,8 @@
       "quote": "who reprogrammed it in 1945",
       "citation_keys": [
         "eniac1946"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-wiener-cybernetics",
@@ -20629,7 +20660,8 @@
       "citation_keys": [
         "wiener1948cybernetics",
         "mccullochpitts1943"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-mccarthy-dartmouth",
@@ -20640,7 +20672,8 @@
       "quote": "the 1955 Dartmouth proposal",
       "citation_keys": [
         "img_john_mccarthy"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-minsky-dartmouth",
@@ -20651,7 +20684,8 @@
       "quote": "McCarthy's co-author on the Dartmouth proposal",
       "citation_keys": [
         "img_marvin_minsky"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-dartmouth-ai",
@@ -20671,7 +20705,8 @@
       "kind": "caused",
       "qualifiers": {},
       "quote": "Created in February 1958 in response to Sputnik",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-arpa-darpa",
@@ -20691,7 +20726,8 @@
       "quote": "Its **Information Processing Techniques Office** (IPTO) financed",
       "citation_keys": [
         "nilsson1984shakey"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-ipto-arpa",
@@ -20700,7 +20736,8 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "**Information Processing Techniques Office** (IPTO)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-shakey-sri",
@@ -20720,7 +20757,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "which became the modern Internet",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-wald-sequential",
@@ -20742,7 +20780,8 @@
       "quote": "He proposed the same trick for the **neutron diffusion problem**",
       "citation_keys": [
         "eckhardt1987ulam"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-montecarlo-eniac",
@@ -20764,7 +20803,8 @@
       "quote": "had turned the same idea into a general algorithm",
       "citation_keys": [
         "metropolis1953equation"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-mcmc-metropolis",
@@ -20775,7 +20815,8 @@
       "quote": "Generalized by Hastings in 1970",
       "citation_keys": [
         "hastings1970mcmc"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-vonneumann-game",
@@ -20797,7 +20838,8 @@
       "quote": "with Oskar Morgenstern",
       "citation_keys": [
         "vonneumann_morgenstern1944"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-game-marl",
@@ -20808,7 +20850,8 @@
       "quote": "became the foundation of **multi-agent reinforcement learning**",
       "citation_keys": [
         "vonneumann_morgenstern1944"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-vonneumann-stored",
@@ -20828,7 +20871,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "later designed self-reproducing **cellular automata** with Ulam",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-mcts-alphago",
@@ -20872,7 +20916,8 @@
       "quote": "engineer **Helmut Hölzer** at Peenemünde designed the *Mischgerät*",
       "citation_keys": [
         "tomayko1985hoelzer"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-mischgeraet-v2",
@@ -20883,7 +20928,8 @@
       "quote": "stabilized the V-2 rocket",
       "citation_keys": [
         "tomayko1985hoelzer"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-lvdc-ibm",
@@ -20894,7 +20940,8 @@
       "quote": "the **Launch Vehicle Digital Computer**, built by IBM",
       "citation_keys": [
         "dickinson1964lvdc"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-lvdc-saturn",
@@ -20905,7 +20952,8 @@
       "quote": "the **Saturn V**'s Instrument Unit carried the **Launch Vehicle Digital Computer**",
       "citation_keys": [
         "dickinson1964lvdc"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-agc-mit",
@@ -20916,7 +20964,8 @@
       "quote": "developed at the MIT Instrumentation Laboratory from 1961",
       "citation_keys": [
         "mindell2008digitalapollo"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-agc-apollo",
@@ -20927,7 +20976,8 @@
       "quote": "the Block II version flown to the Moon",
       "citation_keys": [
         "mindell2008digitalapollo"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-hamilton-agc",
@@ -20938,7 +20988,8 @@
       "quote": "Margaret Hamilton, who directed the software team",
       "citation_keys": [
         "hoag1976apollohistory"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-argon-soyuz",
@@ -20949,7 +21000,8 @@
       "quote": "it flew from the Soyuz T-2 in 1980",
       "citation_keys": [
         "ieee_digital_soyuz"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-buran-biser",
@@ -20960,7 +21012,8 @@
       "quote": "Its central computer complex ran four **BISER-4** machines",
       "citation_keys": [
         "burancomputer_guide"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-shuttle-ap101",
@@ -20969,7 +21022,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "carried four redundant IBM AP-101 computers",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-perseverance-autonav",
@@ -20980,7 +21034,8 @@
       "quote": "Perseverance (\\citeyear{nasa2021perseverance}) pushes the autonomy into the driving itself",
       "citation_keys": [
         "nasa2021perseverance"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-perseverance-aegis",
@@ -20991,7 +21046,8 @@
       "quote": "From Curiosity onward, the **AEGIS** system",
       "citation_keys": [
         "estlin2009aegis"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-lunar-woods",
@@ -21002,7 +21058,8 @@
       "quote": "with Ron Kaplan and Bonnie Webber he built **LUNAR**",
       "citation_keys": [
         "nilsson1984qai"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-kalman-rudolf",
@@ -21046,7 +21103,8 @@
       "quote": "Its core is not a discrete cosine transform but a **discrete wavelet transform**",
       "citation_keys": [
         "wiki_jpeg2000"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-ccsds-jpeg",
@@ -21068,7 +21126,8 @@
       "quote": "the Sloan Digital Sky Survey had imaged roughly nine hundred thousand galaxies",
       "citation_keys": [
         "wiki_galaxy_zoo"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-zooniverse-galaxyzoo",
@@ -21090,7 +21149,8 @@
       "quote": "A **denoising diffusion model** (Ho et al., 2020) is built on exactly this move, only *learned*",
       "citation_keys": [
         "wiki_diffusion_model"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-ieee-kahan",
@@ -21101,7 +21161,8 @@
       "quote": "primarily the work of **William Kahan**",
       "citation_keys": [
         "ieee754_1985"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-algol-naur",
@@ -21112,7 +21173,8 @@
       "quote": "edited by **Peter Naur**",
       "citation_keys": [
         "algol60report"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-algol-boolean-rel",
@@ -21125,7 +21187,8 @@
       "quote": "This was the first language to include `Boolean` as a named, first-class data type",
       "citation_keys": [
         "algol60report"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-boolean-boole",
@@ -21136,7 +21199,8 @@
       "quote": "named after \\cite[George Boole]{bool1854}",
       "citation_keys": [
         "bool1854"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-boole-lawsofthought",
@@ -21147,7 +21211,8 @@
       "quote": "*An Investigation of the Laws of Thought* reduced logic to binary algebra",
       "citation_keys": [
         "bool1854"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-c-ritchie",
@@ -21183,7 +21248,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "by unifying two earlier projects: `Numeric` (1995, Jim Hugunin)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-numpy-numarray-rel",
@@ -21192,7 +21258,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "and `Numarray` (2001, Space Telescope Science Institute)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-scipy-numpy-rel",
@@ -21201,7 +21268,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "Built on NumPy",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-matplotlib-hunter",
@@ -21210,7 +21278,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "Created by **John D. Hunter**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-sklearn-cournapeau",
@@ -21219,7 +21288,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "Created by **David Cournapeau**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-z3-zuse",
@@ -21241,7 +21311,8 @@
       "quote": "(Russell & Whitehead, 1910)",
       "citation_keys": [
         "russell1910principia"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-principia-whitehead",
@@ -21252,7 +21323,8 @@
       "quote": "(Russell & Whitehead, 1910)",
       "citation_keys": [
         "russell1910principia"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-church-lambda",
@@ -21307,7 +21379,8 @@
       "quote": "formalized matrix algebra",
       "citation_keys": [
         "cayleymemoirmatrices"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-rosenblatt-perceptron",
@@ -21318,7 +21391,8 @@
       "quote": "Dr. Rosenblatt, a research psychologist at the Cornell Aeronautical Laboratory, Buffalo",
       "citation_keys": [
         "newyorktimesperceptron"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-grandchallenge-selfdriving",
@@ -21329,7 +21403,8 @@
       "quote": "whose competing teams seeded the technology that became self-driving cars",
       "citation_keys": [
         "kurzweil2010darpasingular"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-sage-computer-industry",
@@ -21340,7 +21415,8 @@
       "quote": "the contractual separation of hardware and software that created the modern computer industry",
       "citation_keys": [
         "edwards1996closedworld"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-wald-abtesting",
@@ -21351,7 +21427,8 @@
       "quote": "It is now foundational to A/B testing, clinical-trial design, and reinforcement-learning stopping rules",
       "citation_keys": [
         "wald1947sequential"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-mcmc-bayesian",
@@ -21362,7 +21439,8 @@
       "quote": "is now standard in Bayesian statistics, phylogenetics, computational linguistics, and probabilistic machine learning",
       "citation_keys": [
         "hastings1970mcmc"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-argon-fault-tolerant",
@@ -21382,7 +21460,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "Every modern airliner and military fighter inherits this lineage",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-kalman-slam",
@@ -21393,7 +21472,8 @@
       "quote": "Every modern SLAM system, every inertial measurement unit on a smartphone, and every GPS receiver is a descendant",
       "citation_keys": [
         "kalman1960filter"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-jpeg-autoencoder",
@@ -21404,7 +21484,8 @@
       "quote": "except it *learns* the transform instead of fixing it in advance",
       "citation_keys": [
         "wiki_jpeg2000"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-hollerith-census",
@@ -21415,7 +21496,8 @@
       "quote": "used for the 1890 United States census",
       "citation_keys": [
         "hollerith1890"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-ebcdic-derived-bcdic",
@@ -21435,7 +21517,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "International teleprinter standard, the direct ancestor of ASCII",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-iso8859-1-derived-dec",
@@ -21479,7 +21562,8 @@
       "quote": "a document labelled `ISO-8859-1` is decoded by browsers as Windows-1252",
       "citation_keys": [
         "whatwg_encoding"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-unicode-identical-iso10646",
@@ -21490,7 +21574,8 @@
       "quote": "kept code-for-code identical with ISO/IEC 10646",
       "citation_keys": [
         "unicode2022standard"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-utf8-invented-thompson",
@@ -21501,7 +21586,8 @@
       "quote": "The design was made by Ken Thompson",
       "citation_keys": [
         "pike2003utf8"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-utf8-invented-pike",
@@ -21512,7 +21598,8 @@
       "quote": "with Rob Pike",
       "citation_keys": [
         "pike2003utf8"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-utf8-plan9",
@@ -21523,7 +21610,8 @@
       "quote": "Pike and Thompson implemented it in Plan 9 within days",
       "citation_keys": [
         "pike2003utf8"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-utf8-usenix",
@@ -21534,7 +21622,8 @@
       "quote": "presented it at USENIX in January 1993",
       "citation_keys": [
         "pike2003utf8"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-rfc3629-restricts-utf8",
@@ -21556,7 +21645,8 @@
       "quote": "JSON went further and required it for interchange",
       "citation_keys": [
         "rfc8259"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-gpt2-uses-bpe",
@@ -21578,7 +21668,8 @@
       "quote": "they encoded rare and unknown words as sequences of subword units using byte-pair encoding",
       "citation_keys": [
         "sennrich2016bpe"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-sentencepiece-uses-bpe",
@@ -21589,7 +21680,8 @@
       "quote": "supporting both byte-pair encoding and a unigram language model",
       "citation_keys": [
         "kudo2018sentencepiece"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-tesseract-hp",
@@ -21618,7 +21710,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "**Charles Babbage** borrowed the mechanism explicitly for his unfinished **Analytical Engine**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-lovelace-wrote-notes",
@@ -21629,7 +21722,8 @@
       "quote": "whose notes on Luigi Menabrea's 1842 French memoir",
       "citation_keys": [
         "menabrea_lovelace1843"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-lovelace-notes-related-menabrea",
@@ -21651,7 +21745,8 @@
       "quote": "published in 1843 in *Taylor's Scientific Memoirs*",
       "citation_keys": [
         "menabrea_lovelace1843"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-note-g-bernoulli",
@@ -21671,7 +21766,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "**Plankalkül**, written by **Konrad Zuse**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-short-code-invented-mauchly",
@@ -21689,7 +21785,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "designed by John Mauchly in 1949 for the BINAC and UNIVAC",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-short-code-uses-univac",
@@ -21698,7 +21795,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "designed by John Mauchly in 1949 for the BINAC and UNIVAC",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-lisp-invented-mccarthy",
@@ -21709,7 +21807,8 @@
       "quote": "designed **LISP**",
       "citation_keys": [
         "mccarthy1960lisp"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-lisp-advice-taker",
@@ -21720,7 +21819,8 @@
       "quote": "experiments with a proposed system called the Advice Taker",
       "citation_keys": [
         "mccarthy1960lisp"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-algol60-meeting-paris",
@@ -21731,7 +21831,8 @@
       "quote": "met in Paris to design a single, language-independent notation for algorithms",
       "citation_keys": [
         "naur1963algol"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-pascal-derived-algol60",
@@ -21740,7 +21841,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "its descendants — Pascal, C, Java, Python",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-c-derived-algol60",
@@ -21749,7 +21851,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "its descendants — Pascal, C, Java, Python",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-java-derived-algol60",
@@ -21758,7 +21861,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "its descendants — Pascal, C, Java, Python",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-python-derived-algol60",
@@ -21767,7 +21871,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "its descendants — Pascal, C, Java, Python",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-cobol-derived-flowmatic",
@@ -21785,7 +21890,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "developed under **Grace Hopper** from FLOW-MATIC",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-basic-invented-kemeny",
@@ -21812,7 +21918,8 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "at Dartmouth in 1964",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-simula-invented-dahl",
@@ -21823,7 +21930,8 @@
       "quote": "designed by **Ole-Johan Dahl** and **Kristen Nygaard**",
       "citation_keys": [
         "dahl1966simula"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-simula-invented-nygaard",
@@ -21834,7 +21942,8 @@
       "quote": "designed by **Ole-Johan Dahl** and **Kristen Nygaard**",
       "citation_keys": [
         "dahl1966simula"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-simula-ncc",
@@ -21845,7 +21954,8 @@
       "quote": "at the Norwegian Computing Centre in Oslo",
       "citation_keys": [
         "dahl1966simula"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-simula-oslo",
@@ -21856,7 +21966,8 @@
       "quote": "Norwegian Computing Centre in Oslo",
       "citation_keys": [
         "dahl1966simula"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-c-invented-ritchie",
@@ -21867,7 +21978,8 @@
       "quote": "developed by **Dennis Ritchie** at Bell Labs",
       "citation_keys": [
         "ritchie1993c"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-c-bell-labs",
@@ -21878,7 +21990,8 @@
       "quote": "at Bell Labs between 1969 and 1973",
       "citation_keys": [
         "ritchie1993c"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-c-derived-nb",
@@ -21889,7 +22002,8 @@
       "quote": "to **NB** (\"new B\") to **C**",
       "citation_keys": [
         "ritchie1993c"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-nb-derived-b",
@@ -21900,7 +22014,8 @@
       "quote": "**NB** (\"new B\")",
       "citation_keys": [
         "ritchie1993c"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-b-derived-bcpl",
@@ -21911,7 +22026,8 @@
       "quote": "The chain runs from Martin Richards's **BCPL** through Ken Thompson's **B**",
       "citation_keys": [
         "ritchie1993c"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-bcpl-authored-richards",
@@ -21955,7 +22071,8 @@
       "quote": "rewritten the Unix kernel for the PDP-11 in C",
       "citation_keys": [
         "ritchie1993c"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-cpp-invented-stroustrup",
@@ -21966,7 +22083,8 @@
       "quote": "when **Bjarne Stroustrup** started adding Simula-style classes to C",
       "citation_keys": [
         "stroustrup1993cpp"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-cpp-derived-c",
@@ -21977,7 +22095,8 @@
       "quote": "began life as **\"C with Classes\"** in 1979",
       "citation_keys": [
         "stroustrup1993cpp"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-cpp-derived-simula",
@@ -21988,7 +22107,8 @@
       "quote": "C++ was designed to provide Simula's facilities for program organization",
       "citation_keys": [
         "stroustrup1993cpp"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-cpp-bell-labs",
@@ -21999,7 +22119,8 @@
       "quote": "adding Simula-style classes to C at Bell Labs",
       "citation_keys": [
         "stroustrup1993cpp"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-shift-jis-ascii-corp",
@@ -22065,7 +22186,8 @@
       "quote": "Germany's DIN 66003 used the freedom to replace",
       "citation_keys": [
         "iso646_wiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-cp437-part-ibm-pc",
@@ -22076,7 +22198,8 @@
       "quote": "IBM's PC introduced code page 437 in 1981",
       "citation_keys": [
         "cp437_wiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-mac-roman-part-apple",
@@ -22096,7 +22219,8 @@
       "quote": "Han unification merged many Chinese, Japanese and Korean characters",
       "citation_keys": [
         "unicode_wiki"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-note-a-part-lovelace-notes",
@@ -22118,7 +22242,8 @@
       "quote": "*Note G* contained a detailed table of operations",
       "citation_keys": [
         "menabrea_lovelace1843"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-lisp-mit",
@@ -22129,7 +22254,8 @@
       "quote": "at MIT",
       "citation_keys": [
         "mccarthy1960lisp"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-mascitti-coins-cpp-name",
@@ -22151,7 +22277,8 @@
       "quote": "developed by Alan Kay, Dan Ingalls, and Adele Goldberg at Xerox PARC",
       "citation_keys": [
         "goldberg1983smalltalk"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-ingalls-smalltalk",
@@ -22162,7 +22289,8 @@
       "quote": "developed by Alan Kay, Dan Ingalls, and Adele Goldberg at Xerox PARC",
       "citation_keys": [
         "goldberg1983smalltalk"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-goldberg-smalltalk",
@@ -22173,7 +22301,8 @@
       "quote": "developed by Alan Kay, Dan Ingalls, and Adele Goldberg at Xerox PARC",
       "citation_keys": [
         "goldberg1983smalltalk"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-smalltalk-objective-c",
@@ -22182,7 +22311,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "the *object model* it codified is the ancestor of Objective-C, Ruby, Python, Java, C#",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-smalltalk-ruby",
@@ -22191,7 +22321,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "the *object model* it codified is the ancestor of Objective-C, Ruby, Python, Java, C#",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-smalltalk-python",
@@ -22200,7 +22331,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "the *object model* it codified is the ancestor of Objective-C, Ruby, Python, Java, C#",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-smalltalk-java",
@@ -22209,7 +22341,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "the *object model* it codified is the ancestor of Objective-C, Ruby, Python, Java, C#",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-smalltalk-csharp",
@@ -22218,7 +22351,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "the *object model* it codified is the ancestor of Objective-C, Ruby, Python, Java, C#",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-colmerauer-prolog",
@@ -22245,7 +22379,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "Japan's Fifth Generation project, much of the expert-systems industry",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-prolog-expert-systems",
@@ -22254,7 +22389,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "much of the expert-systems industry",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-prolog-csp",
@@ -22263,7 +22399,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "it is the conceptual ancestor of every modern system that uses *constraint satisfaction*",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-prolog-sat",
@@ -22272,7 +22409,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "*SAT solvers*, or *Datalog* as part of its inference stack",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-prolog-datalog",
@@ -22281,7 +22419,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "*SAT solvers*, or *Datalog* as part of its inference stack",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-wirth-pascal",
@@ -22303,7 +22442,8 @@
       "quote": "a small, deliberately clean ALGOL descendant designed to teach structured programming",
       "citation_keys": [
         "wirth1974design"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-wirth-stepwise",
@@ -22323,7 +22463,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "became the template for every modern teaching language, including Python",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-dijkstra-goto",
@@ -22356,7 +22497,8 @@
       "quote": "merged into the draft standard in 1994, reaching the ISO standard as C++98",
       "citation_keys": [
         "stroustrup1993cpp"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-ansi-cpp98",
@@ -22367,7 +22509,8 @@
       "quote": "began in 1989 and produced the **C++98** standard",
       "citation_keys": [
         "stroustrup1993cpp"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-perl-wall",
@@ -22385,7 +22528,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "first released by the University of New Mexico and Stanford in 1984",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-stanford-matlab",
@@ -22394,7 +22538,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "first released by the University of New Mexico and Stanford in 1984",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-matlab-dl",
@@ -22403,7 +22548,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "almost every modern deep-learning framework borrows its notation for matrices and tensors",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-pandas-numpy",
@@ -22412,7 +22558,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "its descendants SciPy, pandas, scikit-learn, Matplotlib, Jupyter, PyTorch, and TensorFlow",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-sklearn-numpy",
@@ -22421,7 +22568,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "its descendants SciPy, pandas, scikit-learn, Matplotlib, Jupyter, PyTorch, and TensorFlow",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-matplotlib-numpy",
@@ -22430,7 +22578,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "its descendants SciPy, pandas, scikit-learn, Matplotlib, Jupyter, PyTorch, and TensorFlow",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-jupyter-numpy",
@@ -22439,7 +22588,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "its descendants SciPy, pandas, scikit-learn, Matplotlib, Jupyter, PyTorch, and TensorFlow",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-pytorch-numpy",
@@ -22448,7 +22598,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "its descendants SciPy, pandas, scikit-learn, Matplotlib, Jupyter, PyTorch, and TensorFlow",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-tensorflow-numpy",
@@ -22457,7 +22608,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "its descendants SciPy, pandas, scikit-learn, Matplotlib, Jupyter, PyTorch, and TensorFlow",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-gosling-java",
@@ -22547,7 +22699,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "that show up in every modern TensorFlow and PyTorch pipeline",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-haskell-pytorch",
@@ -22556,7 +22709,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "that show up in every modern TensorFlow and PyTorch pipeline",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-sun-java",
@@ -22565,7 +22719,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "designed by James Gosling and Mike Sheridan at Sun Microsystems",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-numpy-python",
@@ -22574,7 +22729,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "turned Python into the language of data science and machine learning",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-microsoft-csharp",
@@ -22583,7 +22739,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "**C#**, released by Microsoft in 2000",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-csharp-java",
@@ -22594,7 +22751,8 @@
         "relation": "successor"
       },
       "quote": "as the successor to Java for the .NET platform",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-csharp-dotnet",
@@ -22603,7 +22761,8 @@
       "kind": "part_of",
       "qualifiers": {},
       "quote": "as the successor to Java for the .NET platform",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-unity-csharp",
@@ -22612,7 +22771,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "is now the language of Unity (the dominant game engine)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-xamarin-csharp",
@@ -22621,7 +22781,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "Xamarin (cross-platform mobile)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-google-go",
@@ -22686,7 +22847,8 @@
         "relation": "replaces"
       },
       "quote": "released by Apple in 2014 to replace Objective-C",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-bezanson-julia",
@@ -22695,7 +22857,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "first released in 2012 by Jeff Bezanson, Stefan Karpinski, Viral Shah, and Alan Edelman",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-karpinski-julia",
@@ -22704,7 +22867,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "first released in 2012 by Jeff Bezanson, Stefan Karpinski, Viral Shah, and Alan Edelman",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-shah-julia",
@@ -22713,7 +22877,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "first released in 2012 by Jeff Bezanson, Stefan Karpinski, Viral Shah, and Alan Edelman",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-edelman-julia",
@@ -22722,7 +22887,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "first released in 2012 by Jeff Bezanson, Stefan Karpinski, Viral Shah, and Alan Edelman",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-modular-mojo",
@@ -22749,7 +22915,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "who also designed Swift and the LLVM compiler infrastructure",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-lattner-llvm",
@@ -22758,7 +22925,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "who also designed Swift and the LLVM compiler infrastructure",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-mojo-python",
@@ -22769,7 +22937,8 @@
         "relation": "superset"
       },
       "quote": "is a Python-superset language designed explicitly for AI infrastructure",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-pytorch-c",
@@ -22778,7 +22947,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "The numerical kernels of PyTorch and TensorFlow are written in C, C++, and CUDA",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-pytorch-cpp",
@@ -22787,7 +22957,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "The numerical kernels of PyTorch and TensorFlow are written in C, C++, and CUDA",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-pytorch-cuda",
@@ -22805,7 +22976,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "The numerical kernels of PyTorch and TensorFlow are written in C, C++, and CUDA",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-tensorflow-cpp",
@@ -22814,7 +22986,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "The numerical kernels of PyTorch and TensorFlow are written in C, C++, and CUDA",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-tensorflow-cuda",
@@ -22832,7 +23005,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "The JIT compilers that make Python fast are written in C",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-blas-fortran",
@@ -22859,7 +23033,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "C (via CPython, NumPy, and Linux)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-numpy-c",
@@ -22868,7 +23043,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "C (via CPython, NumPy, and Linux)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-linux-c",
@@ -22877,7 +23053,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "C (via CPython, NumPy, and Linux)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-pytorch-cpp-desc",
@@ -22886,7 +23063,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "C++ (via PyTorch and TensorFlow)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-tensorflow-cpp-desc",
@@ -22895,7 +23073,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "C++ (via PyTorch and TensorFlow)",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-numpy-fortran",
@@ -22904,7 +23083,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "the numerical libraries on which NumPy depends",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-python-c",
@@ -22915,7 +23095,8 @@
       "quote": "strip C, and Python, PyTorch, Linux, and CUDA all vanish with it",
       "citation_keys": [
         "ritchie1993c"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-linux-c-dep",
@@ -22926,7 +23107,8 @@
       "quote": "strip C, and Python, PyTorch, Linux, and CUDA all vanish with it",
       "citation_keys": [
         "ritchie1993c"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-cuda-c",
@@ -22937,7 +23119,8 @@
       "quote": "strip C, and Python, PyTorch, Linux, and CUDA all vanish with it",
       "citation_keys": [
         "ritchie1993c"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-algol-modern",
@@ -22992,7 +23175,8 @@
         "relation": "solves"
       },
       "quote": "was designed to solve the *two-language problem*",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-pacioli-summa",
@@ -23003,7 +23187,8 @@
       "quote": "Double-entry bookkeeping, formalized by **Luca Pacioli** in his 1494 work",
       "citation_keys": [
         "summaarithmetica"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-pacioli-double-entry",
@@ -23043,7 +23228,8 @@
       "kind": "influenced",
       "qualifiers": {},
       "quote": "ambitious time-sharing OS that influenced Unix",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-thompson-unix",
@@ -23088,7 +23274,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "a system used internally at Bell Labs and AT&T for budgeting",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-att-lanpar",
@@ -23097,7 +23284,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "a system used internally at Bell Labs and AT&T for budgeting",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-ge-autotab",
@@ -23115,7 +23303,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "He partnered with **Bob Frankston**, a skilled MIT programmer, and together they created **VisiCalc**",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-frankston-visicalc",
@@ -23178,7 +23367,8 @@
       "kind": "uses",
       "qualifiers": {},
       "quote": "hierarchical database for the Apollo program",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-codd-relational",
@@ -23196,7 +23386,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "developed by Donald Chamberlin and Raymond Boyce at IBM",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-boyce-sql",
@@ -23205,7 +23396,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "developed by Donald Chamberlin and Raymond Boyce at IBM",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-sql-relational",
@@ -23214,7 +23406,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "based on Codd's relational algebra",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-bell-labs-unix",
@@ -23232,7 +23425,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "developed by Donald Chamberlin and Raymond Boyce at IBM",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-s-language-invented-by-bell-labs",
@@ -23250,7 +23444,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "| **R** (open-source S) | 1993 | Academic statistics and visualization |",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-jupyter-derived-from-ipython",
@@ -23259,7 +23454,8 @@
       "kind": "derived_from",
       "qualifiers": {},
       "quote": "evolved from IPython, created by Fernando Pérez in 2001",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-perez-invented-ipython",
@@ -23268,7 +23464,8 @@
       "kind": "invented",
       "qualifiers": {},
       "quote": "created by Fernando Pérez in 2001",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-mclean-invented-container-patent",
@@ -23301,7 +23498,8 @@
       "quote": "developed by IBM for American Airlines",
       "citation_keys": [
         "sabre1960reservation"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-richardson-wrote-weather-prediction",
@@ -23345,7 +23543,8 @@
       "quote": "he argued the computer's purpose was to **augment** human problem-solving",
       "citation_keys": [
         "augmentinghumanintellect"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-nelson-invented-hypertext",
@@ -23356,7 +23555,8 @@
       "quote": "coined the word **\"hypertext\"** in his 1965 paper",
       "citation_keys": [
         "tednelsonhypertext"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-nelson-wrote-complex-information-processing",
@@ -23367,7 +23567,8 @@
       "quote": "his 1965 paper *Complex Information Processing*",
       "citation_keys": [
         "tednelsonhypertext"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-licklider-wrote-man-computer-symbiosis",
@@ -23389,7 +23590,8 @@
       "quote": "In April 1963 he circulated a memo",
       "citation_keys": [
         "licklider1963intergalactic"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-ipto-founded-arpanet",
@@ -23444,7 +23646,8 @@
       "quote": "**Tim Berners-Lee**, a software engineer at CERN, circulated \\citetitle{bernerslee1989}",
       "citation_keys": [
         "bernerslee1989"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-berners-lee-invented-html",
@@ -23455,7 +23658,8 @@
       "quote": "The three pillars he created, **HTML**",
       "citation_keys": [
         "bernerslee1989"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-berners-lee-invented-http",
@@ -23466,7 +23670,8 @@
       "quote": "**HTTP** (a protocol for transferring them)",
       "citation_keys": [
         "bernerslee1989"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-berners-lee-invented-url",
@@ -23477,7 +23682,8 @@
       "quote": "**URLs** (a system for addressing them)",
       "citation_keys": [
         "bernerslee1989"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-gpt-3-uses-common-crawl",
@@ -23499,7 +23705,8 @@
       "quote": "and \\cite[Wikipedia dumps]{wikimediadumps})",
       "citation_keys": [
         "wikimediadumps"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-imagenet-uses-mturk",
@@ -23510,7 +23717,8 @@
       "quote": "its construction explicitly relied on Amazon Mechanical Turk",
       "citation_keys": [
         "deng2009imagenet"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-mturk-related-to-kempelen-automaton",
@@ -23521,7 +23729,8 @@
       "quote": "was named after Kempelen's chess automaton",
       "citation_keys": [
         "pew2016mturk"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-gray-wrote-ghost-work",
@@ -23554,7 +23763,8 @@
       "quote": "The EU Directive 2019/790",
       "citation_keys": [
         "eu2019dsm"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-gdpr-part-of-eu",
@@ -23565,7 +23775,8 @@
       "quote": "The GDPR governs personal data.",
       "citation_keys": [
         "eu2016gdpr"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-authors-guild-related-second-circuit",
@@ -23587,7 +23798,8 @@
       "quote": "The U.S. Bureau of Industry and Security states",
       "citation_keys": [
         "bis2026advancedcomputing"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-luther-wrote-letter",
@@ -23642,7 +23854,8 @@
       "quote": "The Immigration and Nationality Act of 1965",
       "citation_keys": [
         "us1965immigration"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-us-congress-created-immigration-act-1990",
@@ -23653,7 +23866,8 @@
       "quote": "The Immigration Act of 1990",
       "citation_keys": [
         "us1990h1b"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-endless-frontier-before-nsf",
@@ -23697,7 +23911,8 @@
       "quote": "Linus Torvalds built a replacement",
       "citation_keys": [
         "git_history"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-bitkeeper-caused-git",
@@ -23708,7 +23923,8 @@
       "quote": "when the Linux kernel community's free use of the proprietary BitKeeper was revoked",
       "citation_keys": [
         "git_history"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-linux-kernel-before-git",
@@ -23818,7 +24034,8 @@
       "quote": "Hertz's experiments confirmed the prediction",
       "citation_keys": [
         "maxwell1865"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-marconi-uses-hertz",
@@ -23829,7 +24046,8 @@
       "quote": "Marconi turned it into signalling",
       "citation_keys": [
         "maxwell1865"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-carnot-wrote-reflections",
@@ -23895,7 +24113,8 @@
       "quote": "The Selective Service Act of 1917",
       "citation_keys": [
         "selectiveservice1917"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-berlin-conference-created-general-act",
@@ -23917,7 +24136,8 @@
       "quote": "created the BIPM and the machinery of international metrology",
       "citation_keys": [
         "metre_convention1875"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-ford-wrote-book",
@@ -24049,7 +24269,8 @@
       "quote": "Priestley's experiments on air",
       "citation_keys": [
         "priestley1772air"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-ingenhousz-supports-atmosphere-cycle",
@@ -24060,7 +24281,8 @@
       "quote": "Ingenhousz's demonstration",
       "citation_keys": [
         "ingenhousz1779vegetables"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-calvin-discovered-carbon-path",
@@ -24126,7 +24348,8 @@
       "quote": "wrote a treatise on the aqueducts",
       "citation_keys": [
         "frontinus97aqueducts"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-agricola-wrote-de-re-metallica",
@@ -24170,7 +24393,8 @@
       "quote": "the Small Business Investment Act of 1958",
       "citation_keys": [
         "sbic1958"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-google-published-s1",
@@ -24210,7 +24434,8 @@
       "kind": "related_to",
       "qualifiers": {},
       "quote": "represents the modern equivalent of what VisiCalc did in 1979",
-      "citation_keys": []
+      "citation_keys": [],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-memex-related-hypertext",
@@ -24233,7 +24458,8 @@
       "quote": "It is the same idea \\cite[Licklider's man–computer symbiosis (1960)]{licklider} gave a phrase to",
       "citation_keys": [
         "licklider"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-web-derived-from-hypertext",
@@ -24245,7 +24471,8 @@
       "citation_keys": [
         "bernerslee1989",
         "tednelsonhypertext"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-arpanet-use-idea-symbiosis",
@@ -24256,7 +24483,8 @@
       "quote": "It was also an attempt to build the infrastructure of man–computer symbiosis",
       "citation_keys": [
         "licklider1963intergalactic"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-school-system-prerequisite-corpus",
@@ -24279,7 +24507,8 @@
       "quote": "The clinic is therefore a prerequisite of the human-capital budget, not a separate story.",
       "citation_keys": [
         "un2024wpp"
-      ]
+      ],
+      "confidence": "inferred"
     },
     {
       "id": "rel-untold-iii-assembly-line-derived-modern-line",

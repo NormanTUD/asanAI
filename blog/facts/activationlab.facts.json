@@ -304,16 +304,6 @@
   ],
   "relations": [
     {
-      "id": "prov-activationlab-part",
-      "from": "activationlab",
-      "to": "part-2",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 2",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "prov-activationlab-perceptron",
       "from": "perceptron",
       "to": "activationlab",
@@ -488,6 +478,16 @@
       "citation_keys": [
         "rombach2022ldm"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-activationlab-part",
+      "from": "activationlab",
+      "to": "part-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 2",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

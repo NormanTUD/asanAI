@@ -19,7 +19,11 @@
     "imo_wiki",
     "alphageometry2",
     "merchant2023gnome",
-    "price2024gencast"
+    "price2024gencast",
+    "silver2016go",
+    "silver2018zero",
+    "deletion_codes",
+    "navier_stokes_priority"
   ],
   "claims": [
     {
@@ -95,7 +99,11 @@
         "event": "Nobel Prize in Chemistry"
       },
       "quote": "its leaders shared the 2024 **Nobel Prize in Chemistry**",
-      "citation_keys": [],
+      "citation_keys": [
+        "alphafold3",
+        "alphamissense",
+        "alphafold_db"
+      ],
       "confidence": "stated"
     },
     {
@@ -331,6 +339,126 @@
         "price2024gencast"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-gap3-1",
+      "subject": "alphago",
+      "predicate": "year",
+      "value": 2016,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Silver et al., 2016]{silver2016go})",
+      "citation_keys": [
+        "silver2016go"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-gap3-2",
+      "subject": "alphazero",
+      "predicate": "year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Silver et al., 2018]{silver2018zero})",
+      "citation_keys": [
+        "silver2018zero"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-gap3-3",
+      "subject": "alphafold",
+      "predicate": "year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Jumper et al., 2021]{jumper2021alphafold})",
+      "citation_keys": [
+        "jumper2021alphafold"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-gap3-4",
+      "subject": "gnome",
+      "predicate": "year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Merchant et al., 2023]{merchant2023gnome})",
+      "citation_keys": [
+        "merchant2023gnome"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-gap3-5",
+      "subject": "deletion-codes",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Weindel & Heckel, 2025]{deletion_codes})",
+      "citation_keys": [
+        "deletion_codes"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-gap3-6",
+      "subject": "alphaevolve",
+      "predicate": "year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Georgiev, Gómez-Serrano, Tao, Wagner, 2025]{alphaevolve})",
+      "citation_keys": [
+        "alphaevolve"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-gap3-7",
+      "subject": "navier-stokes-openai-proof",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {
+        "event": "Navier-Stokes proof announcement"
+      },
+      "quote": "In September 2026, an **OpenAI** system of roughly **10,000 coordinating agents**",
+      "citation_keys": [
+        "navier_stokes_openai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "ai_for_science-gap3-8",
+      "subject": "navier-stokes-priority-dispute",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Wikipedia, 2026]{navier_stokes_priority})",
+      "citation_keys": [
+        "navier_stokes_priority"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -517,6 +645,54 @@
       "quote": "beating ENS on 97.2% of targets",
       "citation_keys": [
         "price2024gencast"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-alphago",
+      "from": "alphago",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Silver et al., 2016]{silver2016go})",
+      "citation_keys": [
+        "silver2016go"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-alphazero",
+      "from": "alphazero",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Silver et al., 2018]{silver2018zero})",
+      "citation_keys": [
+        "silver2018zero"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-deletion-codes",
+      "from": "deletion-codes",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Weindel & Heckel, 2025]{deletion_codes})",
+      "citation_keys": [
+        "deletion_codes"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-ai_for_science-navier-stokes-priority-dispute",
+      "from": "navier-stokes-priority-dispute",
+      "to": "ai-for-science",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Wikipedia, 2026]{navier_stokes_priority})",
+      "citation_keys": [
+        "navier_stokes_priority"
       ],
       "confidence": "provenance"
     }

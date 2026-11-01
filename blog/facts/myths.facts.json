@@ -14,12 +14,20 @@
     "brednich1991maus",
     "brednich1993huhn",
     "turing1950computing",
+    "mataavianca_wiki",
+    "hallucination_ai_wiki",
+    "theatreopera_wiki",
+    "ai_music_wiki",
+    "luddite_wiki",
+    "brynjolfsson2014secondmachine",
     "vinge1993singularity",
     "kurzweil2005singularity",
     "bostrom2014superintelligence",
     "deadinternet_wiki",
     "heidegger1927beingandtime",
-    "korzybski_mapterritory"
+    "korzybski_mapterritory",
+    "deathschatbots_wiki",
+    "guardian2024sewell"
   ],
   "claims": [
     {
@@ -180,7 +188,11 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "Judge Castel's 2023 ruling in *Mata v. Avianca* was the first",
-      "citation_keys": [],
+      "citation_keys": [
+        "mataavianca_wiki",
+        "hallucination_ai_wiki",
+        "theatreopera_wiki"
+      ],
       "confidence": "stated"
     },
     {
@@ -202,7 +214,9 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "In 2023 a track that sounded like Drake and The Weeknd hit TikTok",
-      "citation_keys": [],
+      "citation_keys": [
+        "ai_music_wiki"
+      ],
       "confidence": "stated"
     },
     {
@@ -213,7 +227,10 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "The **Luddites** of 1811 are usually told as people smashing machines out of fear of technology",
-      "citation_keys": [],
+      "citation_keys": [
+        "luddite_wiki",
+        "brynjolfsson2014secondmachine"
+      ],
       "confidence": "stated"
     },
     {
@@ -303,19 +320,51 @@
         "korzybski_mapterritory"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "myths-gap4-1",
+      "subject": "flammarion-engraving",
+      "predicate": "year",
+      "value": 1888,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "The Flammarion Engraving (1888)",
+      "citation_keys": [
+        "aiindex2025"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-gap4-2",
+      "subject": "cajal-neuron-drawing-1910",
+      "predicate": "drawing_year",
+      "value": 1910,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Santiago Ramón y Cajal's stained neurons, c. 1910",
+      "citation_keys": [
+        "computational_theory_of_mind"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "myths-gap4-3",
+      "subject": "sewell-chatbot-case",
+      "predicate": "case_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "a 2024 case in Florida ended in a death and a lawsuit",
+      "citation_keys": [
+        "deathschatbots_wiki",
+        "guardian2024sewell"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-myths-part",
-      "from": "myths",
-      "to": "part-6",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 6",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-myths-eliza",
       "from": "eliza",
@@ -516,6 +565,53 @@
       "quote": "**the map is not the territory** \\cite[the map–territory relation]{korzybski_mapterritory}",
       "citation_keys": [
         "korzybski_mapterritory"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-part",
+      "from": "myths",
+      "to": "part-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 6",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-flammarion-engraving",
+      "from": "flammarion-engraving",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The Flammarion Engraving (1888)",
+      "citation_keys": [
+        "aiindex2025"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-cajal-neuron-drawing-1910",
+      "from": "cajal-neuron-drawing-1910",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Santiago Ramón y Cajal's stained neurons, c. 1910",
+      "citation_keys": [
+        "computational_theory_of_mind"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-myths-sewell-chatbot-case",
+      "from": "sewell-chatbot-case",
+      "to": "myths",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a 2024 case in Florida ended in a death and a lawsuit",
+      "citation_keys": [
+        "deathschatbots_wiki",
+        "guardian2024sewell"
       ],
       "confidence": "provenance"
     }

@@ -27,7 +27,16 @@
     "dedekind1872",
     "cantor1895",
     "macTutorSetTheory",
-    "brahmagupta_colebrooke"
+    "brahmagupta_colebrooke",
+    "grosseteste_on_light",
+    "kepler1624chilias",
+    "gregoryachievements",
+    "macTutorFunctions",
+    "newtonquadratura",
+    "taylor1715",
+    "euler1748introductio",
+    "miller_functionsymbols",
+    "maclaurin"
   ],
   "claims": [
     {
@@ -319,6 +328,315 @@
       ],
       "qualifiers": {},
       "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-1",
+      "subject": "grosseteste-de-luce",
+      "predicate": "year",
+      "value": 1225,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "Grosseteste's *De luce* (c. 1225)",
+      "citation_keys": [
+        "grosseteste_on_light"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-2",
+      "subject": "kepler-chilias-logarithmorum",
+      "predicate": "year",
+      "value": 1624,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Kepler's *Chilias logarithmorum* (1624)",
+      "citation_keys": [
+        "kepler1624chilias"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-3",
+      "subject": "wallis-arithmetica-infinitorum",
+      "predicate": "year",
+      "value": 1656,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the *Arithmetica infinitorum* (1656)",
+      "citation_keys": [
+        "wallis1655",
+        "macTutorInfinity"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-4",
+      "subject": "james-gregory",
+      "predicate": "year",
+      "value": 1671,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In early 1671, James Gregory independently discovered something like the general Maclaurin series",
+      "citation_keys": [
+        "gregoryachievements"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-5",
+      "subject": "leibniz-function-term",
+      "predicate": "year",
+      "value": 1673,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Leibniz, who used it in 1673 for a line",
+      "citation_keys": [
+        "macTutorFunctions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-6",
+      "subject": "newton-quadratura-draft",
+      "predicate": "year_start",
+      "value": 1691,
+      "unit": "year",
+      "qualifiers": {
+        "range_end": 1692
+      },
+      "quote": "In 1691–1692, Newton wrote down an explicit general formulation",
+      "citation_keys": [
+        "newtonquadratura"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-7",
+      "subject": "newton-quadratura-draft",
+      "predicate": "year_end",
+      "value": 1692,
+      "unit": "year",
+      "qualifiers": {
+        "range_start": 1691
+      },
+      "quote": "In 1691–1692, Newton wrote down an explicit general formulation",
+      "citation_keys": [
+        "newtonquadratura"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-8",
+      "subject": "newton-quadratura-publication",
+      "predicate": "year",
+      "value": 1704,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "omitted from the 1704 publication",
+      "citation_keys": [
+        "newtonquadratura"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-9",
+      "subject": "brook-taylor",
+      "predicate": "year",
+      "value": 1715,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "It was not until 1715 that \\citeauthor{taylor1715} published the first general method",
+      "citation_keys": [
+        "taylor1715"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-10",
+      "subject": "euler-number-e",
+      "predicate": "notation_year",
+      "value": 1731,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Euler first wrote the letter $e$ in a letter to Goldbach in 1731",
+      "citation_keys": [
+        "macTutorE",
+        "euler1748introductio"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-11",
+      "subject": "euler-function-symbol",
+      "predicate": "year",
+      "value": 1734,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Euler also gave the symbol $f(x)$ its modern life in 1734",
+      "citation_keys": [
+        "miller_functionsymbols"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-12",
+      "subject": "colin-maclaurin",
+      "predicate": "year",
+      "value": 1742,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "who published the relevant work in 1742",
+      "citation_keys": [
+        "maclaurin"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-13",
+      "subject": "euler-introductio",
+      "predicate": "year",
+      "value": 1748,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In the *Introductio* (1748) Euler defines a function as an analytic expression",
+      "citation_keys": [
+        "euler1748introductio"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-14",
+      "subject": "colebrooke-brahmagupta-translation",
+      "predicate": "year",
+      "value": 1817,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Colebrooke trans., 1817]{brahmagupta_colebrooke}",
+      "citation_keys": [
+        "brahmagupta_colebrooke"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-15",
+      "subject": "fourier-sigma-notation",
+      "predicate": "year",
+      "value": 1820,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "documented in Fourier's 1820 paper",
+      "citation_keys": [
+        "historyofmathematicalnotation"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-16",
+      "subject": "dirichlet-function-definition",
+      "predicate": "year",
+      "value": 1837,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Dirichlet's 1837 definition drops the formula requirement altogether",
+      "citation_keys": [
+        "macTutorFunctions"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-17",
+      "subject": "russell-paradox",
+      "predicate": "year",
+      "value": 1901,
+      "unit": "year",
+      "qualifiers": {
+        "approx": true,
+        "range_end": 1902
+      },
+      "quote": "Russell's paradox (discovered around 1901–02)",
+      "citation_keys": [
+        "macTutorSetTheory"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-18",
+      "subject": "cajori-history-mathematical-notation",
+      "predicate": "year",
+      "value": 1928,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Cajori, 1928]{historyofmathematicalnotation}",
+      "citation_keys": [
+        "historyofmathematicalnotation"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-19",
+      "subject": "grosseteste-on-light-translation",
+      "predicate": "year",
+      "value": 1942,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Grosseteste, trans. 1942]{grosseteste_on_light}",
+      "citation_keys": [
+        "grosseteste_on_light"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-20",
+      "subject": "ishango-bone",
+      "predicate": "study_year",
+      "value": 1957,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[de Heinzelin, 1957]{ishangobone}",
+      "citation_keys": [
+        "ishangobone"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-21",
+      "subject": "ishango-bone",
+      "predicate": "reanalysis_year",
+      "value": 2012,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Pletser, 2012]{ishango12}",
+      "citation_keys": [
+        "ishango12"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "math_i-gap-22",
+      "subject": "lebombo-bone",
+      "predicate": "study_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Bruderer, 2024]{lebombobone}",
+      "citation_keys": [
+        "lebombobone"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -550,6 +868,224 @@
       "quote": "Brahmagupta's *Brāhmasphuṭasiddhānta* (628 CE), which gives rules for calculating with zero and negatives",
       "citation_keys": [
         "brahmagupta_colebrooke"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-grosseteste-de-luce",
+      "from": "grosseteste-de-luce",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Grosseteste's *De luce* (c. 1225)",
+      "citation_keys": [
+        "grosseteste_on_light"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-kepler-chilias-logarithmorum",
+      "from": "kepler-chilias-logarithmorum",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Kepler's *Chilias logarithmorum* (1624)",
+      "citation_keys": [
+        "kepler1624chilias"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-wallis-arithmetica-infinitorum",
+      "from": "wallis-arithmetica-infinitorum",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the *Arithmetica infinitorum* (1656)",
+      "citation_keys": [
+        "wallis1655",
+        "macTutorInfinity"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-james-gregory",
+      "from": "james-gregory",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In early 1671, James Gregory independently discovered something like the general Maclaurin series",
+      "citation_keys": [
+        "gregoryachievements"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-leibniz-function-term",
+      "from": "leibniz-function-term",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Leibniz, who used it in 1673 for a line",
+      "citation_keys": [
+        "macTutorFunctions"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-newton-quadratura-draft",
+      "from": "newton-quadratura-draft",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1691–1692, Newton wrote down an explicit general formulation",
+      "citation_keys": [
+        "newtonquadratura"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-newton-quadratura-publication",
+      "from": "newton-quadratura-publication",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "omitted from the 1704 publication",
+      "citation_keys": [
+        "newtonquadratura"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-brook-taylor",
+      "from": "brook-taylor",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "It was not until 1715 that \\citeauthor{taylor1715} published the first general method",
+      "citation_keys": [
+        "taylor1715"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-euler-number-e",
+      "from": "euler-number-e",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Euler first wrote the letter $e$ in a letter to Goldbach in 1731",
+      "citation_keys": [
+        "macTutorE",
+        "euler1748introductio"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-euler-function-symbol",
+      "from": "euler-function-symbol",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Euler also gave the symbol $f(x)$ its modern life in 1734",
+      "citation_keys": [
+        "miller_functionsymbols"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-colin-maclaurin",
+      "from": "colin-maclaurin",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "who published the relevant work in 1742",
+      "citation_keys": [
+        "maclaurin"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-euler-introductio",
+      "from": "euler-introductio",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In the *Introductio* (1748) Euler defines a function as an analytic expression",
+      "citation_keys": [
+        "euler1748introductio"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-colebrooke-brahmagupta-translation",
+      "from": "colebrooke-brahmagupta-translation",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Colebrooke trans., 1817]{brahmagupta_colebrooke}",
+      "citation_keys": [
+        "brahmagupta_colebrooke"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-fourier-sigma-notation",
+      "from": "fourier-sigma-notation",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "documented in Fourier's 1820 paper",
+      "citation_keys": [
+        "historyofmathematicalnotation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-dirichlet-function-definition",
+      "from": "dirichlet-function-definition",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Dirichlet's 1837 definition drops the formula requirement altogether",
+      "citation_keys": [
+        "macTutorFunctions"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-russell-paradox",
+      "from": "russell-paradox",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Russell's paradox (discovered around 1901–02)",
+      "citation_keys": [
+        "macTutorSetTheory"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-cajori-history-mathematical-notation",
+      "from": "cajori-history-mathematical-notation",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Cajori, 1928]{historyofmathematicalnotation}",
+      "citation_keys": [
+        "historyofmathematicalnotation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-math_i-grosseteste-on-light-translation",
+      "from": "grosseteste-on-light-translation",
+      "to": "math-i",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Grosseteste, trans. 1942]{grosseteste_on_light}",
+      "citation_keys": [
+        "grosseteste_on_light"
       ],
       "confidence": "provenance"
     }

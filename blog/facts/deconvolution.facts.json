@@ -204,16 +204,6 @@
   ],
   "relations": [
     {
-      "id": "prov-deconvolution-part",
-      "from": "deconvolution",
-      "to": "part-3",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 3",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "prov-deconvolution-transposed-convolution",
       "from": "transposed-convolution",
       "to": "deconvolution",
@@ -319,6 +309,16 @@
       "citation_keys": [
         "odena2016deconvolution"
       ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-deconvolution-part",
+      "from": "deconvolution",
+      "to": "part-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 3",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],

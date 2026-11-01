@@ -16,7 +16,10 @@
     "hendrycks2021math",
     "zheng2023lmsys",
     "rein2024gpqa",
-    "liang2023helm"
+    "liang2023helm",
+    "goodhartslaw",
+    "clark2018arc",
+    "zellers2019hellaswag"
   ],
   "claims": [
     {
@@ -309,19 +312,120 @@
       "quote": "**κ ≥ 0.7** — the rubric is sound enough to measure with",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "evaluation-gap4-1",
+      "subject": "canary-coal-mine-photo",
+      "predicate": "photo_year",
+      "value": 1928,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "the miners' carbon-monoxide detector (U.S. Bureau of Mines, 1928)",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-gap4-2",
+      "subject": "goodharts-law",
+      "predicate": "original_year",
+      "value": 1975,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Goodhart's original 1975 observation",
+      "citation_keys": [
+        "goodhartslaw"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-gap4-3",
+      "subject": "goodharts-law",
+      "predicate": "aphorism_year",
+      "value": 1997,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Marilyn Strathern's 1997 phrasing",
+      "citation_keys": [
+        "goodhartslaw"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-gap4-4",
+      "subject": "arc-benchmark",
+      "predicate": "citation_year",
+      "value": 2018,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Clark et al., 2018]{clark2018arc})",
+      "citation_keys": [
+        "clark2018arc"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-gap4-5",
+      "subject": "hellaswag",
+      "predicate": "citation_year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Zellers et al., 2019]{zellers2019hellaswag})",
+      "citation_keys": [
+        "zellers2019hellaswag"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-gap4-6",
+      "subject": "gpt-4",
+      "predicate": "pretraining_cutoff_year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {
+        "date": "September 2021"
+      },
+      "quote": "GPT-4's pretraining data cuts off in September 2021",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-gap4-7",
+      "subject": "big-bench",
+      "predicate": "citation_year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Srivastava et al., 2022]{srivastava2022bigbench})",
+      "citation_keys": [
+        "srivastava2022bigbench"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-gap4-8",
+      "subject": "arc-benchmark",
+      "predicate": "saturation_year",
+      "value": 2023,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Saturated by 2023.",
+      "citation_keys": [
+        "cobbe2021gsm8k",
+        "hendrycks2021math"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
-    {
-      "id": "prov-evaluation-part",
-      "from": "evaluation",
-      "to": "part-5",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 5",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-evaluation-mmlu",
       "from": "mmlu",
@@ -467,6 +571,72 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "**κ ≥ 0.7** — the rubric is sound enough to measure with",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-part",
+      "from": "evaluation",
+      "to": "part-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 5",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-canary-coal-mine-photo",
+      "from": "canary-coal-mine-photo",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the miners' carbon-monoxide detector (U.S. Bureau of Mines, 1928)",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-goodharts-law",
+      "from": "goodharts-law",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Goodhart's original 1975 observation",
+      "citation_keys": [
+        "goodhartslaw"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-arc-benchmark",
+      "from": "arc-benchmark",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Clark et al., 2018]{clark2018arc})",
+      "citation_keys": [
+        "clark2018arc"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-hellaswag",
+      "from": "hellaswag",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Zellers et al., 2019]{zellers2019hellaswag})",
+      "citation_keys": [
+        "zellers2019hellaswag"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-gpt-4",
+      "from": "gpt-4",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "GPT-4's pretraining data cuts off in September 2021",
       "citation_keys": [],
       "confidence": "provenance"
     }

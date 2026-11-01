@@ -7,7 +7,22 @@
   "order": 10,
   "curated": true,
   "generated_by": "extract_facts.py",
-  "citations": [],
+  "citations": [
+    "giannou2023looped",
+    "hinton1989autoencoder",
+    "kramer1992autoencoder",
+    "monti2007neuroimage",
+    "fedorenko2011language",
+    "amalric2019neuroimage",
+    "nostalgebraist2020logitlens",
+    "elhage2021mathematical",
+    "olsson2022induction",
+    "merullo2024talkingheads",
+    "lindsey2025biology",
+    "huang2026insecure",
+    "burns2022ccs",
+    "saraipour2025syllogisms"
+  ],
   "claims": [
     {
       "id": "auto-mechanistic_interpretability-title-0-1",
@@ -56,8 +71,383 @@
       "unit": "count",
       "qualifiers": {},
       "quote": "\\cite[Giannou et al. (2023)]{giannou2023looped} demonstrate that a **constant-depth** Transformer (≤13 layers), when placed in a loop, can emulate a **general-purpose computer**. This result has profound implications for understanding what Transformers *can* compute and how they might implement algo",
-      "citation_keys": [],
+      "citation_keys": [
+        "giannou2023looped"
+      ],
       "confidence": "extracted"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-1",
+      "subject": "san-francisco-earthquake-1906",
+      "predicate": "year",
+      "value": 1906,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the 1906 earthquake",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-2",
+      "subject": "autoencoder",
+      "predicate": "publication_year",
+      "value": 1989,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Hinton, 1989]{hinton1989autoencoder})",
+      "citation_keys": [
+        "hinton1989autoencoder"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-3",
+      "subject": "nonlinear-pca",
+      "predicate": "publication_year",
+      "value": 1991,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Kramer, 1991]{kramer1992autoencoder})",
+      "citation_keys": [
+        "kramer1992autoencoder"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-4",
+      "subject": "citation-year-prediction-example",
+      "predicate": "year",
+      "value": 1995,
+      "unit": "year",
+      "qualifiers": {
+        "example": true,
+        "bound": "lower"
+      },
+      "quote": "from **1995 to 1998**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-5",
+      "subject": "citation-year-prediction-example",
+      "predicate": "year",
+      "value": 1998,
+      "unit": "year",
+      "qualifiers": {
+        "example": true,
+        "bound": "upper"
+      },
+      "quote": "from **1995 to 1998**",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-6",
+      "subject": "language-network-neuroimaging",
+      "predicate": "publication_year",
+      "value": 2007,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Monti et al., 2007",
+      "citation_keys": [
+        "monti2007neuroimage"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-7",
+      "subject": "fedorenko-2011-language",
+      "predicate": "publication_year",
+      "value": 2011,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Fedorenko et al., 2011",
+      "citation_keys": [
+        "fedorenko2011language"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-8",
+      "subject": "amalric-2019-neuroimage",
+      "predicate": "publication_year",
+      "value": 2019,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Amalric & Dehaene, 2019",
+      "citation_keys": [
+        "amalric2019neuroimage"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-9",
+      "subject": "logit-lens",
+      "predicate": "publication_year",
+      "value": 2020,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "{nostalgebraist2020logitlens}",
+      "citation_keys": [
+        "nostalgebraist2020logitlens"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-10",
+      "subject": "mechanistic-interpretability-program",
+      "predicate": "publication_year",
+      "value": 2021,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "\\cite[Elhage et al. (2021)]{elhage2021mathematical}",
+      "citation_keys": [
+        "elhage2021mathematical"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-11",
+      "subject": "induction-heads",
+      "predicate": "publication_year",
+      "value": 2022,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Olsson et al., 2022]{olsson2022induction})",
+      "citation_keys": [
+        "olsson2022induction"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-12",
+      "subject": "talking-heads",
+      "predicate": "publication_year",
+      "value": 2024,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "(\\cite[Merullo, Eickhoff & Pavlick, 2024]{merullo2024talkingheads})",
+      "citation_keys": [
+        "merullo2024talkingheads"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-13",
+      "subject": "biology-of-a-language-model",
+      "predicate": "publication_year",
+      "value": 2025,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Lindsey et al. (2025)",
+      "citation_keys": [
+        "lindsey2025biology"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-14",
+      "subject": "insecure-honesty",
+      "predicate": "publication_year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {
+        "example": true
+      },
+      "quote": "Huang et al. (2026)",
+      "citation_keys": [
+        "huang2026insecure"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-15",
+      "subject": "gpt-3",
+      "predicate": "parameters",
+      "value": 175000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "GPT-3 175B has 96 layers",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-16",
+      "subject": "gpt-3",
+      "predicate": "layers",
+      "value": 96,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "GPT-3 175B has 96 layers",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-17",
+      "subject": "frontier-models",
+      "predicate": "layers",
+      "value": 128,
+      "unit": "count",
+      "qualifiers": {
+        "bound": "upper",
+        "year": 2025
+      },
+      "quote": "frontier models in 2025 span roughly 32 to 128 layers",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-18",
+      "subject": "othello-gpt",
+      "predicate": "vocabulary_size",
+      "value": 60,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "a vocabulary of 60 tokens",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-19",
+      "subject": "llama-2-13b",
+      "predicate": "parameters",
+      "value": 13000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "LLaMA-2-13B",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-20",
+      "subject": "llama-2-13b",
+      "predicate": "parameters",
+      "value": 13000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "in the 13B model",
+      "citation_keys": [
+        "burns2022ccs"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-21",
+      "subject": "llama-2-70b",
+      "predicate": "parameters",
+      "value": 70000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "in the 70B model they share **one** axis",
+      "citation_keys": [
+        "burns2022ccs"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-22",
+      "subject": "open-source-chat-models",
+      "predicate": "maximum_parameters",
+      "value": 72000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "up to 72B parameters",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-23",
+      "subject": "llama-2-13b-chat",
+      "predicate": "parameters",
+      "value": 13000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Llama-2-13B-Chat",
+      "citation_keys": [
+        "huang2026insecure"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-24",
+      "subject": "cross-layer-transcoder",
+      "predicate": "features",
+      "value": 30000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "30 million features across all layers",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-25",
+      "subject": "attribution-graph",
+      "predicate": "prompt_length_limit",
+      "value": 100,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "an engineering limit around 100 tokens",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-26",
+      "subject": "mistral-7b",
+      "predicate": "parameters",
+      "value": 7000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Mistral-7B",
+      "citation_keys": [
+        "saraipour2025syllogisms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-27",
+      "subject": "llama-3-1-8b",
+      "predicate": "parameters",
+      "value": 8000000000,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "Llama-3.1-8B",
+      "citation_keys": [
+        "saraipour2025syllogisms"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "mechanistic_interpretability-gap-28",
+      "subject": "cross-layer-transcoder",
+      "predicate": "features",
+      "value": 30000000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "~30M features",
+      "citation_keys": [],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -79,6 +469,276 @@
       "qualifiers": {},
       "quote": "part: 4",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-san-francisco-earthquake-1906",
+      "from": "san-francisco-earthquake-1906",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the 1906 earthquake",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-autoencoder",
+      "from": "autoencoder",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Hinton, 1989]{hinton1989autoencoder})",
+      "citation_keys": [
+        "hinton1989autoencoder"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-nonlinear-pca",
+      "from": "nonlinear-pca",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Kramer, 1991]{kramer1992autoencoder})",
+      "citation_keys": [
+        "kramer1992autoencoder"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-citation-year-prediction-example",
+      "from": "citation-year-prediction-example",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "from **1995 to 1998**",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-language-network-neuroimaging",
+      "from": "language-network-neuroimaging",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Monti et al., 2007",
+      "citation_keys": [
+        "monti2007neuroimage"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-fedorenko-2011-language",
+      "from": "fedorenko-2011-language",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Fedorenko et al., 2011",
+      "citation_keys": [
+        "fedorenko2011language"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-amalric-2019-neuroimage",
+      "from": "amalric-2019-neuroimage",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Amalric & Dehaene, 2019",
+      "citation_keys": [
+        "amalric2019neuroimage"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-logit-lens",
+      "from": "logit-lens",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "{nostalgebraist2020logitlens}",
+      "citation_keys": [
+        "nostalgebraist2020logitlens"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-mechanistic-interpretability-program",
+      "from": "mechanistic-interpretability-program",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Elhage et al. (2021)]{elhage2021mathematical}",
+      "citation_keys": [
+        "elhage2021mathematical"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-induction-heads",
+      "from": "induction-heads",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Olsson et al., 2022]{olsson2022induction})",
+      "citation_keys": [
+        "olsson2022induction"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-talking-heads",
+      "from": "talking-heads",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "(\\cite[Merullo, Eickhoff & Pavlick, 2024]{merullo2024talkingheads})",
+      "citation_keys": [
+        "merullo2024talkingheads"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-biology-of-a-language-model",
+      "from": "biology-of-a-language-model",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Lindsey et al. (2025)",
+      "citation_keys": [
+        "lindsey2025biology"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-insecure-honesty",
+      "from": "insecure-honesty",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Huang et al. (2026)",
+      "citation_keys": [
+        "huang2026insecure"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-gpt-3",
+      "from": "gpt-3",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "GPT-3 175B has 96 layers",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-frontier-models",
+      "from": "frontier-models",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "frontier models in 2025 span roughly 32 to 128 layers",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-othello-gpt",
+      "from": "othello-gpt",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a vocabulary of 60 tokens",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-llama-2-13b",
+      "from": "llama-2-13b",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "LLaMA-2-13B",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-llama-2-70b",
+      "from": "llama-2-70b",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "in the 70B model they share **one** axis",
+      "citation_keys": [
+        "burns2022ccs"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-open-source-chat-models",
+      "from": "open-source-chat-models",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "up to 72B parameters",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-llama-2-13b-chat",
+      "from": "llama-2-13b-chat",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Llama-2-13B-Chat",
+      "citation_keys": [
+        "huang2026insecure"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-cross-layer-transcoder",
+      "from": "cross-layer-transcoder",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "30 million features across all layers",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-attribution-graph",
+      "from": "attribution-graph",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "an engineering limit around 100 tokens",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-mistral-7b",
+      "from": "mistral-7b",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Mistral-7B",
+      "citation_keys": [
+        "saraipour2025syllogisms"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-llama-3-1-8b",
+      "from": "llama-3-1-8b",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Llama-3.1-8B",
+      "citation_keys": [
+        "saraipour2025syllogisms"
+      ],
       "confidence": "provenance"
     }
   ],

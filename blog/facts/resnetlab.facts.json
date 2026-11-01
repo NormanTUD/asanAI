@@ -247,16 +247,6 @@
   ],
   "relations": [
     {
-      "id": "prov-resnetlab-part",
-      "from": "resnetlab",
-      "to": "part-3",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 3",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "prov-resnetlab-vanishing-gradient",
       "from": "vanishing-gradient",
       "to": "resnetlab",
@@ -363,6 +353,16 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "proposed a *constant error flow* — the idea that became the LSTM's constant error carousel",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-resnetlab-part",
+      "from": "resnetlab",
+      "to": "part-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 3",
       "citation_keys": [],
       "confidence": "provenance"
     }

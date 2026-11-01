@@ -143,7 +143,8 @@
       "to": "llm-security",
       "kind": "part_of",
       "qualifiers": {},
-      "quote": "Prompt injection occurs when an attacker embeds instructions"
+      "quote": "Prompt injection occurs when an attacker embeds instructions",
+      "confidence": "inferred"
     },
     {
       "id": "rel-jailbreaking-scope",
@@ -151,7 +152,8 @@
       "to": "llm-security",
       "kind": "part_of",
       "qualifiers": {},
-      "quote": "Jailbreaking manipulates the model into bypassing its safety training"
+      "quote": "Jailbreaking manipulates the model into bypassing its safety training",
+      "confidence": "inferred"
     },
     {
       "id": "rel-poisoning-scope",
@@ -159,7 +161,8 @@
       "to": "llm-security",
       "kind": "part_of",
       "qualifiers": {},
-      "quote": "An attacker injects malicious examples into the training or fine-tuning data"
+      "quote": "An attacker injects malicious examples into the training or fine-tuning data",
+      "confidence": "inferred"
     },
     {
       "id": "rel-prompt-jailbreak",
@@ -167,7 +170,8 @@
       "to": "jailbreaking",
       "kind": "related_to",
       "qualifiers": {},
-      "quote": "Jailbreaking manipulates the model into bypassing its safety training"
+      "quote": "Jailbreaking manipulates the model into bypassing its safety training",
+      "confidence": "inferred"
     },
     {
       "id": "prov-security_inference-prompt-injection",

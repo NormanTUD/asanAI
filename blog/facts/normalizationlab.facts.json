@@ -107,7 +107,9 @@
       "unit": "count",
       "qualifiers": {},
       "quote": "The “96 layers” figure is specific to GPT-3 (175B)",
-      "citation_keys": [],
+      "citation_keys": [
+        "semianalysis2023gpt4"
+      ],
       "confidence": "stated"
     },
     {
@@ -118,7 +120,9 @@
       "unit": "count",
       "qualifiers": {},
       "quote": "GPT-3 (175B)",
-      "citation_keys": [],
+      "citation_keys": [
+        "semianalysis2023gpt4"
+      ],
       "confidence": "stated"
     },
     {
@@ -131,7 +135,9 @@
         "approx": true
       },
       "quote": "LLaMA-7B has ~32",
-      "citation_keys": [],
+      "citation_keys": [
+        "semianalysis2023gpt4"
+      ],
       "confidence": "stated"
     },
     {
@@ -144,7 +150,9 @@
         "approx": true
       },
       "quote": "LLaMA-70B has ~80",
-      "citation_keys": [],
+      "citation_keys": [
+        "semianalysis2023gpt4"
+      ],
       "confidence": "stated"
     },
     {
@@ -216,7 +224,10 @@
       "unit": "year",
       "qualifiers": {},
       "quote": "RMSNorm appeared at scale in DeepMind's Gopher (2021)",
-      "citation_keys": [],
+      "citation_keys": [
+        "touvron2023llama",
+        "zhang2019rmsnorm"
+      ],
       "confidence": "stated"
     },
     {
@@ -289,16 +300,6 @@
     }
   ],
   "relations": [
-    {
-      "id": "prov-normalizationlab-part",
-      "from": "normalizationlab",
-      "to": "part-3",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "part: 3",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
     {
       "id": "prov-normalizationlab-layer-normalization",
       "from": "layer-normalization",
@@ -414,6 +415,16 @@
       "kind": "mentioned_in",
       "qualifiers": {},
       "quote": "GN is **independent of the batch**, so it works at batch size 1",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-normalizationlab-part",
+      "from": "normalizationlab",
+      "to": "part-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "part: 3",
       "citation_keys": [],
       "confidence": "provenance"
     }
