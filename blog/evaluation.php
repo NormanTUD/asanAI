@@ -318,6 +318,26 @@ Two corollaries that bite in practice:
 > An eval is a measurement instrument, and like any instrument it has a resolution. Below the resolution, the number is not a result — it is a rounding error with a label on it. The whole discipline of building an eval is: write the standard down, verify two people can read it the same way, calibrate the cheap judge against the careful one, and refuse to act on a number smaller than the noise.
 </div>
 
+<div class="md">
+### The rest of the scientific checklist
+
+Benchmarks and judge calibration are the visible part of evaluation. The invisible part is the set of habits that make a number mean something.
+
+**Generalization is not memorization.** A model that fits its training set has not necessarily learned a rule. The train/validation/test split exists to estimate the gap between fitting and generalization, and the gap is the thing you care about (\cite[Hastie et al., 2009]{hastie2009elements}). Report the split, not just the score.
+
+**Distribution shift is the default.** A benchmark is a sample from one distribution; deployment is a sample from another. Covariate shift, label shift and concept drift can all make a model that looked good in the lab fail in the field (\cite[Quiñonero-Candela et al., 2009]{quinonero2009datasetshift}). A robust evaluation includes a stress set that deliberately differs from the training distribution.
+
+**Leakage is contamination's general form.** Benchmark contamination is one case; the broader failure is any information from the test target entering training, preprocessing or model selection. Leakage inflates performance and is often invisible without an audit of the pipeline (\cite[Kapoor and Narayanan, 2023]{kapoor2023leakage}). Split by entity, not only by row, when the same patient, user or document can appear on both sides.
+
+**Ablation is the intervention.** A benchmark correlation across models cannot tell you which component caused the gain. An ablation removes or replaces one component, retrains, and measures the change; it is the closest thing to a controlled experiment in architecture research (\cite[Meyes et al., 2019]{meyes2019ablation}). Ablate the component you claim matters, not a convenient proxy.
+
+**Reproducibility is part of the result.** A number that cannot be reproduced is an anecdote. Report seeds, code, data version, hardware and the number of runs; the NeurIPS reproducibility programme found that many published results lacked the information needed to repeat them (\cite[Pineau et al., 2021]{pineau2021reproducibility}).
+
+**Correlation is not causation.** Two models that differ in one benchmark also differ in size, data, training compute and post-training recipe. Observing that the better model has a property does not show that the property caused the advantage. Causal claims need an intervention, a natural experiment or an explicit causal model (\cite[Hernán and Robins, 2020]{hernan2020causal}). This is the difference between "models with more data score higher" and "more data causes higher scores."
+
+The checklist is not a bureaucratic ritual. Each item removes a way for a number to lie: the split removes memorization, the stress set removes distribution optimism, the leakage audit removes contamination, the ablation removes confounding, the reproducibility report removes luck, and the causal design removes the temptation to tell a story from a correlation.
+</div>
+
 <script>
 // (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) leaderboard (illustrative 2024-2025 scores)
 (function() {
