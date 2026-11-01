@@ -433,7 +433,8 @@ uv run blog/tools/factcheck/extract_statements.py blog/ --check
 ```
 
 `--check` schlägt fehl, wenn eine Lektion geändert wurde und ihre
-Statement-Liste veraltet ist. Statements sind die Vollständigkeits- und
+Statement-Liste veraltet ist. Alle Factcheck-Skripte haben einen
+`uv`-Shebang und sind ausführbar (`./blog/tools/factcheck/check_facts.py blog/`). Statements sind die Vollständigkeits- und
 Provenienzschicht; numerische Konflikte werden über `claims` geprüft.
 
 ## Satz-Konflikte
