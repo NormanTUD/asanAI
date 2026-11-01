@@ -3957,3 +3957,97 @@ body.darkmode .tlm-sub.tlm-worse {
 body.darkmode .tlm-progress {
 	background: rgba(255, 255, 255, 0.12);
 }
+
+/* ── Per-class history and hard examples (training tab) ── */
+#plotly_training_class_history {
+	width: 100%;
+	height: 300px;
+}
+
+#training_class_history_split {
+	margin: -4px 0 8px;
+}
+
+.training-hard-examples {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+	gap: 10px;
+	margin-bottom: 16px;
+}
+
+.training-hard-example {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	min-width: 0;
+	padding: 8px;
+	border: 1px solid var(--color-separator, rgba(0, 0, 0, 0.12));
+	border-radius: 10px;
+	background: var(--color-bg-grouped, rgba(120, 120, 128, 0.08));
+}
+
+.training-hard-example.is-persistent {
+	border-color: var(--color-warning, #FF9F0A);
+	box-shadow: inset 0 0 0 1px var(--color-warning, #FF9F0A);
+}
+
+.training-hard-example-thumb {
+	flex: 0 0 auto;
+	width: 56px;
+	height: 56px;
+	object-fit: contain;
+	border-radius: 6px;
+	background: rgba(0, 0, 0, 0.18);
+	image-rendering: pixelated;
+}
+
+.training-hard-example-info {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+	font-size: 11px;
+}
+
+.training-hard-example-line {
+	display: flex;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.training-hard-example-label {
+	color: var(--color-label-secondary, rgba(0, 0, 0, 0.55));
+}
+
+.training-hard-example-value {
+	overflow: hidden;
+	color: var(--color-label-primary, rgba(0, 0, 0, 0.85));
+	font-weight: 600;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.training-hard-example-persistent {
+	margin-top: 2px;
+	color: var(--color-warning, #FF9F0A);
+	font-size: 10px;
+	font-weight: 600;
+}
+
+body.darkmode .training-hard-example {
+	border-color: rgba(255, 255, 255, 0.12);
+	background: rgba(255, 255, 255, 0.06);
+}
+
+body.darkmode .training-hard-example.is-persistent {
+	border-color: #ff9f0a;
+	box-shadow: inset 0 0 0 1px #ff9f0a;
+}
+
+body.darkmode .training-hard-example-label {
+	color: rgba(255, 255, 255, 0.55);
+}
+
+body.darkmode .training-hard-example-value {
+	color: rgba(255, 255, 255, 0.92);
+}

@@ -44,6 +44,17 @@
 				<div id="plotly_metric_history"></div>
 			</div>
 
+			<div id="training_class_history_div" style="display: none">
+				<div class="TRANSLATEME_training_class_history_title tlm-heading"></div>
+				<div id="training_class_history_split" class="tlm-sub"></div>
+				<div id="plotly_training_class_history"></div>
+			</div>
+
+			<div id="training_hard_examples_div" style="display: none">
+				<div class="TRANSLATEME_training_hard_examples_title tlm-heading"></div>
+				<div id="training_hard_examples" class="training-hard-examples"></div>
+			</div>
+
 			<div id="simplest_training_data_visualization" style="display: none"></div>
 
 			<div id="bend_graph"></div>
