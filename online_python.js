@@ -1611,8 +1611,44 @@ if input_data is not None:
 	// INITIALIZATION
 	// =========================================================================
 
+	function setPyodideBusy(is_busy) {
+		var overlay = document.getElementById("pyodide_busy_overlay");
+		if (!overlay) return;
+
+		overlay.classList.toggle("pe-visible", !!is_busy);
+		overlay.setAttribute("aria-hidden", is_busy ? "false" : "true");
+	}
+
+	// Give the browser one paint so the busy overlay is on screen before the
+	// blocking WASM compile starts. The timeout keeps hidden/throttled tabs
+	// from waiting forever for a requestAnimationFrame that never fires.
+	function nextPaint() {
+		return new Promise(function (resolve) {
+			var finished = false;
+
+			function finish() {
+				if (finished) return;
+				finished = true;
+				resolve();
+			}
+
+			try {
+				if (!document.hidden && typeof requestAnimationFrame === "function") {
+					requestAnimationFrame(function () {
+						requestAnimationFrame(finish);
+					});
+				}
+			} catch (e) { /* fall through to the timeout */ }
+
+			setTimeout(finish, 100);
+		});
+	}
+
 		async function initPyodide() {
-			if (pyodideReady) return pyodideInstance;
+			if (pyodideReady) {
+				setPyodideBusy(false);
+				return pyodideInstance;
+			}
 
 			// If an initialization is already in flight, every caller waits for
 			// that same promise. Returning immediately here used to make callers
@@ -1624,7 +1660,11 @@ if input_data is not None:
 
 			pyodideInitPromise = (async function() {
 				pyodideLoading = true;
-				setStatus("⏳ Loading...", "loading");
+				setStatus("⏳ Loading...", "busy");
+				setPyodideBusy(true);
+
+				// Paint the overlay before the main thread blocks in loadPyodide().
+				await nextPaint();
 
 				var maxRetries = 6;
 				var lastError = null;
@@ -1657,6 +1697,7 @@ if input_data is not None:
 						pyodideReady = true;
 						pyodideLoading = false;
 						setStatus("✓ Ready", "ready");
+						setPyodideBusy(false);
 						return pyodideInstance;
 					} catch (e) {
 						lastError = e;
@@ -1671,6 +1712,7 @@ if input_data is not None:
 
 				pyodideLoading = false;
 				setStatus("✗ Failed", "error");
+				setPyodideBusy(false);
 				appendConsole("[ERROR] Pyodide failed to initialize after " + maxRetries + " attempts: " + (lastError && lastError.message ? lastError.message : lastError) + "\n", "stderr");
 				appendConsole("[💡 Hint] Try refreshing the page or check your network connection.\n", "info");
 				return null;
@@ -2776,7 +2818,7 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 			const stopBtn = document.getElementById("pyodide_stop_btn");
 			if (stopBtn) stopBtn.disabled = false;
 
-			setStatus("⚡ Running...", "loading");
+			setStatus("⚡ Running...", "busy");
 			hideErrorIndicator();
 
 			appendConsole("\n─── Run #" + thisRun + " ───\n", "info");
@@ -3111,6 +3153,7 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 		switch (type) {
 			case "ready": el.className += ' pe-badge-ready'; break;
 			case "error": el.className += ' pe-badge-error'; break;
+			case "busy": el.className += ' pe-badge-busy'; break;
 			case "loading": default: el.className += ' pe-badge-loading'; break;
 		}
 	}
@@ -3685,7 +3728,7 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 		var stopBtn = document.getElementById("pyodide_stop_btn");
 		if (stopBtn) stopBtn.disabled = false;
 
-		setStatus("⚡ Running...", "loading");
+		setStatus("⚡ Running...", "busy");
 		hideErrorIndicator();
 
 		appendConsole("\n─── Run #" + thisRun + " ───\n", "info");
@@ -4119,7 +4162,7 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 		}
 
 		var pkgList = Array.isArray(packages) ? packages : [packages];
-		setStatus("📦 Loading...", "loading");
+		setStatus("📦 Loading...", "busy");
 		appendConsole("[Loading packages: " + pkgList.join(", ") + "]\n", "info");
 
 		try {

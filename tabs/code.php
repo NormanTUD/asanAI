@@ -58,6 +58,12 @@
 		<br>
 
 		<div id="pyodide_editor_wrapper">
+			<div id="pyodide_busy_overlay" class="pe-busy-overlay" role="status" aria-live="polite" aria-hidden="true">
+				<div class="pe-spinner" aria-hidden="true"></div>
+				<div class="pe-busy-text TRANSLATEME_pe_loading_python"></div>
+				<div class="pe-busy-hint TRANSLATEME_pe_loading_python_hint"></div>
+			</div>
+
 			<!-- Toolbar Row 1: Run controls -->
 			<div class="pe-toolbar">
 				<button id="pyodide_run_btn" onclick="pyodideEditorRun()" class="pe-btn pe-btn-run pe-tooltip" data-tip="Ctrl+Enter">

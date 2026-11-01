@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2569;
+var DEFAULT_EXPECTED_TEST_COUNT = 2571;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -10805,14 +10805,39 @@ async function run_python_code_tests() {
 		return $("#pyodide_console_output").text();
 	}
 
-	async function run_and_wait_for_console (expected_text, timeout_ms) {
+	async function run_and_wait_for_console (expected_text, timeout_ms, expect_busy_overlay = false) {
 		var before = pyodide_console();
 		$("#pyodide_run_btn").click();
 
-		return await wait_until(function () {
+		if(expect_busy_overlay) {
+			var overlay_shown = await wait_until(function () {
+				return $("#pyodide_busy_overlay").is(":visible");
+			}, 2000, 30);
+
+			test_equal("pyodide run shows the loading overlay", overlay_shown, true);
+
+			if(!overlay_shown) {
+				err("#pyodide_busy_overlay was not visible while the runtime initialized");
+				return false;
+			}
+		}
+
+		var finished = await wait_until(function () {
 			var text = pyodide_console();
 			return text !== before && text.includes(expected_text);
 		}, timeout_ms);
+
+		if(expect_busy_overlay) {
+			var overlay_hidden = !$("#pyodide_busy_overlay").is(":visible");
+			test_equal("pyodide loading overlay disappears when ready", overlay_hidden, true);
+
+			if(!overlay_hidden) {
+				err("#pyodide_busy_overlay is still visible after the runtime became ready");
+				return false;
+			}
+		}
+
+		return finished;
 	}
 
 	await set_dataset_and_wait("signs");
@@ -10838,7 +10863,14 @@ async function run_python_code_tests() {
 		return false;
 	}
 
-	if(!(await run_and_wait_for_console("Hello, World", 60000))) {
+	if($("#pyodide_busy_overlay").length !== 1) {
+		err("The Python editor is missing #pyodide_busy_overlay");
+		return false;
+	}
+
+	var pyodide_was_ready = PyodideEditor.isReady();
+
+	if(!(await run_and_wait_for_console("Hello, World", 60000, !pyodide_was_ready))) {
 		err("#pyodide_console_output does not contain 'Hello, World' after clicking 'Run' for default program");
 		return false;
 	}
