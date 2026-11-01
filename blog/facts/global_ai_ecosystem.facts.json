@@ -710,902 +710,2181 @@
         "tml2025"
       ],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-1-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-1",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-2-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-2",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-1-before-global_ai_ecosystem-block-2",
+      "from": "global_ai_ecosystem-block-1",
+      "to": "global_ai_ecosystem-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-2-related_to-global_ai_ecosystem-block-1",
+      "from": "global_ai_ecosystem-block-2",
+      "to": "global_ai_ecosystem-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-3-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-3",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-2-before-global_ai_ecosystem-block-3",
+      "from": "global_ai_ecosystem-block-2",
+      "to": "global_ai_ecosystem-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-4-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-4",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-3-before-global_ai_ecosystem-block-4",
+      "from": "global_ai_ecosystem-block-3",
+      "to": "global_ai_ecosystem-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-4-related_to-global_ai_ecosystem-block-3",
+      "from": "global_ai_ecosystem-block-4",
+      "to": "global_ai_ecosystem-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-5-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-5",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-4-before-global_ai_ecosystem-block-5",
+      "from": "global_ai_ecosystem-block-4",
+      "to": "global_ai_ecosystem-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-6-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-6",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-5-before-global_ai_ecosystem-block-6",
+      "from": "global_ai_ecosystem-block-5",
+      "to": "global_ai_ecosystem-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-7-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-7",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-6-before-global_ai_ecosystem-block-7",
+      "from": "global_ai_ecosystem-block-6",
+      "to": "global_ai_ecosystem-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-8-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-8",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-7-before-global_ai_ecosystem-block-8",
+      "from": "global_ai_ecosystem-block-7",
+      "to": "global_ai_ecosystem-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-9-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-9",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-8-before-global_ai_ecosystem-block-9",
+      "from": "global_ai_ecosystem-block-8",
+      "to": "global_ai_ecosystem-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-9-related_to-global_ai_ecosystem-block-8",
+      "from": "global_ai_ecosystem-block-9",
+      "to": "global_ai_ecosystem-block-8",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-10-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-10",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-9-before-global_ai_ecosystem-block-10",
+      "from": "global_ai_ecosystem-block-9",
+      "to": "global_ai_ecosystem-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-11-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-11",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-10-before-global_ai_ecosystem-block-11",
+      "from": "global_ai_ecosystem-block-10",
+      "to": "global_ai_ecosystem-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-12-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-12",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-11-before-global_ai_ecosystem-block-12",
+      "from": "global_ai_ecosystem-block-11",
+      "to": "global_ai_ecosystem-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-13-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-13",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-12-before-global_ai_ecosystem-block-13",
+      "from": "global_ai_ecosystem-block-12",
+      "to": "global_ai_ecosystem-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-14-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-14",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-13-before-global_ai_ecosystem-block-14",
+      "from": "global_ai_ecosystem-block-13",
+      "to": "global_ai_ecosystem-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-14-related_to-global_ai_ecosystem-block-13",
+      "from": "global_ai_ecosystem-block-14",
+      "to": "global_ai_ecosystem-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-15-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-15",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-14-before-global_ai_ecosystem-block-15",
+      "from": "global_ai_ecosystem-block-14",
+      "to": "global_ai_ecosystem-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-16-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-16",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-15-before-global_ai_ecosystem-block-16",
+      "from": "global_ai_ecosystem-block-15",
+      "to": "global_ai_ecosystem-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-16-related_to-global_ai_ecosystem-block-15",
+      "from": "global_ai_ecosystem-block-16",
+      "to": "global_ai_ecosystem-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-17-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-17",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-16-before-global_ai_ecosystem-block-17",
+      "from": "global_ai_ecosystem-block-16",
+      "to": "global_ai_ecosystem-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-18-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-18",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-17-before-global_ai_ecosystem-block-18",
+      "from": "global_ai_ecosystem-block-17",
+      "to": "global_ai_ecosystem-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-19-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-19",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-18-before-global_ai_ecosystem-block-19",
+      "from": "global_ai_ecosystem-block-18",
+      "to": "global_ai_ecosystem-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-20-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-20",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-19-before-global_ai_ecosystem-block-20",
+      "from": "global_ai_ecosystem-block-19",
+      "to": "global_ai_ecosystem-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-20-related_to-global_ai_ecosystem-block-19",
+      "from": "global_ai_ecosystem-block-20",
+      "to": "global_ai_ecosystem-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-21-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-21",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-20-before-global_ai_ecosystem-block-21",
+      "from": "global_ai_ecosystem-block-20",
+      "to": "global_ai_ecosystem-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-22-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-22",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-21-before-global_ai_ecosystem-block-22",
+      "from": "global_ai_ecosystem-block-21",
+      "to": "global_ai_ecosystem-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-23-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-23",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-22-before-global_ai_ecosystem-block-23",
+      "from": "global_ai_ecosystem-block-22",
+      "to": "global_ai_ecosystem-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-23-related_to-global_ai_ecosystem-block-22",
+      "from": "global_ai_ecosystem-block-23",
+      "to": "global_ai_ecosystem-block-22",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-24-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-24",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-23-before-global_ai_ecosystem-block-24",
+      "from": "global_ai_ecosystem-block-23",
+      "to": "global_ai_ecosystem-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-24-related_to-global_ai_ecosystem-block-22",
+      "from": "global_ai_ecosystem-block-24",
+      "to": "global_ai_ecosystem-block-22",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-25-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-25",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-24-before-global_ai_ecosystem-block-25",
+      "from": "global_ai_ecosystem-block-24",
+      "to": "global_ai_ecosystem-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-26-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-26",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-25-before-global_ai_ecosystem-block-26",
+      "from": "global_ai_ecosystem-block-25",
+      "to": "global_ai_ecosystem-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-27-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-27",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-26-before-global_ai_ecosystem-block-27",
+      "from": "global_ai_ecosystem-block-26",
+      "to": "global_ai_ecosystem-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-28-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-28",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-27-before-global_ai_ecosystem-block-28",
+      "from": "global_ai_ecosystem-block-27",
+      "to": "global_ai_ecosystem-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-29-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-29",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-28-before-global_ai_ecosystem-block-29",
+      "from": "global_ai_ecosystem-block-28",
+      "to": "global_ai_ecosystem-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-30-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-30",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-29-before-global_ai_ecosystem-block-30",
+      "from": "global_ai_ecosystem-block-29",
+      "to": "global_ai_ecosystem-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-31-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-31",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-30-before-global_ai_ecosystem-block-31",
+      "from": "global_ai_ecosystem-block-30",
+      "to": "global_ai_ecosystem-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-32-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-32",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-31-before-global_ai_ecosystem-block-32",
+      "from": "global_ai_ecosystem-block-31",
+      "to": "global_ai_ecosystem-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-33-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-33",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-32-before-global_ai_ecosystem-block-33",
+      "from": "global_ai_ecosystem-block-32",
+      "to": "global_ai_ecosystem-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-34-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-34",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-33-before-global_ai_ecosystem-block-34",
+      "from": "global_ai_ecosystem-block-33",
+      "to": "global_ai_ecosystem-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-35-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-35",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-34-before-global_ai_ecosystem-block-35",
+      "from": "global_ai_ecosystem-block-34",
+      "to": "global_ai_ecosystem-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-35-related_to-global_ai_ecosystem-block-34",
+      "from": "global_ai_ecosystem-block-35",
+      "to": "global_ai_ecosystem-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-36-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-36",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-35-before-global_ai_ecosystem-block-36",
+      "from": "global_ai_ecosystem-block-35",
+      "to": "global_ai_ecosystem-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-36-related_to-global_ai_ecosystem-block-34",
+      "from": "global_ai_ecosystem-block-36",
+      "to": "global_ai_ecosystem-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-37-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-37",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-36-before-global_ai_ecosystem-block-37",
+      "from": "global_ai_ecosystem-block-36",
+      "to": "global_ai_ecosystem-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-38-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-38",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-37-before-global_ai_ecosystem-block-38",
+      "from": "global_ai_ecosystem-block-37",
+      "to": "global_ai_ecosystem-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-38-related_to-global_ai_ecosystem-block-37",
+      "from": "global_ai_ecosystem-block-38",
+      "to": "global_ai_ecosystem-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-39-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-39",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-38-before-global_ai_ecosystem-block-39",
+      "from": "global_ai_ecosystem-block-38",
+      "to": "global_ai_ecosystem-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-39-related_to-global_ai_ecosystem-block-37",
+      "from": "global_ai_ecosystem-block-39",
+      "to": "global_ai_ecosystem-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-40-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-40",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-39-before-global_ai_ecosystem-block-40",
+      "from": "global_ai_ecosystem-block-39",
+      "to": "global_ai_ecosystem-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-40-related_to-global_ai_ecosystem-block-37",
+      "from": "global_ai_ecosystem-block-40",
+      "to": "global_ai_ecosystem-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-41-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-41",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-40-before-global_ai_ecosystem-block-41",
+      "from": "global_ai_ecosystem-block-40",
+      "to": "global_ai_ecosystem-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-41-related_to-global_ai_ecosystem-block-37",
+      "from": "global_ai_ecosystem-block-41",
+      "to": "global_ai_ecosystem-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-42-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-42",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-41-before-global_ai_ecosystem-block-42",
+      "from": "global_ai_ecosystem-block-41",
+      "to": "global_ai_ecosystem-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-42-related_to-global_ai_ecosystem-block-37",
+      "from": "global_ai_ecosystem-block-42",
+      "to": "global_ai_ecosystem-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-43-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-43",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-42-before-global_ai_ecosystem-block-43",
+      "from": "global_ai_ecosystem-block-42",
+      "to": "global_ai_ecosystem-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-44-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-44",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-43-before-global_ai_ecosystem-block-44",
+      "from": "global_ai_ecosystem-block-43",
+      "to": "global_ai_ecosystem-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-44-related_to-global_ai_ecosystem-block-43",
+      "from": "global_ai_ecosystem-block-44",
+      "to": "global_ai_ecosystem-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-45-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-45",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-44-before-global_ai_ecosystem-block-45",
+      "from": "global_ai_ecosystem-block-44",
+      "to": "global_ai_ecosystem-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-45-related_to-global_ai_ecosystem-block-43",
+      "from": "global_ai_ecosystem-block-45",
+      "to": "global_ai_ecosystem-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-46-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-46",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-45-before-global_ai_ecosystem-block-46",
+      "from": "global_ai_ecosystem-block-45",
+      "to": "global_ai_ecosystem-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-46-related_to-global_ai_ecosystem-block-43",
+      "from": "global_ai_ecosystem-block-46",
+      "to": "global_ai_ecosystem-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-47-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-47",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-46-before-global_ai_ecosystem-block-47",
+      "from": "global_ai_ecosystem-block-46",
+      "to": "global_ai_ecosystem-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-47-related_to-global_ai_ecosystem-block-43",
+      "from": "global_ai_ecosystem-block-47",
+      "to": "global_ai_ecosystem-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-48-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-48",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-47-before-global_ai_ecosystem-block-48",
+      "from": "global_ai_ecosystem-block-47",
+      "to": "global_ai_ecosystem-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-48-related_to-global_ai_ecosystem-block-43",
+      "from": "global_ai_ecosystem-block-48",
+      "to": "global_ai_ecosystem-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-49-part_of-global-ai-ecosystem",
+      "from": "global_ai_ecosystem-block-49",
+      "to": "global-ai-ecosystem",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-48-before-global_ai_ecosystem-block-49",
+      "from": "global_ai_ecosystem-block-48",
+      "to": "global_ai_ecosystem-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-block-49-related_to-global_ai_ecosystem-block-43",
+      "from": "global_ai_ecosystem-block-49",
+      "to": "global_ai_ecosystem-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-1-part_of-global_ai_ecosystem-block-1",
+      "from": "global_ai_ecosystem-stmt-1",
+      "to": "global_ai_ecosystem-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-2-part_of-global_ai_ecosystem-block-1",
+      "from": "global_ai_ecosystem-stmt-2",
+      "to": "global_ai_ecosystem-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-3-part_of-global_ai_ecosystem-block-1",
+      "from": "global_ai_ecosystem-stmt-3",
+      "to": "global_ai_ecosystem-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-4-part_of-global_ai_ecosystem-block-1",
+      "from": "global_ai_ecosystem-stmt-4",
+      "to": "global_ai_ecosystem-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-5-part_of-global_ai_ecosystem-block-1",
+      "from": "global_ai_ecosystem-stmt-5",
+      "to": "global_ai_ecosystem-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-6-part_of-global_ai_ecosystem-block-1",
+      "from": "global_ai_ecosystem-stmt-6",
+      "to": "global_ai_ecosystem-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-7-part_of-global_ai_ecosystem-block-1",
+      "from": "global_ai_ecosystem-stmt-7",
+      "to": "global_ai_ecosystem-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-8-part_of-global_ai_ecosystem-block-1",
+      "from": "global_ai_ecosystem-stmt-8",
+      "to": "global_ai_ecosystem-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-9-part_of-global_ai_ecosystem-block-2",
+      "from": "global_ai_ecosystem-stmt-9",
+      "to": "global_ai_ecosystem-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-10-part_of-global_ai_ecosystem-block-4",
+      "from": "global_ai_ecosystem-stmt-10",
+      "to": "global_ai_ecosystem-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-11-part_of-global_ai_ecosystem-block-4",
+      "from": "global_ai_ecosystem-stmt-11",
+      "to": "global_ai_ecosystem-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-12-part_of-global_ai_ecosystem-block-9",
+      "from": "global_ai_ecosystem-stmt-12",
+      "to": "global_ai_ecosystem-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-13-part_of-global_ai_ecosystem-block-9",
+      "from": "global_ai_ecosystem-stmt-13",
+      "to": "global_ai_ecosystem-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-14-part_of-global_ai_ecosystem-block-14",
+      "from": "global_ai_ecosystem-stmt-14",
+      "to": "global_ai_ecosystem-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-15-part_of-global_ai_ecosystem-block-16",
+      "from": "global_ai_ecosystem-stmt-15",
+      "to": "global_ai_ecosystem-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-16-part_of-global_ai_ecosystem-block-20",
+      "from": "global_ai_ecosystem-stmt-16",
+      "to": "global_ai_ecosystem-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-17-part_of-global_ai_ecosystem-block-23",
+      "from": "global_ai_ecosystem-stmt-17",
+      "to": "global_ai_ecosystem-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-18-part_of-global_ai_ecosystem-block-24",
+      "from": "global_ai_ecosystem-stmt-18",
+      "to": "global_ai_ecosystem-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-19-part_of-global_ai_ecosystem-block-35",
+      "from": "global_ai_ecosystem-stmt-19",
+      "to": "global_ai_ecosystem-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-20-part_of-global_ai_ecosystem-block-36",
+      "from": "global_ai_ecosystem-stmt-20",
+      "to": "global_ai_ecosystem-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-21-part_of-global_ai_ecosystem-block-38",
+      "from": "global_ai_ecosystem-stmt-21",
+      "to": "global_ai_ecosystem-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-22-part_of-global_ai_ecosystem-block-39",
+      "from": "global_ai_ecosystem-stmt-22",
+      "to": "global_ai_ecosystem-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-23-part_of-global_ai_ecosystem-block-39",
+      "from": "global_ai_ecosystem-stmt-23",
+      "to": "global_ai_ecosystem-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-24-part_of-global_ai_ecosystem-block-39",
+      "from": "global_ai_ecosystem-stmt-24",
+      "to": "global_ai_ecosystem-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-25-part_of-global_ai_ecosystem-block-40",
+      "from": "global_ai_ecosystem-stmt-25",
+      "to": "global_ai_ecosystem-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-26-part_of-global_ai_ecosystem-block-40",
+      "from": "global_ai_ecosystem-stmt-26",
+      "to": "global_ai_ecosystem-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-27-part_of-global_ai_ecosystem-block-40",
+      "from": "global_ai_ecosystem-stmt-27",
+      "to": "global_ai_ecosystem-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-28-part_of-global_ai_ecosystem-block-40",
+      "from": "global_ai_ecosystem-stmt-28",
+      "to": "global_ai_ecosystem-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-29-part_of-global_ai_ecosystem-block-41",
+      "from": "global_ai_ecosystem-stmt-29",
+      "to": "global_ai_ecosystem-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-30-part_of-global_ai_ecosystem-block-42",
+      "from": "global_ai_ecosystem-stmt-30",
+      "to": "global_ai_ecosystem-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-31-part_of-global_ai_ecosystem-block-42",
+      "from": "global_ai_ecosystem-stmt-31",
+      "to": "global_ai_ecosystem-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-32-part_of-global_ai_ecosystem-block-42",
+      "from": "global_ai_ecosystem-stmt-32",
+      "to": "global_ai_ecosystem-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-33-part_of-global_ai_ecosystem-block-45",
+      "from": "global_ai_ecosystem-stmt-33",
+      "to": "global_ai_ecosystem-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-34-part_of-global_ai_ecosystem-block-46",
+      "from": "global_ai_ecosystem-stmt-34",
+      "to": "global_ai_ecosystem-block-46",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-35-part_of-global_ai_ecosystem-block-47",
+      "from": "global_ai_ecosystem-stmt-35",
+      "to": "global_ai_ecosystem-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-36-part_of-global_ai_ecosystem-block-47",
+      "from": "global_ai_ecosystem-stmt-36",
+      "to": "global_ai_ecosystem-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-37-part_of-global_ai_ecosystem-block-48",
+      "from": "global_ai_ecosystem-stmt-37",
+      "to": "global_ai_ecosystem-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-38-part_of-global_ai_ecosystem-block-48",
+      "from": "global_ai_ecosystem-stmt-38",
+      "to": "global_ai_ecosystem-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-39-part_of-global_ai_ecosystem-block-48",
+      "from": "global_ai_ecosystem-stmt-39",
+      "to": "global_ai_ecosystem-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-40-part_of-global_ai_ecosystem-block-48",
+      "from": "global_ai_ecosystem-stmt-40",
+      "to": "global_ai_ecosystem-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-global_ai_ecosystem-stmt-41-part_of-global_ai_ecosystem-block-49",
+      "from": "global_ai_ecosystem-stmt-41",
+      "to": "global_ai_ecosystem-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "global_ai_ecosystem-stmt-1",
       "quote": "The dominant narrative around AI is Silicon Valley-centric: OpenAI, Anthropic, Google DeepMind, Meta.",
+      "block_id": "global_ai_ecosystem-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "global_ai_ecosystem-stmt-2",
       "quote": "But the global AI ecosystem is far richer.",
+      "block_id": "global_ai_ecosystem-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "global_ai_ecosystem-stmt-3",
       "quote": "China has produced frontier-class open-source models \\cite[e.g. DeepSeek and Qwen]{deepseekv3tech2024,qwen2024}.",
+      "block_id": "global_ai_ecosystem-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "global_ai_ecosystem-stmt-4",
       "quote": "India has world-class applied AI work and a thriving open-source community (\\cite[AI4Bharat, 2024]{ai4bharat2024}).",
+      "block_id": "global_ai_ecosystem-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "global_ai_ecosystem-stmt-5",
       "quote": "The UAE, France, Korea, Japan, Israel, and Singapore host serious AI efforts.",
+      "block_id": "global_ai_ecosystem-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "global_ai_ecosystem-stmt-6",
       "quote": "Africa is building AI for low-resource languages and African challenges (\\cite[Masakhane, 2024]{masakhane2024}).",
+      "block_id": "global_ai_ecosystem-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "global_ai_ecosystem-stmt-7",
       "quote": "The Soviet cybernetics and pattern-recognition tradition (Ivakhnenko, etc., covered in the History chapter) developed largely independently of Western deep learning.",
+      "block_id": "global_ai_ecosystem-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "global_ai_ecosystem-stmt-8",
       "quote": "In Europe, a separate lineage through Schmidhuber's IDSIA group (LSTM, etc.) and its successors has shaped modern deep learning from a different direction.",
+      "block_id": "global_ai_ecosystem-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "global_ai_ecosystem-stmt-9",
       "quote": "This chapter is a corrective: a brief tour of AI's worldwide geography.",
+      "block_id": "global_ai_ecosystem-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "global_ai_ecosystem-stmt-10",
       "quote": "China is the **second pole** of the global AI ecosystem.",
+      "block_id": "global_ai_ecosystem-block-4",
       "section": "China",
       "kind": "statement"
     },
     {
       "id": "global_ai_ecosystem-stmt-11",
       "quote": "By 2025, Chinese open-source models have *closed a substantial portion of the gap* to Western closed frontier models on many widely-cited benchmarks (e.g., DeepSeek-V3, Qwen 2.5, Kimi K2), though the *frontier itself remains contested* (see the *Frontier Topics* chapter for an open discussion of whether open models are converging with or lagging behind the closed-source frontier).",
+      "block_id": "global_ai_ecosystem-block-4",
       "section": "China",
       "kind": "statement"
     },
     {
       "id": "global_ai_ecosystem-stmt-12",
-      "quote": "* **DeepSeek** (Hangzhou): \\cite[DeepSeek-V3]{deepseekv3tech2024} (671B MoE), \\cite[DeepSeek-R1]{guo2025deepseekr1}.",
-      "section": "Frontier Model Builders",
+      "quote": "India is **the world's largest AI talent producer** but a relatively small frontier-model builder.",
+      "block_id": "global_ai_ecosystem-block-9",
+      "section": "India",
       "kind": "statement"
     },
     {
       "id": "global_ai_ecosystem-stmt-13",
-      "quote": "Trained reportedly for \\$5–6M on H800s.",
-      "section": "Frontier Model Builders",
+      "quote": "The focus is on applied AI, particularly for India's 1.4 billion population.",
+      "block_id": "global_ai_ecosystem-block-9",
+      "section": "India",
       "kind": "statement"
     },
     {
       "id": "global_ai_ecosystem-stmt-14",
-      "quote": "State-of-the-art math/coding.",
-      "section": "Frontier Model Builders",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-15",
-      "quote": "* **Alibaba / Qwen**: \\cite[Qwen 2.5]{qwen2024qwen25} family (0.5B–72B), Qwen2-VL (vision), Qwen2-Audio.",
-      "section": "Frontier Model Builders",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-16",
-      "quote": "**Qwen3** (2025) added hybrid thinking and non-thinking modes across dense and mixture-of-experts variants (\\cite[Qwen Team, 2025]{qwen2025qwen3}).",
-      "section": "Frontier Model Builders",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-17",
-      "quote": "Among the most-used open models globally.",
-      "section": "Frontier Model Builders",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-18",
-      "quote": "* **Zhipu AI / GLM**: \\cite[ChatGLM]{glm2024}.",
-      "section": "Frontier Model Builders",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-19",
-      "quote": "Strong bilingual EN/ZH performance.",
-      "section": "Frontier Model Builders",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-20",
-      "quote": "* **Baidu**: ERNIE 4.0, Ernie Bot.",
-      "section": "Frontier Model Builders",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-21",
-      "quote": "Earlier proprietary; later opened some weights.",
-      "section": "Frontier Model Builders",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-22",
-      "quote": "* **Moonshot AI / Kimi**: the long-context Kimi assistant, then the open-weight **Kimi K2** — a trillion-parameter mixture-of-experts model trained with the MuonClip optimizer and tuned for agentic tool use (\\cite[Kimi Team, 2025]{kimi2025k2}).",
-      "section": "Frontier Model Builders",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-23",
-      "quote": "* **01.AI (Yi)**: Yi-Lightning (long context), Yi-VL (vision).",
-      "section": "Frontier Model Builders",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-24",
-      "quote": "* **Tencent**: Hunyuan series.",
-      "section": "Frontier Model Builders",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-25",
-      "quote": "* **MiniMax**: the MiniMax-01, M1, and M2 lines, built on **lightning attention** — a linear-attention variant used in a hybrid stack with softmax attention (\\cite[MiniMax, 2025]{minimax2025lightning}) — plus the Hailuo video models.",
-      "section": "Frontier Model Builders",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-26",
-      "quote": "* **Meituan / LongCat**: **LongCat-Flash**, a 560B-parameter mixture-of-experts model with roughly 27B active parameters that was reported as trained on Chinese-made accelerators (\\cite[LongCat Team, 2025]{longcat2025}).",
-      "section": "Frontier Model Builders",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-27",
-      "quote": "* **Stepfun**: Step-1V, Step-1.5V (multimodal).",
-      "section": "Frontier Model Builders",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-28",
-      "quote": "* **Massive engineering talent**: top Chinese universities (Tsinghua, Peking, Shanghai Jiao Tong) produce ~100,000 CS graduates per year.",
-      "section": "Strategic Advantages",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-29",
-      "quote": "* **Aggressive open-source publishing**: Chinese labs release model weights and papers freely.",
-      "section": "Strategic Advantages",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-30",
-      "quote": "This is partly a competitive strategy (commoditize the closed labs) and partly regulatory pressure to “contribute to the community”.",
-      "section": "Strategic Advantages",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-31",
-      "quote": "* **Low inference cost**: aggressive optimization yields APIs at \\$0.27/1M tokens (DeepSeek), 10× cheaper than GPT-4o (\\cite[DeepSeek, 2024]{deepseek2024v3}).",
-      "section": "Strategic Advantages",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-32",
-      "quote": "* **Industry integration**: deep partnerships with Alibaba Cloud, Tencent Cloud, Baidu Cloud for distribution.",
-      "section": "Strategic Advantages",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-33",
-      "quote": "* **US export controls** on advanced GPUs (H100, B200) limit training at the frontier.",
-      "section": "Constraints",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-34",
-      "quote": "DeepSeek trained on H800s (slower interconnects); next-gen training is constrained.",
-      "section": "Constraints",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-35",
-      "quote": "* **Regulatory environment**: every public model requires CAC approval \\cite[China2023Algorithmic]{china2023algorithmic}.",
-      "section": "Constraints",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-36",
-      "quote": "* **Data**: training data is largely Chinese-language; English coverage lags.",
-      "section": "Constraints",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-37",
-      "quote": "India is **the world's largest AI talent producer** but a relatively small frontier-model builder.",
-      "section": "India",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-38",
-      "quote": "The focus is on applied AI, particularly for India's 1.4 billion population.",
-      "section": "India",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-39",
-      "quote": "* **AI4Bharat** (IIT Madras): \\cite[open-source models]{ai4bharat2024} for 22 Indic languages.",
-      "section": "Research Labs",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-40",
-      "quote": "**Airavata**, **Navarasa-2.0** (15 Indic languages), **IndicTrans2** (translation).",
-      "section": "Research Labs",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-41",
-      "quote": "* **Krishna et al.** (IIT Bombay): efficient Transformers, KV-cache compression.",
-      "section": "Research Labs",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-42",
-      "quote": "* **Microsoft Research India**: pioneering work on multilingual AI, code-mixing, low-resource NLP.",
-      "section": "Research Labs",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-43",
-      "quote": "* **Google Research India**: focused on agriculture, healthcare, education.",
-      "section": "Research Labs",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-44",
-      "quote": "* **IBM Research India**: enterprise AI.",
-      "section": "Research Labs",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-45",
-      "quote": "* **Agriculture**: crop disease detection, weather prediction for 100M+ smallholder farmers (e.g., **Plantix**, **Intello Labs**).",
-      "section": "Industry Applications",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-46",
-      "quote": "* **Healthcare**: AI-driven radiology (Qure.ai, SigTuple), diagnostic assistants for rural clinics.",
-      "section": "Industry Applications",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-47",
-      "quote": "* **Education**: personalized tutors for 250M+ students (Embibe, BYJU's, Vedantu).",
-      "section": "Industry Applications",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-48",
-      "quote": "* **Finance**: UPI fraud detection processes 10B+ transactions/month.",
-      "section": "Industry Applications",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-49",
-      "quote": "* **Languages**: voice-first AI for 22 official languages.",
-      "section": "Industry Applications",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-50",
-      "quote": "* **BharatGPT** (cooperative): Indic language LLMs.",
-      "section": "Open Source",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-51",
-      "quote": "* **OpenHathi** (Sarvam AI): Hindi-first models.",
-      "section": "Open Source",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-52",
-      "quote": "* **Airavata, Navarasa**: AI4Bharat releases.",
-      "section": "Open Source",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-53",
       "quote": "India is positioning as the **“AI for the global south”** hub, building affordable, multilingual AI for emerging markets.",
+      "block_id": "global_ai_ecosystem-block-14",
       "section": "Strategic Position",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-54",
+      "id": "global_ai_ecosystem-stmt-15",
       "quote": "African AI is **early but rapidly growing**, focused on problems specific to the continent.",
+      "block_id": "global_ai_ecosystem-block-16",
       "section": "Africa",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-55",
-      "quote": "* **African Institute for Mathematical Sciences (AIMS)**: pan-African AI research.",
-      "section": "Research Centers",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-56",
-      "quote": "* **Data Science Africa**: annual conference and network.",
-      "section": "Research Centers",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-57",
-      "quote": "* **Deep Learning Indaba**: pan-African ML community, hosts the **IndabaX** conference series across 30+ countries.",
-      "section": "Research Centers",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-58",
-      "quote": "* **Google AI Research Accra** (Ghana): agriculture and healthcare ML.",
-      "section": "Research Centers",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-59",
-      "quote": "* **Meta AI Nairobi**: multilingual NLP.",
-      "section": "Research Centers",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-60",
-      "quote": "* **Zindi** (South Africa): data science competition platform with 50,000+ African practitioners.",
-      "section": "Research Centers",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-61",
-      "quote": "* **Lesan AI** (Ethiopia): Tigrinya, Amharic machine translation.",
-      "section": "Notable Projects",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-62",
-      "quote": "* **Sunbird AI** (Uganda): multilingual speech recognition for 40+ African languages.",
-      "section": "Notable Projects",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-63",
-      "quote": "* **Awarri** (Nigeria): Yoruba, Igbo, Hausa NLP.",
-      "section": "Notable Projects",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-64",
-      "quote": "* **Lelapa AI** (South Africa): “Vulavula”, African language LLM.",
-      "section": "Notable Projects",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-65",
-      "quote": "* **InstaDeep** (Tunisia): \\cite[acquired by BioNTech for \\$680M]{insta2023}.",
-      "section": "Notable Projects",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-66",
-      "quote": "AI for genomic surveillance, including early detection of COVID variants in Africa.",
-      "section": "Notable Projects",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-67",
-      "quote": "* **Compute access**: limited GPU availability outside South Africa, Kenya, Nigeria, Egypt.",
-      "section": "Challenges",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-68",
-      "quote": "* **Language data**: most African languages have < 1 MB of digital text.",
-      "section": "Challenges",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-69",
-      "quote": "Building foundational corpora is itself a major effort.",
-      "section": "Challenges",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-70",
-      "quote": "* **Funding**: most grants are from Western foundations with priorities that don't always align with African needs.",
-      "section": "Challenges",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-71",
-      "quote": "* **Talent retention**: many top researchers leave for North American/European industry.",
-      "section": "Challenges",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-72",
+      "id": "global_ai_ecosystem-stmt-16",
       "quote": "The African AI ecosystem is **small but scrappy**, with strong community support (\\cite[Masakhane, 2024]{masakhane2024}) and a focus on local problems.",
+      "block_id": "global_ai_ecosystem-block-20",
       "section": "Challenges",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-73",
+      "id": "global_ai_ecosystem-stmt-17",
       "quote": "Beyond the incumbents, the 2024–2026 wave produced a cluster of well-funded startups with sharply different theses:",
+      "block_id": "global_ai_ecosystem-block-23",
       "section": "United States: the new labs",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-74",
-      "quote": "* **Safe Superintelligence Inc.** (\\cite[SSI, 2024]{ssi2024}), founded in 2024 by Ilya Sutskever, Daniel Gross, and Daniel Levy, has a single product as its stated goal: a safe superintelligence.",
-      "section": "United States: the new labs",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-75",
-      "quote": "It raised a reported \\$2 billion at a roughly \\$32 billion valuation in 2025 while still shipping nothing.",
-      "section": "United States: the new labs",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-76",
-      "quote": "* **Thinking Machines Lab** (\\cite[Thinking Machines Lab, 2025]{tml2025}), founded in 2025 by former OpenAI CTO Mira Murati, raised a record seed round and builds **Tinker**, a fine-tuning API around the thesis that most users want to customize models rather than train one from scratch.",
-      "section": "United States: the new labs",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-77",
-      "quote": "* **Ndea** (\\cite[Ndea, 2025]{ndea2025}), founded by Keras creator François Chollet and Zapier co-founder Mike Knoop, pursues **deep-learning-guided program synthesis** — combining neural networks with search over programs — as its path to general intelligence.",
-      "section": "United States: the new labs",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-78",
-      "quote": "It is the institutional continuation of the ARC-AGI benchmark program.",
-      "section": "United States: the new labs",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-79",
-      "quote": "* **Arcee AI** (\\cite[Arcee AI, 2025]{arcee2025}) grew from model merging and distillation into from-scratch pretraining; its **Trinity** line spans 6B, 26B, and 400B sparse mixture-of-experts models released as open weights.",
-      "section": "United States: the new labs",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-80",
+      "id": "global_ai_ecosystem-stmt-18",
       "quote": "The pattern is a broadening of *what counts as a frontier lab*: not only companies training the largest dense model, but companies betting on customization, program synthesis, or open-weight sparsity.",
+      "block_id": "global_ai_ecosystem-block-24",
       "section": "United States: the new labs",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-81",
-      "quote": "* **G42** (Abu Dhabi): backed by the ruling family, partnered with OpenAI, Cerebras, and others.",
-      "section": "United Arab Emirates",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-82",
-      "quote": "Building Arabic-first LLMs.",
-      "section": "United Arab Emirates",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-83",
-      "quote": "* **Falcon** (\\cite[Technology Innovation Institute]{technologyinnovation2024}, Abu Dhabi): open-source LLMs (Falcon 3, 7B–180B).",
-      "section": "United Arab Emirates",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-84",
-      "quote": "Arabic language model leader.",
-      "section": "United Arab Emirates",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-85",
-      "quote": "* **MBZUAI** (Mohamed bin Zayed University of AI): graduate AI program, attracting faculty worldwide.",
-      "section": "United Arab Emirates",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-86",
-      "quote": "* **Mistral AI** (Paris): European champion.",
-      "section": "France",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-87",
-      "quote": "Strong open-source offering.",
-      "section": "France",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-88",
-      "quote": "* **Kyutai** (Paris, Moshi): real-time multimodal speech model.",
-      "section": "France",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-89",
-      "quote": "* **Hugging Face** (Paris/NYC): the open-source hub for ML models and datasets.",
-      "section": "France",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-90",
-      "quote": "Central infrastructure for the entire field.",
-      "section": "France",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-91",
-      "quote": "* **LightOn**: enterprise LLM deployments.",
-      "section": "France",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-92",
-      "quote": "* **LG, Samsung, SK Telecom**: integrating LLMs into consumer electronics.",
-      "section": "South Korea",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-93",
-      "quote": "* **NAVER HyperCLOVA X**: Korean-specialized LLM.",
-      "section": "South Korea",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-94",
-      "quote": "* **Kakao, NCSoft**: conversational AI.",
-      "section": "South Korea",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-95",
-      "quote": "* **Sakana AI** (Tokyo): evolutionary model merging, Japanese-specialized LLMs.",
-      "section": "Japan",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-96",
-      "quote": "* **NTT, SoftBank**: enterprise AI, infrastructure.",
-      "section": "Japan",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-97",
-      "quote": "* **Preferred Networks**: autonomous driving, materials science.",
-      "section": "Japan",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-98",
-      "quote": "* **AI Singapore**: government-funded research consortium.",
-      "section": "Singapore",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-99",
-      "quote": "* **Sea Group, Grab**: applied AI in Southeast Asian markets.",
-      "section": "Singapore",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-100",
-      "quote": "* **Salesforce AI Research Asia**: multilingual enterprise AI.",
-      "section": "Singapore",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-101",
-      "quote": "* **AI21 Labs**: Jurassic-2, Jamba (hybrid SSM-Transformer) (\\cite[Lieber et al., 2024]{lieber2024jamba}).",
-      "section": "Israel",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-102",
-      "quote": "* **Mobileye**: autonomous driving.",
-      "section": "Israel",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-103",
-      "quote": "* **Unit 8200 alumni**: many AI startups trace their founders to Israeli military intelligence.",
-      "section": "Israel",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-104",
-      "quote": "* **Yandex**: YaLM, Alice AI (YandexGPT family).",
-      "section": "Russia",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-105",
-      "quote": "Strong in code (YandexGPT).",
-      "section": "Russia",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-106",
-      "quote": "* **Sberbank** (SberDevices): GigaChat, Kandinsky (image generation).",
-      "section": "Russia",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-107",
-      "quote": "* **T-Bank (Tinkoff)**: T-Pro LLM.",
-      "section": "Russia",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-108",
-      "quote": "* Despite sanctions, the Russian AI ecosystem continues to publish, primarily for Russian-language use.",
-      "section": "Russia",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-109",
-      "quote": "* **Mila** (Montreal, Bengio's institute): foundational research.",
-      "section": "Canada",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-110",
-      "quote": "* **Cohere** (Toronto): enterprise LLMs, Aya multilingual models.",
-      "section": "Canada",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-111",
-      "quote": "* **Element AI → ServiceNow**: enterprise AI.",
-      "section": "Canada",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-112",
-      "quote": "* **DeepMind Canada (Montreal)**: reinforcement-learning research (Doina Precup et al.); not the AlphaFold team.",
-      "section": "Canada",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-113",
-      "quote": "* **DeepMind** (London): AlphaFold, Gemini co-development, AlphaProof.",
-      "section": "UK",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-114",
-      "quote": "* **Anthropic London office**: Claude team expansion.",
-      "section": "UK",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-115",
-      "quote": "* **Stability AI** (London): Stable Diffusion.",
-      "section": "UK",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-116",
-      "quote": "* **Wayve** (Cambridge): end-to-end driving AI.",
-      "section": "UK",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-117",
+      "id": "global_ai_ecosystem-stmt-19",
       "quote": "The EU's AI strategy emphasizes **regulation + research**:",
+      "block_id": "global_ai_ecosystem-block-35",
       "section": "EU Generally",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-118",
-      "quote": "* **European AI Office**: coordinates the \\cite[AI Act]{euaiact2024}.",
-      "section": "EU Generally",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-119",
-      "quote": "* **AI Factories** (2024–): subsidized supercomputers for SMEs and researchers.",
-      "section": "EU Generally",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-120",
-      "quote": "* **Horizon Europe**: €1B/year for AI research.",
-      "section": "EU Generally",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-121",
-      "quote": "* **EuroLLM, Project OpenGPT-X**: European open-source multilingual models.",
-      "section": "EU Generally",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-122",
+      "id": "global_ai_ecosystem-stmt-20",
       "quote": "The research tradition with European roots — Bengio (Mila, Montreal), Schmidhuber (IDSIA, Lugano), Hinton's students — has shaped deep learning from its inception.",
+      "block_id": "global_ai_ecosystem-block-36",
       "section": "EU Generally",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-123",
+      "id": "global_ai_ecosystem-stmt-21",
       "quote": "Open-source models have **dramatically changed the geography of AI**:",
+      "block_id": "global_ai_ecosystem-block-38",
       "section": "Open Source: The Global Equalizer",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-124",
-      "quote": "* A researcher in Nairobi can fine-tune Llama 3.1 70B on consumer hardware (with quantization).",
-      "section": "Open Source: The Global Equalizer",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-125",
-      "quote": "* A startup in Bangalore can serve a fine-tuned Qwen on Together.ai for \\$50/month.",
-      "section": "Open Source: The Global Equalizer",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-126",
-      "quote": "* A student in São Paulo can read the \\cite[DeepSeek-V3]{deepseekv3tech2024} technical report and reproduce the results.",
-      "section": "Open Source: The Global Equalizer",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-127",
+      "id": "global_ai_ecosystem-stmt-22",
       "quote": "The **Hugging Face Hub** hosts 1M+ models from every country.",
+      "block_id": "global_ai_ecosystem-block-39",
       "section": "Open Source: The Global Equalizer",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-128",
+      "id": "global_ai_ecosystem-stmt-23",
       "quote": "The model release pattern in 2025: most frontier-capable models are published as open weights within months of their closed-source competition.",
+      "block_id": "global_ai_ecosystem-block-39",
       "section": "Open Source: The Global Equalizer",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-129",
+      "id": "global_ai_ecosystem-stmt-24",
       "quote": "Even OpenAI returned to open weights — its first since GPT-2 — with the **gpt-oss** pair (120B and 20B mixture-of-experts models under Apache 2.0), which also shipped learned per-head attention-sink logits (\\cite[OpenAI, 2025]{gptoss2025}).",
+      "block_id": "global_ai_ecosystem-block-39",
       "section": "Open Source: The Global Equalizer",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-130",
+      "id": "global_ai_ecosystem-stmt-25",
       "quote": "The open-weight lineage has its own history.",
+      "block_id": "global_ai_ecosystem-block-40",
       "section": "Open Source: The Global Equalizer",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-131",
+      "id": "global_ai_ecosystem-stmt-26",
       "quote": "EleutherAI's **GPT-Neo** and **GPT-J** were early public replications of the GPT-3 design; **GPT-NeoX-20B** was, at release, the largest dense model with fully open weights (\\cite[Black et al., 2022]{black2022gptneox}).",
+      "block_id": "global_ai_ecosystem-block-40",
       "section": "Open Source: The Global Equalizer",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-132",
+      "id": "global_ai_ecosystem-stmt-27",
       "quote": "Meta's **OPT** released weights together with a candid training logbook (\\cite[Zhang et al., 2022]{zhang2022opt}), BigScience's **BLOOM** was a 176B multilingual collaboration (\\cite[Le Scao et al., 2022]{scao2022bloom}), and EleutherAI's **Pythia** suite released 16 models *with* their intermediate training checkpoints, turning training dynamics into something outside researchers could study (\\cite[Biderman et al., 2023]{biderman2023pythia}).",
+      "block_id": "global_ai_ecosystem-block-40",
       "section": "Open Source: The Global Equalizer",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-133",
+      "id": "global_ai_ecosystem-stmt-28",
       "quote": "These projects established the norm that a serious open release includes weights, data documentation, and often code — the norm that Llama, Qwen, DeepSeek, and OLMo later inherited.",
+      "block_id": "global_ai_ecosystem-block-40",
       "section": "Open Source: The Global Equalizer",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-134",
+      "id": "global_ai_ecosystem-stmt-29",
       "quote": "The asymmetry that remains:",
+      "block_id": "global_ai_ecosystem-block-41",
       "section": "Open Source: The Global Equalizer",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-135",
-      "quote": "* **Frontier training compute** is still concentrated: ~5 companies worldwide can train GPT-4-class models.",
-      "section": "Open Source: The Global Equalizer",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-136",
-      "quote": "* **Data acquisition** is increasingly centralized: licensing deals favor large incumbents.",
-      "section": "Open Source: The Global Equalizer",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-137",
-      "quote": "* **Distribution** (API customers, enterprise relationships) requires sales infrastructure.",
-      "section": "Open Source: The Global Equalizer",
-      "kind": "statement"
-    },
-    {
-      "id": "global_ai_ecosystem-stmt-138",
+      "id": "global_ai_ecosystem-stmt-30",
       "quote": "But the **“good enough” tier** is now globally accessible.",
+      "block_id": "global_ai_ecosystem-block-42",
       "section": "Open Source: The Global Equalizer",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-139",
+      "id": "global_ai_ecosystem-stmt-31",
       "quote": "Most enterprise AI applications don't need frontier; they need a 7B–70B open model fine-tuned on local data.",
+      "block_id": "global_ai_ecosystem-block-42",
       "section": "Open Source: The Global Equalizer",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-140",
+      "id": "global_ai_ecosystem-stmt-32",
       "quote": "This is the playing field where most innovation now happens.",
+      "block_id": "global_ai_ecosystem-block-42",
       "section": "Open Source: The Global Equalizer",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-141",
+      "id": "global_ai_ecosystem-stmt-33",
       "quote": "**Bifurcation**: US-China compute decoupling may produce two parallel AI ecosystems, Western and Chinese, with limited cross-pollination.",
+      "block_id": "global_ai_ecosystem-block-45",
       "section": "Geopolitics and the Future",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-142",
+      "id": "global_ai_ecosystem-stmt-34",
       "quote": "**Multipolarity**: India, UAE, France, Korea, and others are building independent AI capabilities, especially for their languages and cultures.",
+      "block_id": "global_ai_ecosystem-block-46",
       "section": "Geopolitics and the Future",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-143",
+      "id": "global_ai_ecosystem-stmt-35",
       "quote": "**Open-source as soft power**: Chinese open-source releases (Qwen, DeepSeek) and Western ones (Llama, Mistral) compete for global developer mindshare.",
+      "block_id": "global_ai_ecosystem-block-47",
       "section": "Geopolitics and the Future",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-144",
+      "id": "global_ai_ecosystem-stmt-36",
       "quote": "Adoption is a form of influence.",
+      "block_id": "global_ai_ecosystem-block-47",
       "section": "Geopolitics and the Future",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-145",
+      "id": "global_ai_ecosystem-stmt-37",
       "quote": "The student of AI in 2025 should not assume that the latest OpenAI or Anthropic model represents the state of the art for *their* problem.",
+      "block_id": "global_ai_ecosystem-block-48",
       "section": "Geopolitics and the Future",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-146",
+      "id": "global_ai_ecosystem-stmt-38",
       "quote": "**Look globally.** The best model for Yoruba is not the best model for English.",
+      "block_id": "global_ai_ecosystem-block-48",
       "section": "Geopolitics and the Future",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-147",
+      "id": "global_ai_ecosystem-stmt-39",
       "quote": "The best model for code in Rust might be a 7B Chinese release.",
+      "block_id": "global_ai_ecosystem-block-48",
       "section": "Geopolitics and the Future",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-148",
+      "id": "global_ai_ecosystem-stmt-40",
       "quote": "The best model for math might be \\cite[DeepSeek-R1]{guo2025deepseekr1}, not o1.",
+      "block_id": "global_ai_ecosystem-block-48",
       "section": "Geopolitics and the Future",
       "kind": "statement"
     },
     {
-      "id": "global_ai_ecosystem-stmt-149",
+      "id": "global_ai_ecosystem-stmt-41",
       "quote": "The global AI ecosystem in 2025 is the most dynamic and polycentric in computing history.",
+      "block_id": "global_ai_ecosystem-block-49",
       "section": "Geopolitics and the Future",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "global_ai_ecosystem-block-1",
+      "quote": "The dominant narrative around AI is Silicon Valley-centric: OpenAI, Anthropic, Google DeepMind, Meta. But the global AI ecosystem is far richer. China has produced frontier-class open-source models \\cite[e.g. DeepSeek and Qwen]{deepseekv3tech2024,qwen2024}. India has world-class applied AI work and a thriving open-source community (\\cite[AI4Bharat, 2024]{ai4bharat2024}). The UAE, France, Korea, Japan, Israel, and Singapore host serious AI efforts. Africa is building AI for low-resource languages and African challenges (\\cite[Masakhane, 2024]{masakhane2024}). The Soviet cybernetics and pattern-recognition tradition (Ivakhnenko, etc., covered in the History chapter) developed largely independently of Western deep learning. In Europe, a separate lineage through Schmidhuber's IDSIA group (LSTM, etc.) and its successors has shaped modern deep learning from a different direction.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "global_ai_ecosystem-block-2",
+      "quote": "This chapter is a corrective: a brief tour of AI's worldwide geography.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "global_ai_ecosystem-block-3",
+      "quote": "China",
+      "kind": "heading",
+      "section": "China"
+    },
+    {
+      "id": "global_ai_ecosystem-block-4",
+      "quote": "China is the **second pole** of the global AI ecosystem. By 2025, Chinese open-source models have *closed a substantial portion of the gap* to Western closed frontier models on many widely-cited benchmarks (e.g., DeepSeek-V3, Qwen 2.5, Kimi K2), though the *frontier itself remains contested* (see the *Frontier Topics* chapter for an open discussion of whether open models are converging with or lagging behind the closed-source frontier).",
+      "kind": "paragraph",
+      "section": "China"
+    },
+    {
+      "id": "global_ai_ecosystem-block-5",
+      "quote": "Frontier Model Builders",
+      "kind": "heading",
+      "section": "Frontier Model Builders"
+    },
+    {
+      "id": "global_ai_ecosystem-block-6",
+      "quote": "Strategic Advantages",
+      "kind": "heading",
+      "section": "Strategic Advantages"
+    },
+    {
+      "id": "global_ai_ecosystem-block-7",
+      "quote": "Constraints",
+      "kind": "heading",
+      "section": "Constraints"
+    },
+    {
+      "id": "global_ai_ecosystem-block-8",
+      "quote": "India",
+      "kind": "heading",
+      "section": "India"
+    },
+    {
+      "id": "global_ai_ecosystem-block-9",
+      "quote": "India is **the world's largest AI talent producer** but a relatively small frontier-model builder. The focus is on applied AI, particularly for India's 1.4 billion population.",
+      "kind": "paragraph",
+      "section": "India"
+    },
+    {
+      "id": "global_ai_ecosystem-block-10",
+      "quote": "Research Labs",
+      "kind": "heading",
+      "section": "Research Labs"
+    },
+    {
+      "id": "global_ai_ecosystem-block-11",
+      "quote": "Industry Applications",
+      "kind": "heading",
+      "section": "Industry Applications"
+    },
+    {
+      "id": "global_ai_ecosystem-block-12",
+      "quote": "Open Source",
+      "kind": "heading",
+      "section": "Open Source"
+    },
+    {
+      "id": "global_ai_ecosystem-block-13",
+      "quote": "Strategic Position",
+      "kind": "heading",
+      "section": "Strategic Position"
+    },
+    {
+      "id": "global_ai_ecosystem-block-14",
+      "quote": "India is positioning as the **“AI for the global south”** hub, building affordable, multilingual AI for emerging markets.",
+      "kind": "paragraph",
+      "section": "Strategic Position"
+    },
+    {
+      "id": "global_ai_ecosystem-block-15",
+      "quote": "Africa",
+      "kind": "heading",
+      "section": "Africa"
+    },
+    {
+      "id": "global_ai_ecosystem-block-16",
+      "quote": "African AI is **early but rapidly growing**, focused on problems specific to the continent.",
+      "kind": "paragraph",
+      "section": "Africa"
+    },
+    {
+      "id": "global_ai_ecosystem-block-17",
+      "quote": "Research Centers",
+      "kind": "heading",
+      "section": "Research Centers"
+    },
+    {
+      "id": "global_ai_ecosystem-block-18",
+      "quote": "Notable Projects",
+      "kind": "heading",
+      "section": "Notable Projects"
+    },
+    {
+      "id": "global_ai_ecosystem-block-19",
+      "quote": "Challenges",
+      "kind": "heading",
+      "section": "Challenges"
+    },
+    {
+      "id": "global_ai_ecosystem-block-20",
+      "quote": "The African AI ecosystem is **small but scrappy**, with strong community support (\\cite[Masakhane, 2024]{masakhane2024}) and a focus on local problems.",
+      "kind": "paragraph",
+      "section": "Challenges"
+    },
+    {
+      "id": "global_ai_ecosystem-block-21",
+      "quote": "Other Major Players",
+      "kind": "heading",
+      "section": "Other Major Players"
+    },
+    {
+      "id": "global_ai_ecosystem-block-22",
+      "quote": "United States: the new labs",
+      "kind": "heading",
+      "section": "United States: the new labs"
+    },
+    {
+      "id": "global_ai_ecosystem-block-23",
+      "quote": "Beyond the incumbents, the 2024–2026 wave produced a cluster of well-funded startups with sharply different theses:",
+      "kind": "paragraph",
+      "section": "United States: the new labs"
+    },
+    {
+      "id": "global_ai_ecosystem-block-24",
+      "quote": "The pattern is a broadening of *what counts as a frontier lab*: not only companies training the largest dense model, but companies betting on customization, program synthesis, or open-weight sparsity.",
+      "kind": "paragraph",
+      "section": "United States: the new labs"
+    },
+    {
+      "id": "global_ai_ecosystem-block-25",
+      "quote": "United Arab Emirates",
+      "kind": "heading",
+      "section": "United Arab Emirates"
+    },
+    {
+      "id": "global_ai_ecosystem-block-26",
+      "quote": "France",
+      "kind": "heading",
+      "section": "France"
+    },
+    {
+      "id": "global_ai_ecosystem-block-27",
+      "quote": "South Korea",
+      "kind": "heading",
+      "section": "South Korea"
+    },
+    {
+      "id": "global_ai_ecosystem-block-28",
+      "quote": "Japan",
+      "kind": "heading",
+      "section": "Japan"
+    },
+    {
+      "id": "global_ai_ecosystem-block-29",
+      "quote": "Singapore",
+      "kind": "heading",
+      "section": "Singapore"
+    },
+    {
+      "id": "global_ai_ecosystem-block-30",
+      "quote": "Israel",
+      "kind": "heading",
+      "section": "Israel"
+    },
+    {
+      "id": "global_ai_ecosystem-block-31",
+      "quote": "Russia",
+      "kind": "heading",
+      "section": "Russia"
+    },
+    {
+      "id": "global_ai_ecosystem-block-32",
+      "quote": "Canada",
+      "kind": "heading",
+      "section": "Canada"
+    },
+    {
+      "id": "global_ai_ecosystem-block-33",
+      "quote": "UK",
+      "kind": "heading",
+      "section": "UK"
+    },
+    {
+      "id": "global_ai_ecosystem-block-34",
+      "quote": "EU Generally",
+      "kind": "heading",
+      "section": "EU Generally"
+    },
+    {
+      "id": "global_ai_ecosystem-block-35",
+      "quote": "The EU's AI strategy emphasizes **regulation + research**:",
+      "kind": "paragraph",
+      "section": "EU Generally"
+    },
+    {
+      "id": "global_ai_ecosystem-block-36",
+      "quote": "The research tradition with European roots — Bengio (Mila, Montreal), Schmidhuber (IDSIA, Lugano), Hinton's students — has shaped deep learning from its inception.",
+      "kind": "paragraph",
+      "section": "EU Generally"
+    },
+    {
+      "id": "global_ai_ecosystem-block-37",
+      "quote": "Open Source: The Global Equalizer",
+      "kind": "heading",
+      "section": "Open Source: The Global Equalizer"
+    },
+    {
+      "id": "global_ai_ecosystem-block-38",
+      "quote": "Open-source models have **dramatically changed the geography of AI**:",
+      "kind": "paragraph",
+      "section": "Open Source: The Global Equalizer"
+    },
+    {
+      "id": "global_ai_ecosystem-block-39",
+      "quote": "The **Hugging Face Hub** hosts 1M+ models from every country. The model release pattern in 2025: most frontier-capable models are published as open weights within months of their closed-source competition. Even OpenAI returned to open weights — its first since GPT-2 — with the **gpt-oss** pair (120B and 20B mixture-of-experts models under Apache 2.0), which also shipped learned per-head attention-sink logits (\\cite[OpenAI, 2025]{gptoss2025}).",
+      "kind": "paragraph",
+      "section": "Open Source: The Global Equalizer"
+    },
+    {
+      "id": "global_ai_ecosystem-block-40",
+      "quote": "The open-weight lineage has its own history. EleutherAI's **GPT-Neo** and **GPT-J** were early public replications of the GPT-3 design; **GPT-NeoX-20B** was, at release, the largest dense model with fully open weights (\\cite[Black et al., 2022]{black2022gptneox}). Meta's **OPT** released weights together with a candid training logbook (\\cite[Zhang et al., 2022]{zhang2022opt}), BigScience's **BLOOM** was a 176B multilingual collaboration (\\cite[Le Scao et al., 2022]{scao2022bloom}), and EleutherAI's **Pythia** suite released 16 models *with* their intermediate training checkpoints, turning training dynamics into something outside researchers could study (\\cite[Biderman et al., 2023]{biderman2023pythia}). These projects established the norm that a serious open release includes weights, data documentation, and often code — the norm that Llama, Qwen, DeepSeek, and OLMo later inherited.",
+      "kind": "paragraph",
+      "section": "Open Source: The Global Equalizer"
+    },
+    {
+      "id": "global_ai_ecosystem-block-41",
+      "quote": "The asymmetry that remains:",
+      "kind": "paragraph",
+      "section": "Open Source: The Global Equalizer"
+    },
+    {
+      "id": "global_ai_ecosystem-block-42",
+      "quote": "But the **“good enough” tier** is now globally accessible. Most enterprise AI applications don't need frontier; they need a 7B–70B open model fine-tuned on local data. This is the playing field where most innovation now happens.",
+      "kind": "paragraph",
+      "section": "Open Source: The Global Equalizer"
+    },
+    {
+      "id": "global_ai_ecosystem-block-43",
+      "quote": "Geopolitics and the Future",
+      "kind": "heading",
+      "section": "Geopolitics and the Future"
+    },
+    {
+      "id": "global_ai_ecosystem-block-44",
+      "quote": "Three trends to watch:",
+      "kind": "paragraph",
+      "section": "Geopolitics and the Future"
+    },
+    {
+      "id": "global_ai_ecosystem-block-45",
+      "quote": "1. **Bifurcation**: US-China compute decoupling may produce two parallel AI ecosystems, Western and Chinese, with limited cross-pollination.",
+      "kind": "list-item",
+      "section": "Geopolitics and the Future"
+    },
+    {
+      "id": "global_ai_ecosystem-block-46",
+      "quote": "2. **Multipolarity**: India, UAE, France, Korea, and others are building independent AI capabilities, especially for their languages and cultures.",
+      "kind": "list-item",
+      "section": "Geopolitics and the Future"
+    },
+    {
+      "id": "global_ai_ecosystem-block-47",
+      "quote": "3. **Open-source as soft power**: Chinese open-source releases (Qwen, DeepSeek) and Western ones (Llama, Mistral) compete for global developer mindshare. Adoption is a form of influence.",
+      "kind": "list-item",
+      "section": "Geopolitics and the Future"
+    },
+    {
+      "id": "global_ai_ecosystem-block-48",
+      "quote": "The student of AI in 2025 should not assume that the latest OpenAI or Anthropic model represents the state of the art for *their* problem. **Look globally.** The best model for Yoruba is not the best model for English. The best model for code in Rust might be a 7B Chinese release. The best model for math might be \\cite[DeepSeek-R1]{guo2025deepseekr1}, not o1.",
+      "kind": "paragraph",
+      "section": "Geopolitics and the Future"
+    },
+    {
+      "id": "global_ai_ecosystem-block-49",
+      "quote": "The global AI ecosystem in 2025 is the most dynamic and polycentric in computing history.",
+      "kind": "paragraph",
+      "section": "Geopolitics and the Future"
     }
   ]
 }

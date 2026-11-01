@@ -291,68 +291,721 @@
       "quote": "part: 2",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-1-part_of-traininglab",
+      "from": "traininglab-block-1",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-2-part_of-traininglab",
+      "from": "traininglab-block-2",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-1-before-traininglab-block-2",
+      "from": "traininglab-block-1",
+      "to": "traininglab-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-2-related_to-traininglab-block-1",
+      "from": "traininglab-block-2",
+      "to": "traininglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-3-part_of-traininglab",
+      "from": "traininglab-block-3",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-2-before-traininglab-block-3",
+      "from": "traininglab-block-2",
+      "to": "traininglab-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-3-related_to-traininglab-block-1",
+      "from": "traininglab-block-3",
+      "to": "traininglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-4-part_of-traininglab",
+      "from": "traininglab-block-4",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-3-before-traininglab-block-4",
+      "from": "traininglab-block-3",
+      "to": "traininglab-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-4-related_to-traininglab-block-1",
+      "from": "traininglab-block-4",
+      "to": "traininglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-5-part_of-traininglab",
+      "from": "traininglab-block-5",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-4-before-traininglab-block-5",
+      "from": "traininglab-block-4",
+      "to": "traininglab-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-5-related_to-traininglab-block-1",
+      "from": "traininglab-block-5",
+      "to": "traininglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-6-part_of-traininglab",
+      "from": "traininglab-block-6",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-5-before-traininglab-block-6",
+      "from": "traininglab-block-5",
+      "to": "traininglab-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-6-related_to-traininglab-block-1",
+      "from": "traininglab-block-6",
+      "to": "traininglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-7-part_of-traininglab",
+      "from": "traininglab-block-7",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-6-before-traininglab-block-7",
+      "from": "traininglab-block-6",
+      "to": "traininglab-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-7-related_to-traininglab-block-1",
+      "from": "traininglab-block-7",
+      "to": "traininglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-8-part_of-traininglab",
+      "from": "traininglab-block-8",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-7-before-traininglab-block-8",
+      "from": "traininglab-block-7",
+      "to": "traininglab-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-8-related_to-traininglab-block-1",
+      "from": "traininglab-block-8",
+      "to": "traininglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-9-part_of-traininglab",
+      "from": "traininglab-block-9",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-8-before-traininglab-block-9",
+      "from": "traininglab-block-8",
+      "to": "traininglab-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-9-related_to-traininglab-block-1",
+      "from": "traininglab-block-9",
+      "to": "traininglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-10-part_of-traininglab",
+      "from": "traininglab-block-10",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-9-before-traininglab-block-10",
+      "from": "traininglab-block-9",
+      "to": "traininglab-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-10-related_to-traininglab-block-1",
+      "from": "traininglab-block-10",
+      "to": "traininglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-11-part_of-traininglab",
+      "from": "traininglab-block-11",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-10-before-traininglab-block-11",
+      "from": "traininglab-block-10",
+      "to": "traininglab-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-11-related_to-traininglab-block-1",
+      "from": "traininglab-block-11",
+      "to": "traininglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-12-part_of-traininglab",
+      "from": "traininglab-block-12",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-11-before-traininglab-block-12",
+      "from": "traininglab-block-11",
+      "to": "traininglab-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-12-related_to-traininglab-block-1",
+      "from": "traininglab-block-12",
+      "to": "traininglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-13-part_of-traininglab",
+      "from": "traininglab-block-13",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-12-before-traininglab-block-13",
+      "from": "traininglab-block-12",
+      "to": "traininglab-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-13-related_to-traininglab-block-1",
+      "from": "traininglab-block-13",
+      "to": "traininglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-14-part_of-traininglab",
+      "from": "traininglab-block-14",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-13-before-traininglab-block-14",
+      "from": "traininglab-block-13",
+      "to": "traininglab-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-14-related_to-traininglab-block-1",
+      "from": "traininglab-block-14",
+      "to": "traininglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-15-part_of-traininglab",
+      "from": "traininglab-block-15",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-14-before-traininglab-block-15",
+      "from": "traininglab-block-14",
+      "to": "traininglab-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-15-related_to-traininglab-block-1",
+      "from": "traininglab-block-15",
+      "to": "traininglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-16-part_of-traininglab",
+      "from": "traininglab-block-16",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-15-before-traininglab-block-16",
+      "from": "traininglab-block-15",
+      "to": "traininglab-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-16-related_to-traininglab-block-1",
+      "from": "traininglab-block-16",
+      "to": "traininglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-17-part_of-traininglab",
+      "from": "traininglab-block-17",
+      "to": "traininglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-16-before-traininglab-block-17",
+      "from": "traininglab-block-16",
+      "to": "traininglab-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-block-17-related_to-traininglab-block-1",
+      "from": "traininglab-block-17",
+      "to": "traininglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-stmt-1-part_of-traininglab-block-1",
+      "from": "traininglab-stmt-1",
+      "to": "traininglab-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-stmt-2-part_of-traininglab-block-1",
+      "from": "traininglab-stmt-2",
+      "to": "traininglab-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-stmt-3-part_of-traininglab-block-2",
+      "from": "traininglab-stmt-3",
+      "to": "traininglab-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-stmt-4-part_of-traininglab-block-2",
+      "from": "traininglab-stmt-4",
+      "to": "traininglab-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-stmt-5-part_of-traininglab-block-3",
+      "from": "traininglab-stmt-5",
+      "to": "traininglab-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-stmt-6-part_of-traininglab-block-4",
+      "from": "traininglab-stmt-6",
+      "to": "traininglab-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-traininglab-stmt-7-part_of-traininglab-block-17",
+      "from": "traininglab-stmt-7",
+      "to": "traininglab-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "traininglab-stmt-1",
       "quote": "In the previous sections, we learned about **Tensors** (the data containers) and **Activation Functions** (the decision gates).",
+      "block_id": "traininglab-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "traininglab-stmt-2",
       "quote": "Now, we combine them into a **Model**.",
+      "block_id": "traininglab-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "traininglab-stmt-3",
       "quote": "A Model is essentially a complex function with “knobs” called **Weights**.",
+      "block_id": "traininglab-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "traininglab-stmt-4",
       "quote": "Training is the process where an **Optimizer** (like Adam) automatically turns these knobs to minimize the **Loss** (the error).",
+      "block_id": "traininglab-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "traininglab-stmt-5",
       "quote": "Here, you can see how a small network tries to learn a pattern.",
+      "block_id": "traininglab-block-3",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "traininglab-stmt-6",
-      "quote": "* **The Decision Boundary**: Shows the “map” of what the AI thinks.",
+      "quote": "Since the network weights are randomly initialized, you may need to *reset* the model and restart training a few times to get decent results.",
+      "block_id": "traininglab-block-4",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "traininglab-stmt-7",
-      "quote": "Red areas represent one classification, blue the other.",
+      "quote": "Result: $\\hat{y} = $ 0.00",
+      "block_id": "traininglab-block-17",
       "section": "",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "traininglab-block-1",
+      "quote": "In the previous sections, we learned about **Tensors** (the data containers) and **Activation Functions** (the decision gates). Now, we combine them into a **Model**.",
+      "kind": "paragraph",
+      "section": ""
     },
     {
-      "id": "traininglab-stmt-8",
-      "quote": "* **Weights (Live)**: These are the actual numerical values inside the first layer of the network.",
-      "section": "",
-      "kind": "statement"
+      "id": "traininglab-block-2",
+      "quote": "A Model is essentially a complex function with “knobs” called **Weights**. Training is the process where an **Optimizer** (like Adam) automatically turns these knobs to minimize the **Loss** (the error).",
+      "kind": "paragraph",
+      "section": ""
     },
     {
-      "id": "traininglab-stmt-9",
-      "quote": "* **Weight Patterns**: These heatmaps show the numerical values inside each layer's weights, updating live as the optimizer turns the knobs.",
-      "section": "",
-      "kind": "statement"
+      "id": "traininglab-block-3",
+      "quote": "Here, you can see how a small network tries to learn a pattern.",
+      "kind": "paragraph",
+      "section": ""
     },
     {
-      "id": "traininglab-stmt-10",
+      "id": "traininglab-block-4",
       "quote": "Since the network weights are randomly initialized, you may need to *reset* the model and restart training a few times to get decent results.",
-      "section": "",
-      "kind": "statement"
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "traininglab-block-5",
+      "quote": "Learning Rate",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "traininglab-block-6",
+      "quote": "0.1",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "traininglab-block-7",
+      "quote": "Epochs",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "traininglab-block-8",
+      "quote": "▶ START",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "traininglab-block-9",
+      "quote": "↺ RESET",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "traininglab-block-10",
+      "quote": "Training Data",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "traininglab-block-11",
+      "quote": "+ Add Row",
+      "kind": "list-item",
+      "section": ""
+    },
+    {
+      "id": "traininglab-block-12",
+      "quote": "Decision Boundary",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "traininglab-block-13",
+      "quote": "Loss History",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "traininglab-block-14",
+      "quote": "Weight Controls",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "traininglab-block-15",
+      "quote": "Weight Heatmaps",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "traininglab-block-16",
+      "quote": "Live Inference",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "traininglab-block-17",
+      "quote": "Result: $\\hat{y} = $ 0.00",
+      "kind": "paragraph",
+      "section": ""
     }
   ]
 }

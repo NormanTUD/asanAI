@@ -320,206 +320,1171 @@
       "quote": "part: 3",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-1-part_of-deconvolution",
+      "from": "deconvolution-block-1",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-2-part_of-deconvolution",
+      "from": "deconvolution-block-2",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-1-before-deconvolution-block-2",
+      "from": "deconvolution-block-1",
+      "to": "deconvolution-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-2-related_to-deconvolution-block-1",
+      "from": "deconvolution-block-2",
+      "to": "deconvolution-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-3-part_of-deconvolution",
+      "from": "deconvolution-block-3",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-2-before-deconvolution-block-3",
+      "from": "deconvolution-block-2",
+      "to": "deconvolution-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-3-related_to-deconvolution-block-1",
+      "from": "deconvolution-block-3",
+      "to": "deconvolution-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-4-part_of-deconvolution",
+      "from": "deconvolution-block-4",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-3-before-deconvolution-block-4",
+      "from": "deconvolution-block-3",
+      "to": "deconvolution-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-4-related_to-deconvolution-block-1",
+      "from": "deconvolution-block-4",
+      "to": "deconvolution-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-5-part_of-deconvolution",
+      "from": "deconvolution-block-5",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-4-before-deconvolution-block-5",
+      "from": "deconvolution-block-4",
+      "to": "deconvolution-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-6-part_of-deconvolution",
+      "from": "deconvolution-block-6",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-5-before-deconvolution-block-6",
+      "from": "deconvolution-block-5",
+      "to": "deconvolution-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-6-related_to-deconvolution-block-5",
+      "from": "deconvolution-block-6",
+      "to": "deconvolution-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-7-part_of-deconvolution",
+      "from": "deconvolution-block-7",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-6-before-deconvolution-block-7",
+      "from": "deconvolution-block-6",
+      "to": "deconvolution-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-7-related_to-deconvolution-block-5",
+      "from": "deconvolution-block-7",
+      "to": "deconvolution-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-8-part_of-deconvolution",
+      "from": "deconvolution-block-8",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-7-before-deconvolution-block-8",
+      "from": "deconvolution-block-7",
+      "to": "deconvolution-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-8-related_to-deconvolution-block-5",
+      "from": "deconvolution-block-8",
+      "to": "deconvolution-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-9-part_of-deconvolution",
+      "from": "deconvolution-block-9",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-8-before-deconvolution-block-9",
+      "from": "deconvolution-block-8",
+      "to": "deconvolution-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-9-related_to-deconvolution-block-5",
+      "from": "deconvolution-block-9",
+      "to": "deconvolution-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-10-part_of-deconvolution",
+      "from": "deconvolution-block-10",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-9-before-deconvolution-block-10",
+      "from": "deconvolution-block-9",
+      "to": "deconvolution-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-10-related_to-deconvolution-block-5",
+      "from": "deconvolution-block-10",
+      "to": "deconvolution-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-11-part_of-deconvolution",
+      "from": "deconvolution-block-11",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-10-before-deconvolution-block-11",
+      "from": "deconvolution-block-10",
+      "to": "deconvolution-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-12-part_of-deconvolution",
+      "from": "deconvolution-block-12",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-11-before-deconvolution-block-12",
+      "from": "deconvolution-block-11",
+      "to": "deconvolution-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-12-related_to-deconvolution-block-11",
+      "from": "deconvolution-block-12",
+      "to": "deconvolution-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-13-part_of-deconvolution",
+      "from": "deconvolution-block-13",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-12-before-deconvolution-block-13",
+      "from": "deconvolution-block-12",
+      "to": "deconvolution-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-13-related_to-deconvolution-block-11",
+      "from": "deconvolution-block-13",
+      "to": "deconvolution-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-14-part_of-deconvolution",
+      "from": "deconvolution-block-14",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-13-before-deconvolution-block-14",
+      "from": "deconvolution-block-13",
+      "to": "deconvolution-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-14-related_to-deconvolution-block-11",
+      "from": "deconvolution-block-14",
+      "to": "deconvolution-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-15-part_of-deconvolution",
+      "from": "deconvolution-block-15",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-14-before-deconvolution-block-15",
+      "from": "deconvolution-block-14",
+      "to": "deconvolution-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-16-part_of-deconvolution",
+      "from": "deconvolution-block-16",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-15-before-deconvolution-block-16",
+      "from": "deconvolution-block-15",
+      "to": "deconvolution-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-16-related_to-deconvolution-block-15",
+      "from": "deconvolution-block-16",
+      "to": "deconvolution-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-17-part_of-deconvolution",
+      "from": "deconvolution-block-17",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-16-before-deconvolution-block-17",
+      "from": "deconvolution-block-16",
+      "to": "deconvolution-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-17-related_to-deconvolution-block-15",
+      "from": "deconvolution-block-17",
+      "to": "deconvolution-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-18-part_of-deconvolution",
+      "from": "deconvolution-block-18",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-17-before-deconvolution-block-18",
+      "from": "deconvolution-block-17",
+      "to": "deconvolution-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-18-related_to-deconvolution-block-15",
+      "from": "deconvolution-block-18",
+      "to": "deconvolution-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-19-part_of-deconvolution",
+      "from": "deconvolution-block-19",
+      "to": "deconvolution",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-18-before-deconvolution-block-19",
+      "from": "deconvolution-block-18",
+      "to": "deconvolution-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-block-19-related_to-deconvolution-block-15",
+      "from": "deconvolution-block-19",
+      "to": "deconvolution-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-1-part_of-deconvolution-block-2",
+      "from": "deconvolution-stmt-1",
+      "to": "deconvolution-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-2-part_of-deconvolution-block-2",
+      "from": "deconvolution-stmt-2",
+      "to": "deconvolution-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-3-part_of-deconvolution-block-2",
+      "from": "deconvolution-stmt-3",
+      "to": "deconvolution-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-4-part_of-deconvolution-block-3",
+      "from": "deconvolution-stmt-4",
+      "to": "deconvolution-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-5-part_of-deconvolution-block-4",
+      "from": "deconvolution-stmt-5",
+      "to": "deconvolution-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-6-part_of-deconvolution-block-4",
+      "from": "deconvolution-stmt-6",
+      "to": "deconvolution-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-7-part_of-deconvolution-block-4",
+      "from": "deconvolution-stmt-7",
+      "to": "deconvolution-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-8-part_of-deconvolution-block-6",
+      "from": "deconvolution-stmt-8",
+      "to": "deconvolution-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-9-part_of-deconvolution-block-6",
+      "from": "deconvolution-stmt-9",
+      "to": "deconvolution-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-10-part_of-deconvolution-block-6",
+      "from": "deconvolution-stmt-10",
+      "to": "deconvolution-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-11-part_of-deconvolution-block-6",
+      "from": "deconvolution-stmt-11",
+      "to": "deconvolution-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-12-part_of-deconvolution-block-7",
+      "from": "deconvolution-stmt-12",
+      "to": "deconvolution-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-13-part_of-deconvolution-block-7",
+      "from": "deconvolution-stmt-13",
+      "to": "deconvolution-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-14-part_of-deconvolution-block-8",
+      "from": "deconvolution-stmt-14",
+      "to": "deconvolution-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-15-part_of-deconvolution-block-9",
+      "from": "deconvolution-stmt-15",
+      "to": "deconvolution-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-16-part_of-deconvolution-block-10",
+      "from": "deconvolution-stmt-16",
+      "to": "deconvolution-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-17-part_of-deconvolution-block-10",
+      "from": "deconvolution-stmt-17",
+      "to": "deconvolution-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-18-part_of-deconvolution-block-12",
+      "from": "deconvolution-stmt-18",
+      "to": "deconvolution-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-19-part_of-deconvolution-block-12",
+      "from": "deconvolution-stmt-19",
+      "to": "deconvolution-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-20-part_of-deconvolution-block-12",
+      "from": "deconvolution-stmt-20",
+      "to": "deconvolution-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-21-part_of-deconvolution-block-12",
+      "from": "deconvolution-stmt-21",
+      "to": "deconvolution-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-22-part_of-deconvolution-block-13",
+      "from": "deconvolution-stmt-22",
+      "to": "deconvolution-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-23-part_of-deconvolution-block-14",
+      "from": "deconvolution-stmt-23",
+      "to": "deconvolution-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-24-part_of-deconvolution-block-14",
+      "from": "deconvolution-stmt-24",
+      "to": "deconvolution-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-25-part_of-deconvolution-block-16",
+      "from": "deconvolution-stmt-25",
+      "to": "deconvolution-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-26-part_of-deconvolution-block-17",
+      "from": "deconvolution-stmt-26",
+      "to": "deconvolution-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-27-part_of-deconvolution-block-17",
+      "from": "deconvolution-stmt-27",
+      "to": "deconvolution-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-28-part_of-deconvolution-block-17",
+      "from": "deconvolution-stmt-28",
+      "to": "deconvolution-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-29-part_of-deconvolution-block-18",
+      "from": "deconvolution-stmt-29",
+      "to": "deconvolution-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-30-part_of-deconvolution-block-19",
+      "from": "deconvolution-stmt-30",
+      "to": "deconvolution-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deconvolution-stmt-31-part_of-deconvolution-block-19",
+      "from": "deconvolution-stmt-31",
+      "to": "deconvolution-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "deconvolution-stmt-1",
       "quote": "Generative models must *go the other way*: instead of shrinking an image into descriptors, they turn a small latent vector into a full-size picture.",
+      "block_id": "deconvolution-block-2",
       "section": "Drawing a Bigger Picture",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-2",
       "quote": "The standard building block is a **transposed convolution** — a convolution run with its input and output swapped.",
+      "block_id": "deconvolution-block-2",
       "section": "Drawing a Bigger Picture",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-3",
       "quote": "Transposed convolutions are necessary, but they are also the source of one of the most recognizable failure modes in deep learning: the **checkerboard artifact**.",
+      "block_id": "deconvolution-block-2",
       "section": "Drawing a Bigger Picture",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-4",
       "quote": "> A transposed convolution that upscales by factor 2 with a kernel size of 3 spreads each input pixel over a *square* of the output — and leaves some output pixels darker where those squares overlap.",
+      "block_id": "deconvolution-block-3",
       "section": "Drawing a Bigger Picture",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-5",
       "quote": "Neural upsampling has a geometric story: a transposed convolution with stride 2 places each input pixel's “stamp” at 2-pixel intervals.",
+      "block_id": "deconvolution-block-4",
       "section": "Drawing a Bigger Picture",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-6",
       "quote": "With a $3\\times 3$ kernel, those stamps are wide — each one is a **smeared square** on the output, traditionally called a deconvolution, a name that flatters it: a transposed convolution is *not* an inverse of a convolution.",
+      "block_id": "deconvolution-block-4",
       "section": "Drawing a Bigger Picture",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-7",
       "quote": "\\citeauthor{odena2016deconvolution} (\\citeyear{odena2016deconvolution}) note that the operation has several interpretations and several names, and use “deconvolution” for brevity \\cite{odena2016deconvolution}.",
+      "block_id": "deconvolution-block-4",
       "section": "Drawing a Bigger Picture",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-8",
       "quote": "In one dimension the mechanism is easy to see.",
+      "block_id": "deconvolution-block-6",
       "section": "Where the Checkerboard Comes From",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-9",
       "quote": "Transpose a $3$-wide kernel $\\{w_0, w_1, w_2\\}$ and walk it across the output with stride 2.",
+      "block_id": "deconvolution-block-6",
       "section": "Where the Checkerboard Comes From",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-10",
       "quote": "Some output positions receive one kernel tap; their neighbors receive two, because the 3-wide kernel “overlaps” itself across the 2-wide stride.",
+      "block_id": "deconvolution-block-6",
       "section": "Where the Checkerboard Comes From",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-11",
       "quote": "With all weights equal, the 1D pattern alternates **1, 2, 1, 2, …**:",
+      "block_id": "deconvolution-block-6",
       "section": "Where the Checkerboard Comes From",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-12",
       "quote": "In two dimensions the pattern is the outer product of two such 1D stripes — and since the stride factorizes, you get intensity differences that repeat in a **checkerboard** with a $2\\times 2$ tile.",
+      "block_id": "deconvolution-block-7",
       "section": "Where the Checkerboard Comes From",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-13",
       "quote": "The general law, stated by \\citeauthor{odena2016deconvolution}: whenever the kernel size is **not divisible by the stride**, the upsampling is uneven — some output positions end up brighter than others \\cite{odena2016deconvolution}:",
+      "block_id": "deconvolution-block-7",
       "section": "Where the Checkerboard Comes From",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-14",
-      "quote": "* **$2\\times 2$ kernels, stride 2:** every input pixel's stamp is exactly one output cell — uniform, no artifact.",
+      "quote": "The two panels below are the same style-transfer result produced by \\citeauthor{odena2016deconvolution}: upsampled with a deconvolution on the left, with a resize + plain convolution on the right \\cite{odena2016deconvolution}.",
+      "block_id": "deconvolution-block-8",
       "section": "Where the Checkerboard Comes From",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-15",
-      "quote": "* **$4\\times 4$ kernels, stride 2:** uniform too — divisible.",
+      "quote": "Deconvolution upsampling: the checkerboard is visible as a repeating square grid over the whole image.",
+      "block_id": "deconvolution-block-9",
       "section": "Where the Checkerboard Comes From",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-16",
-      "quote": "* **$3\\times 3, 5\\times 5$ kernels, stride 2:** the classic harmful sizes — the checkerboard appears with period 2.",
+      "quote": "Resize + regular convolution: the stripes and grid are gone.",
+      "block_id": "deconvolution-block-10",
       "section": "Where the Checkerboard Comes From",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-17",
-      "quote": "The two panels below are the same style-transfer result produced by \\citeauthor{odena2016deconvolution}: upsampled with a deconvolution on the left, with a resize + plain convolution on the right \\cite{odena2016deconvolution}.",
+      "quote": "\\cite[Figures from the Distill article, CC BY 2.0]{odena2016deconvolution}",
+      "block_id": "deconvolution-block-10",
       "section": "Where the Checkerboard Comes From",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-18",
       "quote": "The artifact does **not** wait for training — even a randomly-initialized transposed convolution already draws a checkerboard.",
+      "block_id": "deconvolution-block-12",
       "section": "It's in the Gradients, Not Just the Pixels",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-19",
       "quote": "And it does **not** stop at the output image.",
+      "block_id": "deconvolution-block-12",
       "section": "It's in the Gradients, Not Just the Pixels",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-20",
       "quote": "The authors' sharpest observation: the *gradient* of a regular convolution, computed by the backpropagation that trains the network, is itself a transposed convolution — so **every method that looks at gradients inherits the pattern** \\cite{odena2016deconvolution}.",
+      "block_id": "deconvolution-block-12",
       "section": "It's in the Gradients, Not Just the Pixels",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-21",
       "quote": "Feature visualizations, adversarial noise, style transfer, and GAN training all see it, even when the final image is clean.",
+      "block_id": "deconvolution-block-12",
       "section": "It's in the Gradients, Not Just the Pixels",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-22",
       "quote": "Three consequences follow \\cite{odena2016deconvolution}:",
+      "block_id": "deconvolution-block-13",
       "section": "It's in the Gradients, Not Just the Pixels",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-23",
-      "quote": "* **Color matters:** the artifact is strongest for **unusual**, saturated colors and weakest near the average color, because producing the average is easy for the bias term while a color far from it needs a large deconvolution contribution.",
+      "quote": "DeepDream, rendered with 8×8 random shifts per iteration: the deconvolution artifact is a periodic error, so randomized shifting cancels it out.",
+      "block_id": "deconvolution-block-14",
       "section": "It's in the Gradients, Not Just the Pixels",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-24",
-      "quote": "* **Layering compounds it:** stacked deconvolutions overlap each decoder stage's pattern, multiplying the checkerboard into a fractal, multi-period grid.",
+      "quote": "\\cite[Figure from the Distill article, CC BY 2.0]{odena2016deconvolution}",
+      "block_id": "deconvolution-block-14",
       "section": "It's in the Gradients, Not Just the Pixels",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-25",
-      "quote": "* **The Internet's favorite workaround** — the one DeepDream already used — is **jitter**: shifting the image by a random number of pixels each iteration and averaging.",
-      "section": "It's in the Gradients, Not Just the Pixels",
+      "quote": "\\citeauthor{odena2016deconvolution} offer a recommendation, not a decree: *deconvolution is not inherently bad*, but the easiest way to be safe is to stop using it for upsampling entirely \\cite{odena2016deconvolution}.",
+      "block_id": "deconvolution-block-16",
+      "section": "The Two Fixes",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-26",
-      "quote": "Averaging over shifts *cancels* the periodic pattern.",
-      "section": "It's in the Gradients, Not Just the Pixels",
+      "quote": "**Resize-conv (or “re-size convolution”):** upsample with an interpolation (nearest-neighbour or bilinear) and then apply a **regular** 3×3 convolution.",
+      "block_id": "deconvolution-block-17",
+      "section": "The Two Fixes",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-27",
-      "quote": "\\citeauthor{odena2016deconvolution} offer a recommendation, not a decree: *deconvolution is not inherently bad*, but the easiest way to be safe is to stop using it for upsampling entirely \\cite{odena2016deconvolution}.",
+      "quote": "Because the interpolation is uniform, no periodic overlap pattern is introduced.",
+      "block_id": "deconvolution-block-17",
       "section": "The Two Fixes",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-28",
-      "quote": "**Resize-conv (or “re-size convolution”):** upsample with an interpolation (nearest-neighbour or bilinear) and then apply a **regular** 3×3 convolution.",
+      "quote": "This is the modern default in image generators \\cite{odena2016deconvolution}.",
+      "block_id": "deconvolution-block-17",
       "section": "The Two Fixes",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-29",
-      "quote": "Because the interpolation is uniform, no periodic overlap pattern is introduced.",
+      "quote": "**Plan for it:** if a deconvolution is unavoidable, a network can learn to suppress the artifacts — but the standard advice is to prefer the simpler, artifact-free path.",
+      "block_id": "deconvolution-block-18",
       "section": "The Two Fixes",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-30",
-      "quote": "This is the modern default in image generators \\cite{odena2016deconvolution}.",
+      "quote": "The pattern lesson generalizes far beyond upsampling: whenever a periodic operation (a fixed kernels size, a fixed stride) is applied across a domain, its *overlap structure* becomes part of what the model learns — and part of what it shows.",
+      "block_id": "deconvolution-block-19",
       "section": "The Two Fixes",
       "kind": "statement"
     },
     {
       "id": "deconvolution-stmt-31",
-      "quote": "**Plan for it:** if a deconvolution is unavoidable, a network can learn to suppress the artifacts — but the standard advice is to prefer the simpler, artifact-free path.",
-      "section": "The Two Fixes",
-      "kind": "statement"
-    },
-    {
-      "id": "deconvolution-stmt-32",
-      "quote": "The pattern lesson generalizes far beyond upsampling: whenever a periodic operation (a fixed kernels size, a fixed stride) is applied across a domain, its *overlap structure* becomes part of what the model learns — and part of what it shows.",
-      "section": "The Two Fixes",
-      "kind": "statement"
-    },
-    {
-      "id": "deconvolution-stmt-33",
       "quote": "That same hidden structure, turned **inward** instead of outward, is what the [Inceptionism chapter](inceptionism.php) exploits: a network's gradients can be read back as images, revealing the shapes and colors it secretly expects.",
+      "block_id": "deconvolution-block-19",
       "section": "The Two Fixes",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "deconvolution-block-1",
+      "quote": "Drawing a Bigger Picture",
+      "kind": "heading",
+      "section": "Drawing a Bigger Picture"
+    },
+    {
+      "id": "deconvolution-block-2",
+      "quote": "Generative models must *go the other way*: instead of shrinking an image into descriptors, they turn a small latent vector into a full-size picture. The standard building block is a **transposed convolution** — a convolution run with its input and output swapped. Transposed convolutions are necessary, but they are also the source of one of the most recognizable failure modes in deep learning: the **checkerboard artifact**.",
+      "kind": "paragraph",
+      "section": "Drawing a Bigger Picture"
+    },
+    {
+      "id": "deconvolution-block-3",
+      "quote": "> A transposed convolution that upscales by factor 2 with a kernel size of 3 spreads each input pixel over a *square* of the output — and leaves some output pixels darker where those squares overlap.",
+      "kind": "paragraph",
+      "section": "Drawing a Bigger Picture"
+    },
+    {
+      "id": "deconvolution-block-4",
+      "quote": "Neural upsampling has a geometric story: a transposed convolution with stride 2 places each input pixel's “stamp” at 2-pixel intervals. With a $3\\times 3$ kernel, those stamps are wide — each one is a **smeared square** on the output, traditionally called a deconvolution, a name that flatters it: a transposed convolution is *not* an inverse of a convolution. \\citeauthor{odena2016deconvolution} (\\citeyear{odena2016deconvolution}) note that the operation has several interpretations and several names, and use “deconvolution” for brevity \\cite{odena2016deconvolution}.",
+      "kind": "paragraph",
+      "section": "Drawing a Bigger Picture"
+    },
+    {
+      "id": "deconvolution-block-5",
+      "quote": "Where the Checkerboard Comes From",
+      "kind": "heading",
+      "section": "Where the Checkerboard Comes From"
+    },
+    {
+      "id": "deconvolution-block-6",
+      "quote": "In one dimension the mechanism is easy to see. Transpose a $3$-wide kernel $\\{w_0, w_1, w_2\\}$ and walk it across the output with stride 2. Some output positions receive one kernel tap; their neighbors receive two, because the 3-wide kernel “overlaps” itself across the 2-wide stride. With all weights equal, the 1D pattern alternates **1, 2, 1, 2, …**:",
+      "kind": "paragraph",
+      "section": "Where the Checkerboard Comes From"
+    },
+    {
+      "id": "deconvolution-block-7",
+      "quote": "In two dimensions the pattern is the outer product of two such 1D stripes — and since the stride factorizes, you get intensity differences that repeat in a **checkerboard** with a $2\\times 2$ tile. The general law, stated by \\citeauthor{odena2016deconvolution}: whenever the kernel size is **not divisible by the stride**, the upsampling is uneven — some output positions end up brighter than others \\cite{odena2016deconvolution}:",
+      "kind": "paragraph",
+      "section": "Where the Checkerboard Comes From"
+    },
+    {
+      "id": "deconvolution-block-8",
+      "quote": "The two panels below are the same style-transfer result produced by \\citeauthor{odena2016deconvolution}: upsampled with a deconvolution on the left, with a resize + plain convolution on the right \\cite{odena2016deconvolution}.",
+      "kind": "paragraph",
+      "section": "Where the Checkerboard Comes From"
+    },
+    {
+      "id": "deconvolution-block-9",
+      "quote": "Deconvolution upsampling: the checkerboard is visible as a repeating square grid over the whole image.",
+      "kind": "paragraph",
+      "section": "Where the Checkerboard Comes From"
+    },
+    {
+      "id": "deconvolution-block-10",
+      "quote": "Resize + regular convolution: the stripes and grid are gone. \\cite[Figures from the Distill article, CC BY 2.0]{odena2016deconvolution}",
+      "kind": "paragraph",
+      "section": "Where the Checkerboard Comes From"
+    },
+    {
+      "id": "deconvolution-block-11",
+      "quote": "It's in the Gradients, Not Just the Pixels",
+      "kind": "heading",
+      "section": "It's in the Gradients, Not Just the Pixels"
+    },
+    {
+      "id": "deconvolution-block-12",
+      "quote": "The artifact does **not** wait for training — even a randomly-initialized transposed convolution already draws a checkerboard. And it does **not** stop at the output image. The authors' sharpest observation: the *gradient* of a regular convolution, computed by the backpropagation that trains the network, is itself a transposed convolution — so **every method that looks at gradients inherits the pattern** \\cite{odena2016deconvolution}. Feature visualizations, adversarial noise, style transfer, and GAN training all see it, even when the final image is clean.",
+      "kind": "paragraph",
+      "section": "It's in the Gradients, Not Just the Pixels"
+    },
+    {
+      "id": "deconvolution-block-13",
+      "quote": "Three consequences follow \\cite{odena2016deconvolution}:",
+      "kind": "paragraph",
+      "section": "It's in the Gradients, Not Just the Pixels"
+    },
+    {
+      "id": "deconvolution-block-14",
+      "quote": "DeepDream, rendered with 8×8 random shifts per iteration: the deconvolution artifact is a periodic error, so randomized shifting cancels it out. \\cite[Figure from the Distill article, CC BY 2.0]{odena2016deconvolution}",
+      "kind": "paragraph",
+      "section": "It's in the Gradients, Not Just the Pixels"
+    },
+    {
+      "id": "deconvolution-block-15",
+      "quote": "The Two Fixes",
+      "kind": "heading",
+      "section": "The Two Fixes"
+    },
+    {
+      "id": "deconvolution-block-16",
+      "quote": "\\citeauthor{odena2016deconvolution} offer a recommendation, not a decree: *deconvolution is not inherently bad*, but the easiest way to be safe is to stop using it for upsampling entirely \\cite{odena2016deconvolution}.",
+      "kind": "paragraph",
+      "section": "The Two Fixes"
+    },
+    {
+      "id": "deconvolution-block-17",
+      "quote": "1. **Resize-conv (or “re-size convolution”):** upsample with an interpolation (nearest-neighbour or bilinear) and then apply a **regular** 3×3 convolution. Because the interpolation is uniform, no periodic overlap pattern is introduced. This is the modern default in image generators \\cite{odena2016deconvolution}.",
+      "kind": "list-item",
+      "section": "The Two Fixes"
+    },
+    {
+      "id": "deconvolution-block-18",
+      "quote": "2. **Plan for it:** if a deconvolution is unavoidable, a network can learn to suppress the artifacts — but the standard advice is to prefer the simpler, artifact-free path.",
+      "kind": "list-item",
+      "section": "The Two Fixes"
+    },
+    {
+      "id": "deconvolution-block-19",
+      "quote": "The pattern lesson generalizes far beyond upsampling: whenever a periodic operation (a fixed kernels size, a fixed stride) is applied across a domain, its *overlap structure* becomes part of what the model learns — and part of what it shows. That same hidden structure, turned **inward** instead of outward, is what the [Inceptionism chapter](inceptionism.php) exploits: a network's gradients can be read back as images, revealing the shapes and colors it secretly expects.",
+      "kind": "paragraph",
+      "section": "The Two Fixes"
     }
   ]
 }

@@ -293,182 +293,1160 @@
       "quote": "7B on a laptop, or the API",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-1-part_of-ai-economics",
+      "from": "ai_economics-block-1",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-2-part_of-ai-economics",
+      "from": "ai_economics-block-2",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-1-before-ai_economics-block-2",
+      "from": "ai_economics-block-1",
+      "to": "ai_economics-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-3-part_of-ai-economics",
+      "from": "ai_economics-block-3",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-2-before-ai_economics-block-3",
+      "from": "ai_economics-block-2",
+      "to": "ai_economics-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-4-part_of-ai-economics",
+      "from": "ai_economics-block-4",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-3-before-ai_economics-block-4",
+      "from": "ai_economics-block-3",
+      "to": "ai_economics-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-4-related_to-ai_economics-block-3",
+      "from": "ai_economics-block-4",
+      "to": "ai_economics-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-5-part_of-ai-economics",
+      "from": "ai_economics-block-5",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-4-before-ai_economics-block-5",
+      "from": "ai_economics-block-4",
+      "to": "ai_economics-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-5-related_to-ai_economics-block-3",
+      "from": "ai_economics-block-5",
+      "to": "ai_economics-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-6-part_of-ai-economics",
+      "from": "ai_economics-block-6",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-5-before-ai_economics-block-6",
+      "from": "ai_economics-block-5",
+      "to": "ai_economics-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-6-related_to-ai_economics-block-3",
+      "from": "ai_economics-block-6",
+      "to": "ai_economics-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-7-part_of-ai-economics",
+      "from": "ai_economics-block-7",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-6-before-ai_economics-block-7",
+      "from": "ai_economics-block-6",
+      "to": "ai_economics-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-7-related_to-ai_economics-block-3",
+      "from": "ai_economics-block-7",
+      "to": "ai_economics-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-8-part_of-ai-economics",
+      "from": "ai_economics-block-8",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-7-before-ai_economics-block-8",
+      "from": "ai_economics-block-7",
+      "to": "ai_economics-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-9-part_of-ai-economics",
+      "from": "ai_economics-block-9",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-8-before-ai_economics-block-9",
+      "from": "ai_economics-block-8",
+      "to": "ai_economics-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-9-related_to-ai_economics-block-8",
+      "from": "ai_economics-block-9",
+      "to": "ai_economics-block-8",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-10-part_of-ai-economics",
+      "from": "ai_economics-block-10",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-9-before-ai_economics-block-10",
+      "from": "ai_economics-block-9",
+      "to": "ai_economics-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-10-related_to-ai_economics-block-8",
+      "from": "ai_economics-block-10",
+      "to": "ai_economics-block-8",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-11-part_of-ai-economics",
+      "from": "ai_economics-block-11",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-10-before-ai_economics-block-11",
+      "from": "ai_economics-block-10",
+      "to": "ai_economics-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-11-related_to-ai_economics-block-8",
+      "from": "ai_economics-block-11",
+      "to": "ai_economics-block-8",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-12-part_of-ai-economics",
+      "from": "ai_economics-block-12",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-11-before-ai_economics-block-12",
+      "from": "ai_economics-block-11",
+      "to": "ai_economics-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-13-part_of-ai-economics",
+      "from": "ai_economics-block-13",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-12-before-ai_economics-block-13",
+      "from": "ai_economics-block-12",
+      "to": "ai_economics-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-14-part_of-ai-economics",
+      "from": "ai_economics-block-14",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-13-before-ai_economics-block-14",
+      "from": "ai_economics-block-13",
+      "to": "ai_economics-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-14-related_to-ai_economics-block-13",
+      "from": "ai_economics-block-14",
+      "to": "ai_economics-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-15-part_of-ai-economics",
+      "from": "ai_economics-block-15",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-14-before-ai_economics-block-15",
+      "from": "ai_economics-block-14",
+      "to": "ai_economics-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-15-related_to-ai_economics-block-13",
+      "from": "ai_economics-block-15",
+      "to": "ai_economics-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-16-part_of-ai-economics",
+      "from": "ai_economics-block-16",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-15-before-ai_economics-block-16",
+      "from": "ai_economics-block-15",
+      "to": "ai_economics-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-16-related_to-ai_economics-block-13",
+      "from": "ai_economics-block-16",
+      "to": "ai_economics-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-17-part_of-ai-economics",
+      "from": "ai_economics-block-17",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-16-before-ai_economics-block-17",
+      "from": "ai_economics-block-16",
+      "to": "ai_economics-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-18-part_of-ai-economics",
+      "from": "ai_economics-block-18",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-17-before-ai_economics-block-18",
+      "from": "ai_economics-block-17",
+      "to": "ai_economics-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-18-related_to-ai_economics-block-17",
+      "from": "ai_economics-block-18",
+      "to": "ai_economics-block-17",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-19-part_of-ai-economics",
+      "from": "ai_economics-block-19",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-18-before-ai_economics-block-19",
+      "from": "ai_economics-block-18",
+      "to": "ai_economics-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-19-related_to-ai_economics-block-17",
+      "from": "ai_economics-block-19",
+      "to": "ai_economics-block-17",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-20-part_of-ai-economics",
+      "from": "ai_economics-block-20",
+      "to": "ai-economics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-19-before-ai_economics-block-20",
+      "from": "ai_economics-block-19",
+      "to": "ai_economics-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-block-20-related_to-ai_economics-block-17",
+      "from": "ai_economics-block-20",
+      "to": "ai_economics-block-17",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-1-part_of-ai_economics-block-1",
+      "from": "ai_economics-stmt-1",
+      "to": "ai_economics-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-2-part_of-ai_economics-block-1",
+      "from": "ai_economics-stmt-2",
+      "to": "ai_economics-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-3-part_of-ai_economics-block-1",
+      "from": "ai_economics-stmt-3",
+      "to": "ai_economics-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-4-part_of-ai_economics-block-4",
+      "from": "ai_economics-stmt-4",
+      "to": "ai_economics-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-5-part_of-ai_economics-block-4",
+      "from": "ai_economics-stmt-5",
+      "to": "ai_economics-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-6-part_of-ai_economics-block-5",
+      "from": "ai_economics-stmt-6",
+      "to": "ai_economics-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-7-part_of-ai_economics-block-5",
+      "from": "ai_economics-stmt-7",
+      "to": "ai_economics-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-8-part_of-ai_economics-block-6",
+      "from": "ai_economics-stmt-8",
+      "to": "ai_economics-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-9-part_of-ai_economics-block-9",
+      "from": "ai_economics-stmt-9",
+      "to": "ai_economics-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-10-part_of-ai_economics-block-10",
+      "from": "ai_economics-stmt-10",
+      "to": "ai_economics-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-11-part_of-ai_economics-block-10",
+      "from": "ai_economics-stmt-11",
+      "to": "ai_economics-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-12-part_of-ai_economics-block-11",
+      "from": "ai_economics-stmt-12",
+      "to": "ai_economics-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-13-part_of-ai_economics-block-14",
+      "from": "ai_economics-stmt-13",
+      "to": "ai_economics-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-14-part_of-ai_economics-block-14",
+      "from": "ai_economics-stmt-14",
+      "to": "ai_economics-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-15-part_of-ai_economics-block-14",
+      "from": "ai_economics-stmt-15",
+      "to": "ai_economics-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-16-part_of-ai_economics-block-14",
+      "from": "ai_economics-stmt-16",
+      "to": "ai_economics-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-17-part_of-ai_economics-block-15",
+      "from": "ai_economics-stmt-17",
+      "to": "ai_economics-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-18-part_of-ai_economics-block-15",
+      "from": "ai_economics-stmt-18",
+      "to": "ai_economics-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-19-part_of-ai_economics-block-15",
+      "from": "ai_economics-stmt-19",
+      "to": "ai_economics-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-20-part_of-ai_economics-block-16",
+      "from": "ai_economics-stmt-20",
+      "to": "ai_economics-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-21-part_of-ai_economics-block-16",
+      "from": "ai_economics-stmt-21",
+      "to": "ai_economics-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-22-part_of-ai_economics-block-18",
+      "from": "ai_economics-stmt-22",
+      "to": "ai_economics-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-23-part_of-ai_economics-block-18",
+      "from": "ai_economics-stmt-23",
+      "to": "ai_economics-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-24-part_of-ai_economics-block-19",
+      "from": "ai_economics-stmt-24",
+      "to": "ai_economics-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-25-part_of-ai_economics-block-19",
+      "from": "ai_economics-stmt-25",
+      "to": "ai_economics-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-26-part_of-ai_economics-block-19",
+      "from": "ai_economics-stmt-26",
+      "to": "ai_economics-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-27-part_of-ai_economics-block-20",
+      "from": "ai_economics-stmt-27",
+      "to": "ai_economics-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-28-part_of-ai_economics-block-20",
+      "from": "ai_economics-stmt-28",
+      "to": "ai_economics-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-29-part_of-ai_economics-block-20",
+      "from": "ai_economics-stmt-29",
+      "to": "ai_economics-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-ai_economics-stmt-30-part_of-ai_economics-block-20",
+      "from": "ai_economics-stmt-30",
+      "to": "ai_economics-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "ai_economics-stmt-1",
       "quote": "The course has covered what AI *is* and what it *can do*; this chapter is the part that decides what it *can afford to do* — and it is missing until now.",
+      "block_id": "ai_economics-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-2",
       "quote": "Economics is not a business afterthought bolted onto the technology; it is a **physical layer**, and it explains decisions you have already seen without a word of arithmetic: why the frontier moved to [Mixture of Experts](mixture_of_experts.php) (more knowledge, same active cost), why the field moved from large under-trained models toward smaller models trained on far more data ([Scaling](hyperparameters.php), \\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}), and why \"just run it locally\" is sometimes the cheapest option and sometimes the most expensive.",
+      "block_id": "ai_economics-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-3",
       "quote": "The whole layer reduces to two numbers — *FLOPs for training* and *FLOPs per token for inference* — and everything below is arithmetic on top of those two.",
+      "block_id": "ai_economics-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-4",
-      "quote": "Here is the load-bearing estimate.",
+      "quote": "floating-point operations.",
+      "block_id": "ai_economics-block-4",
       "section": "The 6ND rule: training cost in one line",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-5",
-      "quote": "Training a transformer on $D$ tokens, with $N$ parameters, costs approximately",
+      "quote": "The \"6\" has a clean origin, and it is worth deriving rather than memorizing:",
+      "block_id": "ai_economics-block-4",
       "section": "The 6ND rule: training cost in one line",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-6",
-      "quote": "Inference is a **forward pass only** — no backward — so the per-token cost equals one training step's forward pass, about **2 FLOPs per active parameter per token** (one third of the $6N$ used for a full training step):",
-      "section": "Inference cost per token: active parameters, not total",
+      "quote": "Price your training run Pick a model size, a data budget, a GPU, and an MFU.",
+      "block_id": "ai_economics-block-5",
+      "section": "The 6ND rule: training cost in one line",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-7",
-      "quote": "The single most important serving cost-saver is **prompt caching**, and its arithmetic is the [prefill/decode split](inference_vs_training.php) you already met.",
-      "section": "Why caching saves ~10×: the prefill is paid once",
+      "quote": "Watch the FLOPs, hours, and dollars move.",
+      "block_id": "ai_economics-block-5",
+      "section": "The 6ND rule: training cost in one line",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-8",
-      "quote": "The expensive part of a call is often the **prefill** — reading a long, *repeated* system prompt, tool definitions, or few-shot examples into context.",
-      "section": "Why caching saves ~10×: the prefill is paid once",
+      "quote": "GPU A100 (~312 TFLOP/s BF16) H100 (~495 TFLOP/s TF32) H100 BF16 (~989 TFLOP/s)",
+      "block_id": "ai_economics-block-6",
+      "section": "The 6ND rule: training cost in one line",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-9",
-      "quote": "Without caching, you pay the prefill FLOPs *every call*.",
-      "section": "Why caching saves ~10×: the prefill is paid once",
+      "quote": "Inference is a **forward pass only** — no backward — so the per-token cost equals one training step's forward pass, about **2 FLOPs per active parameter per token** (one third of the $6N$ used for a full training step):",
+      "block_id": "ai_economics-block-9",
+      "section": "Inference cost per token: active parameters, not total",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-10",
-      "quote": "With caching, the repeated prefix's keys and values are computed **once** and *reused*, so the second and later calls skip that prefill almost entirely.",
-      "section": "Why caching saves ~10×: the prefill is paid once",
+      "quote": "Price your tokens Enter a price per million tokens and a session's token count.",
+      "block_id": "ai_economics-block-10",
+      "section": "Inference cost per token: active parameters, not total",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-11",
-      "quote": "That is where the \"~10×\" comes from: when a call is dominated by a long, repeated prefix (say 4,000 tokens of system prompt) plus a short completion (say 400), uncached you pay for all 4,400 tokens' prefill+decode, but cached you pay mostly for the 400-token completion — roughly **one tenth** of the work per call.",
-      "section": "Why caching saves ~10×: the prefill is paid once",
+      "quote": "Slide the cached fraction to see the effect of prompt caching on the bill.",
+      "block_id": "ai_economics-block-10",
+      "section": "Inference cost per token: active parameters, not total",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-12",
-      "quote": "\\cite[Anthropic, Prompt caching]{promptcaching} is the production example: cached tokens are billed at a fraction of uncached ones, precisely because the prefill that would have been recomputed is not.",
-      "section": "Why caching saves ~10×: the prefill is paid once",
+      "quote": "Tokens per session (millions) Cached fraction 60%",
+      "block_id": "ai_economics-block-11",
+      "section": "Inference cost per token: active parameters, not total",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-13",
-      "quote": "The calculator above models this directly — slide the cached fraction and watch the bill fall by up to ~90% on the cached part.",
+      "quote": "The single most important serving cost-saver is **prompt caching**, and its arithmetic is the [prefill/decode split](inference_vs_training.php) you already met.",
+      "block_id": "ai_economics-block-14",
       "section": "Why caching saves ~10×: the prefill is paid once",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-14",
-      "quote": "The deeper point: caching is not a trick, it is a consequence of the two regimes.",
+      "quote": "The expensive part of a call is often the **prefill** — reading a long, *repeated* system prompt, tool definitions, or few-shot examples into context.",
+      "block_id": "ai_economics-block-14",
       "section": "Why caching saves ~10×: the prefill is paid once",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-15",
-      "quote": "**Prefill is compute-bound and pay-once-able; decode is memory-bound and per-step.** Anything you can make *pay-once* (a repeated prefix) you should cache, because you are moving cost out of the per-call path and into a one-time one.",
+      "quote": "Without caching, you pay the prefill FLOPs *every call*.",
+      "block_id": "ai_economics-block-14",
       "section": "Why caching saves ~10×: the prefill is paid once",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-16",
-      "quote": "The last comparison is the one people get wrong.",
-      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "quote": "With caching, the repeated prefix's keys and values are computed **once** and *reused*, so the second and later calls skip that prefill almost entirely.",
+      "block_id": "ai_economics-block-14",
+      "section": "Why caching saves ~10×: the prefill is paid once",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-17",
-      "quote": "\"Run it locally\" and \"call the API\" are not the same cost shape:",
-      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "quote": "That is where the \"~10×\" comes from: when a call is dominated by a long, repeated prefix (say 4,000 tokens of system prompt) plus a short completion (say 400), uncached you pay for all 4,400 tokens' prefill+decode, but cached you pay mostly for the 400-token completion — roughly **one tenth** of the work per call.",
+      "block_id": "ai_economics-block-15",
+      "section": "Why caching saves ~10×: the prefill is paid once",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-18",
-      "quote": "* **The API is *per-token*.** You pay for what you use — zero when idle, high when busy.",
-      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "quote": "\\cite[Anthropic, Prompt caching]{promptcaching} is the production example: cached tokens are billed at a fraction of uncached ones, precisely because the prefill that would have been recomputed is not.",
+      "block_id": "ai_economics-block-15",
+      "section": "Why caching saves ~10×: the prefill is paid once",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-19",
-      "quote": "The marginal cost of a token is the price; there is no fixed cost.",
-      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "quote": "The calculator above models this directly — slide the cached fraction and watch the bill fall by up to ~90% on the cached part.",
+      "block_id": "ai_economics-block-15",
+      "section": "Why caching saves ~10×: the prefill is paid once",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-20",
-      "quote": "This is cheap for a **light, spiky** workload and expensive for a heavy, steady one (you keep paying per token forever).",
-      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "quote": "The deeper point: caching is not a trick, it is a consequence of the two regimes.",
+      "block_id": "ai_economics-block-16",
+      "section": "Why caching saves ~10×: the prefill is paid once",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-21",
-      "quote": "* **Local is *fixed*.** You pay for the hardware (a GPU that holds a 7B model) once, and then tokens cost almost nothing in compute — the marginal cost is just electricity.",
-      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "quote": "**Prefill is compute-bound and pay-once-able; decode is memory-bound and per-step.** Anything you can make *pay-once* (a repeated prefix) you should cache, because you are moving cost out of the per-call path and into a one-time one.",
+      "block_id": "ai_economics-block-16",
+      "section": "Why caching saves ~10×: the prefill is paid once",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-22",
-      "quote": "This is expensive for a **light** workload (you bought a GPU to use 2% of the time) and cheap for a **heavy, steady** one (the fixed cost amortizes to nothing over millions of tokens).",
+      "quote": "The last comparison is the one people get wrong.",
+      "block_id": "ai_economics-block-18",
       "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-23",
-      "quote": "They cross at a **breakeven**: local is better when your *steady* token volume is high enough that the hardware cost is recovered within your horizon; the API is better when your volume is light, spiky, or private-data-light.",
+      "quote": "\"Run it locally\" and \"call the API\" are not the same cost shape:",
+      "block_id": "ai_economics-block-18",
       "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-24",
-      "quote": "And there is a third axis the arithmetic ignores — **privacy**: local keeps the data on the machine, which is sometimes worth the worse economics.",
+      "quote": "They cross at a **breakeven**: local is better when your *steady* token volume is high enough that the hardware cost is recovered within your horizon; the API is better when your volume is light, spiky, or private-data-light.",
+      "block_id": "ai_economics-block-19",
       "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-25",
-      "quote": "This is the [Running locally](running_locally.php) and [Inference optimization](inference_optimization.php) decision, made into a number.",
+      "quote": "And there is a third axis the arithmetic ignores — **privacy**: local keeps the data on the machine, which is sometimes worth the worse economics.",
+      "block_id": "ai_economics-block-19",
       "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-26",
-      "quote": "> The economic layer is two numbers and one split.",
+      "quote": "This is the [Running locally](running_locally.php) and [Inference optimization](inference_optimization.php) decision, made into a number.",
+      "block_id": "ai_economics-block-19",
       "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-27",
-      "quote": "Training costs $6ND$; inference costs 2× active-params per token.",
+      "quote": "> The economic layer is two numbers and one split.",
+      "block_id": "ai_economics-block-20",
       "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-28",
-      "quote": "Caching moves the pay-once prefill out of the per-call path; the active-vs-total gap is what sparsity buys; and fixed-versus-per-token is what \"local or API\" really means.",
+      "quote": "Training costs $6ND$; inference costs 2× active-params per token.",
+      "block_id": "ai_economics-block-20",
       "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
       "kind": "statement"
     },
     {
       "id": "ai_economics-stmt-29",
-      "quote": "None of it is about the technology being *worth* it — it is about the technology being *affordable*, which is a different question, and the one that decides what gets built.",
+      "quote": "Caching moves the pay-once prefill out of the per-call path; the active-vs-total gap is what sparsity buys; and fixed-versus-per-token is what \"local or API\" really means.",
+      "block_id": "ai_economics-block-20",
       "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
       "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-30",
+      "quote": "None of it is about the technology being *worth* it — it is about the technology being *affordable*, which is a different question, and the one that decides what gets built.",
+      "block_id": "ai_economics-block-20",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "ai_economics-block-1",
+      "quote": "The course has covered what AI *is* and what it *can do*; this chapter is the part that decides what it *can afford to do* — and it is missing until now. Economics is not a business afterthought bolted onto the technology; it is a **physical layer**, and it explains decisions you have already seen without a word of arithmetic: why the frontier moved to [Mixture of Experts](mixture_of_experts.php) (more knowledge, same active cost), why the field moved from large under-trained models toward smaller models trained on far more data ([Scaling](hyperparameters.php), \\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}), and why \"just run it locally\" is sometimes the cheapest option and sometimes the most expensive. The whole layer reduces to two numbers — *FLOPs for training* and *FLOPs per token for inference* — and everything below is arithmetic on top of those two.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "ai_economics-block-2",
+      "quote": "The cost model",
+      "kind": "heading",
+      "section": "The cost model"
+    },
+    {
+      "id": "ai_economics-block-3",
+      "quote": "The 6ND rule: training cost in one line",
+      "kind": "heading",
+      "section": "The 6ND rule: training cost in one line"
+    },
+    {
+      "id": "ai_economics-block-4",
+      "quote": "floating-point operations. The \"6\" has a clean origin, and it is worth deriving rather than memorizing:",
+      "kind": "paragraph",
+      "section": "The 6ND rule: training cost in one line"
+    },
+    {
+      "id": "ai_economics-block-5",
+      "quote": "Price your training run Pick a model size, a data budget, a GPU, and an MFU. Watch the FLOPs, hours, and dollars move.",
+      "kind": "paragraph",
+      "section": "The 6ND rule: training cost in one line"
+    },
+    {
+      "id": "ai_economics-block-6",
+      "quote": "GPU A100 (~312 TFLOP/s BF16) H100 (~495 TFLOP/s TF32) H100 BF16 (~989 TFLOP/s)",
+      "kind": "paragraph",
+      "section": "The 6ND rule: training cost in one line"
+    },
+    {
+      "id": "ai_economics-block-7",
+      "quote": "MFU % (default 40)",
+      "kind": "paragraph",
+      "section": "The 6ND rule: training cost in one line"
+    },
+    {
+      "id": "ai_economics-block-8",
+      "quote": "Inference cost per token: active parameters, not total",
+      "kind": "heading",
+      "section": "Inference cost per token: active parameters, not total"
+    },
+    {
+      "id": "ai_economics-block-9",
+      "quote": "Inference is a **forward pass only** — no backward — so the per-token cost equals one training step's forward pass, about **2 FLOPs per active parameter per token** (one third of the $6N$ used for a full training step):",
+      "kind": "paragraph",
+      "section": "Inference cost per token: active parameters, not total"
+    },
+    {
+      "id": "ai_economics-block-10",
+      "quote": "Price your tokens Enter a price per million tokens and a session's token count. Slide the cached fraction to see the effect of prompt caching on the bill.",
+      "kind": "paragraph",
+      "section": "Inference cost per token: active parameters, not total"
+    },
+    {
+      "id": "ai_economics-block-11",
+      "quote": "Tokens per session (millions) Cached fraction 60%",
+      "kind": "paragraph",
+      "section": "Inference cost per token: active parameters, not total"
+    },
+    {
+      "id": "ai_economics-block-12",
+      "quote": "Paying for it in practice",
+      "kind": "heading",
+      "section": "Paying for it in practice"
+    },
+    {
+      "id": "ai_economics-block-13",
+      "quote": "Why caching saves ~10×: the prefill is paid once",
+      "kind": "heading",
+      "section": "Why caching saves ~10×: the prefill is paid once"
+    },
+    {
+      "id": "ai_economics-block-14",
+      "quote": "The single most important serving cost-saver is **prompt caching**, and its arithmetic is the [prefill/decode split](inference_vs_training.php) you already met. The expensive part of a call is often the **prefill** — reading a long, *repeated* system prompt, tool definitions, or few-shot examples into context. Without caching, you pay the prefill FLOPs *every call*. With caching, the repeated prefix's keys and values are computed **once** and *reused*, so the second and later calls skip that prefill almost entirely.",
+      "kind": "paragraph",
+      "section": "Why caching saves ~10×: the prefill is paid once"
+    },
+    {
+      "id": "ai_economics-block-15",
+      "quote": "That is where the \"~10×\" comes from: when a call is dominated by a long, repeated prefix (say 4,000 tokens of system prompt) plus a short completion (say 400), uncached you pay for all 4,400 tokens' prefill+decode, but cached you pay mostly for the 400-token completion — roughly **one tenth** of the work per call. \\cite[Anthropic, Prompt caching]{promptcaching} is the production example: cached tokens are billed at a fraction of uncached ones, precisely because the prefill that would have been recomputed is not. The calculator above models this directly — slide the cached fraction and watch the bill fall by up to ~90% on the cached part.",
+      "kind": "paragraph",
+      "section": "Why caching saves ~10×: the prefill is paid once"
+    },
+    {
+      "id": "ai_economics-block-16",
+      "quote": "The deeper point: caching is not a trick, it is a consequence of the two regimes. **Prefill is compute-bound and pay-once-able; decode is memory-bound and per-step.** Anything you can make *pay-once* (a repeated prefix) you should cache, because you are moving cost out of the per-call path and into a one-time one.",
+      "kind": "paragraph",
+      "section": "Why caching saves ~10×: the prefill is paid once"
+    },
+    {
+      "id": "ai_economics-block-17",
+      "quote": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "kind": "heading",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost"
+    },
+    {
+      "id": "ai_economics-block-18",
+      "quote": "The last comparison is the one people get wrong. \"Run it locally\" and \"call the API\" are not the same cost shape:",
+      "kind": "paragraph",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost"
+    },
+    {
+      "id": "ai_economics-block-19",
+      "quote": "They cross at a **breakeven**: local is better when your *steady* token volume is high enough that the hardware cost is recovered within your horizon; the API is better when your volume is light, spiky, or private-data-light. And there is a third axis the arithmetic ignores — **privacy**: local keeps the data on the machine, which is sometimes worth the worse economics. This is the [Running locally](running_locally.php) and [Inference optimization](inference_optimization.php) decision, made into a number.",
+      "kind": "paragraph",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost"
+    },
+    {
+      "id": "ai_economics-block-20",
+      "quote": "> The economic layer is two numbers and one split. Training costs $6ND$; inference costs 2× active-params per token. Caching moves the pay-once prefill out of the per-call path; the active-vs-total gap is what sparsity buys; and fixed-versus-per-token is what \"local or API\" really means. None of it is about the technology being *worth* it — it is about the technology being *affordable*, which is a different question, and the one that decides what gets built.",
+      "kind": "paragraph",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost"
     }
   ]
 }

@@ -374,404 +374,1015 @@
       "quote": "each accelerator holds a different subset of experts, so a 671B model's weights spread over many chips.",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-1-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-1",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-2-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-2",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-1-before-mixture_of_experts-block-2",
+      "from": "mixture_of_experts-block-1",
+      "to": "mixture_of_experts-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-3-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-3",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-2-before-mixture_of_experts-block-3",
+      "from": "mixture_of_experts-block-2",
+      "to": "mixture_of_experts-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-4-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-4",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-3-before-mixture_of_experts-block-4",
+      "from": "mixture_of_experts-block-3",
+      "to": "mixture_of_experts-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-5-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-5",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-4-before-mixture_of_experts-block-5",
+      "from": "mixture_of_experts-block-4",
+      "to": "mixture_of_experts-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-6-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-6",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-5-before-mixture_of_experts-block-6",
+      "from": "mixture_of_experts-block-5",
+      "to": "mixture_of_experts-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-6-related_to-mixture_of_experts-block-5",
+      "from": "mixture_of_experts-block-6",
+      "to": "mixture_of_experts-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-7-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-7",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-6-before-mixture_of_experts-block-7",
+      "from": "mixture_of_experts-block-6",
+      "to": "mixture_of_experts-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-7-related_to-mixture_of_experts-block-5",
+      "from": "mixture_of_experts-block-7",
+      "to": "mixture_of_experts-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-8-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-8",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-7-before-mixture_of_experts-block-8",
+      "from": "mixture_of_experts-block-7",
+      "to": "mixture_of_experts-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-9-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-9",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-8-before-mixture_of_experts-block-9",
+      "from": "mixture_of_experts-block-8",
+      "to": "mixture_of_experts-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-9-related_to-mixture_of_experts-block-8",
+      "from": "mixture_of_experts-block-9",
+      "to": "mixture_of_experts-block-8",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-10-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-10",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-9-before-mixture_of_experts-block-10",
+      "from": "mixture_of_experts-block-9",
+      "to": "mixture_of_experts-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-10-related_to-mixture_of_experts-block-8",
+      "from": "mixture_of_experts-block-10",
+      "to": "mixture_of_experts-block-8",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-11-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-11",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-10-before-mixture_of_experts-block-11",
+      "from": "mixture_of_experts-block-10",
+      "to": "mixture_of_experts-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-12-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-12",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-11-before-mixture_of_experts-block-12",
+      "from": "mixture_of_experts-block-11",
+      "to": "mixture_of_experts-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-13-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-13",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-12-before-mixture_of_experts-block-13",
+      "from": "mixture_of_experts-block-12",
+      "to": "mixture_of_experts-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-14-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-14",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-13-before-mixture_of_experts-block-14",
+      "from": "mixture_of_experts-block-13",
+      "to": "mixture_of_experts-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-14-related_to-mixture_of_experts-block-13",
+      "from": "mixture_of_experts-block-14",
+      "to": "mixture_of_experts-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-15-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-15",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-14-before-mixture_of_experts-block-15",
+      "from": "mixture_of_experts-block-14",
+      "to": "mixture_of_experts-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-15-related_to-mixture_of_experts-block-13",
+      "from": "mixture_of_experts-block-15",
+      "to": "mixture_of_experts-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-16-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-16",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-15-before-mixture_of_experts-block-16",
+      "from": "mixture_of_experts-block-15",
+      "to": "mixture_of_experts-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-16-related_to-mixture_of_experts-block-13",
+      "from": "mixture_of_experts-block-16",
+      "to": "mixture_of_experts-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-17-part_of-mixture-of-experts",
+      "from": "mixture_of_experts-block-17",
+      "to": "mixture-of-experts",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-16-before-mixture_of_experts-block-17",
+      "from": "mixture_of_experts-block-16",
+      "to": "mixture_of_experts-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-block-17-related_to-mixture_of_experts-block-13",
+      "from": "mixture_of_experts-block-17",
+      "to": "mixture_of_experts-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-1-part_of-mixture_of_experts-block-1",
+      "from": "mixture_of_experts-stmt-1",
+      "to": "mixture_of_experts-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-2-part_of-mixture_of_experts-block-1",
+      "from": "mixture_of_experts-stmt-2",
+      "to": "mixture_of_experts-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-3-part_of-mixture_of_experts-block-1",
+      "from": "mixture_of_experts-stmt-3",
+      "to": "mixture_of_experts-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-4-part_of-mixture_of_experts-block-1",
+      "from": "mixture_of_experts-stmt-4",
+      "to": "mixture_of_experts-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-5-part_of-mixture_of_experts-block-1",
+      "from": "mixture_of_experts-stmt-5",
+      "to": "mixture_of_experts-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-6-part_of-mixture_of_experts-block-6",
+      "from": "mixture_of_experts-stmt-6",
+      "to": "mixture_of_experts-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-7-part_of-mixture_of_experts-block-6",
+      "from": "mixture_of_experts-stmt-7",
+      "to": "mixture_of_experts-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-8-part_of-mixture_of_experts-block-6",
+      "from": "mixture_of_experts-stmt-8",
+      "to": "mixture_of_experts-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-9-part_of-mixture_of_experts-block-7",
+      "from": "mixture_of_experts-stmt-9",
+      "to": "mixture_of_experts-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-10-part_of-mixture_of_experts-block-7",
+      "from": "mixture_of_experts-stmt-10",
+      "to": "mixture_of_experts-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-11-part_of-mixture_of_experts-block-9",
+      "from": "mixture_of_experts-stmt-11",
+      "to": "mixture_of_experts-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-12-part_of-mixture_of_experts-block-9",
+      "from": "mixture_of_experts-stmt-12",
+      "to": "mixture_of_experts-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-13-part_of-mixture_of_experts-block-9",
+      "from": "mixture_of_experts-stmt-13",
+      "to": "mixture_of_experts-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-14-part_of-mixture_of_experts-block-9",
+      "from": "mixture_of_experts-stmt-14",
+      "to": "mixture_of_experts-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-15-part_of-mixture_of_experts-block-10",
+      "from": "mixture_of_experts-stmt-15",
+      "to": "mixture_of_experts-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-16-part_of-mixture_of_experts-block-10",
+      "from": "mixture_of_experts-stmt-16",
+      "to": "mixture_of_experts-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-17-part_of-mixture_of_experts-block-10",
+      "from": "mixture_of_experts-stmt-17",
+      "to": "mixture_of_experts-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-18-part_of-mixture_of_experts-block-10",
+      "from": "mixture_of_experts-stmt-18",
+      "to": "mixture_of_experts-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-19-part_of-mixture_of_experts-block-14",
+      "from": "mixture_of_experts-stmt-19",
+      "to": "mixture_of_experts-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-20-part_of-mixture_of_experts-block-15",
+      "from": "mixture_of_experts-stmt-20",
+      "to": "mixture_of_experts-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-21-part_of-mixture_of_experts-block-15",
+      "from": "mixture_of_experts-stmt-21",
+      "to": "mixture_of_experts-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-22-part_of-mixture_of_experts-block-16",
+      "from": "mixture_of_experts-stmt-22",
+      "to": "mixture_of_experts-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-23-part_of-mixture_of_experts-block-16",
+      "from": "mixture_of_experts-stmt-23",
+      "to": "mixture_of_experts-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-24-part_of-mixture_of_experts-block-16",
+      "from": "mixture_of_experts-stmt-24",
+      "to": "mixture_of_experts-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-25-part_of-mixture_of_experts-block-16",
+      "from": "mixture_of_experts-stmt-25",
+      "to": "mixture_of_experts-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-26-part_of-mixture_of_experts-block-17",
+      "from": "mixture_of_experts-stmt-26",
+      "to": "mixture_of_experts-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-27-part_of-mixture_of_experts-block-17",
+      "from": "mixture_of_experts-stmt-27",
+      "to": "mixture_of_experts-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-28-part_of-mixture_of_experts-block-17",
+      "from": "mixture_of_experts-stmt-28",
+      "to": "mixture_of_experts-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mixture_of_experts-stmt-29-part_of-mixture_of_experts-block-17",
+      "from": "mixture_of_experts-stmt-29",
+      "to": "mixture_of_experts-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "mixture_of_experts-stmt-1",
       "quote": "The transformer you have been building all this chapter passes every token through every weight: one dense feed-forward block per layer, and that block is the bulk of the model's parameters.",
+      "block_id": "mixture_of_experts-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-2",
       "quote": "That means the model's **capacity** (how many parameters it stores) and its **compute per token** (how many it actually uses) are the same number — you cannot have one without the other.",
+      "block_id": "mixture_of_experts-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-3",
       "quote": "**Mixture of Experts (MoE)** breaks that lock.",
+      "block_id": "mixture_of_experts-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-4",
       "quote": "It lets a model *store* a very large number of parameters while *activating* only a small fraction for each token — so you get the knowledge of a 600-billion-parameter model at the speed and cost of a 30-billion one.",
+      "block_id": "mixture_of_experts-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-5",
       "quote": "By 2026 this is not a niche trick; it is how most frontier models are built (\\cite[Jiang et al., 2024]{mixtral2024}; \\cite[DeepSeek-V3, 2024]{deepseekv3tech2024}), and it is the single most important reason the \"size of a model\" question has quietly become two questions: *total* and *active*.",
+      "block_id": "mixture_of_experts-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-6",
-      "quote": "Recall the per-layer structure from [The Transformer](transformer.php): an attention block, then a feed-forward (FFN) block.",
-      "section": "The core idea: swap the FFN for a bank of routed experts",
+      "quote": "GShard (\\cite[Lepikhin et al., 2021]{lepikhin2021gshard}; arXiv 2020) is the bridge between the 2017 layer and the trillion-parameter runs.",
+      "block_id": "mixture_of_experts-block-6",
+      "section": "Load balancing: why the experts would otherwise collapse",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-7",
-      "quote": "The FFN is where most parameters live — roughly two of the three parameters in a layer sit in it.",
-      "section": "The core idea: swap the FFN for a bank of routed experts",
+      "quote": "It scaled a sparse MoE to 600 billion parameters for multilingual translation, used top-2 gating with a hard **expert capacity** — a limit on how many tokens each expert may accept — and added random routing during training so that even lightly scored experts receive gradient.",
+      "block_id": "mixture_of_experts-block-6",
+      "section": "Load balancing: why the experts would otherwise collapse",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-8",
-      "quote": "The MoE idea goes back to Jacobs et al. (\\cite[Jacobs et al., 1991]{jacobs1991moe}) and Jordan and Jacobs (\\cite[Jordan and Jacobs, 1993]{jordan1993hme}; journal version 1994); the sparse, top-$k$ version that made it practical at scale (\\cite[Shazeer et al., 2017]{shazeer2017moe}) replaces that single FFN with a **bank of $E$ experts** — a set of smaller FFNs — plus a tiny **router** (a.k.a.",
-      "section": "The core idea: swap the FFN for a bank of routed experts",
+      "quote": "Just as importantly, it introduced automatic sharding, which lets the experts live on different devices and turns expert parallelism into a compiler problem rather than a hand-built one.",
+      "block_id": "mixture_of_experts-block-6",
+      "section": "Load balancing: why the experts would otherwise collapse",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-9",
-      "quote": "the gating network) that decides, for each token, which experts to use.",
-      "section": "The core idea: swap the FFN for a bank of routed experts",
+      "quote": "> The load-balancing loss is the reason a MoE does not secretly become a dense model.",
+      "block_id": "mixture_of_experts-block-7",
+      "section": "Load balancing: why the experts would otherwise collapse",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-10",
-      "quote": "The idea is older than the transformer.",
-      "section": "The core idea: swap the FFN for a bank of routed experts",
+      "quote": "Without it, the router is a greedy allocator that hoards all traffic onto the two or three experts that got ahead first, and the extra capacity you paid for goes unused.",
+      "block_id": "mixture_of_experts-block-7",
+      "section": "Load balancing: why the experts would otherwise collapse",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-11",
-      "quote": "Jacobs, Jordan, Nowlan and Hinton introduced adaptive mixtures of local experts in 1991: several small networks compete through a gating network, and the gate learns which expert should own which region of input space (\\cite[Jacobs et al., 1991]{jacobs1991moe}).",
-      "section": "The core idea: swap the FFN for a bank of routed experts",
+      "quote": "A cleaner decomposition arrived with DeepSeekMoE (\\cite[DeepSeekMoE, 2024]{deepseekmoe2024}) and was carried into DeepSeek-V3 (\\cite[DeepSeek-V3, 2024]{deepseekv3tech2024}); the design is now the reference.",
+      "block_id": "mixture_of_experts-block-9",
+      "section": "Shared experts: the part everyone needs, plus the part each token picks",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-12",
-      "quote": "Jordan and Jacobs then made the gate itself hierarchical and trained the whole tree with expectation–maximization (\\cite[Jordan and Jacobs, 1993]{jordan1993hme}; journal version 1994), so that experts could specialize at several scales.",
-      "section": "The core idea: swap the FFN for a bank of routed experts",
+      "quote": "The first is a **shared expert**: one expert is *dense* — every token goes through it — while the remaining experts are *sparse* — routed as usual.",
+      "block_id": "mixture_of_experts-block-9",
+      "section": "Shared experts: the part everyone needs, plus the part each token picks",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-13",
-      "quote": "The modern top-$k$ router is a sparse, gradient-trained descendant of that competitive gate.",
-      "section": "The core idea: swap the FFN for a bank of routed experts",
+      "quote": "The shared expert holds the knowledge that *every* token needs (syntax, general language form), and the routed experts hold the *specialized* knowledge (a domain, a rare pattern).",
+      "block_id": "mixture_of_experts-block-9",
+      "section": "Shared experts: the part everyone needs, plus the part each token picks",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-14",
-      "quote": "Given a token's hidden state $h$, the router computes a score for each expert and the model keeps only the **top-$k$** (often $k=1$ or $k=2$):",
-      "section": "The core idea: swap the FFN for a bank of routed experts",
+      "quote": "It is a clean split: \"what everyone shares\" + \"what this token picks.\" The second idea, **auxiliary-loss-free balancing**, replaces the fixed aux penalty with a *dynamic* router whose bias grows for under-used experts and shrinks for over-used ones, so the routing self-corrects during training rather than being tugged by a separate term — reported to give a stable run at 671 billion parameters with no irrecoverable loss spikes \\cite[DeepSeek-V3 (2024)]{deepseekv3tech2024}.",
+      "block_id": "mixture_of_experts-block-9",
+      "section": "Shared experts: the part everyone needs, plus the part each token picks",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-15",
-      "quote": "The router (a small linear layer) scores all $E$ experts and the token is computed only by the $k$ it selects — here two of four.",
-      "section": "The core idea: swap the FFN for a bank of routed experts",
+      "quote": "DeepSeekMoE made the expert bank finer and split off the part every token needs.",
+      "block_id": "mixture_of_experts-block-10",
+      "section": "Shared experts: the part everyone needs, plus the part each token picks",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-16",
-      "quote": "The idle experts cost memory, not compute, for this token.",
-      "section": "The core idea: swap the FFN for a bank of routed experts",
+      "quote": "It segments each expert into smaller pieces, so a token can combine several narrow specialists instead of one broad FFN, and it isolates a **shared expert** that every token passes through (\\cite[DeepSeekMoE, 2024]{deepseekmoe2024}).",
+      "block_id": "mixture_of_experts-block-10",
+      "section": "Shared experts: the part everyone needs, plus the part each token picks",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-17",
-      "quote": "The router looks trivial — in the original it is a linear projection to $E$ scores plus a learned noise branch — but its *behavior* is the whole story.",
-      "section": "Routing: a learned sparse switch",
+      "quote": "The shared expert carries common syntax and language structure; the routed experts are free to specialize.",
+      "block_id": "mixture_of_experts-block-10",
+      "section": "Shared experts: the part everyone needs, plus the part each token picks",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-18",
-      "quote": "In the standard **top-$k$** form, the router computes a softmax over the $E$ experts, keeps the $k$ largest, and renormalizes those $k$ to sum to one; the token's output is the weighted sum of those $k$ experts' outputs.",
-      "section": "Routing: a learned sparse switch",
+      "quote": "DeepSeek-V3 keeps this design and adds auxiliary-loss-free balancing, where a per-expert bias — not an extra loss term — is adjusted during training to keep the load even (\\cite[Wang et al., 2024]{wang2024auxfree}).",
+      "block_id": "mixture_of_experts-block-10",
+      "section": "Shared experts: the part everyone needs, plus the part each token picks",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-19",
-      "quote": "The router is trained *end-to-end* with the rest of the model, so it learns to send \"this kind of token\" to the experts that are good at it.",
-      "section": "Routing: a learned sparse switch",
+      "quote": "Two open models made MoE concrete, and their numbers make the point:",
+      "block_id": "mixture_of_experts-block-14",
+      "section": "The payoff for the economics: total vs active",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-20",
-      "quote": "In practice specialization is weaker and more local than the slogan suggests: experts often divide tokens by position, syntax, or surface form rather than by clean domains, and the router's choices are only loosely interpretable (\\cite[Xue et al., 2024]{xue2024openmoe}).",
-      "section": "Routing: a learned sparse switch",
+      "quote": "\"Active\" is the number that governs inference cost and per-step training time; \"total\" is the number that governs memory (you must *load* every expert, even the idle ones, because you do not know which one the next token will need).",
+      "block_id": "mixture_of_experts-block-15",
+      "section": "The payoff for the economics: total vs active",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-21",
-      "quote": "The model can therefore afford to be *bad at most things* in any one expert, because each expert only ever sees the slice of tokens that gets routed to it.",
-      "section": "Routing: a learned sparse switch",
+      "quote": "The gap between the two — 47B vs 13B, 671B vs 37B — is the MoE dividend: you pay storage for all of them and compute for a fraction.",
+      "block_id": "mixture_of_experts-block-15",
+      "section": "The payoff for the economics: total vs active",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-22",
-      "quote": "A later refinement, used in DeepSeek-V3 (\\cite[DeepSeek-V3, 2024]{deepseekv3tech2024}), replaces the softmax-over-all-experts with a **sigmoid** gate: each expert is scored independently, the top-$k$ are chosen, and the selection is not noised; instead a per-expert bias is adjusted during training to keep the load even (\\cite[Wang et al., 2024]{wang2024auxfree}).",
-      "section": "Routing: a learned sparse switch",
+      "quote": "Mixtral made the arithmetic public.",
+      "block_id": "mixture_of_experts-block-16",
+      "section": "The payoff for the economics: total vs active",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-23",
-      "quote": "The difference is subtle but it matters at scale: the sigmoid variant keeps every expert *reachable* for any token, which is exactly what you want when $E$ is in the hundreds.",
-      "section": "Routing: a learned sparse switch",
+      "quote": "Each layer has eight experts and routes each token to two of them, so the model stores 47 billion parameters but computes with about 13 billion per token (\\cite[Jiang et al., 2024]{mixtral2024}).",
+      "block_id": "mixture_of_experts-block-16",
+      "section": "The payoff for the economics: total vs active",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-24",
-      "quote": "The deeper point is that routing is a **learned sparse switch**: the model is no longer one function but a family of them, and the router is the part that picks which family member to run — a decision that is itself learned, not designed.",
-      "section": "Routing: a learned sparse switch",
+      "quote": "The saving is real but narrower than the name suggests: every expert must still be resident in memory, and the all-to-all that gathers a token's two experts is a latency cost a dense model does not pay.",
+      "block_id": "mixture_of_experts-block-16",
+      "section": "The payoff for the economics: total vs active",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-25",
-      "quote": "Shazeer's layer is more than a linear gate.",
-      "section": "Routing: a learned sparse switch",
+      "quote": "Mixtral's routing analysis also found no clean domain split — the gate follows surface and positional patterns more than topics — which is the empirical corrective to the \"grammar expert, code expert\" story.",
+      "block_id": "mixture_of_experts-block-16",
+      "section": "The payoff for the economics: total vs active",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-26",
-      "quote": "The original router adds Gaussian noise to the logits before the top-$k$ selection (\\cite[Shazeer et al., 2017]{shazeer2017moe}), which keeps early training from committing to one expert, and it trains under two pressures: the task loss and an auxiliary loss that penalizes both uneven *importance* (the sum of gate probabilities) and uneven *load* (the number of tokens dispatched).",
-      "section": "Routing: a learned sparse switch",
+      "quote": "This is exactly the knob the later chapters turn.",
+      "block_id": "mixture_of_experts-block-17",
+      "section": "The payoff for the economics: total vs active",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-27",
-      "quote": "The top-$k$ itself is non-differentiable, so gradients reach the router only through the selected gate values; the auxiliary terms are what keep that sparse signal from collapsing onto a few experts.",
-      "section": "Routing: a learned sparse switch",
+      "quote": "The [economic layer](ai_economics) prices a model by its *active* parameters per token, and [Inference vs Training](inference_vs_training.php) shows why the serving cost follows the cache and the active compute, not the total weights.",
+      "block_id": "mixture_of_experts-block-17",
+      "section": "The payoff for the economics: total vs active",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-28",
-      "quote": "Here is the failure mode that a MoE must fight, and the reason a whole class of training machinery exists.",
-      "section": "Load balancing: why the experts would otherwise collapse",
+      "quote": "MoE is the cleanest example in this course of a **displaced prerequisite**: the \"which part of the machine handles this\" question was solved long ago, in the brain (different neurons fire for different inputs) and in the switchboard of a telephone exchange.",
+      "block_id": "mixture_of_experts-block-17",
+      "section": "The payoff for the economics: total vs active",
       "kind": "statement"
     },
     {
       "id": "mixture_of_experts-stmt-29",
-      "quote": "A router left to itself **collapses**.",
-      "section": "Load balancing: why the experts would otherwise collapse",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-30",
-      "quote": "Because routing a token to a single expert is \"cheaper\" in gradient terms than splitting it across several, an unbalanced router drifts until a few experts grab *almost all* the traffic and the rest starve.",
-      "section": "Load balancing: why the experts would otherwise collapse",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-31",
-      "quote": "The model's effective capacity then silently shrinks back toward a dense model — you built $E$ experts and the router quietly uses two.",
-      "section": "Load balancing: why the experts would otherwise collapse",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-32",
-      "quote": "GShard (\\cite[Lepikhin et al., 2021]{lepikhin2021gshard}; arXiv 2020) is the bridge between the 2017 layer and the trillion-parameter runs.",
-      "section": "Load balancing: why the experts would otherwise collapse",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-33",
-      "quote": "It scaled a sparse MoE to 600 billion parameters for multilingual translation, used top-2 gating with a hard **expert capacity** — a limit on how many tokens each expert may accept — and added random routing during training so that even lightly scored experts receive gradient.",
-      "section": "Load balancing: why the experts would otherwise collapse",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-34",
-      "quote": "Just as importantly, it introduced automatic sharding, which lets the experts live on different devices and turns expert parallelism into a compiler problem rather than a hand-built one.",
-      "section": "Load balancing: why the experts would otherwise collapse",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-35",
-      "quote": "Switch Transformers (\\cite[Fedus et al., 2022]{switchtransformers2022}) made the sparse layer simple enough to scale to a trillion parameters.",
-      "section": "Load balancing: why the experts would otherwise collapse",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-36",
-      "quote": "Its signature change was **top-1 routing** — a single expert per token — which is simpler and faster than top-2 and is enough *if* the experts stay balanced.",
-      "section": "Load balancing: why the experts would otherwise collapse",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-37",
-      "quote": "The **load-balancing auxiliary loss** it relies on goes back to Shazeer et al. (\\cite[Shazeer et al., 2017]{shazeer2017moe}), and Switch keeps it to punish collapse.",
-      "section": "Load balancing: why the experts would otherwise collapse",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-38",
-      "quote": "Let $f_i$ be the fraction of tokens that *select* expert $i$ as a top expert, and let $P_i$ be the mean router *probability* assigned to expert $i$.",
-      "section": "Load balancing: why the experts would otherwise collapse",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-39",
-      "quote": "A cleaner decomposition arrived with DeepSeekMoE (\\cite[DeepSeekMoE, 2024]{deepseekmoe2024}) and was carried into DeepSeek-V3 (\\cite[DeepSeek-V3, 2024]{deepseekv3tech2024}); the design is now the reference.",
-      "section": "Shared experts: the part everyone needs, plus the part each token picks",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-40",
-      "quote": "The first is a **shared expert**: one expert is *dense* — every token goes through it — while the remaining experts are *sparse* — routed as usual.",
-      "section": "Shared experts: the part everyone needs, plus the part each token picks",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-41",
-      "quote": "The shared expert holds the knowledge that *every* token needs (syntax, general language form), and the routed experts hold the *specialized* knowledge (a domain, a rare pattern).",
-      "section": "Shared experts: the part everyone needs, plus the part each token picks",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-42",
-      "quote": "It is a clean split: \"what everyone shares\" + \"what this token picks.\" The second idea, **auxiliary-loss-free balancing**, replaces the fixed aux penalty with a *dynamic* router whose bias grows for under-used experts and shrinks for over-used ones, so the routing self-corrects during training rather than being tugged by a separate term — reported to give a stable run at 671 billion parameters with no irrecoverable loss spikes \\cite[DeepSeek-V3 (2024)]{deepseekv3tech2024}.",
-      "section": "Shared experts: the part everyone needs, plus the part each token picks",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-43",
-      "quote": "DeepSeekMoE made the expert bank finer and split off the part every token needs.",
-      "section": "Shared experts: the part everyone needs, plus the part each token picks",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-44",
-      "quote": "It segments each expert into smaller pieces, so a token can combine several narrow specialists instead of one broad FFN, and it isolates a **shared expert** that every token passes through (\\cite[DeepSeekMoE, 2024]{deepseekmoe2024}).",
-      "section": "Shared experts: the part everyone needs, plus the part each token picks",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-45",
-      "quote": "The shared expert carries common syntax and language structure; the routed experts are free to specialize.",
-      "section": "Shared experts: the part everyone needs, plus the part each token picks",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-46",
-      "quote": "DeepSeek-V3 keeps this design and adds auxiliary-loss-free balancing, where a per-expert bias — not an extra loss term — is adjusted during training to keep the load even (\\cite[Wang et al., 2024]{wang2024auxfree}).",
-      "section": "Shared experts: the part everyone needs, plus the part each token picks",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-47",
-      "quote": "If experts are the point, the engineering question is *where they sit*.",
-      "section": "Expert parallelism: where the experts live",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-48",
-      "quote": "In **expert parallelism** the $E$ experts are **sharded across devices**: each accelerator holds a different subset of experts, so a 671B model's weights spread over many chips.",
-      "section": "Expert parallelism: where the experts live",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-49",
-      "quote": "For a given token, the system routes to the devices that hold its $k$ experts, gathers their outputs, and scatters the next token — an **all-to-all** communication pattern in both directions.",
-      "section": "Expert parallelism: where the experts live",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-50",
-      "quote": "This is why MoE is famously cheap to *train* per active parameter but awkward to *serve*: the all-to-all is a synchronous, latency-sensitive step, and a request can only move on once every device holding one of its experts has answered.",
-      "section": "Expert parallelism: where the experts live",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-51",
-      "quote": "The training side of this is [Training Infrastructure](training_infrastructure.php); the serving side is [Inference vs Training](inference_vs_training.php).",
-      "section": "Expert parallelism: where the experts live",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-52",
-      "quote": "The conceptual point is that *routing* (which expert) and *parallelism* (which device) are separate decisions that compose — the router decides the logic, the parallelism decides the physics.",
-      "section": "Expert parallelism: where the experts live",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-53",
-      "quote": "Two open models made MoE concrete, and their numbers make the point:",
-      "section": "The payoff for the economics: total vs active",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-54",
-      "quote": "* **Mixtral 8x7B** (\\cite[Jiang et al., 2024]{mixtral2024}) — eight experts per layer, top-2.",
-      "section": "The payoff for the economics: total vs active",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-55",
-      "quote": "**47B total** parameters, only **13B active** per token; despite the name, each expert is not a 7B model.",
-      "section": "The payoff for the economics: total vs active",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-56",
-      "quote": "* **DeepSeek-V3** (\\cite[DeepSeek-V3 (2024)]{deepseekv3tech2024}) — **671B total**, **37B active** per token, with the shared-expert + dynamic-routing design above.",
-      "section": "The payoff for the economics: total vs active",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-57",
-      "quote": "\"Active\" is the number that governs inference cost and per-step training time; \"total\" is the number that governs memory (you must *load* every expert, even the idle ones, because you do not know which one the next token will need).",
-      "section": "The payoff for the economics: total vs active",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-58",
-      "quote": "The gap between the two — 47B vs 13B, 671B vs 37B — is the MoE dividend: you pay storage for all of them and compute for a fraction.",
-      "section": "The payoff for the economics: total vs active",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-59",
-      "quote": "Mixtral made the arithmetic public.",
-      "section": "The payoff for the economics: total vs active",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-60",
-      "quote": "Each layer has eight experts and routes each token to two of them, so the model stores 47 billion parameters but computes with about 13 billion per token (\\cite[Jiang et al., 2024]{mixtral2024}).",
-      "section": "The payoff for the economics: total vs active",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-61",
-      "quote": "The saving is real but narrower than the name suggests: every expert must still be resident in memory, and the all-to-all that gathers a token's two experts is a latency cost a dense model does not pay.",
-      "section": "The payoff for the economics: total vs active",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-62",
-      "quote": "Mixtral's routing analysis also found no clean domain split — the gate follows surface and positional patterns more than topics — which is the empirical corrective to the \"grammar expert, code expert\" story.",
-      "section": "The payoff for the economics: total vs active",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-63",
-      "quote": "This is exactly the knob the later chapters turn.",
-      "section": "The payoff for the economics: total vs active",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-64",
-      "quote": "The [economic layer](ai_economics) prices a model by its *active* parameters per token, and [Inference vs Training](inference_vs_training.php) shows why the serving cost follows the cache and the active compute, not the total weights.",
-      "section": "The payoff for the economics: total vs active",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-65",
-      "quote": "MoE is the cleanest example in this course of a **displaced prerequisite**: the \"which part of the machine handles this\" question was solved long ago, in the brain (different neurons fire for different inputs) and in the switchboard of a telephone exchange.",
-      "section": "The payoff for the economics: total vs active",
-      "kind": "statement"
-    },
-    {
-      "id": "mixture_of_experts-stmt-66",
       "quote": "The transformer did not invent sparsity; it finally made a *learned router* of it.",
+      "block_id": "mixture_of_experts-block-17",
       "section": "The payoff for the economics: total vs active",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "mixture_of_experts-block-1",
+      "quote": "The transformer you have been building all this chapter passes every token through every weight: one dense feed-forward block per layer, and that block is the bulk of the model's parameters. That means the model's **capacity** (how many parameters it stores) and its **compute per token** (how many it actually uses) are the same number — you cannot have one without the other. **Mixture of Experts (MoE)** breaks that lock. It lets a model *store* a very large number of parameters while *activating* only a small fraction for each token — so you get the knowledge of a 600-billion-parameter model at the speed and cost of a 30-billion one. By 2026 this is not a niche trick; it is how most frontier models are built (\\cite[Jiang et al., 2024]{mixtral2024}; \\cite[DeepSeek-V3, 2024]{deepseekv3tech2024}), and it is the single most important reason the \"size of a model\" question has quietly become two questions: *total* and *active*.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "mixture_of_experts-block-2",
+      "quote": "The architecture",
+      "kind": "heading",
+      "section": "The architecture"
+    },
+    {
+      "id": "mixture_of_experts-block-3",
+      "quote": "The core idea: swap the FFN for a bank of routed experts",
+      "kind": "heading",
+      "section": "The core idea: swap the FFN for a bank of routed experts"
+    },
+    {
+      "id": "mixture_of_experts-block-4",
+      "quote": "Routing: a learned sparse switch",
+      "kind": "heading",
+      "section": "Routing: a learned sparse switch"
+    },
+    {
+      "id": "mixture_of_experts-block-5",
+      "quote": "Load balancing: why the experts would otherwise collapse",
+      "kind": "heading",
+      "section": "Load balancing: why the experts would otherwise collapse"
+    },
+    {
+      "id": "mixture_of_experts-block-6",
+      "quote": "GShard (\\cite[Lepikhin et al., 2021]{lepikhin2021gshard}; arXiv 2020) is the bridge between the 2017 layer and the trillion-parameter runs. It scaled a sparse MoE to 600 billion parameters for multilingual translation, used top-2 gating with a hard **expert capacity** — a limit on how many tokens each expert may accept — and added random routing during training so that even lightly scored experts receive gradient. Just as importantly, it introduced automatic sharding, which lets the experts live on different devices and turns expert parallelism into a compiler problem rather than a hand-built one.",
+      "kind": "paragraph",
+      "section": "Load balancing: why the experts would otherwise collapse"
+    },
+    {
+      "id": "mixture_of_experts-block-7",
+      "quote": "> The load-balancing loss is the reason a MoE does not secretly become a dense model. Without it, the router is a greedy allocator that hoards all traffic onto the two or three experts that got ahead first, and the extra capacity you paid for goes unused.",
+      "kind": "paragraph",
+      "section": "Load balancing: why the experts would otherwise collapse"
+    },
+    {
+      "id": "mixture_of_experts-block-8",
+      "quote": "Shared experts: the part everyone needs, plus the part each token picks",
+      "kind": "heading",
+      "section": "Shared experts: the part everyone needs, plus the part each token picks"
+    },
+    {
+      "id": "mixture_of_experts-block-9",
+      "quote": "A cleaner decomposition arrived with DeepSeekMoE (\\cite[DeepSeekMoE, 2024]{deepseekmoe2024}) and was carried into DeepSeek-V3 (\\cite[DeepSeek-V3, 2024]{deepseekv3tech2024}); the design is now the reference. The first is a **shared expert**: one expert is *dense* — every token goes through it — while the remaining experts are *sparse* — routed as usual. The shared expert holds the knowledge that *every* token needs (syntax, general language form), and the routed experts hold the *specialized* knowledge (a domain, a rare pattern). It is a clean split: \"what everyone shares\" + \"what this token picks.\" The second idea, **auxiliary-loss-free balancing**, replaces the fixed aux penalty with a *dynamic* router whose bias grows for under-used experts and shrinks for over-used ones, so the routing self-corrects during training rather than being tugged by a separate term — reported to give a stable run at 671 billion parameters with no irrecoverable loss spikes \\cite[DeepSeek-V3 (2024)]{deepseekv3tech2024}.",
+      "kind": "paragraph",
+      "section": "Shared experts: the part everyone needs, plus the part each token picks"
+    },
+    {
+      "id": "mixture_of_experts-block-10",
+      "quote": "DeepSeekMoE made the expert bank finer and split off the part every token needs. It segments each expert into smaller pieces, so a token can combine several narrow specialists instead of one broad FFN, and it isolates a **shared expert** that every token passes through (\\cite[DeepSeekMoE, 2024]{deepseekmoe2024}). The shared expert carries common syntax and language structure; the routed experts are free to specialize. DeepSeek-V3 keeps this design and adds auxiliary-loss-free balancing, where a per-expert bias — not an extra loss term — is adjusted during training to keep the load even (\\cite[Wang et al., 2024]{wang2024auxfree}).",
+      "kind": "paragraph",
+      "section": "Shared experts: the part everyone needs, plus the part each token picks"
+    },
+    {
+      "id": "mixture_of_experts-block-11",
+      "quote": "Systems and economics",
+      "kind": "heading",
+      "section": "Systems and economics"
+    },
+    {
+      "id": "mixture_of_experts-block-12",
+      "quote": "Expert parallelism: where the experts live",
+      "kind": "heading",
+      "section": "Expert parallelism: where the experts live"
+    },
+    {
+      "id": "mixture_of_experts-block-13",
+      "quote": "The payoff for the economics: total vs active",
+      "kind": "heading",
+      "section": "The payoff for the economics: total vs active"
+    },
+    {
+      "id": "mixture_of_experts-block-14",
+      "quote": "Two open models made MoE concrete, and their numbers make the point:",
+      "kind": "paragraph",
+      "section": "The payoff for the economics: total vs active"
+    },
+    {
+      "id": "mixture_of_experts-block-15",
+      "quote": "\"Active\" is the number that governs inference cost and per-step training time; \"total\" is the number that governs memory (you must *load* every expert, even the idle ones, because you do not know which one the next token will need). The gap between the two — 47B vs 13B, 671B vs 37B — is the MoE dividend: you pay storage for all of them and compute for a fraction.",
+      "kind": "paragraph",
+      "section": "The payoff for the economics: total vs active"
+    },
+    {
+      "id": "mixture_of_experts-block-16",
+      "quote": "Mixtral made the arithmetic public. Each layer has eight experts and routes each token to two of them, so the model stores 47 billion parameters but computes with about 13 billion per token (\\cite[Jiang et al., 2024]{mixtral2024}). The saving is real but narrower than the name suggests: every expert must still be resident in memory, and the all-to-all that gathers a token's two experts is a latency cost a dense model does not pay. Mixtral's routing analysis also found no clean domain split — the gate follows surface and positional patterns more than topics — which is the empirical corrective to the \"grammar expert, code expert\" story.",
+      "kind": "paragraph",
+      "section": "The payoff for the economics: total vs active"
+    },
+    {
+      "id": "mixture_of_experts-block-17",
+      "quote": "This is exactly the knob the later chapters turn. The [economic layer](ai_economics) prices a model by its *active* parameters per token, and [Inference vs Training](inference_vs_training.php) shows why the serving cost follows the cache and the active compute, not the total weights. MoE is the cleanest example in this course of a **displaced prerequisite**: the \"which part of the machine handles this\" question was solved long ago, in the brain (different neurons fire for different inputs) and in the switchboard of a telephone exchange. The transformer did not invent sparsity; it finally made a *learned router* of it.",
+      "kind": "paragraph",
+      "section": "The payoff for the economics: total vs active"
     }
   ]
 }

@@ -504,452 +504,2406 @@
         "bahdanau2014"
       ],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-1-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-1",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-2-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-2",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-1-before-recurrent_networks-block-2",
+      "from": "recurrent_networks-block-1",
+      "to": "recurrent_networks-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-3-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-3",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-2-before-recurrent_networks-block-3",
+      "from": "recurrent_networks-block-2",
+      "to": "recurrent_networks-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-3-related_to-recurrent_networks-block-2",
+      "from": "recurrent_networks-block-3",
+      "to": "recurrent_networks-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-4-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-4",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-3-before-recurrent_networks-block-4",
+      "from": "recurrent_networks-block-3",
+      "to": "recurrent_networks-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-4-related_to-recurrent_networks-block-2",
+      "from": "recurrent_networks-block-4",
+      "to": "recurrent_networks-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-5-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-5",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-4-before-recurrent_networks-block-5",
+      "from": "recurrent_networks-block-4",
+      "to": "recurrent_networks-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-5-related_to-recurrent_networks-block-2",
+      "from": "recurrent_networks-block-5",
+      "to": "recurrent_networks-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-6-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-6",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-5-before-recurrent_networks-block-6",
+      "from": "recurrent_networks-block-5",
+      "to": "recurrent_networks-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-6-related_to-recurrent_networks-block-2",
+      "from": "recurrent_networks-block-6",
+      "to": "recurrent_networks-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-7-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-7",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-6-before-recurrent_networks-block-7",
+      "from": "recurrent_networks-block-6",
+      "to": "recurrent_networks-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-8-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-8",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-7-before-recurrent_networks-block-8",
+      "from": "recurrent_networks-block-7",
+      "to": "recurrent_networks-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-8-related_to-recurrent_networks-block-7",
+      "from": "recurrent_networks-block-8",
+      "to": "recurrent_networks-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-9-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-9",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-8-before-recurrent_networks-block-9",
+      "from": "recurrent_networks-block-8",
+      "to": "recurrent_networks-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-9-related_to-recurrent_networks-block-7",
+      "from": "recurrent_networks-block-9",
+      "to": "recurrent_networks-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-10-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-10",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-9-before-recurrent_networks-block-10",
+      "from": "recurrent_networks-block-9",
+      "to": "recurrent_networks-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-10-related_to-recurrent_networks-block-7",
+      "from": "recurrent_networks-block-10",
+      "to": "recurrent_networks-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-11-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-11",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-10-before-recurrent_networks-block-11",
+      "from": "recurrent_networks-block-10",
+      "to": "recurrent_networks-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-11-related_to-recurrent_networks-block-7",
+      "from": "recurrent_networks-block-11",
+      "to": "recurrent_networks-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-12-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-12",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-11-before-recurrent_networks-block-12",
+      "from": "recurrent_networks-block-11",
+      "to": "recurrent_networks-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-13-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-13",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-12-before-recurrent_networks-block-13",
+      "from": "recurrent_networks-block-12",
+      "to": "recurrent_networks-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-14-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-14",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-13-before-recurrent_networks-block-14",
+      "from": "recurrent_networks-block-13",
+      "to": "recurrent_networks-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-14-related_to-recurrent_networks-block-13",
+      "from": "recurrent_networks-block-14",
+      "to": "recurrent_networks-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-15-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-15",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-14-before-recurrent_networks-block-15",
+      "from": "recurrent_networks-block-14",
+      "to": "recurrent_networks-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-15-related_to-recurrent_networks-block-13",
+      "from": "recurrent_networks-block-15",
+      "to": "recurrent_networks-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-16-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-16",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-15-before-recurrent_networks-block-16",
+      "from": "recurrent_networks-block-15",
+      "to": "recurrent_networks-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-16-related_to-recurrent_networks-block-13",
+      "from": "recurrent_networks-block-16",
+      "to": "recurrent_networks-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-17-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-17",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-16-before-recurrent_networks-block-17",
+      "from": "recurrent_networks-block-16",
+      "to": "recurrent_networks-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-17-related_to-recurrent_networks-block-13",
+      "from": "recurrent_networks-block-17",
+      "to": "recurrent_networks-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-18-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-18",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-17-before-recurrent_networks-block-18",
+      "from": "recurrent_networks-block-17",
+      "to": "recurrent_networks-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-18-related_to-recurrent_networks-block-13",
+      "from": "recurrent_networks-block-18",
+      "to": "recurrent_networks-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-19-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-19",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-18-before-recurrent_networks-block-19",
+      "from": "recurrent_networks-block-18",
+      "to": "recurrent_networks-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-20-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-20",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-19-before-recurrent_networks-block-20",
+      "from": "recurrent_networks-block-19",
+      "to": "recurrent_networks-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-20-related_to-recurrent_networks-block-19",
+      "from": "recurrent_networks-block-20",
+      "to": "recurrent_networks-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-21-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-21",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-20-before-recurrent_networks-block-21",
+      "from": "recurrent_networks-block-20",
+      "to": "recurrent_networks-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-21-related_to-recurrent_networks-block-19",
+      "from": "recurrent_networks-block-21",
+      "to": "recurrent_networks-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-22-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-22",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-21-before-recurrent_networks-block-22",
+      "from": "recurrent_networks-block-21",
+      "to": "recurrent_networks-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-22-related_to-recurrent_networks-block-19",
+      "from": "recurrent_networks-block-22",
+      "to": "recurrent_networks-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-23-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-23",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-22-before-recurrent_networks-block-23",
+      "from": "recurrent_networks-block-22",
+      "to": "recurrent_networks-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-23-related_to-recurrent_networks-block-19",
+      "from": "recurrent_networks-block-23",
+      "to": "recurrent_networks-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-24-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-24",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-23-before-recurrent_networks-block-24",
+      "from": "recurrent_networks-block-23",
+      "to": "recurrent_networks-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-24-related_to-recurrent_networks-block-19",
+      "from": "recurrent_networks-block-24",
+      "to": "recurrent_networks-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-25-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-25",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-24-before-recurrent_networks-block-25",
+      "from": "recurrent_networks-block-24",
+      "to": "recurrent_networks-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-25-related_to-recurrent_networks-block-19",
+      "from": "recurrent_networks-block-25",
+      "to": "recurrent_networks-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-26-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-26",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-25-before-recurrent_networks-block-26",
+      "from": "recurrent_networks-block-25",
+      "to": "recurrent_networks-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-26-related_to-recurrent_networks-block-19",
+      "from": "recurrent_networks-block-26",
+      "to": "recurrent_networks-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-27-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-27",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-26-before-recurrent_networks-block-27",
+      "from": "recurrent_networks-block-26",
+      "to": "recurrent_networks-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-28-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-28",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-27-before-recurrent_networks-block-28",
+      "from": "recurrent_networks-block-27",
+      "to": "recurrent_networks-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-28-related_to-recurrent_networks-block-27",
+      "from": "recurrent_networks-block-28",
+      "to": "recurrent_networks-block-27",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-29-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-29",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-28-before-recurrent_networks-block-29",
+      "from": "recurrent_networks-block-28",
+      "to": "recurrent_networks-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-29-related_to-recurrent_networks-block-27",
+      "from": "recurrent_networks-block-29",
+      "to": "recurrent_networks-block-27",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-30-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-30",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-29-before-recurrent_networks-block-30",
+      "from": "recurrent_networks-block-29",
+      "to": "recurrent_networks-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-30-related_to-recurrent_networks-block-27",
+      "from": "recurrent_networks-block-30",
+      "to": "recurrent_networks-block-27",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-31-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-31",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-30-before-recurrent_networks-block-31",
+      "from": "recurrent_networks-block-30",
+      "to": "recurrent_networks-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-32-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-32",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-31-before-recurrent_networks-block-32",
+      "from": "recurrent_networks-block-31",
+      "to": "recurrent_networks-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-32-related_to-recurrent_networks-block-31",
+      "from": "recurrent_networks-block-32",
+      "to": "recurrent_networks-block-31",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-33-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-33",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-32-before-recurrent_networks-block-33",
+      "from": "recurrent_networks-block-32",
+      "to": "recurrent_networks-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-33-related_to-recurrent_networks-block-31",
+      "from": "recurrent_networks-block-33",
+      "to": "recurrent_networks-block-31",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-34-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-34",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-33-before-recurrent_networks-block-34",
+      "from": "recurrent_networks-block-33",
+      "to": "recurrent_networks-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-34-related_to-recurrent_networks-block-31",
+      "from": "recurrent_networks-block-34",
+      "to": "recurrent_networks-block-31",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-35-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-35",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-34-before-recurrent_networks-block-35",
+      "from": "recurrent_networks-block-34",
+      "to": "recurrent_networks-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-35-related_to-recurrent_networks-block-31",
+      "from": "recurrent_networks-block-35",
+      "to": "recurrent_networks-block-31",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-36-part_of-recurrent-networks",
+      "from": "recurrent_networks-block-36",
+      "to": "recurrent-networks",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-35-before-recurrent_networks-block-36",
+      "from": "recurrent_networks-block-35",
+      "to": "recurrent_networks-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-block-36-related_to-recurrent_networks-block-31",
+      "from": "recurrent_networks-block-36",
+      "to": "recurrent_networks-block-31",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-1-part_of-recurrent_networks-block-3",
+      "from": "recurrent_networks-stmt-1",
+      "to": "recurrent_networks-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-2-part_of-recurrent_networks-block-3",
+      "from": "recurrent_networks-stmt-2",
+      "to": "recurrent_networks-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-3-part_of-recurrent_networks-block-3",
+      "from": "recurrent_networks-stmt-3",
+      "to": "recurrent_networks-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-4-part_of-recurrent_networks-block-3",
+      "from": "recurrent_networks-stmt-4",
+      "to": "recurrent_networks-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-5-part_of-recurrent_networks-block-4",
+      "from": "recurrent_networks-stmt-5",
+      "to": "recurrent_networks-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-6-part_of-recurrent_networks-block-4",
+      "from": "recurrent_networks-stmt-6",
+      "to": "recurrent_networks-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-7-part_of-recurrent_networks-block-4",
+      "from": "recurrent_networks-stmt-7",
+      "to": "recurrent_networks-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-8-part_of-recurrent_networks-block-5",
+      "from": "recurrent_networks-stmt-8",
+      "to": "recurrent_networks-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-9-part_of-recurrent_networks-block-5",
+      "from": "recurrent_networks-stmt-9",
+      "to": "recurrent_networks-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-10-part_of-recurrent_networks-block-6",
+      "from": "recurrent_networks-stmt-10",
+      "to": "recurrent_networks-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-11-part_of-recurrent_networks-block-6",
+      "from": "recurrent_networks-stmt-11",
+      "to": "recurrent_networks-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-12-part_of-recurrent_networks-block-6",
+      "from": "recurrent_networks-stmt-12",
+      "to": "recurrent_networks-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-13-part_of-recurrent_networks-block-8",
+      "from": "recurrent_networks-stmt-13",
+      "to": "recurrent_networks-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-14-part_of-recurrent_networks-block-9",
+      "from": "recurrent_networks-stmt-14",
+      "to": "recurrent_networks-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-15-part_of-recurrent_networks-block-9",
+      "from": "recurrent_networks-stmt-15",
+      "to": "recurrent_networks-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-16-part_of-recurrent_networks-block-10",
+      "from": "recurrent_networks-stmt-16",
+      "to": "recurrent_networks-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-17-part_of-recurrent_networks-block-10",
+      "from": "recurrent_networks-stmt-17",
+      "to": "recurrent_networks-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-18-part_of-recurrent_networks-block-10",
+      "from": "recurrent_networks-stmt-18",
+      "to": "recurrent_networks-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-19-part_of-recurrent_networks-block-10",
+      "from": "recurrent_networks-stmt-19",
+      "to": "recurrent_networks-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-20-part_of-recurrent_networks-block-11",
+      "from": "recurrent_networks-stmt-20",
+      "to": "recurrent_networks-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-21-part_of-recurrent_networks-block-11",
+      "from": "recurrent_networks-stmt-21",
+      "to": "recurrent_networks-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-22-part_of-recurrent_networks-block-11",
+      "from": "recurrent_networks-stmt-22",
+      "to": "recurrent_networks-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-23-part_of-recurrent_networks-block-11",
+      "from": "recurrent_networks-stmt-23",
+      "to": "recurrent_networks-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-24-part_of-recurrent_networks-block-14",
+      "from": "recurrent_networks-stmt-24",
+      "to": "recurrent_networks-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-25-part_of-recurrent_networks-block-14",
+      "from": "recurrent_networks-stmt-25",
+      "to": "recurrent_networks-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-26-part_of-recurrent_networks-block-14",
+      "from": "recurrent_networks-stmt-26",
+      "to": "recurrent_networks-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-27-part_of-recurrent_networks-block-14",
+      "from": "recurrent_networks-stmt-27",
+      "to": "recurrent_networks-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-28-part_of-recurrent_networks-block-15",
+      "from": "recurrent_networks-stmt-28",
+      "to": "recurrent_networks-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-29-part_of-recurrent_networks-block-16",
+      "from": "recurrent_networks-stmt-29",
+      "to": "recurrent_networks-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-30-part_of-recurrent_networks-block-17",
+      "from": "recurrent_networks-stmt-30",
+      "to": "recurrent_networks-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-31-part_of-recurrent_networks-block-17",
+      "from": "recurrent_networks-stmt-31",
+      "to": "recurrent_networks-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-32-part_of-recurrent_networks-block-17",
+      "from": "recurrent_networks-stmt-32",
+      "to": "recurrent_networks-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-33-part_of-recurrent_networks-block-18",
+      "from": "recurrent_networks-stmt-33",
+      "to": "recurrent_networks-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-34-part_of-recurrent_networks-block-18",
+      "from": "recurrent_networks-stmt-34",
+      "to": "recurrent_networks-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-35-part_of-recurrent_networks-block-18",
+      "from": "recurrent_networks-stmt-35",
+      "to": "recurrent_networks-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-36-part_of-recurrent_networks-block-20",
+      "from": "recurrent_networks-stmt-36",
+      "to": "recurrent_networks-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-37-part_of-recurrent_networks-block-20",
+      "from": "recurrent_networks-stmt-37",
+      "to": "recurrent_networks-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-38-part_of-recurrent_networks-block-20",
+      "from": "recurrent_networks-stmt-38",
+      "to": "recurrent_networks-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-39-part_of-recurrent_networks-block-21",
+      "from": "recurrent_networks-stmt-39",
+      "to": "recurrent_networks-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-40-part_of-recurrent_networks-block-21",
+      "from": "recurrent_networks-stmt-40",
+      "to": "recurrent_networks-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-41-part_of-recurrent_networks-block-21",
+      "from": "recurrent_networks-stmt-41",
+      "to": "recurrent_networks-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-42-part_of-recurrent_networks-block-22",
+      "from": "recurrent_networks-stmt-42",
+      "to": "recurrent_networks-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-43-part_of-recurrent_networks-block-23",
+      "from": "recurrent_networks-stmt-43",
+      "to": "recurrent_networks-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-44-part_of-recurrent_networks-block-24",
+      "from": "recurrent_networks-stmt-44",
+      "to": "recurrent_networks-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-45-part_of-recurrent_networks-block-25",
+      "from": "recurrent_networks-stmt-45",
+      "to": "recurrent_networks-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-46-part_of-recurrent_networks-block-26",
+      "from": "recurrent_networks-stmt-46",
+      "to": "recurrent_networks-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-47-part_of-recurrent_networks-block-26",
+      "from": "recurrent_networks-stmt-47",
+      "to": "recurrent_networks-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-48-part_of-recurrent_networks-block-26",
+      "from": "recurrent_networks-stmt-48",
+      "to": "recurrent_networks-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-49-part_of-recurrent_networks-block-26",
+      "from": "recurrent_networks-stmt-49",
+      "to": "recurrent_networks-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-50-part_of-recurrent_networks-block-28",
+      "from": "recurrent_networks-stmt-50",
+      "to": "recurrent_networks-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-51-part_of-recurrent_networks-block-28",
+      "from": "recurrent_networks-stmt-51",
+      "to": "recurrent_networks-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-52-part_of-recurrent_networks-block-28",
+      "from": "recurrent_networks-stmt-52",
+      "to": "recurrent_networks-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-53-part_of-recurrent_networks-block-29",
+      "from": "recurrent_networks-stmt-53",
+      "to": "recurrent_networks-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-54-part_of-recurrent_networks-block-29",
+      "from": "recurrent_networks-stmt-54",
+      "to": "recurrent_networks-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-55-part_of-recurrent_networks-block-30",
+      "from": "recurrent_networks-stmt-55",
+      "to": "recurrent_networks-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-56-part_of-recurrent_networks-block-30",
+      "from": "recurrent_networks-stmt-56",
+      "to": "recurrent_networks-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-57-part_of-recurrent_networks-block-32",
+      "from": "recurrent_networks-stmt-57",
+      "to": "recurrent_networks-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-58-part_of-recurrent_networks-block-32",
+      "from": "recurrent_networks-stmt-58",
+      "to": "recurrent_networks-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-59-part_of-recurrent_networks-block-33",
+      "from": "recurrent_networks-stmt-59",
+      "to": "recurrent_networks-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-60-part_of-recurrent_networks-block-33",
+      "from": "recurrent_networks-stmt-60",
+      "to": "recurrent_networks-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-61-part_of-recurrent_networks-block-33",
+      "from": "recurrent_networks-stmt-61",
+      "to": "recurrent_networks-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-62-part_of-recurrent_networks-block-33",
+      "from": "recurrent_networks-stmt-62",
+      "to": "recurrent_networks-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-63-part_of-recurrent_networks-block-34",
+      "from": "recurrent_networks-stmt-63",
+      "to": "recurrent_networks-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-64-part_of-recurrent_networks-block-35",
+      "from": "recurrent_networks-stmt-64",
+      "to": "recurrent_networks-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-65-part_of-recurrent_networks-block-35",
+      "from": "recurrent_networks-stmt-65",
+      "to": "recurrent_networks-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-66-part_of-recurrent_networks-block-35",
+      "from": "recurrent_networks-stmt-66",
+      "to": "recurrent_networks-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-67-part_of-recurrent_networks-block-35",
+      "from": "recurrent_networks-stmt-67",
+      "to": "recurrent_networks-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-68-part_of-recurrent_networks-block-35",
+      "from": "recurrent_networks-stmt-68",
+      "to": "recurrent_networks-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-69-part_of-recurrent_networks-block-36",
+      "from": "recurrent_networks-stmt-69",
+      "to": "recurrent_networks-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-recurrent_networks-stmt-70-part_of-recurrent_networks-block-36",
+      "from": "recurrent_networks-stmt-70",
+      "to": "recurrent_networks-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "recurrent_networks-stmt-1",
       "quote": "A feedforward network answers one question and forgets it.",
+      "block_id": "recurrent_networks-block-3",
       "section": "The Loop",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-2",
       "quote": "The token that left the model's mind is gone — the next token is produced without the first one having made a mark.",
+      "block_id": "recurrent_networks-block-3",
       "section": "The Loop",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-3",
       "quote": "But language is *sequential*: the meaning of “was” arrives only with what came before.",
+      "block_id": "recurrent_networks-block-3",
       "section": "The Loop",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-4",
       "quote": "\\citeauthor{colah2015lstm}'s classic walkthrough (\\citeyear{colah2015lstm}) puts it simply:",
+      "block_id": "recurrent_networks-block-3",
       "section": "The Loop",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-5",
       "quote": "> Humans don't start their thinking from scratch every second.",
+      "block_id": "recurrent_networks-block-4",
       "section": "The Loop",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-6",
       "quote": "… You don't throw everything away and start thinking from scratch again.",
+      "block_id": "recurrent_networks-block-4",
       "section": "The Loop",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-7",
       "quote": "Your thoughts have persistence.",
+      "block_id": "recurrent_networks-block-4",
       "section": "The Loop",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-8",
       "quote": "A **recurrent neural network (RNN)** gives a network the same trick: a loop that feeds its own hidden state back in.",
+      "block_id": "recurrent_networks-block-5",
       "section": "The Loop",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-9",
       "quote": "Instead of a stack of layers, it is a chain of copies of one network, each passing a **hidden state** $\\mathbf{h}_{t-1}$ to the next — the machine keeps reading its own writing.",
+      "block_id": "recurrent_networks-block-5",
       "section": "The Loop",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-10",
       "quote": "The loop is older than the language model.",
+      "block_id": "recurrent_networks-block-6",
       "section": "The Loop",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-11",
       "quote": "\\citeauthor{hopfield1982} showed that a network of symmetrically connected threshold units could store patterns as stable states of an energy landscape, with the dynamics settling into one of them \\cite{hopfield1982}.",
+      "block_id": "recurrent_networks-block-6",
       "section": "The Loop",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-12",
       "quote": "Hopfield's networks were not trained by backpropagation and did not process sequences token by token, but they established the idea the RNN inherits: a network's computation can be a trajectory through state space rather than a single feedforward pass.",
+      "block_id": "recurrent_networks-block-6",
       "section": "The Loop",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-13",
       "quote": "The recurrence is easiest to read when it is **unrolled** across time — drawn as a sequence of identical networks, one per step, each handing its state forward:",
+      "block_id": "recurrent_networks-block-8",
       "section": "Unrolling: One Network, Many Copies",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-14",
       "quote": "The recurrent loop unfolded as a chain — $\\mathbf{a}$ is the input, $\\mathbf{h}$ the state the copies hand to each other, $\\mathbf{y}$ the output.",
+      "block_id": "recurrent_networks-block-9",
       "section": "Unrolling: One Network, Many Copies",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-15",
       "quote": "[Diagram: fdeloche, CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Recurrent_neural_network_unfold.svg)",
+      "block_id": "recurrent_networks-block-9",
       "section": "Unrolling: One Network, Many Copies",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-16",
-      "quote": "Because the state must be *propagated* — multiplied through the chain, step by step — far-apart context is fragile.",
-      "section": "The Long-Distance Problem",
+      "quote": "“Recurrent” hides a beautiful fact: the *same* weight matrices $\\mathbf{W}_h$, $\\mathbf{W}_x$ are used at **every** step.",
+      "block_id": "recurrent_networks-block-10",
+      "section": "Unrolling: One Network, Many Copies",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-17",
-      "quote": "Predicting the next word in *“the clouds are in the sky”* needs only recent words.",
-      "section": "The Long-Distance Problem",
+      "quote": "There is one network, applied many times.",
+      "block_id": "recurrent_networks-block-10",
+      "section": "Unrolling: One Network, Many Copies",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-18",
-      "quote": "But finish *“I grew up in France … I speak fluent __”*, and the answer depends on something from sentences ago.",
-      "section": "The Long-Distance Problem",
+      "quote": "This is the weight-sharing trick from the [computer vision chapter](computer_vision.php) — a filter that slides over time instead of over space (see also the fixed-weight argument in \\cite[Olah, 2014]{colah2014conv}).",
+      "block_id": "recurrent_networks-block-10",
+      "section": "Unrolling: One Network, Many Copies",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-19",
-      "quote": "In the long gap, an RNN must remember the word “France” while doing all the intervening work.",
-      "section": "The Long-Distance Problem",
+      "quote": "It is also why \\citeauthor{colah2015lstm} calls RNNs “intimately related to sequences and lists”: they are *the* natural architecture for data that arrives one step at a time.",
+      "block_id": "recurrent_networks-block-10",
+      "section": "Unrolling: One Network, Many Copies",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-20",
-      "quote": "\\citeauthor{colah2015lstm} captures the state of things precisely:",
-      "section": "The Long-Distance Problem",
+      "quote": "The first trainable recurrent architectures came from psychology and connectionism.",
+      "block_id": "recurrent_networks-block-11",
+      "section": "Unrolling: One Network, Many Copies",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-21",
-      "quote": "> In theory, RNNs are absolutely capable of handling such “long-term dependencies.” … In practice, RNNs don't seem to be able to learn them.",
-      "section": "The Long-Distance Problem",
+      "quote": "\\citeauthor{jordan1986} added *context units* that copied the previous output back into the input, and \\citeauthor{elman1990finding} made the hidden layer itself recurrent, giving the network a memory of its own internal state \\cite{jordan1986,elman1990finding}.",
+      "block_id": "recurrent_networks-block-11",
+      "section": "Unrolling: One Network, Many Copies",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-22",
-      "quote": "The failure mode is the [vanishing gradient](backproplab.php).",
-      "section": "The Long-Distance Problem",
+      "quote": "Elman called his model a *simple recurrent network*; it is essentially the recurrence above, trained by backpropagation through the unrolled chain.",
+      "block_id": "recurrent_networks-block-11",
+      "section": "Unrolling: One Network, Many Copies",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-23",
-      "quote": "Unrolling an RNN computes gradients through many multiplications of the same matrix; if the Jacobian's spectral radius stays below 1, the signal *shrinks* toward zero — mathematically, a long step sequence compounds the decay into the exponential $\\rho^{k}$ that [attention later sidesteps entirely](attentionlab.php) \\cite{colah2015backprop,hochreiter1991vanishing}.",
-      "section": "The Long-Distance Problem",
+      "quote": "These small networks learned grammar-like regularities in sequences—and set the stage for the vanishing-gradient diagnosis that followed.",
+      "block_id": "recurrent_networks-block-11",
+      "section": "Unrolling: One Network, Many Copies",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-24",
-      "quote": "The problem was diagnosed early by \\citeauthor{hochreiter1991vanishing} (\\citeyear{hochreiter1991vanishing}) and formalized for recurrent networks by \\citeauthor{bengio1994learning} (\\citeyear{bengio1994learning}) — but the fix arrived as an explicit memory.",
+      "quote": "Because the state must be *propagated* — multiplied through the chain, step by step — far-apart context is fragile.",
+      "block_id": "recurrent_networks-block-14",
       "section": "The Long-Distance Problem",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-25",
-      "quote": "Training a recurrent net means differentiating through the unrolled graph, a procedure known as **backpropagation through time**.",
+      "quote": "Predicting the next word in *“the clouds are in the sky”* needs only recent words.",
+      "block_id": "recurrent_networks-block-14",
       "section": "The Long-Distance Problem",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-26",
-      "quote": "\\citeauthor{werbos1990bptt} gave the method its canonical exposition, showing how the adjoint recurrence runs backward along the same chain that generated the states \\cite{werbos1990bptt}.",
+      "quote": "But finish *“I grew up in France … I speak fluent __”*, and the answer depends on something from sentences ago.",
+      "block_id": "recurrent_networks-block-14",
       "section": "The Long-Distance Problem",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-27",
-      "quote": "In the language of the [autodiff chapter](autodiff.php), BPTT is simply reverse-mode AD applied to a graph whose depth is the sequence length—which is exactly why the same vanishing-gradient arithmetic returns.",
+      "quote": "In the long gap, an RNN must remember the word “France” while doing all the intervening work.",
+      "block_id": "recurrent_networks-block-14",
       "section": "The Long-Distance Problem",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-28",
-      "quote": "The **Long Short-Term Memory** network, introduced by \\citeauthorlastnameand{lstm} in \\citeyear{lstm}, changes what flows down the chain \\cite{lstm}.",
-      "section": "The LSTM's Conveyor Belt",
+      "quote": "\\citeauthor{colah2015lstm} captures the state of things precisely:",
+      "block_id": "recurrent_networks-block-15",
+      "section": "The Long-Distance Problem",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-29",
-      "quote": "Alongside the ordinary hidden state $\\mathbf{h}_t$ runs a **cell state** $\\mathbf{c}_t$ — a lane that is *not* transformed by every gate.",
-      "section": "The LSTM's Conveyor Belt",
+      "quote": "> In theory, RNNs are absolutely capable of handling such “long-term dependencies.” … In practice, RNNs don't seem to be able to learn them.",
+      "block_id": "recurrent_networks-block-16",
+      "section": "The Long-Distance Problem",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-30",
-      "quote": "\\citeauthor{colah2015lstm} calls it the conveyor belt: information rides on it straight through the network, altered only by the gentle, learned interactions that **gates** apply.",
-      "section": "The LSTM's Conveyor Belt",
+      "quote": "The failure mode is the [vanishing gradient](backproplab.php).",
+      "block_id": "recurrent_networks-block-17",
+      "section": "The Long-Distance Problem",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-31",
-      "quote": "Each gate is a sigmoid layer whose output lies in $[0,1]$ — it reads “how much to let through,” from closed ($0$) to wide open ($1$) \\cite{colah2015lstm}.",
-      "section": "The LSTM's Conveyor Belt",
+      "quote": "Unrolling an RNN computes gradients through many multiplications of the same matrix; if the Jacobian's spectral radius stays below 1, the signal *shrinks* toward zero — mathematically, a long step sequence compounds the decay into the exponential $\\rho^{k}$ that [attention later sidesteps entirely](attentionlab.php) \\cite{colah2015backprop,hochreiter1991vanishing}.",
+      "block_id": "recurrent_networks-block-17",
+      "section": "The Long-Distance Problem",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-32",
-      "quote": "The original LSTM had an input gate and an output gate; the forget gate was added by \\citeauthor{lstm_vanilla} (\\citeyear{lstm_vanilla}).",
-      "section": "The LSTM's Conveyor Belt",
+      "quote": "The problem was diagnosed early by \\citeauthor{hochreiter1991vanishing} (\\citeyear{hochreiter1991vanishing}) and formalized for recurrent networks by \\citeauthor{bengio1994learning} (\\citeyear{bengio1994learning}) — but the fix arrived as an explicit memory.",
+      "block_id": "recurrent_networks-block-17",
+      "section": "The Long-Distance Problem",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-33",
-      "quote": "The modern cell has three:",
-      "section": "The LSTM's Conveyor Belt",
+      "quote": "Training a recurrent net means differentiating through the unrolled graph, a procedure known as **backpropagation through time**.",
+      "block_id": "recurrent_networks-block-18",
+      "section": "The Long-Distance Problem",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-34",
-      "quote": "* **The forget gate** decides what to drop from the previous state: $\\mathbf{f}_t = \\sigma\\!\\big(\\mathbf{W}_f [\\mathbf{h}_{t-1}, \\mathbf{x}_t] + \\mathbf{b}_f\\big)$.",
-      "section": "The LSTM's Conveyor Belt",
+      "quote": "\\citeauthor{werbos1990bptt} gave the method its canonical exposition, showing how the adjoint recurrence runs backward along the same chain that generated the states \\cite{werbos1990bptt}.",
+      "block_id": "recurrent_networks-block-18",
+      "section": "The Long-Distance Problem",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-35",
-      "quote": "* **The input gate** writes new memory from a candidate $\\tilde{\\mathbf{c}}_t = \\tanh\\big(\\mathbf{W}_c [\\mathbf{h}_{t-1}, \\mathbf{x}_t] + \\mathbf{b}_c\\big)$, scaled by $\\mathbf{i}_t = \\sigma\\!\\big(\\mathbf{W}_i [\\mathbf{h}_{t-1}, \\mathbf{x}_t] + \\mathbf{b}_i\\big)$.",
-      "section": "The LSTM's Conveyor Belt",
+      "quote": "In the language of the [autodiff chapter](autodiff.php), BPTT is simply reverse-mode AD applied to a graph whose depth is the sequence length—which is exactly why the same vanishing-gradient arithmetic returns.",
+      "block_id": "recurrent_networks-block-18",
+      "section": "The Long-Distance Problem",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-36",
-      "quote": "* The **output gate** decides what the updated state reveals as $\\mathbf{h}_t = \\mathbf{o}_t \\odot \\tanh(\\mathbf{c}_t)$.",
+      "quote": "The **Long Short-Term Memory** network, introduced by \\citeauthorlastnameand{lstm} in \\citeyear{lstm}, changes what flows down the chain \\cite{lstm}.",
+      "block_id": "recurrent_networks-block-20",
       "section": "The LSTM's Conveyor Belt",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-37",
-      "quote": "The cell update is then a soft overwrite, not a full rewrite:",
+      "quote": "Alongside the ordinary hidden state $\\mathbf{h}_t$ runs a **cell state** $\\mathbf{c}_t$ — a lane that is *not* transformed by every gate.",
+      "block_id": "recurrent_networks-block-20",
       "section": "The LSTM's Conveyor Belt",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-38",
-      "quote": "In a language model that has learned grammar, \\citeauthor{colah2015lstm} notes the gates learn an interpretable job:",
+      "quote": "\\citeauthor{colah2015lstm} calls it the conveyor belt: information rides on it straight through the network, altered only by the gentle, learned interactions that **gates** apply.",
+      "block_id": "recurrent_networks-block-20",
       "section": "The LSTM's Conveyor Belt",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-39",
-      "quote": "> …it might output whether the subject is singular or plural, so that we know what form a verb should be conjugated into if that's what follows next.",
+      "quote": "Each gate is a sigmoid layer whose output lies in $[0,1]$ — it reads “how much to let through,” from closed ($0$) to wide open ($1$) \\cite{colah2015lstm}.",
+      "block_id": "recurrent_networks-block-21",
       "section": "The LSTM's Conveyor Belt",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-40",
-      "quote": "Forget the gate, keep the memory: that is the whole trick — an *elementwise* multiplication by a gate near 1 instead of a full matrix product, so the gradients survive the journey across a long sentence \\cite{colah2015lstm}.",
+      "quote": "The original LSTM had an input gate and an output gate; the forget gate was added by \\citeauthor{lstm_vanilla} (\\citeyear{lstm_vanilla}).",
+      "block_id": "recurrent_networks-block-21",
       "section": "The LSTM's Conveyor Belt",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-41",
-      "quote": "The LSTM was not invented in a vacuum.",
+      "quote": "The modern cell has three:",
+      "block_id": "recurrent_networks-block-21",
       "section": "The LSTM's Conveyor Belt",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-42",
-      "quote": "In his 1991 diploma thesis, \\citeauthor{hochreiter1991vanishing} analyzed why recurrent gradients decay; the solution he and Schmidhuber developed, the *constant error carousel*, appeared in the 1997 LSTM paper \\cite{hochreiter1991vanishing,lstm}.",
+      "quote": "The cell update is then a soft overwrite, not a full rewrite:",
+      "block_id": "recurrent_networks-block-22",
       "section": "The LSTM's Conveyor Belt",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-43",
-      "quote": "The carousel is a self-connected unit whose error signal can flow backward without being multiplied by a weight matrix—the cell state made trainable.",
+      "quote": "In a language model that has learned grammar, \\citeauthor{colah2015lstm} notes the gates learn an interpretable job:",
+      "block_id": "recurrent_networks-block-23",
       "section": "The LSTM's Conveyor Belt",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-44",
-      "quote": "Learned input and output gates let the network decide when to write to it and when to read from it.",
+      "quote": "> …it might output whether the subject is singular or plural, so that we know what form a verb should be conjugated into if that's what follows next.",
+      "block_id": "recurrent_networks-block-24",
       "section": "The LSTM's Conveyor Belt",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-45",
-      "quote": "What follows is a pruning of the idea, not a new invention.",
-      "section": "The Family Tree",
+      "quote": "Forget the gate, keep the memory: that is the whole trick — an *elementwise* multiplication by a gate near 1 instead of a full matrix product, so the gradients survive the journey across a long sentence \\cite{colah2015lstm}.",
+      "block_id": "recurrent_networks-block-25",
+      "section": "The LSTM's Conveyor Belt",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-46",
-      "quote": "The **gated recurrent unit (GRU)** of \\citeauthor{cho2014gru} (\\citeyear{cho2014gru}) merges the forget and input gates into one **update gate**, and weds the memory to the output via a **reset gate** — two gates instead of three, fewer parameters, similar performance \\cite{cho2014gru}.",
-      "section": "The Family Tree",
+      "quote": "The LSTM was not invented in a vacuum.",
+      "block_id": "recurrent_networks-block-26",
+      "section": "The LSTM's Conveyor Belt",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-47",
-      "quote": "And when \\citeauthor{greff2015lstm} and colleagues *searched* the space of LSTM variants systematically, they reached a deflating but reassuring conclusion: the best variants are only marginally better than the plain, standard LSTM \\cite{greff2015lstm}.",
-      "section": "The Family Tree",
+      "quote": "In his 1991 diploma thesis, \\citeauthor{hochreiter1991vanishing} analyzed why recurrent gradients decay; the solution he and Schmidhuber developed, the *constant error carousel*, appeared in the 1997 LSTM paper \\cite{hochreiter1991vanishing,lstm}.",
+      "block_id": "recurrent_networks-block-26",
+      "section": "The LSTM's Conveyor Belt",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-48",
-      "quote": "The message of that search echoes [the universality discussion in the toolkit](https://asanai.scads.ai): architecture cleverness buys freedom from *unavoidable* failure, but the winning configurations cluster together — “all about the same” \\cite{colah2015lstm}.",
-      "section": "The Family Tree",
+      "quote": "The carousel is a self-connected unit whose error signal can flow backward without being multiplied by a weight matrix—the cell state made trainable.",
+      "block_id": "recurrent_networks-block-26",
+      "section": "The LSTM's Conveyor Belt",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-49",
-      "quote": "What actually scaled, as [the next chapter](attentionlab.php) shows, was not a better gate but *removing the chain entirely* — \\citeauthor{colah2015lstm} ends his walkthrough with an honest roadmap:",
-      "section": "The Family Tree",
+      "quote": "Learned input and output gates let the network decide when to write to it and when to read from it.",
+      "block_id": "recurrent_networks-block-26",
+      "section": "The LSTM's Conveyor Belt",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-50",
-      "quote": "> A common opinion among researchers is: \"Yes!",
+      "quote": "What follows is a pruning of the idea, not a new invention.",
+      "block_id": "recurrent_networks-block-28",
       "section": "The Family Tree",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-51",
-      "quote": "There is a next step and it's attention!\" The idea is to let every step of an RNN pick information to look at from some larger collection of information.",
+      "quote": "The **gated recurrent unit (GRU)** of \\citeauthor{cho2014gru} (\\citeyear{cho2014gru}) merges the forget and input gates into one **update gate**, and weds the memory to the output via a **reset gate** — two gates instead of three, fewer parameters, similar performance \\cite{cho2014gru}.",
+      "block_id": "recurrent_networks-block-28",
       "section": "The Family Tree",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-52",
-      "quote": "The next step was not another gate but the removal of the recurrence itself.",
+      "quote": "And when \\citeauthor{greff2015lstm} and colleagues *searched* the space of LSTM variants systematically, they reached a deflating but reassuring conclusion: the best variants are only marginally better than the plain, standard LSTM \\cite{greff2015lstm}.",
+      "block_id": "recurrent_networks-block-28",
       "section": "The Family Tree",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-53",
-      "quote": "\\citeauthor{vaswani2017attention}'s Transformer kept the encoder–decoder shape and replaced the recurrent chain with **self-attention**, letting every position attend to every other position in parallel \\cite{vaswani2017attention}.",
+      "quote": "The message of that search echoes [the universality discussion in the toolkit](https://asanai.scads.ai): architecture cleverness buys freedom from *unavoidable* failure, but the winning configurations cluster together — “all about the same” \\cite{colah2015lstm}.",
+      "block_id": "recurrent_networks-block-29",
       "section": "The Family Tree",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-54",
-      "quote": "That change shortened the path between distant tokens from a chain of length $n$ to a single attention step, and it made training parallel across the sequence.",
+      "quote": "What actually scaled, as [the next chapter](attentionlab.php) shows, was not a better gate but *removing the chain entirely* — \\citeauthor{colah2015lstm} ends his walkthrough with an honest roadmap:",
+      "block_id": "recurrent_networks-block-29",
       "section": "The Family Tree",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-55",
-      "quote": "The price was quadratic cost in sequence length—and the beginning of the architecture that powers modern LLMs.",
+      "quote": "> A common opinion among researchers is: \"Yes!",
+      "block_id": "recurrent_networks-block-30",
       "section": "The Family Tree",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-56",
-      "quote": "The recurrent loop becomes much more useful when you give it a job with two different sequences.",
-      "section": "From sequences to translations: seq2seq",
+      "quote": "There is a next step and it's attention!\" The idea is to let every step of an RNN pick information to look at from some larger collection of information.",
+      "block_id": "recurrent_networks-block-30",
+      "section": "The Family Tree",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-57",
-      "quote": "**Sequence-to-sequence** learning (seq2seq), introduced in 2014 by Sutskever, Vinyals, and Le and independently by Cho et al., pairs two recurrent networks (\\cite[Sutskever et al., 2014]{sutskever2014seq2seq}; \\cite[Cho et al., 2014]{cho2014gru}):",
+      "quote": "The recurrent loop becomes much more useful when you give it a job with two different sequences.",
+      "block_id": "recurrent_networks-block-32",
       "section": "From sequences to translations: seq2seq",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-58",
-      "quote": "* an **encoder** reads the source sentence one token at a time and compresses it into a single **context vector** — the final hidden state;",
+      "quote": "**Sequence-to-sequence** learning (seq2seq), introduced in 2014 by Sutskever, Vinyals, and Le and independently by Cho et al., pairs two recurrent networks (\\cite[Sutskever et al., 2014]{sutskever2014seq2seq}; \\cite[Cho et al., 2014]{cho2014gru}):",
+      "block_id": "recurrent_networks-block-32",
       "section": "From sequences to translations: seq2seq",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-59",
-      "quote": "* a **decoder** is initialized with that vector and generates the target sentence token by token, feeding its own previous output back in.",
+      "quote": "The context vector is the paradigm's central wager: that the meaning of a sentence of any length can be stored as a point in a fixed-dimensional space, and unfolded back into another language.",
+      "block_id": "recurrent_networks-block-33",
       "section": "From sequences to translations: seq2seq",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-60",
-      "quote": "For a source $x_1,\\dots,x_T$ and target $y_1,\\dots,y_{T'}$:",
+      "quote": "It is also its central weakness.",
+      "block_id": "recurrent_networks-block-33",
       "section": "From sequences to translations: seq2seq",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-61",
-      "quote": "The context vector is the paradigm's central wager: that the meaning of a sentence of any length can be stored as a point in a fixed-dimensional space, and unfolded back into another language.",
+      "quote": "Everything the decoder knows about the source must pass through those few numbers, so quality falls as sentences get longer.",
+      "block_id": "recurrent_networks-block-33",
       "section": "From sequences to translations: seq2seq",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-62",
-      "quote": "It is also its central weakness.",
+      "quote": "Sutskever et al. found a cheap partial fix: **reverse the source sentence**, which puts the first source words — the ones that predict the first target words — close to the context vector.",
+      "block_id": "recurrent_networks-block-33",
       "section": "From sequences to translations: seq2seq",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-63",
-      "quote": "Everything the decoder knows about the source must pass through those few numbers, so quality falls as sentences get longer.",
+      "quote": "That per-step alignment is the direct ancestor of the self-attention inside every Transformer: instead of one compressed summary, the decoder learns *where to look* (\\cite[Bahdanau et al., 2014]{bahdanau2014}).",
+      "block_id": "recurrent_networks-block-34",
       "section": "From sequences to translations: seq2seq",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-64",
-      "quote": "Sutskever et al. found a cheap partial fix: **reverse the source sentence**, which puts the first source words — the ones that predict the first target words — close to the context vector.",
+      "quote": "Training introduced a protocol that every modern language model still uses.",
+      "block_id": "recurrent_networks-block-35",
       "section": "From sequences to translations: seq2seq",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-65",
-      "quote": "**Attention** removed the bottleneck.",
+      "quote": "**Teacher forcing** feeds the decoder the *true* previous token at every step, not its own prediction, so all positions can be scored in one parallel pass; the technique goes back to \\citeauthor{williams1989} (\\citeyear{williams1989}).",
+      "block_id": "recurrent_networks-block-35",
       "section": "From sequences to translations: seq2seq",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-66",
-      "quote": "\\citeauthor{bahdanau2014} let the decoder compute, at every output step, a weighted sum over *all* encoder states:",
+      "quote": "At inference the gold prefix is gone and the model consumes its own outputs; the mismatch between the two conditions is called **exposure bias**.",
+      "block_id": "recurrent_networks-block-35",
       "section": "From sequences to translations: seq2seq",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-67",
-      "quote": "That per-step alignment is the direct ancestor of the self-attention inside every Transformer: instead of one compressed summary, the decoder learns *where to look* (\\cite[Bahdanau et al., 2014]{bahdanau2014}).",
+      "quote": "Scheduled sampling, which gradually replaces gold tokens with model predictions during training, was the recurrent era's remedy \\cite{bengio2015scheduled}.",
+      "block_id": "recurrent_networks-block-35",
       "section": "From sequences to translations: seq2seq",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-68",
-      "quote": "Training introduced a protocol that every modern language model still uses.",
+      "quote": "At Transformer scale the problem largely receded in practice, but the protocol did not: next-token training *is* teacher forcing with a causal mask.",
+      "block_id": "recurrent_networks-block-35",
       "section": "From sequences to translations: seq2seq",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-69",
-      "quote": "**Teacher forcing** feeds the decoder the *true* previous token at every step, not its own prediction, so all positions can be scored in one parallel pass; the technique goes back to \\citeauthor{williams1989} (\\citeyear{williams1989}).",
+      "quote": "The seq2seq form outlived the recurrence.",
+      "block_id": "recurrent_networks-block-36",
       "section": "From sequences to translations: seq2seq",
       "kind": "statement"
     },
     {
       "id": "recurrent_networks-stmt-70",
-      "quote": "At inference the gold prefix is gone and the model consumes its own outputs; the mismatch between the two conditions is called **exposure bias**.",
-      "section": "From sequences to translations: seq2seq",
-      "kind": "statement"
-    },
-    {
-      "id": "recurrent_networks-stmt-71",
-      "quote": "Scheduled sampling, which gradually replaces gold tokens with model predictions during training, was the recurrent era's remedy \\cite{bengio2015scheduled}.",
-      "section": "From sequences to translations: seq2seq",
-      "kind": "statement"
-    },
-    {
-      "id": "recurrent_networks-stmt-72",
-      "quote": "At Transformer scale the problem largely receded in practice, but the protocol did not: next-token training *is* teacher forcing with a causal mask.",
-      "section": "From sequences to translations: seq2seq",
-      "kind": "statement"
-    },
-    {
-      "id": "recurrent_networks-stmt-73",
-      "quote": "The seq2seq form outlived the recurrence.",
-      "section": "From sequences to translations: seq2seq",
-      "kind": "statement"
-    },
-    {
-      "id": "recurrent_networks-stmt-74",
       "quote": "Google's production GNMT system stacked eight LSTM layers per side \\cite{wu2016gnmt}, the Transformer kept the encoder–decoder skeleton and replaced the recurrent core with attention \\cite{vaswani2017attention}, T5 recast every task as text-to-text \\cite{raffel2020t5}, and Whisper carried the same shape into speech recognition \\cite{radford2022whisper}.",
+      "block_id": "recurrent_networks-block-36",
       "section": "From sequences to translations: seq2seq",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "recurrent_networks-block-1",
+      "quote": "The recurrent idea",
+      "kind": "heading",
+      "section": "The recurrent idea"
+    },
+    {
+      "id": "recurrent_networks-block-2",
+      "quote": "The Loop",
+      "kind": "heading",
+      "section": "The Loop"
+    },
+    {
+      "id": "recurrent_networks-block-3",
+      "quote": "A feedforward network answers one question and forgets it. The token that left the model's mind is gone — the next token is produced without the first one having made a mark. But language is *sequential*: the meaning of “was” arrives only with what came before. \\citeauthor{colah2015lstm}'s classic walkthrough (\\citeyear{colah2015lstm}) puts it simply:",
+      "kind": "paragraph",
+      "section": "The Loop"
+    },
+    {
+      "id": "recurrent_networks-block-4",
+      "quote": "> Humans don't start their thinking from scratch every second. … You don't throw everything away and start thinking from scratch again. Your thoughts have persistence.",
+      "kind": "paragraph",
+      "section": "The Loop"
+    },
+    {
+      "id": "recurrent_networks-block-5",
+      "quote": "A **recurrent neural network (RNN)** gives a network the same trick: a loop that feeds its own hidden state back in. Instead of a stack of layers, it is a chain of copies of one network, each passing a **hidden state** $\\mathbf{h}_{t-1}$ to the next — the machine keeps reading its own writing.",
+      "kind": "paragraph",
+      "section": "The Loop"
+    },
+    {
+      "id": "recurrent_networks-block-6",
+      "quote": "The loop is older than the language model. \\citeauthor{hopfield1982} showed that a network of symmetrically connected threshold units could store patterns as stable states of an energy landscape, with the dynamics settling into one of them \\cite{hopfield1982}. Hopfield's networks were not trained by backpropagation and did not process sequences token by token, but they established the idea the RNN inherits: a network's computation can be a trajectory through state space rather than a single feedforward pass.",
+      "kind": "paragraph",
+      "section": "The Loop"
+    },
+    {
+      "id": "recurrent_networks-block-7",
+      "quote": "Unrolling: One Network, Many Copies",
+      "kind": "heading",
+      "section": "Unrolling: One Network, Many Copies"
+    },
+    {
+      "id": "recurrent_networks-block-8",
+      "quote": "The recurrence is easiest to read when it is **unrolled** across time — drawn as a sequence of identical networks, one per step, each handing its state forward:",
+      "kind": "paragraph",
+      "section": "Unrolling: One Network, Many Copies"
+    },
+    {
+      "id": "recurrent_networks-block-9",
+      "quote": "The recurrent loop unfolded as a chain — $\\mathbf{a}$ is the input, $\\mathbf{h}$ the state the copies hand to each other, $\\mathbf{y}$ the output. [Diagram: fdeloche, CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Recurrent_neural_network_unfold.svg)",
+      "kind": "paragraph",
+      "section": "Unrolling: One Network, Many Copies"
+    },
+    {
+      "id": "recurrent_networks-block-10",
+      "quote": "“Recurrent” hides a beautiful fact: the *same* weight matrices $\\mathbf{W}_h$, $\\mathbf{W}_x$ are used at **every** step. There is one network, applied many times. This is the weight-sharing trick from the [computer vision chapter](computer_vision.php) — a filter that slides over time instead of over space (see also the fixed-weight argument in \\cite[Olah, 2014]{colah2014conv}). It is also why \\citeauthor{colah2015lstm} calls RNNs “intimately related to sequences and lists”: they are *the* natural architecture for data that arrives one step at a time.",
+      "kind": "paragraph",
+      "section": "Unrolling: One Network, Many Copies"
+    },
+    {
+      "id": "recurrent_networks-block-11",
+      "quote": "The first trainable recurrent architectures came from psychology and connectionism. \\citeauthor{jordan1986} added *context units* that copied the previous output back into the input, and \\citeauthor{elman1990finding} made the hidden layer itself recurrent, giving the network a memory of its own internal state \\cite{jordan1986,elman1990finding}. Elman called his model a *simple recurrent network*; it is essentially the recurrence above, trained by backpropagation through the unrolled chain. These small networks learned grammar-like regularities in sequences—and set the stage for the vanishing-gradient diagnosis that followed.",
+      "kind": "paragraph",
+      "section": "Unrolling: One Network, Many Copies"
+    },
+    {
+      "id": "recurrent_networks-block-12",
+      "quote": "The long-distance problem",
+      "kind": "heading",
+      "section": "The long-distance problem"
+    },
+    {
+      "id": "recurrent_networks-block-13",
+      "quote": "The Long-Distance Problem",
+      "kind": "heading",
+      "section": "The Long-Distance Problem"
+    },
+    {
+      "id": "recurrent_networks-block-14",
+      "quote": "Because the state must be *propagated* — multiplied through the chain, step by step — far-apart context is fragile. Predicting the next word in *“the clouds are in the sky”* needs only recent words. But finish *“I grew up in France … I speak fluent __”*, and the answer depends on something from sentences ago. In the long gap, an RNN must remember the word “France” while doing all the intervening work.",
+      "kind": "paragraph",
+      "section": "The Long-Distance Problem"
+    },
+    {
+      "id": "recurrent_networks-block-15",
+      "quote": "\\citeauthor{colah2015lstm} captures the state of things precisely:",
+      "kind": "paragraph",
+      "section": "The Long-Distance Problem"
+    },
+    {
+      "id": "recurrent_networks-block-16",
+      "quote": "> In theory, RNNs are absolutely capable of handling such “long-term dependencies.” … In practice, RNNs don't seem to be able to learn them.",
+      "kind": "paragraph",
+      "section": "The Long-Distance Problem"
+    },
+    {
+      "id": "recurrent_networks-block-17",
+      "quote": "The failure mode is the [vanishing gradient](backproplab.php). Unrolling an RNN computes gradients through many multiplications of the same matrix; if the Jacobian's spectral radius stays below 1, the signal *shrinks* toward zero — mathematically, a long step sequence compounds the decay into the exponential $\\rho^{k}$ that [attention later sidesteps entirely](attentionlab.php) \\cite{colah2015backprop,hochreiter1991vanishing}. The problem was diagnosed early by \\citeauthor{hochreiter1991vanishing} (\\citeyear{hochreiter1991vanishing}) and formalized for recurrent networks by \\citeauthor{bengio1994learning} (\\citeyear{bengio1994learning}) — but the fix arrived as an explicit memory.",
+      "kind": "paragraph",
+      "section": "The Long-Distance Problem"
+    },
+    {
+      "id": "recurrent_networks-block-18",
+      "quote": "Training a recurrent net means differentiating through the unrolled graph, a procedure known as **backpropagation through time**. \\citeauthor{werbos1990bptt} gave the method its canonical exposition, showing how the adjoint recurrence runs backward along the same chain that generated the states \\cite{werbos1990bptt}. In the language of the [autodiff chapter](autodiff.php), BPTT is simply reverse-mode AD applied to a graph whose depth is the sequence length—which is exactly why the same vanishing-gradient arithmetic returns.",
+      "kind": "paragraph",
+      "section": "The Long-Distance Problem"
+    },
+    {
+      "id": "recurrent_networks-block-19",
+      "quote": "The LSTM's Conveyor Belt",
+      "kind": "heading",
+      "section": "The LSTM's Conveyor Belt"
+    },
+    {
+      "id": "recurrent_networks-block-20",
+      "quote": "The **Long Short-Term Memory** network, introduced by \\citeauthorlastnameand{lstm} in \\citeyear{lstm}, changes what flows down the chain \\cite{lstm}. Alongside the ordinary hidden state $\\mathbf{h}_t$ runs a **cell state** $\\mathbf{c}_t$ — a lane that is *not* transformed by every gate. \\citeauthor{colah2015lstm} calls it the conveyor belt: information rides on it straight through the network, altered only by the gentle, learned interactions that **gates** apply.",
+      "kind": "paragraph",
+      "section": "The LSTM's Conveyor Belt"
+    },
+    {
+      "id": "recurrent_networks-block-21",
+      "quote": "Each gate is a sigmoid layer whose output lies in $[0,1]$ — it reads “how much to let through,” from closed ($0$) to wide open ($1$) \\cite{colah2015lstm}. The original LSTM had an input gate and an output gate; the forget gate was added by \\citeauthor{lstm_vanilla} (\\citeyear{lstm_vanilla}). The modern cell has three:",
+      "kind": "paragraph",
+      "section": "The LSTM's Conveyor Belt"
+    },
+    {
+      "id": "recurrent_networks-block-22",
+      "quote": "The cell update is then a soft overwrite, not a full rewrite:",
+      "kind": "paragraph",
+      "section": "The LSTM's Conveyor Belt"
+    },
+    {
+      "id": "recurrent_networks-block-23",
+      "quote": "In a language model that has learned grammar, \\citeauthor{colah2015lstm} notes the gates learn an interpretable job:",
+      "kind": "paragraph",
+      "section": "The LSTM's Conveyor Belt"
+    },
+    {
+      "id": "recurrent_networks-block-24",
+      "quote": "> …it might output whether the subject is singular or plural, so that we know what form a verb should be conjugated into if that's what follows next.",
+      "kind": "paragraph",
+      "section": "The LSTM's Conveyor Belt"
+    },
+    {
+      "id": "recurrent_networks-block-25",
+      "quote": "Forget the gate, keep the memory: that is the whole trick — an *elementwise* multiplication by a gate near 1 instead of a full matrix product, so the gradients survive the journey across a long sentence \\cite{colah2015lstm}.",
+      "kind": "paragraph",
+      "section": "The LSTM's Conveyor Belt"
+    },
+    {
+      "id": "recurrent_networks-block-26",
+      "quote": "The LSTM was not invented in a vacuum. In his 1991 diploma thesis, \\citeauthor{hochreiter1991vanishing} analyzed why recurrent gradients decay; the solution he and Schmidhuber developed, the *constant error carousel*, appeared in the 1997 LSTM paper \\cite{hochreiter1991vanishing,lstm}. The carousel is a self-connected unit whose error signal can flow backward without being multiplied by a weight matrix—the cell state made trainable. Learned input and output gates let the network decide when to write to it and when to read from it.",
+      "kind": "paragraph",
+      "section": "The LSTM's Conveyor Belt"
+    },
+    {
+      "id": "recurrent_networks-block-27",
+      "quote": "The Family Tree",
+      "kind": "heading",
+      "section": "The Family Tree"
+    },
+    {
+      "id": "recurrent_networks-block-28",
+      "quote": "What follows is a pruning of the idea, not a new invention. The **gated recurrent unit (GRU)** of \\citeauthor{cho2014gru} (\\citeyear{cho2014gru}) merges the forget and input gates into one **update gate**, and weds the memory to the output via a **reset gate** — two gates instead of three, fewer parameters, similar performance \\cite{cho2014gru}. And when \\citeauthor{greff2015lstm} and colleagues *searched* the space of LSTM variants systematically, they reached a deflating but reassuring conclusion: the best variants are only marginally better than the plain, standard LSTM \\cite{greff2015lstm}.",
+      "kind": "paragraph",
+      "section": "The Family Tree"
+    },
+    {
+      "id": "recurrent_networks-block-29",
+      "quote": "The message of that search echoes [the universality discussion in the toolkit](https://asanai.scads.ai): architecture cleverness buys freedom from *unavoidable* failure, but the winning configurations cluster together — “all about the same” \\cite{colah2015lstm}. What actually scaled, as [the next chapter](attentionlab.php) shows, was not a better gate but *removing the chain entirely* — \\citeauthor{colah2015lstm} ends his walkthrough with an honest roadmap:",
+      "kind": "paragraph",
+      "section": "The Family Tree"
+    },
+    {
+      "id": "recurrent_networks-block-30",
+      "quote": "> A common opinion among researchers is: \"Yes! There is a next step and it's attention!\" The idea is to let every step of an RNN pick information to look at from some larger collection of information.",
+      "kind": "paragraph",
+      "section": "The Family Tree"
+    },
+    {
+      "id": "recurrent_networks-block-31",
+      "quote": "From sequences to translations: seq2seq",
+      "kind": "heading",
+      "section": "From sequences to translations: seq2seq"
+    },
+    {
+      "id": "recurrent_networks-block-32",
+      "quote": "The recurrent loop becomes much more useful when you give it a job with two different sequences. **Sequence-to-sequence** learning (seq2seq), introduced in 2014 by Sutskever, Vinyals, and Le and independently by Cho et al., pairs two recurrent networks (\\cite[Sutskever et al., 2014]{sutskever2014seq2seq}; \\cite[Cho et al., 2014]{cho2014gru}):",
+      "kind": "paragraph",
+      "section": "From sequences to translations: seq2seq"
+    },
+    {
+      "id": "recurrent_networks-block-33",
+      "quote": "The context vector is the paradigm's central wager: that the meaning of a sentence of any length can be stored as a point in a fixed-dimensional space, and unfolded back into another language. It is also its central weakness. Everything the decoder knows about the source must pass through those few numbers, so quality falls as sentences get longer. Sutskever et al. found a cheap partial fix: **reverse the source sentence**, which puts the first source words — the ones that predict the first target words — close to the context vector.",
+      "kind": "paragraph",
+      "section": "From sequences to translations: seq2seq"
+    },
+    {
+      "id": "recurrent_networks-block-34",
+      "quote": "That per-step alignment is the direct ancestor of the self-attention inside every Transformer: instead of one compressed summary, the decoder learns *where to look* (\\cite[Bahdanau et al., 2014]{bahdanau2014}).",
+      "kind": "paragraph",
+      "section": "From sequences to translations: seq2seq"
+    },
+    {
+      "id": "recurrent_networks-block-35",
+      "quote": "Training introduced a protocol that every modern language model still uses. **Teacher forcing** feeds the decoder the *true* previous token at every step, not its own prediction, so all positions can be scored in one parallel pass; the technique goes back to \\citeauthor{williams1989} (\\citeyear{williams1989}). At inference the gold prefix is gone and the model consumes its own outputs; the mismatch between the two conditions is called **exposure bias**. Scheduled sampling, which gradually replaces gold tokens with model predictions during training, was the recurrent era's remedy \\cite{bengio2015scheduled}. At Transformer scale the problem largely receded in practice, but the protocol did not: next-token training *is* teacher forcing with a causal mask.",
+      "kind": "paragraph",
+      "section": "From sequences to translations: seq2seq"
+    },
+    {
+      "id": "recurrent_networks-block-36",
+      "quote": "The seq2seq form outlived the recurrence. Google's production GNMT system stacked eight LSTM layers per side \\cite{wu2016gnmt}, the Transformer kept the encoder–decoder skeleton and replaced the recurrent core with attention \\cite{vaswani2017attention}, T5 recast every task as text-to-text \\cite{raffel2020t5}, and Whisper carried the same shape into speech recognition \\cite{radford2022whisper}.",
+      "kind": "paragraph",
+      "section": "From sequences to translations: seq2seq"
     }
   ]
 }

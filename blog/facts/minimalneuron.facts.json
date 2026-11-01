@@ -574,818 +574,3120 @@
       "quote": "part: 2",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-1-part_of-minimalneuron",
+      "from": "minimalneuron-block-1",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-2-part_of-minimalneuron",
+      "from": "minimalneuron-block-2",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-1-before-minimalneuron-block-2",
+      "from": "minimalneuron-block-1",
+      "to": "minimalneuron-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-2-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-2",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-3-part_of-minimalneuron",
+      "from": "minimalneuron-block-3",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-2-before-minimalneuron-block-3",
+      "from": "minimalneuron-block-2",
+      "to": "minimalneuron-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-3-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-3",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-4-part_of-minimalneuron",
+      "from": "minimalneuron-block-4",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-3-before-minimalneuron-block-4",
+      "from": "minimalneuron-block-3",
+      "to": "minimalneuron-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-4-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-4",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-5-part_of-minimalneuron",
+      "from": "minimalneuron-block-5",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-4-before-minimalneuron-block-5",
+      "from": "minimalneuron-block-4",
+      "to": "minimalneuron-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-5-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-5",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-6-part_of-minimalneuron",
+      "from": "minimalneuron-block-6",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-5-before-minimalneuron-block-6",
+      "from": "minimalneuron-block-5",
+      "to": "minimalneuron-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-6-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-6",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-7-part_of-minimalneuron",
+      "from": "minimalneuron-block-7",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-6-before-minimalneuron-block-7",
+      "from": "minimalneuron-block-6",
+      "to": "minimalneuron-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-7-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-7",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-8-part_of-minimalneuron",
+      "from": "minimalneuron-block-8",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-7-before-minimalneuron-block-8",
+      "from": "minimalneuron-block-7",
+      "to": "minimalneuron-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-8-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-8",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-9-part_of-minimalneuron",
+      "from": "minimalneuron-block-9",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-8-before-minimalneuron-block-9",
+      "from": "minimalneuron-block-8",
+      "to": "minimalneuron-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-9-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-9",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-10-part_of-minimalneuron",
+      "from": "minimalneuron-block-10",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-9-before-minimalneuron-block-10",
+      "from": "minimalneuron-block-9",
+      "to": "minimalneuron-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-10-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-10",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-11-part_of-minimalneuron",
+      "from": "minimalneuron-block-11",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-10-before-minimalneuron-block-11",
+      "from": "minimalneuron-block-10",
+      "to": "minimalneuron-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-11-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-11",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-12-part_of-minimalneuron",
+      "from": "minimalneuron-block-12",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-11-before-minimalneuron-block-12",
+      "from": "minimalneuron-block-11",
+      "to": "minimalneuron-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-12-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-12",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-13-part_of-minimalneuron",
+      "from": "minimalneuron-block-13",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-12-before-minimalneuron-block-13",
+      "from": "minimalneuron-block-12",
+      "to": "minimalneuron-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-13-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-13",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-14-part_of-minimalneuron",
+      "from": "minimalneuron-block-14",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-13-before-minimalneuron-block-14",
+      "from": "minimalneuron-block-13",
+      "to": "minimalneuron-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-14-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-14",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-15-part_of-minimalneuron",
+      "from": "minimalneuron-block-15",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-14-before-minimalneuron-block-15",
+      "from": "minimalneuron-block-14",
+      "to": "minimalneuron-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-15-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-15",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-16-part_of-minimalneuron",
+      "from": "minimalneuron-block-16",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-15-before-minimalneuron-block-16",
+      "from": "minimalneuron-block-15",
+      "to": "minimalneuron-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-16-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-16",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-17-part_of-minimalneuron",
+      "from": "minimalneuron-block-17",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-16-before-minimalneuron-block-17",
+      "from": "minimalneuron-block-16",
+      "to": "minimalneuron-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-17-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-17",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-18-part_of-minimalneuron",
+      "from": "minimalneuron-block-18",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-17-before-minimalneuron-block-18",
+      "from": "minimalneuron-block-17",
+      "to": "minimalneuron-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-18-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-18",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-19-part_of-minimalneuron",
+      "from": "minimalneuron-block-19",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-18-before-minimalneuron-block-19",
+      "from": "minimalneuron-block-18",
+      "to": "minimalneuron-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-19-related_to-minimalneuron-block-1",
+      "from": "minimalneuron-block-19",
+      "to": "minimalneuron-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-20-part_of-minimalneuron",
+      "from": "minimalneuron-block-20",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-19-before-minimalneuron-block-20",
+      "from": "minimalneuron-block-19",
+      "to": "minimalneuron-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-21-part_of-minimalneuron",
+      "from": "minimalneuron-block-21",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-20-before-minimalneuron-block-21",
+      "from": "minimalneuron-block-20",
+      "to": "minimalneuron-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-21-related_to-minimalneuron-block-20",
+      "from": "minimalneuron-block-21",
+      "to": "minimalneuron-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-22-part_of-minimalneuron",
+      "from": "minimalneuron-block-22",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-21-before-minimalneuron-block-22",
+      "from": "minimalneuron-block-21",
+      "to": "minimalneuron-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-22-related_to-minimalneuron-block-20",
+      "from": "minimalneuron-block-22",
+      "to": "minimalneuron-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-23-part_of-minimalneuron",
+      "from": "minimalneuron-block-23",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-22-before-minimalneuron-block-23",
+      "from": "minimalneuron-block-22",
+      "to": "minimalneuron-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-24-part_of-minimalneuron",
+      "from": "minimalneuron-block-24",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-23-before-minimalneuron-block-24",
+      "from": "minimalneuron-block-23",
+      "to": "minimalneuron-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-24-related_to-minimalneuron-block-23",
+      "from": "minimalneuron-block-24",
+      "to": "minimalneuron-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-25-part_of-minimalneuron",
+      "from": "minimalneuron-block-25",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-24-before-minimalneuron-block-25",
+      "from": "minimalneuron-block-24",
+      "to": "minimalneuron-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-25-related_to-minimalneuron-block-23",
+      "from": "minimalneuron-block-25",
+      "to": "minimalneuron-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-26-part_of-minimalneuron",
+      "from": "minimalneuron-block-26",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-25-before-minimalneuron-block-26",
+      "from": "minimalneuron-block-25",
+      "to": "minimalneuron-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-27-part_of-minimalneuron",
+      "from": "minimalneuron-block-27",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-26-before-minimalneuron-block-27",
+      "from": "minimalneuron-block-26",
+      "to": "minimalneuron-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-28-part_of-minimalneuron",
+      "from": "minimalneuron-block-28",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-27-before-minimalneuron-block-28",
+      "from": "minimalneuron-block-27",
+      "to": "minimalneuron-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-28-related_to-minimalneuron-block-27",
+      "from": "minimalneuron-block-28",
+      "to": "minimalneuron-block-27",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-29-part_of-minimalneuron",
+      "from": "minimalneuron-block-29",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-28-before-minimalneuron-block-29",
+      "from": "minimalneuron-block-28",
+      "to": "minimalneuron-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-30-part_of-minimalneuron",
+      "from": "minimalneuron-block-30",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-29-before-minimalneuron-block-30",
+      "from": "minimalneuron-block-29",
+      "to": "minimalneuron-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-30-related_to-minimalneuron-block-29",
+      "from": "minimalneuron-block-30",
+      "to": "minimalneuron-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-31-part_of-minimalneuron",
+      "from": "minimalneuron-block-31",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-30-before-minimalneuron-block-31",
+      "from": "minimalneuron-block-30",
+      "to": "minimalneuron-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-31-related_to-minimalneuron-block-29",
+      "from": "minimalneuron-block-31",
+      "to": "minimalneuron-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-32-part_of-minimalneuron",
+      "from": "minimalneuron-block-32",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-31-before-minimalneuron-block-32",
+      "from": "minimalneuron-block-31",
+      "to": "minimalneuron-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-32-related_to-minimalneuron-block-29",
+      "from": "minimalneuron-block-32",
+      "to": "minimalneuron-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-33-part_of-minimalneuron",
+      "from": "minimalneuron-block-33",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-32-before-minimalneuron-block-33",
+      "from": "minimalneuron-block-32",
+      "to": "minimalneuron-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-34-part_of-minimalneuron",
+      "from": "minimalneuron-block-34",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-33-before-minimalneuron-block-34",
+      "from": "minimalneuron-block-33",
+      "to": "minimalneuron-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-34-related_to-minimalneuron-block-33",
+      "from": "minimalneuron-block-34",
+      "to": "minimalneuron-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-35-part_of-minimalneuron",
+      "from": "minimalneuron-block-35",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-34-before-minimalneuron-block-35",
+      "from": "minimalneuron-block-34",
+      "to": "minimalneuron-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-35-related_to-minimalneuron-block-33",
+      "from": "minimalneuron-block-35",
+      "to": "minimalneuron-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-36-part_of-minimalneuron",
+      "from": "minimalneuron-block-36",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-35-before-minimalneuron-block-36",
+      "from": "minimalneuron-block-35",
+      "to": "minimalneuron-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-37-part_of-minimalneuron",
+      "from": "minimalneuron-block-37",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-36-before-minimalneuron-block-37",
+      "from": "minimalneuron-block-36",
+      "to": "minimalneuron-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-37-related_to-minimalneuron-block-36",
+      "from": "minimalneuron-block-37",
+      "to": "minimalneuron-block-36",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-38-part_of-minimalneuron",
+      "from": "minimalneuron-block-38",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-37-before-minimalneuron-block-38",
+      "from": "minimalneuron-block-37",
+      "to": "minimalneuron-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-39-part_of-minimalneuron",
+      "from": "minimalneuron-block-39",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-38-before-minimalneuron-block-39",
+      "from": "minimalneuron-block-38",
+      "to": "minimalneuron-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-39-related_to-minimalneuron-block-38",
+      "from": "minimalneuron-block-39",
+      "to": "minimalneuron-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-40-part_of-minimalneuron",
+      "from": "minimalneuron-block-40",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-39-before-minimalneuron-block-40",
+      "from": "minimalneuron-block-39",
+      "to": "minimalneuron-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-40-related_to-minimalneuron-block-38",
+      "from": "minimalneuron-block-40",
+      "to": "minimalneuron-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-41-part_of-minimalneuron",
+      "from": "minimalneuron-block-41",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-40-before-minimalneuron-block-41",
+      "from": "minimalneuron-block-40",
+      "to": "minimalneuron-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-41-related_to-minimalneuron-block-38",
+      "from": "minimalneuron-block-41",
+      "to": "minimalneuron-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-42-part_of-minimalneuron",
+      "from": "minimalneuron-block-42",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-41-before-minimalneuron-block-42",
+      "from": "minimalneuron-block-41",
+      "to": "minimalneuron-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-42-related_to-minimalneuron-block-38",
+      "from": "minimalneuron-block-42",
+      "to": "minimalneuron-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-43-part_of-minimalneuron",
+      "from": "minimalneuron-block-43",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-42-before-minimalneuron-block-43",
+      "from": "minimalneuron-block-42",
+      "to": "minimalneuron-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-43-related_to-minimalneuron-block-38",
+      "from": "minimalneuron-block-43",
+      "to": "minimalneuron-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-44-part_of-minimalneuron",
+      "from": "minimalneuron-block-44",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-43-before-minimalneuron-block-44",
+      "from": "minimalneuron-block-43",
+      "to": "minimalneuron-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-44-related_to-minimalneuron-block-38",
+      "from": "minimalneuron-block-44",
+      "to": "minimalneuron-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-45-part_of-minimalneuron",
+      "from": "minimalneuron-block-45",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-44-before-minimalneuron-block-45",
+      "from": "minimalneuron-block-44",
+      "to": "minimalneuron-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-46-part_of-minimalneuron",
+      "from": "minimalneuron-block-46",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-45-before-minimalneuron-block-46",
+      "from": "minimalneuron-block-45",
+      "to": "minimalneuron-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-46-related_to-minimalneuron-block-45",
+      "from": "minimalneuron-block-46",
+      "to": "minimalneuron-block-45",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-47-part_of-minimalneuron",
+      "from": "minimalneuron-block-47",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-46-before-minimalneuron-block-47",
+      "from": "minimalneuron-block-46",
+      "to": "minimalneuron-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-47-related_to-minimalneuron-block-45",
+      "from": "minimalneuron-block-47",
+      "to": "minimalneuron-block-45",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-48-part_of-minimalneuron",
+      "from": "minimalneuron-block-48",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-47-before-minimalneuron-block-48",
+      "from": "minimalneuron-block-47",
+      "to": "minimalneuron-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-48-related_to-minimalneuron-block-45",
+      "from": "minimalneuron-block-48",
+      "to": "minimalneuron-block-45",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-49-part_of-minimalneuron",
+      "from": "minimalneuron-block-49",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-48-before-minimalneuron-block-49",
+      "from": "minimalneuron-block-48",
+      "to": "minimalneuron-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-49-related_to-minimalneuron-block-45",
+      "from": "minimalneuron-block-49",
+      "to": "minimalneuron-block-45",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-50-part_of-minimalneuron",
+      "from": "minimalneuron-block-50",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-49-before-minimalneuron-block-50",
+      "from": "minimalneuron-block-49",
+      "to": "minimalneuron-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-51-part_of-minimalneuron",
+      "from": "minimalneuron-block-51",
+      "to": "minimalneuron",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-50-before-minimalneuron-block-51",
+      "from": "minimalneuron-block-50",
+      "to": "minimalneuron-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-block-51-related_to-minimalneuron-block-50",
+      "from": "minimalneuron-block-51",
+      "to": "minimalneuron-block-50",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-1-part_of-minimalneuron-block-1",
+      "from": "minimalneuron-stmt-1",
+      "to": "minimalneuron-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-2-part_of-minimalneuron-block-1",
+      "from": "minimalneuron-stmt-2",
+      "to": "minimalneuron-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-3-part_of-minimalneuron-block-2",
+      "from": "minimalneuron-stmt-3",
+      "to": "minimalneuron-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-4-part_of-minimalneuron-block-2",
+      "from": "minimalneuron-stmt-4",
+      "to": "minimalneuron-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-5-part_of-minimalneuron-block-2",
+      "from": "minimalneuron-stmt-5",
+      "to": "minimalneuron-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-6-part_of-minimalneuron-block-2",
+      "from": "minimalneuron-stmt-6",
+      "to": "minimalneuron-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-7-part_of-minimalneuron-block-2",
+      "from": "minimalneuron-stmt-7",
+      "to": "minimalneuron-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-8-part_of-minimalneuron-block-3",
+      "from": "minimalneuron-stmt-8",
+      "to": "minimalneuron-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-9-part_of-minimalneuron-block-4",
+      "from": "minimalneuron-stmt-9",
+      "to": "minimalneuron-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-10-part_of-minimalneuron-block-4",
+      "from": "minimalneuron-stmt-10",
+      "to": "minimalneuron-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-11-part_of-minimalneuron-block-4",
+      "from": "minimalneuron-stmt-11",
+      "to": "minimalneuron-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-12-part_of-minimalneuron-block-5",
+      "from": "minimalneuron-stmt-12",
+      "to": "minimalneuron-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-13-part_of-minimalneuron-block-6",
+      "from": "minimalneuron-stmt-13",
+      "to": "minimalneuron-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-14-part_of-minimalneuron-block-6",
+      "from": "minimalneuron-stmt-14",
+      "to": "minimalneuron-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-15-part_of-minimalneuron-block-6",
+      "from": "minimalneuron-stmt-15",
+      "to": "minimalneuron-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-16-part_of-minimalneuron-block-7",
+      "from": "minimalneuron-stmt-16",
+      "to": "minimalneuron-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-17-part_of-minimalneuron-block-8",
+      "from": "minimalneuron-stmt-17",
+      "to": "minimalneuron-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-18-part_of-minimalneuron-block-8",
+      "from": "minimalneuron-stmt-18",
+      "to": "minimalneuron-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-19-part_of-minimalneuron-block-9",
+      "from": "minimalneuron-stmt-19",
+      "to": "minimalneuron-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-20-part_of-minimalneuron-block-9",
+      "from": "minimalneuron-stmt-20",
+      "to": "minimalneuron-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-21-part_of-minimalneuron-block-9",
+      "from": "minimalneuron-stmt-21",
+      "to": "minimalneuron-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-22-part_of-minimalneuron-block-9",
+      "from": "minimalneuron-stmt-22",
+      "to": "minimalneuron-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-23-part_of-minimalneuron-block-11",
+      "from": "minimalneuron-stmt-23",
+      "to": "minimalneuron-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-24-part_of-minimalneuron-block-11",
+      "from": "minimalneuron-stmt-24",
+      "to": "minimalneuron-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-25-part_of-minimalneuron-block-11",
+      "from": "minimalneuron-stmt-25",
+      "to": "minimalneuron-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-26-part_of-minimalneuron-block-11",
+      "from": "minimalneuron-stmt-26",
+      "to": "minimalneuron-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-27-part_of-minimalneuron-block-12",
+      "from": "minimalneuron-stmt-27",
+      "to": "minimalneuron-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-28-part_of-minimalneuron-block-12",
+      "from": "minimalneuron-stmt-28",
+      "to": "minimalneuron-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-29-part_of-minimalneuron-block-12",
+      "from": "minimalneuron-stmt-29",
+      "to": "minimalneuron-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-30-part_of-minimalneuron-block-12",
+      "from": "minimalneuron-stmt-30",
+      "to": "minimalneuron-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-31-part_of-minimalneuron-block-13",
+      "from": "minimalneuron-stmt-31",
+      "to": "minimalneuron-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-32-part_of-minimalneuron-block-13",
+      "from": "minimalneuron-stmt-32",
+      "to": "minimalneuron-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-33-part_of-minimalneuron-block-13",
+      "from": "minimalneuron-stmt-33",
+      "to": "minimalneuron-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-34-part_of-minimalneuron-block-13",
+      "from": "minimalneuron-stmt-34",
+      "to": "minimalneuron-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-35-part_of-minimalneuron-block-14",
+      "from": "minimalneuron-stmt-35",
+      "to": "minimalneuron-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-36-part_of-minimalneuron-block-14",
+      "from": "minimalneuron-stmt-36",
+      "to": "minimalneuron-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-37-part_of-minimalneuron-block-14",
+      "from": "minimalneuron-stmt-37",
+      "to": "minimalneuron-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-38-part_of-minimalneuron-block-14",
+      "from": "minimalneuron-stmt-38",
+      "to": "minimalneuron-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-39-part_of-minimalneuron-block-17",
+      "from": "minimalneuron-stmt-39",
+      "to": "minimalneuron-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-40-part_of-minimalneuron-block-21",
+      "from": "minimalneuron-stmt-40",
+      "to": "minimalneuron-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-41-part_of-minimalneuron-block-21",
+      "from": "minimalneuron-stmt-41",
+      "to": "minimalneuron-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-42-part_of-minimalneuron-block-22",
+      "from": "minimalneuron-stmt-42",
+      "to": "minimalneuron-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-43-part_of-minimalneuron-block-24",
+      "from": "minimalneuron-stmt-43",
+      "to": "minimalneuron-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-44-part_of-minimalneuron-block-25",
+      "from": "minimalneuron-stmt-44",
+      "to": "minimalneuron-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-45-part_of-minimalneuron-block-28",
+      "from": "minimalneuron-stmt-45",
+      "to": "minimalneuron-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-46-part_of-minimalneuron-block-28",
+      "from": "minimalneuron-stmt-46",
+      "to": "minimalneuron-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-47-part_of-minimalneuron-block-30",
+      "from": "minimalneuron-stmt-47",
+      "to": "minimalneuron-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-48-part_of-minimalneuron-block-30",
+      "from": "minimalneuron-stmt-48",
+      "to": "minimalneuron-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-49-part_of-minimalneuron-block-31",
+      "from": "minimalneuron-stmt-49",
+      "to": "minimalneuron-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-50-part_of-minimalneuron-block-31",
+      "from": "minimalneuron-stmt-50",
+      "to": "minimalneuron-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-51-part_of-minimalneuron-block-32",
+      "from": "minimalneuron-stmt-51",
+      "to": "minimalneuron-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-52-part_of-minimalneuron-block-32",
+      "from": "minimalneuron-stmt-52",
+      "to": "minimalneuron-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-53-part_of-minimalneuron-block-32",
+      "from": "minimalneuron-stmt-53",
+      "to": "minimalneuron-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-54-part_of-minimalneuron-block-32",
+      "from": "minimalneuron-stmt-54",
+      "to": "minimalneuron-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-55-part_of-minimalneuron-block-34",
+      "from": "minimalneuron-stmt-55",
+      "to": "minimalneuron-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-56-part_of-minimalneuron-block-35",
+      "from": "minimalneuron-stmt-56",
+      "to": "minimalneuron-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-57-part_of-minimalneuron-block-37",
+      "from": "minimalneuron-stmt-57",
+      "to": "minimalneuron-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-58-part_of-minimalneuron-block-37",
+      "from": "minimalneuron-stmt-58",
+      "to": "minimalneuron-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-59-part_of-minimalneuron-block-39",
+      "from": "minimalneuron-stmt-59",
+      "to": "minimalneuron-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-60-part_of-minimalneuron-block-39",
+      "from": "minimalneuron-stmt-60",
+      "to": "minimalneuron-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-61-part_of-minimalneuron-block-40",
+      "from": "minimalneuron-stmt-61",
+      "to": "minimalneuron-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-62-part_of-minimalneuron-block-42",
+      "from": "minimalneuron-stmt-62",
+      "to": "minimalneuron-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-63-part_of-minimalneuron-block-42",
+      "from": "minimalneuron-stmt-63",
+      "to": "minimalneuron-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-64-part_of-minimalneuron-block-42",
+      "from": "minimalneuron-stmt-64",
+      "to": "minimalneuron-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-65-part_of-minimalneuron-block-43",
+      "from": "minimalneuron-stmt-65",
+      "to": "minimalneuron-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-66-part_of-minimalneuron-block-43",
+      "from": "minimalneuron-stmt-66",
+      "to": "minimalneuron-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-67-part_of-minimalneuron-block-43",
+      "from": "minimalneuron-stmt-67",
+      "to": "minimalneuron-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-68-part_of-minimalneuron-block-43",
+      "from": "minimalneuron-stmt-68",
+      "to": "minimalneuron-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-69-part_of-minimalneuron-block-44",
+      "from": "minimalneuron-stmt-69",
+      "to": "minimalneuron-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-70-part_of-minimalneuron-block-44",
+      "from": "minimalneuron-stmt-70",
+      "to": "minimalneuron-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-71-part_of-minimalneuron-block-44",
+      "from": "minimalneuron-stmt-71",
+      "to": "minimalneuron-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-72-part_of-minimalneuron-block-44",
+      "from": "minimalneuron-stmt-72",
+      "to": "minimalneuron-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-73-part_of-minimalneuron-block-46",
+      "from": "minimalneuron-stmt-73",
+      "to": "minimalneuron-block-46",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-74-part_of-minimalneuron-block-46",
+      "from": "minimalneuron-stmt-74",
+      "to": "minimalneuron-block-46",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-75-part_of-minimalneuron-block-46",
+      "from": "minimalneuron-stmt-75",
+      "to": "minimalneuron-block-46",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-76-part_of-minimalneuron-block-47",
+      "from": "minimalneuron-stmt-76",
+      "to": "minimalneuron-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-77-part_of-minimalneuron-block-47",
+      "from": "minimalneuron-stmt-77",
+      "to": "minimalneuron-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-78-part_of-minimalneuron-block-48",
+      "from": "minimalneuron-stmt-78",
+      "to": "minimalneuron-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-79-part_of-minimalneuron-block-49",
+      "from": "minimalneuron-stmt-79",
+      "to": "minimalneuron-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-80-part_of-minimalneuron-block-51",
+      "from": "minimalneuron-stmt-80",
+      "to": "minimalneuron-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-81-part_of-minimalneuron-block-51",
+      "from": "minimalneuron-stmt-81",
+      "to": "minimalneuron-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-minimalneuron-stmt-82-part_of-minimalneuron-block-51",
+      "from": "minimalneuron-stmt-82",
+      "to": "minimalneuron-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "minimalneuron-stmt-1",
       "quote": "The simplest AI is actually a very simple mathematical model called a **Neuron**.",
+      "block_id": "minimalneuron-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-2",
       "quote": "As a *pedagogical starting point*, we take it to be just an affine map — a linear function plus a constant shift:",
+      "block_id": "minimalneuron-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-3",
-      "quote": "**Important note:** A single affine map by itself is **not yet a full neural network**.",
+      "quote": "The paper \\citeauthor{mccullochpitts1943} published in \\citeyear{mccullochpitts1943} was not yet a learning machine.",
+      "block_id": "minimalneuron-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-4",
-      "quote": "Formally, a neural network is built by composing many such affine maps with a non-linear **activation function** $g$ between them, of the form $f(x) = (T_L \\circ g \\circ T_{L-1} \\circ g \\circ \\dots \\circ T_1)(x)$.",
+      "quote": "They modelled the neuron as an **all-or-none** threshold unit: a weighted sum of excitatory and inhibitory inputs is compared with a threshold, and the unit fires only if that threshold is crossed.",
+      "block_id": "minimalneuron-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-5",
-      "quote": "Without that non-linearity, stacking affine maps collapses back into a single affine map (we will see exactly this collapse in the activation chapter, and it is the reason every real network uses an activation function).",
+      "quote": "Because such units can implement AND, OR and NOT, the paper showed that networks of them can realise any propositional formula — a *logical calculus* of nervous activity.",
+      "block_id": "minimalneuron-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-6",
-      "quote": "For this *first Chautauqua*, however, we keep things as simple as possible: just that single function equation, with $a$ and $b$ being *Parameters* for the function.",
+      "quote": "What it did not contain was a rule for *changing* the weights.",
+      "block_id": "minimalneuron-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-7",
-      "quote": "In this case, $a$ and $b$ are just simple floating point numbers, but usually they are not numbers but tensors, ie.",
+      "quote": "That step — learning from examples — is the contribution of the next decade.",
+      "block_id": "minimalneuron-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-8",
-      "quote": "large lists of numbers, such that it can be that they can look like",
+      "quote": "In AI terminology, we give these parameters specific names:",
+      "block_id": "minimalneuron-block-3",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-9",
-      "quote": "But since normal numbers are tensors as well, this holds true.",
+      "quote": "\\citeauthor{hebb1949organizationofbehaviour}'s *The Organization of Behavior* (\\citeyear{hebb1949organizationofbehaviour}) proposed that learning is a change in synaptic strength: when one neuron repeatedly helps to fire another, the connection between them is strengthened.",
+      "block_id": "minimalneuron-block-4",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-10",
-      "quote": "Historically, the threshold unit predates the Perceptron.",
+      "quote": "The slogan \"cells that fire together, wire together\" is a later summary, but the idea is his: memory is not a stored symbol but a stable pattern of weights.",
+      "block_id": "minimalneuron-block-4",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-11",
-      "quote": "\\citeauthor{mccullochpitts1943} modelled the neuron in \\citeyear{mccullochpitts1943} as an all-or-none element: a weighted sum is compared with a threshold, and the unit fires $1$ when the affine map is positive and $0$ otherwise.",
+      "quote": "Rosenblatt's Perceptron learning rule \\cite{rosenblatt1958perceptron} can be read as a supervised, error-correcting cousin of Hebb's principle — the weight moves only when the output is wrong.",
+      "block_id": "minimalneuron-block-4",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-12",
-      "quote": "With the Heaviside step $H(x)=\\mathbf{1}_{x>0}$, that neuron computes $\\hat{y}=H(ax+b)$.",
+      "quote": "To help the computer find the right values, we provide a **Dataset** (a set of “correct” pairs):",
+      "block_id": "minimalneuron-block-5",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-13",
-      "quote": "\\citeauthor{rosenblatt1958perceptron} turned the idea into a trainable classifier in \\citeyear{rosenblatt1958perceptron}; its output unit used the same threshold, but the full Perceptron also had fixed association units and a discrete learning rule.",
+      "quote": "Rosenblatt's first report appeared in 1957 as *The Perceptron: A Perceiving and Recognizing Automaton* \\cite{rosenblattperceptron}; the better-known paper followed in 1958 \\cite{rosenblatt1958perceptron}.",
+      "block_id": "minimalneuron-block-6",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-14",
-      "quote": "The paper \\citeauthor{mccullochpitts1943} published in \\citeyear{mccullochpitts1943} was not yet a learning machine.",
+      "quote": "The machine was not a thought experiment: the Mark I Perceptron used a 20×20 grid of photocells, a layer of fixed association units and a layer of trainable response units, with weights adjusted by motor-driven potentiometers \\cite{rosenblatt1962neurodynamics}.",
+      "block_id": "minimalneuron-block-6",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-15",
-      "quote": "They modelled the neuron as an **all-or-none** threshold unit: a weighted sum of excitatory and inhibitory inputs is compared with a threshold, and the unit fires only if that threshold is crossed.",
+      "quote": "In 1958 the *New York Times* reported that the Navy had demonstrated a device that \"learns by doing\" — a public claim of a machine that improved with experience \\cite{newyorktimesperceptron}.",
+      "block_id": "minimalneuron-block-6",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-16",
-      "quote": "Because such units can implement AND, OR and NOT, the paper showed that networks of them can realise any propositional formula — a *logical calculus* of nervous activity.",
+      "quote": "When you click **🚀 Start Training**, the computer performs a loop:",
+      "block_id": "minimalneuron-block-7",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-17",
-      "quote": "What it did not contain was a rule for *changing* the weights.",
+      "quote": "**Loss Calculation:** The computer calculates the **Loss** (the error).",
+      "block_id": "minimalneuron-block-8",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-18",
-      "quote": "That step — learning from examples — is the contribution of the next decade.",
+      "quote": "If the model guesses $5$ but the real answer is $6$, the loss tells the AI “you are off by 1”.",
+      "block_id": "minimalneuron-block-8",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-19",
-      "quote": "In AI terminology, we give these parameters specific names:",
+      "quote": "The linear neuron in this demo has a direct ancestor: the **ADALINE** (Adaptive Linear Neuron) of \\citeauthor{widrow1960adaline}, built at Stanford in \\citeyear{widrow1960adaline}.",
+      "block_id": "minimalneuron-block-9",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-20",
-      "quote": "* **Weight ($a$):** This determines the “tilt” of the line.",
+      "quote": "Unlike the Perceptron, its output unit was *linear*, not a step, and its weights were updated by the **delta rule** — move each weight in proportion to the error times the input.",
+      "block_id": "minimalneuron-block-9",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-21",
-      "quote": "It defines how much the input $x$ influences the output $y$.",
+      "quote": "That is exactly the gradient-descent update used here, derived from the mean-squared-error loss.",
+      "block_id": "minimalneuron-block-9",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-22",
-      "quote": "* **Bias ($b$):** This allows the model to shift the line up or down, regardless of the input.",
+      "quote": "In other words, the single-neuron lab below is a 1960 ADALINE with a modern optimiser and a plot.",
+      "block_id": "minimalneuron-block-9",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-23",
-      "quote": "\\citeauthor{hebb1949organizationofbehaviour}'s *The Organization of Behavior* (\\citeyear{hebb1949organizationofbehaviour}) proposed that learning is a change in synaptic strength: when one neuron repeatedly helps to fire another, the connection between them is strengthened.",
+      "quote": "A single **linear** neuron can only fit a straight line.",
+      "block_id": "minimalneuron-block-11",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-24",
-      "quote": "The slogan \"cells that fire together, wire together\" is a later summary, but the idea is his: memory is not a stored symbol but a stable pattern of weights.",
+      "quote": "However, complex AI systems group many of these neurons into **Layers**, and — crucially — place a non-linear activation between the layers.",
+      "block_id": "minimalneuron-block-11",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-25",
-      "quote": "Rosenblatt's Perceptron learning rule \\cite{rosenblatt1958perceptron} can be read as a supervised, error-correcting cousin of Hebb's principle — the weight moves only when the output is wrong.",
+      "quote": "Stacking linear layers alone would collapse back into one affine map; with a non-linearity in between, the composition becomes a **Neural Network** capable of representing patterns far beyond a simple line.",
+      "block_id": "minimalneuron-block-11",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-26",
-      "quote": "Instead of us moving the sliders to find $a$ and $b$, the computer will search for these values itself.",
+      "quote": "But this will come later on, in this example we'll deal with the simplest form of neural networks (one layer, one neuron).",
+      "block_id": "minimalneuron-block-11",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-27",
-      "quote": "To help the computer find the right values, we provide a **Dataset** (a set of “correct” pairs):",
+      "quote": "The limits of the single unit were made precise by \\citeauthor{minskyperceptrons} in *Perceptrons* (\\citeyear{minskyperceptrons}).",
+      "block_id": "minimalneuron-block-12",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-28",
-      "quote": "* **Input $(x) \\rightarrow$ Output $(y)$**",
+      "quote": "They proved that a linear threshold unit cannot compute exclusive-or, and that many simple geometric predicates are beyond a one-layer perceptron.",
+      "block_id": "minimalneuron-block-12",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-29",
-      "quote": "Our goal is for the computer to find a function where $f(1) \\approx 2$, $f(2) \\approx 4$, and so on.",
+      "quote": "The book is often remembered as the cause of an \"AI winter\", but its argument was specifically about the limits of *linear* threshold units, not about multilayer networks with hidden, non-linear units.",
+      "block_id": "minimalneuron-block-12",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-30",
-      "quote": "You might notice the “perfect” rule here is $y = 2x + 0$.",
+      "quote": "The constructive answer — hidden layers with non-linear units — is exactly the architecture the next chapter builds.",
+      "block_id": "minimalneuron-block-12",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-31",
-      "quote": "Rosenblatt's first report appeared in 1957 as *The Perceptron: A Perceiving and Recognizing Automaton* \\cite{rosenblattperceptron}; the better-known paper followed in 1958 \\cite{rosenblatt1958perceptron}.",
+      "quote": "The gradient-descent loop above trains one neuron.",
+      "block_id": "minimalneuron-block-13",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-32",
-      "quote": "The machine was not a thought experiment: the Mark I Perceptron used a 20×20 grid of photocells, a layer of fixed association units and a layer of trainable response units, with weights adjusted by motor-driven potentiometers \\cite{rosenblatt1962neurodynamics}.",
+      "quote": "Training a *deep* network needed one more idea: **backpropagation**, the chain rule applied layer by layer.",
+      "block_id": "minimalneuron-block-13",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-33",
-      "quote": "In 1958 the *New York Times* reported that the Navy had demonstrated a device that \"learns by doing\" — a public claim of a machine that improved with experience \\cite{newyorktimesperceptron}.",
+      "quote": "\\cite[Werbos (1974)]{werbos1974} worked it out in his doctoral thesis, but the result became famous only when \\citeauthor{rumelhart1986} showed in \\citeyear{rumelhart1986} that it could learn useful internal representations.",
+      "block_id": "minimalneuron-block-13",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-34",
-      "quote": "When you click **🚀 Start Training**, the computer performs a loop:",
+      "quote": "Their paper, together with the parallel-distributed-processing volumes of the same year \\cite{rumelhart1986pdp}, made multilayer networks trainable and turned the \"hidden layer\" from a theoretical possibility into a practical tool.",
+      "block_id": "minimalneuron-block-13",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-35",
-      "quote": "**Prediction:** The model takes an input $x$ and calculates a guess using its current $a$ and $b$.",
+      "quote": "The statistical idea behind this neuron is older than the neuron itself.",
+      "block_id": "minimalneuron-block-14",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-36",
-      "quote": "**Loss Calculation:** The computer calculates the **Loss** (the error).",
+      "quote": "The method of least squares — choosing parameters that minimise the sum of squared errors — was published by \\citeauthor{legendre1805} in \\citeyear{legendre1805} and given its probabilistic justification by \\citeauthor{gauss1809} in \\citeyear{gauss1809}.",
+      "block_id": "minimalneuron-block-14",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-37",
-      "quote": "If the model guesses $5$ but the real answer is $6$, the loss tells the AI “you are off by 1”.",
+      "quote": "\\citeauthor{galton} later gave the fitted line its name: studying hereditary stature in \\citeyear{galton}, he observed that children of very tall or very short parents tended toward the population average, and called the phenomenon **regression toward mediocrity**.",
+      "block_id": "minimalneuron-block-14",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-38",
-      "quote": "**Optimization:** The AI uses a math trick called *Gradient Descent* to slightly nudge $a$ and $b$ in the direction that makes the Loss smaller.",
+      "quote": "The modern single neuron is, in effect, a least-squares line with a learning algorithm attached.",
+      "block_id": "minimalneuron-block-14",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-39",
-      "quote": "The linear neuron in this demo has a direct ancestor: the **ADALINE** (Adaptive Linear Neuron) of \\citeauthor{widrow1960adaline}, built at Stanford in \\citeyear{widrow1960adaline}.",
+      "quote": "🚀 Start Training 🔄 Reset Model",
+      "block_id": "minimalneuron-block-17",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-40",
-      "quote": "Unlike the Perceptron, its output unit was *linear*, not a step, and its weights were updated by the **delta rule** — move each weight in proportion to the error times the input.",
-      "section": "",
+      "quote": "Before a network begins to learn, its internal world is a mathematical void.",
+      "block_id": "minimalneuron-block-21",
+      "section": "The Genesis of Space: Weights and Initializers",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-41",
-      "quote": "That is exactly the gradient-descent update used here, derived from the mean-squared-error loss.",
-      "section": "",
+      "quote": "In a dense layer, every relationship is governed by a fundamental linear transformation.",
+      "block_id": "minimalneuron-block-21",
+      "section": "The Genesis of Space: Weights and Initializers",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-42",
-      "quote": "In other words, the single-neuron lab below is a 1960 ADALINE with a modern optimiser and a plot.",
-      "section": "",
+      "quote": "In this “toy” network equation:",
+      "block_id": "minimalneuron-block-22",
+      "section": "The Genesis of Space: Weights and Initializers",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-43",
-      "quote": "* **Loss History:** Watch the red chart.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-44",
-      "quote": "As the AI learns, the “Loss” (error) should drop toward zero.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-45",
-      "quote": "* **Linear Regression:** Watch the orange line.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-46",
-      "quote": "It starts at a random position and gradually “tilts” until it passes through the blue data points.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-47",
-      "quote": "* **Math Monitor:** This shows the internal state of the neuron.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-48",
-      "quote": "Watch how $a$ (weight) and $b$ (bias) change as the AI fits the data!",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-49",
-      "quote": "A single **linear** neuron can only fit a straight line.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-50",
-      "quote": "However, complex AI systems group many of these neurons into **Layers**, and — crucially — place a non-linear activation between the layers.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-51",
-      "quote": "Stacking linear layers alone would collapse back into one affine map; with a non-linearity in between, the composition becomes a **Neural Network** capable of representing patterns far beyond a simple line.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-52",
-      "quote": "But this will come later on, in this example we'll deal with the simplest form of neural networks (one layer, one neuron).",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-53",
-      "quote": "The limits of the single unit were made precise by \\citeauthor{minskyperceptrons} in *Perceptrons* (\\citeyear{minskyperceptrons}).",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-54",
-      "quote": "They proved that a linear threshold unit cannot compute exclusive-or, and that many simple geometric predicates are beyond a one-layer perceptron.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-55",
-      "quote": "The book is often remembered as the cause of an \"AI winter\", but its argument was specifically about the limits of *linear* threshold units, not about multilayer networks with hidden, non-linear units.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-56",
-      "quote": "The constructive answer — hidden layers with non-linear units — is exactly the architecture the next chapter builds.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-57",
-      "quote": "The gradient-descent loop above trains one neuron.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-58",
-      "quote": "Training a *deep* network needed one more idea: **backpropagation**, the chain rule applied layer by layer.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-59",
-      "quote": "\\cite[Werbos (1974)]{werbos1974} worked it out in his doctoral thesis, but the result became famous only when \\citeauthor{rumelhart1986} showed in \\citeyear{rumelhart1986} that it could learn useful internal representations.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-60",
-      "quote": "Their paper, together with the parallel-distributed-processing volumes of the same year \\cite{rumelhart1986pdp}, made multilayer networks trainable and turned the \"hidden layer\" from a theoretical possibility into a practical tool.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-61",
-      "quote": "The statistical idea behind this neuron is older than the neuron itself.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-62",
-      "quote": "The method of least squares — choosing parameters that minimise the sum of squared errors — was published by \\citeauthor{legendre1805} in \\citeyear{legendre1805} and given its probabilistic justification by \\citeauthor{gauss1809} in \\citeyear{gauss1809}.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-63",
-      "quote": "\\citeauthor{galton} later gave the fitted line its name: studying hereditary stature in \\citeyear{galton}, he observed that children of very tall or very short parents tended toward the population average, and called the phenomenon **regression toward mediocrity**.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-64",
-      "quote": "The modern single neuron is, in effect, a least-squares line with a learning algorithm attached.",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-65",
-      "quote": "Before a network begins to learn, its internal world is a mathematical void.",
-      "section": "The Genesis of Space: Weights and Initializers",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-66",
-      "quote": "In a dense layer, every relationship is governed by a fundamental linear transformation.",
-      "section": "The Genesis of Space: Weights and Initializers",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-67",
-      "quote": "In this “toy” network equation:",
-      "section": "The Genesis of Space: Weights and Initializers",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-68",
-      "quote": "* **$x$**: Represents the input signal (the initial coordinate).",
-      "section": "The Genesis of Space: Weights and Initializers",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-69",
-      "quote": "* **$a$** (Weights): The scaling factor that determines the trajectory of data through the system.",
-      "section": "The Genesis of Space: Weights and Initializers",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-70",
-      "quote": "* **$b$** (Bias): The translation factor that shifts the position of the output.",
-      "section": "The Genesis of Space: Weights and Initializers",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-71",
       "quote": "One must have chaos in one's self to give birth to a dancing star.",
+      "block_id": "minimalneuron-block-24",
       "section": "Breaking Symmetry",
       "kind": "statement"
     },
     {
-      "id": "minimalneuron-stmt-72",
+      "id": "minimalneuron-stmt-44",
+      "quote": "By starting with “noise,” we give the network the mathematical flexibility it needs to reorganize that chaos into a structured map of logical relationships.",
+      "block_id": "minimalneuron-block-25",
+      "section": "Breaking Symmetry",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-45",
       "quote": "The final layer of a neural network is not arbitrary; it is a mathematical mirror of the data you want to predict.",
+      "block_id": "minimalneuron-block-28",
       "section": "Output Layer: The Mirror of the Target",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-46",
+      "quote": "Its shape, the number of neurons it contains, must match the dimensionality of your “Labels” (the ground truth).",
+      "block_id": "minimalneuron-block-28",
+      "section": "Output Layer: The Mirror of the Target",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-47",
+      "quote": "If you are classifying objects (e.g., Cat, Dog, Bird), the computer cannot easily work with text.",
+      "block_id": "minimalneuron-block-30",
+      "section": "Categorical Data and One-Hot Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-48",
+      "quote": "However, we also cannot simply assign them numbers like $1, 2,$ and $3$, because the math would assume a Dog ($2$) is “twice as much” as a Cat ($1$).",
+      "block_id": "minimalneuron-block-30",
+      "section": "Categorical Data and One-Hot Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-49",
+      "quote": "To solve this, we use **One-Hot Encoding**.",
+      "block_id": "minimalneuron-block-31",
+      "section": "Categorical Data and One-Hot Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-50",
+      "quote": "Each category becomes its own dimension in a vector:",
+      "block_id": "minimalneuron-block-31",
+      "section": "Categorical Data and One-Hot Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-51",
+      "quote": "In this case, your output layer **must have exactly 3 neurons**.",
+      "block_id": "minimalneuron-block-32",
+      "section": "Categorical Data and One-Hot Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-52",
+      "quote": "To turn the raw numbers from these neurons into something we can understand, we use the **Softmax** activation function.",
+      "block_id": "minimalneuron-block-32",
+      "section": "Categorical Data and One-Hot Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-53",
+      "quote": "Think of Softmax as a “percentage generator”: it squashes the outputs so they all sum up to $1.0$ ($100\\%$), allowing the network to say “I am 90% sure this is a Dog”.",
+      "block_id": "minimalneuron-block-32",
+      "section": "Categorical Data and One-Hot Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-54",
+      "quote": "Details are more complicated, but we will come back to them later.",
+      "block_id": "minimalneuron-block-32",
+      "section": "Categorical Data and One-Hot Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-55",
+      "quote": "The rule of “matching the data” extends to every domain:",
+      "block_id": "minimalneuron-block-34",
+      "section": "Spatial and Complex Outputs",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-56",
+      "quote": "If the output layer's dimensions do not match the target data's dimensions, the **Loss Function** will be unable to compare the prediction to the reality, and the “loop” of learning will break.",
+      "block_id": "minimalneuron-block-35",
+      "section": "Spatial and Complex Outputs",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-57",
+      "quote": "We often think of Neural Networks as “learning” in the way a human student learns: by understanding concepts.",
+      "block_id": "minimalneuron-block-37",
+      "section": "The Statistical Nature of Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-58",
+      "quote": "However, mathematically, a Neural Network is simply a statistical machine trying to fit a curve to a distribution.",
+      "block_id": "minimalneuron-block-37",
+      "section": "The Statistical Nature of Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-59",
+      "quote": "In the **Normal Distribution** part of the **Statistics** section, we learned about the difference between a “Sample” and a “Population.” When we train the neuron above on points like $(1, 2)$ or $(2, 4)$, we are not teaching it just those specific numbers.",
+      "block_id": "minimalneuron-block-39",
+      "section": "Data is not just Numbers; it is a Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-60",
+      "quote": "We are asking it to approximate the **Underlying Distribution** that generated those numbers.",
+      "block_id": "minimalneuron-block-39",
+      "section": "Data is not just Numbers; it is a Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-61",
+      "quote": "This relies on the **Law of Large Numbers**:",
+      "block_id": "minimalneuron-block-40",
+      "section": "Data is not just Numbers; it is a Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-62",
+      "quote": "This law is the reason why more data usually leads to a better model.",
+      "block_id": "minimalneuron-block-42",
+      "section": "Data is not just Numbers; it is a Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-63",
+      "quote": "With only a few data points, your “average” (the weights the network learns) might be skewed by luck or noise.",
+      "block_id": "minimalneuron-block-42",
+      "section": "Data is not just Numbers; it is a Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-64",
+      "quote": "But as you feed it thousands of examples, the Law of Large Numbers ensures that the noise cancels itself out, allowing the network to find the “true” underlying pattern ($\\mu$) of the data.",
+      "block_id": "minimalneuron-block-42",
+      "section": "Data is not just Numbers; it is a Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-65",
+      "quote": "If our training data is a “representative sample” (meaning it follows the same statistical distribution as the real world example you're trying to model), the weights of the network will converge to the “True” relationship.",
+      "block_id": "minimalneuron-block-43",
+      "section": "Data is not just Numbers; it is a Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-66",
+      "quote": "If the data is biased (a bad sample), the model learns a skewed reality.",
+      "block_id": "minimalneuron-block-43",
+      "section": "Data is not just Numbers; it is a Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-67",
+      "quote": "This is why knowing your data's distribution is critical.",
+      "block_id": "minimalneuron-block-43",
+      "section": "Data is not just Numbers; it is a Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-68",
+      "quote": "You cannot fit a straight line to a circle; you must choose a model architecture that matches the geometry of your data's distribution.",
+      "block_id": "minimalneuron-block-43",
+      "section": "Data is not just Numbers; it is a Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-69",
+      "quote": "There is a name for this matching requirement, and it comes from cybernetics.",
+      "block_id": "minimalneuron-block-44",
+      "section": "Data is not just Numbers; it is a Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-70",
+      "quote": "\\citeauthor{ashbyintrocybernetics1956}'s **Law of Requisite Variety** \\cite{ashbyintrocybernetics1956} holds that a controller can cancel the *variety* — the number of distinct states — thrown at it only with at least as much variety of its own: *\"only variety can destroy variety.\"* Messy, high-variety real-world data is exactly what forces the model to grow: the more distinct patterns the environment can throw at it, the more internal variety (more parameters, more neurons, more layers) the network needs to tell them apart and track each one.",
+      "block_id": "minimalneuron-block-44",
+      "section": "Data is not just Numbers; it is a Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-71",
+      "quote": "The law is a *lower bound*, not a slogan — it does not say \"more is always better,\" only that the model's variety must never fall below the environment's.",
+      "block_id": "minimalneuron-block-44",
+      "section": "Data is not just Numbers; it is a Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "minimalneuron-stmt-72",
+      "quote": "Under-provision a network for a messy domain and it is structurally incapable of regulating that domain, no matter how long you train.",
+      "block_id": "minimalneuron-block-44",
+      "section": "Data is not just Numbers; it is a Distribution",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-73",
-      "quote": "Its shape, the number of neurons it contains, must match the dimensionality of your “Labels” (the ground truth).",
-      "section": "Output Layer: The Mirror of the Target",
+      "quote": "We previously mentioned initializing weights “randomly.” But “random” is a dangerous word in engineering.",
+      "block_id": "minimalneuron-block-46",
+      "section": "Initialization: Controlled Chaos",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-74",
-      "quote": "If you are classifying objects (e.g., Cat, Dog, Bird), the computer cannot easily work with text.",
-      "section": "Categorical Data and One-Hot Encoding",
+      "quote": "If we pick weights from a **Uniform Distribution** between $-1000$ and $1000$, the signal will explode towards infinity (NaN).",
+      "block_id": "minimalneuron-block-46",
+      "section": "Initialization: Controlled Chaos",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-75",
-      "quote": "However, we also cannot simply assign them numbers like $1, 2,$ and $3$, because the math would assume a Dog ($2$) is “twice as much” as a Cat ($1$).",
-      "section": "Categorical Data and One-Hot Encoding",
+      "quote": "If we pick them between $-0.0001$ and $0.0001$, the signal will vanish to zero.",
+      "block_id": "minimalneuron-block-46",
+      "section": "Initialization: Controlled Chaos",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-76",
-      "quote": "To solve this, we use **One-Hot Encoding**.",
-      "section": "Categorical Data and One-Hot Encoding",
+      "quote": "To solve this, we use the **Normal Distribution** ($\\mathcal{N}$) we saw in the **Statistics** part.",
+      "block_id": "minimalneuron-block-47",
+      "section": "Initialization: Controlled Chaos",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-77",
-      "quote": "Each category becomes its own dimension in a vector:",
-      "section": "Categorical Data and One-Hot Encoding",
+      "quote": "Modern networks use “Xavier” (Glorot) or “He” initialization: *pick random numbers from a Gaussian Bell Curve whose width is set by the size of the layer.* He initialization, designed for ReLU, uses variance $2/n_\\text{inputs}$:",
+      "block_id": "minimalneuron-block-47",
+      "section": "Initialization: Controlled Chaos",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-78",
-      "quote": "In this case, your output layer **must have exactly 3 neurons**.",
-      "section": "Categorical Data and One-Hot Encoding",
+      "quote": "Xavier initialization, designed for tanh and sigmoid, also takes the number of outputs into account, typically with variance $2/(n_\\text{inputs}+n_\\text{outputs})$.",
+      "block_id": "minimalneuron-block-48",
+      "section": "Initialization: Controlled Chaos",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-79",
-      "quote": "To turn the raw numbers from these neurons into something we can understand, we use the **Softmax** activation function.",
-      "section": "Categorical Data and One-Hot Encoding",
+      "quote": "This ensures that the “energy” (variance) of the data stays constant as it flows through the network, preventing the math from breaking before learning even begins.",
+      "block_id": "minimalneuron-block-49",
+      "section": "Initialization: Controlled Chaos",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-80",
-      "quote": "Think of Softmax as a “percentage generator”: it squashes the outputs so they all sum up to $1.0$ ($100\\%$), allowing the network to say “I am 90% sure this is a Dog”.",
-      "section": "Categorical Data and One-Hot Encoding",
+      "quote": "This is why GPUs are so effective for deep learning: they are designed to perform matrix multiplications in hardware, processing thousands of operations per clock cycle.",
+      "block_id": "minimalneuron-block-51",
+      "section": "Matrices as Parallel Processing",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-81",
-      "quote": "Details are more complicated, but we will come back to them later.",
-      "section": "Categorical Data and One-Hot Encoding",
+      "quote": "A modern GPU can execute a $4096 \\times 4096$ matrix times a $4096$-dimensional vector, over 16 million individual multiplications, in a single operation.",
+      "block_id": "minimalneuron-block-51",
+      "section": "Matrices as Parallel Processing",
       "kind": "statement"
     },
     {
       "id": "minimalneuron-stmt-82",
-      "quote": "The rule of “matching the data” extends to every domain:",
-      "section": "Spatial and Complex Outputs",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-83",
-      "quote": "* **Binary Classification**: If the answer is just Yes/No (0 or 1), a single neuron with a Sigmoid activation is enough.",
-      "section": "Spatial and Complex Outputs",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-84",
-      "quote": "* **Image Generation**: If the model is supposed to output a grayscale image of $28 \\times 28$ pixels and is a single channel only (black and white), the output layer must contain $784$ neurons (one for every pixel) or be reshaped to match that specific width and height.",
-      "section": "Spatial and Complex Outputs",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-85",
-      "quote": "* **Coordinates**: If you are predicting the $(x, y)$ location of an object, you need exactly $2$ output neurons.",
-      "section": "Spatial and Complex Outputs",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-86",
-      "quote": "If the output layer's dimensions do not match the target data's dimensions, the **Loss Function** will be unable to compare the prediction to the reality, and the “loop” of learning will break.",
-      "section": "Spatial and Complex Outputs",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-87",
-      "quote": "**The Golden Rule:** Your model's output layer must be a mirror of your data's constraints.",
-      "section": "Spatial and Complex Outputs",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-88",
-      "quote": "If the data cannot be negative, your activation function must prevent negative numbers.",
-      "section": "Spatial and Complex Outputs",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-89",
-      "quote": "If the data is categorical, your output activation must produce a probability distribution (i.e., softmax), paired with a cross-entropy loss.",
-      "section": "Spatial and Complex Outputs",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-90",
-      "quote": "**The mirror rule is a design consequence of a theorem, not just a convention.** In 1970, Conant and Ashby proved the **Good Regulator Theorem**: *every good regulator of a system must be a model of that system* \\cite{conantashby1970}.",
-      "section": "Spatial and Complex Outputs",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-91",
-      "quote": "The theorem does not dictate a particular output encoding; it says that whatever encoding the regulator uses must be rich enough to distinguish the states it has to regulate.",
-      "section": "Spatial and Complex Outputs",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-92",
-      "quote": "The controller that best tames a system must internally carry a structure-preserving image of it — and no amount of tuning closes the gap when the controller's structure cannot represent the thing it controls.",
-      "section": "Spatial and Complex Outputs",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-93",
-      "quote": "The output layer is the sharpest place this shows up in a network: its shape is a one-to-one image of the target it is to regulate — a thermostat \"models\" a room insofar as it carries a one-parameter image of its temperature, a classifier \"models\" its label set insofar as its output is a one-hot image of the categories.",
-      "section": "Spatial and Complex Outputs",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-94",
-      "quote": "When the mirror is wrong, training cannot fix it, which is why the Golden Rule is a *structural* requirement rather than a stylistic one.",
-      "section": "Spatial and Complex Outputs",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-95",
-      "quote": "We often think of Neural Networks as “learning” in the way a human student learns: by understanding concepts.",
-      "section": "The Statistical Nature of Learning",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-96",
-      "quote": "However, mathematically, a Neural Network is simply a statistical machine trying to fit a curve to a distribution.",
-      "section": "The Statistical Nature of Learning",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-97",
-      "quote": "In the **Normal Distribution** part of the **Statistics** section, we learned about the difference between a “Sample” and a “Population.” When we train the neuron above on points like $(1, 2)$ or $(2, 4)$, we are not teaching it just those specific numbers.",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-98",
-      "quote": "We are asking it to approximate the **Underlying Distribution** that generated those numbers.",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-99",
-      "quote": "This relies on the **Law of Large Numbers**:",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-100",
-      "quote": "Or, in plain English: **“As the number of repetitions $n$ grows, the sample average $\\bar{X}_n$ converges to the population mean $\\mu$: for any small tolerance, the probability that the sample average lies farther than that tolerance from $\\mu$ tends to zero.”**",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-101",
-      "quote": "* **The Left Side ($\\bar{X}_n$):** This is the “Sample Average.” It represents what you actually observed in your data (e.g., the average height of 100 people you measured).",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-102",
-      "quote": "* **The Arrow ($\\to$):** This represents “convergence.” It means “gets closer and closer to”.",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-103",
-      "quote": "* **The Right Side ($\\mu$):** This is the “Population Mean.” It is the “true” hidden reality (e.g., the average height of every human on Earth).",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-104",
-      "quote": "**Why it matters for your Neural Network:**",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-105",
-      "quote": "This law is the reason why more data usually leads to a better model.",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-106",
-      "quote": "With only a few data points, your “average” (the weights the network learns) might be skewed by luck or noise.",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-107",
-      "quote": "But as you feed it thousands of examples, the Law of Large Numbers ensures that the noise cancels itself out, allowing the network to find the “true” underlying pattern ($\\mu$) of the data.",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-108",
-      "quote": "If our training data is a “representative sample” (meaning it follows the same statistical distribution as the real world example you're trying to model), the weights of the network will converge to the “True” relationship.",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-109",
-      "quote": "If the data is biased (a bad sample), the model learns a skewed reality.",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-110",
-      "quote": "This is why knowing your data's distribution is critical.",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-111",
-      "quote": "You cannot fit a straight line to a circle; you must choose a model architecture that matches the geometry of your data's distribution.",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-112",
-      "quote": "There is a name for this matching requirement, and it comes from cybernetics.",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-113",
-      "quote": "\\citeauthor{ashbyintrocybernetics1956}'s **Law of Requisite Variety** \\cite{ashbyintrocybernetics1956} holds that a controller can cancel the *variety* — the number of distinct states — thrown at it only with at least as much variety of its own: *\"only variety can destroy variety.\"* Messy, high-variety real-world data is exactly what forces the model to grow: the more distinct patterns the environment can throw at it, the more internal variety (more parameters, more neurons, more layers) the network needs to tell them apart and track each one.",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-114",
-      "quote": "The law is a *lower bound*, not a slogan — it does not say \"more is always better,\" only that the model's variety must never fall below the environment's.",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-115",
-      "quote": "Under-provision a network for a messy domain and it is structurally incapable of regulating that domain, no matter how long you train.",
-      "section": "Data is not just Numbers; it is a Distribution",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-116",
-      "quote": "We previously mentioned initializing weights “randomly.” But “random” is a dangerous word in engineering.",
-      "section": "Initialization: Controlled Chaos",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-117",
-      "quote": "If we pick weights from a **Uniform Distribution** between $-1000$ and $1000$, the signal will explode towards infinity (NaN).",
-      "section": "Initialization: Controlled Chaos",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-118",
-      "quote": "If we pick them between $-0.0001$ and $0.0001$, the signal will vanish to zero.",
-      "section": "Initialization: Controlled Chaos",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-119",
-      "quote": "To solve this, we use the **Normal Distribution** ($\\mathcal{N}$) we saw in the **Statistics** part.",
-      "section": "Initialization: Controlled Chaos",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-120",
-      "quote": "Modern networks use “Xavier” (Glorot) or “He” initialization: *pick random numbers from a Gaussian Bell Curve whose width is set by the size of the layer.* He initialization, designed for ReLU, uses variance $2/n_\\text{inputs}$:",
-      "section": "Initialization: Controlled Chaos",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-121",
-      "quote": "Xavier initialization, designed for tanh and sigmoid, also takes the number of outputs into account, typically with variance $2/(n_\\text{inputs}+n_\\text{outputs})$.",
-      "section": "Initialization: Controlled Chaos",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-122",
-      "quote": "This ensures that the “energy” (variance) of the data stays constant as it flows through the network, preventing the math from breaking before learning even begins.",
-      "section": "Initialization: Controlled Chaos",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-123",
-      "quote": "A single neuron computes $y = ax + b$: one input, one weight, one output.",
-      "section": "Matrices as Parallel Processing",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-124",
-      "quote": "But a Transformer with $d_{\\text{model}} = 4096$ processes 4096 numbers simultaneously at every step.",
-      "section": "Matrices as Parallel Processing",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-125",
-      "quote": "The bridge between these two scales is the **matrix**.",
-      "section": "Matrices as Parallel Processing",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-126",
-      "quote": "Instead of computing one neuron at a time, we pack all inputs into a vector $\\mathbf{x}$ and all weights into a matrix $W$.",
-      "section": "Matrices as Parallel Processing",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-127",
-      "quote": "The entire layer's computation becomes:",
-      "section": "Matrices as Parallel Processing",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-128",
-      "quote": "This single line represents thousands of individual multiplications and additions, all happening in parallel.",
-      "section": "Matrices as Parallel Processing",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-129",
-      "quote": "Every row of $W$ is a separate “neuron” with its own set of weights.",
-      "section": "Matrices as Parallel Processing",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-130",
-      "quote": "Every row of $W$ receives the same input $\\mathbf{x}$.",
-      "section": "Matrices as Parallel Processing",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-131",
-      "quote": "The matrix multiplication $W\\mathbf{x}$ computes the dot product of every row with $\\mathbf{x}$ simultaneously.",
-      "section": "Matrices as Parallel Processing",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-132",
-      "quote": "This is why GPUs are so effective for deep learning: they are designed to perform matrix multiplications in hardware, processing thousands of operations per clock cycle.",
-      "section": "Matrices as Parallel Processing",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-133",
-      "quote": "A modern GPU can execute a $4096 \\times 4096$ matrix times a $4096$-dimensional vector, over 16 million individual multiplications, in a single operation.",
-      "section": "Matrices as Parallel Processing",
-      "kind": "statement"
-    },
-    {
-      "id": "minimalneuron-stmt-134",
       "quote": "Without this parallelization, training a model like GPT-4 would be computationally impossible.",
+      "block_id": "minimalneuron-block-51",
       "section": "Matrices as Parallel Processing",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "minimalneuron-block-1",
+      "quote": "The simplest AI is actually a very simple mathematical model called a **Neuron**. As a *pedagogical starting point*, we take it to be just an affine map — a linear function plus a constant shift:",
+      "kind": "paragraph",
+      "section": ""
     },
     {
-      "id": "minimalneuron-stmt-135",
-      "quote": "So when you see $\\mathbf{h} = \\text{Attention}(Q, K, V)$, remember that every letter in that equation is a **matrix**, and every operation is a **batch of thousands of parallel arithmetic operations**, each one as simple as the single neuron $y = ax + b$.",
-      "section": "Matrices as Parallel Processing",
-      "kind": "statement"
+      "id": "minimalneuron-block-2",
+      "quote": "The paper \\citeauthor{mccullochpitts1943} published in \\citeyear{mccullochpitts1943} was not yet a learning machine. They modelled the neuron as an **all-or-none** threshold unit: a weighted sum of excitatory and inhibitory inputs is compared with a threshold, and the unit fires only if that threshold is crossed. Because such units can implement AND, OR and NOT, the paper showed that networks of them can realise any propositional formula — a *logical calculus* of nervous activity. What it did not contain was a rule for *changing* the weights. That step — learning from examples — is the contribution of the next decade.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-3",
+      "quote": "In AI terminology, we give these parameters specific names:",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-4",
+      "quote": "\\citeauthor{hebb1949organizationofbehaviour}'s *The Organization of Behavior* (\\citeyear{hebb1949organizationofbehaviour}) proposed that learning is a change in synaptic strength: when one neuron repeatedly helps to fire another, the connection between them is strengthened. The slogan \"cells that fire together, wire together\" is a later summary, but the idea is his: memory is not a stored symbol but a stable pattern of weights. Rosenblatt's Perceptron learning rule \\cite{rosenblatt1958perceptron} can be read as a supervised, error-correcting cousin of Hebb's principle — the weight moves only when the output is wrong.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-5",
+      "quote": "To help the computer find the right values, we provide a **Dataset** (a set of “correct” pairs):",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-6",
+      "quote": "Rosenblatt's first report appeared in 1957 as *The Perceptron: A Perceiving and Recognizing Automaton* \\cite{rosenblattperceptron}; the better-known paper followed in 1958 \\cite{rosenblatt1958perceptron}. The machine was not a thought experiment: the Mark I Perceptron used a 20×20 grid of photocells, a layer of fixed association units and a layer of trainable response units, with weights adjusted by motor-driven potentiometers \\cite{rosenblatt1962neurodynamics}. In 1958 the *New York Times* reported that the Navy had demonstrated a device that \"learns by doing\" — a public claim of a machine that improved with experience \\cite{newyorktimesperceptron}.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-7",
+      "quote": "When you click **🚀 Start Training**, the computer performs a loop:",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-8",
+      "quote": "2. **Loss Calculation:** The computer calculates the **Loss** (the error). If the model guesses $5$ but the real answer is $6$, the loss tells the AI “you are off by 1”.",
+      "kind": "list-item",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-9",
+      "quote": "The linear neuron in this demo has a direct ancestor: the **ADALINE** (Adaptive Linear Neuron) of \\citeauthor{widrow1960adaline}, built at Stanford in \\citeyear{widrow1960adaline}. Unlike the Perceptron, its output unit was *linear*, not a step, and its weights were updated by the **delta rule** — move each weight in proportion to the error times the input. That is exactly the gradient-descent update used here, derived from the mean-squared-error loss. In other words, the single-neuron lab below is a 1960 ADALINE with a modern optimiser and a plot.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-10",
+      "quote": "Watch it in real time:",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-11",
+      "quote": "A single **linear** neuron can only fit a straight line. However, complex AI systems group many of these neurons into **Layers**, and — crucially — place a non-linear activation between the layers. Stacking linear layers alone would collapse back into one affine map; with a non-linearity in between, the composition becomes a **Neural Network** capable of representing patterns far beyond a simple line. But this will come later on, in this example we'll deal with the simplest form of neural networks (one layer, one neuron).",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-12",
+      "quote": "The limits of the single unit were made precise by \\citeauthor{minskyperceptrons} in *Perceptrons* (\\citeyear{minskyperceptrons}). They proved that a linear threshold unit cannot compute exclusive-or, and that many simple geometric predicates are beyond a one-layer perceptron. The book is often remembered as the cause of an \"AI winter\", but its argument was specifically about the limits of *linear* threshold units, not about multilayer networks with hidden, non-linear units. The constructive answer — hidden layers with non-linear units — is exactly the architecture the next chapter builds.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-13",
+      "quote": "The gradient-descent loop above trains one neuron. Training a *deep* network needed one more idea: **backpropagation**, the chain rule applied layer by layer. \\cite[Werbos (1974)]{werbos1974} worked it out in his doctoral thesis, but the result became famous only when \\citeauthor{rumelhart1986} showed in \\citeyear{rumelhart1986} that it could learn useful internal representations. Their paper, together with the parallel-distributed-processing volumes of the same year \\cite{rumelhart1986pdp}, made multilayer networks trainable and turned the \"hidden layer\" from a theoretical possibility into a practical tool.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-14",
+      "quote": "The statistical idea behind this neuron is older than the neuron itself. The method of least squares — choosing parameters that minimise the sum of squared errors — was published by \\citeauthor{legendre1805} in \\citeyear{legendre1805} and given its probabilistic justification by \\citeauthor{gauss1809} in \\citeyear{gauss1809}. \\citeauthor{galton} later gave the fitted line its name: studying hereditary stature in \\citeyear{galton}, he observed that children of very tall or very short parents tended toward the population average, and called the phenomenon **regression toward mediocrity**. The modern single neuron is, in effect, a least-squares line with a learning algorithm attached.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-15",
+      "quote": "Learning Rate",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-16",
+      "quote": "Epochs",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-17",
+      "quote": "🚀 Start Training 🔄 Reset Model",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-18",
+      "quote": "Target Equation",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-19",
+      "quote": "Click 'Start Training'",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "minimalneuron-block-20",
+      "quote": "The Genesis of Space: Weights and Initializers",
+      "kind": "heading",
+      "section": "The Genesis of Space: Weights and Initializers"
+    },
+    {
+      "id": "minimalneuron-block-21",
+      "quote": "Before a network begins to learn, its internal world is a mathematical void. In a dense layer, every relationship is governed by a fundamental linear transformation.",
+      "kind": "paragraph",
+      "section": "The Genesis of Space: Weights and Initializers"
+    },
+    {
+      "id": "minimalneuron-block-22",
+      "quote": "In this “toy” network equation:",
+      "kind": "paragraph",
+      "section": "The Genesis of Space: Weights and Initializers"
+    },
+    {
+      "id": "minimalneuron-block-23",
+      "quote": "Breaking Symmetry",
+      "kind": "heading",
+      "section": "Breaking Symmetry"
+    },
+    {
+      "id": "minimalneuron-block-24",
+      "quote": "One must have chaos in one's self to give birth to a dancing star.",
+      "kind": "paragraph",
+      "section": "Breaking Symmetry"
+    },
+    {
+      "id": "minimalneuron-block-25",
+      "quote": "By starting with “noise,” we give the network the mathematical flexibility it needs to reorganize that chaos into a structured map of logical relationships.",
+      "kind": "paragraph",
+      "section": "Breaking Symmetry"
+    },
+    {
+      "id": "minimalneuron-block-26",
+      "quote": "Python implementation",
+      "kind": "heading",
+      "section": "Python implementation"
+    },
+    {
+      "id": "minimalneuron-block-27",
+      "quote": "Output Layer: The Mirror of the Target",
+      "kind": "heading",
+      "section": "Output Layer: The Mirror of the Target"
+    },
+    {
+      "id": "minimalneuron-block-28",
+      "quote": "The final layer of a neural network is not arbitrary; it is a mathematical mirror of the data you want to predict. Its shape, the number of neurons it contains, must match the dimensionality of your “Labels” (the ground truth).",
+      "kind": "paragraph",
+      "section": "Output Layer: The Mirror of the Target"
+    },
+    {
+      "id": "minimalneuron-block-29",
+      "quote": "Categorical Data and One-Hot Encoding",
+      "kind": "heading",
+      "section": "Categorical Data and One-Hot Encoding"
+    },
+    {
+      "id": "minimalneuron-block-30",
+      "quote": "If you are classifying objects (e.g., Cat, Dog, Bird), the computer cannot easily work with text. However, we also cannot simply assign them numbers like $1, 2,$ and $3$, because the math would assume a Dog ($2$) is “twice as much” as a Cat ($1$).",
+      "kind": "paragraph",
+      "section": "Categorical Data and One-Hot Encoding"
+    },
+    {
+      "id": "minimalneuron-block-31",
+      "quote": "To solve this, we use **One-Hot Encoding**. Each category becomes its own dimension in a vector:",
+      "kind": "paragraph",
+      "section": "Categorical Data and One-Hot Encoding"
+    },
+    {
+      "id": "minimalneuron-block-32",
+      "quote": "In this case, your output layer **must have exactly 3 neurons**. To turn the raw numbers from these neurons into something we can understand, we use the **Softmax** activation function. Think of Softmax as a “percentage generator”: it squashes the outputs so they all sum up to $1.0$ ($100\\%$), allowing the network to say “I am 90% sure this is a Dog”. Details are more complicated, but we will come back to them later.",
+      "kind": "paragraph",
+      "section": "Categorical Data and One-Hot Encoding"
+    },
+    {
+      "id": "minimalneuron-block-33",
+      "quote": "Spatial and Complex Outputs",
+      "kind": "heading",
+      "section": "Spatial and Complex Outputs"
+    },
+    {
+      "id": "minimalneuron-block-34",
+      "quote": "The rule of “matching the data” extends to every domain:",
+      "kind": "paragraph",
+      "section": "Spatial and Complex Outputs"
+    },
+    {
+      "id": "minimalneuron-block-35",
+      "quote": "If the output layer's dimensions do not match the target data's dimensions, the **Loss Function** will be unable to compare the prediction to the reality, and the “loop” of learning will break.",
+      "kind": "paragraph",
+      "section": "Spatial and Complex Outputs"
+    },
+    {
+      "id": "minimalneuron-block-36",
+      "quote": "The Statistical Nature of Learning",
+      "kind": "heading",
+      "section": "The Statistical Nature of Learning"
+    },
+    {
+      "id": "minimalneuron-block-37",
+      "quote": "We often think of Neural Networks as “learning” in the way a human student learns: by understanding concepts. However, mathematically, a Neural Network is simply a statistical machine trying to fit a curve to a distribution.",
+      "kind": "paragraph",
+      "section": "The Statistical Nature of Learning"
+    },
+    {
+      "id": "minimalneuron-block-38",
+      "quote": "Data is not just Numbers; it is a Distribution",
+      "kind": "heading",
+      "section": "Data is not just Numbers; it is a Distribution"
+    },
+    {
+      "id": "minimalneuron-block-39",
+      "quote": "In the **Normal Distribution** part of the **Statistics** section, we learned about the difference between a “Sample” and a “Population.” When we train the neuron above on points like $(1, 2)$ or $(2, 4)$, we are not teaching it just those specific numbers. We are asking it to approximate the **Underlying Distribution** that generated those numbers.",
+      "kind": "paragraph",
+      "section": "Data is not just Numbers; it is a Distribution"
+    },
+    {
+      "id": "minimalneuron-block-40",
+      "quote": "This relies on the **Law of Large Numbers**:",
+      "kind": "paragraph",
+      "section": "Data is not just Numbers; it is a Distribution"
+    },
+    {
+      "id": "minimalneuron-block-41",
+      "quote": "In simpler terms:",
+      "kind": "paragraph",
+      "section": "Data is not just Numbers; it is a Distribution"
+    },
+    {
+      "id": "minimalneuron-block-42",
+      "quote": "This law is the reason why more data usually leads to a better model. With only a few data points, your “average” (the weights the network learns) might be skewed by luck or noise. But as you feed it thousands of examples, the Law of Large Numbers ensures that the noise cancels itself out, allowing the network to find the “true” underlying pattern ($\\mu$) of the data.",
+      "kind": "paragraph",
+      "section": "Data is not just Numbers; it is a Distribution"
+    },
+    {
+      "id": "minimalneuron-block-43",
+      "quote": "If our training data is a “representative sample” (meaning it follows the same statistical distribution as the real world example you're trying to model), the weights of the network will converge to the “True” relationship. If the data is biased (a bad sample), the model learns a skewed reality. This is why knowing your data's distribution is critical. You cannot fit a straight line to a circle; you must choose a model architecture that matches the geometry of your data's distribution.",
+      "kind": "paragraph",
+      "section": "Data is not just Numbers; it is a Distribution"
+    },
+    {
+      "id": "minimalneuron-block-44",
+      "quote": "There is a name for this matching requirement, and it comes from cybernetics. \\citeauthor{ashbyintrocybernetics1956}'s **Law of Requisite Variety** \\cite{ashbyintrocybernetics1956} holds that a controller can cancel the *variety* — the number of distinct states — thrown at it only with at least as much variety of its own: *\"only variety can destroy variety.\"* Messy, high-variety real-world data is exactly what forces the model to grow: the more distinct patterns the environment can throw at it, the more internal variety (more parameters, more neurons, more layers) the network needs to tell them apart and track each one. The law is a *lower bound*, not a slogan — it does not say \"more is always better,\" only that the model's variety must never fall below the environment's. Under-provision a network for a messy domain and it is structurally incapable of regulating that domain, no matter how long you train.",
+      "kind": "paragraph",
+      "section": "Data is not just Numbers; it is a Distribution"
+    },
+    {
+      "id": "minimalneuron-block-45",
+      "quote": "Initialization: Controlled Chaos",
+      "kind": "heading",
+      "section": "Initialization: Controlled Chaos"
+    },
+    {
+      "id": "minimalneuron-block-46",
+      "quote": "We previously mentioned initializing weights “randomly.” But “random” is a dangerous word in engineering. If we pick weights from a **Uniform Distribution** between $-1000$ and $1000$, the signal will explode towards infinity (NaN). If we pick them between $-0.0001$ and $0.0001$, the signal will vanish to zero.",
+      "kind": "paragraph",
+      "section": "Initialization: Controlled Chaos"
+    },
+    {
+      "id": "minimalneuron-block-47",
+      "quote": "To solve this, we use the **Normal Distribution** ($\\mathcal{N}$) we saw in the **Statistics** part. Modern networks use “Xavier” (Glorot) or “He” initialization: *pick random numbers from a Gaussian Bell Curve whose width is set by the size of the layer.* He initialization, designed for ReLU, uses variance $2/n_\\text{inputs}$:",
+      "kind": "paragraph",
+      "section": "Initialization: Controlled Chaos"
+    },
+    {
+      "id": "minimalneuron-block-48",
+      "quote": "Xavier initialization, designed for tanh and sigmoid, also takes the number of outputs into account, typically with variance $2/(n_\\text{inputs}+n_\\text{outputs})$.",
+      "kind": "paragraph",
+      "section": "Initialization: Controlled Chaos"
+    },
+    {
+      "id": "minimalneuron-block-49",
+      "quote": "This ensures that the “energy” (variance) of the data stays constant as it flows through the network, preventing the math from breaking before learning even begins.",
+      "kind": "paragraph",
+      "section": "Initialization: Controlled Chaos"
+    },
+    {
+      "id": "minimalneuron-block-50",
+      "quote": "Matrices as Parallel Processing",
+      "kind": "heading",
+      "section": "Matrices as Parallel Processing"
+    },
+    {
+      "id": "minimalneuron-block-51",
+      "quote": "This is why GPUs are so effective for deep learning: they are designed to perform matrix multiplications in hardware, processing thousands of operations per clock cycle. A modern GPU can execute a $4096 \\times 4096$ matrix times a $4096$-dimensional vector, over 16 million individual multiplications, in a single operation. Without this parallelization, training a model like GPT-4 would be computationally impossible.",
+      "kind": "paragraph",
+      "section": "Matrices as Parallel Processing"
     }
   ]
 }

@@ -452,386 +452,1639 @@
       "quote": "**Voxtral** (Mistral, 2025): open-weight 24B audio model.",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-1-part_of-speech-audio",
+      "from": "speech_audio-block-1",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-2-part_of-speech-audio",
+      "from": "speech_audio-block-2",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-1-before-speech_audio-block-2",
+      "from": "speech_audio-block-1",
+      "to": "speech_audio-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-2-related_to-speech_audio-block-1",
+      "from": "speech_audio-block-2",
+      "to": "speech_audio-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-3-part_of-speech-audio",
+      "from": "speech_audio-block-3",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-2-before-speech_audio-block-3",
+      "from": "speech_audio-block-2",
+      "to": "speech_audio-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-4-part_of-speech-audio",
+      "from": "speech_audio-block-4",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-3-before-speech_audio-block-4",
+      "from": "speech_audio-block-3",
+      "to": "speech_audio-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-4-related_to-speech_audio-block-3",
+      "from": "speech_audio-block-4",
+      "to": "speech_audio-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-5-part_of-speech-audio",
+      "from": "speech_audio-block-5",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-4-before-speech_audio-block-5",
+      "from": "speech_audio-block-4",
+      "to": "speech_audio-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-6-part_of-speech-audio",
+      "from": "speech_audio-block-6",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-5-before-speech_audio-block-6",
+      "from": "speech_audio-block-5",
+      "to": "speech_audio-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-6-related_to-speech_audio-block-5",
+      "from": "speech_audio-block-6",
+      "to": "speech_audio-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-7-part_of-speech-audio",
+      "from": "speech_audio-block-7",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-6-before-speech_audio-block-7",
+      "from": "speech_audio-block-6",
+      "to": "speech_audio-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-7-related_to-speech_audio-block-5",
+      "from": "speech_audio-block-7",
+      "to": "speech_audio-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-8-part_of-speech-audio",
+      "from": "speech_audio-block-8",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-7-before-speech_audio-block-8",
+      "from": "speech_audio-block-7",
+      "to": "speech_audio-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-9-part_of-speech-audio",
+      "from": "speech_audio-block-9",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-8-before-speech_audio-block-9",
+      "from": "speech_audio-block-8",
+      "to": "speech_audio-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-9-related_to-speech_audio-block-8",
+      "from": "speech_audio-block-9",
+      "to": "speech_audio-block-8",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-10-part_of-speech-audio",
+      "from": "speech_audio-block-10",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-9-before-speech_audio-block-10",
+      "from": "speech_audio-block-9",
+      "to": "speech_audio-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-11-part_of-speech-audio",
+      "from": "speech_audio-block-11",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-10-before-speech_audio-block-11",
+      "from": "speech_audio-block-10",
+      "to": "speech_audio-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-11-related_to-speech_audio-block-10",
+      "from": "speech_audio-block-11",
+      "to": "speech_audio-block-10",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-12-part_of-speech-audio",
+      "from": "speech_audio-block-12",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-11-before-speech_audio-block-12",
+      "from": "speech_audio-block-11",
+      "to": "speech_audio-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-13-part_of-speech-audio",
+      "from": "speech_audio-block-13",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-12-before-speech_audio-block-13",
+      "from": "speech_audio-block-12",
+      "to": "speech_audio-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-14-part_of-speech-audio",
+      "from": "speech_audio-block-14",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-13-before-speech_audio-block-14",
+      "from": "speech_audio-block-13",
+      "to": "speech_audio-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-14-related_to-speech_audio-block-13",
+      "from": "speech_audio-block-14",
+      "to": "speech_audio-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-15-part_of-speech-audio",
+      "from": "speech_audio-block-15",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-14-before-speech_audio-block-15",
+      "from": "speech_audio-block-14",
+      "to": "speech_audio-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-15-related_to-speech_audio-block-13",
+      "from": "speech_audio-block-15",
+      "to": "speech_audio-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-16-part_of-speech-audio",
+      "from": "speech_audio-block-16",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-15-before-speech_audio-block-16",
+      "from": "speech_audio-block-15",
+      "to": "speech_audio-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-17-part_of-speech-audio",
+      "from": "speech_audio-block-17",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-16-before-speech_audio-block-17",
+      "from": "speech_audio-block-16",
+      "to": "speech_audio-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-17-related_to-speech_audio-block-16",
+      "from": "speech_audio-block-17",
+      "to": "speech_audio-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-18-part_of-speech-audio",
+      "from": "speech_audio-block-18",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-17-before-speech_audio-block-18",
+      "from": "speech_audio-block-17",
+      "to": "speech_audio-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-18-related_to-speech_audio-block-16",
+      "from": "speech_audio-block-18",
+      "to": "speech_audio-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-19-part_of-speech-audio",
+      "from": "speech_audio-block-19",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-18-before-speech_audio-block-19",
+      "from": "speech_audio-block-18",
+      "to": "speech_audio-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-19-related_to-speech_audio-block-16",
+      "from": "speech_audio-block-19",
+      "to": "speech_audio-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-20-part_of-speech-audio",
+      "from": "speech_audio-block-20",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-19-before-speech_audio-block-20",
+      "from": "speech_audio-block-19",
+      "to": "speech_audio-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-20-related_to-speech_audio-block-16",
+      "from": "speech_audio-block-20",
+      "to": "speech_audio-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-21-part_of-speech-audio",
+      "from": "speech_audio-block-21",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-20-before-speech_audio-block-21",
+      "from": "speech_audio-block-20",
+      "to": "speech_audio-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-22-part_of-speech-audio",
+      "from": "speech_audio-block-22",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-21-before-speech_audio-block-22",
+      "from": "speech_audio-block-21",
+      "to": "speech_audio-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-22-related_to-speech_audio-block-21",
+      "from": "speech_audio-block-22",
+      "to": "speech_audio-block-21",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-23-part_of-speech-audio",
+      "from": "speech_audio-block-23",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-22-before-speech_audio-block-23",
+      "from": "speech_audio-block-22",
+      "to": "speech_audio-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-24-part_of-speech-audio",
+      "from": "speech_audio-block-24",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-23-before-speech_audio-block-24",
+      "from": "speech_audio-block-23",
+      "to": "speech_audio-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-24-related_to-speech_audio-block-23",
+      "from": "speech_audio-block-24",
+      "to": "speech_audio-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-25-part_of-speech-audio",
+      "from": "speech_audio-block-25",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-24-before-speech_audio-block-25",
+      "from": "speech_audio-block-24",
+      "to": "speech_audio-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-25-related_to-speech_audio-block-23",
+      "from": "speech_audio-block-25",
+      "to": "speech_audio-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-26-part_of-speech-audio",
+      "from": "speech_audio-block-26",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-25-before-speech_audio-block-26",
+      "from": "speech_audio-block-25",
+      "to": "speech_audio-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-27-part_of-speech-audio",
+      "from": "speech_audio-block-27",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-26-before-speech_audio-block-27",
+      "from": "speech_audio-block-26",
+      "to": "speech_audio-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-27-related_to-speech_audio-block-26",
+      "from": "speech_audio-block-27",
+      "to": "speech_audio-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-28-part_of-speech-audio",
+      "from": "speech_audio-block-28",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-27-before-speech_audio-block-28",
+      "from": "speech_audio-block-27",
+      "to": "speech_audio-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-28-related_to-speech_audio-block-26",
+      "from": "speech_audio-block-28",
+      "to": "speech_audio-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-29-part_of-speech-audio",
+      "from": "speech_audio-block-29",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-28-before-speech_audio-block-29",
+      "from": "speech_audio-block-28",
+      "to": "speech_audio-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-29-related_to-speech_audio-block-26",
+      "from": "speech_audio-block-29",
+      "to": "speech_audio-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-30-part_of-speech-audio",
+      "from": "speech_audio-block-30",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-29-before-speech_audio-block-30",
+      "from": "speech_audio-block-29",
+      "to": "speech_audio-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-30-related_to-speech_audio-block-26",
+      "from": "speech_audio-block-30",
+      "to": "speech_audio-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-31-part_of-speech-audio",
+      "from": "speech_audio-block-31",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-30-before-speech_audio-block-31",
+      "from": "speech_audio-block-30",
+      "to": "speech_audio-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-31-related_to-speech_audio-block-26",
+      "from": "speech_audio-block-31",
+      "to": "speech_audio-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-32-part_of-speech-audio",
+      "from": "speech_audio-block-32",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-31-before-speech_audio-block-32",
+      "from": "speech_audio-block-31",
+      "to": "speech_audio-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-32-related_to-speech_audio-block-26",
+      "from": "speech_audio-block-32",
+      "to": "speech_audio-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-33-part_of-speech-audio",
+      "from": "speech_audio-block-33",
+      "to": "speech-audio",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-32-before-speech_audio-block-33",
+      "from": "speech_audio-block-32",
+      "to": "speech_audio-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-block-33-related_to-speech_audio-block-26",
+      "from": "speech_audio-block-33",
+      "to": "speech_audio-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-1-part_of-speech_audio-block-1",
+      "from": "speech_audio-stmt-1",
+      "to": "speech_audio-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-2-part_of-speech_audio-block-1",
+      "from": "speech_audio-stmt-2",
+      "to": "speech_audio-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-3-part_of-speech_audio-block-2",
+      "from": "speech_audio-stmt-3",
+      "to": "speech_audio-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-4-part_of-speech_audio-block-4",
+      "from": "speech_audio-stmt-4",
+      "to": "speech_audio-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-5-part_of-speech_audio-block-4",
+      "from": "speech_audio-stmt-5",
+      "to": "speech_audio-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-6-part_of-speech_audio-block-4",
+      "from": "speech_audio-stmt-6",
+      "to": "speech_audio-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-7-part_of-speech_audio-block-6",
+      "from": "speech_audio-stmt-7",
+      "to": "speech_audio-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-8-part_of-speech_audio-block-6",
+      "from": "speech_audio-stmt-8",
+      "to": "speech_audio-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-9-part_of-speech_audio-block-7",
+      "from": "speech_audio-stmt-9",
+      "to": "speech_audio-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-10-part_of-speech_audio-block-7",
+      "from": "speech_audio-stmt-10",
+      "to": "speech_audio-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-11-part_of-speech_audio-block-9",
+      "from": "speech_audio-stmt-11",
+      "to": "speech_audio-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-12-part_of-speech_audio-block-11",
+      "from": "speech_audio-stmt-12",
+      "to": "speech_audio-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-13-part_of-speech_audio-block-11",
+      "from": "speech_audio-stmt-13",
+      "to": "speech_audio-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-14-part_of-speech_audio-block-14",
+      "from": "speech_audio-stmt-14",
+      "to": "speech_audio-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-15-part_of-speech_audio-block-14",
+      "from": "speech_audio-stmt-15",
+      "to": "speech_audio-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-16-part_of-speech_audio-block-15",
+      "from": "speech_audio-stmt-16",
+      "to": "speech_audio-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-17-part_of-speech_audio-block-17",
+      "from": "speech_audio-stmt-17",
+      "to": "speech_audio-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-18-part_of-speech_audio-block-18",
+      "from": "speech_audio-stmt-18",
+      "to": "speech_audio-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-19-part_of-speech_audio-block-19",
+      "from": "speech_audio-stmt-19",
+      "to": "speech_audio-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-20-part_of-speech_audio-block-20",
+      "from": "speech_audio-stmt-20",
+      "to": "speech_audio-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-21-part_of-speech_audio-block-20",
+      "from": "speech_audio-stmt-21",
+      "to": "speech_audio-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-22-part_of-speech_audio-block-22",
+      "from": "speech_audio-stmt-22",
+      "to": "speech_audio-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-23-part_of-speech_audio-block-24",
+      "from": "speech_audio-stmt-23",
+      "to": "speech_audio-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-24-part_of-speech_audio-block-25",
+      "from": "speech_audio-stmt-24",
+      "to": "speech_audio-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-25-part_of-speech_audio-block-25",
+      "from": "speech_audio-stmt-25",
+      "to": "speech_audio-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-26-part_of-speech_audio-block-27",
+      "from": "speech_audio-stmt-26",
+      "to": "speech_audio-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-27-part_of-speech_audio-block-28",
+      "from": "speech_audio-stmt-27",
+      "to": "speech_audio-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-28-part_of-speech_audio-block-29",
+      "from": "speech_audio-stmt-28",
+      "to": "speech_audio-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-29-part_of-speech_audio-block-30",
+      "from": "speech_audio-stmt-29",
+      "to": "speech_audio-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-30-part_of-speech_audio-block-31",
+      "from": "speech_audio-stmt-30",
+      "to": "speech_audio-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-31-part_of-speech_audio-block-32",
+      "from": "speech_audio-stmt-31",
+      "to": "speech_audio-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-32-part_of-speech_audio-block-33",
+      "from": "speech_audio-stmt-32",
+      "to": "speech_audio-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-speech_audio-stmt-33-part_of-speech_audio-block-33",
+      "from": "speech_audio-stmt-33",
+      "to": "speech_audio-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "speech_audio-stmt-1",
       "quote": "Sound is the **last major modality** that LLMs learned to read and write.",
+      "block_id": "speech_audio-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-2",
       "quote": "As of 2025, frontier models (GPT-4o, Gemini, Voxtral, Qwen2-Audio) handle audio natively, taking voice input, generating speech, transcribing languages, recognizing emotion, even singing.",
+      "block_id": "speech_audio-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-3",
       "quote": "This chapter covers how audio is represented, how it is encoded and decoded, and how Transformer-based models learn to listen and speak.",
+      "block_id": "speech_audio-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-4",
       "quote": "A raw audio waveform is a 1-D signal sampled at 16 kHz or 44.1 kHz, a sequence of 16,000 to 44,100 floats **per second**.",
+      "block_id": "speech_audio-block-4",
       "section": "From Waveform to Tokens: Three Representations",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-5",
       "quote": "That is too dense for any model to ingest directly.",
+      "block_id": "speech_audio-block-4",
       "section": "From Waveform to Tokens: Three Representations",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-6",
       "quote": "Modern systems compress audio through one of three representations:",
+      "block_id": "speech_audio-block-4",
       "section": "From Waveform to Tokens: Three Representations",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-7",
       "quote": "A spectrogram is a 2-D representation: **time on the x-axis, frequency on the y-axis, intensity as colour**.",
+      "block_id": "speech_audio-block-6",
       "section": "1. Spectrograms (and Mel-spectrograms)",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-8",
       "quote": "It is computed by Short-Time Fourier Transform (STFT): split the waveform into 20–40 ms windows, compute the magnitude of the FFT, stack them.",
+      "block_id": "speech_audio-block-6",
       "section": "1. Spectrograms (and Mel-spectrograms)",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-9",
-      "quote": "where $w$ is a window function (Hann, Hamming) and $H$ is the hop size.",
+      "quote": "\\marginfig{spectrogram_speech_open.png}{A real spectrogram of the spoken word “open”, plotted with a *reassigned* STFT so the harmonic stripes stand out clearly: time runs left to right, frequency bottom to top, intensity as brightness.",
+      "block_id": "speech_audio-block-7",
       "section": "1. Spectrograms (and Mel-spectrograms)",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-10",
-      "quote": "\\marginfig{spectrogram_speech_open.png}{A real spectrogram of the spoken word “open”, plotted with a *reassigned* STFT so the harmonic stripes stand out clearly: time runs left to right, frequency bottom to top, intensity as brightness.",
+      "quote": "Image: [Kelly Fitz, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Long-window_reassigned_spectrogram_of_speech.png).}",
+      "block_id": "speech_audio-block-7",
       "section": "1. Spectrograms (and Mel-spectrograms)",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-11",
-      "quote": "Image: [Kelly Fitz, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Long-window_reassigned_spectrogram_of_speech.png).}",
-      "section": "1. Spectrograms (and Mel-spectrograms)",
+      "quote": "For an LLM to “read” audio as discrete tokens (like text tokens), a **neural codec** compresses audio into a stream of integers.",
+      "block_id": "speech_audio-block-9",
+      "section": "2. Neural Audio Codecs (the modern approach)",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-12",
-      "quote": "**Mel-spectrograms** warp the frequency axis to the **mel scale**, which approximates human pitch perception (logarithmic in frequency).",
-      "section": "1. Spectrograms (and Mel-spectrograms)",
+      "quote": "Models like **wav2vec 2.0**, **HuBERT**, and **WavLM** learn speech representations by masking spans of audio and predicting the discrete latent units of a teacher model.",
+      "block_id": "speech_audio-block-11",
+      "section": "3. Self-Supervised Representations",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-13",
-      "quote": "A 10-second clip at 16 kHz becomes a mel-spectrogram of shape $(\\text{mel bins}, \\text{time frames}) \\approx (80, 500)$.",
-      "section": "1. Spectrograms (and Mel-spectrograms)",
+      "quote": "The output is a sequence of 50 Hz contextualized vectors, perfect input for downstream ASR, speaker ID, or emotion recognition.",
+      "block_id": "speech_audio-block-11",
+      "section": "3. Self-Supervised Representations",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-14",
-      "quote": "For an LLM to “read” audio as discrete tokens (like text tokens), a **neural codec** compresses audio into a stream of integers.",
-      "section": "2. Neural Audio Codecs (the modern approach)",
+      "quote": "The model is trained with a multi-task objective: transcribe, translate to English, detect language, timestamp.",
+      "block_id": "speech_audio-block-14",
+      "section": "Speech Recognition: Whisper and Friends",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-15",
-      "quote": "* **SoundStream** (Google, 2021): 24 kHz mono audio → discrete codes at 3–18 kbps.",
-      "section": "2. Neural Audio Codecs (the modern approach)",
+      "quote": "Whisper-large-v3 (2023) achieves under 3% word error rate on clean English and ~10% on noisy multilingual.",
+      "block_id": "speech_audio-block-14",
+      "section": "Speech Recognition: Whisper and Friends",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-16",
-      "quote": "* **EnCodec** (Meta, 2022): 24 kHz stereo → discrete codes; uses a residual vector quantizer.",
-      "section": "2. Neural Audio Codecs (the modern approach)",
+      "quote": "Note that Whisper is one of the few remaining widely-used **encoder-decoder** Transformers, most modern speech and language systems are decoder-only (see the Transformer chapter ); the unified models below (GPT-4o, Gemini, Voxtral, Qwen2-Audio) follow the decoder-only / native-Transformer pattern.",
+      "block_id": "speech_audio-block-15",
+      "section": "Speech Recognition: Whisper and Friends",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-17",
-      "quote": "* **DAC** (Descript, 2023): improved quality at low bitrates.",
-      "section": "2. Neural Audio Codecs (the modern approach)",
+      "quote": "TTS has three historical generations:",
+      "block_id": "speech_audio-block-17",
+      "section": "Text-to-Speech: From Tacotron to Neural Codec Models",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-18",
-      "quote": "* **Whisper's log-mel**: not discrete, but the de facto input for ASR models.",
-      "section": "2. Neural Audio Codecs (the modern approach)",
+      "quote": "**Concatenative TTS** (pre-2016): stitch pre-recorded phoneme fragments.",
+      "block_id": "speech_audio-block-18",
+      "section": "Text-to-Speech: From Tacotron to Neural Codec Models",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-19",
-      "quote": "The codec has an **encoder** $E: \\text{waveform} \\to \\mathbb{Z}^{T \\times n_q}$ (frames × codebook entries) and a **decoder** $D: \\mathbb{Z}^{T \\times n_q} \\to \\text{waveform}$.",
-      "section": "2. Neural Audio Codecs (the modern approach)",
+      "quote": "**Neural spectrogram models** (Tacotron 2, 2017): encoder–decoder produces a mel-spectrogram, a separate **vocoder** (WaveNet, WaveGlow) converts it to waveform.",
+      "block_id": "speech_audio-block-19",
+      "section": "Text-to-Speech: From Tacotron to Neural Codec Models",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-20",
-      "quote": "With $n_q = 8$ codebooks and 75 frames per second, audio becomes 600 tokens per second, comparable in density to text.",
-      "section": "2. Neural Audio Codecs (the modern approach)",
+      "quote": "**Codec-based models** (VALL-E, Bark, SoundStorm, 2023+): treat speech as discrete codec tokens; a Transformer LLM predicts them; the codec decoder converts to waveform.",
+      "block_id": "speech_audio-block-20",
+      "section": "Text-to-Speech: From Tacotron to Neural Codec Models",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-21",
-      "quote": "Models like **wav2vec 2.0**, **HuBERT**, and **WavLM** learn speech representations by masking spans of audio and predicting the discrete latent units of a teacher model.",
-      "section": "3. Self-Supervised Representations",
+      "quote": "Voice cloning from a 3-second reference sample becomes trivial.",
+      "block_id": "speech_audio-block-20",
+      "section": "Text-to-Speech: From Tacotron to Neural Codec Models",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-22",
-      "quote": "The output is a sequence of 50 Hz contextualized vectors, perfect input for downstream ASR, speaker ID, or emotion recognition.",
-      "section": "3. Self-Supervised Representations",
+      "quote": "All rely on the same principle: **audio as a sequence of discrete tokens** + autoregressive or diffusion generation.",
+      "block_id": "speech_audio-block-22",
+      "section": "Music Generation",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-23",
-      "quote": "**Whisper** (Radford et al., OpenAI, 2022) is the dominant open ASR model.",
-      "section": "Speech Recognition: Whisper and Friends",
+      "quote": "The frontier is a single Transformer that handles text, audio, and image tokens interchangeably:",
+      "block_id": "speech_audio-block-24",
+      "section": "Unified Speech–Text Models (2024+)",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-24",
-      "quote": "* **Input**: 30-second audio chunks, converted to 80-channel log-mel spectrograms (100 Hz frames; 50 Hz after the conv stem).",
-      "section": "Speech Recognition: Whisper and Friends",
+      "quote": "The training data for these is massive: trillions of audio tokens, interleaved with text.",
+      "block_id": "speech_audio-block-25",
+      "section": "Unified Speech–Text Models (2024+)",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-25",
-      "quote": "* **Encoder**: standard Transformer (ViT-style for the convolutional stem), processes the spectrogram into hidden states.",
-      "section": "Speech Recognition: Whisper and Friends",
+      "quote": "Internally, audio is encoded into the LLM's vocabulary; the model is trained as a normal next-token predictor.",
+      "block_id": "speech_audio-block-25",
+      "section": "Unified Speech–Text Models (2024+)",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-26",
-      "quote": "* **Decoder**: autoregressive Transformer that produces text tokens.",
-      "section": "Speech Recognition: Whisper and Friends",
+      "quote": "| Concept | Reference | Key formula/idea |",
+      "block_id": "speech_audio-block-27",
+      "section": "Key Concepts Recap",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-27",
-      "quote": "* **Training**: 680,000 hours of weakly-supervised multilingual audio with transcribed captions.",
-      "section": "Speech Recognition: Whisper and Friends",
+      "quote": "| Spectrogram | Time × Frequency | STFT magnitude |",
+      "block_id": "speech_audio-block-28",
+      "section": "Key Concepts Recap",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-28",
-      "quote": "The model is trained with a multi-task objective: transcribe, translate to English, detect language, timestamp.",
-      "section": "Speech Recognition: Whisper and Friends",
+      "quote": "| Mel-spectrogram | Perceptually warped frequency | $\\text{mel}(f) = 2595 \\log_{10}(1 + f/700)$ |",
+      "block_id": "speech_audio-block-29",
+      "section": "Key Concepts Recap",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-29",
-      "quote": "Whisper-large-v3 (2023) achieves under 3% word error rate on clean English and ~10% on noisy multilingual.",
-      "section": "Speech Recognition: Whisper and Friends",
+      "quote": "| Whisper | Encoder–decoder Transformer | 80-mel input → text tokens |",
+      "block_id": "speech_audio-block-30",
+      "section": "Key Concepts Recap",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-30",
-      "quote": "**Conformer** (Gulati et al., Google, 2020) is the dominant architecture for streaming ASR.",
-      "section": "Speech Recognition: Whisper and Friends",
+      "quote": "| Conformer | Conv + Attention | Local + global context per layer |",
+      "block_id": "speech_audio-block-31",
+      "section": "Key Concepts Recap",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-31",
-      "quote": "It combines convolutions (for local patterns) with self-attention (for global context) in each block.",
-      "section": "Speech Recognition: Whisper and Friends",
+      "quote": "| Unified multimodal | Text + audio tokens | One Transformer for both |",
+      "block_id": "speech_audio-block-32",
+      "section": "Key Concepts Recap",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-32",
-      "quote": "USM (Google, 2023) and SeamlessM4T (Meta, 2023) extend this to 100+ languages.",
-      "section": "Speech Recognition: Whisper and Friends",
+      "quote": "The shift from “speech recognition” (separate ASR model) and “speech synthesis” (separate TTS model) to **one model that speaks and listens** is now complete in 2025.",
+      "block_id": "speech_audio-block-33",
+      "section": "Key Concepts Recap",
       "kind": "statement"
     },
     {
       "id": "speech_audio-stmt-33",
-      "quote": "Note that Whisper is one of the few remaining widely-used **encoder-decoder** Transformers, most modern speech and language systems are decoder-only (see the Transformer chapter ); the unified models below (GPT-4o, Gemini, Voxtral, Qwen2-Audio) follow the decoder-only / native-Transformer pattern.",
-      "section": "Speech Recognition: Whisper and Friends",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-34",
-      "quote": "TTS has three historical generations:",
-      "section": "Text-to-Speech: From Tacotron to Neural Codec Models",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-35",
-      "quote": "**Concatenative TTS** (pre-2016): stitch pre-recorded phoneme fragments.",
-      "section": "Text-to-Speech: From Tacotron to Neural Codec Models",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-36",
-      "quote": "**Neural spectrogram models** (Tacotron 2, 2017): encoder–decoder produces a mel-spectrogram, a separate **vocoder** (WaveNet, WaveGlow) converts it to waveform.",
-      "section": "Text-to-Speech: From Tacotron to Neural Codec Models",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-37",
-      "quote": "**Codec-based models** (VALL-E, Bark, SoundStorm, 2023+): treat speech as discrete codec tokens; a Transformer LLM predicts them; the codec decoder converts to waveform.",
-      "section": "Text-to-Speech: From Tacotron to Neural Codec Models",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-38",
-      "quote": "Voice cloning from a 3-second reference sample becomes trivial.",
-      "section": "Text-to-Speech: From Tacotron to Neural Codec Models",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-39",
-      "quote": "* **Jukebox** (OpenAI, 2020): VQ-VAE on raw audio + autoregressive Transformer.",
-      "section": "Music Generation",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-40",
-      "quote": "Slow, and limited to a few minutes of music per sample.",
-      "section": "Music Generation",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-41",
-      "quote": "* **MusicGen** (Meta, 2023): single-pass Transformer over EnCodec tokens, conditioned on text and (optionally) melody.",
-      "section": "Music Generation",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-42",
-      "quote": "* **Suno / Udio** (2024): closed-source, end-to-end text → song with vocals and instruments.",
-      "section": "Music Generation",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-43",
-      "quote": "Industry-leading quality.",
-      "section": "Music Generation",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-44",
-      "quote": "* **Stable Audio** (Stability AI, 2024): latent diffusion over audio spectrograms.",
-      "section": "Music Generation",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-45",
-      "quote": "All rely on the same principle: **audio as a sequence of discrete tokens** + autoregressive or diffusion generation.",
-      "section": "Music Generation",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-46",
-      "quote": "The frontier is a single Transformer that handles text, audio, and image tokens interchangeably:",
-      "section": "Unified Speech–Text Models (2024+)",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-47",
-      "quote": "* **GPT-4o** (OpenAI, 2024): real-time voice conversation with emotional nuance.",
-      "section": "Unified Speech–Text Models (2024+)",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-48",
-      "quote": "Audio tokens are interleaved with text tokens in one residual stream.",
-      "section": "Unified Speech–Text Models (2024+)",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-49",
-      "quote": "* **Gemini 1.5/2** (Google): native audio understanding (transcription, translation, classification) and generation.",
-      "section": "Unified Speech–Text Models (2024+)",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-50",
-      "quote": "* **Voxtral** (Mistral, 2025): open-weight 24B audio model.",
-      "section": "Unified Speech–Text Models (2024+)",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-51",
-      "quote": "* **Qwen2-Audio** (Alibaba, 2024): open-weights audio chat model.",
-      "section": "Unified Speech–Text Models (2024+)",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-52",
-      "quote": "The training data for these is massive: trillions of audio tokens, interleaved with text.",
-      "section": "Unified Speech–Text Models (2024+)",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-53",
-      "quote": "Internally, audio is encoded into the LLM's vocabulary; the model is trained as a normal next-token predictor.",
-      "section": "Unified Speech–Text Models (2024+)",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-54",
-      "quote": "| Concept | Reference | Key formula/idea |",
-      "section": "Key Concepts Recap",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-55",
-      "quote": "| Spectrogram | Time × Frequency | STFT magnitude |",
-      "section": "Key Concepts Recap",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-56",
-      "quote": "| Mel-spectrogram | Perceptually warped frequency | $\\text{mel}(f) = 2595 \\log_{10}(1 + f/700)$ |",
-      "section": "Key Concepts Recap",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-57",
-      "quote": "| Neural codec | Discrete audio tokens | $D(E(x)) \\approx x$ |",
-      "section": "Key Concepts Recap",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-58",
-      "quote": "| Whisper | Encoder–decoder Transformer | 80-mel input → text tokens |",
-      "section": "Key Concepts Recap",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-59",
-      "quote": "| VALL-E | Codec-LM TTS | $P(\\text{tokens} \\mid \\text{text}, \\text{reference})$ |",
-      "section": "Key Concepts Recap",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-60",
-      "quote": "| Conformer | Conv + Attention | Local + global context per layer |",
-      "section": "Key Concepts Recap",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-61",
-      "quote": "| Unified multimodal | Text + audio tokens | One Transformer for both |",
-      "section": "Key Concepts Recap",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-62",
-      "quote": "The shift from “speech recognition” (separate ASR model) and “speech synthesis” (separate TTS model) to **one model that speaks and listens** is now complete in 2025.",
-      "section": "Key Concepts Recap",
-      "kind": "statement"
-    },
-    {
-      "id": "speech_audio-stmt-63",
       "quote": "The remaining frontier is **real-time, low-latency, expressive speech**, natural conversation rather than turn-taking.",
+      "block_id": "speech_audio-block-33",
       "section": "Key Concepts Recap",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "speech_audio-block-1",
+      "quote": "Sound is the **last major modality** that LLMs learned to read and write. As of 2025, frontier models (GPT-4o, Gemini, Voxtral, Qwen2-Audio) handle audio natively, taking voice input, generating speech, transcribing languages, recognizing emotion, even singing.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "speech_audio-block-2",
+      "quote": "This chapter covers how audio is represented, how it is encoded and decoded, and how Transformer-based models learn to listen and speak.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "speech_audio-block-3",
+      "quote": "From Waveform to Tokens: Three Representations",
+      "kind": "heading",
+      "section": "From Waveform to Tokens: Three Representations"
+    },
+    {
+      "id": "speech_audio-block-4",
+      "quote": "A raw audio waveform is a 1-D signal sampled at 16 kHz or 44.1 kHz, a sequence of 16,000 to 44,100 floats **per second**. That is too dense for any model to ingest directly. Modern systems compress audio through one of three representations:",
+      "kind": "paragraph",
+      "section": "From Waveform to Tokens: Three Representations"
+    },
+    {
+      "id": "speech_audio-block-5",
+      "quote": "1. Spectrograms (and Mel-spectrograms)",
+      "kind": "heading",
+      "section": "1. Spectrograms (and Mel-spectrograms)"
+    },
+    {
+      "id": "speech_audio-block-6",
+      "quote": "A spectrogram is a 2-D representation: **time on the x-axis, frequency on the y-axis, intensity as colour**. It is computed by Short-Time Fourier Transform (STFT): split the waveform into 20–40 ms windows, compute the magnitude of the FFT, stack them.",
+      "kind": "paragraph",
+      "section": "1. Spectrograms (and Mel-spectrograms)"
+    },
+    {
+      "id": "speech_audio-block-7",
+      "quote": "\\marginfig{spectrogram_speech_open.png}{A real spectrogram of the spoken word “open”, plotted with a *reassigned* STFT so the harmonic stripes stand out clearly: time runs left to right, frequency bottom to top, intensity as brightness. Image: [Kelly Fitz, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Long-window_reassigned_spectrogram_of_speech.png).}",
+      "kind": "paragraph",
+      "section": "1. Spectrograms (and Mel-spectrograms)"
+    },
+    {
+      "id": "speech_audio-block-8",
+      "quote": "2. Neural Audio Codecs (the modern approach)",
+      "kind": "heading",
+      "section": "2. Neural Audio Codecs (the modern approach)"
+    },
+    {
+      "id": "speech_audio-block-9",
+      "quote": "For an LLM to “read” audio as discrete tokens (like text tokens), a **neural codec** compresses audio into a stream of integers. Examples:",
+      "kind": "paragraph",
+      "section": "2. Neural Audio Codecs (the modern approach)"
+    },
+    {
+      "id": "speech_audio-block-10",
+      "quote": "3. Self-Supervised Representations",
+      "kind": "heading",
+      "section": "3. Self-Supervised Representations"
+    },
+    {
+      "id": "speech_audio-block-11",
+      "quote": "Models like **wav2vec 2.0**, **HuBERT**, and **WavLM** learn speech representations by masking spans of audio and predicting the discrete latent units of a teacher model. The output is a sequence of 50 Hz contextualized vectors, perfect input for downstream ASR, speaker ID, or emotion recognition.",
+      "kind": "paragraph",
+      "section": "3. Self-Supervised Representations"
+    },
+    {
+      "id": "speech_audio-block-12",
+      "quote": "Speech and music systems",
+      "kind": "heading",
+      "section": "Speech and music systems"
+    },
+    {
+      "id": "speech_audio-block-13",
+      "quote": "Speech Recognition: Whisper and Friends",
+      "kind": "heading",
+      "section": "Speech Recognition: Whisper and Friends"
+    },
+    {
+      "id": "speech_audio-block-14",
+      "quote": "The model is trained with a multi-task objective: transcribe, translate to English, detect language, timestamp. Whisper-large-v3 (2023) achieves under 3% word error rate on clean English and ~10% on noisy multilingual.",
+      "kind": "paragraph",
+      "section": "Speech Recognition: Whisper and Friends"
+    },
+    {
+      "id": "speech_audio-block-15",
+      "quote": "Note that Whisper is one of the few remaining widely-used **encoder-decoder** Transformers, most modern speech and language systems are decoder-only (see the Transformer chapter ); the unified models below (GPT-4o, Gemini, Voxtral, Qwen2-Audio) follow the decoder-only / native-Transformer pattern.",
+      "kind": "paragraph",
+      "section": "Speech Recognition: Whisper and Friends"
+    },
+    {
+      "id": "speech_audio-block-16",
+      "quote": "Text-to-Speech: From Tacotron to Neural Codec Models",
+      "kind": "heading",
+      "section": "Text-to-Speech: From Tacotron to Neural Codec Models"
+    },
+    {
+      "id": "speech_audio-block-17",
+      "quote": "TTS has three historical generations:",
+      "kind": "paragraph",
+      "section": "Text-to-Speech: From Tacotron to Neural Codec Models"
+    },
+    {
+      "id": "speech_audio-block-18",
+      "quote": "1. **Concatenative TTS** (pre-2016): stitch pre-recorded phoneme fragments. Robotic.",
+      "kind": "list-item",
+      "section": "Text-to-Speech: From Tacotron to Neural Codec Models"
+    },
+    {
+      "id": "speech_audio-block-19",
+      "quote": "2. **Neural spectrogram models** (Tacotron 2, 2017): encoder–decoder produces a mel-spectrogram, a separate **vocoder** (WaveNet, WaveGlow) converts it to waveform.",
+      "kind": "list-item",
+      "section": "Text-to-Speech: From Tacotron to Neural Codec Models"
+    },
+    {
+      "id": "speech_audio-block-20",
+      "quote": "3. **Codec-based models** (VALL-E, Bark, SoundStorm, 2023+): treat speech as discrete codec tokens; a Transformer LLM predicts them; the codec decoder converts to waveform. Voice cloning from a 3-second reference sample becomes trivial.",
+      "kind": "list-item",
+      "section": "Text-to-Speech: From Tacotron to Neural Codec Models"
+    },
+    {
+      "id": "speech_audio-block-21",
+      "quote": "Music Generation",
+      "kind": "heading",
+      "section": "Music Generation"
+    },
+    {
+      "id": "speech_audio-block-22",
+      "quote": "All rely on the same principle: **audio as a sequence of discrete tokens** + autoregressive or diffusion generation.",
+      "kind": "paragraph",
+      "section": "Music Generation"
+    },
+    {
+      "id": "speech_audio-block-23",
+      "quote": "Unified Speech–Text Models (2024+)",
+      "kind": "heading",
+      "section": "Unified Speech–Text Models (2024+)"
+    },
+    {
+      "id": "speech_audio-block-24",
+      "quote": "The frontier is a single Transformer that handles text, audio, and image tokens interchangeably:",
+      "kind": "paragraph",
+      "section": "Unified Speech–Text Models (2024+)"
+    },
+    {
+      "id": "speech_audio-block-25",
+      "quote": "The training data for these is massive: trillions of audio tokens, interleaved with text. Internally, audio is encoded into the LLM's vocabulary; the model is trained as a normal next-token predictor.",
+      "kind": "paragraph",
+      "section": "Unified Speech–Text Models (2024+)"
+    },
+    {
+      "id": "speech_audio-block-26",
+      "quote": "Key Concepts Recap",
+      "kind": "heading",
+      "section": "Key Concepts Recap"
+    },
+    {
+      "id": "speech_audio-block-27",
+      "quote": "| Concept | Reference | Key formula/idea |",
+      "kind": "table-row",
+      "section": "Key Concepts Recap"
+    },
+    {
+      "id": "speech_audio-block-28",
+      "quote": "| Spectrogram | Time × Frequency | STFT magnitude |",
+      "kind": "table-row",
+      "section": "Key Concepts Recap"
+    },
+    {
+      "id": "speech_audio-block-29",
+      "quote": "| Mel-spectrogram | Perceptually warped frequency | $\\text{mel}(f) = 2595 \\log_{10}(1 + f/700)$ |",
+      "kind": "table-row",
+      "section": "Key Concepts Recap"
+    },
+    {
+      "id": "speech_audio-block-30",
+      "quote": "| Whisper | Encoder–decoder Transformer | 80-mel input → text tokens |",
+      "kind": "table-row",
+      "section": "Key Concepts Recap"
+    },
+    {
+      "id": "speech_audio-block-31",
+      "quote": "| Conformer | Conv + Attention | Local + global context per layer |",
+      "kind": "table-row",
+      "section": "Key Concepts Recap"
+    },
+    {
+      "id": "speech_audio-block-32",
+      "quote": "| Unified multimodal | Text + audio tokens | One Transformer for both |",
+      "kind": "table-row",
+      "section": "Key Concepts Recap"
+    },
+    {
+      "id": "speech_audio-block-33",
+      "quote": "The shift from “speech recognition” (separate ASR model) and “speech synthesis” (separate TTS model) to **one model that speaks and listens** is now complete in 2025. The remaining frontier is **real-time, low-latency, expressive speech**, natural conversation rather than turn-taking.",
+      "kind": "paragraph",
+      "section": "Key Concepts Recap"
     }
   ]
 }

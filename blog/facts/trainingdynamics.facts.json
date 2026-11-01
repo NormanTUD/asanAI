@@ -487,362 +487,1653 @@
       "quote": "part: 2",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-1-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-1",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-2-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-2",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-1-before-trainingdynamics-block-2",
+      "from": "trainingdynamics-block-1",
+      "to": "trainingdynamics-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-2-related_to-trainingdynamics-block-1",
+      "from": "trainingdynamics-block-2",
+      "to": "trainingdynamics-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-3-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-3",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-2-before-trainingdynamics-block-3",
+      "from": "trainingdynamics-block-2",
+      "to": "trainingdynamics-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-4-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-4",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-3-before-trainingdynamics-block-4",
+      "from": "trainingdynamics-block-3",
+      "to": "trainingdynamics-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-5-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-5",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-4-before-trainingdynamics-block-5",
+      "from": "trainingdynamics-block-4",
+      "to": "trainingdynamics-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-5-related_to-trainingdynamics-block-4",
+      "from": "trainingdynamics-block-5",
+      "to": "trainingdynamics-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-6-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-6",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-5-before-trainingdynamics-block-6",
+      "from": "trainingdynamics-block-5",
+      "to": "trainingdynamics-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-6-related_to-trainingdynamics-block-4",
+      "from": "trainingdynamics-block-6",
+      "to": "trainingdynamics-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-7-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-7",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-6-before-trainingdynamics-block-7",
+      "from": "trainingdynamics-block-6",
+      "to": "trainingdynamics-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-7-related_to-trainingdynamics-block-4",
+      "from": "trainingdynamics-block-7",
+      "to": "trainingdynamics-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-8-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-8",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-7-before-trainingdynamics-block-8",
+      "from": "trainingdynamics-block-7",
+      "to": "trainingdynamics-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-8-related_to-trainingdynamics-block-4",
+      "from": "trainingdynamics-block-8",
+      "to": "trainingdynamics-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-9-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-9",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-8-before-trainingdynamics-block-9",
+      "from": "trainingdynamics-block-8",
+      "to": "trainingdynamics-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-9-related_to-trainingdynamics-block-4",
+      "from": "trainingdynamics-block-9",
+      "to": "trainingdynamics-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-10-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-10",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-9-before-trainingdynamics-block-10",
+      "from": "trainingdynamics-block-9",
+      "to": "trainingdynamics-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-10-related_to-trainingdynamics-block-4",
+      "from": "trainingdynamics-block-10",
+      "to": "trainingdynamics-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-11-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-11",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-10-before-trainingdynamics-block-11",
+      "from": "trainingdynamics-block-10",
+      "to": "trainingdynamics-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-11-related_to-trainingdynamics-block-4",
+      "from": "trainingdynamics-block-11",
+      "to": "trainingdynamics-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-12-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-12",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-11-before-trainingdynamics-block-12",
+      "from": "trainingdynamics-block-11",
+      "to": "trainingdynamics-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-12-related_to-trainingdynamics-block-4",
+      "from": "trainingdynamics-block-12",
+      "to": "trainingdynamics-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-13-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-13",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-12-before-trainingdynamics-block-13",
+      "from": "trainingdynamics-block-12",
+      "to": "trainingdynamics-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-13-related_to-trainingdynamics-block-4",
+      "from": "trainingdynamics-block-13",
+      "to": "trainingdynamics-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-14-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-14",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-13-before-trainingdynamics-block-14",
+      "from": "trainingdynamics-block-13",
+      "to": "trainingdynamics-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-14-related_to-trainingdynamics-block-4",
+      "from": "trainingdynamics-block-14",
+      "to": "trainingdynamics-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-15-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-15",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-14-before-trainingdynamics-block-15",
+      "from": "trainingdynamics-block-14",
+      "to": "trainingdynamics-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-15-related_to-trainingdynamics-block-4",
+      "from": "trainingdynamics-block-15",
+      "to": "trainingdynamics-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-16-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-16",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-15-before-trainingdynamics-block-16",
+      "from": "trainingdynamics-block-15",
+      "to": "trainingdynamics-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-16-related_to-trainingdynamics-block-4",
+      "from": "trainingdynamics-block-16",
+      "to": "trainingdynamics-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-17-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-17",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-16-before-trainingdynamics-block-17",
+      "from": "trainingdynamics-block-16",
+      "to": "trainingdynamics-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-17-related_to-trainingdynamics-block-4",
+      "from": "trainingdynamics-block-17",
+      "to": "trainingdynamics-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-18-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-18",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-17-before-trainingdynamics-block-18",
+      "from": "trainingdynamics-block-17",
+      "to": "trainingdynamics-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-18-related_to-trainingdynamics-block-4",
+      "from": "trainingdynamics-block-18",
+      "to": "trainingdynamics-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-19-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-19",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-18-before-trainingdynamics-block-19",
+      "from": "trainingdynamics-block-18",
+      "to": "trainingdynamics-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-20-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-20",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-19-before-trainingdynamics-block-20",
+      "from": "trainingdynamics-block-19",
+      "to": "trainingdynamics-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-21-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-21",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-20-before-trainingdynamics-block-21",
+      "from": "trainingdynamics-block-20",
+      "to": "trainingdynamics-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-22-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-22",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-21-before-trainingdynamics-block-22",
+      "from": "trainingdynamics-block-21",
+      "to": "trainingdynamics-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-23-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-23",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-22-before-trainingdynamics-block-23",
+      "from": "trainingdynamics-block-22",
+      "to": "trainingdynamics-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-23-related_to-trainingdynamics-block-22",
+      "from": "trainingdynamics-block-23",
+      "to": "trainingdynamics-block-22",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-24-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-24",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-23-before-trainingdynamics-block-24",
+      "from": "trainingdynamics-block-23",
+      "to": "trainingdynamics-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-25-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-25",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-24-before-trainingdynamics-block-25",
+      "from": "trainingdynamics-block-24",
+      "to": "trainingdynamics-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-25-related_to-trainingdynamics-block-24",
+      "from": "trainingdynamics-block-25",
+      "to": "trainingdynamics-block-24",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-26-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-26",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-25-before-trainingdynamics-block-26",
+      "from": "trainingdynamics-block-25",
+      "to": "trainingdynamics-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-27-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-27",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-26-before-trainingdynamics-block-27",
+      "from": "trainingdynamics-block-26",
+      "to": "trainingdynamics-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-27-related_to-trainingdynamics-block-26",
+      "from": "trainingdynamics-block-27",
+      "to": "trainingdynamics-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-28-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-28",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-27-before-trainingdynamics-block-28",
+      "from": "trainingdynamics-block-27",
+      "to": "trainingdynamics-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-29-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-29",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-28-before-trainingdynamics-block-29",
+      "from": "trainingdynamics-block-28",
+      "to": "trainingdynamics-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-29-related_to-trainingdynamics-block-28",
+      "from": "trainingdynamics-block-29",
+      "to": "trainingdynamics-block-28",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-30-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-30",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-29-before-trainingdynamics-block-30",
+      "from": "trainingdynamics-block-29",
+      "to": "trainingdynamics-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-30-related_to-trainingdynamics-block-28",
+      "from": "trainingdynamics-block-30",
+      "to": "trainingdynamics-block-28",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-31-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-31",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-30-before-trainingdynamics-block-31",
+      "from": "trainingdynamics-block-30",
+      "to": "trainingdynamics-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-31-related_to-trainingdynamics-block-28",
+      "from": "trainingdynamics-block-31",
+      "to": "trainingdynamics-block-28",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-32-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-32",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-31-before-trainingdynamics-block-32",
+      "from": "trainingdynamics-block-31",
+      "to": "trainingdynamics-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-32-related_to-trainingdynamics-block-28",
+      "from": "trainingdynamics-block-32",
+      "to": "trainingdynamics-block-28",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-33-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-33",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-32-before-trainingdynamics-block-33",
+      "from": "trainingdynamics-block-32",
+      "to": "trainingdynamics-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-33-related_to-trainingdynamics-block-28",
+      "from": "trainingdynamics-block-33",
+      "to": "trainingdynamics-block-28",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-34-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-34",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-33-before-trainingdynamics-block-34",
+      "from": "trainingdynamics-block-33",
+      "to": "trainingdynamics-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-34-related_to-trainingdynamics-block-28",
+      "from": "trainingdynamics-block-34",
+      "to": "trainingdynamics-block-28",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-35-part_of-trainingdynamics",
+      "from": "trainingdynamics-block-35",
+      "to": "trainingdynamics",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-34-before-trainingdynamics-block-35",
+      "from": "trainingdynamics-block-34",
+      "to": "trainingdynamics-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-block-35-related_to-trainingdynamics-block-28",
+      "from": "trainingdynamics-block-35",
+      "to": "trainingdynamics-block-28",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-1-part_of-trainingdynamics-block-1",
+      "from": "trainingdynamics-stmt-1",
+      "to": "trainingdynamics-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-2-part_of-trainingdynamics-block-1",
+      "from": "trainingdynamics-stmt-2",
+      "to": "trainingdynamics-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-3-part_of-trainingdynamics-block-2",
+      "from": "trainingdynamics-stmt-3",
+      "to": "trainingdynamics-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-4-part_of-trainingdynamics-block-2",
+      "from": "trainingdynamics-stmt-4",
+      "to": "trainingdynamics-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-5-part_of-trainingdynamics-block-2",
+      "from": "trainingdynamics-stmt-5",
+      "to": "trainingdynamics-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-6-part_of-trainingdynamics-block-5",
+      "from": "trainingdynamics-stmt-6",
+      "to": "trainingdynamics-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-7-part_of-trainingdynamics-block-5",
+      "from": "trainingdynamics-stmt-7",
+      "to": "trainingdynamics-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-8-part_of-trainingdynamics-block-9",
+      "from": "trainingdynamics-stmt-8",
+      "to": "trainingdynamics-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-9-part_of-trainingdynamics-block-11",
+      "from": "trainingdynamics-stmt-9",
+      "to": "trainingdynamics-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-10-part_of-trainingdynamics-block-12",
+      "from": "trainingdynamics-stmt-10",
+      "to": "trainingdynamics-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-11-part_of-trainingdynamics-block-18",
+      "from": "trainingdynamics-stmt-11",
+      "to": "trainingdynamics-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-12-part_of-trainingdynamics-block-23",
+      "from": "trainingdynamics-stmt-12",
+      "to": "trainingdynamics-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-13-part_of-trainingdynamics-block-23",
+      "from": "trainingdynamics-stmt-13",
+      "to": "trainingdynamics-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-14-part_of-trainingdynamics-block-23",
+      "from": "trainingdynamics-stmt-14",
+      "to": "trainingdynamics-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-15-part_of-trainingdynamics-block-23",
+      "from": "trainingdynamics-stmt-15",
+      "to": "trainingdynamics-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-16-part_of-trainingdynamics-block-25",
+      "from": "trainingdynamics-stmt-16",
+      "to": "trainingdynamics-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-17-part_of-trainingdynamics-block-27",
+      "from": "trainingdynamics-stmt-17",
+      "to": "trainingdynamics-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-18-part_of-trainingdynamics-block-27",
+      "from": "trainingdynamics-stmt-18",
+      "to": "trainingdynamics-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-19-part_of-trainingdynamics-block-27",
+      "from": "trainingdynamics-stmt-19",
+      "to": "trainingdynamics-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-20-part_of-trainingdynamics-block-27",
+      "from": "trainingdynamics-stmt-20",
+      "to": "trainingdynamics-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-21-part_of-trainingdynamics-block-29",
+      "from": "trainingdynamics-stmt-21",
+      "to": "trainingdynamics-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-22-part_of-trainingdynamics-block-30",
+      "from": "trainingdynamics-stmt-22",
+      "to": "trainingdynamics-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-23-part_of-trainingdynamics-block-31",
+      "from": "trainingdynamics-stmt-23",
+      "to": "trainingdynamics-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-24-part_of-trainingdynamics-block-32",
+      "from": "trainingdynamics-stmt-24",
+      "to": "trainingdynamics-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-25-part_of-trainingdynamics-block-33",
+      "from": "trainingdynamics-stmt-25",
+      "to": "trainingdynamics-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-26-part_of-trainingdynamics-block-34",
+      "from": "trainingdynamics-stmt-26",
+      "to": "trainingdynamics-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-27-part_of-trainingdynamics-block-35",
+      "from": "trainingdynamics-stmt-27",
+      "to": "trainingdynamics-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-28-part_of-trainingdynamics-block-35",
+      "from": "trainingdynamics-stmt-28",
+      "to": "trainingdynamics-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-trainingdynamics-stmt-29-part_of-trainingdynamics-block-35",
+      "from": "trainingdynamics-stmt-29",
+      "to": "trainingdynamics-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "trainingdynamics-stmt-1",
       "quote": "A training run is a phenomenon you can *watch*, not just a number you report.",
+      "block_id": "trainingdynamics-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-2",
       "quote": "The scaling laws are mentioned in the [Hyperparameters](hyperparameters.php) and [Loss](losslab.php) chapters, but a single line — \"the loss falls as a power law\" — hides most of what actually happens between \"initialize the weights\" and \"the model is done.\" A run *warms up*, *decays*, *spikes*, and either *settles* or *dies*; the shape of that curve is a direct readout of the choices you made — the model size, the data, the batch, the learning-rate schedule.",
+      "block_id": "trainingdynamics-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-3",
       "quote": "This lesson makes that a thing you can touch.",
+      "block_id": "trainingdynamics-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-4",
       "quote": "The interactive below is a **training-curve simulator**: set the knobs and watch the loss move toward its theoretical floor, wiggle with the noise of the batch, spike, and recover — or diverge.",
+      "block_id": "trainingdynamics-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-5",
       "quote": "Every one of those behaviors is a *lived practice* of the field, and each maps to a named technique you will meet in the sections below.",
+      "block_id": "trainingdynamics-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-6",
-      "quote": "Strip a run down to its skeleton and it is a power law.",
+      "quote": "📘 Simulator: a stylized training run.",
+      "block_id": "trainingdynamics-block-5",
       "section": "The shape of a training run: the power law",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-7",
-      "quote": "\\cite[Kaplan et al. (2020)]{kaplan2020scaling} fit the held-out loss of a family of language models and found a power-law trade-off between parameters $N$ and training tokens $D$.",
+      "quote": "Set the model, the data, the batch, and the learning-rate schedule, then press Train and watch the loss decay toward its power-law floor.",
+      "block_id": "trainingdynamics-block-5",
       "section": "The shape of a training run: the power law",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-8",
-      "quote": "\\cite[Hoffmann et al. (2022)]{hoffmann2022chinchilla} redid the fit at much larger scale with the additive form",
+      "quote": "4096 small batch = cheaper steps, noisier curve; large batch = smooth, costlier steps",
+      "block_id": "trainingdynamics-block-9",
       "section": "The shape of a training run: the power law",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-9",
-      "quote": "The curve above is a *stylized* run, not a real one — and being explicit about that is part of the point.",
-      "section": "What the simulator is, and isn't",
+      "quote": "Constant (peak LR, no decay) Cosine decay WSD (warmup–stable–decay)",
+      "block_id": "trainingdynamics-block-11",
+      "section": "The shape of a training run: the power law",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-10",
-      "quote": "The loss follows the power-law floor $L_{\\min}(N, D)$ from the section above: it starts at the loss of an untrained model (roughly $\\ln(\\text{vocab})$, a constant independent of size) and decays toward the floor as the model sees more tokens.",
-      "section": "What the simulator is, and isn't",
+      "quote": "Inject a loss spike (then recover) Diverge (LR too high — does not recover)",
+      "block_id": "trainingdynamics-block-12",
+      "section": "The shape of a training run: the power law",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-11",
-      "quote": "On top of that smooth decay it adds noise that scales as $1/\\sqrt{\\text{batch}}$ — which is why the small-batch curve is jagged and the large-batch curve is smooth — and it can be nudged to spike or diverge.",
-      "section": "What the simulator is, and isn't",
+      "quote": "Adjust the parameters above and press Train to run the simulation.",
+      "block_id": "trainingdynamics-block-18",
+      "section": "The shape of a training run: the power law",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-12",
-      "quote": "What the simulator gets *right* is the **relationship** between the knobs and the curve: bigger $N$ or $D$ lowers the floor the curve is heading for; smaller batches make the \"last mile\" noisier; the schedule shapes how the curve settles.",
-      "section": "What the simulator is, and isn't",
+      "quote": "\\cite[Goyal et al. (2017)]{goyal2017largebatch} made a result that is almost a law: **doubling the batch lets you double the learning rate** and still reach the same loss.",
+      "block_id": "trainingdynamics-block-23",
+      "section": "Batch size and the linear scaling rule",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-13",
-      "quote": "That relationship is the whole lesson, and it is exactly what a power law predicts.",
-      "section": "What the simulator is, and isn't",
+      "quote": "A minibatch gradient is the true gradient plus noise, and that noise scales as $1/\\sqrt{\\text{batch}}$ — double the batch and the noise drops by $\\sqrt{2}$.",
+      "block_id": "trainingdynamics-block-23",
+      "section": "Batch size and the linear scaling rule",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-14",
-      "quote": "The simulator's $N$, $D$ and batch decide *where* the curve goes; the **learning-rate schedule** decides *how it gets there*, and it is the single most-tuned dial in practice.",
-      "section": "Warmup and learning-rate schedules",
+      "quote": "A proportionally larger learning rate exactly compensates, so you can trade *more* steps of *smaller* batches for *fewer* steps of *bigger* batches and land at the same place, as long as you hold the product (and the LR) in the right ratio.",
+      "block_id": "trainingdynamics-block-23",
+      "section": "Batch size and the linear scaling rule",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-15",
-      "quote": "**Why the first steps use a rising learning rate.** Modern optimizers like Adam keep running *moment* estimates — averages of past gradients and squared gradients.",
-      "section": "Warmup and learning-rate schedules",
+      "quote": "This is the **linear scaling rule**.",
+      "block_id": "trainingdynamics-block-23",
+      "section": "Batch size and the linear scaling rule",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-16",
-      "quote": "In the first few hundred steps those estimates are dominated by the noisy, large initial gradients, so the effective per-parameter step is miscalibrated and the run can lurch or even blow up.",
-      "section": "Warmup and learning-rate schedules",
+      "quote": "Training runs are *flaky* in a specific way, and you are expected to recognize the shape.",
+      "block_id": "trainingdynamics-block-25",
+      "section": "When a run diverges: spikes, the edge of stability, and clipping",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-17",
-      "quote": "A short **warmup** — holding the learning rate near zero and *ramping it up* over a few percent of the run — lets those estimates settle before the model commits to big steps.",
-      "section": "Warmup and learning-rate schedules",
+      "quote": "All of the above is tuned per model — you pick a learning rate for *this* width, re-tune when you change it, and hope the answer transfers.",
+      "block_id": "trainingdynamics-block-27",
+      "section": "Making hyperparameters transfer: μP",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-18",
-      "quote": "Every serious run warms up; the simulator does the same in its first sliver of steps.",
-      "section": "Warmup and learning-rate schedules",
+      "quote": "\\cite[Yang et al. (2022)]{yang2022mup} introduced **μP** (Maximal Update Parametrization), a way of *writing down* the network so that the optimal hyperparameters found on a *tiny* model transfer to a *huge* one essentially unchanged.",
+      "block_id": "trainingdynamics-block-27",
+      "section": "Making hyperparameters transfer: μP",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-19",
-      "quote": "**Cosine decay.** The classic full-run schedule starts at a peak learning rate and decays it along a cosine down to zero at the end.",
-      "section": "Warmup and learning-rate schedules",
+      "quote": "The consequence is a new tuning paradigm — tune on a small net where experiments are cheap, then scale the width without re-tuning at all, and the same learning rate, warmup, and schedule keep working.",
+      "block_id": "trainingdynamics-block-27",
+      "section": "Making hyperparameters transfer: μP",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-20",
-      "quote": "The early steps move fast (high LR), the late steps move slowly and precisely (near-zero LR), so the model does the heavy learning early and *settles* into a low-loss region rather than jittering across it.",
-      "section": "Warmup and learning-rate schedules",
+      "quote": "For teams that train at frontier scale, that transfer is worth a lot: it turns \"how do I set the learning rate for a model this size?\" into \"the answer I already have from the 0.1B model.\"",
+      "block_id": "trainingdynamics-block-27",
+      "section": "Making hyperparameters transfer: μP",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-21",
-      "quote": "**WSD — warmup, stable, decay.** The modern, reusable recipe splits the run into three phases: a short **warmup**, a long **stable** phase at a *fixed* learning rate, and a final **decay** phase that drops the learning rate to zero.",
-      "section": "Warmup and learning-rate schedules",
+      "quote": "| You turn this knob | The curve does this |",
+      "block_id": "trainingdynamics-block-29",
+      "section": "What to take away",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-22",
-      "quote": "Its payoff is that the stable phase is *reusable*.",
-      "section": "Warmup and learning-rate schedules",
+      "quote": "| **Batch** ↓ | Cheaper steps, but the curve is noisier ($1/\\sqrt{\\text{batch}}$ noise).",
+      "block_id": "trainingdynamics-block-30",
+      "section": "What to take away",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-23",
-      "quote": "\"How stable is this run?\" and \"how long do I train?\" are two separate questions, and WSD lets you answer them independently: to train longer you *unroll* the stable phase (more fixed-LR steps), and to do the final quality push you run the decay once.",
-      "section": "Warmup and learning-rate schedules",
+      "quote": "| **LR schedule** | Shapes the tail: constant flattens, cosine squeezes, WSD holds then drops.",
+      "block_id": "trainingdynamics-block-31",
+      "section": "What to take away",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-24",
-      "quote": "And the shape of each curve is measurable, not folklore: \\cite[Luo et al. (2025)]{wsd2025} fit a multi-power law to the pretraining loss across constant, cosine, and step schedules, and used it to auto-discover a schedule that *resembles WSD* and lands just below cosine.",
-      "section": "Warmup and learning-rate schedules",
+      "quote": "| **Warmup** | Keeps the first, miscalibrated steps from lurching the run.",
+      "block_id": "trainingdynamics-block-32",
+      "section": "What to take away",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-25",
-      "quote": "Compare the three schedules in the simulator: constant has a flat tail (it stops improving), cosine squeezes gently to the end, and WSD holds a stable level then drops hard in the decay phase.",
-      "section": "Warmup and learning-rate schedules",
+      "quote": "| **Spikes / high LR** | Recoverable jump vs. divergence — read the shape.",
+      "block_id": "trainingdynamics-block-33",
+      "section": "What to take away",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-26",
-      "quote": "\\cite[Goyal et al. (2017)]{goyal2017largebatch} made a result that is almost a law: **doubling the batch lets you double the learning rate** and still reach the same loss.",
-      "section": "Batch size and the linear scaling rule",
+      "quote": "| **μP** | Makes the tuned hyperparameters transfer across model widths.",
+      "block_id": "trainingdynamics-block-34",
+      "section": "What to take away",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-27",
-      "quote": "A minibatch gradient is the true gradient plus noise, and that noise scales as $1/\\sqrt{\\text{batch}}$ — double the batch and the noise drops by $\\sqrt{2}$.",
-      "section": "Batch size and the linear scaling rule",
+      "quote": "A training run is not a number; it is a *dynamics*.",
+      "block_id": "trainingdynamics-block-35",
+      "section": "What to take away",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-28",
-      "quote": "A proportionally larger learning rate exactly compensates, so you can trade *more* steps of *smaller* batches for *fewer* steps of *bigger* batches and land at the same place, as long as you hold the product (and the LR) in the right ratio.",
-      "section": "Batch size and the linear scaling rule",
+      "quote": "The power law tells you where the curve is going, the schedule tells you how it gets there, the batch sets how noisily, and the spike tells you whether it is going to make it.",
+      "block_id": "trainingdynamics-block-35",
+      "section": "What to take away",
       "kind": "statement"
     },
     {
       "id": "trainingdynamics-stmt-29",
-      "quote": "This is the **linear scaling rule**.",
-      "section": "Batch size and the linear scaling rule",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-30",
-      "quote": "**Gradient accumulation** is how you get a large *effective* batch on limited memory.",
-      "section": "Batch size and the linear scaling rule",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-31",
-      "quote": "You take several small forward/backward passes, *accumulate* their gradients, and step only once at the end.",
-      "section": "Batch size and the linear scaling rule",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-32",
-      "quote": "Your effective batch is the number of accumulation steps times the per-step batch, without ever holding the large batch in memory at once.",
-      "section": "Batch size and the linear scaling rule",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-33",
-      "quote": "In the simulator the batch slider is exactly this knob: drag it down and the curve gets cheap-but-noisy (watch it wiggle); drag it up and it gets smooth-but-slow.",
-      "section": "Batch size and the linear scaling rule",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-34",
-      "quote": "Training runs are *flaky* in a specific way, and you are expected to recognize the shape.",
-      "section": "When a run diverges: spikes, the edge of stability, and clipping",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-35",
-      "quote": "**Loss spikes.** A spike is a sudden jump in the loss — a step (or a data batch) that pushes the model into a bad region.",
-      "section": "When a run diverges: spikes, the edge of stability, and clipping",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-36",
-      "quote": "In a healthy run the loss recovers: the optimizer climbs back out and the curve resumes its decay.",
-      "section": "When a run diverges: spikes, the edge of stability, and clipping",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-37",
-      "quote": "Check \"Inject a loss spike\" in the simulator to see exactly that — a jump, then a recovery.",
-      "section": "When a run diverges: spikes, the edge of stability, and clipping",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-38",
-      "quote": "A run that spikes *and recovers* is fine; the danger is a spike that does not.",
-      "section": "When a run diverges: spikes, the edge of stability, and clipping",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-39",
-      "quote": "**Divergence.** If the learning rate is truly too high, the recovery never comes: the loss jumps and *stays* up, or climbs without bound, and the run is dead.",
-      "section": "When a run diverges: spikes, the edge of stability, and clipping",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-40",
-      "quote": "Toggle \"Diverge (LR too high)\" to see the non-recovering case — this is the shape you must learn to read, because it is the difference between a recoverable hiccup and a lost run.",
-      "section": "When a run diverges: spikes, the edge of stability, and clipping",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-41",
-      "quote": "**The edge of stability.** Somewhere between \"settles comfortably\" and \"diverges\" is a sharp, studied regime.",
-      "section": "When a run diverges: spikes, the edge of stability, and clipping",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-42",
-      "quote": "At a high learning rate gradient descent does *not* blow up — it **locks onto the rim of a sharp region and oscillates there** while the loss still drifts down, as \\cite[Cohen et al. (2021)]{cohen2021edgeofstability} and \\cite[Arora et al. (2022)]{arora2022edgeofstability} showed.",
-      "section": "When a run diverges: spikes, the edge of stability, and clipping",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-43",
-      "quote": "So a loss that *oscillates but trends down* is not a bug to fix; it is the network running at the edge, and it is one of the reasons people run at the largest learning rate that \"just barely\" holds.",
-      "section": "When a run diverges: spikes, the edge of stability, and clipping",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-44",
-      "quote": "**Gradient clipping** — capping the magnitude of each gradient before the update — is the standard tool that keeps a high-LR run on the edge instead of past it.",
-      "section": "When a run diverges: spikes, the edge of stability, and clipping",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-45",
-      "quote": "All of the above is tuned per model — you pick a learning rate for *this* width, re-tune when you change it, and hope the answer transfers.",
-      "section": "Making hyperparameters transfer: μP",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-46",
-      "quote": "\\cite[Yang et al. (2022)]{yang2022mup} introduced **μP** (Maximal Update Parametrization), a way of *writing down* the network so that the optimal hyperparameters found on a *tiny* model transfer to a *huge* one essentially unchanged.",
-      "section": "Making hyperparameters transfer: μP",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-47",
-      "quote": "The consequence is a new tuning paradigm — tune on a small net where experiments are cheap, then scale the width without re-tuning at all, and the same learning rate, warmup, and schedule keep working.",
-      "section": "Making hyperparameters transfer: μP",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-48",
-      "quote": "For teams that train at frontier scale, that transfer is worth a lot: it turns \"how do I set the learning rate for a model this size?\" into \"the answer I already have from the 0.1B model.\"",
-      "section": "Making hyperparameters transfer: μP",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-49",
-      "quote": "| You turn this knob | The curve does this |",
-      "section": "What to take away",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-50",
-      "quote": "| **Model size $N$** ↑ | The floor the curve heads for drops (a power law).",
-      "section": "What to take away",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-51",
-      "quote": "| **Data $D$** ↑ | Same floor drop; $D \\approx 20N$ is the Chinchilla optimum.",
-      "section": "What to take away",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-52",
-      "quote": "| **Batch** ↓ | Cheaper steps, but the curve is noisier ($1/\\sqrt{\\text{batch}}$ noise).",
-      "section": "What to take away",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-53",
-      "quote": "| **LR schedule** | Shapes the tail: constant flattens, cosine squeezes, WSD holds then drops.",
-      "section": "What to take away",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-54",
-      "quote": "| **Warmup** | Keeps the first, miscalibrated steps from lurching the run.",
-      "section": "What to take away",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-55",
-      "quote": "| **Spikes / high LR** | Recoverable jump vs. divergence — read the shape.",
-      "section": "What to take away",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-56",
-      "quote": "| **μP** | Makes the tuned hyperparameters transfer across model widths.",
-      "section": "What to take away",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-57",
-      "quote": "A training run is not a number; it is a *dynamics*.",
-      "section": "What to take away",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-58",
-      "quote": "The power law tells you where the curve is going, the schedule tells you how it gets there, the batch sets how noisily, and the spike tells you whether it is going to make it.",
-      "section": "What to take away",
-      "kind": "statement"
-    },
-    {
-      "id": "trainingdynamics-stmt-59",
       "quote": "Watch the curve and you are watching the run.",
+      "block_id": "trainingdynamics-block-35",
       "section": "What to take away",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "trainingdynamics-block-1",
+      "quote": "A training run is a phenomenon you can *watch*, not just a number you report. The scaling laws are mentioned in the [Hyperparameters](hyperparameters.php) and [Loss](losslab.php) chapters, but a single line — \"the loss falls as a power law\" — hides most of what actually happens between \"initialize the weights\" and \"the model is done.\" A run *warms up*, *decays*, *spikes*, and either *settles* or *dies*; the shape of that curve is a direct readout of the choices you made — the model size, the data, the batch, the learning-rate schedule.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "trainingdynamics-block-2",
+      "quote": "This lesson makes that a thing you can touch. The interactive below is a **training-curve simulator**: set the knobs and watch the loss move toward its theoretical floor, wiggle with the noise of the batch, spike, and recover — or diverge. Every one of those behaviors is a *lived practice* of the field, and each maps to a named technique you will meet in the sections below.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "trainingdynamics-block-3",
+      "quote": "The shape of a run",
+      "kind": "heading",
+      "section": "The shape of a run"
+    },
+    {
+      "id": "trainingdynamics-block-4",
+      "quote": "The shape of a training run: the power law",
+      "kind": "heading",
+      "section": "The shape of a training run: the power law"
+    },
+    {
+      "id": "trainingdynamics-block-5",
+      "quote": "📘 Simulator: a stylized training run. Set the model, the data, the batch, and the learning-rate schedule, then press Train and watch the loss decay toward its power-law floor.",
+      "kind": "paragraph",
+      "section": "The shape of a training run: the power law"
+    },
+    {
+      "id": "trainingdynamics-block-6",
+      "quote": "1B",
+      "kind": "paragraph",
+      "section": "The shape of a training run: the power law"
+    },
+    {
+      "id": "trainingdynamics-block-7",
+      "quote": "10B",
+      "kind": "paragraph",
+      "section": "The shape of a training run: the power law"
+    },
+    {
+      "id": "trainingdynamics-block-8",
+      "quote": "Batch size:",
+      "kind": "paragraph",
+      "section": "The shape of a training run: the power law"
+    },
+    {
+      "id": "trainingdynamics-block-9",
+      "quote": "4096 small batch = cheaper steps, noisier curve; large batch = smooth, costlier steps",
+      "kind": "paragraph",
+      "section": "The shape of a training run: the power law"
+    },
+    {
+      "id": "trainingdynamics-block-10",
+      "quote": "Learning-rate schedule:",
+      "kind": "paragraph",
+      "section": "The shape of a training run: the power law"
+    },
+    {
+      "id": "trainingdynamics-block-11",
+      "quote": "Constant (peak LR, no decay) Cosine decay WSD (warmup–stable–decay)",
+      "kind": "paragraph",
+      "section": "The shape of a training run: the power law"
+    },
+    {
+      "id": "trainingdynamics-block-12",
+      "quote": "Inject a loss spike (then recover) Diverge (LR too high — does not recover)",
+      "kind": "paragraph",
+      "section": "The shape of a training run: the power law"
+    },
+    {
+      "id": "trainingdynamics-block-13",
+      "quote": "▶ Train ↺ Reset",
+      "kind": "paragraph",
+      "section": "The shape of a training run: the power law"
+    },
+    {
+      "id": "trainingdynamics-block-14",
+      "quote": "Current loss —",
+      "kind": "paragraph",
+      "section": "The shape of a training run: the power law"
+    },
+    {
+      "id": "trainingdynamics-block-15",
+      "quote": "Tokens seen —",
+      "kind": "paragraph",
+      "section": "The shape of a training run: the power law"
+    },
+    {
+      "id": "trainingdynamics-block-16",
+      "quote": "Optimizer steps —",
+      "kind": "paragraph",
+      "section": "The shape of a training run: the power law"
+    },
+    {
+      "id": "trainingdynamics-block-17",
+      "quote": "—",
+      "kind": "paragraph",
+      "section": "The shape of a training run: the power law"
+    },
+    {
+      "id": "trainingdynamics-block-18",
+      "quote": "Adjust the parameters above and press Train to run the simulation.",
+      "kind": "paragraph",
+      "section": "The shape of a training run: the power law"
+    },
+    {
+      "id": "trainingdynamics-block-19",
+      "quote": "What the simulator is, and isn't",
+      "kind": "heading",
+      "section": "What the simulator is, and isn't"
+    },
+    {
+      "id": "trainingdynamics-block-20",
+      "quote": "The knobs that shape it",
+      "kind": "heading",
+      "section": "The knobs that shape it"
+    },
+    {
+      "id": "trainingdynamics-block-21",
+      "quote": "Warmup and learning-rate schedules",
+      "kind": "heading",
+      "section": "Warmup and learning-rate schedules"
+    },
+    {
+      "id": "trainingdynamics-block-22",
+      "quote": "Batch size and the linear scaling rule",
+      "kind": "heading",
+      "section": "Batch size and the linear scaling rule"
+    },
+    {
+      "id": "trainingdynamics-block-23",
+      "quote": "\\cite[Goyal et al. (2017)]{goyal2017largebatch} made a result that is almost a law: **doubling the batch lets you double the learning rate** and still reach the same loss. The reason is the noise. A minibatch gradient is the true gradient plus noise, and that noise scales as $1/\\sqrt{\\text{batch}}$ — double the batch and the noise drops by $\\sqrt{2}$. A proportionally larger learning rate exactly compensates, so you can trade *more* steps of *smaller* batches for *fewer* steps of *bigger* batches and land at the same place, as long as you hold the product (and the LR) in the right ratio. This is the **linear scaling rule**.",
+      "kind": "paragraph",
+      "section": "Batch size and the linear scaling rule"
+    },
+    {
+      "id": "trainingdynamics-block-24",
+      "quote": "When a run diverges: spikes, the edge of stability, and clipping",
+      "kind": "heading",
+      "section": "When a run diverges: spikes, the edge of stability, and clipping"
+    },
+    {
+      "id": "trainingdynamics-block-25",
+      "quote": "Training runs are *flaky* in a specific way, and you are expected to recognize the shape.",
+      "kind": "paragraph",
+      "section": "When a run diverges: spikes, the edge of stability, and clipping"
+    },
+    {
+      "id": "trainingdynamics-block-26",
+      "quote": "Making hyperparameters transfer: μP",
+      "kind": "heading",
+      "section": "Making hyperparameters transfer: μP"
+    },
+    {
+      "id": "trainingdynamics-block-27",
+      "quote": "All of the above is tuned per model — you pick a learning rate for *this* width, re-tune when you change it, and hope the answer transfers. \\cite[Yang et al. (2022)]{yang2022mup} introduced **μP** (Maximal Update Parametrization), a way of *writing down* the network so that the optimal hyperparameters found on a *tiny* model transfer to a *huge* one essentially unchanged. The consequence is a new tuning paradigm — tune on a small net where experiments are cheap, then scale the width without re-tuning at all, and the same learning rate, warmup, and schedule keep working. For teams that train at frontier scale, that transfer is worth a lot: it turns \"how do I set the learning rate for a model this size?\" into \"the answer I already have from the 0.1B model.\"",
+      "kind": "paragraph",
+      "section": "Making hyperparameters transfer: μP"
+    },
+    {
+      "id": "trainingdynamics-block-28",
+      "quote": "What to take away",
+      "kind": "heading",
+      "section": "What to take away"
+    },
+    {
+      "id": "trainingdynamics-block-29",
+      "quote": "| You turn this knob | The curve does this |",
+      "kind": "table-row",
+      "section": "What to take away"
+    },
+    {
+      "id": "trainingdynamics-block-30",
+      "quote": "| **Batch** ↓ | Cheaper steps, but the curve is noisier ($1/\\sqrt{\\text{batch}}$ noise). |",
+      "kind": "table-row",
+      "section": "What to take away"
+    },
+    {
+      "id": "trainingdynamics-block-31",
+      "quote": "| **LR schedule** | Shapes the tail: constant flattens, cosine squeezes, WSD holds then drops. |",
+      "kind": "table-row",
+      "section": "What to take away"
+    },
+    {
+      "id": "trainingdynamics-block-32",
+      "quote": "| **Warmup** | Keeps the first, miscalibrated steps from lurching the run. |",
+      "kind": "table-row",
+      "section": "What to take away"
+    },
+    {
+      "id": "trainingdynamics-block-33",
+      "quote": "| **Spikes / high LR** | Recoverable jump vs. divergence — read the shape. |",
+      "kind": "table-row",
+      "section": "What to take away"
+    },
+    {
+      "id": "trainingdynamics-block-34",
+      "quote": "| **μP** | Makes the tuned hyperparameters transfer across model widths. |",
+      "kind": "table-row",
+      "section": "What to take away"
+    },
+    {
+      "id": "trainingdynamics-block-35",
+      "quote": "A training run is not a number; it is a *dynamics*. The power law tells you where the curve is going, the schedule tells you how it gets there, the batch sets how noisily, and the spike tells you whether it is going to make it. Watch the curve and you are watching the run.",
+      "kind": "paragraph",
+      "section": "What to take away"
     }
   ]
 }

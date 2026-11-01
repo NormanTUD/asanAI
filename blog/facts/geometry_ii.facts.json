@@ -1088,1250 +1088,4000 @@
         "axler2024linearalgebra"
       ],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-1-part_of-geometry-ii",
+      "from": "geometry_ii-block-1",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-2-part_of-geometry-ii",
+      "from": "geometry_ii-block-2",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-1-before-geometry_ii-block-2",
+      "from": "geometry_ii-block-1",
+      "to": "geometry_ii-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-2-related_to-geometry_ii-block-1",
+      "from": "geometry_ii-block-2",
+      "to": "geometry_ii-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-3-part_of-geometry-ii",
+      "from": "geometry_ii-block-3",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-2-before-geometry_ii-block-3",
+      "from": "geometry_ii-block-2",
+      "to": "geometry_ii-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-3-related_to-geometry_ii-block-1",
+      "from": "geometry_ii-block-3",
+      "to": "geometry_ii-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-4-part_of-geometry-ii",
+      "from": "geometry_ii-block-4",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-3-before-geometry_ii-block-4",
+      "from": "geometry_ii-block-3",
+      "to": "geometry_ii-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-4-related_to-geometry_ii-block-1",
+      "from": "geometry_ii-block-4",
+      "to": "geometry_ii-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-5-part_of-geometry-ii",
+      "from": "geometry_ii-block-5",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-4-before-geometry_ii-block-5",
+      "from": "geometry_ii-block-4",
+      "to": "geometry_ii-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-6-part_of-geometry-ii",
+      "from": "geometry_ii-block-6",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-5-before-geometry_ii-block-6",
+      "from": "geometry_ii-block-5",
+      "to": "geometry_ii-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-7-part_of-geometry-ii",
+      "from": "geometry_ii-block-7",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-6-before-geometry_ii-block-7",
+      "from": "geometry_ii-block-6",
+      "to": "geometry_ii-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-7-related_to-geometry_ii-block-6",
+      "from": "geometry_ii-block-7",
+      "to": "geometry_ii-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-8-part_of-geometry-ii",
+      "from": "geometry_ii-block-8",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-7-before-geometry_ii-block-8",
+      "from": "geometry_ii-block-7",
+      "to": "geometry_ii-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-8-related_to-geometry_ii-block-6",
+      "from": "geometry_ii-block-8",
+      "to": "geometry_ii-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-9-part_of-geometry-ii",
+      "from": "geometry_ii-block-9",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-8-before-geometry_ii-block-9",
+      "from": "geometry_ii-block-8",
+      "to": "geometry_ii-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-9-related_to-geometry_ii-block-6",
+      "from": "geometry_ii-block-9",
+      "to": "geometry_ii-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-10-part_of-geometry-ii",
+      "from": "geometry_ii-block-10",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-9-before-geometry_ii-block-10",
+      "from": "geometry_ii-block-9",
+      "to": "geometry_ii-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-11-part_of-geometry-ii",
+      "from": "geometry_ii-block-11",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-10-before-geometry_ii-block-11",
+      "from": "geometry_ii-block-10",
+      "to": "geometry_ii-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-11-related_to-geometry_ii-block-10",
+      "from": "geometry_ii-block-11",
+      "to": "geometry_ii-block-10",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-12-part_of-geometry-ii",
+      "from": "geometry_ii-block-12",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-11-before-geometry_ii-block-12",
+      "from": "geometry_ii-block-11",
+      "to": "geometry_ii-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-13-part_of-geometry-ii",
+      "from": "geometry_ii-block-13",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-12-before-geometry_ii-block-13",
+      "from": "geometry_ii-block-12",
+      "to": "geometry_ii-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-13-related_to-geometry_ii-block-12",
+      "from": "geometry_ii-block-13",
+      "to": "geometry_ii-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-14-part_of-geometry-ii",
+      "from": "geometry_ii-block-14",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-13-before-geometry_ii-block-14",
+      "from": "geometry_ii-block-13",
+      "to": "geometry_ii-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-14-related_to-geometry_ii-block-12",
+      "from": "geometry_ii-block-14",
+      "to": "geometry_ii-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-15-part_of-geometry-ii",
+      "from": "geometry_ii-block-15",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-14-before-geometry_ii-block-15",
+      "from": "geometry_ii-block-14",
+      "to": "geometry_ii-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-15-related_to-geometry_ii-block-12",
+      "from": "geometry_ii-block-15",
+      "to": "geometry_ii-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-16-part_of-geometry-ii",
+      "from": "geometry_ii-block-16",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-15-before-geometry_ii-block-16",
+      "from": "geometry_ii-block-15",
+      "to": "geometry_ii-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-16-related_to-geometry_ii-block-12",
+      "from": "geometry_ii-block-16",
+      "to": "geometry_ii-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-17-part_of-geometry-ii",
+      "from": "geometry_ii-block-17",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-16-before-geometry_ii-block-17",
+      "from": "geometry_ii-block-16",
+      "to": "geometry_ii-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-17-related_to-geometry_ii-block-12",
+      "from": "geometry_ii-block-17",
+      "to": "geometry_ii-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-18-part_of-geometry-ii",
+      "from": "geometry_ii-block-18",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-17-before-geometry_ii-block-18",
+      "from": "geometry_ii-block-17",
+      "to": "geometry_ii-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-19-part_of-geometry-ii",
+      "from": "geometry_ii-block-19",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-18-before-geometry_ii-block-19",
+      "from": "geometry_ii-block-18",
+      "to": "geometry_ii-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-20-part_of-geometry-ii",
+      "from": "geometry_ii-block-20",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-19-before-geometry_ii-block-20",
+      "from": "geometry_ii-block-19",
+      "to": "geometry_ii-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-20-related_to-geometry_ii-block-19",
+      "from": "geometry_ii-block-20",
+      "to": "geometry_ii-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-21-part_of-geometry-ii",
+      "from": "geometry_ii-block-21",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-20-before-geometry_ii-block-21",
+      "from": "geometry_ii-block-20",
+      "to": "geometry_ii-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-21-related_to-geometry_ii-block-19",
+      "from": "geometry_ii-block-21",
+      "to": "geometry_ii-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-22-part_of-geometry-ii",
+      "from": "geometry_ii-block-22",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-21-before-geometry_ii-block-22",
+      "from": "geometry_ii-block-21",
+      "to": "geometry_ii-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-22-related_to-geometry_ii-block-19",
+      "from": "geometry_ii-block-22",
+      "to": "geometry_ii-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-23-part_of-geometry-ii",
+      "from": "geometry_ii-block-23",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-22-before-geometry_ii-block-23",
+      "from": "geometry_ii-block-22",
+      "to": "geometry_ii-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-23-related_to-geometry_ii-block-19",
+      "from": "geometry_ii-block-23",
+      "to": "geometry_ii-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-24-part_of-geometry-ii",
+      "from": "geometry_ii-block-24",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-23-before-geometry_ii-block-24",
+      "from": "geometry_ii-block-23",
+      "to": "geometry_ii-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-24-related_to-geometry_ii-block-19",
+      "from": "geometry_ii-block-24",
+      "to": "geometry_ii-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-25-part_of-geometry-ii",
+      "from": "geometry_ii-block-25",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-24-before-geometry_ii-block-25",
+      "from": "geometry_ii-block-24",
+      "to": "geometry_ii-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-25-related_to-geometry_ii-block-19",
+      "from": "geometry_ii-block-25",
+      "to": "geometry_ii-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-26-part_of-geometry-ii",
+      "from": "geometry_ii-block-26",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-25-before-geometry_ii-block-26",
+      "from": "geometry_ii-block-25",
+      "to": "geometry_ii-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-26-related_to-geometry_ii-block-19",
+      "from": "geometry_ii-block-26",
+      "to": "geometry_ii-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-27-part_of-geometry-ii",
+      "from": "geometry_ii-block-27",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-26-before-geometry_ii-block-27",
+      "from": "geometry_ii-block-26",
+      "to": "geometry_ii-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-27-related_to-geometry_ii-block-19",
+      "from": "geometry_ii-block-27",
+      "to": "geometry_ii-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-28-part_of-geometry-ii",
+      "from": "geometry_ii-block-28",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-27-before-geometry_ii-block-28",
+      "from": "geometry_ii-block-27",
+      "to": "geometry_ii-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-28-related_to-geometry_ii-block-19",
+      "from": "geometry_ii-block-28",
+      "to": "geometry_ii-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-29-part_of-geometry-ii",
+      "from": "geometry_ii-block-29",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-28-before-geometry_ii-block-29",
+      "from": "geometry_ii-block-28",
+      "to": "geometry_ii-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-29-related_to-geometry_ii-block-19",
+      "from": "geometry_ii-block-29",
+      "to": "geometry_ii-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-30-part_of-geometry-ii",
+      "from": "geometry_ii-block-30",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-29-before-geometry_ii-block-30",
+      "from": "geometry_ii-block-29",
+      "to": "geometry_ii-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-30-related_to-geometry_ii-block-19",
+      "from": "geometry_ii-block-30",
+      "to": "geometry_ii-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-31-part_of-geometry-ii",
+      "from": "geometry_ii-block-31",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-30-before-geometry_ii-block-31",
+      "from": "geometry_ii-block-30",
+      "to": "geometry_ii-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-31-related_to-geometry_ii-block-19",
+      "from": "geometry_ii-block-31",
+      "to": "geometry_ii-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-32-part_of-geometry-ii",
+      "from": "geometry_ii-block-32",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-31-before-geometry_ii-block-32",
+      "from": "geometry_ii-block-31",
+      "to": "geometry_ii-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-33-part_of-geometry-ii",
+      "from": "geometry_ii-block-33",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-32-before-geometry_ii-block-33",
+      "from": "geometry_ii-block-32",
+      "to": "geometry_ii-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-33-related_to-geometry_ii-block-32",
+      "from": "geometry_ii-block-33",
+      "to": "geometry_ii-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-34-part_of-geometry-ii",
+      "from": "geometry_ii-block-34",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-33-before-geometry_ii-block-34",
+      "from": "geometry_ii-block-33",
+      "to": "geometry_ii-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-34-related_to-geometry_ii-block-32",
+      "from": "geometry_ii-block-34",
+      "to": "geometry_ii-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-35-part_of-geometry-ii",
+      "from": "geometry_ii-block-35",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-34-before-geometry_ii-block-35",
+      "from": "geometry_ii-block-34",
+      "to": "geometry_ii-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-35-related_to-geometry_ii-block-32",
+      "from": "geometry_ii-block-35",
+      "to": "geometry_ii-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-36-part_of-geometry-ii",
+      "from": "geometry_ii-block-36",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-35-before-geometry_ii-block-36",
+      "from": "geometry_ii-block-35",
+      "to": "geometry_ii-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-36-related_to-geometry_ii-block-32",
+      "from": "geometry_ii-block-36",
+      "to": "geometry_ii-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-37-part_of-geometry-ii",
+      "from": "geometry_ii-block-37",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-36-before-geometry_ii-block-37",
+      "from": "geometry_ii-block-36",
+      "to": "geometry_ii-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-37-related_to-geometry_ii-block-32",
+      "from": "geometry_ii-block-37",
+      "to": "geometry_ii-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-38-part_of-geometry-ii",
+      "from": "geometry_ii-block-38",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-37-before-geometry_ii-block-38",
+      "from": "geometry_ii-block-37",
+      "to": "geometry_ii-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-38-related_to-geometry_ii-block-32",
+      "from": "geometry_ii-block-38",
+      "to": "geometry_ii-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-39-part_of-geometry-ii",
+      "from": "geometry_ii-block-39",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-38-before-geometry_ii-block-39",
+      "from": "geometry_ii-block-38",
+      "to": "geometry_ii-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-39-related_to-geometry_ii-block-32",
+      "from": "geometry_ii-block-39",
+      "to": "geometry_ii-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-40-part_of-geometry-ii",
+      "from": "geometry_ii-block-40",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-39-before-geometry_ii-block-40",
+      "from": "geometry_ii-block-39",
+      "to": "geometry_ii-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-41-part_of-geometry-ii",
+      "from": "geometry_ii-block-41",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-40-before-geometry_ii-block-41",
+      "from": "geometry_ii-block-40",
+      "to": "geometry_ii-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-41-related_to-geometry_ii-block-40",
+      "from": "geometry_ii-block-41",
+      "to": "geometry_ii-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-42-part_of-geometry-ii",
+      "from": "geometry_ii-block-42",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-41-before-geometry_ii-block-42",
+      "from": "geometry_ii-block-41",
+      "to": "geometry_ii-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-42-related_to-geometry_ii-block-40",
+      "from": "geometry_ii-block-42",
+      "to": "geometry_ii-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-43-part_of-geometry-ii",
+      "from": "geometry_ii-block-43",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-42-before-geometry_ii-block-43",
+      "from": "geometry_ii-block-42",
+      "to": "geometry_ii-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-43-related_to-geometry_ii-block-40",
+      "from": "geometry_ii-block-43",
+      "to": "geometry_ii-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-44-part_of-geometry-ii",
+      "from": "geometry_ii-block-44",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-43-before-geometry_ii-block-44",
+      "from": "geometry_ii-block-43",
+      "to": "geometry_ii-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-44-related_to-geometry_ii-block-40",
+      "from": "geometry_ii-block-44",
+      "to": "geometry_ii-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-45-part_of-geometry-ii",
+      "from": "geometry_ii-block-45",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-44-before-geometry_ii-block-45",
+      "from": "geometry_ii-block-44",
+      "to": "geometry_ii-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-45-related_to-geometry_ii-block-40",
+      "from": "geometry_ii-block-45",
+      "to": "geometry_ii-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-46-part_of-geometry-ii",
+      "from": "geometry_ii-block-46",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-45-before-geometry_ii-block-46",
+      "from": "geometry_ii-block-45",
+      "to": "geometry_ii-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-46-related_to-geometry_ii-block-40",
+      "from": "geometry_ii-block-46",
+      "to": "geometry_ii-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-47-part_of-geometry-ii",
+      "from": "geometry_ii-block-47",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-46-before-geometry_ii-block-47",
+      "from": "geometry_ii-block-46",
+      "to": "geometry_ii-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-47-related_to-geometry_ii-block-40",
+      "from": "geometry_ii-block-47",
+      "to": "geometry_ii-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-48-part_of-geometry-ii",
+      "from": "geometry_ii-block-48",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-47-before-geometry_ii-block-48",
+      "from": "geometry_ii-block-47",
+      "to": "geometry_ii-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-48-related_to-geometry_ii-block-40",
+      "from": "geometry_ii-block-48",
+      "to": "geometry_ii-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-49-part_of-geometry-ii",
+      "from": "geometry_ii-block-49",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-48-before-geometry_ii-block-49",
+      "from": "geometry_ii-block-48",
+      "to": "geometry_ii-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-50-part_of-geometry-ii",
+      "from": "geometry_ii-block-50",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-49-before-geometry_ii-block-50",
+      "from": "geometry_ii-block-49",
+      "to": "geometry_ii-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-50-related_to-geometry_ii-block-49",
+      "from": "geometry_ii-block-50",
+      "to": "geometry_ii-block-49",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-51-part_of-geometry-ii",
+      "from": "geometry_ii-block-51",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-50-before-geometry_ii-block-51",
+      "from": "geometry_ii-block-50",
+      "to": "geometry_ii-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-51-related_to-geometry_ii-block-49",
+      "from": "geometry_ii-block-51",
+      "to": "geometry_ii-block-49",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-52-part_of-geometry-ii",
+      "from": "geometry_ii-block-52",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-51-before-geometry_ii-block-52",
+      "from": "geometry_ii-block-51",
+      "to": "geometry_ii-block-52",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-52-related_to-geometry_ii-block-49",
+      "from": "geometry_ii-block-52",
+      "to": "geometry_ii-block-49",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-53-part_of-geometry-ii",
+      "from": "geometry_ii-block-53",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-52-before-geometry_ii-block-53",
+      "from": "geometry_ii-block-52",
+      "to": "geometry_ii-block-53",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-53-related_to-geometry_ii-block-49",
+      "from": "geometry_ii-block-53",
+      "to": "geometry_ii-block-49",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-54-part_of-geometry-ii",
+      "from": "geometry_ii-block-54",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-53-before-geometry_ii-block-54",
+      "from": "geometry_ii-block-53",
+      "to": "geometry_ii-block-54",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-54-related_to-geometry_ii-block-49",
+      "from": "geometry_ii-block-54",
+      "to": "geometry_ii-block-49",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-55-part_of-geometry-ii",
+      "from": "geometry_ii-block-55",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-54-before-geometry_ii-block-55",
+      "from": "geometry_ii-block-54",
+      "to": "geometry_ii-block-55",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-55-related_to-geometry_ii-block-49",
+      "from": "geometry_ii-block-55",
+      "to": "geometry_ii-block-49",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-56-part_of-geometry-ii",
+      "from": "geometry_ii-block-56",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-55-before-geometry_ii-block-56",
+      "from": "geometry_ii-block-55",
+      "to": "geometry_ii-block-56",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-56-related_to-geometry_ii-block-49",
+      "from": "geometry_ii-block-56",
+      "to": "geometry_ii-block-49",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-57-part_of-geometry-ii",
+      "from": "geometry_ii-block-57",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-56-before-geometry_ii-block-57",
+      "from": "geometry_ii-block-56",
+      "to": "geometry_ii-block-57",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-57-related_to-geometry_ii-block-49",
+      "from": "geometry_ii-block-57",
+      "to": "geometry_ii-block-49",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-58-part_of-geometry-ii",
+      "from": "geometry_ii-block-58",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-57-before-geometry_ii-block-58",
+      "from": "geometry_ii-block-57",
+      "to": "geometry_ii-block-58",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-58-related_to-geometry_ii-block-49",
+      "from": "geometry_ii-block-58",
+      "to": "geometry_ii-block-49",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-59-part_of-geometry-ii",
+      "from": "geometry_ii-block-59",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-58-before-geometry_ii-block-59",
+      "from": "geometry_ii-block-58",
+      "to": "geometry_ii-block-59",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-59-related_to-geometry_ii-block-49",
+      "from": "geometry_ii-block-59",
+      "to": "geometry_ii-block-49",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-60-part_of-geometry-ii",
+      "from": "geometry_ii-block-60",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-59-before-geometry_ii-block-60",
+      "from": "geometry_ii-block-59",
+      "to": "geometry_ii-block-60",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-60-related_to-geometry_ii-block-49",
+      "from": "geometry_ii-block-60",
+      "to": "geometry_ii-block-49",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-61-part_of-geometry-ii",
+      "from": "geometry_ii-block-61",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-60-before-geometry_ii-block-61",
+      "from": "geometry_ii-block-60",
+      "to": "geometry_ii-block-61",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-62-part_of-geometry-ii",
+      "from": "geometry_ii-block-62",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-61-before-geometry_ii-block-62",
+      "from": "geometry_ii-block-61",
+      "to": "geometry_ii-block-62",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-62-related_to-geometry_ii-block-61",
+      "from": "geometry_ii-block-62",
+      "to": "geometry_ii-block-61",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-63-part_of-geometry-ii",
+      "from": "geometry_ii-block-63",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-62-before-geometry_ii-block-63",
+      "from": "geometry_ii-block-62",
+      "to": "geometry_ii-block-63",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-63-related_to-geometry_ii-block-61",
+      "from": "geometry_ii-block-63",
+      "to": "geometry_ii-block-61",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-64-part_of-geometry-ii",
+      "from": "geometry_ii-block-64",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-63-before-geometry_ii-block-64",
+      "from": "geometry_ii-block-63",
+      "to": "geometry_ii-block-64",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-64-related_to-geometry_ii-block-61",
+      "from": "geometry_ii-block-64",
+      "to": "geometry_ii-block-61",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-65-part_of-geometry-ii",
+      "from": "geometry_ii-block-65",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-64-before-geometry_ii-block-65",
+      "from": "geometry_ii-block-64",
+      "to": "geometry_ii-block-65",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-65-related_to-geometry_ii-block-61",
+      "from": "geometry_ii-block-65",
+      "to": "geometry_ii-block-61",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-66-part_of-geometry-ii",
+      "from": "geometry_ii-block-66",
+      "to": "geometry-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-65-before-geometry_ii-block-66",
+      "from": "geometry_ii-block-65",
+      "to": "geometry_ii-block-66",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-block-66-related_to-geometry_ii-block-61",
+      "from": "geometry_ii-block-66",
+      "to": "geometry_ii-block-61",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-1-part_of-geometry_ii-block-2",
+      "from": "geometry_ii-stmt-1",
+      "to": "geometry_ii-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-2-part_of-geometry_ii-block-2",
+      "from": "geometry_ii-stmt-2",
+      "to": "geometry_ii-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-3-part_of-geometry_ii-block-2",
+      "from": "geometry_ii-stmt-3",
+      "to": "geometry_ii-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-4-part_of-geometry_ii-block-2",
+      "from": "geometry_ii-stmt-4",
+      "to": "geometry_ii-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-5-part_of-geometry_ii-block-4",
+      "from": "geometry_ii-stmt-5",
+      "to": "geometry_ii-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-6-part_of-geometry_ii-block-4",
+      "from": "geometry_ii-stmt-6",
+      "to": "geometry_ii-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-7-part_of-geometry_ii-block-4",
+      "from": "geometry_ii-stmt-7",
+      "to": "geometry_ii-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-8-part_of-geometry_ii-block-7",
+      "from": "geometry_ii-stmt-8",
+      "to": "geometry_ii-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-9-part_of-geometry_ii-block-7",
+      "from": "geometry_ii-stmt-9",
+      "to": "geometry_ii-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-10-part_of-geometry_ii-block-7",
+      "from": "geometry_ii-stmt-10",
+      "to": "geometry_ii-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-11-part_of-geometry_ii-block-7",
+      "from": "geometry_ii-stmt-11",
+      "to": "geometry_ii-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-12-part_of-geometry_ii-block-8",
+      "from": "geometry_ii-stmt-12",
+      "to": "geometry_ii-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-13-part_of-geometry_ii-block-8",
+      "from": "geometry_ii-stmt-13",
+      "to": "geometry_ii-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-14-part_of-geometry_ii-block-8",
+      "from": "geometry_ii-stmt-14",
+      "to": "geometry_ii-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-15-part_of-geometry_ii-block-8",
+      "from": "geometry_ii-stmt-15",
+      "to": "geometry_ii-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-16-part_of-geometry_ii-block-9",
+      "from": "geometry_ii-stmt-16",
+      "to": "geometry_ii-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-17-part_of-geometry_ii-block-11",
+      "from": "geometry_ii-stmt-17",
+      "to": "geometry_ii-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-18-part_of-geometry_ii-block-11",
+      "from": "geometry_ii-stmt-18",
+      "to": "geometry_ii-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-19-part_of-geometry_ii-block-13",
+      "from": "geometry_ii-stmt-19",
+      "to": "geometry_ii-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-20-part_of-geometry_ii-block-13",
+      "from": "geometry_ii-stmt-20",
+      "to": "geometry_ii-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-21-part_of-geometry_ii-block-13",
+      "from": "geometry_ii-stmt-21",
+      "to": "geometry_ii-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-22-part_of-geometry_ii-block-13",
+      "from": "geometry_ii-stmt-22",
+      "to": "geometry_ii-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-23-part_of-geometry_ii-block-20",
+      "from": "geometry_ii-stmt-23",
+      "to": "geometry_ii-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-24-part_of-geometry_ii-block-21",
+      "from": "geometry_ii-stmt-24",
+      "to": "geometry_ii-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-25-part_of-geometry_ii-block-22",
+      "from": "geometry_ii-stmt-25",
+      "to": "geometry_ii-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-26-part_of-geometry_ii-block-22",
+      "from": "geometry_ii-stmt-26",
+      "to": "geometry_ii-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-27-part_of-geometry_ii-block-23",
+      "from": "geometry_ii-stmt-27",
+      "to": "geometry_ii-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-28-part_of-geometry_ii-block-23",
+      "from": "geometry_ii-stmt-28",
+      "to": "geometry_ii-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-29-part_of-geometry_ii-block-23",
+      "from": "geometry_ii-stmt-29",
+      "to": "geometry_ii-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-30-part_of-geometry_ii-block-23",
+      "from": "geometry_ii-stmt-30",
+      "to": "geometry_ii-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-31-part_of-geometry_ii-block-24",
+      "from": "geometry_ii-stmt-31",
+      "to": "geometry_ii-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-32-part_of-geometry_ii-block-25",
+      "from": "geometry_ii-stmt-32",
+      "to": "geometry_ii-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-33-part_of-geometry_ii-block-25",
+      "from": "geometry_ii-stmt-33",
+      "to": "geometry_ii-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-34-part_of-geometry_ii-block-25",
+      "from": "geometry_ii-stmt-34",
+      "to": "geometry_ii-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-35-part_of-geometry_ii-block-25",
+      "from": "geometry_ii-stmt-35",
+      "to": "geometry_ii-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-36-part_of-geometry_ii-block-25",
+      "from": "geometry_ii-stmt-36",
+      "to": "geometry_ii-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-37-part_of-geometry_ii-block-25",
+      "from": "geometry_ii-stmt-37",
+      "to": "geometry_ii-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-38-part_of-geometry_ii-block-26",
+      "from": "geometry_ii-stmt-38",
+      "to": "geometry_ii-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-39-part_of-geometry_ii-block-26",
+      "from": "geometry_ii-stmt-39",
+      "to": "geometry_ii-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-40-part_of-geometry_ii-block-26",
+      "from": "geometry_ii-stmt-40",
+      "to": "geometry_ii-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-41-part_of-geometry_ii-block-27",
+      "from": "geometry_ii-stmt-41",
+      "to": "geometry_ii-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-42-part_of-geometry_ii-block-27",
+      "from": "geometry_ii-stmt-42",
+      "to": "geometry_ii-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-43-part_of-geometry_ii-block-27",
+      "from": "geometry_ii-stmt-43",
+      "to": "geometry_ii-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-44-part_of-geometry_ii-block-33",
+      "from": "geometry_ii-stmt-44",
+      "to": "geometry_ii-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-45-part_of-geometry_ii-block-33",
+      "from": "geometry_ii-stmt-45",
+      "to": "geometry_ii-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-46-part_of-geometry_ii-block-33",
+      "from": "geometry_ii-stmt-46",
+      "to": "geometry_ii-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-47-part_of-geometry_ii-block-34",
+      "from": "geometry_ii-stmt-47",
+      "to": "geometry_ii-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-48-part_of-geometry_ii-block-34",
+      "from": "geometry_ii-stmt-48",
+      "to": "geometry_ii-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-49-part_of-geometry_ii-block-35",
+      "from": "geometry_ii-stmt-49",
+      "to": "geometry_ii-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-50-part_of-geometry_ii-block-35",
+      "from": "geometry_ii-stmt-50",
+      "to": "geometry_ii-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-51-part_of-geometry_ii-block-41",
+      "from": "geometry_ii-stmt-51",
+      "to": "geometry_ii-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-52-part_of-geometry_ii-block-41",
+      "from": "geometry_ii-stmt-52",
+      "to": "geometry_ii-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-53-part_of-geometry_ii-block-41",
+      "from": "geometry_ii-stmt-53",
+      "to": "geometry_ii-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-54-part_of-geometry_ii-block-42",
+      "from": "geometry_ii-stmt-54",
+      "to": "geometry_ii-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-55-part_of-geometry_ii-block-42",
+      "from": "geometry_ii-stmt-55",
+      "to": "geometry_ii-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-56-part_of-geometry_ii-block-43",
+      "from": "geometry_ii-stmt-56",
+      "to": "geometry_ii-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-57-part_of-geometry_ii-block-43",
+      "from": "geometry_ii-stmt-57",
+      "to": "geometry_ii-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-58-part_of-geometry_ii-block-43",
+      "from": "geometry_ii-stmt-58",
+      "to": "geometry_ii-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-59-part_of-geometry_ii-block-43",
+      "from": "geometry_ii-stmt-59",
+      "to": "geometry_ii-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-60-part_of-geometry_ii-block-44",
+      "from": "geometry_ii-stmt-60",
+      "to": "geometry_ii-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-61-part_of-geometry_ii-block-44",
+      "from": "geometry_ii-stmt-61",
+      "to": "geometry_ii-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-62-part_of-geometry_ii-block-44",
+      "from": "geometry_ii-stmt-62",
+      "to": "geometry_ii-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-63-part_of-geometry_ii-block-44",
+      "from": "geometry_ii-stmt-63",
+      "to": "geometry_ii-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-64-part_of-geometry_ii-block-45",
+      "from": "geometry_ii-stmt-64",
+      "to": "geometry_ii-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-65-part_of-geometry_ii-block-45",
+      "from": "geometry_ii-stmt-65",
+      "to": "geometry_ii-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-66-part_of-geometry_ii-block-45",
+      "from": "geometry_ii-stmt-66",
+      "to": "geometry_ii-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-67-part_of-geometry_ii-block-48",
+      "from": "geometry_ii-stmt-67",
+      "to": "geometry_ii-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-68-part_of-geometry_ii-block-50",
+      "from": "geometry_ii-stmt-68",
+      "to": "geometry_ii-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-69-part_of-geometry_ii-block-51",
+      "from": "geometry_ii-stmt-69",
+      "to": "geometry_ii-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-70-part_of-geometry_ii-block-51",
+      "from": "geometry_ii-stmt-70",
+      "to": "geometry_ii-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-71-part_of-geometry_ii-block-51",
+      "from": "geometry_ii-stmt-71",
+      "to": "geometry_ii-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-72-part_of-geometry_ii-block-51",
+      "from": "geometry_ii-stmt-72",
+      "to": "geometry_ii-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-73-part_of-geometry_ii-block-51",
+      "from": "geometry_ii-stmt-73",
+      "to": "geometry_ii-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-74-part_of-geometry_ii-block-52",
+      "from": "geometry_ii-stmt-74",
+      "to": "geometry_ii-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-75-part_of-geometry_ii-block-52",
+      "from": "geometry_ii-stmt-75",
+      "to": "geometry_ii-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-76-part_of-geometry_ii-block-53",
+      "from": "geometry_ii-stmt-76",
+      "to": "geometry_ii-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-77-part_of-geometry_ii-block-53",
+      "from": "geometry_ii-stmt-77",
+      "to": "geometry_ii-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-78-part_of-geometry_ii-block-54",
+      "from": "geometry_ii-stmt-78",
+      "to": "geometry_ii-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-79-part_of-geometry_ii-block-54",
+      "from": "geometry_ii-stmt-79",
+      "to": "geometry_ii-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-80-part_of-geometry_ii-block-55",
+      "from": "geometry_ii-stmt-80",
+      "to": "geometry_ii-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-81-part_of-geometry_ii-block-56",
+      "from": "geometry_ii-stmt-81",
+      "to": "geometry_ii-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-82-part_of-geometry_ii-block-56",
+      "from": "geometry_ii-stmt-82",
+      "to": "geometry_ii-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-83-part_of-geometry_ii-block-56",
+      "from": "geometry_ii-stmt-83",
+      "to": "geometry_ii-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-84-part_of-geometry_ii-block-57",
+      "from": "geometry_ii-stmt-84",
+      "to": "geometry_ii-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-85-part_of-geometry_ii-block-57",
+      "from": "geometry_ii-stmt-85",
+      "to": "geometry_ii-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-86-part_of-geometry_ii-block-58",
+      "from": "geometry_ii-stmt-86",
+      "to": "geometry_ii-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-87-part_of-geometry_ii-block-58",
+      "from": "geometry_ii-stmt-87",
+      "to": "geometry_ii-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-88-part_of-geometry_ii-block-58",
+      "from": "geometry_ii-stmt-88",
+      "to": "geometry_ii-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-89-part_of-geometry_ii-block-58",
+      "from": "geometry_ii-stmt-89",
+      "to": "geometry_ii-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-90-part_of-geometry_ii-block-62",
+      "from": "geometry_ii-stmt-90",
+      "to": "geometry_ii-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-91-part_of-geometry_ii-block-63",
+      "from": "geometry_ii-stmt-91",
+      "to": "geometry_ii-block-63",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-92-part_of-geometry_ii-block-64",
+      "from": "geometry_ii-stmt-92",
+      "to": "geometry_ii-block-64",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-93-part_of-geometry_ii-block-65",
+      "from": "geometry_ii-stmt-93",
+      "to": "geometry_ii-block-65",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-94-part_of-geometry_ii-block-65",
+      "from": "geometry_ii-stmt-94",
+      "to": "geometry_ii-block-65",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-95-part_of-geometry_ii-block-65",
+      "from": "geometry_ii-stmt-95",
+      "to": "geometry_ii-block-65",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-96-part_of-geometry_ii-block-65",
+      "from": "geometry_ii-stmt-96",
+      "to": "geometry_ii-block-65",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-97-part_of-geometry_ii-block-66",
+      "from": "geometry_ii-stmt-97",
+      "to": "geometry_ii-block-66",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-98-part_of-geometry_ii-block-66",
+      "from": "geometry_ii-stmt-98",
+      "to": "geometry_ii-block-66",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-99-part_of-geometry_ii-block-66",
+      "from": "geometry_ii-stmt-99",
+      "to": "geometry_ii-block-66",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-100-part_of-geometry_ii-block-66",
+      "from": "geometry_ii-stmt-100",
+      "to": "geometry_ii-block-66",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-101-part_of-geometry_ii-block-66",
+      "from": "geometry_ii-stmt-101",
+      "to": "geometry_ii-block-66",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-geometry_ii-stmt-102-part_of-geometry_ii-block-66",
+      "from": "geometry_ii-stmt-102",
+      "to": "geometry_ii-block-66",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "geometry_ii-stmt-1",
       "quote": "The [Shape of Space](geometry_i) chapter asked what *space* is.",
+      "block_id": "geometry_ii-block-2",
       "section": "One picture for the whole chapter",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-2",
       "quote": "This chapter asks what a neural network *does* to the numbers that live in space, and draws each operation as a picture.",
+      "block_id": "geometry_ii-block-2",
       "section": "One picture for the whole chapter",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-3",
       "quote": "The claim: **nearly every layer in a modern network is a single geometric move**.",
+      "block_id": "geometry_ii-block-2",
       "section": "One picture for the whole chapter",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-4",
       "quote": "Once you can see the move, you can predict what the layer is for, where it can fail, and what it costs.",
+      "block_id": "geometry_ii-block-2",
       "section": "One picture for the whole chapter",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-5",
-      "quote": "* **The inner product** — a dot product is a *measurement of alignment*; its shadow, the Gram matrix, is where “similarity” is stored \\cite{scholkopf2002learning}.",
+      "quote": "Each section ends with a hands-on plot.",
+      "block_id": "geometry_ii-block-4",
       "section": "One picture for the whole chapter",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-6",
-      "quote": "* **Projection** — fitting anything is the same move: the best fit is the *shadow* the data throws onto a subspace, and the error is the piece left standing.",
+      "quote": "We do **not** re-teach what the earlier chapters own — the dot product, attention as a convex combination, optimizers, least squares, or PCA.",
+      "block_id": "geometry_ii-block-4",
       "section": "One picture for the whole chapter",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-7",
-      "quote": "* **The singular value decomposition** — every matrix is a rotation, a set of pure stretches, and a rotation again; the stretches *are* the shape of the map \\cite{svd_wiki}.",
+      "quote": "We link to those instead.",
+      "block_id": "geometry_ii-block-4",
       "section": "One picture for the whole chapter",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-8",
-      "quote": "* **Descent** — why the gradient points where it points, and why “steepest” is geometry, not an optimizer’s choice \\cite{cauchy1847}.",
-      "section": "One picture for the whole chapter",
+      "quote": "Everything in a neural network is a vector, and every layer *does* a measurement of how those vectors line up.",
+      "block_id": "geometry_ii-block-7",
+      "section": "The inner product",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-9",
-      "quote": "* **Convolution and the Fourier transform** — a convolution is a dot product that slides across space; the Fourier transform is the change of coordinates that turns that sliding into multiplication \\cite{fourier1822} \\cite{cooley1965fft}.",
-      "section": "One picture for the whole chapter",
+      "quote": "That measurement is the **inner product** (dot product).",
+      "block_id": "geometry_ii-block-7",
+      "section": "The inner product",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-10",
-      "quote": "* **Symmetry** — invariance and equivariance, why a filter may be *shared*, and the shape of the attention map \\cite{zaheer2017deepsets}.",
-      "section": "One picture for the whole chapter",
+      "quote": "Three signs appear in the formula that follows: **$\\langle u, v\\rangle$** (angle brackets) is the general inner product — the plain dot product suffices in $\\mathbb{R}^n$, where $\\mathbb{R}$ denotes the **real numbers** ($\\mathbb{R}^2$ is the plane); **$\\sum$** (sigma) means “sum”; and **$\\lVert v \\rVert$** (double bars) is the *length* of a vector.",
+      "block_id": "geometry_ii-block-7",
+      "section": "The inner product",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-11",
-      "quote": "Each section ends with a hands-on plot.",
-      "section": "One picture for the whole chapter",
+      "quote": "Read the identity as “alignment = (one length) × (the other length) × (closeness to parallel).” The three forms are the same quantity:",
+      "block_id": "geometry_ii-block-7",
+      "section": "The inner product",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-12",
-      "quote": "We do **not** re-teach what the earlier chapters own — the dot product, attention as a convex combination, optimizers, least squares, or PCA.",
-      "section": "One picture for the whole chapter",
+      "quote": "The third form is what matters.",
+      "block_id": "geometry_ii-block-8",
+      "section": "The inner product",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-13",
-      "quote": "We link to those instead.",
-      "section": "One picture for the whole chapter",
+      "quote": "The inner product splits into *how long* each vector is and *how close to parallel* they are: same direction is maximum, perpendicular is zero, opposite is minimum.",
+      "block_id": "geometry_ii-block-8",
+      "section": "The inner product",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-14",
-      "quote": "Everything in a neural network is a vector, and every layer *does* a measurement of how those vectors line up.",
+      "quote": "A dot product is a **measure of alignment** (\\cite[Boyd & Vandenberghe, Applied Linear Algebra, Ch.",
+      "block_id": "geometry_ii-block-8",
       "section": "The inner product",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-15",
-      "quote": "That measurement is the **inner product** (dot product).",
+      "quote": "58]{boyd2018appliedlinearalgebra}).",
+      "block_id": "geometry_ii-block-8",
       "section": "The inner product",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-16",
-      "quote": "Three signs appear in the formula that follows: **$\\langle u, v\\rangle$** (angle brackets) is the general inner product — the plain dot product suffices in $\\mathbb{R}^n$, where $\\mathbb{R}$ denotes the **real numbers** ($\\mathbb{R}^2$ is the plane); **$\\sum$** (sigma) means “sum”; and **$\\lVert v \\rVert$** (double bars) is the *length* of a vector.",
+      "quote": "> **The dot product has two parents.** Grassmann named the inner product in 1844; Hamilton hid it inside quaternion multiplication in 1843–46; Gibbs and Heaviside made it the dot product of vector calculus in the 1880s–1901.",
+      "block_id": "geometry_ii-block-9",
       "section": "The inner product",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-17",
-      "quote": "Read the identity as “alignment = (one length) × (the other length) × (closeness to parallel).” The three forms are the same quantity:",
-      "section": "The inner product",
+      "quote": "That is the seed of the chapter.",
+      "block_id": "geometry_ii-block-11",
+      "section": "The Gram matrix: where similarity lives",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-18",
-      "quote": "The third form is what matters.",
-      "section": "The inner product",
+      "quote": "Everything that follows is a geometric operation on those vectors: **projection** picks out a subspace, the **SVD** diagonalizes the stretch, **descent** walks across a level set, **convolution** is a sliding dot product that commutes with shifts, and **symmetry** is the set of transformations a network respects.",
+      "block_id": "geometry_ii-block-11",
+      "section": "The Gram matrix: where similarity lives",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-19",
-      "quote": "The inner product splits into *how long* each vector is and *how close to parallel* they are: same direction is maximum, perpendicular is zero, opposite is minimum.",
-      "section": "The inner product",
+      "quote": "The method has a celebrated priority dispute.",
+      "block_id": "geometry_ii-block-13",
+      "section": "Projection: the best fit is a shadow",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-20",
-      "quote": "A dot product is a **measure of alignment** (\\cite[Boyd & Vandenberghe, Applied Linear Algebra, Ch.",
-      "section": "The inner product",
+      "quote": "Legendre published it first, in 1805, as a practical rule for fitting comet orbits; Gauss published it in 1809 and claimed he had used it since 1795 (\\cite[Legendre, 1805]{legendre1805}; \\cite[Gauss, 1809]{gauss1809}).",
+      "block_id": "geometry_ii-block-13",
+      "section": "Projection: the best fit is a shadow",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-21",
-      "quote": "58]{boyd2018appliedlinearalgebra}).",
-      "section": "The inner product",
+      "quote": "What Gauss added was the probabilistic justification: under normally distributed errors, least squares is the maximum-likelihood estimate.",
+      "block_id": "geometry_ii-block-13",
+      "section": "Projection: the best fit is a shadow",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-22",
-      "quote": "This fact drives the whole field.",
-      "section": "The inner product",
+      "quote": "The geometry in this section — the residual perpendicular to the model — is the coordinate-free content both men were exploiting.",
+      "block_id": "geometry_ii-block-13",
+      "section": "Projection: the best fit is a shadow",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-23",
-      "quote": "A neuron’s weighted sum $w \\cdot x + b$ is an inner product plus a shift.",
-      "section": "The inner product",
+      "quote": "Read the factorisation as a story about a circle:",
+      "block_id": "geometry_ii-block-20",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-24",
-      "quote": "Similarity search finds the vector with the largest inner product.",
-      "section": "The inner product",
+      "quote": "$\\Sigma$ **stretches** purely along the axes, by $\\sigma_1$ and $\\sigma_2$ — no rotation, no shear.",
+      "block_id": "geometry_ii-block-21",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-25",
-      "quote": "Attention is a weighted average whose *weights* are normalized inner products (see [Attention](attentionlab)).",
-      "section": "The inner product",
+      "quote": "More precisely, it is simple in a *pair* of coordinate systems — one chosen in the input space and one in the output space; a rectangular map has different dimensions on the two sides.",
+      "block_id": "geometry_ii-block-22",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-26",
-      "quote": "Cosine similarity — the inner product with the lengths divided out — powers retrieval \\citeauthor{mikolov2013word2vec} (\\citeyear{mikolov2013word2vec}).",
-      "section": "The inner product",
+      "quote": "And \"orthogonal\" means length-preserving, which includes reflections: for strict rotations require $\\det U=\\det V=+1$.",
+      "block_id": "geometry_ii-block-22",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-27",
-      "quote": "The word *inner* is Grassmann's: in the *Ausdehnungslehre* of 1844 he coined *inneres Produkt* for exactly this pairing (\\cite[Grassmann, 1844]{grassmann1844ausdehnungslehre}).",
-      "section": "The inner product",
+      "quote": "\\marginfig{jacobi.jpg}{Carl Gustav Jacobi (1804–1851).",
+      "block_id": "geometry_ii-block-23",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-28",
-      "quote": "Hamilton arrived from the other side.",
-      "section": "The inner product",
+      "quote": "In 1842 he gave the theory of *reducing a quadratic form to its principal axes by successive linear substitutions* \\cite{jacobi1842} — the “Jacobi rotations” that, in various descendants, are still the workhorse behind computing eigenvalues and the SVD today.",
+      "block_id": "geometry_ii-block-23",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-29",
-      "quote": "For pure quaternions $pq=-p\\cdot q+p\\times q$: the scalar part is (up to sign) the dot product and the vector part the cross product (\\cite[Hamilton, 1853]{hamilton1853lectures}; \\cite[Hamilton's Broom Bridge letter]{hamilton1865letter}).",
-      "section": "The inner product",
+      "quote": "The published rotation method is Jacobi's 1846 paper in Crelle's Journal 30 (pp.",
+      "block_id": "geometry_ii-block-23",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-30",
-      "quote": "Gibbs and Heaviside then stripped the quaternions down to the vector calculus every network inherits (\\cite[Gibbs \\& Wilson, 1901]{gibbs_wilson1901}; \\cite[Heaviside, 1893]{heaviside1893electromagnetic}); the quarrel is chronicled by \\citeauthor{crowe1967vectoranalysis} (\\citeyear{crowe1967vectoranalysis}).",
-      "section": "The inner product",
+      "quote": "51–94); 1842 is not the date of the algorithm (\\cite[Jacobi, 1846]{jacobi1846}).}",
+      "block_id": "geometry_ii-block-23",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-31",
-      "quote": "> **The dot product has two parents.** Grassmann named the inner product in 1844; Hamilton hid it inside quaternion multiplication in 1843–46; Gibbs and Heaviside made it the dot product of vector calculus in the 1880s–1901.",
-      "section": "The inner product",
+      "quote": "Two facts turn the picture into engineering:",
+      "block_id": "geometry_ii-block-24",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-32",
-      "quote": "Line up $k$ data vectors as the columns of a matrix $X \\in \\mathbb{R}^{n \\times k}$ ($n$ rows, $k$ columns).",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "That is why the SVD appears across this course under different names.",
+      "block_id": "geometry_ii-block-25",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-33",
-      "quote": "The superscript $^{\\top}$ is the *transpose* — flipping a matrix over its main diagonal.",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "**PCA** is the singular vectors of the data matrix, ordered by the variance they explain.",
+      "block_id": "geometry_ii-block-25",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-34",
-      "quote": "$X^{\\top}X$ dots each column of $X$ (one data point) against every other.",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "**Low-rank compression** is “keep the top singular values.” **LoRA** fine-tunes a weight matrix by learning only a *low-rank* correction $\\Delta W = BA$ \\cite{hu2021lora} — the bet that the useful change lives in a few directions.",
+      "block_id": "geometry_ii-block-25",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-35",
-      "quote": "The result is the **Gram matrix**",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "And a layer’s “effective rank” (how fast its singular values decay) proxies how much of its capacity it actually uses.",
+      "block_id": "geometry_ii-block-25",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-36",
-      "quote": "First, $G$ is, as \\cite[Axler shows in Linear Algebra Done Right (Ch.",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "Applied to an attention head, the same “keep the top singular directions” idea becomes an interpretability tool: an SVD of a head’s query–key or value–output matrix isolates the one or two directions that carry the real signal when that head talks to a head several layers later — the **communication channels** that can be read straight off the weights (\\cite[Merullo et al., 2024]{merullo2024talkingheads}) (see [Mechanistic Interpretability](mechanistic_interpretability)).",
+      "block_id": "geometry_ii-block-25",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-37",
-      "quote": "251)]{axler2024linearalgebra}, **always symmetric and positive semi-definite**: the diagonal is $G_{ii} = \\lVert x_i \\rVert^2 \\ge 0$, and for any vector $c$, $c^{\\top} G c = \\lVert Xc \\rVert^2 \\ge 0$.",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "See [Beyond LLMs](beyond_llms) for PCA and factorisation as algorithms.",
+      "block_id": "geometry_ii-block-25",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-38",
-      "quote": "(The deep version is Mercer’s theorem \\citeyear{mercerno1909}: a positive-definite “kernel” is *exactly* a Gram matrix of features in some space — the reason the “kernel trick” works.)",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "The interactive shows the unit circle (white) and its image under a map with singular values $\\sigma_1, \\sigma_2$ and rotation $\\theta$.",
+      "block_id": "geometry_ii-block-26",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-39",
-      "quote": "Second: **$G$ describes the data’s geometry without any coordinates.** It records only *inner products*, which are unchanged by a rigid motion.",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "The colored arrows are the singular-vector axes, with lengths $\\sigma_1, \\sigma_2$.",
+      "block_id": "geometry_ii-block-26",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-40",
-      "quote": "Rotate every data point by the same rotation $R$ and every pairwise dot product stays the same, so $G$ is **unchanged**:",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "Drag $\\sigma_2$ to zero and the ellipse collapses to a line — rank 2 to 1.",
+      "block_id": "geometry_ii-block-26",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-41",
-      "quote": "Rotate the whole point cloud and nothing in $G$ moves — a coordinate-free description.",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "The white circle is the unit circle $\\lVert x\\rVert = 1$.",
+      "block_id": "geometry_ii-block-27",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-42",
-      "quote": "Even more rigid: the **eigenvalues** of $G$ are invariant under *any* orthogonal change of basis (\\cite[Axler, Linear Algebra Done Right, Ch.",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "The colored ellipse is its image under a map that rotates by $\\theta$, stretches by $\\sigma_1$ and $\\sigma_2$, and rotates back — “rotate, stretch, rotate.” The two colored arrows are the singular-vector axes; their lengths are exactly $\\sigma_1$ and $\\sigma_2$.",
+      "block_id": "geometry_ii-block-27",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-43",
-      "quote": "243]{axler2024linearalgebra}), so they capture the data’s shape independent of coordinates.",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "Drag σ₂ → 0 and the ellipse collapses to a line: the rank drops from 2 to 1.",
+      "block_id": "geometry_ii-block-27",
+      "section": "The SVD: the shape of any linear map",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-44",
-      "quote": "That is the seed of the chapter.",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "Strictly, Cauchy's 1847 note treats simultaneous equations by minimising a sum of squares; it is not a general nonlinear-descent method.",
+      "block_id": "geometry_ii-block-33",
+      "section": "Descent: why the gradient is steepest",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-45",
-      "quote": "Everything that follows is a geometric operation on those vectors: **projection** picks out a subspace, the **SVD** diagonalizes the stretch, **descent** walks across a level set, **convolution** is a sliding dot product that commutes with shifts, and **symmetry** is the set of transformations a network respects.",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "The name \"steepest descent\" and the convergence theory came later, with Hadamard's 1907–08 method (\\cite[Hadamard, 1908]{hadamard1908}) and the mid-20th-century optimisation literature.",
+      "block_id": "geometry_ii-block-33",
+      "section": "Descent: why the gradient is steepest",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-46",
-      "quote": "The matrix of all pairwise inner products is named for Jørgen Pedersen Gram, whose 1879/1883 work on least-squares series expansions used the determinant of such a matrix to test whether functions were linearly dependent (\\cite[Gram, 1879/1883]{gram1883}).",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "The constrained version — project the gradient back onto the feasible set — is Rosen's gradient-projection method (1960) (\\cite[Rosen, 1960]{rosen1960}), the direct ancestor of the projection step in modern constrained optimisers.",
+      "block_id": "geometry_ii-block-33",
+      "section": "Descent: why the gradient is steepest",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-47",
-      "quote": "Gram was not the first to orthogonalise — Laplace and Cauchy had used the procedure earlier — but his name stuck to the object that records a set's geometry.",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "\\marginfig{cauchy.jpg}{Augustin-Louis Cauchy (1789–1857).",
+      "block_id": "geometry_ii-block-34",
+      "section": "Descent: why the gradient is steepest",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-48",
-      "quote": "In modern language $G$ is the covariance of the data up to centring, and its rank is the number of independent directions in the cloud.",
-      "section": "The Gram matrix: where similarity lives",
+      "quote": "In 1847 he proposed moving a point *against the gradient* to solve systems of equations and to fit by least squares \\cite{cauchy1847} — the move later christened the **method of steepest descent**, and the same move every gradient-based optimizer makes on a loss landscape.}",
+      "block_id": "geometry_ii-block-34",
+      "section": "Descent: why the gradient is steepest",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-49",
-      "quote": "Suppose the answer *must* lie in a subspace $S$ — a line, a plane, or the set of all outputs a layer can produce.",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "The *schedule* on top of this fact — momentum, Adam, learning-rate decay — is optimization, not geometry, covered in [The Optimizer](optimizerlab) and [Automatic Differentiation](autodiff).",
+      "block_id": "geometry_ii-block-35",
+      "section": "Descent: why the gradient is steepest",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-50",
-      "quote": "Given a target point $p$ outside $S$, **which point $s \\in S$ is closest to $p$?**",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "What we keep here: **the gradient is the normal to the level sets, and the steepest way down is to follow it.** In the interactive, drag the point around an oval bowl and watch the descent arrow (−∇) stay perpendicular to the contours; drag the valley narrow and it starts pointing across.",
+      "block_id": "geometry_ii-block-35",
+      "section": "Descent: why the gradient is steepest",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-51",
-      "quote": "The answer is the **orthogonal projection** (\\cite[Boyd & Vandenberghe, Applied Linear Algebra, Ch.",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "\\marginfig{fourier.jpg}{Jean-Baptiste Joseph Fourier (1768–1830).",
+      "block_id": "geometry_ii-block-41",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-52",
-      "quote": "130]{boyd2018appliedlinearalgebra}).",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "In his 1822 *Théorie analytique de la chaleur* he argued that any signal is a sum of sines \\cite{fourier1822} — the Fourier idea that makes the next paragraph possible.",
+      "block_id": "geometry_ii-block-41",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-53",
-      "quote": "Take any candidate $s \\in S$ and split the distance into two pieces:",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "Fourier's claim was about functions (heat distributions), not \"signals\", and it was not a proof for arbitrary functions: convergence conditions were clarified later, notably by Dirichlet in 1829.}",
+      "block_id": "geometry_ii-block-41",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-54",
-      "quote": "where $p_S$ is the projection of $p$ onto $S$.",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "The idea that a vibrating string is a sum of simple modes is older than Fourier.",
+      "block_id": "geometry_ii-block-42",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-55",
-      "quote": "The cross term vanishes because $p - p_S$ is *perpendicular to* $S$ while $s - p_S$ lies *in* it.",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "D'Alembert solved the one-dimensional wave equation in 1747 and wrote the solution as two travelling waves (\\cite[d'Alembert, 1747]{dalembert1747}); contemporaries such as Daniel Bernoulli argued for the sine-series superposition, and Fourier's 1807 memoir on heat — expanded into the 1822 *Théorie* — made the general claim (\\cite[Fourier, 1822]{fourier1822}).",
+      "block_id": "geometry_ii-block-42",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-56",
-      "quote": "The first term does not depend on $s$; the second is non-negative and zero only when $s = p_S$.",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "The payoff is the **Fourier transform** $\\mathcal{F}$ — a *change of coordinates*.",
+      "block_id": "geometry_ii-block-43",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-57",
-      "quote": "So the closest point is **the shadow $p_S$**, and the error $p - p_S$ is the part of $p$ sticking out, perpendicular to $S$.",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "It sends a signal to the list of sine-wave ingredients that build it.",
+      "block_id": "geometry_ii-block-43",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-58",
-      "quote": "“The error is perpendicular to the model” is a *working diagnostic*.",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "Write the signal and kernel in the basis of pure sine waves (“frequency” coordinates) instead of time.",
+      "block_id": "geometry_ii-block-43",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-59",
-      "quote": "It is the whole of least squares: a fit is optimal exactly when the residual is orthogonal to every direction the model can move in (\\cite[Boyd & Vandenberghe, Applied Linear Algebra, Ch.",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "In that system the sliding sum becomes **ordinary multiplication**, point by point,",
+      "block_id": "geometry_ii-block-43",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-60",
-      "quote": "231]{boyd2018appliedlinearalgebra}) \\cite{legendre1805} \\cite{gauss1809} (see [Loss](losslab)).",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "Convolution in time is multiplication in frequency \\cite{fourier1822}.",
+      "block_id": "geometry_ii-block-44",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-61",
-      "quote": "It is the whole of low-rank approximation: truncating to a few directions gives the best shadow of the data in that subspace \\cite{svd_wiki} (see [Beyond LLMs](beyond_llms)).",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "The reason: the sines are the directions in which the *slide* is normal.",
+      "block_id": "geometry_ii-block-44",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-62",
-      "quote": "And it reads a single neuron: its output $\\langle w, x \\rangle$ is how much of the input $x$ points along $w$.",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "Shifting a sine in time only rotates its phase, so in the sine basis a shift is a rotation, and a sliding dot product of rotations is a product.",
+      "block_id": "geometry_ii-block-44",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-63",
-      "quote": "Attention does the same move in reverse — project each key onto the query for a similarity, then recombine the values (see [Attention](attentionlab)).",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "The DFT finds those directions; the FFT is the fast way to compute them \\cite{cooley1965fft}.",
+      "block_id": "geometry_ii-block-44",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-64",
-      "quote": "The method has a celebrated priority dispute.",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "“Smooth the signal” means multiply its spectrum by a low-pass; “detect an edge” means the output lights up at high frequency; “a periodic hum” means energy piled up at one frequency.",
+      "block_id": "geometry_ii-block-45",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-65",
-      "quote": "Legendre published it first, in 1805, as a practical rule for fitting comet orbits; Gauss published it in 1809 and claimed he had used it since 1795 (\\cite[Legendre, 1805]{legendre1805}; \\cite[Gauss, 1809]{gauss1809}).",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "In audio the short-time Fourier view of sound is this identity (see [Speech & Audio](speech_audio)); in vision it underlies frequency filtering and the DFT tricks behind positional encoding and grokking (see [Positional Embeddings](positionalembeddingslab) and [The Shape of Space](geometry_i)).",
+      "block_id": "geometry_ii-block-45",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-66",
-      "quote": "What Gauss added was the probabilistic justification: under normally distributed errors, least squares is the maximum-likelihood estimate.",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "The two interactives share one kernel: drag its three taps and the time-domain output smooths (left) while the frequency-domain reason — pointwise multiplication — appears at the same time (right).",
+      "block_id": "geometry_ii-block-45",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-67",
-      "quote": "The geometry in this section — the residual perpendicular to the model — is the coordinate-free content both men were exploiting.",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "frequency domain — $|F(y)| = |F(c)|\\cdot|F(x)|$",
+      "block_id": "geometry_ii-block-48",
+      "section": "Convolution is a sliding dot product — the DFT is its shape",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-68",
-      "quote": "The picture is always *a target, a family of allowed answers, keep the shadow.* In the interactive, move the target and tilt the subspace.",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "Write the equivariance condition as a diagram that **commutes**: do the symmetry first, then the function, or the function first, then the symmetry — both paths land on the same point.",
+      "block_id": "geometry_ii-block-50",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-69",
-      "quote": "The residual stays perpendicular — that right angle *is* the proof — and “explained” behaves like a regression’s $R^2$.",
-      "section": "Projection: the best fit is a shadow",
+      "quote": "The modern definition is Klein's.",
+      "block_id": "geometry_ii-block-51",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-70",
-      "quote": "A linear map $A:\\mathbb{R}^n\\to\\mathbb{R}^m$ looks like a messy matrix of mixed-up numbers.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "In the *Erlangen Programme* of 1872 he proposed that a geometry *is* the study of what a group of transformations leaves invariant (\\cite[Klein, 1872]{klein1872erlangen}).",
+      "block_id": "geometry_ii-block-51",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-71",
-      "quote": "But in one coordinate system it is simple.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "Read backwards, that is the neural-network question: choose the group — translations, permutations, rotations — and the architecture is the family of functions that respect it.",
+      "block_id": "geometry_ii-block-51",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-72",
-      "quote": "The **singular value decomposition** (SVD) says every such $A$ factors as",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "Noether's 1918 theorem is the physicist's cousin: every continuous symmetry of an action yields a conserved quantity (\\cite[Noether, 1918]{noether1918}).",
+      "block_id": "geometry_ii-block-51",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-73",
-      "quote": "where $U$ and $V$ are pure rotations (orthogonal: $U^{\\top}U = V^{\\top}V = I$) and $\\Sigma$ is diagonal, its entries $\\sigma_1 \\ge \\sigma_2 \\ge \\cdots \\ge 0$ the **singular values**.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "Weyl's *Classical Groups* (1939) catalogued the invariants themselves (\\cite[Weyl, 1939]{weyl1939classicalgroups}).",
+      "block_id": "geometry_ii-block-51",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-74",
-      "quote": "Read the factorisation as a story about a circle:",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "These are not exotic — they are *forced*.",
+      "block_id": "geometry_ii-block-52",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-75",
-      "quote": "$V^{\\top}$ **rotates** the input unit circle so its axes line up with the directions $A$ stretches most and least.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "**Deep Sets** \\cite{zaheer2017deepsets} proved that any function of a *set* of inputs that is permutation-invariant must factor as “map each item, add them up, then pool”:",
+      "block_id": "geometry_ii-block-52",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-76",
-      "quote": "$\\Sigma$ **stretches** purely along the axes, by $\\sigma_1$ and $\\sigma_2$ — no rotation, no shear.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "and it gives the matching condition for equivariance.",
+      "block_id": "geometry_ii-block-53",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-77",
-      "quote": "$U$ **rotates** the result into the output space.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "“Map, sum, pool” is not a design choice — it is *the* shape any invariant or equivariant function on a set must have.",
+      "block_id": "geometry_ii-block-53",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-78",
-      "quote": "So *every* linear map is **rotate, stretch, rotate**.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "The theorem's hypothesis matters: for a countable universe the sum decomposition is exact; for uncountable domains the paper proves it only for sets of fixed size and conjectures the general case (\\cite[Zaheer et al., 2017]{zaheer2017deepsets}).",
+      "block_id": "geometry_ii-block-54",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-79",
-      "quote": "The circle $\\lVert x\\rVert = 1$ becomes an **ellipse**, and the singular values are its **semi-axis lengths** \\cite{svd_wiki}.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "The equivariant form is different: for a linear layer it forces weight sharing, $\\Theta=\\lambda I+\\gamma\\mathbf{1}\\mathbf{1}^{\\top}$.",
+      "block_id": "geometry_ii-block-54",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-80",
-      "quote": "The right singular vectors (columns of $V$) are the axes of the circle that get stretched; the left singular vectors (columns of $U$) are where those stretched axes end up.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "This matters because **weight sharing is equivariance in disguise**, and attention is *permutation-equivariant* rather than symmetric:",
+      "block_id": "geometry_ii-block-55",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-81",
-      "quote": "More precisely, it is simple in a *pair* of coordinate systems — one chosen in the input space and one in the output space; a rectangular map has different dimensions on the two sides.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "The interactive holds a bag of six “tokens.” Drag the **shift** to reorder them.",
+      "block_id": "geometry_ii-block-56",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-82",
-      "quote": "And \"orthogonal\" means length-preserving, which includes reflections: for strict rotations require $\\det U=\\det V=+1$.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "The blue (input) and orange (per-item equivariant output) traces rotate *together* — equivariance, the commutative square closing.",
+      "block_id": "geometry_ii-block-56",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-83",
-      "quote": "The factorization was not found in one stroke.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "The flat green line is the invariant readout (the mean), which does not move no matter how you reorder.",
+      "block_id": "geometry_ii-block-56",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-84",
-      "quote": "Beltrami (1873) and Jordan (1874) independently showed that the singular values of a bilinear form are complete invariants under independent orthogonal changes of the two spaces; Sylvester (1889) called them *canonical multipliers* (\\cite[Stewart, 1993]{stewart1993svd}).",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "> **A geometry is a group.** Klein (1872) defined a geometry by the transformations it leaves invariant; Noether (1918) turned continuous symmetry into conservation laws; Weyl (1939) catalogued the invariants.",
+      "block_id": "geometry_ii-block-57",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-85",
-      "quote": "Schmidt (1907) carried the idea to integral operators (\\cite[Schmidt, 1907]{schmidt1907}), and Weyl (1912) proved the eigenvalue–singular-value inequalities that brought it into spectral theory (\\cite[Weyl, 1912]{weyl1912singular}).",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "A CNN, a pooling layer and a GNN are three answers to Klein's question, written in weights.",
+      "block_id": "geometry_ii-block-57",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-86",
-      "quote": "The letters $U$, $\\Sigma$, $V$ arrived only with the numerical age.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "Drag shift to cyclically reorder them.",
+      "block_id": "geometry_ii-block-58",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-87",
-      "quote": "\\marginfig{jacobi.jpg}{Carl Gustav Jacobi (1804–1851).",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "The blue trace is the reordered input and the orange trace is a fixed per-item function of it — an equivariant output, so the two move together.",
+      "block_id": "geometry_ii-block-58",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-88",
-      "quote": "In 1842 he gave the theory of *reducing a quadratic form to its principal axes by successive linear substitutions* \\cite{jacobi1842} — the “Jacobi rotations” that, in various descendants, are still the workhorse behind computing eigenvalues and the SVD today.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "The flat green line is the invariant readout (the mean), which does not move for any reorder.",
+      "block_id": "geometry_ii-block-58",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-89",
-      "quote": "The published rotation method is Jacobi's 1846 paper in Crelle's Journal 30 (pp.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "The grey trace is the original order, for reference.",
+      "block_id": "geometry_ii-block-58",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-90",
-      "quote": "51–94); 1842 is not the date of the algorithm (\\cite[Jacobi, 1846]{jacobi1846}).}",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "Pull the six moves together and a forward pass reads as a *sequence of geometric operations*, each with a fixed shape and a handful of learned parameters:",
+      "block_id": "geometry_ii-block-62",
+      "section": "Synthesis: one forward pass, as geometry",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-91",
-      "quote": "Two facts turn the picture into engineering:",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "Move Operation The layer Met in",
+      "block_id": "geometry_ii-block-63",
+      "section": "Synthesis: one forward pass, as geometry",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-92",
-      "quote": "* **Rank is the number of non-zero singular values.** If $\\sigma_2 = 0$ the ellipse collapses to a line and the map forgets an input dimension — its image is lower-dimensional.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "Inner product alignment $\\langle u,v\\rangle$ neuron, similarity, attention Attention , Embedding Projection best fit = shadow, ⟂ least squares, low-rank Loss SVD rotate → stretch → rotate PCA, compression, LoRA Beyond LLMs Descent $-\\nabla$, ⟂ to level sets descent, backprop Optimizer , Autodiff Conv + DFT sliding dot product CNN filter, FFT Vision , Positional Symmetry invariant / equivariant pooling, attention, sharing Vision , Mech.",
+      "block_id": "geometry_ii-block-64",
+      "section": "Synthesis: one forward pass, as geometry",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-93",
-      "quote": "Keeping only the top $r$ terms, $A \\approx \\sum_{i\\le r}\\sigma_i\\, u_i v_i^{\\top}$, is the *best* rank-$r$ approximation: it keeps the biggest stretches and drops the smallest \\cite{svd_wiki}.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "Notice what is *learned* and what is *fixed*.",
+      "block_id": "geometry_ii-block-65",
+      "section": "Synthesis: one forward pass, as geometry",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-94",
-      "quote": "* **Singular values are the “true sizes.”** Unlike eigenvalues, they are always real and non-negative and are defined for *any* rectangular matrix.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "The geometry — a dot product measures alignment, the best fit is a shadow, the steepest direction is the normal to the level sets, convolution multiplies in frequency, a symmetric operation commutes with its symmetry — is **fixed by mathematics**.",
+      "block_id": "geometry_ii-block-65",
+      "section": "Synthesis: one forward pass, as geometry",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-95",
-      "quote": "The ratio $\\kappa = \\sigma_{\\max}/\\sigma_{\\min}$, the **condition number**, measures how much more one direction is stretched than another — it controls how ill-conditioned the map is, and how sensitive its output is to noise.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "Training learns only the *parameters inside* each move: which directions to stretch, which kernel to slide, which per-item map to apply.",
+      "block_id": "geometry_ii-block-65",
+      "section": "Synthesis: one forward pass, as geometry",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-96",
-      "quote": "That truncation is optimal in a precise sense: among all matrices of rank at most $r$, the truncated SVD is closest in both the spectral and Frobenius norms.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "The shape of the operations is a prior; the data supplies the numbers.",
+      "block_id": "geometry_ii-block-65",
+      "section": "Synthesis: one forward pass, as geometry",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-97",
-      "quote": "The finite-dimensional theorem is due to Eckart and Young (1936) (\\cite[Eckart \\& Young, 1936]{eckartyoung1936}); Schmidt had already proved the integral-operator version in 1907 (\\cite[Schmidt, 1907]{schmidt1907}).",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "That is why the picture transfers.",
+      "block_id": "geometry_ii-block-66",
+      "section": "Synthesis: one forward pass, as geometry",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-98",
-      "quote": "The algorithm that made the SVD routine — bidiagonalisation followed by QR iteration — is Golub and Reinsch's (1970) (\\cite[Golub \\& Reinsch, 1970]{golubreinsch1970}), the ancestor of the LAPACK routines behind `numpy.linalg.svd`.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "The same inner product that measures a neuron’s alignment measures a word’s similarity.",
+      "block_id": "geometry_ii-block-66",
+      "section": "Synthesis: one forward pass, as geometry",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-99",
-      "quote": "That is why the SVD appears across this course under different names.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "The same projection that fits a line explains a low-rank approximation.",
+      "block_id": "geometry_ii-block-66",
+      "section": "Synthesis: one forward pass, as geometry",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-100",
-      "quote": "**PCA** is the singular vectors of the data matrix, ordered by the variance they explain.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "The same SVD that shapes a matrix ranks a layer’s capacity.",
+      "block_id": "geometry_ii-block-66",
+      "section": "Synthesis: one forward pass, as geometry",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-101",
-      "quote": "**Low-rank compression** is “keep the top singular values.” **LoRA** fine-tunes a weight matrix by learning only a *low-rank* correction $\\Delta W = BA$ \\cite{hu2021lora} — the bet that the useful change lives in a few directions.",
-      "section": "The SVD: the shape of any linear map",
+      "quote": "The same symmetry that justifies a shared filter is the reason attention needs position.",
+      "block_id": "geometry_ii-block-66",
+      "section": "Synthesis: one forward pass, as geometry",
       "kind": "statement"
     },
     {
       "id": "geometry_ii-stmt-102",
-      "quote": "And a layer’s “effective rank” (how fast its singular values decay) proxies how much of its capacity it actually uses.",
-      "section": "The SVD: the shape of any linear map",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-103",
-      "quote": "Applied to an attention head, the same “keep the top singular directions” idea becomes an interpretability tool: an SVD of a head’s query–key or value–output matrix isolates the one or two directions that carry the real signal when that head talks to a head several layers later — the **communication channels** that can be read straight off the weights (\\cite[Merullo et al., 2024]{merullo2024talkingheads}) (see [Mechanistic Interpretability](mechanistic_interpretability)).",
-      "section": "The SVD: the shape of any linear map",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-104",
-      "quote": "See [Beyond LLMs](beyond_llms) for PCA and factorisation as algorithms.",
-      "section": "The SVD: the shape of any linear map",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-105",
-      "quote": "The interactive shows the unit circle (white) and its image under a map with singular values $\\sigma_1, \\sigma_2$ and rotation $\\theta$.",
-      "section": "The SVD: the shape of any linear map",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-106",
-      "quote": "The colored arrows are the singular-vector axes, with lengths $\\sigma_1, \\sigma_2$.",
-      "section": "The SVD: the shape of any linear map",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-107",
-      "quote": "Drag $\\sigma_2$ to zero and the ellipse collapses to a line — rank 2 to 1.",
-      "section": "The SVD: the shape of any linear map",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-108",
-      "quote": "Training a model is walking downhill on a loss landscape $L$.",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-109",
-      "quote": "At any point $w$ the **gradient** $\\nabla L(w) = (\\partial L/\\partial w_1, \\dots, \\partial L/\\partial w_d)$ is a vector pointing the way the function climbs *fastest*, so $-\\nabla L$ points straight *downhill*.",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-110",
-      "quote": "Is the gradient actually the steepest way, or just a convenient choice?",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-111",
-      "quote": "The answer is geometric — it is the inner-product identity pointed at a function.",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-112",
-      "quote": "The **directional derivative** of $L$ in a unit direction $d$ is an inner product (\\cite[Boyd & Vandenberghe, Applied Linear Algebra, Ch.",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-113",
-      "quote": "36]{boyd2018appliedlinearalgebra}), using two geometric signs: $a \\parallel b$ (*parallel to*) and $a \\perp b$ (*perpendicular to*):",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-114",
-      "quote": "So $\\langle \\nabla L, d\\rangle$ is largest when $d$ points *along* $\\nabla L$ and most negative when $d$ points *against* it.",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-115",
-      "quote": "Steepest ascent is $+\\nabla L$ and steepest descent is $-\\nabla L$ — not by choice, but because the inner product *forces* the steepest direction to be the gradient.",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-116",
-      "quote": "Cauchy wrote this down in 1847 as the method of steepest descent, a century before neural networks \\cite{cauchy1847}.",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-117",
-      "quote": "Strictly, Cauchy's 1847 note treats simultaneous equations by minimising a sum of squares; it is not a general nonlinear-descent method.",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-118",
-      "quote": "The name \"steepest descent\" and the convergence theory came later, with Hadamard's 1907–08 method (\\cite[Hadamard, 1908]{hadamard1908}) and the mid-20th-century optimisation literature.",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-119",
-      "quote": "The constrained version — project the gradient back onto the feasible set — is Rosen's gradient-projection method (1960) (\\cite[Rosen, 1960]{rosen1960}), the direct ancestor of the projection step in modern constrained optimisers.",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-120",
-      "quote": "\\marginfig{cauchy.jpg}{Augustin-Louis Cauchy (1789–1857).",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-121",
-      "quote": "In 1847 he proposed moving a point *against the gradient* to solve systems of equations and to fit by least squares \\cite{cauchy1847} — the move later christened the **method of steepest descent**, and the same move every gradient-based optimizer makes on a loss landscape.}",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-122",
-      "quote": "Read the same identity differently: the gradient is **perpendicular to the level sets** of $L$ — the “same loss” contours.",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-123",
-      "quote": "Moving along a contour keeps $L$ constant, so its direction $d$ satisfies $\\langle \\nabla L, d\\rangle = 0$, i.e. $d \\perp \\nabla L$.",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-124",
-      "quote": "This is why a *curved* landscape is hard to descend: in a narrow valley the gradient points *across* the valley rather than down it, so a plain step zig-zags.",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-125",
-      "quote": "The **condition number** from the SVD section — the ratio of the loss’s biggest to smallest curvature — measures how narrow the valley is, and it, not the gradient itself, decides whether optimization is fast or slow.",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-126",
-      "quote": "The *schedule* on top of this fact — momentum, Adam, learning-rate decay — is optimization, not geometry, covered in [The Optimizer](optimizerlab) and [Automatic Differentiation](autodiff).",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-127",
-      "quote": "What we keep here: **the gradient is the normal to the level sets, and the steepest way down is to follow it.** In the interactive, drag the point around an oval bowl and watch the descent arrow (−∇) stay perpendicular to the contours; drag the valley narrow and it starts pointing across.",
-      "section": "Descent: why the gradient is steepest",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-128",
-      "quote": "A convolution takes a short pattern (the **kernel** $c$) and a long signal (the **input** $x$), flips the kernel, slides it across the signal, and at each position takes a **dot product** and sums:",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-129",
-      "quote": "That is all a convolution is: an inner product, repeated at every offset $t$ — the same alignment measurement from the inner product.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-130",
-      "quote": "This is why a CNN filter works: each filter is a kernel, and applying it to an image is taking the dot product with every patch, so it *detects* the local pattern it is shaped like (see [Computer Vision](computer_vision)).",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-131",
-      "quote": "In deep-learning libraries the operation is usually *cross-correlation*: the kernel is slid without flipping.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-132",
-      "quote": "A learned filter can absorb the reflection, but the convolution theorem applies to the flipped version.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-133",
-      "quote": "Written as a matrix, the repeated inner product is a **Toeplitz matrix**: each row is the previous row shifted by one, $A_{ij}=c_{i-j}$, so the whole operator is determined by a single kernel (\\cite[Toeplitz, 1911]{toeplitz1911}).",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-134",
-      "quote": "This is also why convolution is cheap to describe but not cheap to compute naively: an $n$-point output costs $O(nk)$, and the FFT later reduces the whole operator to pointwise multiplication.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-135",
-      "quote": "\\marginfig{fourier.jpg}{Jean-Baptiste Joseph Fourier (1768–1830).",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-136",
-      "quote": "In his 1822 *Théorie analytique de la chaleur* he argued that any signal is a sum of sines \\cite{fourier1822} — the Fourier idea that makes the next paragraph possible.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-137",
-      "quote": "Fourier's claim was about functions (heat distributions), not \"signals\", and it was not a proof for arbitrary functions: convergence conditions were clarified later, notably by Dirichlet in 1829.}",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-138",
-      "quote": "The idea that a vibrating string is a sum of simple modes is older than Fourier.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-139",
-      "quote": "D'Alembert solved the one-dimensional wave equation in 1747 and wrote the solution as two travelling waves (\\cite[d'Alembert, 1747]{dalembert1747}); contemporaries such as Daniel Bernoulli argued for the sine-series superposition, and Fourier's 1807 memoir on heat — expanded into the 1822 *Théorie* — made the general claim (\\cite[Fourier, 1822]{fourier1822}).",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-140",
-      "quote": "The payoff is the **Fourier transform** $\\mathcal{F}$ — a *change of coordinates*.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-141",
-      "quote": "It sends a signal to the list of sine-wave ingredients that build it.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-142",
-      "quote": "Write the signal and kernel in the basis of pure sine waves (“frequency” coordinates) instead of time.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-143",
-      "quote": "In that system the sliding sum becomes **ordinary multiplication**, point by point,",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-144",
-      "quote": "Convolution in time is multiplication in frequency \\cite{fourier1822}.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-145",
-      "quote": "The reason: the sines are the directions in which the *slide* is normal.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-146",
-      "quote": "Shifting a sine in time only rotates its phase, so in the sine basis a shift is a rotation, and a sliding dot product of rotations is a product.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-147",
-      "quote": "The DFT finds those directions; the FFT is the fast way to compute them \\cite{cooley1965fft}.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-148",
-      "quote": "The fast algorithm is older than the computer.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-149",
-      "quote": "Gauss used a radix-2 decomposition around 1805 to interpolate asteroid orbits, but left it unpublished (\\cite[FFT history]{fft_history_wiki}).",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-150",
-      "quote": "Runge's 1903 trigonometric-interpolation work supplied a precursor, and Danielson and Lanczos used the doubling trick for X-ray crystallography in 1942.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-151",
-      "quote": "Cooley and Tukey's 1965 paper supplied the general composite-length algorithm and the $O(n\\log n)$ analysis that made it famous (\\cite[Cooley \\& Tukey, 1965]{cooley1965fft}).",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-152",
-      "quote": "The history is a warning: the same idea can wait a century for its application.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-153",
-      "quote": "“Smooth the signal” means multiply its spectrum by a low-pass; “detect an edge” means the output lights up at high frequency; “a periodic hum” means energy piled up at one frequency.",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-154",
-      "quote": "In audio the short-time Fourier view of sound is this identity (see [Speech & Audio](speech_audio)); in vision it underlies frequency filtering and the DFT tricks behind positional encoding and grokking (see [Positional Embeddings](positionalembeddingslab) and [The Shape of Space](geometry_i)).",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-155",
-      "quote": "The two interactives share one kernel: drag its three taps and the time-domain output smooths (left) while the frequency-domain reason — pointwise multiplication — appears at the same time (right).",
-      "section": "Convolution is a sliding dot product — the DFT is its shape",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-156",
-      "quote": "A neural network is a stack of functions $f$.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-157",
-      "quote": "A function has a **symmetry** when some operation on its input changes the input but the output moves in a predictable, *structured* way.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-158",
-      "quote": "Write a symmetry as $\\sigma$ and its action on an input $x$ as $\\sigma \\cdot x$ (here the dot means “apply $\\sigma$ to $x$,” not multiplication).",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-159",
-      "quote": "* **Invariant** — the output does not change: $f(\\sigma \\cdot x) = f(x)$ for a symmetry $\\sigma$ (say, reordering the inputs).",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-160",
-      "quote": "The output “forgets” the symmetry.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-161",
-      "quote": "* **Equivariant** — the output changes *the same way* the input did: $f(\\sigma \\cdot x) = \\sigma \\cdot f(x)$.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-162",
-      "quote": "The function “commutes” with the symmetry.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-163",
-      "quote": "Write the equivariance condition as a diagram that **commutes**: do the symmetry first, then the function, or the function first, then the symmetry — both paths land on the same point.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-164",
-      "quote": "The commuting square is the whole idea of equivariance, and it is *geometric*: $f$ and the symmetry $\\sigma$ are two motions of space that get along.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-165",
-      "quote": "The modern definition is Klein's.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-166",
-      "quote": "In the *Erlangen Programme* of 1872 he proposed that a geometry *is* the study of what a group of transformations leaves invariant (\\cite[Klein, 1872]{klein1872erlangen}).",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-167",
-      "quote": "Read backwards, that is the neural-network question: choose the group — translations, permutations, rotations — and the architecture is the family of functions that respect it.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-168",
-      "quote": "Noether's 1918 theorem is the physicist's cousin: every continuous symmetry of an action yields a conserved quantity (\\cite[Noether, 1918]{noether1918}).",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-169",
-      "quote": "Weyl's *Classical Groups* (1939) catalogued the invariants themselves (\\cite[Weyl, 1939]{weyl1939classicalgroups}).",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-170",
-      "quote": "These are not exotic — they are *forced*.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-171",
-      "quote": "**Deep Sets** \\cite{zaheer2017deepsets} proved that any function of a *set* of inputs that is permutation-invariant must factor as “map each item, add them up, then pool”:",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-172",
-      "quote": "and it gives the matching condition for equivariance.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-173",
-      "quote": "“Map, sum, pool” is not a design choice — it is *the* shape any invariant or equivariant function on a set must have.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-174",
-      "quote": "The theorem's hypothesis matters: for a countable universe the sum decomposition is exact; for uncountable domains the paper proves it only for sets of fixed size and conjectures the general case (\\cite[Zaheer et al., 2017]{zaheer2017deepsets}).",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-175",
-      "quote": "The equivariant form is different: for a linear layer it forces weight sharing, $\\Theta=\\lambda I+\\gamma\\mathbf{1}\\mathbf{1}^{\\top}$.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-176",
-      "quote": "This matters because **weight sharing is equivariance in disguise**, and attention is *permutation-equivariant* rather than symmetric:",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-177",
-      "quote": "* A **CNN** shares one kernel across every location — translation-equivariance: shift the input and the feature map shifts the same way (see [Computer Vision](computer_vision)).",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-178",
-      "quote": "The convolution section’s “sliding dot product” is the *mechanism*; this section is the *reason it is allowed*.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-179",
-      "quote": "* **Pooling** (mean, max) is the invariant readout: reorder what you pool over and the number does not move.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-180",
-      "quote": "* **Attention** is permutation-equivariant over the token set: shuffle the tokens and every output token and attention weight shuffles along.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-181",
-      "quote": "Order is not something attention knows, which is why position must be *added in explicitly* (see [Positional Embeddings](positionalembeddingslab)).",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-182",
-      "quote": "* The same logic reaches **graphs**: a GNN is equivariant under re-labeling the vertices, which is why its basic form is message-passing — a sum over neighbors (the broader program is **geometric deep learning** \\cite{bronstein2021geometric}).",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-183",
-      "quote": "A caution on the word \"symmetric\": attention is permutation-equivariant, not symmetric.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-184",
-      "quote": "$A=\\operatorname{softmax}(QK^{\\top}/\\sqrt{d_k})$ is normalised row by row, so $A^{\\top}\\neq A$ in general; swapping queries and keys changes the map (\\cite[Vaswani et al., 2017]{vaswani2017attention}).",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-185",
-      "quote": "The interactive holds a bag of six “tokens.” Drag the **shift** to reorder them.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-186",
-      "quote": "The blue (input) and orange (per-item equivariant output) traces rotate *together* — equivariance, the commutative square closing.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-187",
-      "quote": "The flat green line is the invariant readout (the mean), which does not move no matter how you reorder.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-188",
-      "quote": "> **A geometry is a group.** Klein (1872) defined a geometry by the transformations it leaves invariant; Noether (1918) turned continuous symmetry into conservation laws; Weyl (1939) catalogued the invariants.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-189",
-      "quote": "A CNN, a pooling layer and a GNN are three answers to Klein's question, written in weights.",
-      "section": "Symmetry: invariance, equivariance, and the shape of attention",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-190",
-      "quote": "Pull the six moves together and a forward pass reads as a *sequence of geometric operations*, each with a fixed shape and a handful of learned parameters:",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-191",
-      "quote": "Move Operation The layer Met in",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-192",
-      "quote": "Inner product alignment $\\langle u,v\\rangle$ neuron, similarity, attention Attention , Embedding",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-193",
-      "quote": "Projection best fit = shadow, ⟂ least squares, low-rank Loss",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-194",
-      "quote": "SVD rotate → stretch → rotate PCA, compression, LoRA Beyond LLMs",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-195",
-      "quote": "Descent $-\\nabla$, ⟂ to level sets descent, backprop Optimizer , Autodiff",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-196",
-      "quote": "Conv + DFT sliding dot product CNN filter, FFT Vision , Positional",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-197",
-      "quote": "Symmetry invariant / equivariant pooling, attention, sharing Vision , Mech.",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-198",
-      "quote": "Notice what is *learned* and what is *fixed*.",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-199",
-      "quote": "The geometry — a dot product measures alignment, the best fit is a shadow, the steepest direction is the normal to the level sets, convolution multiplies in frequency, a symmetric operation commutes with its symmetry — is **fixed by mathematics**.",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-200",
-      "quote": "Training learns only the *parameters inside* each move: which directions to stretch, which kernel to slide, which per-item map to apply.",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-201",
-      "quote": "The shape of the operations is a prior; the data supplies the numbers.",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-202",
-      "quote": "That is why the picture transfers.",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-203",
-      "quote": "The same inner product that measures a neuron’s alignment measures a word’s similarity.",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-204",
-      "quote": "The same projection that fits a line explains a low-rank approximation.",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-205",
-      "quote": "The same SVD that shapes a matrix ranks a layer’s capacity.",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-206",
-      "quote": "The same symmetry that justifies a shared filter is the reason attention needs position.",
-      "section": "Synthesis: one forward pass, as geometry",
-      "kind": "statement"
-    },
-    {
-      "id": "geometry_ii-stmt-207",
       "quote": "A network is not “matrices of weights” but **geometry — points, shadows, stretches, level sets, sliding alignments, and symmetries** — and its layers become a single, navigable space.",
+      "block_id": "geometry_ii-block-66",
       "section": "Synthesis: one forward pass, as geometry",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "geometry_ii-block-1",
+      "quote": "One picture for the whole chapter",
+      "kind": "heading",
+      "section": "One picture for the whole chapter"
+    },
+    {
+      "id": "geometry_ii-block-2",
+      "quote": "The [Shape of Space](geometry_i) chapter asked what *space* is. This chapter asks what a neural network *does* to the numbers that live in space, and draws each operation as a picture. The claim: **nearly every layer in a modern network is a single geometric move**. Once you can see the move, you can predict what the layer is for, where it can fail, and what it costs.",
+      "kind": "paragraph",
+      "section": "One picture for the whole chapter"
+    },
+    {
+      "id": "geometry_ii-block-3",
+      "quote": "The moves, in order:",
+      "kind": "paragraph",
+      "section": "One picture for the whole chapter"
+    },
+    {
+      "id": "geometry_ii-block-4",
+      "quote": "Each section ends with a hands-on plot. We do **not** re-teach what the earlier chapters own — the dot product, attention as a convex combination, optimizers, least squares, or PCA. We link to those instead.",
+      "kind": "paragraph",
+      "section": "One picture for the whole chapter"
+    },
+    {
+      "id": "geometry_ii-block-5",
+      "quote": "Similarity and projection",
+      "kind": "heading",
+      "section": "Similarity and projection"
+    },
+    {
+      "id": "geometry_ii-block-6",
+      "quote": "The inner product",
+      "kind": "heading",
+      "section": "The inner product"
+    },
+    {
+      "id": "geometry_ii-block-7",
+      "quote": "Everything in a neural network is a vector, and every layer *does* a measurement of how those vectors line up. That measurement is the **inner product** (dot product). Three signs appear in the formula that follows: **$\\langle u, v\\rangle$** (angle brackets) is the general inner product — the plain dot product suffices in $\\mathbb{R}^n$, where $\\mathbb{R}$ denotes the **real numbers** ($\\mathbb{R}^2$ is the plane); **$\\sum$** (sigma) means “sum”; and **$\\lVert v \\rVert$** (double bars) is the *length* of a vector. Read the identity as “alignment = (one length) × (the other length) × (closeness to parallel).” The three forms are the same quantity:",
+      "kind": "paragraph",
+      "section": "The inner product"
+    },
+    {
+      "id": "geometry_ii-block-8",
+      "quote": "The third form is what matters. The inner product splits into *how long* each vector is and *how close to parallel* they are: same direction is maximum, perpendicular is zero, opposite is minimum. A dot product is a **measure of alignment** (\\cite[Boyd & Vandenberghe, Applied Linear Algebra, Ch. 3, §3.4, p. 58]{boyd2018appliedlinearalgebra}).",
+      "kind": "paragraph",
+      "section": "The inner product"
+    },
+    {
+      "id": "geometry_ii-block-9",
+      "quote": "> **The dot product has two parents.** Grassmann named the inner product in 1844; Hamilton hid it inside quaternion multiplication in 1843–46; Gibbs and Heaviside made it the dot product of vector calculus in the 1880s–1901.",
+      "kind": "paragraph",
+      "section": "The inner product"
+    },
+    {
+      "id": "geometry_ii-block-10",
+      "quote": "The Gram matrix: where similarity lives",
+      "kind": "heading",
+      "section": "The Gram matrix: where similarity lives"
+    },
+    {
+      "id": "geometry_ii-block-11",
+      "quote": "That is the seed of the chapter. Everything that follows is a geometric operation on those vectors: **projection** picks out a subspace, the **SVD** diagonalizes the stretch, **descent** walks across a level set, **convolution** is a sliding dot product that commutes with shifts, and **symmetry** is the set of transformations a network respects.",
+      "kind": "paragraph",
+      "section": "The Gram matrix: where similarity lives"
+    },
+    {
+      "id": "geometry_ii-block-12",
+      "quote": "Projection: the best fit is a shadow",
+      "kind": "heading",
+      "section": "Projection: the best fit is a shadow"
+    },
+    {
+      "id": "geometry_ii-block-13",
+      "quote": "The method has a celebrated priority dispute. Legendre published it first, in 1805, as a practical rule for fitting comet orbits; Gauss published it in 1809 and claimed he had used it since 1795 (\\cite[Legendre, 1805]{legendre1805}; \\cite[Gauss, 1809]{gauss1809}). What Gauss added was the probabilistic justification: under normally distributed errors, least squares is the maximum-likelihood estimate. The geometry in this section — the residual perpendicular to the model — is the coordinate-free content both men were exploiting.",
+      "kind": "paragraph",
+      "section": "Projection: the best fit is a shadow"
+    },
+    {
+      "id": "geometry_ii-block-14",
+      "quote": "P x:",
+      "kind": "paragraph",
+      "section": "Projection: the best fit is a shadow"
+    },
+    {
+      "id": "geometry_ii-block-15",
+      "quote": "3.0 P y:",
+      "kind": "paragraph",
+      "section": "Projection: the best fit is a shadow"
+    },
+    {
+      "id": "geometry_ii-block-16",
+      "quote": "2.2 line angle φ:",
+      "kind": "paragraph",
+      "section": "Projection: the best fit is a shadow"
+    },
+    {
+      "id": "geometry_ii-block-17",
+      "quote": "35°",
+      "kind": "paragraph",
+      "section": "Projection: the best fit is a shadow"
+    },
+    {
+      "id": "geometry_ii-block-18",
+      "quote": "The shape of a linear map",
+      "kind": "heading",
+      "section": "The shape of a linear map"
+    },
+    {
+      "id": "geometry_ii-block-19",
+      "quote": "The SVD: the shape of any linear map",
+      "kind": "heading",
+      "section": "The SVD: the shape of any linear map"
+    },
+    {
+      "id": "geometry_ii-block-20",
+      "quote": "Read the factorisation as a story about a circle:",
+      "kind": "paragraph",
+      "section": "The SVD: the shape of any linear map"
+    },
+    {
+      "id": "geometry_ii-block-21",
+      "quote": "2. $\\Sigma$ **stretches** purely along the axes, by $\\sigma_1$ and $\\sigma_2$ — no rotation, no shear.",
+      "kind": "list-item",
+      "section": "The SVD: the shape of any linear map"
+    },
+    {
+      "id": "geometry_ii-block-22",
+      "quote": "More precisely, it is simple in a *pair* of coordinate systems — one chosen in the input space and one in the output space; a rectangular map has different dimensions on the two sides. And \"orthogonal\" means length-preserving, which includes reflections: for strict rotations require $\\det U=\\det V=+1$.",
+      "kind": "paragraph",
+      "section": "The SVD: the shape of any linear map"
+    },
+    {
+      "id": "geometry_ii-block-23",
+      "quote": "\\marginfig{jacobi.jpg}{Carl Gustav Jacobi (1804–1851). In 1842 he gave the theory of *reducing a quadratic form to its principal axes by successive linear substitutions* \\cite{jacobi1842} — the “Jacobi rotations” that, in various descendants, are still the workhorse behind computing eigenvalues and the SVD today. The published rotation method is Jacobi's 1846 paper in Crelle's Journal 30 (pp. 51–94); 1842 is not the date of the algorithm (\\cite[Jacobi, 1846]{jacobi1846}).}",
+      "kind": "paragraph",
+      "section": "The SVD: the shape of any linear map"
+    },
+    {
+      "id": "geometry_ii-block-24",
+      "quote": "Two facts turn the picture into engineering:",
+      "kind": "paragraph",
+      "section": "The SVD: the shape of any linear map"
+    },
+    {
+      "id": "geometry_ii-block-25",
+      "quote": "That is why the SVD appears across this course under different names. **PCA** is the singular vectors of the data matrix, ordered by the variance they explain. **Low-rank compression** is “keep the top singular values.” **LoRA** fine-tunes a weight matrix by learning only a *low-rank* correction $\\Delta W = BA$ \\cite{hu2021lora} — the bet that the useful change lives in a few directions. And a layer’s “effective rank” (how fast its singular values decay) proxies how much of its capacity it actually uses. Applied to an attention head, the same “keep the top singular directions” idea becomes an interpretability tool: an SVD of a head’s query–key or value–output matrix isolates the one or two directions that carry the real signal when that head talks to a head several layers later — the **communication channels** that can be read straight off the weights (\\cite[Merullo et al., 2024]{merullo2024talkingheads}) (see [Mechanistic Interpretability](mechanistic_interpretability)). See [Beyond LLMs](beyond_llms) for PCA and factorisation as algorithms.",
+      "kind": "paragraph",
+      "section": "The SVD: the shape of any linear map"
+    },
+    {
+      "id": "geometry_ii-block-26",
+      "quote": "The interactive shows the unit circle (white) and its image under a map with singular values $\\sigma_1, \\sigma_2$ and rotation $\\theta$. The colored arrows are the singular-vector axes, with lengths $\\sigma_1, \\sigma_2$. Drag $\\sigma_2$ to zero and the ellipse collapses to a line — rank 2 to 1.",
+      "kind": "paragraph",
+      "section": "The SVD: the shape of any linear map"
+    },
+    {
+      "id": "geometry_ii-block-27",
+      "quote": "The white circle is the unit circle $\\lVert x\\rVert = 1$. The colored ellipse is its image under a map that rotates by $\\theta$, stretches by $\\sigma_1$ and $\\sigma_2$, and rotates back — “rotate, stretch, rotate.” The two colored arrows are the singular-vector axes; their lengths are exactly $\\sigma_1$ and $\\sigma_2$. Drag σ₂ → 0 and the ellipse collapses to a line: the rank drops from 2 to 1.",
+      "kind": "paragraph",
+      "section": "The SVD: the shape of any linear map"
+    },
+    {
+      "id": "geometry_ii-block-28",
+      "quote": "σ₁ (major):",
+      "kind": "paragraph",
+      "section": "The SVD: the shape of any linear map"
+    },
+    {
+      "id": "geometry_ii-block-29",
+      "quote": "3.0 σ₂ (minor):",
+      "kind": "paragraph",
+      "section": "The SVD: the shape of any linear map"
+    },
+    {
+      "id": "geometry_ii-block-30",
+      "quote": "1.5 rotation θ:",
+      "kind": "paragraph",
+      "section": "The SVD: the shape of any linear map"
+    },
+    {
+      "id": "geometry_ii-block-31",
+      "quote": "25°",
+      "kind": "paragraph",
+      "section": "The SVD: the shape of any linear map"
+    },
+    {
+      "id": "geometry_ii-block-32",
+      "quote": "Descent: why the gradient is steepest",
+      "kind": "heading",
+      "section": "Descent: why the gradient is steepest"
+    },
+    {
+      "id": "geometry_ii-block-33",
+      "quote": "Strictly, Cauchy's 1847 note treats simultaneous equations by minimising a sum of squares; it is not a general nonlinear-descent method. The name \"steepest descent\" and the convergence theory came later, with Hadamard's 1907–08 method (\\cite[Hadamard, 1908]{hadamard1908}) and the mid-20th-century optimisation literature. The constrained version — project the gradient back onto the feasible set — is Rosen's gradient-projection method (1960) (\\cite[Rosen, 1960]{rosen1960}), the direct ancestor of the projection step in modern constrained optimisers.",
+      "kind": "paragraph",
+      "section": "Descent: why the gradient is steepest"
+    },
+    {
+      "id": "geometry_ii-block-34",
+      "quote": "\\marginfig{cauchy.jpg}{Augustin-Louis Cauchy (1789–1857). In 1847 he proposed moving a point *against the gradient* to solve systems of equations and to fit by least squares \\cite{cauchy1847} — the move later christened the **method of steepest descent**, and the same move every gradient-based optimizer makes on a loss landscape.}",
+      "kind": "paragraph",
+      "section": "Descent: why the gradient is steepest"
+    },
+    {
+      "id": "geometry_ii-block-35",
+      "quote": "The *schedule* on top of this fact — momentum, Adam, learning-rate decay — is optimization, not geometry, covered in [The Optimizer](optimizerlab) and [Automatic Differentiation](autodiff). What we keep here: **the gradient is the normal to the level sets, and the steepest way down is to follow it.** In the interactive, drag the point around an oval bowl and watch the descent arrow (−∇) stay perpendicular to the contours; drag the valley narrow and it starts pointing across.",
+      "kind": "paragraph",
+      "section": "Descent: why the gradient is steepest"
+    },
+    {
+      "id": "geometry_ii-block-36",
+      "quote": "x:",
+      "kind": "paragraph",
+      "section": "Descent: why the gradient is steepest"
+    },
+    {
+      "id": "geometry_ii-block-37",
+      "quote": "1.5 y:",
+      "kind": "paragraph",
+      "section": "Descent: why the gradient is steepest"
+    },
+    {
+      "id": "geometry_ii-block-38",
+      "quote": "1.2",
+      "kind": "paragraph",
+      "section": "Descent: why the gradient is steepest"
+    },
+    {
+      "id": "geometry_ii-block-39",
+      "quote": "2.0",
+      "kind": "paragraph",
+      "section": "Descent: why the gradient is steepest"
+    },
+    {
+      "id": "geometry_ii-block-40",
+      "quote": "Convolution is a sliding dot product — the DFT is its shape",
+      "kind": "heading",
+      "section": "Convolution is a sliding dot product — the DFT is its shape"
+    },
+    {
+      "id": "geometry_ii-block-41",
+      "quote": "\\marginfig{fourier.jpg}{Jean-Baptiste Joseph Fourier (1768–1830). In his 1822 *Théorie analytique de la chaleur* he argued that any signal is a sum of sines \\cite{fourier1822} — the Fourier idea that makes the next paragraph possible. Fourier's claim was about functions (heat distributions), not \"signals\", and it was not a proof for arbitrary functions: convergence conditions were clarified later, notably by Dirichlet in 1829.}",
+      "kind": "paragraph",
+      "section": "Convolution is a sliding dot product — the DFT is its shape"
+    },
+    {
+      "id": "geometry_ii-block-42",
+      "quote": "The idea that a vibrating string is a sum of simple modes is older than Fourier. D'Alembert solved the one-dimensional wave equation in 1747 and wrote the solution as two travelling waves (\\cite[d'Alembert, 1747]{dalembert1747}); contemporaries such as Daniel Bernoulli argued for the sine-series superposition, and Fourier's 1807 memoir on heat — expanded into the 1822 *Théorie* — made the general claim (\\cite[Fourier, 1822]{fourier1822}).",
+      "kind": "paragraph",
+      "section": "Convolution is a sliding dot product — the DFT is its shape"
+    },
+    {
+      "id": "geometry_ii-block-43",
+      "quote": "The payoff is the **Fourier transform** $\\mathcal{F}$ — a *change of coordinates*. It sends a signal to the list of sine-wave ingredients that build it. Write the signal and kernel in the basis of pure sine waves (“frequency” coordinates) instead of time. In that system the sliding sum becomes **ordinary multiplication**, point by point,",
+      "kind": "paragraph",
+      "section": "Convolution is a sliding dot product — the DFT is its shape"
+    },
+    {
+      "id": "geometry_ii-block-44",
+      "quote": "Convolution in time is multiplication in frequency \\cite{fourier1822}. The reason: the sines are the directions in which the *slide* is normal. Shifting a sine in time only rotates its phase, so in the sine basis a shift is a rotation, and a sliding dot product of rotations is a product. The DFT finds those directions; the FFT is the fast way to compute them \\cite{cooley1965fft}.",
+      "kind": "paragraph",
+      "section": "Convolution is a sliding dot product — the DFT is its shape"
+    },
+    {
+      "id": "geometry_ii-block-45",
+      "quote": "This is not a curiosity. “Smooth the signal” means multiply its spectrum by a low-pass; “detect an edge” means the output lights up at high frequency; “a periodic hum” means energy piled up at one frequency. In audio the short-time Fourier view of sound is this identity (see [Speech & Audio](speech_audio)); in vision it underlies frequency filtering and the DFT tricks behind positional encoding and grokking (see [Positional Embeddings](positionalembeddingslab) and [The Shape of Space](geometry_i)). The two interactives share one kernel: drag its three taps and the time-domain output smooths (left) while the frequency-domain reason — pointwise multiplication — appears at the same time (right).",
+      "kind": "paragraph",
+      "section": "Convolution is a sliding dot product — the DFT is its shape"
+    },
+    {
+      "id": "geometry_ii-block-46",
+      "quote": "0.25",
+      "kind": "paragraph",
+      "section": "Convolution is a sliding dot product — the DFT is its shape"
+    },
+    {
+      "id": "geometry_ii-block-47",
+      "quote": "0.50",
+      "kind": "paragraph",
+      "section": "Convolution is a sliding dot product — the DFT is its shape"
+    },
+    {
+      "id": "geometry_ii-block-48",
+      "quote": "frequency domain — $|F(y)| = |F(c)|\\cdot|F(x)|$",
+      "kind": "paragraph",
+      "section": "Convolution is a sliding dot product — the DFT is its shape"
+    },
+    {
+      "id": "geometry_ii-block-49",
+      "quote": "Symmetry: invariance, equivariance, and the shape of attention",
+      "kind": "heading",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention"
+    },
+    {
+      "id": "geometry_ii-block-50",
+      "quote": "Write the equivariance condition as a diagram that **commutes**: do the symmetry first, then the function, or the function first, then the symmetry — both paths land on the same point.",
+      "kind": "paragraph",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention"
+    },
+    {
+      "id": "geometry_ii-block-51",
+      "quote": "The modern definition is Klein's. In the *Erlangen Programme* of 1872 he proposed that a geometry *is* the study of what a group of transformations leaves invariant (\\cite[Klein, 1872]{klein1872erlangen}). Read backwards, that is the neural-network question: choose the group — translations, permutations, rotations — and the architecture is the family of functions that respect it. Noether's 1918 theorem is the physicist's cousin: every continuous symmetry of an action yields a conserved quantity (\\cite[Noether, 1918]{noether1918}). Weyl's *Classical Groups* (1939) catalogued the invariants themselves (\\cite[Weyl, 1939]{weyl1939classicalgroups}).",
+      "kind": "paragraph",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention"
+    },
+    {
+      "id": "geometry_ii-block-52",
+      "quote": "These are not exotic — they are *forced*. **Deep Sets** \\cite{zaheer2017deepsets} proved that any function of a *set* of inputs that is permutation-invariant must factor as “map each item, add them up, then pool”:",
+      "kind": "paragraph",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention"
+    },
+    {
+      "id": "geometry_ii-block-53",
+      "quote": "and it gives the matching condition for equivariance. “Map, sum, pool” is not a design choice — it is *the* shape any invariant or equivariant function on a set must have.",
+      "kind": "paragraph",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention"
+    },
+    {
+      "id": "geometry_ii-block-54",
+      "quote": "The theorem's hypothesis matters: for a countable universe the sum decomposition is exact; for uncountable domains the paper proves it only for sets of fixed size and conjectures the general case (\\cite[Zaheer et al., 2017]{zaheer2017deepsets}). The equivariant form is different: for a linear layer it forces weight sharing, $\\Theta=\\lambda I+\\gamma\\mathbf{1}\\mathbf{1}^{\\top}$.",
+      "kind": "paragraph",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention"
+    },
+    {
+      "id": "geometry_ii-block-55",
+      "quote": "This matters because **weight sharing is equivariance in disguise**, and attention is *permutation-equivariant* rather than symmetric:",
+      "kind": "paragraph",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention"
+    },
+    {
+      "id": "geometry_ii-block-56",
+      "quote": "The interactive holds a bag of six “tokens.” Drag the **shift** to reorder them. The blue (input) and orange (per-item equivariant output) traces rotate *together* — equivariance, the commutative square closing. The flat green line is the invariant readout (the mean), which does not move no matter how you reorder.",
+      "kind": "paragraph",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention"
+    },
+    {
+      "id": "geometry_ii-block-57",
+      "quote": "> **A geometry is a group.** Klein (1872) defined a geometry by the transformations it leaves invariant; Noether (1918) turned continuous symmetry into conservation laws; Weyl (1939) catalogued the invariants. A CNN, a pooling layer and a GNN are three answers to Klein's question, written in weights.",
+      "kind": "paragraph",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention"
+    },
+    {
+      "id": "geometry_ii-block-58",
+      "quote": "Six “tokens” (a bag). Drag shift to cyclically reorder them. The blue trace is the reordered input and the orange trace is a fixed per-item function of it — an equivariant output, so the two move together. The flat green line is the invariant readout (the mean), which does not move for any reorder. The grey trace is the original order, for reference.",
+      "kind": "paragraph",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention"
+    },
+    {
+      "id": "geometry_ii-block-59",
+      "quote": "shift (reorder):",
+      "kind": "paragraph",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention"
+    },
+    {
+      "id": "geometry_ii-block-60",
+      "quote": "0",
+      "kind": "paragraph",
+      "section": "Symmetry: invariance, equivariance, and the shape of attention"
+    },
+    {
+      "id": "geometry_ii-block-61",
+      "quote": "Synthesis: one forward pass, as geometry",
+      "kind": "heading",
+      "section": "Synthesis: one forward pass, as geometry"
+    },
+    {
+      "id": "geometry_ii-block-62",
+      "quote": "Pull the six moves together and a forward pass reads as a *sequence of geometric operations*, each with a fixed shape and a handful of learned parameters:",
+      "kind": "paragraph",
+      "section": "Synthesis: one forward pass, as geometry"
+    },
+    {
+      "id": "geometry_ii-block-63",
+      "quote": "Move Operation The layer Met in",
+      "kind": "paragraph",
+      "section": "Synthesis: one forward pass, as geometry"
+    },
+    {
+      "id": "geometry_ii-block-64",
+      "quote": "Inner product alignment $\\langle u,v\\rangle$ neuron, similarity, attention Attention , Embedding Projection best fit = shadow, ⟂ least squares, low-rank Loss SVD rotate → stretch → rotate PCA, compression, LoRA Beyond LLMs Descent $-\\nabla$, ⟂ to level sets descent, backprop Optimizer , Autodiff Conv + DFT sliding dot product CNN filter, FFT Vision , Positional Symmetry invariant / equivariant pooling, attention, sharing Vision , Mech. Interp.",
+      "kind": "paragraph",
+      "section": "Synthesis: one forward pass, as geometry"
+    },
+    {
+      "id": "geometry_ii-block-65",
+      "quote": "Notice what is *learned* and what is *fixed*. The geometry — a dot product measures alignment, the best fit is a shadow, the steepest direction is the normal to the level sets, convolution multiplies in frequency, a symmetric operation commutes with its symmetry — is **fixed by mathematics**. Training learns only the *parameters inside* each move: which directions to stretch, which kernel to slide, which per-item map to apply. The shape of the operations is a prior; the data supplies the numbers.",
+      "kind": "paragraph",
+      "section": "Synthesis: one forward pass, as geometry"
+    },
+    {
+      "id": "geometry_ii-block-66",
+      "quote": "That is why the picture transfers. The same inner product that measures a neuron’s alignment measures a word’s similarity. The same projection that fits a line explains a low-rank approximation. The same SVD that shapes a matrix ranks a layer’s capacity. The same symmetry that justifies a shared filter is the reason attention needs position. A network is not “matrices of weights” but **geometry — points, shadows, stretches, level sets, sliding alignments, and symmetries** — and its layers become a single, navigable space.",
+      "kind": "paragraph",
+      "section": "Synthesis: one forward pass, as geometry"
     }
   ]
 }

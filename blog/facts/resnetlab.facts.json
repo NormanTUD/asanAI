@@ -365,236 +365,996 @@
       "quote": "part: 3",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-1-part_of-resnetlab",
+      "from": "resnetlab-block-1",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-2-part_of-resnetlab",
+      "from": "resnetlab-block-2",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-1-before-resnetlab-block-2",
+      "from": "resnetlab-block-1",
+      "to": "resnetlab-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-2-related_to-resnetlab-block-1",
+      "from": "resnetlab-block-2",
+      "to": "resnetlab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-3-part_of-resnetlab",
+      "from": "resnetlab-block-3",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-2-before-resnetlab-block-3",
+      "from": "resnetlab-block-2",
+      "to": "resnetlab-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-3-related_to-resnetlab-block-1",
+      "from": "resnetlab-block-3",
+      "to": "resnetlab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-4-part_of-resnetlab",
+      "from": "resnetlab-block-4",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-3-before-resnetlab-block-4",
+      "from": "resnetlab-block-3",
+      "to": "resnetlab-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-4-related_to-resnetlab-block-1",
+      "from": "resnetlab-block-4",
+      "to": "resnetlab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-5-part_of-resnetlab",
+      "from": "resnetlab-block-5",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-4-before-resnetlab-block-5",
+      "from": "resnetlab-block-4",
+      "to": "resnetlab-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-6-part_of-resnetlab",
+      "from": "resnetlab-block-6",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-5-before-resnetlab-block-6",
+      "from": "resnetlab-block-5",
+      "to": "resnetlab-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-6-related_to-resnetlab-block-5",
+      "from": "resnetlab-block-6",
+      "to": "resnetlab-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-7-part_of-resnetlab",
+      "from": "resnetlab-block-7",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-6-before-resnetlab-block-7",
+      "from": "resnetlab-block-6",
+      "to": "resnetlab-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-8-part_of-resnetlab",
+      "from": "resnetlab-block-8",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-7-before-resnetlab-block-8",
+      "from": "resnetlab-block-7",
+      "to": "resnetlab-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-8-related_to-resnetlab-block-7",
+      "from": "resnetlab-block-8",
+      "to": "resnetlab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-9-part_of-resnetlab",
+      "from": "resnetlab-block-9",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-8-before-resnetlab-block-9",
+      "from": "resnetlab-block-8",
+      "to": "resnetlab-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-9-related_to-resnetlab-block-7",
+      "from": "resnetlab-block-9",
+      "to": "resnetlab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-10-part_of-resnetlab",
+      "from": "resnetlab-block-10",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-9-before-resnetlab-block-10",
+      "from": "resnetlab-block-9",
+      "to": "resnetlab-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-10-related_to-resnetlab-block-7",
+      "from": "resnetlab-block-10",
+      "to": "resnetlab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-11-part_of-resnetlab",
+      "from": "resnetlab-block-11",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-10-before-resnetlab-block-11",
+      "from": "resnetlab-block-10",
+      "to": "resnetlab-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-11-related_to-resnetlab-block-7",
+      "from": "resnetlab-block-11",
+      "to": "resnetlab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-12-part_of-resnetlab",
+      "from": "resnetlab-block-12",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-11-before-resnetlab-block-12",
+      "from": "resnetlab-block-11",
+      "to": "resnetlab-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-12-related_to-resnetlab-block-7",
+      "from": "resnetlab-block-12",
+      "to": "resnetlab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-13-part_of-resnetlab",
+      "from": "resnetlab-block-13",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-12-before-resnetlab-block-13",
+      "from": "resnetlab-block-12",
+      "to": "resnetlab-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-13-related_to-resnetlab-block-7",
+      "from": "resnetlab-block-13",
+      "to": "resnetlab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-14-part_of-resnetlab",
+      "from": "resnetlab-block-14",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-13-before-resnetlab-block-14",
+      "from": "resnetlab-block-13",
+      "to": "resnetlab-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-14-related_to-resnetlab-block-7",
+      "from": "resnetlab-block-14",
+      "to": "resnetlab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-15-part_of-resnetlab",
+      "from": "resnetlab-block-15",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-14-before-resnetlab-block-15",
+      "from": "resnetlab-block-14",
+      "to": "resnetlab-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-15-related_to-resnetlab-block-7",
+      "from": "resnetlab-block-15",
+      "to": "resnetlab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-16-part_of-resnetlab",
+      "from": "resnetlab-block-16",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-15-before-resnetlab-block-16",
+      "from": "resnetlab-block-15",
+      "to": "resnetlab-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-16-related_to-resnetlab-block-7",
+      "from": "resnetlab-block-16",
+      "to": "resnetlab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-17-part_of-resnetlab",
+      "from": "resnetlab-block-17",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-16-before-resnetlab-block-17",
+      "from": "resnetlab-block-16",
+      "to": "resnetlab-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-17-related_to-resnetlab-block-7",
+      "from": "resnetlab-block-17",
+      "to": "resnetlab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-18-part_of-resnetlab",
+      "from": "resnetlab-block-18",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-17-before-resnetlab-block-18",
+      "from": "resnetlab-block-17",
+      "to": "resnetlab-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-18-related_to-resnetlab-block-7",
+      "from": "resnetlab-block-18",
+      "to": "resnetlab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-19-part_of-resnetlab",
+      "from": "resnetlab-block-19",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-18-before-resnetlab-block-19",
+      "from": "resnetlab-block-18",
+      "to": "resnetlab-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-19-related_to-resnetlab-block-7",
+      "from": "resnetlab-block-19",
+      "to": "resnetlab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-20-part_of-resnetlab",
+      "from": "resnetlab-block-20",
+      "to": "resnetlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-19-before-resnetlab-block-20",
+      "from": "resnetlab-block-19",
+      "to": "resnetlab-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-block-20-related_to-resnetlab-block-7",
+      "from": "resnetlab-block-20",
+      "to": "resnetlab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-1-part_of-resnetlab-block-2",
+      "from": "resnetlab-stmt-1",
+      "to": "resnetlab-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-2-part_of-resnetlab-block-2",
+      "from": "resnetlab-stmt-2",
+      "to": "resnetlab-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-3-part_of-resnetlab-block-3",
+      "from": "resnetlab-stmt-3",
+      "to": "resnetlab-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-4-part_of-resnetlab-block-4",
+      "from": "resnetlab-stmt-4",
+      "to": "resnetlab-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-5-part_of-resnetlab-block-8",
+      "from": "resnetlab-stmt-5",
+      "to": "resnetlab-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-6-part_of-resnetlab-block-9",
+      "from": "resnetlab-stmt-6",
+      "to": "resnetlab-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-7-part_of-resnetlab-block-10",
+      "from": "resnetlab-stmt-7",
+      "to": "resnetlab-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-8-part_of-resnetlab-block-10",
+      "from": "resnetlab-stmt-8",
+      "to": "resnetlab-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-9-part_of-resnetlab-block-10",
+      "from": "resnetlab-stmt-9",
+      "to": "resnetlab-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-10-part_of-resnetlab-block-11",
+      "from": "resnetlab-stmt-10",
+      "to": "resnetlab-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-11-part_of-resnetlab-block-13",
+      "from": "resnetlab-stmt-11",
+      "to": "resnetlab-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-12-part_of-resnetlab-block-14",
+      "from": "resnetlab-stmt-12",
+      "to": "resnetlab-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-13-part_of-resnetlab-block-15",
+      "from": "resnetlab-stmt-13",
+      "to": "resnetlab-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-14-part_of-resnetlab-block-16",
+      "from": "resnetlab-stmt-14",
+      "to": "resnetlab-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-15-part_of-resnetlab-block-17",
+      "from": "resnetlab-stmt-15",
+      "to": "resnetlab-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-16-part_of-resnetlab-block-18",
+      "from": "resnetlab-stmt-16",
+      "to": "resnetlab-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-17-part_of-resnetlab-block-19",
+      "from": "resnetlab-stmt-17",
+      "to": "resnetlab-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-resnetlab-stmt-18-part_of-resnetlab-block-20",
+      "from": "resnetlab-stmt-18",
+      "to": "resnetlab-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "resnetlab-stmt-1",
       "quote": "To train a neural network, we use **Backpropagation**.",
+      "block_id": "resnetlab-block-2",
       "section": "The Vanishing Gradient Problem",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-2",
       "quote": "This algorithm calculates how much each weight contributed to the final error (loss) so we can adjust the weights to reduce that error.",
+      "block_id": "resnetlab-block-2",
       "section": "The Vanishing Gradient Problem",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-3",
-      "quote": "Mathematically, we use the **Chain Rule** of calculus.",
+      "quote": "During backpropagation, to find the gradient of the loss $\\mathcal{L}$ with respect to the first layer's weights, we must multiply the derivatives of *every* layer in the network:",
+      "block_id": "resnetlab-block-3",
       "section": "The Vanishing Gradient Problem",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-4",
-      "quote": "In a standard “Plain” network (like VGG or AlexNet), the input $x$ passes through a series of layers to produce output $y$.",
+      "quote": "This was first mathematically accurately described by \\citeauthor{hochreiter1991vanishing} in his \\cite[Diplomarbeit]{hochreiter1991vanishing}, while the term 'Vanishing Gradient' was first coined by Yoshua Bengio et al. in their \\citeyear{bengio1994learning} paper '\\citetitle{bengio1994learning}'.",
+      "block_id": "resnetlab-block-4",
       "section": "The Vanishing Gradient Problem",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-5",
-      "quote": "During backpropagation, to find the gradient of the loss $\\mathcal{L}$ with respect to the first layer's weights, we must multiply the derivatives of *every* layer in the network:",
-      "section": "The Vanishing Gradient Problem",
+      "quote": "**Downsampling:** Reducing Height/Width (Stride > 1).",
+      "block_id": "resnetlab-block-8",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-6",
-      "quote": "**Why “Vanishing”?** If the derivatives (gradients) in this chain are small (e.g., $< 1$), multiplying many of them together causes the result to shrink exponentially.",
-      "section": "The Vanishing Gradient Problem",
+      "quote": "**Channel Expansion:** Increasing the number of filters (Depth).",
+      "block_id": "resnetlab-block-9",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-7",
-      "quote": "* **Plain Network:** $0.9 \\times 0.9 \\times 0.9 \\dots \\approx 0$",
-      "section": "The Vanishing Gradient Problem",
+      "quote": "Interactive lab The Gradient Highway An error signal of size 1 starts at the loss and is sent back through every layer.",
+      "block_id": "resnetlab-block-10",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-8",
-      "quote": "* **Result:** The early layers stop learning because their gradient update is effectively zero.",
-      "section": "The Vanishing Gradient Problem",
+      "quote": "A plain layer multiplies it by its local derivative; a residual block multiplies it by 1 + ∂F/∂x.",
+      "block_id": "resnetlab-block-10",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-9",
-      "quote": "Deep networks become impossible to train.",
-      "section": "The Vanishing Gradient Problem",
+      "quote": "Make the network deeper and see who still hears the signal.",
+      "block_id": "resnetlab-block-10",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-10",
-      "quote": "This was first mathematically accurately described by \\citeauthor{hochreiter1991vanishing} in his \\cite[Diplomarbeit]{hochreiter1991vanishing}, while the term 'Vanishing Gradient' was first coined by Yoshua Bengio et al. in their \\citeyear{bengio1994learning} paper '\\citetitle{bengio1994learning}'.",
-      "section": "The Vanishing Gradient Problem",
+      "quote": "plain network: ∏ a l residual network: ∏ (1 + b l ) node brightness = gradient size at that layer",
+      "block_id": "resnetlab-block-11",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-11",
-      "quote": "ResNet (short for *Residual Network*) was introduced by Kaiming He et al. in \\citeyear{he2015resnet} in their paper '\\citetitle{he2015resnet}', and won the ImageNet competition in December 2015.",
-      "section": "The Residual Solution",
+      "quote": "Local derivative per plain layer 0.90",
+      "block_id": "resnetlab-block-13",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-12",
-      "quote": "The skip-connection idea itself, however, did not originate there: \\citeauthor{highway2015}'s **Highway Networks** \\citeyear{highway2015} (May 2015, seven months earlier) introduced learnable gating on top of skip connections and demonstrated training of truly deep feedforward networks with hundreds of layers.",
-      "section": "The Residual Solution",
+      "quote": "🎲 New random initialization",
+      "block_id": "resnetlab-block-14",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-13",
-      "quote": "Hochreiter's \\citeyear{hochreiter1991vanishing} thesis is a different ancestor: it analysed the vanishing-gradient problem and proposed a *constant error flow* — the idea that became the LSTM's constant error carousel — but it did not propose ResNet-style identity shortcuts.",
-      "section": "The Residual Solution",
+      "quote": "Plain: gradient at layer 1 – Residual: gradient at layer 1 – Residual / plain –",
+      "block_id": "resnetlab-block-15",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-14",
-      "quote": "ResNet is closely related to a Highway Network whose gates are always open — a useful analogy rather than an exact algebraic special case (see the History chapter).",
-      "section": "The Residual Solution",
+      "quote": "Identity shortcut — shapes match",
+      "block_id": "resnetlab-block-16",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-15",
-      "quote": "ResNet changes the fundamental building block of the convolution.",
-      "section": "The Residual Solution",
+      "quote": "Input x [64, 64, 3] Conv path F(x) [64, 64, 3] Output F(x) + x [64, 64, 3]",
+      "block_id": "resnetlab-block-17",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-16",
-      "quote": "Instead of trying to learn the mapping $H(x)$ directly, we ask the network to learn the **residual** (the *difference*) $F(x) := H(x) - x$.",
-      "section": "The Residual Solution",
+      "quote": "Projection shortcut — 4 → 2 channels",
+      "block_id": "resnetlab-block-18",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-17",
-      "quote": "The original mapping is reconstructed as:",
-      "section": "The Residual Solution",
+      "quote": "Source x [H, W, 4] 1×1 conv W s [1, 1, 4, 2] Projected W s x [H, W, 2]",
+      "block_id": "resnetlab-block-19",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
       "kind": "statement"
     },
     {
       "id": "resnetlab-stmt-18",
-      "quote": "* $x$ is the input to the block (the “Identity Connection”).",
-      "section": "The Residual Solution",
-      "kind": "statement"
-    },
-    {
-      "id": "resnetlab-stmt-19",
-      "quote": "* $F(x)$ is the learned transformation (usually 2 or 3 convolution layers).",
-      "section": "The Residual Solution",
-      "kind": "statement"
-    },
-    {
-      "id": "resnetlab-stmt-20",
-      "quote": "**The Gradient “Superhighway”:** Let's look at the gradient of this new block during backpropagation:",
-      "section": "The Residual Solution",
-      "kind": "statement"
-    },
-    {
-      "id": "resnetlab-stmt-21",
-      "quote": "The **$+\\mathbf{I}$** term is the magic.",
-      "section": "The Residual Solution",
-      "kind": "statement"
-    },
-    {
-      "id": "resnetlab-stmt-22",
-      "quote": "It ensures that the gradient can flow *directly* from the later layers to the earlier layers without being multiplied by the weights of the intermediate layers.",
-      "section": "The Residual Solution",
-      "kind": "statement"
-    },
-    {
-      "id": "resnetlab-stmt-23",
-      "quote": "Even if the weights in $F(x)$ are very small (causing $\\frac{\\partial F}{\\partial x} \\approx 0$), the gradient signal is preserved by the identity term.",
-      "section": "The Residual Solution",
-      "kind": "statement"
-    },
-    {
-      "id": "resnetlab-stmt-24",
-      "quote": "Formally, the backpropagation recursion through a residual block involves the factor $\\mathbf{I} + J_F$ (where $J_F$ is the Jacobian of the residual function) rather than $J_F$ alone — so the gradient is never *multiplied by* a potentially tiny matrix, only *shifted* by one.",
-      "section": "The Residual Solution",
-      "kind": "statement"
-    },
-    {
-      "id": "resnetlab-stmt-25",
-      "quote": "The full analysis is in \\citeauthor{petersen2024mathdl} (\\citeyear{petersen2024mathdl}), Ch.\\ 17.1.",
-      "section": "The Residual Solution",
-      "kind": "statement"
-    },
-    {
-      "id": "resnetlab-stmt-26",
-      "quote": "The equation $y = F(x) + x$ requires that the dimensions of $x$ and $F(x)$ be identical so they can be added element-wise.",
+      "quote": "y = F(x, {W i }) + W s x — the 1×1 kernel mixes channels at each pixel without looking at its neighbours.",
+      "block_id": "resnetlab-block-20",
       "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "resnetlab-block-1",
+      "quote": "The Vanishing Gradient Problem",
+      "kind": "heading",
+      "section": "The Vanishing Gradient Problem"
     },
     {
-      "id": "resnetlab-stmt-27",
-      "quote": "However, Convolutional Neural Networks (CNNs) often change dimensions to process features at different scales:",
-      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
-      "kind": "statement"
+      "id": "resnetlab-block-2",
+      "quote": "To train a neural network, we use **Backpropagation**. This algorithm calculates how much each weight contributed to the final error (loss) so we can adjust the weights to reduce that error.",
+      "kind": "paragraph",
+      "section": "The Vanishing Gradient Problem"
     },
     {
-      "id": "resnetlab-stmt-28",
-      "quote": "**Downsampling:** Reducing Height/Width (Stride > 1).",
-      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
-      "kind": "statement"
+      "id": "resnetlab-block-3",
+      "quote": "During backpropagation, to find the gradient of the loss $\\mathcal{L}$ with respect to the first layer's weights, we must multiply the derivatives of *every* layer in the network:",
+      "kind": "paragraph",
+      "section": "The Vanishing Gradient Problem"
     },
     {
-      "id": "resnetlab-stmt-29",
-      "quote": "**Channel Expansion:** Increasing the number of filters (Depth).",
-      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
-      "kind": "statement"
+      "id": "resnetlab-block-4",
+      "quote": "This was first mathematically accurately described by \\citeauthor{hochreiter1991vanishing} in his \\cite[Diplomarbeit]{hochreiter1991vanishing}, while the term 'Vanishing Gradient' was first coined by Yoshua Bengio et al. in their \\citeyear{bengio1994learning} paper '\\citetitle{bengio1994learning}'.",
+      "kind": "paragraph",
+      "section": "The Vanishing Gradient Problem"
     },
     {
-      "id": "resnetlab-stmt-30",
-      "quote": "When the dimensions don't match, we cannot simply add $x$.",
-      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
-      "kind": "statement"
+      "id": "resnetlab-block-5",
+      "quote": "The Residual Solution",
+      "kind": "heading",
+      "section": "The Residual Solution"
     },
     {
-      "id": "resnetlab-stmt-31",
-      "quote": "We must transform $x$ using a **projection shortcut** ($W_s$):",
-      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
-      "kind": "statement"
+      "id": "resnetlab-block-6",
+      "quote": "Where:",
+      "kind": "paragraph",
+      "section": "The Residual Solution"
     },
     {
-      "id": "resnetlab-stmt-32",
-      "quote": "**The $1 \\times 1$ Convolution:** The most common way to implement $W_s$ is a **$1 \\times 1$ Convolution**.",
-      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
-      "kind": "statement"
+      "id": "resnetlab-block-7",
+      "quote": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
+      "kind": "heading",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)"
     },
     {
-      "id": "resnetlab-stmt-33",
-      "quote": "* **Spatial:** A $1 \\times 1$ kernel does not look at neighboring pixels; with stride 1 it preserves the spatial height and width ($H \\times W$).",
-      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
-      "kind": "statement"
+      "id": "resnetlab-block-8",
+      "quote": "1. **Downsampling:** Reducing Height/Width (Stride > 1).",
+      "kind": "list-item",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)"
     },
     {
-      "id": "resnetlab-stmt-34",
-      "quote": "When the main path downsamples, the projection shortcut uses the same stride and downsamples with it.",
-      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
-      "kind": "statement"
+      "id": "resnetlab-block-9",
+      "quote": "2. **Channel Expansion:** Increasing the number of filters (Depth).",
+      "kind": "list-item",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)"
     },
     {
-      "id": "resnetlab-stmt-35",
-      "quote": "* **Depth:** It acts as a linear projection across the channels.",
-      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
-      "kind": "statement"
+      "id": "resnetlab-block-10",
+      "quote": "Interactive lab The Gradient Highway An error signal of size 1 starts at the loss and is sent back through every layer. A plain layer multiplies it by its local derivative; a residual block multiplies it by 1 + ∂F/∂x. Make the network deeper and see who still hears the signal.",
+      "kind": "paragraph",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)"
     },
     {
-      "id": "resnetlab-stmt-36",
-      "quote": "If input $x$ has $C_\\text{in}$ channels and we need $C_\\text{out}$ channels, the $1 \\times 1$ layer performs a weighted sum of the input channels to produce the desired output depth.",
-      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
-      "kind": "statement"
+      "id": "resnetlab-block-11",
+      "quote": "plain network: ∏ a l residual network: ∏ (1 + b l ) node brightness = gradient size at that layer",
+      "kind": "paragraph",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)"
     },
     {
-      "id": "resnetlab-stmt-37",
-      "quote": "**Mathematical Operation at a single pixel $(i, j)$:** If input $x \\in \\mathbb{R}^{H \\times W \\times C_\\text{in}}$ and we want output $y \\in \\mathbb{R}^{H \\times W \\times C_\\text{out}}$:",
-      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
-      "kind": "statement"
+      "id": "resnetlab-block-12",
+      "quote": "Network depth 20",
+      "kind": "paragraph",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)"
     },
     {
-      "id": "resnetlab-stmt-38",
-      "quote": "This allows the network to match the “shape” of the main path $F(x)$ so the residual connection can still function, keeping the flow of gradients intact.",
-      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
-      "kind": "statement"
+      "id": "resnetlab-block-13",
+      "quote": "Local derivative per plain layer 0.90",
+      "kind": "paragraph",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)"
+    },
+    {
+      "id": "resnetlab-block-14",
+      "quote": "🎲 New random initialization",
+      "kind": "paragraph",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)"
+    },
+    {
+      "id": "resnetlab-block-15",
+      "quote": "Plain: gradient at layer 1 – Residual: gradient at layer 1 – Residual / plain –",
+      "kind": "paragraph",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)"
+    },
+    {
+      "id": "resnetlab-block-16",
+      "quote": "Identity shortcut — shapes match",
+      "kind": "paragraph",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)"
+    },
+    {
+      "id": "resnetlab-block-17",
+      "quote": "Input x [64, 64, 3] Conv path F(x) [64, 64, 3] Output F(x) + x [64, 64, 3]",
+      "kind": "paragraph",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)"
+    },
+    {
+      "id": "resnetlab-block-18",
+      "quote": "Projection shortcut — 4 → 2 channels",
+      "kind": "paragraph",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)"
+    },
+    {
+      "id": "resnetlab-block-19",
+      "quote": "Source x [H, W, 4] 1×1 conv W s [1, 1, 4, 2] Projected W s x [H, W, 2]",
+      "kind": "paragraph",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)"
+    },
+    {
+      "id": "resnetlab-block-20",
+      "quote": "y = F(x, {W i }) + W s x — the 1×1 kernel mixes channels at each pixel without looking at its neighbours.",
+      "kind": "paragraph",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)"
     }
   ]
 }

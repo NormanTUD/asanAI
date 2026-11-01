@@ -795,836 +795,4237 @@
       "quote": "part: 5",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-1-part_of-finetuninglab",
+      "from": "finetuninglab-block-1",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-2-part_of-finetuninglab",
+      "from": "finetuninglab-block-2",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-1-before-finetuninglab-block-2",
+      "from": "finetuninglab-block-1",
+      "to": "finetuninglab-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-2-related_to-finetuninglab-block-1",
+      "from": "finetuninglab-block-2",
+      "to": "finetuninglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-3-part_of-finetuninglab",
+      "from": "finetuninglab-block-3",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-2-before-finetuninglab-block-3",
+      "from": "finetuninglab-block-2",
+      "to": "finetuninglab-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-4-part_of-finetuninglab",
+      "from": "finetuninglab-block-4",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-3-before-finetuninglab-block-4",
+      "from": "finetuninglab-block-3",
+      "to": "finetuninglab-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-4-related_to-finetuninglab-block-3",
+      "from": "finetuninglab-block-4",
+      "to": "finetuninglab-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-5-part_of-finetuninglab",
+      "from": "finetuninglab-block-5",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-4-before-finetuninglab-block-5",
+      "from": "finetuninglab-block-4",
+      "to": "finetuninglab-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-5-related_to-finetuninglab-block-3",
+      "from": "finetuninglab-block-5",
+      "to": "finetuninglab-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-6-part_of-finetuninglab",
+      "from": "finetuninglab-block-6",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-5-before-finetuninglab-block-6",
+      "from": "finetuninglab-block-5",
+      "to": "finetuninglab-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-6-related_to-finetuninglab-block-3",
+      "from": "finetuninglab-block-6",
+      "to": "finetuninglab-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-7-part_of-finetuninglab",
+      "from": "finetuninglab-block-7",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-6-before-finetuninglab-block-7",
+      "from": "finetuninglab-block-6",
+      "to": "finetuninglab-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-8-part_of-finetuninglab",
+      "from": "finetuninglab-block-8",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-7-before-finetuninglab-block-8",
+      "from": "finetuninglab-block-7",
+      "to": "finetuninglab-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-8-related_to-finetuninglab-block-7",
+      "from": "finetuninglab-block-8",
+      "to": "finetuninglab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-9-part_of-finetuninglab",
+      "from": "finetuninglab-block-9",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-8-before-finetuninglab-block-9",
+      "from": "finetuninglab-block-8",
+      "to": "finetuninglab-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-9-related_to-finetuninglab-block-7",
+      "from": "finetuninglab-block-9",
+      "to": "finetuninglab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-10-part_of-finetuninglab",
+      "from": "finetuninglab-block-10",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-9-before-finetuninglab-block-10",
+      "from": "finetuninglab-block-9",
+      "to": "finetuninglab-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-10-related_to-finetuninglab-block-7",
+      "from": "finetuninglab-block-10",
+      "to": "finetuninglab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-11-part_of-finetuninglab",
+      "from": "finetuninglab-block-11",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-10-before-finetuninglab-block-11",
+      "from": "finetuninglab-block-10",
+      "to": "finetuninglab-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-12-part_of-finetuninglab",
+      "from": "finetuninglab-block-12",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-11-before-finetuninglab-block-12",
+      "from": "finetuninglab-block-11",
+      "to": "finetuninglab-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-12-related_to-finetuninglab-block-11",
+      "from": "finetuninglab-block-12",
+      "to": "finetuninglab-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-13-part_of-finetuninglab",
+      "from": "finetuninglab-block-13",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-12-before-finetuninglab-block-13",
+      "from": "finetuninglab-block-12",
+      "to": "finetuninglab-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-13-related_to-finetuninglab-block-11",
+      "from": "finetuninglab-block-13",
+      "to": "finetuninglab-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-14-part_of-finetuninglab",
+      "from": "finetuninglab-block-14",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-13-before-finetuninglab-block-14",
+      "from": "finetuninglab-block-13",
+      "to": "finetuninglab-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-15-part_of-finetuninglab",
+      "from": "finetuninglab-block-15",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-14-before-finetuninglab-block-15",
+      "from": "finetuninglab-block-14",
+      "to": "finetuninglab-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-15-related_to-finetuninglab-block-14",
+      "from": "finetuninglab-block-15",
+      "to": "finetuninglab-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-16-part_of-finetuninglab",
+      "from": "finetuninglab-block-16",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-15-before-finetuninglab-block-16",
+      "from": "finetuninglab-block-15",
+      "to": "finetuninglab-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-16-related_to-finetuninglab-block-14",
+      "from": "finetuninglab-block-16",
+      "to": "finetuninglab-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-17-part_of-finetuninglab",
+      "from": "finetuninglab-block-17",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-16-before-finetuninglab-block-17",
+      "from": "finetuninglab-block-16",
+      "to": "finetuninglab-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-17-related_to-finetuninglab-block-14",
+      "from": "finetuninglab-block-17",
+      "to": "finetuninglab-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-18-part_of-finetuninglab",
+      "from": "finetuninglab-block-18",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-17-before-finetuninglab-block-18",
+      "from": "finetuninglab-block-17",
+      "to": "finetuninglab-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-18-related_to-finetuninglab-block-14",
+      "from": "finetuninglab-block-18",
+      "to": "finetuninglab-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-19-part_of-finetuninglab",
+      "from": "finetuninglab-block-19",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-18-before-finetuninglab-block-19",
+      "from": "finetuninglab-block-18",
+      "to": "finetuninglab-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-20-part_of-finetuninglab",
+      "from": "finetuninglab-block-20",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-19-before-finetuninglab-block-20",
+      "from": "finetuninglab-block-19",
+      "to": "finetuninglab-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-20-related_to-finetuninglab-block-19",
+      "from": "finetuninglab-block-20",
+      "to": "finetuninglab-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-21-part_of-finetuninglab",
+      "from": "finetuninglab-block-21",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-20-before-finetuninglab-block-21",
+      "from": "finetuninglab-block-20",
+      "to": "finetuninglab-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-21-related_to-finetuninglab-block-19",
+      "from": "finetuninglab-block-21",
+      "to": "finetuninglab-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-22-part_of-finetuninglab",
+      "from": "finetuninglab-block-22",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-21-before-finetuninglab-block-22",
+      "from": "finetuninglab-block-21",
+      "to": "finetuninglab-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-22-related_to-finetuninglab-block-19",
+      "from": "finetuninglab-block-22",
+      "to": "finetuninglab-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-23-part_of-finetuninglab",
+      "from": "finetuninglab-block-23",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-22-before-finetuninglab-block-23",
+      "from": "finetuninglab-block-22",
+      "to": "finetuninglab-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-24-part_of-finetuninglab",
+      "from": "finetuninglab-block-24",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-23-before-finetuninglab-block-24",
+      "from": "finetuninglab-block-23",
+      "to": "finetuninglab-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-24-related_to-finetuninglab-block-23",
+      "from": "finetuninglab-block-24",
+      "to": "finetuninglab-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-25-part_of-finetuninglab",
+      "from": "finetuninglab-block-25",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-24-before-finetuninglab-block-25",
+      "from": "finetuninglab-block-24",
+      "to": "finetuninglab-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-25-related_to-finetuninglab-block-23",
+      "from": "finetuninglab-block-25",
+      "to": "finetuninglab-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-26-part_of-finetuninglab",
+      "from": "finetuninglab-block-26",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-25-before-finetuninglab-block-26",
+      "from": "finetuninglab-block-25",
+      "to": "finetuninglab-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-26-related_to-finetuninglab-block-23",
+      "from": "finetuninglab-block-26",
+      "to": "finetuninglab-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-27-part_of-finetuninglab",
+      "from": "finetuninglab-block-27",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-26-before-finetuninglab-block-27",
+      "from": "finetuninglab-block-26",
+      "to": "finetuninglab-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-27-related_to-finetuninglab-block-23",
+      "from": "finetuninglab-block-27",
+      "to": "finetuninglab-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-28-part_of-finetuninglab",
+      "from": "finetuninglab-block-28",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-27-before-finetuninglab-block-28",
+      "from": "finetuninglab-block-27",
+      "to": "finetuninglab-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-28-related_to-finetuninglab-block-23",
+      "from": "finetuninglab-block-28",
+      "to": "finetuninglab-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-29-part_of-finetuninglab",
+      "from": "finetuninglab-block-29",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-28-before-finetuninglab-block-29",
+      "from": "finetuninglab-block-28",
+      "to": "finetuninglab-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-29-related_to-finetuninglab-block-23",
+      "from": "finetuninglab-block-29",
+      "to": "finetuninglab-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-30-part_of-finetuninglab",
+      "from": "finetuninglab-block-30",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-29-before-finetuninglab-block-30",
+      "from": "finetuninglab-block-29",
+      "to": "finetuninglab-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-30-related_to-finetuninglab-block-23",
+      "from": "finetuninglab-block-30",
+      "to": "finetuninglab-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-31-part_of-finetuninglab",
+      "from": "finetuninglab-block-31",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-30-before-finetuninglab-block-31",
+      "from": "finetuninglab-block-30",
+      "to": "finetuninglab-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-31-related_to-finetuninglab-block-23",
+      "from": "finetuninglab-block-31",
+      "to": "finetuninglab-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-32-part_of-finetuninglab",
+      "from": "finetuninglab-block-32",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-31-before-finetuninglab-block-32",
+      "from": "finetuninglab-block-31",
+      "to": "finetuninglab-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-33-part_of-finetuninglab",
+      "from": "finetuninglab-block-33",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-32-before-finetuninglab-block-33",
+      "from": "finetuninglab-block-32",
+      "to": "finetuninglab-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-33-related_to-finetuninglab-block-32",
+      "from": "finetuninglab-block-33",
+      "to": "finetuninglab-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-34-part_of-finetuninglab",
+      "from": "finetuninglab-block-34",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-33-before-finetuninglab-block-34",
+      "from": "finetuninglab-block-33",
+      "to": "finetuninglab-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-34-related_to-finetuninglab-block-32",
+      "from": "finetuninglab-block-34",
+      "to": "finetuninglab-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-35-part_of-finetuninglab",
+      "from": "finetuninglab-block-35",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-34-before-finetuninglab-block-35",
+      "from": "finetuninglab-block-34",
+      "to": "finetuninglab-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-35-related_to-finetuninglab-block-32",
+      "from": "finetuninglab-block-35",
+      "to": "finetuninglab-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-36-part_of-finetuninglab",
+      "from": "finetuninglab-block-36",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-35-before-finetuninglab-block-36",
+      "from": "finetuninglab-block-35",
+      "to": "finetuninglab-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-36-related_to-finetuninglab-block-32",
+      "from": "finetuninglab-block-36",
+      "to": "finetuninglab-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-37-part_of-finetuninglab",
+      "from": "finetuninglab-block-37",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-36-before-finetuninglab-block-37",
+      "from": "finetuninglab-block-36",
+      "to": "finetuninglab-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-38-part_of-finetuninglab",
+      "from": "finetuninglab-block-38",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-37-before-finetuninglab-block-38",
+      "from": "finetuninglab-block-37",
+      "to": "finetuninglab-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-38-related_to-finetuninglab-block-37",
+      "from": "finetuninglab-block-38",
+      "to": "finetuninglab-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-39-part_of-finetuninglab",
+      "from": "finetuninglab-block-39",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-38-before-finetuninglab-block-39",
+      "from": "finetuninglab-block-38",
+      "to": "finetuninglab-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-39-related_to-finetuninglab-block-37",
+      "from": "finetuninglab-block-39",
+      "to": "finetuninglab-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-40-part_of-finetuninglab",
+      "from": "finetuninglab-block-40",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-39-before-finetuninglab-block-40",
+      "from": "finetuninglab-block-39",
+      "to": "finetuninglab-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-40-related_to-finetuninglab-block-37",
+      "from": "finetuninglab-block-40",
+      "to": "finetuninglab-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-41-part_of-finetuninglab",
+      "from": "finetuninglab-block-41",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-40-before-finetuninglab-block-41",
+      "from": "finetuninglab-block-40",
+      "to": "finetuninglab-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-41-related_to-finetuninglab-block-37",
+      "from": "finetuninglab-block-41",
+      "to": "finetuninglab-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-42-part_of-finetuninglab",
+      "from": "finetuninglab-block-42",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-41-before-finetuninglab-block-42",
+      "from": "finetuninglab-block-41",
+      "to": "finetuninglab-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-43-part_of-finetuninglab",
+      "from": "finetuninglab-block-43",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-42-before-finetuninglab-block-43",
+      "from": "finetuninglab-block-42",
+      "to": "finetuninglab-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-43-related_to-finetuninglab-block-42",
+      "from": "finetuninglab-block-43",
+      "to": "finetuninglab-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-44-part_of-finetuninglab",
+      "from": "finetuninglab-block-44",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-43-before-finetuninglab-block-44",
+      "from": "finetuninglab-block-43",
+      "to": "finetuninglab-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-44-related_to-finetuninglab-block-42",
+      "from": "finetuninglab-block-44",
+      "to": "finetuninglab-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-45-part_of-finetuninglab",
+      "from": "finetuninglab-block-45",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-44-before-finetuninglab-block-45",
+      "from": "finetuninglab-block-44",
+      "to": "finetuninglab-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-45-related_to-finetuninglab-block-42",
+      "from": "finetuninglab-block-45",
+      "to": "finetuninglab-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-46-part_of-finetuninglab",
+      "from": "finetuninglab-block-46",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-45-before-finetuninglab-block-46",
+      "from": "finetuninglab-block-45",
+      "to": "finetuninglab-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-47-part_of-finetuninglab",
+      "from": "finetuninglab-block-47",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-46-before-finetuninglab-block-47",
+      "from": "finetuninglab-block-46",
+      "to": "finetuninglab-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-47-related_to-finetuninglab-block-46",
+      "from": "finetuninglab-block-47",
+      "to": "finetuninglab-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-48-part_of-finetuninglab",
+      "from": "finetuninglab-block-48",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-47-before-finetuninglab-block-48",
+      "from": "finetuninglab-block-47",
+      "to": "finetuninglab-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-48-related_to-finetuninglab-block-46",
+      "from": "finetuninglab-block-48",
+      "to": "finetuninglab-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-49-part_of-finetuninglab",
+      "from": "finetuninglab-block-49",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-48-before-finetuninglab-block-49",
+      "from": "finetuninglab-block-48",
+      "to": "finetuninglab-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-49-related_to-finetuninglab-block-46",
+      "from": "finetuninglab-block-49",
+      "to": "finetuninglab-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-50-part_of-finetuninglab",
+      "from": "finetuninglab-block-50",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-49-before-finetuninglab-block-50",
+      "from": "finetuninglab-block-49",
+      "to": "finetuninglab-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-50-related_to-finetuninglab-block-46",
+      "from": "finetuninglab-block-50",
+      "to": "finetuninglab-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-51-part_of-finetuninglab",
+      "from": "finetuninglab-block-51",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-50-before-finetuninglab-block-51",
+      "from": "finetuninglab-block-50",
+      "to": "finetuninglab-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-51-related_to-finetuninglab-block-46",
+      "from": "finetuninglab-block-51",
+      "to": "finetuninglab-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-52-part_of-finetuninglab",
+      "from": "finetuninglab-block-52",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-51-before-finetuninglab-block-52",
+      "from": "finetuninglab-block-51",
+      "to": "finetuninglab-block-52",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-52-related_to-finetuninglab-block-46",
+      "from": "finetuninglab-block-52",
+      "to": "finetuninglab-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-53-part_of-finetuninglab",
+      "from": "finetuninglab-block-53",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-52-before-finetuninglab-block-53",
+      "from": "finetuninglab-block-52",
+      "to": "finetuninglab-block-53",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-54-part_of-finetuninglab",
+      "from": "finetuninglab-block-54",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-53-before-finetuninglab-block-54",
+      "from": "finetuninglab-block-53",
+      "to": "finetuninglab-block-54",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-54-related_to-finetuninglab-block-53",
+      "from": "finetuninglab-block-54",
+      "to": "finetuninglab-block-53",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-55-part_of-finetuninglab",
+      "from": "finetuninglab-block-55",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-54-before-finetuninglab-block-55",
+      "from": "finetuninglab-block-54",
+      "to": "finetuninglab-block-55",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-56-part_of-finetuninglab",
+      "from": "finetuninglab-block-56",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-55-before-finetuninglab-block-56",
+      "from": "finetuninglab-block-55",
+      "to": "finetuninglab-block-56",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-57-part_of-finetuninglab",
+      "from": "finetuninglab-block-57",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-56-before-finetuninglab-block-57",
+      "from": "finetuninglab-block-56",
+      "to": "finetuninglab-block-57",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-57-related_to-finetuninglab-block-56",
+      "from": "finetuninglab-block-57",
+      "to": "finetuninglab-block-56",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-58-part_of-finetuninglab",
+      "from": "finetuninglab-block-58",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-57-before-finetuninglab-block-58",
+      "from": "finetuninglab-block-57",
+      "to": "finetuninglab-block-58",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-59-part_of-finetuninglab",
+      "from": "finetuninglab-block-59",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-58-before-finetuninglab-block-59",
+      "from": "finetuninglab-block-58",
+      "to": "finetuninglab-block-59",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-60-part_of-finetuninglab",
+      "from": "finetuninglab-block-60",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-59-before-finetuninglab-block-60",
+      "from": "finetuninglab-block-59",
+      "to": "finetuninglab-block-60",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-60-related_to-finetuninglab-block-59",
+      "from": "finetuninglab-block-60",
+      "to": "finetuninglab-block-59",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-61-part_of-finetuninglab",
+      "from": "finetuninglab-block-61",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-60-before-finetuninglab-block-61",
+      "from": "finetuninglab-block-60",
+      "to": "finetuninglab-block-61",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-61-related_to-finetuninglab-block-59",
+      "from": "finetuninglab-block-61",
+      "to": "finetuninglab-block-59",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-62-part_of-finetuninglab",
+      "from": "finetuninglab-block-62",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-61-before-finetuninglab-block-62",
+      "from": "finetuninglab-block-61",
+      "to": "finetuninglab-block-62",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-62-related_to-finetuninglab-block-59",
+      "from": "finetuninglab-block-62",
+      "to": "finetuninglab-block-59",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-63-part_of-finetuninglab",
+      "from": "finetuninglab-block-63",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-62-before-finetuninglab-block-63",
+      "from": "finetuninglab-block-62",
+      "to": "finetuninglab-block-63",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-63-related_to-finetuninglab-block-59",
+      "from": "finetuninglab-block-63",
+      "to": "finetuninglab-block-59",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-64-part_of-finetuninglab",
+      "from": "finetuninglab-block-64",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-63-before-finetuninglab-block-64",
+      "from": "finetuninglab-block-63",
+      "to": "finetuninglab-block-64",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-65-part_of-finetuninglab",
+      "from": "finetuninglab-block-65",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-64-before-finetuninglab-block-65",
+      "from": "finetuninglab-block-64",
+      "to": "finetuninglab-block-65",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-65-related_to-finetuninglab-block-64",
+      "from": "finetuninglab-block-65",
+      "to": "finetuninglab-block-64",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-66-part_of-finetuninglab",
+      "from": "finetuninglab-block-66",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-65-before-finetuninglab-block-66",
+      "from": "finetuninglab-block-65",
+      "to": "finetuninglab-block-66",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-66-related_to-finetuninglab-block-64",
+      "from": "finetuninglab-block-66",
+      "to": "finetuninglab-block-64",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-67-part_of-finetuninglab",
+      "from": "finetuninglab-block-67",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-66-before-finetuninglab-block-67",
+      "from": "finetuninglab-block-66",
+      "to": "finetuninglab-block-67",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-67-related_to-finetuninglab-block-64",
+      "from": "finetuninglab-block-67",
+      "to": "finetuninglab-block-64",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-68-part_of-finetuninglab",
+      "from": "finetuninglab-block-68",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-67-before-finetuninglab-block-68",
+      "from": "finetuninglab-block-67",
+      "to": "finetuninglab-block-68",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-69-part_of-finetuninglab",
+      "from": "finetuninglab-block-69",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-68-before-finetuninglab-block-69",
+      "from": "finetuninglab-block-68",
+      "to": "finetuninglab-block-69",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-69-related_to-finetuninglab-block-68",
+      "from": "finetuninglab-block-69",
+      "to": "finetuninglab-block-68",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-70-part_of-finetuninglab",
+      "from": "finetuninglab-block-70",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-69-before-finetuninglab-block-70",
+      "from": "finetuninglab-block-69",
+      "to": "finetuninglab-block-70",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-70-related_to-finetuninglab-block-68",
+      "from": "finetuninglab-block-70",
+      "to": "finetuninglab-block-68",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-71-part_of-finetuninglab",
+      "from": "finetuninglab-block-71",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-70-before-finetuninglab-block-71",
+      "from": "finetuninglab-block-70",
+      "to": "finetuninglab-block-71",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-71-related_to-finetuninglab-block-68",
+      "from": "finetuninglab-block-71",
+      "to": "finetuninglab-block-68",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-72-part_of-finetuninglab",
+      "from": "finetuninglab-block-72",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-71-before-finetuninglab-block-72",
+      "from": "finetuninglab-block-71",
+      "to": "finetuninglab-block-72",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-72-related_to-finetuninglab-block-68",
+      "from": "finetuninglab-block-72",
+      "to": "finetuninglab-block-68",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-73-part_of-finetuninglab",
+      "from": "finetuninglab-block-73",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-72-before-finetuninglab-block-73",
+      "from": "finetuninglab-block-72",
+      "to": "finetuninglab-block-73",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-73-related_to-finetuninglab-block-68",
+      "from": "finetuninglab-block-73",
+      "to": "finetuninglab-block-68",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-74-part_of-finetuninglab",
+      "from": "finetuninglab-block-74",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-73-before-finetuninglab-block-74",
+      "from": "finetuninglab-block-73",
+      "to": "finetuninglab-block-74",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-74-related_to-finetuninglab-block-68",
+      "from": "finetuninglab-block-74",
+      "to": "finetuninglab-block-68",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-75-part_of-finetuninglab",
+      "from": "finetuninglab-block-75",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-74-before-finetuninglab-block-75",
+      "from": "finetuninglab-block-74",
+      "to": "finetuninglab-block-75",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-75-related_to-finetuninglab-block-68",
+      "from": "finetuninglab-block-75",
+      "to": "finetuninglab-block-68",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-76-part_of-finetuninglab",
+      "from": "finetuninglab-block-76",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-75-before-finetuninglab-block-76",
+      "from": "finetuninglab-block-75",
+      "to": "finetuninglab-block-76",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-76-related_to-finetuninglab-block-68",
+      "from": "finetuninglab-block-76",
+      "to": "finetuninglab-block-68",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-77-part_of-finetuninglab",
+      "from": "finetuninglab-block-77",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-76-before-finetuninglab-block-77",
+      "from": "finetuninglab-block-76",
+      "to": "finetuninglab-block-77",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-78-part_of-finetuninglab",
+      "from": "finetuninglab-block-78",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-77-before-finetuninglab-block-78",
+      "from": "finetuninglab-block-77",
+      "to": "finetuninglab-block-78",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-78-related_to-finetuninglab-block-77",
+      "from": "finetuninglab-block-78",
+      "to": "finetuninglab-block-77",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-79-part_of-finetuninglab",
+      "from": "finetuninglab-block-79",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-78-before-finetuninglab-block-79",
+      "from": "finetuninglab-block-78",
+      "to": "finetuninglab-block-79",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-79-related_to-finetuninglab-block-77",
+      "from": "finetuninglab-block-79",
+      "to": "finetuninglab-block-77",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-80-part_of-finetuninglab",
+      "from": "finetuninglab-block-80",
+      "to": "finetuninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-79-before-finetuninglab-block-80",
+      "from": "finetuninglab-block-79",
+      "to": "finetuninglab-block-80",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-block-80-related_to-finetuninglab-block-77",
+      "from": "finetuninglab-block-80",
+      "to": "finetuninglab-block-77",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-1-part_of-finetuninglab-block-1",
+      "from": "finetuninglab-stmt-1",
+      "to": "finetuninglab-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-2-part_of-finetuninglab-block-1",
+      "from": "finetuninglab-stmt-2",
+      "to": "finetuninglab-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-3-part_of-finetuninglab-block-1",
+      "from": "finetuninglab-stmt-3",
+      "to": "finetuninglab-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-4-part_of-finetuninglab-block-2",
+      "from": "finetuninglab-stmt-4",
+      "to": "finetuninglab-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-5-part_of-finetuninglab-block-4",
+      "from": "finetuninglab-stmt-5",
+      "to": "finetuninglab-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-6-part_of-finetuninglab-block-4",
+      "from": "finetuninglab-stmt-6",
+      "to": "finetuninglab-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-7-part_of-finetuninglab-block-5",
+      "from": "finetuninglab-stmt-7",
+      "to": "finetuninglab-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-8-part_of-finetuninglab-block-5",
+      "from": "finetuninglab-stmt-8",
+      "to": "finetuninglab-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-9-part_of-finetuninglab-block-5",
+      "from": "finetuninglab-stmt-9",
+      "to": "finetuninglab-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-10-part_of-finetuninglab-block-6",
+      "from": "finetuninglab-stmt-10",
+      "to": "finetuninglab-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-11-part_of-finetuninglab-block-8",
+      "from": "finetuninglab-stmt-11",
+      "to": "finetuninglab-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-12-part_of-finetuninglab-block-9",
+      "from": "finetuninglab-stmt-12",
+      "to": "finetuninglab-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-13-part_of-finetuninglab-block-10",
+      "from": "finetuninglab-stmt-13",
+      "to": "finetuninglab-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-14-part_of-finetuninglab-block-10",
+      "from": "finetuninglab-stmt-14",
+      "to": "finetuninglab-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-15-part_of-finetuninglab-block-12",
+      "from": "finetuninglab-stmt-15",
+      "to": "finetuninglab-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-16-part_of-finetuninglab-block-12",
+      "from": "finetuninglab-stmt-16",
+      "to": "finetuninglab-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-17-part_of-finetuninglab-block-13",
+      "from": "finetuninglab-stmt-17",
+      "to": "finetuninglab-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-18-part_of-finetuninglab-block-13",
+      "from": "finetuninglab-stmt-18",
+      "to": "finetuninglab-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-19-part_of-finetuninglab-block-15",
+      "from": "finetuninglab-stmt-19",
+      "to": "finetuninglab-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-20-part_of-finetuninglab-block-16",
+      "from": "finetuninglab-stmt-20",
+      "to": "finetuninglab-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-21-part_of-finetuninglab-block-16",
+      "from": "finetuninglab-stmt-21",
+      "to": "finetuninglab-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-22-part_of-finetuninglab-block-16",
+      "from": "finetuninglab-stmt-22",
+      "to": "finetuninglab-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-23-part_of-finetuninglab-block-17",
+      "from": "finetuninglab-stmt-23",
+      "to": "finetuninglab-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-24-part_of-finetuninglab-block-18",
+      "from": "finetuninglab-stmt-24",
+      "to": "finetuninglab-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-25-part_of-finetuninglab-block-20",
+      "from": "finetuninglab-stmt-25",
+      "to": "finetuninglab-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-26-part_of-finetuninglab-block-21",
+      "from": "finetuninglab-stmt-26",
+      "to": "finetuninglab-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-27-part_of-finetuninglab-block-22",
+      "from": "finetuninglab-stmt-27",
+      "to": "finetuninglab-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-28-part_of-finetuninglab-block-22",
+      "from": "finetuninglab-stmt-28",
+      "to": "finetuninglab-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-29-part_of-finetuninglab-block-24",
+      "from": "finetuninglab-stmt-29",
+      "to": "finetuninglab-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-30-part_of-finetuninglab-block-25",
+      "from": "finetuninglab-stmt-30",
+      "to": "finetuninglab-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-31-part_of-finetuninglab-block-26",
+      "from": "finetuninglab-stmt-31",
+      "to": "finetuninglab-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-32-part_of-finetuninglab-block-27",
+      "from": "finetuninglab-stmt-32",
+      "to": "finetuninglab-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-33-part_of-finetuninglab-block-28",
+      "from": "finetuninglab-stmt-33",
+      "to": "finetuninglab-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-34-part_of-finetuninglab-block-29",
+      "from": "finetuninglab-stmt-34",
+      "to": "finetuninglab-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-35-part_of-finetuninglab-block-30",
+      "from": "finetuninglab-stmt-35",
+      "to": "finetuninglab-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-36-part_of-finetuninglab-block-31",
+      "from": "finetuninglab-stmt-36",
+      "to": "finetuninglab-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-37-part_of-finetuninglab-block-33",
+      "from": "finetuninglab-stmt-37",
+      "to": "finetuninglab-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-38-part_of-finetuninglab-block-34",
+      "from": "finetuninglab-stmt-38",
+      "to": "finetuninglab-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-39-part_of-finetuninglab-block-34",
+      "from": "finetuninglab-stmt-39",
+      "to": "finetuninglab-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-40-part_of-finetuninglab-block-36",
+      "from": "finetuninglab-stmt-40",
+      "to": "finetuninglab-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-41-part_of-finetuninglab-block-38",
+      "from": "finetuninglab-stmt-41",
+      "to": "finetuninglab-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-42-part_of-finetuninglab-block-38",
+      "from": "finetuninglab-stmt-42",
+      "to": "finetuninglab-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-43-part_of-finetuninglab-block-39",
+      "from": "finetuninglab-stmt-43",
+      "to": "finetuninglab-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-44-part_of-finetuninglab-block-40",
+      "from": "finetuninglab-stmt-44",
+      "to": "finetuninglab-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-45-part_of-finetuninglab-block-40",
+      "from": "finetuninglab-stmt-45",
+      "to": "finetuninglab-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-46-part_of-finetuninglab-block-40",
+      "from": "finetuninglab-stmt-46",
+      "to": "finetuninglab-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-47-part_of-finetuninglab-block-41",
+      "from": "finetuninglab-stmt-47",
+      "to": "finetuninglab-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-48-part_of-finetuninglab-block-41",
+      "from": "finetuninglab-stmt-48",
+      "to": "finetuninglab-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-49-part_of-finetuninglab-block-41",
+      "from": "finetuninglab-stmt-49",
+      "to": "finetuninglab-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-50-part_of-finetuninglab-block-43",
+      "from": "finetuninglab-stmt-50",
+      "to": "finetuninglab-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-51-part_of-finetuninglab-block-43",
+      "from": "finetuninglab-stmt-51",
+      "to": "finetuninglab-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-52-part_of-finetuninglab-block-43",
+      "from": "finetuninglab-stmt-52",
+      "to": "finetuninglab-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-53-part_of-finetuninglab-block-44",
+      "from": "finetuninglab-stmt-53",
+      "to": "finetuninglab-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-54-part_of-finetuninglab-block-44",
+      "from": "finetuninglab-stmt-54",
+      "to": "finetuninglab-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-55-part_of-finetuninglab-block-44",
+      "from": "finetuninglab-stmt-55",
+      "to": "finetuninglab-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-56-part_of-finetuninglab-block-45",
+      "from": "finetuninglab-stmt-56",
+      "to": "finetuninglab-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-57-part_of-finetuninglab-block-45",
+      "from": "finetuninglab-stmt-57",
+      "to": "finetuninglab-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-58-part_of-finetuninglab-block-45",
+      "from": "finetuninglab-stmt-58",
+      "to": "finetuninglab-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-59-part_of-finetuninglab-block-45",
+      "from": "finetuninglab-stmt-59",
+      "to": "finetuninglab-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-60-part_of-finetuninglab-block-47",
+      "from": "finetuninglab-stmt-60",
+      "to": "finetuninglab-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-61-part_of-finetuninglab-block-48",
+      "from": "finetuninglab-stmt-61",
+      "to": "finetuninglab-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-62-part_of-finetuninglab-block-49",
+      "from": "finetuninglab-stmt-62",
+      "to": "finetuninglab-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-63-part_of-finetuninglab-block-50",
+      "from": "finetuninglab-stmt-63",
+      "to": "finetuninglab-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-64-part_of-finetuninglab-block-51",
+      "from": "finetuninglab-stmt-64",
+      "to": "finetuninglab-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-65-part_of-finetuninglab-block-52",
+      "from": "finetuninglab-stmt-65",
+      "to": "finetuninglab-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-66-part_of-finetuninglab-block-52",
+      "from": "finetuninglab-stmt-66",
+      "to": "finetuninglab-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-67-part_of-finetuninglab-block-54",
+      "from": "finetuninglab-stmt-67",
+      "to": "finetuninglab-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-68-part_of-finetuninglab-block-54",
+      "from": "finetuninglab-stmt-68",
+      "to": "finetuninglab-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-69-part_of-finetuninglab-block-57",
+      "from": "finetuninglab-stmt-69",
+      "to": "finetuninglab-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-70-part_of-finetuninglab-block-57",
+      "from": "finetuninglab-stmt-70",
+      "to": "finetuninglab-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-71-part_of-finetuninglab-block-60",
+      "from": "finetuninglab-stmt-71",
+      "to": "finetuninglab-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-72-part_of-finetuninglab-block-63",
+      "from": "finetuninglab-stmt-72",
+      "to": "finetuninglab-block-63",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-73-part_of-finetuninglab-block-63",
+      "from": "finetuninglab-stmt-73",
+      "to": "finetuninglab-block-63",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-74-part_of-finetuninglab-block-65",
+      "from": "finetuninglab-stmt-74",
+      "to": "finetuninglab-block-65",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-75-part_of-finetuninglab-block-66",
+      "from": "finetuninglab-stmt-75",
+      "to": "finetuninglab-block-66",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-76-part_of-finetuninglab-block-67",
+      "from": "finetuninglab-stmt-76",
+      "to": "finetuninglab-block-67",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-77-part_of-finetuninglab-block-67",
+      "from": "finetuninglab-stmt-77",
+      "to": "finetuninglab-block-67",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-78-part_of-finetuninglab-block-69",
+      "from": "finetuninglab-stmt-78",
+      "to": "finetuninglab-block-69",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-79-part_of-finetuninglab-block-70",
+      "from": "finetuninglab-stmt-79",
+      "to": "finetuninglab-block-70",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-80-part_of-finetuninglab-block-70",
+      "from": "finetuninglab-stmt-80",
+      "to": "finetuninglab-block-70",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-81-part_of-finetuninglab-block-71",
+      "from": "finetuninglab-stmt-81",
+      "to": "finetuninglab-block-71",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-82-part_of-finetuninglab-block-72",
+      "from": "finetuninglab-stmt-82",
+      "to": "finetuninglab-block-72",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-83-part_of-finetuninglab-block-73",
+      "from": "finetuninglab-stmt-83",
+      "to": "finetuninglab-block-73",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-84-part_of-finetuninglab-block-74",
+      "from": "finetuninglab-stmt-84",
+      "to": "finetuninglab-block-74",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-85-part_of-finetuninglab-block-75",
+      "from": "finetuninglab-stmt-85",
+      "to": "finetuninglab-block-75",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-86-part_of-finetuninglab-block-76",
+      "from": "finetuninglab-stmt-86",
+      "to": "finetuninglab-block-76",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-87-part_of-finetuninglab-block-78",
+      "from": "finetuninglab-stmt-87",
+      "to": "finetuninglab-block-78",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-88-part_of-finetuninglab-block-79",
+      "from": "finetuninglab-stmt-88",
+      "to": "finetuninglab-block-79",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-89-part_of-finetuninglab-block-79",
+      "from": "finetuninglab-stmt-89",
+      "to": "finetuninglab-block-79",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-90-part_of-finetuninglab-block-80",
+      "from": "finetuninglab-stmt-90",
+      "to": "finetuninglab-block-80",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-finetuninglab-stmt-91-part_of-finetuninglab-block-80",
+      "from": "finetuninglab-stmt-91",
+      "to": "finetuninglab-block-80",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "finetuninglab-stmt-1",
       "quote": "A pretrained LLM is a “loud internet simulator”: it produces plausible text but doesn't follow instructions, refuses harmful requests, or engage in dialogue.",
+      "block_id": "finetuninglab-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-2",
       "quote": "The path from raw internet text to a useful assistant runs through a series of post-training stages.",
+      "block_id": "finetuninglab-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-3",
       "quote": "This chapter walks through the modern pipeline: **SFT → DPO/KTO/GRPO → RLHF (PPO) refinement → reasoning RL**, with the math behind each.",
+      "block_id": "finetuninglab-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-4",
       "quote": "The trend in 2024–2025: most alignment work has moved away from RLHF toward **DPO-family** methods that are simpler, more stable, and don't require a separate reward model.",
+      "block_id": "finetuninglab-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-5",
       "quote": "The base model is trained on the next-token-prediction objective (see the Intuition chapter ) over ~10T tokens of web text.",
+      "block_id": "finetuninglab-block-4",
       "section": "Stage 0: Pretraining (recap)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-6",
       "quote": "The result is a model that completes sentences in the style of its training data, but does not behave as an assistant.",
+      "block_id": "finetuninglab-block-4",
       "section": "Stage 0: Pretraining (recap)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-7",
       "quote": "Stage 1: **Supervised Fine-Tuning (SFT)** teaches it to follow instructions.",
+      "block_id": "finetuninglab-block-5",
       "section": "Stage 0: Pretraining (recap)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-8",
       "quote": "Stage 2: **Preference optimization** aligns its outputs with human values.",
+      "block_id": "finetuninglab-block-5",
       "section": "Stage 0: Pretraining (recap)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-9",
       "quote": "Stage 3: **Reasoning RL** (optional) teaches it to think longer on hard problems.",
+      "block_id": "finetuninglab-block-5",
       "section": "Stage 0: Pretraining (recap)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-10",
       "quote": "The post-training **compute** is typically **1–10% of pretraining**; once data and human labour are included, the total budget is often closer to **10–30%** — and it produces most of the perceived improvement in helpfulness.",
+      "block_id": "finetuninglab-block-6",
       "section": "Stage 0: Pretraining (recap)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-11",
       "quote": "SFT trains the base model on **instruction–response pairs**:",
+      "block_id": "finetuninglab-block-8",
       "section": "Stage 1: Supervised Fine-Tuning (SFT)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-12",
       "quote": "The loss is the standard cross-entropy on the response tokens (the instruction tokens contribute zero loss):",
+      "block_id": "finetuninglab-block-9",
       "section": "Stage 1: Supervised Fine-Tuning (SFT)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-13",
-      "quote": "where $x$ is the instruction and $y$ is the response.",
+      "quote": "A typical 2025 SFT dataset: 100K–1M examples.",
+      "block_id": "finetuninglab-block-10",
       "section": "Stage 1: Supervised Fine-Tuning (SFT)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-14",
-      "quote": "* **Human-written** (highest quality): OpenAI's early InstructGPT used ~13K human-written examples.",
+      "quote": "Llama 3 used ~10M SFT examples.",
+      "block_id": "finetuninglab-block-10",
       "section": "Stage 1: Supervised Fine-Tuning (SFT)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-15",
-      "quote": "* **Distilled from stronger models** (scalable): Self-Instruct (\\cite[Wang et al., 2022]{wang2022selfinstruct}), WizardLM, Alpaca (\\cite[Taori et al., 2023]{taori2023alpaca}).",
-      "section": "Stage 1: Supervised Fine-Tuning (SFT)",
+      "quote": "For PPO-based RLHF, you need a **reward model** (RM).",
+      "block_id": "finetuninglab-block-12",
+      "section": "Stage 2: Reward Modeling (for RLHF)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-16",
-      "quote": "Use GPT-4 to generate 100K–1M examples.",
-      "section": "Stage 1: Supervised Fine-Tuning (SFT)",
+      "quote": "Collect human preferences over pairs of model outputs, then train a classifier:",
+      "block_id": "finetuninglab-block-12",
+      "section": "Stage 2: Reward Modeling (for RLHF)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-17",
-      "quote": "* **Synthetic** (cheap, controllable): Constitutional AI, Evol-Instruct, Magpie.",
-      "section": "Stage 1: Supervised Fine-Tuning (SFT)",
+      "quote": "A 2025 RM is typically a 7B–70B language model with a **single scalar output head**.",
+      "block_id": "finetuninglab-block-13",
+      "section": "Stage 2: Reward Modeling (for RLHF)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-18",
-      "quote": "A typical 2025 SFT dataset: 100K–1M examples.",
-      "section": "Stage 1: Supervised Fine-Tuning (SFT)",
+      "quote": "It is trained on **100K–1M preference pairs**.",
+      "block_id": "finetuninglab-block-13",
+      "section": "Stage 2: Reward Modeling (for RLHF)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-19",
-      "quote": "Llama 3 used ~10M SFT examples.",
-      "section": "Stage 1: Supervised Fine-Tuning (SFT)",
+      "quote": "The InstructGPT pipeline (\\cite[Ouyang et al., 2022]{ouyang2022instructgpt}):",
+      "block_id": "finetuninglab-block-15",
+      "section": "Stage 3a: RLHF with PPO",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-20",
-      "quote": "* **Data quality > quantity**: 10K carefully curated examples beat 1M noisy ones.",
-      "section": "Stage 1: Supervised Fine-Tuning (SFT)",
+      "quote": "Where $\\pi_{\\text{ref}}$ is the SFT model (frozen reference).",
+      "block_id": "finetuninglab-block-16",
+      "section": "Stage 3a: RLHF with PPO",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-21",
-      "quote": "* **Diversity matters**: instruction-following, code, math, multilingual, refusal, formatting.",
-      "section": "Stage 1: Supervised Fine-Tuning (SFT)",
+      "quote": "The KL term prevents the policy from drifting too far.",
+      "block_id": "finetuninglab-block-16",
+      "section": "Stage 3a: RLHF with PPO",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-22",
-      "quote": "* **Format**: ChatML, Alpaca, ShareGPT, pick one and stick to it.",
-      "section": "Stage 1: Supervised Fine-Tuning (SFT)",
+      "quote": "Typical $\\beta$ values: $0.05$–$0.2$.",
+      "block_id": "finetuninglab-block-16",
+      "section": "Stage 3a: RLHF with PPO",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-23",
-      "quote": "* **Multi-turn**: include conversations, not just single Q&A.",
-      "section": "Stage 1: Supervised Fine-Tuning (SFT)",
+      "quote": "The PPO loss includes three components in practice:",
+      "block_id": "finetuninglab-block-17",
+      "section": "Stage 3a: RLHF with PPO",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-24",
-      "quote": "For PPO-based RLHF, you need a **reward model** (RM).",
-      "section": "Stage 2: Reward Modeling (for RLHF)",
+      "quote": "By 2025, most frontier labs use PPO **only** for the final “alignment tax” refinement; primary alignment is now done with DPO-family methods.",
+      "block_id": "finetuninglab-block-18",
+      "section": "Stage 3a: RLHF with PPO",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-25",
-      "quote": "Collect human preferences over pairs of model outputs, then train a classifier:",
-      "section": "Stage 2: Reward Modeling (for RLHF)",
+      "quote": "DPO (\\cite[Rafailov et al., 2023]{rafailov2023dpo}) showed that the RLHF objective has a closed-form solution.",
+      "block_id": "finetuninglab-block-20",
+      "section": "Stage 3b: DPO and the Preference Optimization Family",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-26",
-      "quote": "where $y_w$ is the human-preferred (winner) response and $y_l$ the loser.",
-      "section": "Stage 2: Reward Modeling (for RLHF)",
+      "quote": "Substituting into the Bradley-Terry loss gives:",
+      "block_id": "finetuninglab-block-21",
+      "section": "Stage 3b: DPO and the Preference Optimization Family",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-27",
-      "quote": "A 2025 RM is typically a 7B–70B language model with a **single scalar output head**.",
-      "section": "Stage 2: Reward Modeling (for RLHF)",
+      "quote": "DPO matches PPO on alignment benchmarks while being 5–10× simpler to implement.",
+      "block_id": "finetuninglab-block-22",
+      "section": "Stage 3b: DPO and the Preference Optimization Family",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-28",
-      "quote": "It is trained on **100K–1M preference pairs**.",
-      "section": "Stage 2: Reward Modeling (for RLHF)",
+      "quote": "Most open-source fine-tunes (Llama-3-Instruct, Qwen-Instruct, Mistral-Instruct) use DPO or a variant.",
+      "block_id": "finetuninglab-block-22",
+      "section": "Stage 3b: DPO and the Preference Optimization Family",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-29",
-      "quote": "**Multi-dimensional rewards**: production RMs score multiple axes, helpfulness, harmlessness, factuality, style.",
-      "section": "Stage 2: Reward Modeling (for RLHF)",
+      "quote": "| Method | Key change | Pros | Cons |",
+      "block_id": "finetuninglab-block-24",
+      "section": "DPO Variants",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-30",
-      "quote": "The final reward is a weighted sum:",
-      "section": "Stage 2: Reward Modeling (for RLHF)",
+      "quote": "| **DPO** | Bradley-Terry from log-ratio | Simple, no RM | Overfits on long responses |",
+      "block_id": "finetuninglab-block-25",
+      "section": "DPO Variants",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-31",
-      "quote": "**Reward hacking** (see the Reinforcement Learning chapter ) is the constant danger: a sufficiently good optimizer will find ways to maximize reward without improving quality.",
-      "section": "Stage 2: Reward Modeling (for RLHF)",
+      "quote": "| **IPO** | $\\sigma^{-1}$ regularizer instead of $\\log \\sigma$ | Robust to deterministic preferences | Slightly weaker on standard benchmarks |",
+      "block_id": "finetuninglab-block-26",
+      "section": "DPO Variants",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-32",
-      "quote": "Defenses: KL penalty, ensemble of RMs, process supervision.",
-      "section": "Stage 2: Reward Modeling (for RLHF)",
+      "quote": "| **KTO** | Kahneman-Tversky utility; binary good/bad labels | Uses cheaper binary feedback | Less sample-efficient |",
+      "block_id": "finetuninglab-block-27",
+      "section": "DPO Variants",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-33",
-      "quote": "The InstructGPT pipeline (\\cite[Ouyang et al., 2022]{ouyang2022instructgpt}):",
-      "section": "Stage 3a: RLHF with PPO",
+      "quote": "| **ORPO** (\\cite[Zhang et al., 2024]{orpo}) | Odds-ratio penalty on SFT loss | Combines SFT + preference in one loss | Newer, less battle-tested |",
+      "block_id": "finetuninglab-block-28",
+      "section": "DPO Variants",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-34",
-      "quote": "Where $\\pi_{\\text{ref}}$ is the SFT model (frozen reference).",
-      "section": "Stage 3a: RLHF with PPO",
+      "quote": "| **SimPO** | Length-normalized log-prob, no reference | Reference-free | Quality slightly behind DPO |",
+      "block_id": "finetuninglab-block-29",
+      "section": "DPO Variants",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-35",
-      "quote": "The KL term prevents the policy from drifting too far.",
-      "section": "Stage 3a: RLHF with PPO",
+      "quote": "| **Cal-DPO** | Calibrated DPO with length normalization | Best of both worlds | More complex |",
+      "block_id": "finetuninglab-block-30",
+      "section": "DPO Variants",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-36",
-      "quote": "Typical $\\beta$ values: $0.05$–$0.2$.",
-      "section": "Stage 3a: RLHF with PPO",
+      "quote": "The choice in 2025: **DPO with length normalization** or **SimPO** for most cases.",
+      "block_id": "finetuninglab-block-31",
+      "section": "DPO Variants",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-37",
-      "quote": "The PPO loss includes three components in practice:",
-      "section": "Stage 3a: RLHF with PPO",
+      "quote": "GRPO (Group Relative Policy Optimization) (\\cite[Shao et al., 2024]{shao2024grpo}) is the breakthrough that enabled DeepSeek-R1's reasoning training (see the Reasoning chapter).",
+      "block_id": "finetuninglab-block-33",
+      "section": "Stage 4: GRPO for Reasoning",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-38",
-      "quote": "* Four models in memory simultaneously (policy, reference, reward, value).",
-      "section": "Stage 3a: RLHF with PPO",
+      "quote": "GRPO has been used to train DeepSeek-R1, Qwen-QwQ, and others.",
+      "block_id": "finetuninglab-block-34",
+      "section": "Stage 4: GRPO for Reasoning",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-39",
-      "quote": "* Unstable; requires careful tuning.",
-      "section": "Stage 3a: RLHF with PPO",
+      "quote": "It produces emergent long chain-of-thought, self-correction, and backtracking behavior.",
+      "block_id": "finetuninglab-block-34",
+      "section": "Stage 4: GRPO for Reasoning",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-40",
-      "quote": "* Memory-hungry: a 70B PPO setup needs ~16 H100s.",
-      "section": "Stage 3a: RLHF with PPO",
+      "quote": "The reward is typically a combination of:",
+      "block_id": "finetuninglab-block-36",
+      "section": "Stage 4: GRPO for Reasoning",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-41",
-      "quote": "* Slow: rollouts are sequential.",
-      "section": "Stage 3a: RLHF with PPO",
+      "quote": "The recipe above acquired a name in 2024: **reinforcement learning with verifiable rewards** (RLVR).",
+      "block_id": "finetuninglab-block-38",
+      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-42",
-      "quote": "By 2025, most frontier labs use PPO **only** for the final “alignment tax” refinement; primary alignment is now done with DPO-family methods.",
-      "section": "Stage 3a: RLHF with PPO",
+      "quote": "The term was popularized by AI2's fully open Tulu 3 post-training recipe, and it is the reward-source label for the training that produced the o1-class and R1-class reasoning models (\\cite[Lambert et al., 2024]{lambert2024tulu3}).",
+      "block_id": "finetuninglab-block-38",
+      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-43",
-      "quote": "DPO (\\cite[Rafailov et al., 2023]{rafailov2023dpo}) showed that the RLHF objective has a closed-form solution.",
-      "section": "Stage 3b: DPO and the Preference Optimization Family",
+      "quote": "The distinction is worth keeping straight:",
+      "block_id": "finetuninglab-block-39",
+      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-44",
-      "quote": "Substituting into the Bradley-Terry loss gives:",
-      "section": "Stage 3b: DPO and the Preference Optimization Family",
+      "quote": "Because a verifier cannot be flattered, only satisfied, RLVR largely sidesteps the reward hacking that plagues RLHF.",
+      "block_id": "finetuninglab-block-40",
+      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-45",
-      "quote": "No rollouts.** Just supervised learning on (prompt, winner, loser) triples.",
-      "section": "Stage 3b: DPO and the Preference Optimization Family",
+      "quote": "That is why it works so well on mathematics, code, and structured tasks — and why it does not transfer automatically to open-ended judgment, where no cheap checker exists.",
+      "block_id": "finetuninglab-block-40",
+      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-46",
-      "quote": "DPO matches PPO on alignment benchmarks while being 5–10× simpler to implement.",
-      "section": "Stage 3b: DPO and the Preference Optimization Family",
+      "quote": "Trained this way, models spontaneously lengthen their chains of thought, backtrack, and self-verify; DeepSeek's R1 paper documented these behaviours emerging without supervised reasoning demonstrations (\\cite[Guo et al., 2025]{guo2025deepseekr1}).",
+      "block_id": "finetuninglab-block-40",
+      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-47",
-      "quote": "Most open-source fine-tunes (Llama-3-Instruct, Qwen-Instruct, Mistral-Instruct) use DPO or a variant.",
-      "section": "Stage 3b: DPO and the Preference Optimization Family",
+      "quote": "RLVR has its own failure modes.",
+      "block_id": "finetuninglab-block-41",
+      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-48",
-      "quote": "| Method | Key change | Pros | Cons |",
-      "section": "DPO Variants",
+      "quote": "Verifiers can be gamed at the margins (a model that overfits a test suite rather than solving the problem), long chains raise serving costs, and whether the verbalized reasoning faithfully reflects the computation is an open question.",
+      "block_id": "finetuninglab-block-41",
+      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-49",
-      "quote": "| **DPO** | Bradley-Terry from log-ratio | Simple, no RM | Overfits on long responses |",
-      "section": "DPO Variants",
+      "quote": "It **composes** with SFT and preference stages rather than replacing them: the modern stack is usually SFT → preference optimization → RLVR.",
+      "block_id": "finetuninglab-block-41",
+      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-50",
-      "quote": "| **IPO** | $\\sigma^{-1}$ regularizer instead of $\\log \\sigma$ | Robust to deterministic preferences | Slightly weaker on standard benchmarks |",
-      "section": "DPO Variants",
+      "quote": "Post-training is also where **knowledge distillation** enters.",
+      "block_id": "finetuninglab-block-43",
+      "section": "Distillation: What Transfers, and What Doesn't",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-51",
-      "quote": "| **KTO** | Kahneman-Tversky utility; binary good/bad labels | Uses cheaper binary feedback | Less sample-efficient |",
-      "section": "DPO Variants",
+      "quote": "The classical recipe trains a small student on the *soft* output distribution of a large teacher, so that the teacher's relative confidences — its “dark knowledge” about which wrong answers are nearly right — become supervision (\\cite[Hinton et al., 2015]{hinton2015distilling}).",
+      "block_id": "finetuninglab-block-43",
+      "section": "Distillation: What Transfers, and What Doesn't",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-52",
-      "quote": "| **ORPO** (\\cite[Zhang et al., 2024]{orpo}) | Odds-ratio penalty on SFT loss | Combines SFT + preference in one loss | Newer, less battle-tested |",
-      "section": "DPO Variants",
+      "quote": "At language-model scale the target broadened from logits to text:",
+      "block_id": "finetuninglab-block-43",
+      "section": "Distillation: What Transfers, and What Doesn't",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-53",
-      "quote": "| **SimPO** | Length-normalized log-prob, no reference | Reference-free | Quality slightly behind DPO |",
-      "section": "DPO Variants",
+      "quote": "Imitation has a documented ceiling.",
+      "block_id": "finetuninglab-block-44",
+      "section": "Distillation: What Transfers, and What Doesn't",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-54",
-      "quote": "| **Cal-DPO** | Calibrated DPO with length normalization | Best of both worlds | More complex |",
-      "section": "DPO Variants",
+      "quote": "Gudibande et al. trained models on outputs of proprietary systems and found that they learned to mimic **style and persona** while their factual and reasoning performance lagged behind the teacher.",
+      "block_id": "finetuninglab-block-44",
+      "section": "Distillation: What Transfers, and What Doesn't",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-55",
-      "quote": "The choice in 2025: **DPO with length normalization** or **SimPO** for most cases.",
-      "section": "DPO Variants",
+      "quote": "Their conclusion is the working caveat for every synthetic-data pipeline: distillation transfers what the teacher can *demonstrate*, not necessarily what the teacher *knows* (\\cite[Gudibande et al., 2023]{gudibande2023falsepromise}).",
+      "block_id": "finetuninglab-block-44",
+      "section": "Distillation: What Transfers, and What Doesn't",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-56",
-      "quote": "GRPO (Group Relative Policy Optimization) (\\cite[Shao et al., 2024]{shao2024grpo}) is the breakthrough that enabled DeepSeek-R1's reasoning training (see the Reasoning chapter).",
-      "section": "Stage 4: GRPO for Reasoning",
+      "quote": "The analytic extreme skips the student altogether.",
+      "block_id": "finetuninglab-block-45",
+      "section": "Distillation: What Transfers, and What Doesn't",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-57",
-      "quote": "* **Group sampling**: for each prompt, sample $G$ candidate responses from the current policy.",
-      "section": "Stage 4: GRPO for Reasoning",
+      "quote": "**Rationale distillation** extracts a teacher's reasoning; **mechanistic interpretability** tries to read the algorithm out of the weights directly — induction heads, the modular-addition circuit in a grokked transformer, sparse-autoencoder feature dictionaries.",
+      "block_id": "finetuninglab-block-45",
+      "section": "Distillation: What Transfers, and What Doesn't",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-58",
-      "quote": "* **Verifiable reward**: for math, the reward is binary, the answer is correct or not.",
-      "section": "Stage 4: GRPO for Reasoning",
+      "quote": "Where output distillation compresses *behaviour*, circuit-level work compresses *mechanism*, and its results feed back into evaluation, model editing, and safety.",
+      "block_id": "finetuninglab-block-45",
+      "section": "Distillation: What Transfers, and What Doesn't",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-59",
-      "quote": "For code, it's test pass/fail.",
-      "section": "Stage 4: GRPO for Reasoning",
+      "quote": "Distillation is also the centre of a persistent intellectual-property fight: most closed-model terms prohibit training competitors on their outputs, and the open web is now saturated with model-generated text, making the provenance of “human” data increasingly hard to establish.",
+      "block_id": "finetuninglab-block-45",
+      "section": "Distillation: What Transfers, and What Doesn't",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-60",
-      "quote": "* **Group-relative advantage**: $A_i = (r_i - \\mu_G) / \\sigma_G$ where $\\mu_G, \\sigma_G$ are the group's mean and std.",
-      "section": "Stage 4: GRPO for Reasoning",
+      "quote": "A 2024 frontier-lab pattern:",
+      "block_id": "finetuninglab-block-47",
+      "section": "Stage 5: Online RL and Iterative DPO",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-61",
-      "quote": "* **No critic**: the group statistics serve as the baseline.",
-      "section": "Stage 4: GRPO for Reasoning",
+      "quote": "**Sample** multiple candidate responses for each prompt using the current policy.",
+      "block_id": "finetuninglab-block-48",
+      "section": "Stage 5: Online RL and Iterative DPO",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-62",
-      "quote": "GRPO has been used to train DeepSeek-R1, Qwen-QwQ, and others.",
-      "section": "Stage 4: GRPO for Reasoning",
+      "quote": "**Judge** using a strong model (or LLM-as-judge), pick winner and loser.",
+      "block_id": "finetuninglab-block-49",
+      "section": "Stage 5: Online RL and Iterative DPO",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-63",
-      "quote": "It produces emergent long chain-of-thought, self-correction, and backtracking behavior.",
-      "section": "Stage 4: GRPO for Reasoning",
+      "quote": "**Train** the policy with DPO on these on-policy preferences.",
+      "block_id": "finetuninglab-block-50",
+      "section": "Stage 5: Online RL and Iterative DPO",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-64",
-      "quote": "The reward is typically a combination of:",
-      "section": "Stage 4: GRPO for Reasoning",
+      "quote": "**Repeat** with the updated policy.",
+      "block_id": "finetuninglab-block-51",
+      "section": "Stage 5: Online RL and Iterative DPO",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-65",
-      "quote": "* **Correctness** (verifier-based): 1.0 if correct, 0 otherwise.",
-      "section": "Stage 4: GRPO for Reasoning",
+      "quote": "This iterative DPO produces stronger alignment than offline DPO (where preferences are static).",
+      "block_id": "finetuninglab-block-52",
+      "section": "Stage 5: Online RL and Iterative DPO",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-66",
-      "quote": "* **Format**: bonus for proper answer formatting.",
-      "section": "Stage 4: GRPO for Reasoning",
+      "quote": "It is the standard for state-of-the-art open-source models.",
+      "block_id": "finetuninglab-block-52",
+      "section": "Stage 5: Online RL and Iterative DPO",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-67",
-      "quote": "* **Length penalty**: discourage very long or very short responses.",
-      "section": "Stage 4: GRPO for Reasoning",
+      "quote": "Full fine-tuning of a 70B model requires ~1 TB of GPU memory (params + grads + optimizer).",
+      "block_id": "finetuninglab-block-54",
+      "section": "LoRA and Parameter-Efficient Fine-Tuning",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-68",
-      "quote": "* **Language consistency**: stay in the same language as the prompt.",
-      "section": "Stage 4: GRPO for Reasoning",
+      "quote": "**Parameter-Efficient Fine-Tuning (PEFT)** methods train only a tiny fraction of parameters:",
+      "block_id": "finetuninglab-block-54",
+      "section": "LoRA and Parameter-Efficient Fine-Tuning",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-69",
-      "quote": "The recipe above acquired a name in 2024: **reinforcement learning with verifiable rewards** (RLVR).",
-      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
+      "quote": "Combines 4-bit quantization of the base model with LoRA adapters in fp16 (\\cite[Dettmers et al., 2023]{dettmers2023qlora}).",
+      "block_id": "finetuninglab-block-57",
+      "section": "QLoRA",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-70",
-      "quote": "The term was popularized by AI2's fully open Tulu 3 post-training recipe, and it is the reward-source label for the training that produced the o1-class and R1-class reasoning models (\\cite[Lambert et al., 2024]{lambert2024tulu3}).",
-      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
+      "quote": "The paper's headline result is a 65B QLoRA fine-tune on a single 48 GB GPU; 70B is an extrapolation, not a demonstrated headline result.",
+      "block_id": "finetuninglab-block-57",
+      "section": "QLoRA",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-71",
-      "quote": "The distinction is worth keeping straight:",
-      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
+      "quote": "For a 7B–13B model with QLoRA on a single consumer GPU (24 GB):",
+      "block_id": "finetuninglab-block-60",
+      "section": "Practical Fine-Tuning Recipe",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-72",
-      "quote": "* **GRPO** is an *optimizer* — a way to estimate advantages from a group of sampled answers without a critic.",
-      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
+      "quote": "Training time: ~2-6 hours for a 7B model with QLoRA on ~10K examples.",
+      "block_id": "finetuninglab-block-63",
+      "section": "Practical Fine-Tuning Recipe",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-73",
-      "quote": "* **RLVR** is a *reward source* — the signal comes from a programmatic verifier (a math answer checker, a unit-test suite, a constraint validator) rather than a learned model of human preference.",
-      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
+      "quote": "Cost: on the order of $4-30 of compute on a rented H100 (~$2-5 per GPU-hour).",
+      "block_id": "finetuninglab-block-63",
+      "section": "Practical Fine-Tuning Recipe",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-74",
-      "quote": "Because a verifier cannot be flattered, only satisfied, RLVR largely sidesteps the reward hacking that plagues RLHF.",
-      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
+      "quote": "Fine-tuning is the right tool when:",
+      "block_id": "finetuninglab-block-65",
+      "section": "When to Fine-Tune (and When Not To)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-75",
-      "quote": "That is why it works so well on mathematics, code, and structured tasks — and why it does not transfer automatically to open-ended judgment, where no cheap checker exists.",
-      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
+      "quote": "Fine-tuning is the wrong tool when:",
+      "block_id": "finetuninglab-block-66",
+      "section": "When to Fine-Tune (and When Not To)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-76",
-      "quote": "Trained this way, models spontaneously lengthen their chains of thought, backtrack, and self-verify; DeepSeek's R1 paper documented these behaviours emerging without supervised reasoning demonstrations (\\cite[Guo et al., 2025]{guo2025deepseekr1}).",
-      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
+      "quote": "Rule of thumb: **prompt first, RAG second, fine-tune third**.",
+      "block_id": "finetuninglab-block-67",
+      "section": "When to Fine-Tune (and When Not To)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-77",
-      "quote": "RLVR has its own failure modes.",
-      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
+      "quote": "Fine-tuning is a significant engineering investment; do it only after the lower-cost options are exhausted.",
+      "block_id": "finetuninglab-block-67",
+      "section": "When to Fine-Tune (and When Not To)",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-78",
-      "quote": "Verifiers can be gamed at the margins (a model that overfits a test suite rather than solving the problem), long chains raise serving costs, and whether the verbalized reasoning faithfully reflects the computation is an open question.",
-      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
+      "quote": "For models that will be deployed widely:",
+      "block_id": "finetuninglab-block-69",
+      "section": "Safety-Critical Post-Training",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-79",
-      "quote": "It **composes** with SFT and preference stages rather than replacing them: the modern stack is usually SFT → preference optimization → RLVR.",
-      "section": "RLVR: The Name for the Verifiable-Reward Recipe",
+      "quote": "**Red-teaming**: hundreds of adversarial users try to elicit bad behavior.",
+      "block_id": "finetuninglab-block-70",
+      "section": "Safety-Critical Post-Training",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-80",
-      "quote": "Post-training is also where **knowledge distillation** enters.",
-      "section": "Distillation: What Transfers, and What Doesn't",
+      "quote": "Their discoveries go into training.",
+      "block_id": "finetuninglab-block-70",
+      "section": "Safety-Critical Post-Training",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-81",
-      "quote": "The classical recipe trains a small student on the *soft* output distribution of a large teacher, so that the teacher's relative confidences — its “dark knowledge” about which wrong answers are nearly right — become supervision (\\cite[Hinton et al., 2015]{hinton2015distilling}).",
-      "section": "Distillation: What Transfers, and What Doesn't",
+      "quote": "**Refusal training**: explicit examples of “this prompt, refuse this way” pairs.",
+      "block_id": "finetuninglab-block-71",
+      "section": "Safety-Critical Post-Training",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-82",
-      "quote": "At language-model scale the target broadened from logits to text:",
-      "section": "Distillation: What Transfers, and What Doesn't",
+      "quote": "**Jailbreak resistance**: train against known jailbreak patterns (DAN, roleplay exploits, encoding tricks).",
+      "block_id": "finetuninglab-block-72",
+      "section": "Safety-Critical Post-Training",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-83",
-      "quote": "* **Sequence-level distillation** trains the student on teacher-generated text outright.",
-      "section": "Distillation: What Transfers, and What Doesn't",
+      "quote": "**Constitutional AI**: self-critique against written principles.",
+      "block_id": "finetuninglab-block-73",
+      "section": "Safety-Critical Post-Training",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-84",
-      "quote": "* **Rationale distillation** trains on the teacher's *reasoning traces*, not just its answers; a small model can then beat its teacher's few-shot performance on some tasks (\\cite[Hsieh et al., 2023]{hsieh2023distilling}).",
-      "section": "Distillation: What Transfers, and What Doesn't",
+      "quote": "**Debate / scalable oversight**: a stronger model critiques a weaker one's outputs.",
+      "block_id": "finetuninglab-block-74",
+      "section": "Safety-Critical Post-Training",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-85",
-      "quote": "* **Synthetic instruction data** (\\cite[Wang et al., 2022]{wang2022selfinstruct}; \\cite[Taori et al., 2023]{taori2023alpaca}; and most modern SFT mixtures) is distillation in all but name.",
-      "section": "Distillation: What Transfers, and What Doesn't",
+      "quote": "**Robustness evaluation**: test against held-out adversarial prompts monthly.",
+      "block_id": "finetuninglab-block-75",
+      "section": "Safety-Critical Post-Training",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-86",
-      "quote": "Imitation has a documented ceiling.",
-      "section": "Distillation: What Transfers, and What Doesn't",
+      "quote": "A frontier model in 2025 typically has **multiple post-training stages** with different objectives: helpful SFT, harmless SFT, helpful DPO, harmless DPO, reasoning RL, and final safety refinement.",
+      "block_id": "finetuninglab-block-76",
+      "section": "Safety-Critical Post-Training",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-87",
-      "quote": "Gudibande et al. trained models on outputs of proprietary systems and found that they learned to mimic **style and persona** while their factual and reasoning performance lagged behind the teacher.",
-      "section": "Distillation: What Transfers, and What Doesn't",
+      "quote": "The state-of-the-art pipeline for a 2025 frontier model:",
+      "block_id": "finetuninglab-block-78",
+      "section": "The Modern Frontier Pipeline",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-88",
-      "quote": "Their conclusion is the working caveat for every synthetic-data pipeline: distillation transfers what the teacher can *demonstrate*, not necessarily what the teacher *knows* (\\cite[Gudibande et al., 2023]{gudibande2023falsepromise}).",
-      "section": "Distillation: What Transfers, and What Doesn't",
+      "quote": "Total cost of post-training: ~$5–30M for a frontier model (10–30% of training cost).",
+      "block_id": "finetuninglab-block-79",
+      "section": "The Modern Frontier Pipeline",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-89",
-      "quote": "The analytic extreme skips the student altogether.",
-      "section": "Distillation: What Transfers, and What Doesn't",
+      "quote": "Produces most of the perceived improvement.",
+      "block_id": "finetuninglab-block-79",
+      "section": "The Modern Frontier Pipeline",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-90",
-      "quote": "**Rationale distillation** extracts a teacher's reasoning; **mechanistic interpretability** tries to read the algorithm out of the weights directly — induction heads, the modular-addition circuit in a grokked transformer, sparse-autoencoder feature dictionaries.",
-      "section": "Distillation: What Transfers, and What Doesn't",
+      "quote": "For practitioners: skip stages 4–6 unless you're training a frontier model.",
+      "block_id": "finetuninglab-block-80",
+      "section": "The Modern Frontier Pipeline",
       "kind": "statement"
     },
     {
       "id": "finetuninglab-stmt-91",
-      "quote": "Where output distillation compresses *behaviour*, circuit-level work compresses *mechanism*, and its results feed back into evaluation, model editing, and safety.",
-      "section": "Distillation: What Transfers, and What Doesn't",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-92",
-      "quote": "Distillation is also the centre of a persistent intellectual-property fight: most closed-model terms prohibit training competitors on their outputs, and the open web is now saturated with model-generated text, making the provenance of “human” data increasingly hard to establish.",
-      "section": "Distillation: What Transfers, and What Doesn't",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-93",
-      "quote": "A 2024 frontier-lab pattern:",
-      "section": "Stage 5: Online RL and Iterative DPO",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-94",
-      "quote": "**Sample** multiple candidate responses for each prompt using the current policy.",
-      "section": "Stage 5: Online RL and Iterative DPO",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-95",
-      "quote": "**Judge** using a strong model (or LLM-as-judge), pick winner and loser.",
-      "section": "Stage 5: Online RL and Iterative DPO",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-96",
-      "quote": "**Train** the policy with DPO on these on-policy preferences.",
-      "section": "Stage 5: Online RL and Iterative DPO",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-97",
-      "quote": "**Repeat** with the updated policy.",
-      "section": "Stage 5: Online RL and Iterative DPO",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-98",
-      "quote": "This iterative DPO produces stronger alignment than offline DPO (where preferences are static).",
-      "section": "Stage 5: Online RL and Iterative DPO",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-99",
-      "quote": "It is the standard for state-of-the-art open-source models.",
-      "section": "Stage 5: Online RL and Iterative DPO",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-100",
-      "quote": "Full fine-tuning of a 70B model requires ~1 TB of GPU memory (params + grads + optimizer).",
-      "section": "LoRA and Parameter-Efficient Fine-Tuning",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-101",
-      "quote": "**Parameter-Efficient Fine-Tuning (PEFT)** methods train only a tiny fraction of parameters:",
-      "section": "LoRA and Parameter-Efficient Fine-Tuning",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-102",
-      "quote": "Freeze the original weights $W \\in \\mathbb{R}^{d \\times k}$ and train low-rank updates $\\Delta W = BA$ where $B \\in \\mathbb{R}^{d \\times r}$, $A \\in \\mathbb{R}^{r \\times k}$, $r \\ll \\min(d, k)$ (\\cite[Hu et al., 2021]{hu2021lora}):",
-      "section": "LoRA (Low-Rank Adaptation)",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-103",
-      "quote": "With $r = 16$ on a 4096×4096 weight matrix, LoRA adds ~131K parameters (0.78% of the original).",
-      "section": "LoRA (Low-Rank Adaptation)",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-104",
-      "quote": "Combines 4-bit quantization of the base model with LoRA adapters in fp16 (\\cite[Dettmers et al., 2023]{dettmers2023qlora}).",
-      "section": "QLoRA",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-105",
-      "quote": "The paper's headline result is a 65B QLoRA fine-tune on a single 48 GB GPU; 70B is an extrapolation, not a demonstrated headline result.",
-      "section": "QLoRA",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-106",
-      "quote": "* **Adapters** (\\cite[Houlsby et al., 2019]{houlsby2019adapters}): small bottleneck layers inserted between Transformer blocks.",
-      "section": "Other PEFT Methods",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-107",
-      "quote": "* **Prompt tuning** (\\cite[Lester et al., 2021]{lester2021prompttuning}): learnable soft prompts prepended to inputs.",
-      "section": "Other PEFT Methods",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-108",
-      "quote": "* **IA³** (\\cite[Liu et al., 2022]{liu2022ia3}): learnable scaling vectors on attention and FFN.",
-      "section": "Other PEFT Methods",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-109",
-      "quote": "* **DoRA** (\\cite[Liu et al., 2024]{liu2024dora}): decomposed magnitude and direction updates, often outperforms LoRA at the same rank.",
-      "section": "Other PEFT Methods",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-110",
-      "quote": "For a 7B–13B model with QLoRA on a single consumer GPU (24 GB):",
-      "section": "Practical Fine-Tuning Recipe",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-111",
-      "quote": "Training time: ~2-6 hours for a 7B model with QLoRA on ~10K examples.",
-      "section": "Practical Fine-Tuning Recipe",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-112",
-      "quote": "Cost: on the order of $4-30 of compute on a rented H100 (~$2-5 per GPU-hour).",
-      "section": "Practical Fine-Tuning Recipe",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-113",
-      "quote": "Fine-tuning is the right tool when:",
-      "section": "When to Fine-Tune (and When Not To)",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-114",
-      "quote": "* You need a **specific style, tone, or format** consistently across responses.",
-      "section": "When to Fine-Tune (and When Not To)",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-115",
-      "quote": "* The model's base behavior is **inappropriate** for your domain (e.g., medical).",
-      "section": "When to Fine-Tune (and When Not To)",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-116",
-      "quote": "* You have **proprietary data** that the model should learn from.",
-      "section": "When to Fine-Tune (and When Not To)",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-117",
-      "quote": "* **Latency** matters and you want a smaller fine-tuned model that beats a larger prompted one.",
-      "section": "When to Fine-Tune (and When Not To)",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-118",
-      "quote": "Fine-tuning is the wrong tool when:",
-      "section": "When to Fine-Tune (and When Not To)",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-119",
-      "quote": "* You need **real-time knowledge**, use RAG instead.",
-      "section": "When to Fine-Tune (and When Not To)",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-120",
-      "quote": "* The behavior you want is **achievable via prompting**, much cheaper.",
-      "section": "When to Fine-Tune (and When Not To)",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-121",
-      "quote": "* You don't have **at least 1K high-quality examples**, quality data is the bottleneck.",
-      "section": "When to Fine-Tune (and When Not To)",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-122",
-      "quote": "* The model needs to **generalize** to situations not in your data, prompts generalize better.",
-      "section": "When to Fine-Tune (and When Not To)",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-123",
-      "quote": "Rule of thumb: **prompt first, RAG second, fine-tune third**.",
-      "section": "When to Fine-Tune (and When Not To)",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-124",
-      "quote": "Fine-tuning is a significant engineering investment; do it only after the lower-cost options are exhausted.",
-      "section": "When to Fine-Tune (and When Not To)",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-125",
-      "quote": "For models that will be deployed widely:",
-      "section": "Safety-Critical Post-Training",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-126",
-      "quote": "**Red-teaming**: hundreds of adversarial users try to elicit bad behavior.",
-      "section": "Safety-Critical Post-Training",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-127",
-      "quote": "Their discoveries go into training.",
-      "section": "Safety-Critical Post-Training",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-128",
-      "quote": "**Refusal training**: explicit examples of “this prompt, refuse this way” pairs.",
-      "section": "Safety-Critical Post-Training",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-129",
-      "quote": "**Jailbreak resistance**: train against known jailbreak patterns (DAN, roleplay exploits, encoding tricks).",
-      "section": "Safety-Critical Post-Training",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-130",
-      "quote": "**Constitutional AI**: self-critique against written principles.",
-      "section": "Safety-Critical Post-Training",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-131",
-      "quote": "**Debate / scalable oversight**: a stronger model critiques a weaker one's outputs.",
-      "section": "Safety-Critical Post-Training",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-132",
-      "quote": "**Robustness evaluation**: test against held-out adversarial prompts monthly.",
-      "section": "Safety-Critical Post-Training",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-133",
-      "quote": "A frontier model in 2025 typically has **multiple post-training stages** with different objectives: helpful SFT, harmless SFT, helpful DPO, harmless DPO, reasoning RL, and final safety refinement.",
-      "section": "Safety-Critical Post-Training",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-134",
-      "quote": "The state-of-the-art pipeline for a 2025 frontier model:",
-      "section": "The Modern Frontier Pipeline",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-135",
-      "quote": "Total cost of post-training: ~$5–30M for a frontier model (10–30% of training cost).",
-      "section": "The Modern Frontier Pipeline",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-136",
-      "quote": "Produces most of the perceived improvement.",
-      "section": "The Modern Frontier Pipeline",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-137",
-      "quote": "For practitioners: skip stages 4–6 unless you're training a frontier model.",
-      "section": "The Modern Frontier Pipeline",
-      "kind": "statement"
-    },
-    {
-      "id": "finetuninglab-stmt-138",
       "quote": "SFT + DPO is enough for most applications.",
+      "block_id": "finetuninglab-block-80",
       "section": "The Modern Frontier Pipeline",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "finetuninglab-block-1",
+      "quote": "A pretrained LLM is a “loud internet simulator”: it produces plausible text but doesn't follow instructions, refuses harmful requests, or engage in dialogue. The path from raw internet text to a useful assistant runs through a series of post-training stages. This chapter walks through the modern pipeline: **SFT → DPO/KTO/GRPO → RLHF (PPO) refinement → reasoning RL**, with the math behind each.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "finetuninglab-block-2",
+      "quote": "The trend in 2024–2025: most alignment work has moved away from RLHF toward **DPO-family** methods that are simpler, more stable, and don't require a separate reward model.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "finetuninglab-block-3",
+      "quote": "Stage 0: Pretraining (recap)",
+      "kind": "heading",
+      "section": "Stage 0: Pretraining (recap)"
+    },
+    {
+      "id": "finetuninglab-block-4",
+      "quote": "The base model is trained on the next-token-prediction objective (see the Intuition chapter ) over ~10T tokens of web text. The result is a model that completes sentences in the style of its training data, but does not behave as an assistant.",
+      "kind": "paragraph",
+      "section": "Stage 0: Pretraining (recap)"
+    },
+    {
+      "id": "finetuninglab-block-5",
+      "quote": "Stage 1: **Supervised Fine-Tuning (SFT)** teaches it to follow instructions. Stage 2: **Preference optimization** aligns its outputs with human values. Stage 3: **Reasoning RL** (optional) teaches it to think longer on hard problems.",
+      "kind": "paragraph",
+      "section": "Stage 0: Pretraining (recap)"
+    },
+    {
+      "id": "finetuninglab-block-6",
+      "quote": "The post-training **compute** is typically **1–10% of pretraining**; once data and human labour are included, the total budget is often closer to **10–30%** — and it produces most of the perceived improvement in helpfulness.",
+      "kind": "paragraph",
+      "section": "Stage 0: Pretraining (recap)"
+    },
+    {
+      "id": "finetuninglab-block-7",
+      "quote": "Stage 1: Supervised Fine-Tuning (SFT)",
+      "kind": "heading",
+      "section": "Stage 1: Supervised Fine-Tuning (SFT)"
+    },
+    {
+      "id": "finetuninglab-block-8",
+      "quote": "SFT trains the base model on **instruction–response pairs**:",
+      "kind": "paragraph",
+      "section": "Stage 1: Supervised Fine-Tuning (SFT)"
+    },
+    {
+      "id": "finetuninglab-block-9",
+      "quote": "The loss is the standard cross-entropy on the response tokens (the instruction tokens contribute zero loss):",
+      "kind": "paragraph",
+      "section": "Stage 1: Supervised Fine-Tuning (SFT)"
+    },
+    {
+      "id": "finetuninglab-block-10",
+      "quote": "A typical 2025 SFT dataset: 100K–1M examples. Llama 3 used ~10M SFT examples.",
+      "kind": "paragraph",
+      "section": "Stage 1: Supervised Fine-Tuning (SFT)"
+    },
+    {
+      "id": "finetuninglab-block-11",
+      "quote": "Stage 2: Reward Modeling (for RLHF)",
+      "kind": "heading",
+      "section": "Stage 2: Reward Modeling (for RLHF)"
+    },
+    {
+      "id": "finetuninglab-block-12",
+      "quote": "For PPO-based RLHF, you need a **reward model** (RM). Collect human preferences over pairs of model outputs, then train a classifier:",
+      "kind": "paragraph",
+      "section": "Stage 2: Reward Modeling (for RLHF)"
+    },
+    {
+      "id": "finetuninglab-block-13",
+      "quote": "A 2025 RM is typically a 7B–70B language model with a **single scalar output head**. It is trained on **100K–1M preference pairs**.",
+      "kind": "paragraph",
+      "section": "Stage 2: Reward Modeling (for RLHF)"
+    },
+    {
+      "id": "finetuninglab-block-14",
+      "quote": "Stage 3a: RLHF with PPO",
+      "kind": "heading",
+      "section": "Stage 3a: RLHF with PPO"
+    },
+    {
+      "id": "finetuninglab-block-15",
+      "quote": "The InstructGPT pipeline (\\cite[Ouyang et al., 2022]{ouyang2022instructgpt}):",
+      "kind": "paragraph",
+      "section": "Stage 3a: RLHF with PPO"
+    },
+    {
+      "id": "finetuninglab-block-16",
+      "quote": "Where $\\pi_{\\text{ref}}$ is the SFT model (frozen reference). The KL term prevents the policy from drifting too far. Typical $\\beta$ values: $0.05$–$0.2$.",
+      "kind": "paragraph",
+      "section": "Stage 3a: RLHF with PPO"
+    },
+    {
+      "id": "finetuninglab-block-17",
+      "quote": "The PPO loss includes three components in practice:",
+      "kind": "paragraph",
+      "section": "Stage 3a: RLHF with PPO"
+    },
+    {
+      "id": "finetuninglab-block-18",
+      "quote": "By 2025, most frontier labs use PPO **only** for the final “alignment tax” refinement; primary alignment is now done with DPO-family methods.",
+      "kind": "paragraph",
+      "section": "Stage 3a: RLHF with PPO"
+    },
+    {
+      "id": "finetuninglab-block-19",
+      "quote": "Stage 3b: DPO and the Preference Optimization Family",
+      "kind": "heading",
+      "section": "Stage 3b: DPO and the Preference Optimization Family"
+    },
+    {
+      "id": "finetuninglab-block-20",
+      "quote": "DPO (\\cite[Rafailov et al., 2023]{rafailov2023dpo}) showed that the RLHF objective has a closed-form solution. The implicit reward is:",
+      "kind": "paragraph",
+      "section": "Stage 3b: DPO and the Preference Optimization Family"
+    },
+    {
+      "id": "finetuninglab-block-21",
+      "quote": "Substituting into the Bradley-Terry loss gives:",
+      "kind": "paragraph",
+      "section": "Stage 3b: DPO and the Preference Optimization Family"
+    },
+    {
+      "id": "finetuninglab-block-22",
+      "quote": "DPO matches PPO on alignment benchmarks while being 5–10× simpler to implement. Most open-source fine-tunes (Llama-3-Instruct, Qwen-Instruct, Mistral-Instruct) use DPO or a variant.",
+      "kind": "paragraph",
+      "section": "Stage 3b: DPO and the Preference Optimization Family"
+    },
+    {
+      "id": "finetuninglab-block-23",
+      "quote": "DPO Variants",
+      "kind": "heading",
+      "section": "DPO Variants"
+    },
+    {
+      "id": "finetuninglab-block-24",
+      "quote": "| Method | Key change | Pros | Cons |",
+      "kind": "table-row",
+      "section": "DPO Variants"
+    },
+    {
+      "id": "finetuninglab-block-25",
+      "quote": "| **DPO** | Bradley-Terry from log-ratio | Simple, no RM | Overfits on long responses |",
+      "kind": "table-row",
+      "section": "DPO Variants"
+    },
+    {
+      "id": "finetuninglab-block-26",
+      "quote": "| **IPO** | $\\sigma^{-1}$ regularizer instead of $\\log \\sigma$ | Robust to deterministic preferences | Slightly weaker on standard benchmarks |",
+      "kind": "table-row",
+      "section": "DPO Variants"
+    },
+    {
+      "id": "finetuninglab-block-27",
+      "quote": "| **KTO** | Kahneman-Tversky utility; binary good/bad labels | Uses cheaper binary feedback | Less sample-efficient |",
+      "kind": "table-row",
+      "section": "DPO Variants"
+    },
+    {
+      "id": "finetuninglab-block-28",
+      "quote": "| **ORPO** (\\cite[Zhang et al., 2024]{orpo}) | Odds-ratio penalty on SFT loss | Combines SFT + preference in one loss | Newer, less battle-tested |",
+      "kind": "table-row",
+      "section": "DPO Variants"
+    },
+    {
+      "id": "finetuninglab-block-29",
+      "quote": "| **SimPO** | Length-normalized log-prob, no reference | Reference-free | Quality slightly behind DPO |",
+      "kind": "table-row",
+      "section": "DPO Variants"
+    },
+    {
+      "id": "finetuninglab-block-30",
+      "quote": "| **Cal-DPO** | Calibrated DPO with length normalization | Best of both worlds | More complex |",
+      "kind": "table-row",
+      "section": "DPO Variants"
+    },
+    {
+      "id": "finetuninglab-block-31",
+      "quote": "The choice in 2025: **DPO with length normalization** or **SimPO** for most cases.",
+      "kind": "paragraph",
+      "section": "DPO Variants"
+    },
+    {
+      "id": "finetuninglab-block-32",
+      "quote": "Stage 4: GRPO for Reasoning",
+      "kind": "heading",
+      "section": "Stage 4: GRPO for Reasoning"
+    },
+    {
+      "id": "finetuninglab-block-33",
+      "quote": "GRPO (Group Relative Policy Optimization) (\\cite[Shao et al., 2024]{shao2024grpo}) is the breakthrough that enabled DeepSeek-R1's reasoning training (see the Reasoning chapter). It combines:",
+      "kind": "paragraph",
+      "section": "Stage 4: GRPO for Reasoning"
+    },
+    {
+      "id": "finetuninglab-block-34",
+      "quote": "GRPO has been used to train DeepSeek-R1, Qwen-QwQ, and others. It produces emergent long chain-of-thought, self-correction, and backtracking behavior.",
+      "kind": "paragraph",
+      "section": "Stage 4: GRPO for Reasoning"
+    },
+    {
+      "id": "finetuninglab-block-35",
+      "quote": "The training loop:",
+      "kind": "paragraph",
+      "section": "Stage 4: GRPO for Reasoning"
+    },
+    {
+      "id": "finetuninglab-block-36",
+      "quote": "The reward is typically a combination of:",
+      "kind": "paragraph",
+      "section": "Stage 4: GRPO for Reasoning"
+    },
+    {
+      "id": "finetuninglab-block-37",
+      "quote": "RLVR: The Name for the Verifiable-Reward Recipe",
+      "kind": "heading",
+      "section": "RLVR: The Name for the Verifiable-Reward Recipe"
+    },
+    {
+      "id": "finetuninglab-block-38",
+      "quote": "The recipe above acquired a name in 2024: **reinforcement learning with verifiable rewards** (RLVR). The term was popularized by AI2's fully open Tulu 3 post-training recipe, and it is the reward-source label for the training that produced the o1-class and R1-class reasoning models (\\cite[Lambert et al., 2024]{lambert2024tulu3}).",
+      "kind": "paragraph",
+      "section": "RLVR: The Name for the Verifiable-Reward Recipe"
+    },
+    {
+      "id": "finetuninglab-block-39",
+      "quote": "The distinction is worth keeping straight:",
+      "kind": "paragraph",
+      "section": "RLVR: The Name for the Verifiable-Reward Recipe"
+    },
+    {
+      "id": "finetuninglab-block-40",
+      "quote": "Because a verifier cannot be flattered, only satisfied, RLVR largely sidesteps the reward hacking that plagues RLHF. That is why it works so well on mathematics, code, and structured tasks — and why it does not transfer automatically to open-ended judgment, where no cheap checker exists. Trained this way, models spontaneously lengthen their chains of thought, backtrack, and self-verify; DeepSeek's R1 paper documented these behaviours emerging without supervised reasoning demonstrations (\\cite[Guo et al., 2025]{guo2025deepseekr1}).",
+      "kind": "paragraph",
+      "section": "RLVR: The Name for the Verifiable-Reward Recipe"
+    },
+    {
+      "id": "finetuninglab-block-41",
+      "quote": "RLVR has its own failure modes. Verifiers can be gamed at the margins (a model that overfits a test suite rather than solving the problem), long chains raise serving costs, and whether the verbalized reasoning faithfully reflects the computation is an open question. It **composes** with SFT and preference stages rather than replacing them: the modern stack is usually SFT → preference optimization → RLVR.",
+      "kind": "paragraph",
+      "section": "RLVR: The Name for the Verifiable-Reward Recipe"
+    },
+    {
+      "id": "finetuninglab-block-42",
+      "quote": "Distillation: What Transfers, and What Doesn't",
+      "kind": "heading",
+      "section": "Distillation: What Transfers, and What Doesn't"
+    },
+    {
+      "id": "finetuninglab-block-43",
+      "quote": "Post-training is also where **knowledge distillation** enters. The classical recipe trains a small student on the *soft* output distribution of a large teacher, so that the teacher's relative confidences — its “dark knowledge” about which wrong answers are nearly right — become supervision (\\cite[Hinton et al., 2015]{hinton2015distilling}). At language-model scale the target broadened from logits to text:",
+      "kind": "paragraph",
+      "section": "Distillation: What Transfers, and What Doesn't"
+    },
+    {
+      "id": "finetuninglab-block-44",
+      "quote": "Imitation has a documented ceiling. Gudibande et al. trained models on outputs of proprietary systems and found that they learned to mimic **style and persona** while their factual and reasoning performance lagged behind the teacher. Their conclusion is the working caveat for every synthetic-data pipeline: distillation transfers what the teacher can *demonstrate*, not necessarily what the teacher *knows* (\\cite[Gudibande et al., 2023]{gudibande2023falsepromise}).",
+      "kind": "paragraph",
+      "section": "Distillation: What Transfers, and What Doesn't"
+    },
+    {
+      "id": "finetuninglab-block-45",
+      "quote": "The analytic extreme skips the student altogether. **Rationale distillation** extracts a teacher's reasoning; **mechanistic interpretability** tries to read the algorithm out of the weights directly — induction heads, the modular-addition circuit in a grokked transformer, sparse-autoencoder feature dictionaries. Where output distillation compresses *behaviour*, circuit-level work compresses *mechanism*, and its results feed back into evaluation, model editing, and safety. Distillation is also the centre of a persistent intellectual-property fight: most closed-model terms prohibit training competitors on their outputs, and the open web is now saturated with model-generated text, making the provenance of “human” data increasingly hard to establish.",
+      "kind": "paragraph",
+      "section": "Distillation: What Transfers, and What Doesn't"
+    },
+    {
+      "id": "finetuninglab-block-46",
+      "quote": "Stage 5: Online RL and Iterative DPO",
+      "kind": "heading",
+      "section": "Stage 5: Online RL and Iterative DPO"
+    },
+    {
+      "id": "finetuninglab-block-47",
+      "quote": "A 2024 frontier-lab pattern:",
+      "kind": "paragraph",
+      "section": "Stage 5: Online RL and Iterative DPO"
+    },
+    {
+      "id": "finetuninglab-block-48",
+      "quote": "1. **Sample** multiple candidate responses for each prompt using the current policy.",
+      "kind": "list-item",
+      "section": "Stage 5: Online RL and Iterative DPO"
+    },
+    {
+      "id": "finetuninglab-block-49",
+      "quote": "2. **Judge** using a strong model (or LLM-as-judge), pick winner and loser.",
+      "kind": "list-item",
+      "section": "Stage 5: Online RL and Iterative DPO"
+    },
+    {
+      "id": "finetuninglab-block-50",
+      "quote": "3. **Train** the policy with DPO on these on-policy preferences.",
+      "kind": "list-item",
+      "section": "Stage 5: Online RL and Iterative DPO"
+    },
+    {
+      "id": "finetuninglab-block-51",
+      "quote": "4. **Repeat** with the updated policy.",
+      "kind": "list-item",
+      "section": "Stage 5: Online RL and Iterative DPO"
+    },
+    {
+      "id": "finetuninglab-block-52",
+      "quote": "This iterative DPO produces stronger alignment than offline DPO (where preferences are static). It is the standard for state-of-the-art open-source models.",
+      "kind": "paragraph",
+      "section": "Stage 5: Online RL and Iterative DPO"
+    },
+    {
+      "id": "finetuninglab-block-53",
+      "quote": "LoRA and Parameter-Efficient Fine-Tuning",
+      "kind": "heading",
+      "section": "LoRA and Parameter-Efficient Fine-Tuning"
+    },
+    {
+      "id": "finetuninglab-block-54",
+      "quote": "Full fine-tuning of a 70B model requires ~1 TB of GPU memory (params + grads + optimizer). **Parameter-Efficient Fine-Tuning (PEFT)** methods train only a tiny fraction of parameters:",
+      "kind": "paragraph",
+      "section": "LoRA and Parameter-Efficient Fine-Tuning"
+    },
+    {
+      "id": "finetuninglab-block-55",
+      "quote": "LoRA (Low-Rank Adaptation)",
+      "kind": "heading",
+      "section": "LoRA (Low-Rank Adaptation)"
+    },
+    {
+      "id": "finetuninglab-block-56",
+      "quote": "QLoRA",
+      "kind": "heading",
+      "section": "QLoRA"
+    },
+    {
+      "id": "finetuninglab-block-57",
+      "quote": "Combines 4-bit quantization of the base model with LoRA adapters in fp16 (\\cite[Dettmers et al., 2023]{dettmers2023qlora}). The paper's headline result is a 65B QLoRA fine-tune on a single 48 GB GPU; 70B is an extrapolation, not a demonstrated headline result.",
+      "kind": "paragraph",
+      "section": "QLoRA"
+    },
+    {
+      "id": "finetuninglab-block-58",
+      "quote": "Other PEFT Methods",
+      "kind": "heading",
+      "section": "Other PEFT Methods"
+    },
+    {
+      "id": "finetuninglab-block-59",
+      "quote": "Practical Fine-Tuning Recipe",
+      "kind": "heading",
+      "section": "Practical Fine-Tuning Recipe"
+    },
+    {
+      "id": "finetuninglab-block-60",
+      "quote": "For a 7B–13B model with QLoRA on a single consumer GPU (24 GB):",
+      "kind": "paragraph",
+      "section": "Practical Fine-Tuning Recipe"
+    },
+    {
+      "id": "finetuninglab-block-61",
+      "quote": "Merge the adapter back:",
+      "kind": "paragraph",
+      "section": "Practical Fine-Tuning Recipe"
+    },
+    {
+      "id": "finetuninglab-block-62",
+      "quote": "For DPO:",
+      "kind": "paragraph",
+      "section": "Practical Fine-Tuning Recipe"
+    },
+    {
+      "id": "finetuninglab-block-63",
+      "quote": "Training time: ~2-6 hours for a 7B model with QLoRA on ~10K examples. Cost: on the order of $4-30 of compute on a rented H100 (~$2-5 per GPU-hour).",
+      "kind": "paragraph",
+      "section": "Practical Fine-Tuning Recipe"
+    },
+    {
+      "id": "finetuninglab-block-64",
+      "quote": "When to Fine-Tune (and When Not To)",
+      "kind": "heading",
+      "section": "When to Fine-Tune (and When Not To)"
+    },
+    {
+      "id": "finetuninglab-block-65",
+      "quote": "Fine-tuning is the right tool when:",
+      "kind": "paragraph",
+      "section": "When to Fine-Tune (and When Not To)"
+    },
+    {
+      "id": "finetuninglab-block-66",
+      "quote": "Fine-tuning is the wrong tool when:",
+      "kind": "paragraph",
+      "section": "When to Fine-Tune (and When Not To)"
+    },
+    {
+      "id": "finetuninglab-block-67",
+      "quote": "Rule of thumb: **prompt first, RAG second, fine-tune third**. Fine-tuning is a significant engineering investment; do it only after the lower-cost options are exhausted.",
+      "kind": "paragraph",
+      "section": "When to Fine-Tune (and When Not To)"
+    },
+    {
+      "id": "finetuninglab-block-68",
+      "quote": "Safety-Critical Post-Training",
+      "kind": "heading",
+      "section": "Safety-Critical Post-Training"
+    },
+    {
+      "id": "finetuninglab-block-69",
+      "quote": "For models that will be deployed widely:",
+      "kind": "paragraph",
+      "section": "Safety-Critical Post-Training"
+    },
+    {
+      "id": "finetuninglab-block-70",
+      "quote": "1. **Red-teaming**: hundreds of adversarial users try to elicit bad behavior. Their discoveries go into training.",
+      "kind": "list-item",
+      "section": "Safety-Critical Post-Training"
+    },
+    {
+      "id": "finetuninglab-block-71",
+      "quote": "2. **Refusal training**: explicit examples of “this prompt, refuse this way” pairs.",
+      "kind": "list-item",
+      "section": "Safety-Critical Post-Training"
+    },
+    {
+      "id": "finetuninglab-block-72",
+      "quote": "3. **Jailbreak resistance**: train against known jailbreak patterns (DAN, roleplay exploits, encoding tricks).",
+      "kind": "list-item",
+      "section": "Safety-Critical Post-Training"
+    },
+    {
+      "id": "finetuninglab-block-73",
+      "quote": "4. **Constitutional AI**: self-critique against written principles.",
+      "kind": "list-item",
+      "section": "Safety-Critical Post-Training"
+    },
+    {
+      "id": "finetuninglab-block-74",
+      "quote": "5. **Debate / scalable oversight**: a stronger model critiques a weaker one's outputs.",
+      "kind": "list-item",
+      "section": "Safety-Critical Post-Training"
+    },
+    {
+      "id": "finetuninglab-block-75",
+      "quote": "6. **Robustness evaluation**: test against held-out adversarial prompts monthly.",
+      "kind": "list-item",
+      "section": "Safety-Critical Post-Training"
+    },
+    {
+      "id": "finetuninglab-block-76",
+      "quote": "A frontier model in 2025 typically has **multiple post-training stages** with different objectives: helpful SFT, harmless SFT, helpful DPO, harmless DPO, reasoning RL, and final safety refinement.",
+      "kind": "paragraph",
+      "section": "Safety-Critical Post-Training"
+    },
+    {
+      "id": "finetuninglab-block-77",
+      "quote": "The Modern Frontier Pipeline",
+      "kind": "heading",
+      "section": "The Modern Frontier Pipeline"
+    },
+    {
+      "id": "finetuninglab-block-78",
+      "quote": "The state-of-the-art pipeline for a 2025 frontier model:",
+      "kind": "paragraph",
+      "section": "The Modern Frontier Pipeline"
+    },
+    {
+      "id": "finetuninglab-block-79",
+      "quote": "Total cost of post-training: ~$5–30M for a frontier model (10–30% of training cost). Produces most of the perceived improvement.",
+      "kind": "paragraph",
+      "section": "The Modern Frontier Pipeline"
+    },
+    {
+      "id": "finetuninglab-block-80",
+      "quote": "For practitioners: skip stages 4–6 unless you're training a frontier model. SFT + DPO is enough for most applications.",
+      "kind": "paragraph",
+      "section": "The Modern Frontier Pipeline"
     }
   ]
 }

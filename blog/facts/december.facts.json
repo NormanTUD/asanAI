@@ -371,140 +371,1005 @@
       "quote": "'slugs' => ['ai_for_science', 'ai_and_society', 'ai_existential_risk'],",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-1-part_of-december",
+      "from": "december-block-1",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-2-part_of-december",
+      "from": "december-block-2",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-1-before-december-block-2",
+      "from": "december-block-1",
+      "to": "december-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-2-related_to-december-block-1",
+      "from": "december-block-2",
+      "to": "december-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-3-part_of-december",
+      "from": "december-block-3",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-2-before-december-block-3",
+      "from": "december-block-2",
+      "to": "december-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-3-related_to-december-block-1",
+      "from": "december-block-3",
+      "to": "december-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-4-part_of-december",
+      "from": "december-block-4",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-3-before-december-block-4",
+      "from": "december-block-3",
+      "to": "december-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-4-related_to-december-block-1",
+      "from": "december-block-4",
+      "to": "december-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-5-part_of-december",
+      "from": "december-block-5",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-4-before-december-block-5",
+      "from": "december-block-4",
+      "to": "december-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-5-related_to-december-block-1",
+      "from": "december-block-5",
+      "to": "december-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-6-part_of-december",
+      "from": "december-block-6",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-5-before-december-block-6",
+      "from": "december-block-5",
+      "to": "december-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-6-related_to-december-block-1",
+      "from": "december-block-6",
+      "to": "december-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-7-part_of-december",
+      "from": "december-block-7",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-6-before-december-block-7",
+      "from": "december-block-6",
+      "to": "december-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-7-related_to-december-block-1",
+      "from": "december-block-7",
+      "to": "december-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-8-part_of-december",
+      "from": "december-block-8",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-7-before-december-block-8",
+      "from": "december-block-7",
+      "to": "december-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-8-related_to-december-block-1",
+      "from": "december-block-8",
+      "to": "december-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-9-part_of-december",
+      "from": "december-block-9",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-8-before-december-block-9",
+      "from": "december-block-8",
+      "to": "december-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-9-related_to-december-block-1",
+      "from": "december-block-9",
+      "to": "december-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-10-part_of-december",
+      "from": "december-block-10",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-9-before-december-block-10",
+      "from": "december-block-9",
+      "to": "december-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-10-related_to-december-block-1",
+      "from": "december-block-10",
+      "to": "december-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-11-part_of-december",
+      "from": "december-block-11",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-10-before-december-block-11",
+      "from": "december-block-10",
+      "to": "december-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-12-part_of-december",
+      "from": "december-block-12",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-11-before-december-block-12",
+      "from": "december-block-11",
+      "to": "december-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-12-related_to-december-block-11",
+      "from": "december-block-12",
+      "to": "december-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-13-part_of-december",
+      "from": "december-block-13",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-12-before-december-block-13",
+      "from": "december-block-12",
+      "to": "december-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-13-related_to-december-block-11",
+      "from": "december-block-13",
+      "to": "december-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-14-part_of-december",
+      "from": "december-block-14",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-13-before-december-block-14",
+      "from": "december-block-13",
+      "to": "december-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-14-related_to-december-block-11",
+      "from": "december-block-14",
+      "to": "december-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-15-part_of-december",
+      "from": "december-block-15",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-14-before-december-block-15",
+      "from": "december-block-14",
+      "to": "december-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-15-related_to-december-block-11",
+      "from": "december-block-15",
+      "to": "december-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-16-part_of-december",
+      "from": "december-block-16",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-15-before-december-block-16",
+      "from": "december-block-15",
+      "to": "december-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-16-related_to-december-block-11",
+      "from": "december-block-16",
+      "to": "december-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-17-part_of-december",
+      "from": "december-block-17",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-16-before-december-block-17",
+      "from": "december-block-16",
+      "to": "december-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-18-part_of-december",
+      "from": "december-block-18",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-17-before-december-block-18",
+      "from": "december-block-17",
+      "to": "december-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-18-related_to-december-block-17",
+      "from": "december-block-18",
+      "to": "december-block-17",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-19-part_of-december",
+      "from": "december-block-19",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-18-before-december-block-19",
+      "from": "december-block-18",
+      "to": "december-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-19-related_to-december-block-17",
+      "from": "december-block-19",
+      "to": "december-block-17",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-20-part_of-december",
+      "from": "december-block-20",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-19-before-december-block-20",
+      "from": "december-block-19",
+      "to": "december-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-21-part_of-december",
+      "from": "december-block-21",
+      "to": "december",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-20-before-december-block-21",
+      "from": "december-block-20",
+      "to": "december-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-block-21-related_to-december-block-20",
+      "from": "december-block-21",
+      "to": "december-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-1-part_of-december-block-2",
+      "from": "december-stmt-1",
+      "to": "december-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-2-part_of-december-block-2",
+      "from": "december-stmt-2",
+      "to": "december-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-3-part_of-december-block-2",
+      "from": "december-stmt-3",
+      "to": "december-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-4-part_of-december-block-3",
+      "from": "december-stmt-4",
+      "to": "december-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-5-part_of-december-block-3",
+      "from": "december-stmt-5",
+      "to": "december-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-6-part_of-december-block-3",
+      "from": "december-stmt-6",
+      "to": "december-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-7-part_of-december-block-3",
+      "from": "december-stmt-7",
+      "to": "december-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-8-part_of-december-block-4",
+      "from": "december-stmt-8",
+      "to": "december-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-9-part_of-december-block-7",
+      "from": "december-stmt-9",
+      "to": "december-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-10-part_of-december-block-18",
+      "from": "december-stmt-10",
+      "to": "december-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-11-part_of-december-block-18",
+      "from": "december-stmt-11",
+      "to": "december-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-12-part_of-december-block-18",
+      "from": "december-stmt-12",
+      "to": "december-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-13-part_of-december-block-19",
+      "from": "december-stmt-13",
+      "to": "december-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-14-part_of-december-block-19",
+      "from": "december-stmt-14",
+      "to": "december-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-15-part_of-december-block-21",
+      "from": "december-stmt-15",
+      "to": "december-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-16-part_of-december-block-21",
+      "from": "december-stmt-16",
+      "to": "december-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-december-stmt-17-part_of-december-block-21",
+      "from": "december-stmt-17",
+      "to": "december-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "december-stmt-1",
       "quote": "This is a guided path for a curious person, not a course for specialists.",
+      "block_id": "december-block-2",
       "section": "Thirty-One Doors into AI",
       "kind": "statement"
     },
     {
       "id": "december-stmt-2",
       "quote": "You do not need calculus, programming, or a GPU.",
+      "block_id": "december-block-2",
       "section": "Thirty-One Doors into AI",
       "kind": "statement"
     },
     {
       "id": "december-stmt-3",
       "quote": "Each day opens one idea, points you to the clearest lesson that explains it, and tells you what you will be able to explain afterward.",
+      "block_id": "december-block-2",
       "section": "Thirty-One Doors into AI",
       "kind": "statement"
     },
     {
       "id": "december-stmt-4",
       "quote": "The month has six sections.",
+      "block_id": "december-block-3",
       "section": "Thirty-One Doors into AI",
       "kind": "statement"
     },
     {
       "id": "december-stmt-5",
       "quote": "The first days are the gentlest; the middle is the technical core; the last days zoom out.",
+      "block_id": "december-block-3",
       "section": "Thirty-One Doors into AI",
       "kind": "statement"
     },
     {
       "id": "december-stmt-6",
       "quote": "If a day feels heavy, read the first link and stop there.",
+      "block_id": "december-block-3",
       "section": "Thirty-One Doors into AI",
       "kind": "statement"
     },
     {
       "id": "december-stmt-7",
       "quote": "The calendar is a map, not a test -- and you can start today, not only in December.",
+      "block_id": "december-block-3",
       "section": "Thirty-One Doors into AI",
       "kind": "statement"
     },
     {
       "id": "december-stmt-8",
-      "quote": "**How to use it:** each card gives a short reading path, a rough time, and how much math it uses.",
+      "quote": "31 days main articles optional deep dives sections Made for a general reader",
+      "block_id": "december-block-4",
       "section": "Thirty-One Doors into AI",
       "kind": "statement"
     },
     {
       "id": "december-stmt-9",
-      "quote": "A \"Short on time?\" line points to the one article to read if you only have ten minutes.",
+      "quote": "Colors show which part of the course a lesson comes from",
+      "block_id": "december-block-7",
       "section": "Thirty-One Doors into AI",
       "kind": "statement"
     },
     {
       "id": "december-stmt-10",
-      "quote": "Optional deep dives are tucked away at the bottom of the card.",
-      "section": "Thirty-One Doors into AI",
+      "quote": "You have not learned to train a frontier model, and that was never the point.",
+      "block_id": "december-block-18",
+      "section": "After December",
       "kind": "statement"
     },
     {
       "id": "december-stmt-11",
-      "quote": "Read one door a day, or jump to whatever you need.",
-      "section": "Thirty-One Doors into AI",
+      "quote": "You have learned the vocabulary, the shape of the pipeline, and the questions worth asking.",
+      "block_id": "december-block-18",
+      "section": "After December",
       "kind": "statement"
     },
     {
       "id": "december-stmt-12",
-      "quote": "The last sections are a little denser; take two days for a card if you like.",
-      "section": "Thirty-One Doors into AI",
+      "quote": "If you want to keep going, the [course overview](index.php) has the full shelf, and the [Atlas](atlas.php) gives you the same material as a map.",
+      "block_id": "december-block-18",
+      "section": "After December",
       "kind": "statement"
     },
     {
       "id": "december-stmt-13",
-      "quote": "**Prefer ten-minute lessons?** The [31-door calendar](tenminutes/advent.html) opens the compact lessons in the ScaDS.AI visual style, with interactive demos and saved progress.",
-      "section": "Thirty-One Doors into AI",
+      "quote": "A few specialist doors sit outside the main path: distributed training, serving stacks, inference kernels, and the deepest excursions into topology and category theory.",
+      "block_id": "december-block-19",
+      "section": "After December",
       "kind": "statement"
     },
     {
       "id": "december-stmt-14",
-      "quote": "Doors that are not distilled yet link to the full chapter.",
-      "section": "Thirty-One Doors into AI",
+      "quote": "They are all still in the course.",
+      "block_id": "december-block-19",
+      "section": "After December",
       "kind": "statement"
     },
     {
       "id": "december-stmt-15",
-      "quote": "You have not learned to train a frontier model, and that was never the point.",
-      "section": "After December",
+      "quote": "Use the calendar as a route, not a fence.",
+      "block_id": "december-block-21",
+      "section": "Further Doors",
       "kind": "statement"
     },
     {
       "id": "december-stmt-16",
-      "quote": "You have learned the vocabulary, the shape of the pipeline, and the questions worth asking.",
-      "section": "After December",
+      "quote": "If a side question grabbed you, follow it: [Training Infrastructure](training_infrastructure.php), [Production Serving](production_serving.php), [Inference Optimization](inference_optimization.php), [Topology](topology.php), [The Shape of Holes](geometry_iii.php), and [The Foam of Meaning](foam_of_meaning.php) are all one click away.",
+      "block_id": "december-block-21",
+      "section": "Further Doors",
       "kind": "statement"
     },
     {
       "id": "december-stmt-17",
-      "quote": "If you want to keep going, the [course overview](index.php) has the full shelf, and the [Atlas](atlas.php) gives you the same material as a map.",
-      "section": "After December",
-      "kind": "statement"
-    },
-    {
-      "id": "december-stmt-18",
-      "quote": "A few specialist doors sit outside the main path: distributed training, serving stacks, inference kernels, and the deepest excursions into topology and category theory.",
-      "section": "After December",
-      "kind": "statement"
-    },
-    {
-      "id": "december-stmt-19",
-      "quote": "They are all still in the course.",
-      "section": "After December",
-      "kind": "statement"
-    },
-    {
-      "id": "december-stmt-20",
-      "quote": "Use the calendar as a route, not a fence.",
-      "section": "Further Doors",
-      "kind": "statement"
-    },
-    {
-      "id": "december-stmt-21",
-      "quote": "If a side question grabbed you, follow it: [Training Infrastructure](training_infrastructure.php), [Production Serving](production_serving.php), [Inference Optimization](inference_optimization.php), [Topology](topology.php), [The Shape of Holes](geometry_iii.php), and [The Foam of Meaning](foam_of_meaning.php) are all one click away.",
-      "section": "Further Doors",
-      "kind": "statement"
-    },
-    {
-      "id": "december-stmt-22",
       "quote": "The [Atlas](atlas.php) is the best place to see how the people, places, and ideas in these pages connect.",
+      "block_id": "december-block-21",
       "section": "Further Doors",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "december-block-1",
+      "quote": "Thirty-One Doors into AI",
+      "kind": "heading",
+      "section": "Thirty-One Doors into AI"
+    },
+    {
+      "id": "december-block-2",
+      "quote": "This is a guided path for a curious person, not a course for specialists. You do not need calculus, programming, or a GPU. Each day opens one idea, points you to the clearest lesson that explains it, and tells you what you will be able to explain afterward.",
+      "kind": "paragraph",
+      "section": "Thirty-One Doors into AI"
+    },
+    {
+      "id": "december-block-3",
+      "quote": "The month has six sections. The first days are the gentlest; the middle is the technical core; the last days zoom out. If a day feels heavy, read the first link and stop there. The calendar is a map, not a test -- and you can start today, not only in December.",
+      "kind": "paragraph",
+      "section": "Thirty-One Doors into AI"
+    },
+    {
+      "id": "december-block-4",
+      "quote": "31 days main articles optional deep dives sections Made for a general reader",
+      "kind": "paragraph",
+      "section": "Thirty-One Doors into AI"
+    },
+    {
+      "id": "december-block-5",
+      "quote": "The shape of the month",
+      "kind": "paragraph",
+      "section": "Thirty-One Doors into AI"
+    },
+    {
+      "id": "december-block-6",
+      "quote": "Days -",
+      "kind": "paragraph",
+      "section": "Thirty-One Doors into AI"
+    },
+    {
+      "id": "december-block-7",
+      "quote": "Colors show which part of the course a lesson comes from",
+      "kind": "paragraph",
+      "section": "Thirty-One Doors into AI"
+    },
+    {
+      "id": "december-block-8",
+      "quote": "Part ·",
+      "kind": "paragraph",
+      "section": "Thirty-One Doors into AI"
+    },
+    {
+      "id": "december-block-9",
+      "quote": "Open today's door",
+      "kind": "paragraph",
+      "section": "Thirty-One Doors into AI"
+    },
+    {
+      "id": "december-block-10",
+      "quote": "Start with Day 1",
+      "kind": "paragraph",
+      "section": "Thirty-One Doors into AI"
+    },
+    {
+      "id": "december-block-11",
+      "quote": "Section ·",
+      "kind": "heading",
+      "section": "Section ·"
+    },
+    {
+      "id": "december-block-12",
+      "quote": "Today",
+      "kind": "paragraph",
+      "section": "Section ·"
+    },
+    {
+      "id": "december-block-13",
+      "quote": "In one sentence",
+      "kind": "paragraph",
+      "section": "Section ·"
+    },
+    {
+      "id": "december-block-14",
+      "quote": "After today you can .",
+      "kind": "paragraph",
+      "section": "Section ·"
+    },
+    {
+      "id": "december-block-15",
+      "quote": "Short on time? Start with .",
+      "kind": "paragraph",
+      "section": "Section ·"
+    },
+    {
+      "id": "december-block-16",
+      "quote": "Go deeper (optional)",
+      "kind": "paragraph",
+      "section": "Section ·"
+    },
+    {
+      "id": "december-block-17",
+      "quote": "After December",
+      "kind": "heading",
+      "section": "After December"
+    },
+    {
+      "id": "december-block-18",
+      "quote": "You have not learned to train a frontier model, and that was never the point. You have learned the vocabulary, the shape of the pipeline, and the questions worth asking. If you want to keep going, the [course overview](index.php) has the full shelf, and the [Atlas](atlas.php) gives you the same material as a map.",
+      "kind": "paragraph",
+      "section": "After December"
+    },
+    {
+      "id": "december-block-19",
+      "quote": "A few specialist doors sit outside the main path: distributed training, serving stacks, inference kernels, and the deepest excursions into topology and category theory. They are all still in the course.",
+      "kind": "paragraph",
+      "section": "After December"
+    },
+    {
+      "id": "december-block-20",
+      "quote": "Further Doors",
+      "kind": "heading",
+      "section": "Further Doors"
+    },
+    {
+      "id": "december-block-21",
+      "quote": "Use the calendar as a route, not a fence. If a side question grabbed you, follow it: [Training Infrastructure](training_infrastructure.php), [Production Serving](production_serving.php), [Inference Optimization](inference_optimization.php), [Topology](topology.php), [The Shape of Holes](geometry_iii.php), and [The Foam of Meaning](foam_of_meaning.php) are all one click away. The [Atlas](atlas.php) is the best place to see how the people, places, and ideas in these pages connect.",
+      "kind": "paragraph",
+      "section": "Further Doors"
     }
   ]
 }

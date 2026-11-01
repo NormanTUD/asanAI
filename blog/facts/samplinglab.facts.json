@@ -561,842 +561,3239 @@
       "quote": "part: 4",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-1-part_of-samplinglab",
+      "from": "samplinglab-block-1",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-2-part_of-samplinglab",
+      "from": "samplinglab-block-2",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-1-before-samplinglab-block-2",
+      "from": "samplinglab-block-1",
+      "to": "samplinglab-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-3-part_of-samplinglab",
+      "from": "samplinglab-block-3",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-2-before-samplinglab-block-3",
+      "from": "samplinglab-block-2",
+      "to": "samplinglab-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-4-part_of-samplinglab",
+      "from": "samplinglab-block-4",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-3-before-samplinglab-block-4",
+      "from": "samplinglab-block-3",
+      "to": "samplinglab-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-4-related_to-samplinglab-block-3",
+      "from": "samplinglab-block-4",
+      "to": "samplinglab-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-5-part_of-samplinglab",
+      "from": "samplinglab-block-5",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-4-before-samplinglab-block-5",
+      "from": "samplinglab-block-4",
+      "to": "samplinglab-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-5-related_to-samplinglab-block-3",
+      "from": "samplinglab-block-5",
+      "to": "samplinglab-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-6-part_of-samplinglab",
+      "from": "samplinglab-block-6",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-5-before-samplinglab-block-6",
+      "from": "samplinglab-block-5",
+      "to": "samplinglab-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-7-part_of-samplinglab",
+      "from": "samplinglab-block-7",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-6-before-samplinglab-block-7",
+      "from": "samplinglab-block-6",
+      "to": "samplinglab-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-7-related_to-samplinglab-block-6",
+      "from": "samplinglab-block-7",
+      "to": "samplinglab-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-8-part_of-samplinglab",
+      "from": "samplinglab-block-8",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-7-before-samplinglab-block-8",
+      "from": "samplinglab-block-7",
+      "to": "samplinglab-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-8-related_to-samplinglab-block-6",
+      "from": "samplinglab-block-8",
+      "to": "samplinglab-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-9-part_of-samplinglab",
+      "from": "samplinglab-block-9",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-8-before-samplinglab-block-9",
+      "from": "samplinglab-block-8",
+      "to": "samplinglab-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-10-part_of-samplinglab",
+      "from": "samplinglab-block-10",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-9-before-samplinglab-block-10",
+      "from": "samplinglab-block-9",
+      "to": "samplinglab-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-10-related_to-samplinglab-block-9",
+      "from": "samplinglab-block-10",
+      "to": "samplinglab-block-9",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-11-part_of-samplinglab",
+      "from": "samplinglab-block-11",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-10-before-samplinglab-block-11",
+      "from": "samplinglab-block-10",
+      "to": "samplinglab-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-11-related_to-samplinglab-block-9",
+      "from": "samplinglab-block-11",
+      "to": "samplinglab-block-9",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-12-part_of-samplinglab",
+      "from": "samplinglab-block-12",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-11-before-samplinglab-block-12",
+      "from": "samplinglab-block-11",
+      "to": "samplinglab-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-13-part_of-samplinglab",
+      "from": "samplinglab-block-13",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-12-before-samplinglab-block-13",
+      "from": "samplinglab-block-12",
+      "to": "samplinglab-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-13-related_to-samplinglab-block-12",
+      "from": "samplinglab-block-13",
+      "to": "samplinglab-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-14-part_of-samplinglab",
+      "from": "samplinglab-block-14",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-13-before-samplinglab-block-14",
+      "from": "samplinglab-block-13",
+      "to": "samplinglab-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-15-part_of-samplinglab",
+      "from": "samplinglab-block-15",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-14-before-samplinglab-block-15",
+      "from": "samplinglab-block-14",
+      "to": "samplinglab-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-16-part_of-samplinglab",
+      "from": "samplinglab-block-16",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-15-before-samplinglab-block-16",
+      "from": "samplinglab-block-15",
+      "to": "samplinglab-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-16-related_to-samplinglab-block-15",
+      "from": "samplinglab-block-16",
+      "to": "samplinglab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-17-part_of-samplinglab",
+      "from": "samplinglab-block-17",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-16-before-samplinglab-block-17",
+      "from": "samplinglab-block-16",
+      "to": "samplinglab-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-17-related_to-samplinglab-block-15",
+      "from": "samplinglab-block-17",
+      "to": "samplinglab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-18-part_of-samplinglab",
+      "from": "samplinglab-block-18",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-17-before-samplinglab-block-18",
+      "from": "samplinglab-block-17",
+      "to": "samplinglab-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-18-related_to-samplinglab-block-15",
+      "from": "samplinglab-block-18",
+      "to": "samplinglab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-19-part_of-samplinglab",
+      "from": "samplinglab-block-19",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-18-before-samplinglab-block-19",
+      "from": "samplinglab-block-18",
+      "to": "samplinglab-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-19-related_to-samplinglab-block-15",
+      "from": "samplinglab-block-19",
+      "to": "samplinglab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-20-part_of-samplinglab",
+      "from": "samplinglab-block-20",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-19-before-samplinglab-block-20",
+      "from": "samplinglab-block-19",
+      "to": "samplinglab-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-20-related_to-samplinglab-block-15",
+      "from": "samplinglab-block-20",
+      "to": "samplinglab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-21-part_of-samplinglab",
+      "from": "samplinglab-block-21",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-20-before-samplinglab-block-21",
+      "from": "samplinglab-block-20",
+      "to": "samplinglab-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-21-related_to-samplinglab-block-15",
+      "from": "samplinglab-block-21",
+      "to": "samplinglab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-22-part_of-samplinglab",
+      "from": "samplinglab-block-22",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-21-before-samplinglab-block-22",
+      "from": "samplinglab-block-21",
+      "to": "samplinglab-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-22-related_to-samplinglab-block-15",
+      "from": "samplinglab-block-22",
+      "to": "samplinglab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-23-part_of-samplinglab",
+      "from": "samplinglab-block-23",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-22-before-samplinglab-block-23",
+      "from": "samplinglab-block-22",
+      "to": "samplinglab-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-23-related_to-samplinglab-block-15",
+      "from": "samplinglab-block-23",
+      "to": "samplinglab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-24-part_of-samplinglab",
+      "from": "samplinglab-block-24",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-23-before-samplinglab-block-24",
+      "from": "samplinglab-block-23",
+      "to": "samplinglab-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-24-related_to-samplinglab-block-15",
+      "from": "samplinglab-block-24",
+      "to": "samplinglab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-25-part_of-samplinglab",
+      "from": "samplinglab-block-25",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-24-before-samplinglab-block-25",
+      "from": "samplinglab-block-24",
+      "to": "samplinglab-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-25-related_to-samplinglab-block-15",
+      "from": "samplinglab-block-25",
+      "to": "samplinglab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-26-part_of-samplinglab",
+      "from": "samplinglab-block-26",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-25-before-samplinglab-block-26",
+      "from": "samplinglab-block-25",
+      "to": "samplinglab-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-26-related_to-samplinglab-block-15",
+      "from": "samplinglab-block-26",
+      "to": "samplinglab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-27-part_of-samplinglab",
+      "from": "samplinglab-block-27",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-26-before-samplinglab-block-27",
+      "from": "samplinglab-block-26",
+      "to": "samplinglab-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-27-related_to-samplinglab-block-15",
+      "from": "samplinglab-block-27",
+      "to": "samplinglab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-28-part_of-samplinglab",
+      "from": "samplinglab-block-28",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-27-before-samplinglab-block-28",
+      "from": "samplinglab-block-27",
+      "to": "samplinglab-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-28-related_to-samplinglab-block-15",
+      "from": "samplinglab-block-28",
+      "to": "samplinglab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-29-part_of-samplinglab",
+      "from": "samplinglab-block-29",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-28-before-samplinglab-block-29",
+      "from": "samplinglab-block-28",
+      "to": "samplinglab-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-29-related_to-samplinglab-block-15",
+      "from": "samplinglab-block-29",
+      "to": "samplinglab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-30-part_of-samplinglab",
+      "from": "samplinglab-block-30",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-29-before-samplinglab-block-30",
+      "from": "samplinglab-block-29",
+      "to": "samplinglab-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-30-related_to-samplinglab-block-15",
+      "from": "samplinglab-block-30",
+      "to": "samplinglab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-31-part_of-samplinglab",
+      "from": "samplinglab-block-31",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-30-before-samplinglab-block-31",
+      "from": "samplinglab-block-30",
+      "to": "samplinglab-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-31-related_to-samplinglab-block-15",
+      "from": "samplinglab-block-31",
+      "to": "samplinglab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-32-part_of-samplinglab",
+      "from": "samplinglab-block-32",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-31-before-samplinglab-block-32",
+      "from": "samplinglab-block-31",
+      "to": "samplinglab-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-33-part_of-samplinglab",
+      "from": "samplinglab-block-33",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-32-before-samplinglab-block-33",
+      "from": "samplinglab-block-32",
+      "to": "samplinglab-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-34-part_of-samplinglab",
+      "from": "samplinglab-block-34",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-33-before-samplinglab-block-34",
+      "from": "samplinglab-block-33",
+      "to": "samplinglab-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-34-related_to-samplinglab-block-33",
+      "from": "samplinglab-block-34",
+      "to": "samplinglab-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-35-part_of-samplinglab",
+      "from": "samplinglab-block-35",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-34-before-samplinglab-block-35",
+      "from": "samplinglab-block-34",
+      "to": "samplinglab-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-35-related_to-samplinglab-block-33",
+      "from": "samplinglab-block-35",
+      "to": "samplinglab-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-36-part_of-samplinglab",
+      "from": "samplinglab-block-36",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-35-before-samplinglab-block-36",
+      "from": "samplinglab-block-35",
+      "to": "samplinglab-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-37-part_of-samplinglab",
+      "from": "samplinglab-block-37",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-36-before-samplinglab-block-37",
+      "from": "samplinglab-block-36",
+      "to": "samplinglab-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-37-related_to-samplinglab-block-36",
+      "from": "samplinglab-block-37",
+      "to": "samplinglab-block-36",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-38-part_of-samplinglab",
+      "from": "samplinglab-block-38",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-37-before-samplinglab-block-38",
+      "from": "samplinglab-block-37",
+      "to": "samplinglab-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-38-related_to-samplinglab-block-36",
+      "from": "samplinglab-block-38",
+      "to": "samplinglab-block-36",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-39-part_of-samplinglab",
+      "from": "samplinglab-block-39",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-38-before-samplinglab-block-39",
+      "from": "samplinglab-block-38",
+      "to": "samplinglab-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-40-part_of-samplinglab",
+      "from": "samplinglab-block-40",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-39-before-samplinglab-block-40",
+      "from": "samplinglab-block-39",
+      "to": "samplinglab-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-40-related_to-samplinglab-block-39",
+      "from": "samplinglab-block-40",
+      "to": "samplinglab-block-39",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-41-part_of-samplinglab",
+      "from": "samplinglab-block-41",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-40-before-samplinglab-block-41",
+      "from": "samplinglab-block-40",
+      "to": "samplinglab-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-42-part_of-samplinglab",
+      "from": "samplinglab-block-42",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-41-before-samplinglab-block-42",
+      "from": "samplinglab-block-41",
+      "to": "samplinglab-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-42-related_to-samplinglab-block-41",
+      "from": "samplinglab-block-42",
+      "to": "samplinglab-block-41",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-43-part_of-samplinglab",
+      "from": "samplinglab-block-43",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-42-before-samplinglab-block-43",
+      "from": "samplinglab-block-42",
+      "to": "samplinglab-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-44-part_of-samplinglab",
+      "from": "samplinglab-block-44",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-43-before-samplinglab-block-44",
+      "from": "samplinglab-block-43",
+      "to": "samplinglab-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-44-related_to-samplinglab-block-43",
+      "from": "samplinglab-block-44",
+      "to": "samplinglab-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-45-part_of-samplinglab",
+      "from": "samplinglab-block-45",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-44-before-samplinglab-block-45",
+      "from": "samplinglab-block-44",
+      "to": "samplinglab-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-45-related_to-samplinglab-block-43",
+      "from": "samplinglab-block-45",
+      "to": "samplinglab-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-46-part_of-samplinglab",
+      "from": "samplinglab-block-46",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-45-before-samplinglab-block-46",
+      "from": "samplinglab-block-45",
+      "to": "samplinglab-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-47-part_of-samplinglab",
+      "from": "samplinglab-block-47",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-46-before-samplinglab-block-47",
+      "from": "samplinglab-block-46",
+      "to": "samplinglab-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-48-part_of-samplinglab",
+      "from": "samplinglab-block-48",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-47-before-samplinglab-block-48",
+      "from": "samplinglab-block-47",
+      "to": "samplinglab-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-48-related_to-samplinglab-block-47",
+      "from": "samplinglab-block-48",
+      "to": "samplinglab-block-47",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-49-part_of-samplinglab",
+      "from": "samplinglab-block-49",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-48-before-samplinglab-block-49",
+      "from": "samplinglab-block-48",
+      "to": "samplinglab-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-49-related_to-samplinglab-block-47",
+      "from": "samplinglab-block-49",
+      "to": "samplinglab-block-47",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-50-part_of-samplinglab",
+      "from": "samplinglab-block-50",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-49-before-samplinglab-block-50",
+      "from": "samplinglab-block-49",
+      "to": "samplinglab-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-51-part_of-samplinglab",
+      "from": "samplinglab-block-51",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-50-before-samplinglab-block-51",
+      "from": "samplinglab-block-50",
+      "to": "samplinglab-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-51-related_to-samplinglab-block-50",
+      "from": "samplinglab-block-51",
+      "to": "samplinglab-block-50",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-52-part_of-samplinglab",
+      "from": "samplinglab-block-52",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-51-before-samplinglab-block-52",
+      "from": "samplinglab-block-51",
+      "to": "samplinglab-block-52",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-52-related_to-samplinglab-block-50",
+      "from": "samplinglab-block-52",
+      "to": "samplinglab-block-50",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-53-part_of-samplinglab",
+      "from": "samplinglab-block-53",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-52-before-samplinglab-block-53",
+      "from": "samplinglab-block-52",
+      "to": "samplinglab-block-53",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-54-part_of-samplinglab",
+      "from": "samplinglab-block-54",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-53-before-samplinglab-block-54",
+      "from": "samplinglab-block-53",
+      "to": "samplinglab-block-54",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-55-part_of-samplinglab",
+      "from": "samplinglab-block-55",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-54-before-samplinglab-block-55",
+      "from": "samplinglab-block-54",
+      "to": "samplinglab-block-55",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-55-related_to-samplinglab-block-54",
+      "from": "samplinglab-block-55",
+      "to": "samplinglab-block-54",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-56-part_of-samplinglab",
+      "from": "samplinglab-block-56",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-55-before-samplinglab-block-56",
+      "from": "samplinglab-block-55",
+      "to": "samplinglab-block-56",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-56-related_to-samplinglab-block-54",
+      "from": "samplinglab-block-56",
+      "to": "samplinglab-block-54",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-57-part_of-samplinglab",
+      "from": "samplinglab-block-57",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-56-before-samplinglab-block-57",
+      "from": "samplinglab-block-56",
+      "to": "samplinglab-block-57",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-57-related_to-samplinglab-block-54",
+      "from": "samplinglab-block-57",
+      "to": "samplinglab-block-54",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-58-part_of-samplinglab",
+      "from": "samplinglab-block-58",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-57-before-samplinglab-block-58",
+      "from": "samplinglab-block-57",
+      "to": "samplinglab-block-58",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-58-related_to-samplinglab-block-54",
+      "from": "samplinglab-block-58",
+      "to": "samplinglab-block-54",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-59-part_of-samplinglab",
+      "from": "samplinglab-block-59",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-58-before-samplinglab-block-59",
+      "from": "samplinglab-block-58",
+      "to": "samplinglab-block-59",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-59-related_to-samplinglab-block-54",
+      "from": "samplinglab-block-59",
+      "to": "samplinglab-block-54",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-60-part_of-samplinglab",
+      "from": "samplinglab-block-60",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-59-before-samplinglab-block-60",
+      "from": "samplinglab-block-59",
+      "to": "samplinglab-block-60",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-60-related_to-samplinglab-block-54",
+      "from": "samplinglab-block-60",
+      "to": "samplinglab-block-54",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-61-part_of-samplinglab",
+      "from": "samplinglab-block-61",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-60-before-samplinglab-block-61",
+      "from": "samplinglab-block-60",
+      "to": "samplinglab-block-61",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-61-related_to-samplinglab-block-54",
+      "from": "samplinglab-block-61",
+      "to": "samplinglab-block-54",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-62-part_of-samplinglab",
+      "from": "samplinglab-block-62",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-61-before-samplinglab-block-62",
+      "from": "samplinglab-block-61",
+      "to": "samplinglab-block-62",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-63-part_of-samplinglab",
+      "from": "samplinglab-block-63",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-62-before-samplinglab-block-63",
+      "from": "samplinglab-block-62",
+      "to": "samplinglab-block-63",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-63-related_to-samplinglab-block-62",
+      "from": "samplinglab-block-63",
+      "to": "samplinglab-block-62",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-64-part_of-samplinglab",
+      "from": "samplinglab-block-64",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-63-before-samplinglab-block-64",
+      "from": "samplinglab-block-63",
+      "to": "samplinglab-block-64",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-64-related_to-samplinglab-block-62",
+      "from": "samplinglab-block-64",
+      "to": "samplinglab-block-62",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-65-part_of-samplinglab",
+      "from": "samplinglab-block-65",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-64-before-samplinglab-block-65",
+      "from": "samplinglab-block-64",
+      "to": "samplinglab-block-65",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-65-related_to-samplinglab-block-62",
+      "from": "samplinglab-block-65",
+      "to": "samplinglab-block-62",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-66-part_of-samplinglab",
+      "from": "samplinglab-block-66",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-65-before-samplinglab-block-66",
+      "from": "samplinglab-block-65",
+      "to": "samplinglab-block-66",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-67-part_of-samplinglab",
+      "from": "samplinglab-block-67",
+      "to": "samplinglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-66-before-samplinglab-block-67",
+      "from": "samplinglab-block-66",
+      "to": "samplinglab-block-67",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-block-67-related_to-samplinglab-block-66",
+      "from": "samplinglab-block-67",
+      "to": "samplinglab-block-66",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-1-part_of-samplinglab-block-1",
+      "from": "samplinglab-stmt-1",
+      "to": "samplinglab-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-2-part_of-samplinglab-block-4",
+      "from": "samplinglab-stmt-2",
+      "to": "samplinglab-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-3-part_of-samplinglab-block-5",
+      "from": "samplinglab-stmt-3",
+      "to": "samplinglab-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-4-part_of-samplinglab-block-5",
+      "from": "samplinglab-stmt-4",
+      "to": "samplinglab-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-5-part_of-samplinglab-block-7",
+      "from": "samplinglab-stmt-5",
+      "to": "samplinglab-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-6-part_of-samplinglab-block-7",
+      "from": "samplinglab-stmt-6",
+      "to": "samplinglab-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-7-part_of-samplinglab-block-8",
+      "from": "samplinglab-stmt-7",
+      "to": "samplinglab-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-8-part_of-samplinglab-block-10",
+      "from": "samplinglab-stmt-8",
+      "to": "samplinglab-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-9-part_of-samplinglab-block-10",
+      "from": "samplinglab-stmt-9",
+      "to": "samplinglab-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-10-part_of-samplinglab-block-11",
+      "from": "samplinglab-stmt-10",
+      "to": "samplinglab-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-11-part_of-samplinglab-block-13",
+      "from": "samplinglab-stmt-11",
+      "to": "samplinglab-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-12-part_of-samplinglab-block-13",
+      "from": "samplinglab-stmt-12",
+      "to": "samplinglab-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-13-part_of-samplinglab-block-16",
+      "from": "samplinglab-stmt-13",
+      "to": "samplinglab-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-14-part_of-samplinglab-block-16",
+      "from": "samplinglab-stmt-14",
+      "to": "samplinglab-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-15-part_of-samplinglab-block-17",
+      "from": "samplinglab-stmt-15",
+      "to": "samplinglab-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-16-part_of-samplinglab-block-19",
+      "from": "samplinglab-stmt-16",
+      "to": "samplinglab-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-17-part_of-samplinglab-block-21",
+      "from": "samplinglab-stmt-17",
+      "to": "samplinglab-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-18-part_of-samplinglab-block-23",
+      "from": "samplinglab-stmt-18",
+      "to": "samplinglab-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-19-part_of-samplinglab-block-25",
+      "from": "samplinglab-stmt-19",
+      "to": "samplinglab-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-20-part_of-samplinglab-block-27",
+      "from": "samplinglab-stmt-20",
+      "to": "samplinglab-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-21-part_of-samplinglab-block-29",
+      "from": "samplinglab-stmt-21",
+      "to": "samplinglab-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-22-part_of-samplinglab-block-30",
+      "from": "samplinglab-stmt-22",
+      "to": "samplinglab-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-23-part_of-samplinglab-block-31",
+      "from": "samplinglab-stmt-23",
+      "to": "samplinglab-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-24-part_of-samplinglab-block-34",
+      "from": "samplinglab-stmt-24",
+      "to": "samplinglab-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-25-part_of-samplinglab-block-34",
+      "from": "samplinglab-stmt-25",
+      "to": "samplinglab-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-26-part_of-samplinglab-block-35",
+      "from": "samplinglab-stmt-26",
+      "to": "samplinglab-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-27-part_of-samplinglab-block-35",
+      "from": "samplinglab-stmt-27",
+      "to": "samplinglab-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-28-part_of-samplinglab-block-37",
+      "from": "samplinglab-stmt-28",
+      "to": "samplinglab-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-29-part_of-samplinglab-block-38",
+      "from": "samplinglab-stmt-29",
+      "to": "samplinglab-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-30-part_of-samplinglab-block-38",
+      "from": "samplinglab-stmt-30",
+      "to": "samplinglab-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-31-part_of-samplinglab-block-40",
+      "from": "samplinglab-stmt-31",
+      "to": "samplinglab-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-32-part_of-samplinglab-block-40",
+      "from": "samplinglab-stmt-32",
+      "to": "samplinglab-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-33-part_of-samplinglab-block-40",
+      "from": "samplinglab-stmt-33",
+      "to": "samplinglab-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-34-part_of-samplinglab-block-42",
+      "from": "samplinglab-stmt-34",
+      "to": "samplinglab-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-35-part_of-samplinglab-block-44",
+      "from": "samplinglab-stmt-35",
+      "to": "samplinglab-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-36-part_of-samplinglab-block-44",
+      "from": "samplinglab-stmt-36",
+      "to": "samplinglab-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-37-part_of-samplinglab-block-45",
+      "from": "samplinglab-stmt-37",
+      "to": "samplinglab-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-38-part_of-samplinglab-block-45",
+      "from": "samplinglab-stmt-38",
+      "to": "samplinglab-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-39-part_of-samplinglab-block-48",
+      "from": "samplinglab-stmt-39",
+      "to": "samplinglab-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-40-part_of-samplinglab-block-49",
+      "from": "samplinglab-stmt-40",
+      "to": "samplinglab-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-41-part_of-samplinglab-block-49",
+      "from": "samplinglab-stmt-41",
+      "to": "samplinglab-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-42-part_of-samplinglab-block-49",
+      "from": "samplinglab-stmt-42",
+      "to": "samplinglab-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-43-part_of-samplinglab-block-49",
+      "from": "samplinglab-stmt-43",
+      "to": "samplinglab-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-44-part_of-samplinglab-block-51",
+      "from": "samplinglab-stmt-44",
+      "to": "samplinglab-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-45-part_of-samplinglab-block-52",
+      "from": "samplinglab-stmt-45",
+      "to": "samplinglab-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-46-part_of-samplinglab-block-55",
+      "from": "samplinglab-stmt-46",
+      "to": "samplinglab-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-47-part_of-samplinglab-block-56",
+      "from": "samplinglab-stmt-47",
+      "to": "samplinglab-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-48-part_of-samplinglab-block-57",
+      "from": "samplinglab-stmt-48",
+      "to": "samplinglab-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-49-part_of-samplinglab-block-58",
+      "from": "samplinglab-stmt-49",
+      "to": "samplinglab-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-50-part_of-samplinglab-block-59",
+      "from": "samplinglab-stmt-50",
+      "to": "samplinglab-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-51-part_of-samplinglab-block-60",
+      "from": "samplinglab-stmt-51",
+      "to": "samplinglab-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-52-part_of-samplinglab-block-61",
+      "from": "samplinglab-stmt-52",
+      "to": "samplinglab-block-61",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-53-part_of-samplinglab-block-63",
+      "from": "samplinglab-stmt-53",
+      "to": "samplinglab-block-63",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-54-part_of-samplinglab-block-63",
+      "from": "samplinglab-stmt-54",
+      "to": "samplinglab-block-63",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-55-part_of-samplinglab-block-63",
+      "from": "samplinglab-stmt-55",
+      "to": "samplinglab-block-63",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-56-part_of-samplinglab-block-64",
+      "from": "samplinglab-stmt-56",
+      "to": "samplinglab-block-64",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-57-part_of-samplinglab-block-65",
+      "from": "samplinglab-stmt-57",
+      "to": "samplinglab-block-65",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-58-part_of-samplinglab-block-67",
+      "from": "samplinglab-stmt-58",
+      "to": "samplinglab-block-67",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-59-part_of-samplinglab-block-67",
+      "from": "samplinglab-stmt-59",
+      "to": "samplinglab-block-67",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-60-part_of-samplinglab-block-67",
+      "from": "samplinglab-stmt-60",
+      "to": "samplinglab-block-67",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-samplinglab-stmt-61-part_of-samplinglab-block-67",
+      "from": "samplinglab-stmt-61",
+      "to": "samplinglab-block-67",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "samplinglab-stmt-1",
-      "quote": "Given a probability distribution over the next token, which one do you pick?",
+      "quote": "This chapter covers every common decoding method with its mathematical formulation and recommended use, grouped from the baseline distribution, through the candidate-set filters, to the diversity and search tricks and the practical settings that tie them together.",
+      "block_id": "samplinglab-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-2",
-      "quote": "This is the **decoding strategy**, and it controls the model's “personality”, focused and deterministic, or wild and creative.",
-      "section": "",
+      "quote": "After the LLM produces logits $\\mathbf{z} \\in \\mathbb{R}^{|V|}$ for the next token, softmax gives a probability distribution:",
+      "block_id": "samplinglab-block-4",
+      "section": "The Probability Distribution",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-3",
-      "quote": "The frontier in 2025: many subtle techniques beyond temperature and top-$k$.",
-      "section": "",
+      "quote": "But that's only the beginning.",
+      "block_id": "samplinglab-block-5",
+      "section": "The Probability Distribution",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-4",
-      "quote": "This chapter covers every common decoding method with its mathematical formulation and recommended use, grouped from the baseline distribution, through the candidate-set filters, to the diversity and search tricks and the practical settings that tie them together.",
-      "section": "",
+      "quote": "Most modern systems use **additional filters** on top of temperature.",
+      "block_id": "samplinglab-block-5",
+      "section": "The Probability Distribution",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-5",
-      "quote": "Three of the four quantities in this chapter, **Boltzmann distributions**, **entropy**, and **KL-divergence**, were born long before language models.",
-      "section": "",
+      "quote": "Always pick $\\arg\\max_i P(i)$.",
+      "block_id": "samplinglab-block-7",
+      "section": "Greedy Decoding",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-6",
-      "quote": "They appear in the Statistics II chapter § Boltzmann Distributions, § Entropy, § KL Divergence.",
-      "section": "",
+      "quote": "Used in production for fact-retrieval tasks where creativity is unwanted.",
+      "block_id": "samplinglab-block-7",
+      "section": "Greedy Decoding",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-7",
-      "quote": "If softmax + temperature looks familiar from physics, that is because it *is* physics.",
-      "section": "",
+      "quote": "Drawback: **repetition loops** and **mode collapse** (“the the the the...”).",
+      "block_id": "samplinglab-block-8",
+      "section": "Greedy Decoding",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-8",
-      "quote": "The softmax with temperature $T$ is exactly the **Boltzmann distribution** (\\cite[Boltzmann, 1877]{boltzmann}) over the token \"energy levels\" $E_i = -z_i$ (the logit, negated), written in dimensionless form by absorbing the Boltzmann constant into $T$: $\\;P_i = e^{z_i/T} / \\sum_j e^{z_j/T}$.",
-      "section": "",
+      "quote": "This adapts the effective vocabulary size to the distribution.",
+      "block_id": "samplinglab-block-10",
+      "section": "Truncating the Candidate Set",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-9",
-      "quote": "So $T$ is not a knob we invented — it is a **temperature** in the thermodynamic sense.",
-      "section": "",
+      "quote": "When the distribution is sharp (one token dominates), $\\mathcal{V}_p$ is small; when flat, $\\mathcal{V}_p$ is large.",
+      "block_id": "samplinglab-block-10",
+      "section": "Truncating the Candidate Set",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-10",
-      "quote": "$T \\to 0$ is the **ground state**: the system collapses onto the single lowest-energy, highest-probability token (greedy).",
-      "section": "",
+      "quote": "A newer dynamic-truncation method (\\cite[Nguyen et al., 2025]{nguyen2025minp}), available in Hugging Face Transformers, vLLM, and llama.cpp:",
+      "block_id": "samplinglab-block-11",
+      "section": "Truncating the Candidate Set",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-11",
-      "quote": "$T \\to \\infty$ is the **infinite-temperature** limit, where every state is equally populated (uniform).",
-      "section": "",
+      "quote": "Discards tokens in the “tail” of the distribution where the second derivative of probability is small.",
+      "block_id": "samplinglab-block-13",
+      "section": "Tail-Free Sampling (TFS)",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-12",
-      "quote": "Raising $T$ does not make the model \"creative\" in any vague sense; it lets higher-energy, rarer tokens be occupied at all, the way a hotter gas puts its particles into excited states.",
-      "section": "",
+      "quote": "Rarely used in production.",
+      "block_id": "samplinglab-block-13",
+      "section": "Tail-Free Sampling (TFS)",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-13",
-      "quote": "Sampling is thermodynamics in disguise.",
-      "section": "",
+      "quote": "Interactive lab Decoding Studio One set of logits, four knobs.",
+      "block_id": "samplinglab-block-16",
+      "section": "Try it: the Decoding Studio",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-14",
-      "quote": "Boltzmann's 1877 memoir gave the combinatorial derivation behind the distribution $p_i\\propto e^{-E_i/kT}$ for a gas in thermal equilibrium (\\cite{boltzmann}).",
-      "section": "",
+      "quote": "Watch which words survive — then let the dice decide.",
+      "block_id": "samplinglab-block-16",
+      "section": "Try it: the Decoding Studio",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-15",
-      "quote": "Gibbs gave the ensemble formulation in his 1902 treatise (\\cite{gibbs1902}), and the same exponential family reappears as the Gibbs distribution in statistics and image processing (\\cite{geman1984gibbs}).",
-      "section": "",
+      "quote": "Open story Factual question",
+      "block_id": "samplinglab-block-17",
+      "section": "Try it: the Decoding Studio",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-16",
-      "quote": "Ackley, Hinton, and Sejnowski imported the idea into neural networks as the Boltzmann machine, where temperature controls the sharpness of the stochastic units (\\cite{ackley1985boltzmann}).",
-      "section": "",
+      "quote": "Presets Greedy Precise Chat default Creative Chaos",
+      "block_id": "samplinglab-block-19",
+      "section": "Try it: the Decoding Studio",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-17",
-      "quote": "Softmax temperature is exactly this formula with the negative logit playing the role of energy, so the analogy is structural, not decorative.",
-      "section": "",
+      "quote": "0 = greedy · 1 = the model as trained · 2 = very flat",
+      "block_id": "samplinglab-block-21",
+      "section": "Try it: the Decoding Studio",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-18",
-      "quote": "After the LLM produces logits $\\mathbf{z} \\in \\mathbb{R}^{|V|}$ for the next token, softmax gives a probability distribution:",
-      "section": "The Probability Distribution",
+      "quote": "keep the k most likely tokens (far right = off)",
+      "block_id": "samplinglab-block-23",
+      "section": "Try it: the Decoding Studio",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-19",
-      "quote": "where $T$ is **temperature**:",
-      "section": "The Probability Distribution",
+      "quote": "smallest set whose probability adds up to p",
+      "block_id": "samplinglab-block-25",
+      "section": "Try it: the Decoding Studio",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-20",
-      "quote": "* $T \\to 0$: argmax (greedy).",
-      "section": "The Probability Distribution",
+      "quote": "drop tokens below s × (best token's probability)",
+      "block_id": "samplinglab-block-27",
+      "section": "Try it: the Decoding Studio",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-21",
-      "quote": "Always picks the most likely token.",
-      "section": "The Probability Distribution",
+      "quote": "🎲 Sample next word ×200 ↺",
+      "block_id": "samplinglab-block-29",
+      "section": "Try it: the Decoding Studio",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-22",
-      "quote": "* $T = 1$: native distribution.",
-      "section": "The Probability Distribution",
+      "quote": "after temperature after filters (renormalized) observed draws end of the top-p nucleus min-p threshold",
+      "block_id": "samplinglab-block-30",
+      "section": "Try it: the Decoding Studio",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-23",
-      "quote": "* $T \\to \\infty$: uniform distribution (random).",
-      "section": "The Probability Distribution",
+      "quote": "Candidates left – Mass cut away – Entropy – Effective choices –",
+      "block_id": "samplinglab-block-31",
+      "section": "Try it: the Decoding Studio",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-24",
-      "quote": "* $T > 1$: flatter distribution (more diverse, more random).",
-      "section": "The Probability Distribution",
+      "quote": "Penalize tokens that have already appeared in the context (\\cite[Keskar et al., 2019]{keskar2019ctrl}).",
+      "block_id": "samplinglab-block-34",
+      "section": "Repetition Penalty",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-25",
-      "quote": "* $T < 1$: sharper distribution (more focused).",
-      "section": "The Probability Distribution",
+      "quote": "CTRL divides their logits by $\\theta$ inside the softmax; most implementations use the sign-aware form, which divides positive logits and multiplies negative ones so that every repeated token really becomes less likely:",
+      "block_id": "samplinglab-block-34",
+      "section": "Repetition Penalty",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-26",
-      "quote": "But that's only the beginning.",
-      "section": "The Probability Distribution",
+      "quote": "Useful for chat where the model might otherwise loop.",
+      "block_id": "samplinglab-block-35",
+      "section": "Repetition Penalty",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-27",
-      "quote": "Most modern systems use **additional filters** on top of temperature.",
-      "section": "The Probability Distribution",
+      "quote": "OpenAI-style **frequency** and **presence** penalties are additive variants: subtract $\\alpha\\cdot\\text{count}(i)$ or $\\beta\\cdot\\mathbf{1}[i\\in\\text{context}]$ from the logit.",
+      "block_id": "samplinglab-block-35",
+      "section": "Repetition Penalty",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-28",
-      "quote": "Always pick $\\arg\\max_i P(i)$.",
-      "section": "Greedy Decoding",
+      "quote": "A smarter repetition penalty (Cohere, 2023) that detects repeated n-grams and penalizes them only when they would create a degenerate loop:",
+      "block_id": "samplinglab-block-37",
+      "section": "DRY (Don't Repeat Yourself) Sampling",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-29",
-      "quote": "Used in production for fact-retrieval tasks where creativity is unwanted.",
-      "section": "Greedy Decoding",
+      "quote": "More nuanced than the basic repetition penalty.",
+      "block_id": "samplinglab-block-38",
+      "section": "DRY (Don't Repeat Yourself) Sampling",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-30",
-      "quote": "Drawback: **repetition loops** and **mode collapse** (“the the the the...”).",
-      "section": "Greedy Decoding",
+      "quote": "Used in Cohere's Command-R and recommended for long-context generation.",
+      "block_id": "samplinglab-block-38",
+      "section": "DRY (Don't Repeat Yourself) Sampling",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-31",
-      "quote": "Restrict to the $k$ tokens with highest probability, then renormalize (\\cite[Fan et al., 2018]{fan2018topk}):",
-      "section": "Top-$k$ Sampling",
+      "quote": "A 2024 technique: randomly exclude the top token from sampling with some probability.",
+      "block_id": "samplinglab-block-40",
+      "section": "XTC (Exclude Top Choices)",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-32",
-      "quote": "where $Z = \\sum_{j \\in \\mathcal{V}_k} P(j)$.",
-      "section": "Top-$k$ Sampling",
+      "quote": "Forces the model to use less-likely words.",
+      "block_id": "samplinglab-block-40",
+      "section": "XTC (Exclude Top Choices)",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-33",
-      "quote": "* $k = 50$: typical for chat.",
-      "section": "Top-$k$ Sampling",
+      "quote": "Useful for breaking out of repetitive patterns in creative writing.",
+      "block_id": "samplinglab-block-40",
+      "section": "XTC (Exclude Top Choices)",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-34",
-      "quote": "* $k = 1000+$ for creative writing.",
-      "section": "Top-$k$ Sampling",
+      "quote": "Contrastive search (\\cite[Su et al., 2022]{su2022contrastive}) is a **deterministic** decoding strategy that picks the token maximizing:",
+      "block_id": "samplinglab-block-42",
+      "section": "Contrastive Search",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-35",
-      "quote": "Drawback: $k$ is a fixed number, but the appropriate $k$ varies per context.",
-      "section": "Top-$k$ Sampling",
+      "quote": "A sampling scheme (\\cite[Basu et al., 2020]{basu2020mirostat}) that **targets a fixed perplexity** during generation.",
+      "block_id": "samplinglab-block-44",
+      "section": "mirostat",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-36",
-      "quote": "Sometimes only 3 tokens have meaningful probability; sometimes 100.",
-      "section": "Top-$k$ Sampling",
+      "quote": "The model adjusts its sampling to maintain target surprise:",
+      "block_id": "samplinglab-block-44",
+      "section": "mirostat",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-37",
-      "quote": "Fan, Lewis, and Dauphin introduced top-$k$ sampling for open-ended story generation, where pure ancestral sampling drifted into incoherence and beam search produced bland text (\\cite{fan2018topk}).",
-      "section": "Top-$k$ Sampling",
+      "quote": "Produces output with consistent information density.",
+      "block_id": "samplinglab-block-45",
+      "section": "mirostat",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-38",
-      "quote": "Their model used $k=10$ together with a temperature, and the combination was enough to keep generations on topic without collapsing to the mode.",
-      "section": "Top-$k$ Sampling",
+      "quote": "Used by some LLM writers for creative prose.",
+      "block_id": "samplinglab-block-45",
+      "section": "mirostat",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-39",
-      "quote": "The method's weakness was visible from the start: a fixed $k$ cannot know whether the next distribution is sharp or flat, which is exactly the problem nucleus sampling later addressed.",
-      "section": "Top-$k$ Sampling",
+      "quote": "Drawbacks: tends to produce generic, “averaged” outputs in open-ended generation.",
+      "block_id": "samplinglab-block-48",
+      "section": "Beam Search",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-40",
-      "quote": "Sample from the smallest set of tokens whose cumulative probability exceeds $p$ (\\cite[Holtzman et al., 2020]{holtzman2020nucleus}):",
-      "section": "Top-$p$ (Nucleus) Sampling",
+      "quote": "Beam search predates neural language models: speech recognizers such as Harpy pruned a tree of acoustic hypotheses with it in the 1970s (\\cite{lowerre1976harpy}).",
+      "block_id": "samplinglab-block-49",
+      "section": "Beam Search",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-41",
-      "quote": "* $p = 0.9$: typical for chat (sample from top 90% of mass).",
-      "section": "Top-$p$ (Nucleus) Sampling",
+      "quote": "Sutskever et al. brought it into sequence-to-sequence translation, where it became the default because it searches sequence likelihood more thoroughly than greedy decoding (\\cite{sutskever2014seq2seq}).",
+      "block_id": "samplinglab-block-49",
+      "section": "Beam Search",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-42",
-      "quote": "* $p = 0.95$: more diverse.",
-      "section": "Top-$p$ (Nucleus) Sampling",
+      "quote": "The catch is length: raw log-probabilities favor short outputs, so implementations divide by a length penalty.",
+      "block_id": "samplinglab-block-49",
+      "section": "Beam Search",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-43",
-      "quote": "* $p = 0.5$: very focused.",
-      "section": "Top-$p$ (Nucleus) Sampling",
+      "quote": "In open-ended generation, that same likelihood objective rewards generic continuations, which is why chat models moved away from beam search.",
+      "block_id": "samplinglab-block-49",
+      "section": "Beam Search",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-44",
-      "quote": "This adapts the effective vocabulary size to the distribution.",
-      "section": "Top-$p$ (Nucleus) Sampling",
+      "quote": "The sampling rule at the heart of speculative decoding (\\cite[Leviathan et al., 2023]{leviathan2023speculative}): the draft model proposes tokens probabilistically, the target model verifies them, and rejected proposals are corrected by sampling from the target's adjusted distribution:",
+      "block_id": "samplinglab-block-51",
+      "section": "Speculative Sampling",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-45",
-      "quote": "When the distribution is sharp (one token dominates), $\\mathcal{V}_p$ is small; when flat, $\\mathcal{V}_p$ is large.",
-      "section": "Top-$p$ (Nucleus) Sampling",
+      "quote": "This guarantees the output distribution exactly matches the target model's distribution, while achieving speedup.",
+      "block_id": "samplinglab-block-52",
+      "section": "Speculative Sampling",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-46",
-      "quote": "Most production APIs default to **top-$p$ = 0.9 or 0.95**.",
-      "section": "Top-$p$ (Nucleus) Sampling",
+      "quote": "| **Chat (factual)** | 0.7 | 0.9 | 0.0 | 1.1 |",
+      "block_id": "samplinglab-block-55",
+      "section": "Recommended Settings (2025)",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-47",
-      "quote": "Holtzman et al. diagnosed the failure of maximization-based decoding as a mismatch between machine and human text: greedy and beam search produce high-probability, low-surprisal strings that loop, while pure sampling occasionally goes off the rails (\\cite{holtzman2020nucleus}).",
-      "section": "Top-$p$ (Nucleus) Sampling",
+      "quote": "| **Chat (creative)** | 1.0 | 0.95 | 0.05 | 1.1 |",
+      "block_id": "samplinglab-block-56",
+      "section": "Recommended Settings (2025)",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-48",
-      "quote": "Nucleus sampling keeps the smallest set of tokens whose mass reaches $p$, so the candidate pool expands when the model is uncertain and contracts when it is confident.",
-      "section": "Top-$p$ (Nucleus) Sampling",
+      "quote": "| **Code generation** | 0.2 | 0.95 | 0.0 | 1.0 |",
+      "block_id": "samplinglab-block-57",
+      "section": "Recommended Settings (2025)",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-49",
-      "quote": "Human evaluation showed it matching or beating top-$k$ on coherence and diversity; the cost is that $p$ still has to be tuned per model.",
-      "section": "Top-$p$ (Nucleus) Sampling",
+      "quote": "| **Math/reasoning** | 0.0 | 1.0 | 0.0 | 1.0 |",
+      "block_id": "samplinglab-block-58",
+      "section": "Recommended Settings (2025)",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-50",
-      "quote": "A newer dynamic-truncation method (\\cite[Nguyen et al., 2025]{nguyen2025minp}), available in Hugging Face Transformers, vLLM, and llama.cpp:",
-      "section": "Min-$p$ Sampling",
+      "quote": "| **Translation** | 0.3 | 0.9 | 0.0 | 1.0 |",
+      "block_id": "samplinglab-block-59",
+      "section": "Recommended Settings (2025)",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-51",
-      "quote": "* Choose $m = \\max_i P(i)$ (the highest probability).",
-      "section": "Min-$p$ Sampling",
+      "quote": "| **Creative writing** | 1.2 | 0.95 | 0.1 | 1.2 + DRY |",
+      "block_id": "samplinglab-block-60",
+      "section": "Recommended Settings (2025)",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-52",
-      "quote": "* Include all tokens with $P(i) \\geq s \\cdot m$ where $s \\in [0, 1]$ is the min-$p$ parameter.",
-      "section": "Min-$p$ Sampling",
+      "quote": "| **Summarization** | 0.5 | 0.9 | 0.0 | 1.1 |",
+      "block_id": "samplinglab-block-61",
+      "section": "Recommended Settings (2025)",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-53",
-      "quote": "* $s = 0.1$: include any token within 10× of the max.",
-      "section": "Min-$p$ Sampling",
+      "quote": "A 2024 idea: adjust temperature based on the entropy of the predicted distribution.",
+      "block_id": "samplinglab-block-63",
+      "section": "Dynamic Temperature",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-54",
-      "quote": "* $s = 0.05$: more inclusive.",
-      "section": "Min-$p$ Sampling",
+      "quote": "When the model is confident (low entropy), lower temperature; when uncertain (high entropy), raise it.",
+      "block_id": "samplinglab-block-63",
+      "section": "Dynamic Temperature",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-55",
-      "quote": "* $s = 1.0$: greedy (only the top token qualifies).",
-      "section": "Min-$p$ Sampling",
+      "quote": "The intuition: respect the model's confidence rather than always applying the same temperature.",
+      "block_id": "samplinglab-block-63",
+      "section": "Dynamic Temperature",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-56",
-      "quote": "$s = 0.0$ switches the filter off (keeps every token).",
-      "section": "Min-$p$ Sampling",
+      "quote": "Implementations: **entropy-aware sampling** (\\cite[Wang et al., 2024]{wang2024entropy}), **DynTemp**, and proprietary variants in vLLM and llama.cpp.",
+      "block_id": "samplinglab-block-64",
+      "section": "Dynamic Temperature",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-57",
-      "quote": "Min-$p$ **scales with confidence**: when the model is sharp, few tokens qualify; when uncertain, more.",
-      "section": "Min-$p$ Sampling",
+      "quote": "Not yet standardized but promising.",
+      "block_id": "samplinglab-block-65",
+      "section": "Dynamic Temperature",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-58",
-      "quote": "The authors report better quality and diversity than top-$p$, especially at higher temperatures; the evidence is strongest in that high-temperature regime.",
-      "section": "Min-$p$ Sampling",
+      "quote": "The choice between greedy and stochastic decoding is not a binary of correct versus creative (\\cite{fan2018topk, holtzman2020nucleus}); temperature 0 removes sampling noise but not every source of variation.",
+      "block_id": "samplinglab-block-67",
+      "section": "Practical Tips",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-59",
-      "quote": "Top-$n$ is just another name for top-$k$: keep exactly the $n$ highest-probability tokens, then renormalize.",
-      "section": "Top-$n$ (Top-$N$) Sampling",
+      "quote": "Floating-point reductions, GPU kernel scheduling, batching, and tensor-parallel order can change the last bits of a logit, and a near-tie can then flip the argmax.",
+      "block_id": "samplinglab-block-67",
+      "section": "Practical Tips",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-60",
-      "quote": "The two names appear in different codebases, which can make them look like separate algorithms.",
-      "section": "Top-$n$ (Top-$N$) Sampling",
+      "quote": "Providers that offer a seed make a best effort, not a guarantee.",
+      "block_id": "samplinglab-block-67",
+      "section": "Practical Tips",
       "kind": "statement"
     },
     {
       "id": "samplinglab-stmt-61",
-      "quote": "They are the same filter, and the same drawback applies: $n$ does not adapt to how sharp or flat the distribution is.",
-      "section": "Top-$n$ (Top-$N$) Sampling",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-62",
-      "quote": "Discards tokens in the “tail” of the distribution where the second derivative of probability is small.",
-      "section": "Tail-Free Sampling (TFS)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-63",
-      "quote": "Rarely used in production.",
-      "section": "Tail-Free Sampling (TFS)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-64",
-      "quote": "Similar to min-$p$ but with a different criterion: cut off tokens with probability below an $\\eta$-dependent threshold based on entropy.",
-      "section": "Eta ($\\eta$) Sampling",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-65",
-      "quote": "Generally less popular than min-$p$.",
-      "section": "Eta ($\\eta$) Sampling",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-66",
-      "quote": "Locally typical sampling starts from an information-theoretic observation: human text keeps each word's surprisal close to the conditional entropy of its context, while high-probability machine text is too predictable and pure sampling is too noisy (\\cite{meister2022typical}).",
-      "section": "Eta ($\\eta$) Sampling",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-67",
-      "quote": "The method keeps tokens whose information content $-\\log p_i$ is closest to the entropy $H$, rather than the tokens with the largest probability.",
-      "section": "Eta ($\\eta$) Sampling",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-68",
-      "quote": "On summarization and story generation it reduced repetition and scored competitively with nucleus sampling.",
-      "section": "Eta ($\\eta$) Sampling",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-69",
-      "quote": "Its parameter is the mass $\\tau$ of the typical set, so like top-$p$ it controls how much of the distribution survives.",
-      "section": "Eta ($\\eta$) Sampling",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-70",
-      "quote": "Every method above is a different way of answering the same question: *which candidates are still allowed?* Below, a model has produced logits for the next word.",
-      "section": "Try it: the Decoding Studio",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-71",
-      "quote": "Turn the temperature, switch the filters on and off, and sample.",
-      "section": "Try it: the Decoding Studio",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-72",
-      "quote": "The faint bar behind each token is its probability after temperature; the bright bar is what is left after the filters cut the tail and the survivors are renormalized.",
-      "section": "Try it: the Decoding Studio",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-73",
-      "quote": "Then switch to the factual prompt and notice how top-$k$ keeps nonsense while top-$p$ and min-$p$ shrink to a single word on their own.",
-      "section": "Try it: the Decoding Studio",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-74",
-      "quote": "Penalize tokens that have already appeared in the context (\\cite[Keskar et al., 2019]{keskar2019ctrl}).",
-      "section": "Repetition Penalty",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-75",
-      "quote": "CTRL divides their logits by $\\theta$ inside the softmax; most implementations use the sign-aware form, which divides positive logits and multiplies negative ones so that every repeated token really becomes less likely:",
-      "section": "Repetition Penalty",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-76",
-      "quote": "* $\\theta = 1.0$: no penalty.",
-      "section": "Repetition Penalty",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-77",
-      "quote": "* $\\theta = 1.1$: mild penalty.",
-      "section": "Repetition Penalty",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-78",
-      "quote": "* $\\theta = 1.3$: strong penalty.",
-      "section": "Repetition Penalty",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-79",
-      "quote": "Useful for chat where the model might otherwise loop.",
-      "section": "Repetition Penalty",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-80",
-      "quote": "OpenAI-style **frequency** and **presence** penalties are additive variants: subtract $\\alpha\\cdot\\text{count}(i)$ or $\\beta\\cdot\\mathbf{1}[i\\in\\text{context}]$ from the logit.",
-      "section": "Repetition Penalty",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-81",
-      "quote": "A smarter repetition penalty (Cohere, 2023) that detects repeated n-grams and penalizes them only when they would create a degenerate loop:",
-      "section": "DRY (Don't Repeat Yourself) Sampling",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-82",
-      "quote": "* Match n-grams of length $n \\geq n_{\\text{min}}$ (e.g., 8).",
-      "section": "DRY (Don't Repeat Yourself) Sampling",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-83",
-      "quote": "* If the most recent n-gram matches an earlier one and would continue the repetition, apply penalty.",
-      "section": "DRY (Don't Repeat Yourself) Sampling",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-84",
-      "quote": "More nuanced than the basic repetition penalty.",
-      "section": "DRY (Don't Repeat Yourself) Sampling",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-85",
-      "quote": "Used in Cohere's Command-R and recommended for long-context generation.",
-      "section": "DRY (Don't Repeat Yourself) Sampling",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-86",
-      "quote": "A 2024 technique: randomly exclude the top token from sampling with some probability.",
-      "section": "XTC (Exclude Top Choices)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-87",
-      "quote": "Forces the model to use less-likely words.",
-      "section": "XTC (Exclude Top Choices)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-88",
-      "quote": "Useful for breaking out of repetitive patterns in creative writing.",
-      "section": "XTC (Exclude Top Choices)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-89",
-      "quote": "* $p_{\\text{exclude}} = 0.1$: 10% of the time, the top token is excluded.",
-      "section": "XTC (Exclude Top Choices)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-90",
-      "quote": "Contrastive search (\\cite[Su et al., 2022]{su2022contrastive}) is a **deterministic** decoding strategy that picks the token maximizing:",
-      "section": "Contrastive Search",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-91",
-      "quote": "where $\\mathbf{h}_i$ is the token's hidden state and $\\alpha$ controls the degeneration penalty.",
-      "section": "Contrastive Search",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-92",
-      "quote": "The original objective uses the model probability $P(i)$, not its logarithm; replacing $P$ with $\\log P$ changes the balance between confidence and the degeneration penalty.",
-      "section": "Contrastive Search",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-93",
-      "quote": "Produces high-quality, **non-repetitive** output without randomness.",
-      "section": "Contrastive Search",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-94",
-      "quote": "A sampling scheme (\\cite[Basu et al., 2020]{basu2020mirostat}) that **targets a fixed perplexity** during generation.",
-      "section": "mirostat",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-95",
-      "quote": "The model adjusts its sampling to maintain target surprise:",
-      "section": "mirostat",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-96",
-      "quote": "* Target perplexity $\\tau$ (e.g., $\\tau = 5$).",
-      "section": "mirostat",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-97",
-      "quote": "* After each generated token, compute current perplexity.",
-      "section": "mirostat",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-98",
-      "quote": "* Adjust $k$ (top-$k$) to drive perplexity toward $\\tau$.",
-      "section": "mirostat",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-99",
-      "quote": "Produces output with consistent information density.",
-      "section": "mirostat",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-100",
-      "quote": "Used by some LLM writers for creative prose.",
-      "section": "mirostat",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-101",
-      "quote": "Maintain the top $B$ partial sequences at each step; expand all of them; keep the top $B$.",
-      "section": "Beam Search",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-102",
-      "quote": "Used in machine translation; rarely in modern LLM chat.",
-      "section": "Beam Search",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-103",
-      "quote": "Drawbacks: tends to produce generic, “averaged” outputs in open-ended generation.",
-      "section": "Beam Search",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-104",
-      "quote": "Beam search predates neural language models: speech recognizers such as Harpy pruned a tree of acoustic hypotheses with it in the 1970s (\\cite{lowerre1976harpy}).",
-      "section": "Beam Search",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-105",
-      "quote": "Sutskever et al. brought it into sequence-to-sequence translation, where it became the default because it searches sequence likelihood more thoroughly than greedy decoding (\\cite{sutskever2014seq2seq}).",
-      "section": "Beam Search",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-106",
-      "quote": "The catch is length: raw log-probabilities favor short outputs, so implementations divide by a length penalty.",
-      "section": "Beam Search",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-107",
-      "quote": "In open-ended generation, that same likelihood objective rewards generic continuations, which is why chat models moved away from beam search.",
-      "section": "Beam Search",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-108",
-      "quote": "The sampling rule at the heart of speculative decoding (\\cite[Leviathan et al., 2023]{leviathan2023speculative}): the draft model proposes tokens probabilistically, the target model verifies them, and rejected proposals are corrected by sampling from the target's adjusted distribution:",
-      "section": "Speculative Sampling",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-109",
-      "quote": "This guarantees the output distribution exactly matches the target model's distribution, while achieving speedup.",
-      "section": "Speculative Sampling",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-110",
-      "quote": "| Use case | Temperature | Top-$p$ | Min-$p$ | Repetition penalty |",
-      "section": "Recommended Settings (2025)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-111",
-      "quote": "| **Chat (factual)** | 0.7 | 0.9 | 0.0 | 1.1 |",
-      "section": "Recommended Settings (2025)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-112",
-      "quote": "| **Chat (creative)** | 1.0 | 0.95 | 0.05 | 1.1 |",
-      "section": "Recommended Settings (2025)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-113",
-      "quote": "| **Code generation** | 0.2 | 0.95 | 0.0 | 1.0 |",
-      "section": "Recommended Settings (2025)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-114",
-      "quote": "| **Math/reasoning** | 0.0 | 1.0 | 0.0 | 1.0 |",
-      "section": "Recommended Settings (2025)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-115",
-      "quote": "| **Translation** | 0.3 | 0.9 | 0.0 | 1.0 |",
-      "section": "Recommended Settings (2025)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-116",
-      "quote": "| **Creative writing** | 1.2 | 0.95 | 0.1 | 1.2 + DRY |",
-      "section": "Recommended Settings (2025)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-117",
-      "quote": "| **Summarization** | 0.5 | 0.9 | 0.0 | 1.1 |",
-      "section": "Recommended Settings (2025)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-118",
-      "quote": "**Model-card defaults vary**: Qwen3 recommends temperature 0.6–0.7 with top-$p$ 0.8–0.95 and min-$p$ 0; DeepSeek-R1 recommends 0.6 with top-$p$ 0.95; Mistral cards do not set min-$p$ either.",
-      "section": "Recommended Settings (2025)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-119",
-      "quote": "The OpenAI API defaults to temperature 1.0 and top-$p$ 1.0; Anthropic likewise applies no nucleus truncation by default.",
-      "section": "Recommended Settings (2025)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-120",
-      "quote": "Product UIs may layer their own presets.",
-      "section": "Recommended Settings (2025)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-121",
-      "quote": "Min-$p$ is a common optional filter, not a universal default.",
-      "section": "Recommended Settings (2025)",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-122",
-      "quote": "A 2024 idea: adjust temperature based on the entropy of the predicted distribution.",
-      "section": "Dynamic Temperature",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-123",
-      "quote": "When the model is confident (low entropy), lower temperature; when uncertain (high entropy), raise it.",
-      "section": "Dynamic Temperature",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-124",
-      "quote": "The intuition: respect the model's confidence rather than always applying the same temperature.",
-      "section": "Dynamic Temperature",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-125",
-      "quote": "Implementations: **entropy-aware sampling** (\\cite[Wang et al., 2024]{wang2024entropy}), **DynTemp**, and proprietary variants in vLLM and llama.cpp.",
-      "section": "Dynamic Temperature",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-126",
-      "quote": "Not yet standardized but promising.",
-      "section": "Dynamic Temperature",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-127",
-      "quote": "* **Reproducibility**: set temperature = 0 (or very low) for reproducible outputs.",
-      "section": "Practical Tips",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-128",
-      "quote": "* **For evals**: temperature = 0 + greedy.",
-      "section": "Practical Tips",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-129",
-      "quote": "Otherwise the eval is noisy.",
-      "section": "Practical Tips",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-130",
-      "quote": "* **For chat**: temperature 0.7–1.0, top-$p$ 0.9.",
-      "section": "Practical Tips",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-131",
-      "quote": "* **For code**: low temperature, no top-$p$, possibly beam search.",
-      "section": "Practical Tips",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-132",
-      "quote": "* **For batch inference**: deterministic, greedy.",
-      "section": "Practical Tips",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-133",
-      "quote": "A common mistake: using temperature 1.0 with top-$p$ 0.9 AND min-$p$ 0.05.",
-      "section": "Practical Tips",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-134",
-      "quote": "These compound; the effective sampling becomes very restricted.",
-      "section": "Practical Tips",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-135",
-      "quote": "**Pick one filter method** unless you know what you're doing.",
-      "section": "Practical Tips",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-136",
-      "quote": "The choice between greedy and stochastic decoding is not a binary of correct versus creative (\\cite{fan2018topk, holtzman2020nucleus}); temperature 0 removes sampling noise but not every source of variation.",
-      "section": "Practical Tips",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-137",
-      "quote": "Floating-point reductions, GPU kernel scheduling, batching, and tensor-parallel order can change the last bits of a logit, and a near-tie can then flip the argmax.",
-      "section": "Practical Tips",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-138",
-      "quote": "Providers that offer a seed make a best effort, not a guarantee.",
-      "section": "Practical Tips",
-      "kind": "statement"
-    },
-    {
-      "id": "samplinglab-stmt-139",
       "quote": "The practical rule is to fix sampler, seed, model version, and batch shape together; if an evaluation must be exactly repeatable, cache the generated outputs rather than regenerate them.",
+      "block_id": "samplinglab-block-67",
       "section": "Practical Tips",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "samplinglab-block-1",
+      "quote": "This chapter covers every common decoding method with its mathematical formulation and recommended use, grouped from the baseline distribution, through the candidate-set filters, to the diversity and search tricks and the practical settings that tie them together.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "samplinglab-block-2",
+      "quote": "The Baseline: Temperature and Greedy",
+      "kind": "heading",
+      "section": "The Baseline: Temperature and Greedy"
+    },
+    {
+      "id": "samplinglab-block-3",
+      "quote": "The Probability Distribution",
+      "kind": "heading",
+      "section": "The Probability Distribution"
+    },
+    {
+      "id": "samplinglab-block-4",
+      "quote": "After the LLM produces logits $\\mathbf{z} \\in \\mathbb{R}^{|V|}$ for the next token, softmax gives a probability distribution:",
+      "kind": "paragraph",
+      "section": "The Probability Distribution"
+    },
+    {
+      "id": "samplinglab-block-5",
+      "quote": "But that's only the beginning. Most modern systems use **additional filters** on top of temperature.",
+      "kind": "paragraph",
+      "section": "The Probability Distribution"
+    },
+    {
+      "id": "samplinglab-block-6",
+      "quote": "Greedy Decoding",
+      "kind": "heading",
+      "section": "Greedy Decoding"
+    },
+    {
+      "id": "samplinglab-block-7",
+      "quote": "Always pick $\\arg\\max_i P(i)$. Deterministic, fast. Used in production for fact-retrieval tasks where creativity is unwanted.",
+      "kind": "paragraph",
+      "section": "Greedy Decoding"
+    },
+    {
+      "id": "samplinglab-block-8",
+      "quote": "Drawback: **repetition loops** and **mode collapse** (“the the the the...”).",
+      "kind": "paragraph",
+      "section": "Greedy Decoding"
+    },
+    {
+      "id": "samplinglab-block-9",
+      "quote": "Truncating the Candidate Set",
+      "kind": "heading",
+      "section": "Truncating the Candidate Set"
+    },
+    {
+      "id": "samplinglab-block-10",
+      "quote": "This adapts the effective vocabulary size to the distribution. When the distribution is sharp (one token dominates), $\\mathcal{V}_p$ is small; when flat, $\\mathcal{V}_p$ is large.",
+      "kind": "paragraph",
+      "section": "Truncating the Candidate Set"
+    },
+    {
+      "id": "samplinglab-block-11",
+      "quote": "A newer dynamic-truncation method (\\cite[Nguyen et al., 2025]{nguyen2025minp}), available in Hugging Face Transformers, vLLM, and llama.cpp:",
+      "kind": "paragraph",
+      "section": "Truncating the Candidate Set"
+    },
+    {
+      "id": "samplinglab-block-12",
+      "quote": "Tail-Free Sampling (TFS)",
+      "kind": "heading",
+      "section": "Tail-Free Sampling (TFS)"
+    },
+    {
+      "id": "samplinglab-block-13",
+      "quote": "Discards tokens in the “tail” of the distribution where the second derivative of probability is small. Rarely used in production.",
+      "kind": "paragraph",
+      "section": "Tail-Free Sampling (TFS)"
+    },
+    {
+      "id": "samplinglab-block-14",
+      "quote": "Eta ($\\eta$) Sampling",
+      "kind": "heading",
+      "section": "Eta ($\\eta$) Sampling"
+    },
+    {
+      "id": "samplinglab-block-15",
+      "quote": "Try it: the Decoding Studio",
+      "kind": "heading",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-16",
+      "quote": "Interactive lab Decoding Studio One set of logits, four knobs. Watch which words survive — then let the dice decide.",
+      "kind": "paragraph",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-17",
+      "quote": "Open story Factual question",
+      "kind": "paragraph",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-18",
+      "quote": "▁▁▁ Recent draws:",
+      "kind": "paragraph",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-19",
+      "quote": "Presets Greedy Precise Chat default Creative Chaos",
+      "kind": "paragraph",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-20",
+      "quote": "Temperature T 1.00",
+      "kind": "paragraph",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-21",
+      "quote": "0 = greedy · 1 = the model as trained · 2 = very flat",
+      "kind": "paragraph",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-22",
+      "quote": "Top-k off",
+      "kind": "paragraph",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-23",
+      "quote": "keep the k most likely tokens (far right = off)",
+      "kind": "paragraph",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-24",
+      "quote": "Top-p (nucleus) off",
+      "kind": "paragraph",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-25",
+      "quote": "smallest set whose probability adds up to p",
+      "kind": "paragraph",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-26",
+      "quote": "Min-p off",
+      "kind": "paragraph",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-27",
+      "quote": "drop tokens below s × (best token's probability)",
+      "kind": "paragraph",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-28",
+      "quote": "Next-word candidates",
+      "kind": "paragraph",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-29",
+      "quote": "🎲 Sample next word ×200 ↺",
+      "kind": "paragraph",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-30",
+      "quote": "after temperature after filters (renormalized) observed draws end of the top-p nucleus min-p threshold",
+      "kind": "paragraph",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-31",
+      "quote": "Candidates left – Mass cut away – Entropy – Effective choices –",
+      "kind": "paragraph",
+      "section": "Try it: the Decoding Studio"
+    },
+    {
+      "id": "samplinglab-block-32",
+      "quote": "Anti-Repetition and Diversity",
+      "kind": "heading",
+      "section": "Anti-Repetition and Diversity"
+    },
+    {
+      "id": "samplinglab-block-33",
+      "quote": "Repetition Penalty",
+      "kind": "heading",
+      "section": "Repetition Penalty"
+    },
+    {
+      "id": "samplinglab-block-34",
+      "quote": "Penalize tokens that have already appeared in the context (\\cite[Keskar et al., 2019]{keskar2019ctrl}). CTRL divides their logits by $\\theta$ inside the softmax; most implementations use the sign-aware form, which divides positive logits and multiplies negative ones so that every repeated token really becomes less likely:",
+      "kind": "paragraph",
+      "section": "Repetition Penalty"
+    },
+    {
+      "id": "samplinglab-block-35",
+      "quote": "Useful for chat where the model might otherwise loop. OpenAI-style **frequency** and **presence** penalties are additive variants: subtract $\\alpha\\cdot\\text{count}(i)$ or $\\beta\\cdot\\mathbf{1}[i\\in\\text{context}]$ from the logit.",
+      "kind": "paragraph",
+      "section": "Repetition Penalty"
+    },
+    {
+      "id": "samplinglab-block-36",
+      "quote": "DRY (Don't Repeat Yourself) Sampling",
+      "kind": "heading",
+      "section": "DRY (Don't Repeat Yourself) Sampling"
+    },
+    {
+      "id": "samplinglab-block-37",
+      "quote": "A smarter repetition penalty (Cohere, 2023) that detects repeated n-grams and penalizes them only when they would create a degenerate loop:",
+      "kind": "paragraph",
+      "section": "DRY (Don't Repeat Yourself) Sampling"
+    },
+    {
+      "id": "samplinglab-block-38",
+      "quote": "More nuanced than the basic repetition penalty. Used in Cohere's Command-R and recommended for long-context generation.",
+      "kind": "paragraph",
+      "section": "DRY (Don't Repeat Yourself) Sampling"
+    },
+    {
+      "id": "samplinglab-block-39",
+      "quote": "XTC (Exclude Top Choices)",
+      "kind": "heading",
+      "section": "XTC (Exclude Top Choices)"
+    },
+    {
+      "id": "samplinglab-block-40",
+      "quote": "A 2024 technique: randomly exclude the top token from sampling with some probability. Forces the model to use less-likely words. Useful for breaking out of repetitive patterns in creative writing.",
+      "kind": "paragraph",
+      "section": "XTC (Exclude Top Choices)"
+    },
+    {
+      "id": "samplinglab-block-41",
+      "quote": "Contrastive Search",
+      "kind": "heading",
+      "section": "Contrastive Search"
+    },
+    {
+      "id": "samplinglab-block-42",
+      "quote": "Contrastive search (\\cite[Su et al., 2022]{su2022contrastive}) is a **deterministic** decoding strategy that picks the token maximizing:",
+      "kind": "paragraph",
+      "section": "Contrastive Search"
+    },
+    {
+      "id": "samplinglab-block-43",
+      "quote": "mirostat",
+      "kind": "heading",
+      "section": "mirostat"
+    },
+    {
+      "id": "samplinglab-block-44",
+      "quote": "A sampling scheme (\\cite[Basu et al., 2020]{basu2020mirostat}) that **targets a fixed perplexity** during generation. The model adjusts its sampling to maintain target surprise:",
+      "kind": "paragraph",
+      "section": "mirostat"
+    },
+    {
+      "id": "samplinglab-block-45",
+      "quote": "Produces output with consistent information density. Used by some LLM writers for creative prose.",
+      "kind": "paragraph",
+      "section": "mirostat"
+    },
+    {
+      "id": "samplinglab-block-46",
+      "quote": "Search and Speculation",
+      "kind": "heading",
+      "section": "Search and Speculation"
+    },
+    {
+      "id": "samplinglab-block-47",
+      "quote": "Beam Search",
+      "kind": "heading",
+      "section": "Beam Search"
+    },
+    {
+      "id": "samplinglab-block-48",
+      "quote": "Drawbacks: tends to produce generic, “averaged” outputs in open-ended generation.",
+      "kind": "paragraph",
+      "section": "Beam Search"
+    },
+    {
+      "id": "samplinglab-block-49",
+      "quote": "Beam search predates neural language models: speech recognizers such as Harpy pruned a tree of acoustic hypotheses with it in the 1970s (\\cite{lowerre1976harpy}). Sutskever et al. brought it into sequence-to-sequence translation, where it became the default because it searches sequence likelihood more thoroughly than greedy decoding (\\cite{sutskever2014seq2seq}). The catch is length: raw log-probabilities favor short outputs, so implementations divide by a length penalty. In open-ended generation, that same likelihood objective rewards generic continuations, which is why chat models moved away from beam search.",
+      "kind": "paragraph",
+      "section": "Beam Search"
+    },
+    {
+      "id": "samplinglab-block-50",
+      "quote": "Speculative Sampling",
+      "kind": "heading",
+      "section": "Speculative Sampling"
+    },
+    {
+      "id": "samplinglab-block-51",
+      "quote": "The sampling rule at the heart of speculative decoding (\\cite[Leviathan et al., 2023]{leviathan2023speculative}): the draft model proposes tokens probabilistically, the target model verifies them, and rejected proposals are corrected by sampling from the target's adjusted distribution:",
+      "kind": "paragraph",
+      "section": "Speculative Sampling"
+    },
+    {
+      "id": "samplinglab-block-52",
+      "quote": "This guarantees the output distribution exactly matches the target model's distribution, while achieving speedup.",
+      "kind": "paragraph",
+      "section": "Speculative Sampling"
+    },
+    {
+      "id": "samplinglab-block-53",
+      "quote": "Choosing and Tuning",
+      "kind": "heading",
+      "section": "Choosing and Tuning"
+    },
+    {
+      "id": "samplinglab-block-54",
+      "quote": "Recommended Settings (2025)",
+      "kind": "heading",
+      "section": "Recommended Settings (2025)"
+    },
+    {
+      "id": "samplinglab-block-55",
+      "quote": "| **Chat (factual)** | 0.7 | 0.9 | 0.0 | 1.1 |",
+      "kind": "table-row",
+      "section": "Recommended Settings (2025)"
+    },
+    {
+      "id": "samplinglab-block-56",
+      "quote": "| **Chat (creative)** | 1.0 | 0.95 | 0.05 | 1.1 |",
+      "kind": "table-row",
+      "section": "Recommended Settings (2025)"
+    },
+    {
+      "id": "samplinglab-block-57",
+      "quote": "| **Code generation** | 0.2 | 0.95 | 0.0 | 1.0 |",
+      "kind": "table-row",
+      "section": "Recommended Settings (2025)"
+    },
+    {
+      "id": "samplinglab-block-58",
+      "quote": "| **Math/reasoning** | 0.0 | 1.0 | 0.0 | 1.0 |",
+      "kind": "table-row",
+      "section": "Recommended Settings (2025)"
+    },
+    {
+      "id": "samplinglab-block-59",
+      "quote": "| **Translation** | 0.3 | 0.9 | 0.0 | 1.0 |",
+      "kind": "table-row",
+      "section": "Recommended Settings (2025)"
+    },
+    {
+      "id": "samplinglab-block-60",
+      "quote": "| **Creative writing** | 1.2 | 0.95 | 0.1 | 1.2 + DRY |",
+      "kind": "table-row",
+      "section": "Recommended Settings (2025)"
+    },
+    {
+      "id": "samplinglab-block-61",
+      "quote": "| **Summarization** | 0.5 | 0.9 | 0.0 | 1.1 |",
+      "kind": "table-row",
+      "section": "Recommended Settings (2025)"
+    },
+    {
+      "id": "samplinglab-block-62",
+      "quote": "Dynamic Temperature",
+      "kind": "heading",
+      "section": "Dynamic Temperature"
+    },
+    {
+      "id": "samplinglab-block-63",
+      "quote": "A 2024 idea: adjust temperature based on the entropy of the predicted distribution. When the model is confident (low entropy), lower temperature; when uncertain (high entropy), raise it. The intuition: respect the model's confidence rather than always applying the same temperature.",
+      "kind": "paragraph",
+      "section": "Dynamic Temperature"
+    },
+    {
+      "id": "samplinglab-block-64",
+      "quote": "Implementations: **entropy-aware sampling** (\\cite[Wang et al., 2024]{wang2024entropy}), **DynTemp**, and proprietary variants in vLLM and llama.cpp.",
+      "kind": "paragraph",
+      "section": "Dynamic Temperature"
+    },
+    {
+      "id": "samplinglab-block-65",
+      "quote": "Not yet standardized but promising.",
+      "kind": "paragraph",
+      "section": "Dynamic Temperature"
+    },
+    {
+      "id": "samplinglab-block-66",
+      "quote": "Practical Tips",
+      "kind": "heading",
+      "section": "Practical Tips"
+    },
+    {
+      "id": "samplinglab-block-67",
+      "quote": "The choice between greedy and stochastic decoding is not a binary of correct versus creative (\\cite{fan2018topk, holtzman2020nucleus}); temperature 0 removes sampling noise but not every source of variation. Floating-point reductions, GPU kernel scheduling, batching, and tensor-parallel order can change the last bits of a logit, and a near-tie can then flip the argmax. Providers that offer a seed make a best effort, not a guarantee. The practical rule is to fix sampler, seed, model version, and batch shape together; if an evaluation must be exactly repeatable, cache the generated outputs rather than regenerate them.",
+      "kind": "paragraph",
+      "section": "Practical Tips"
     }
   ]
 }

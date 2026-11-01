@@ -789,890 +789,4569 @@
       "quote": "A request with a 100K-token prompt would otherwise block the GPU for many seconds.",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-1-part_of-inference-optimization",
+      "from": "inference_optimization-block-1",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-2-part_of-inference-optimization",
+      "from": "inference_optimization-block-2",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-1-before-inference_optimization-block-2",
+      "from": "inference_optimization-block-1",
+      "to": "inference_optimization-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-2-related_to-inference_optimization-block-1",
+      "from": "inference_optimization-block-2",
+      "to": "inference_optimization-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-3-part_of-inference-optimization",
+      "from": "inference_optimization-block-3",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-2-before-inference_optimization-block-3",
+      "from": "inference_optimization-block-2",
+      "to": "inference_optimization-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-4-part_of-inference-optimization",
+      "from": "inference_optimization-block-4",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-3-before-inference_optimization-block-4",
+      "from": "inference_optimization-block-3",
+      "to": "inference_optimization-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-5-part_of-inference-optimization",
+      "from": "inference_optimization-block-5",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-4-before-inference_optimization-block-5",
+      "from": "inference_optimization-block-4",
+      "to": "inference_optimization-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-5-related_to-inference_optimization-block-4",
+      "from": "inference_optimization-block-5",
+      "to": "inference_optimization-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-6-part_of-inference-optimization",
+      "from": "inference_optimization-block-6",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-5-before-inference_optimization-block-6",
+      "from": "inference_optimization-block-5",
+      "to": "inference_optimization-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-6-related_to-inference_optimization-block-4",
+      "from": "inference_optimization-block-6",
+      "to": "inference_optimization-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-7-part_of-inference-optimization",
+      "from": "inference_optimization-block-7",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-6-before-inference_optimization-block-7",
+      "from": "inference_optimization-block-6",
+      "to": "inference_optimization-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-7-related_to-inference_optimization-block-4",
+      "from": "inference_optimization-block-7",
+      "to": "inference_optimization-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-8-part_of-inference-optimization",
+      "from": "inference_optimization-block-8",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-7-before-inference_optimization-block-8",
+      "from": "inference_optimization-block-7",
+      "to": "inference_optimization-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-8-related_to-inference_optimization-block-4",
+      "from": "inference_optimization-block-8",
+      "to": "inference_optimization-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-9-part_of-inference-optimization",
+      "from": "inference_optimization-block-9",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-8-before-inference_optimization-block-9",
+      "from": "inference_optimization-block-8",
+      "to": "inference_optimization-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-9-related_to-inference_optimization-block-4",
+      "from": "inference_optimization-block-9",
+      "to": "inference_optimization-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-10-part_of-inference-optimization",
+      "from": "inference_optimization-block-10",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-9-before-inference_optimization-block-10",
+      "from": "inference_optimization-block-9",
+      "to": "inference_optimization-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-10-related_to-inference_optimization-block-4",
+      "from": "inference_optimization-block-10",
+      "to": "inference_optimization-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-11-part_of-inference-optimization",
+      "from": "inference_optimization-block-11",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-10-before-inference_optimization-block-11",
+      "from": "inference_optimization-block-10",
+      "to": "inference_optimization-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-12-part_of-inference-optimization",
+      "from": "inference_optimization-block-12",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-11-before-inference_optimization-block-12",
+      "from": "inference_optimization-block-11",
+      "to": "inference_optimization-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-13-part_of-inference-optimization",
+      "from": "inference_optimization-block-13",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-12-before-inference_optimization-block-13",
+      "from": "inference_optimization-block-12",
+      "to": "inference_optimization-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-13-related_to-inference_optimization-block-12",
+      "from": "inference_optimization-block-13",
+      "to": "inference_optimization-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-14-part_of-inference-optimization",
+      "from": "inference_optimization-block-14",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-13-before-inference_optimization-block-14",
+      "from": "inference_optimization-block-13",
+      "to": "inference_optimization-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-14-related_to-inference_optimization-block-12",
+      "from": "inference_optimization-block-14",
+      "to": "inference_optimization-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-15-part_of-inference-optimization",
+      "from": "inference_optimization-block-15",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-14-before-inference_optimization-block-15",
+      "from": "inference_optimization-block-14",
+      "to": "inference_optimization-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-15-related_to-inference_optimization-block-12",
+      "from": "inference_optimization-block-15",
+      "to": "inference_optimization-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-16-part_of-inference-optimization",
+      "from": "inference_optimization-block-16",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-15-before-inference_optimization-block-16",
+      "from": "inference_optimization-block-15",
+      "to": "inference_optimization-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-16-related_to-inference_optimization-block-12",
+      "from": "inference_optimization-block-16",
+      "to": "inference_optimization-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-17-part_of-inference-optimization",
+      "from": "inference_optimization-block-17",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-16-before-inference_optimization-block-17",
+      "from": "inference_optimization-block-16",
+      "to": "inference_optimization-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-17-related_to-inference_optimization-block-12",
+      "from": "inference_optimization-block-17",
+      "to": "inference_optimization-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-18-part_of-inference-optimization",
+      "from": "inference_optimization-block-18",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-17-before-inference_optimization-block-18",
+      "from": "inference_optimization-block-17",
+      "to": "inference_optimization-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-18-related_to-inference_optimization-block-12",
+      "from": "inference_optimization-block-18",
+      "to": "inference_optimization-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-19-part_of-inference-optimization",
+      "from": "inference_optimization-block-19",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-18-before-inference_optimization-block-19",
+      "from": "inference_optimization-block-18",
+      "to": "inference_optimization-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-19-related_to-inference_optimization-block-12",
+      "from": "inference_optimization-block-19",
+      "to": "inference_optimization-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-20-part_of-inference-optimization",
+      "from": "inference_optimization-block-20",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-19-before-inference_optimization-block-20",
+      "from": "inference_optimization-block-19",
+      "to": "inference_optimization-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-20-related_to-inference_optimization-block-12",
+      "from": "inference_optimization-block-20",
+      "to": "inference_optimization-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-21-part_of-inference-optimization",
+      "from": "inference_optimization-block-21",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-20-before-inference_optimization-block-21",
+      "from": "inference_optimization-block-20",
+      "to": "inference_optimization-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-21-related_to-inference_optimization-block-12",
+      "from": "inference_optimization-block-21",
+      "to": "inference_optimization-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-22-part_of-inference-optimization",
+      "from": "inference_optimization-block-22",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-21-before-inference_optimization-block-22",
+      "from": "inference_optimization-block-21",
+      "to": "inference_optimization-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-22-related_to-inference_optimization-block-12",
+      "from": "inference_optimization-block-22",
+      "to": "inference_optimization-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-23-part_of-inference-optimization",
+      "from": "inference_optimization-block-23",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-22-before-inference_optimization-block-23",
+      "from": "inference_optimization-block-22",
+      "to": "inference_optimization-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-24-part_of-inference-optimization",
+      "from": "inference_optimization-block-24",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-23-before-inference_optimization-block-24",
+      "from": "inference_optimization-block-23",
+      "to": "inference_optimization-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-24-related_to-inference_optimization-block-23",
+      "from": "inference_optimization-block-24",
+      "to": "inference_optimization-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-25-part_of-inference-optimization",
+      "from": "inference_optimization-block-25",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-24-before-inference_optimization-block-25",
+      "from": "inference_optimization-block-24",
+      "to": "inference_optimization-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-25-related_to-inference_optimization-block-23",
+      "from": "inference_optimization-block-25",
+      "to": "inference_optimization-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-26-part_of-inference-optimization",
+      "from": "inference_optimization-block-26",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-25-before-inference_optimization-block-26",
+      "from": "inference_optimization-block-25",
+      "to": "inference_optimization-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-27-part_of-inference-optimization",
+      "from": "inference_optimization-block-27",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-26-before-inference_optimization-block-27",
+      "from": "inference_optimization-block-26",
+      "to": "inference_optimization-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-27-related_to-inference_optimization-block-26",
+      "from": "inference_optimization-block-27",
+      "to": "inference_optimization-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-28-part_of-inference-optimization",
+      "from": "inference_optimization-block-28",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-27-before-inference_optimization-block-28",
+      "from": "inference_optimization-block-27",
+      "to": "inference_optimization-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-28-related_to-inference_optimization-block-26",
+      "from": "inference_optimization-block-28",
+      "to": "inference_optimization-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-29-part_of-inference-optimization",
+      "from": "inference_optimization-block-29",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-28-before-inference_optimization-block-29",
+      "from": "inference_optimization-block-28",
+      "to": "inference_optimization-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-29-related_to-inference_optimization-block-26",
+      "from": "inference_optimization-block-29",
+      "to": "inference_optimization-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-30-part_of-inference-optimization",
+      "from": "inference_optimization-block-30",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-29-before-inference_optimization-block-30",
+      "from": "inference_optimization-block-29",
+      "to": "inference_optimization-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-31-part_of-inference-optimization",
+      "from": "inference_optimization-block-31",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-30-before-inference_optimization-block-31",
+      "from": "inference_optimization-block-30",
+      "to": "inference_optimization-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-31-related_to-inference_optimization-block-30",
+      "from": "inference_optimization-block-31",
+      "to": "inference_optimization-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-32-part_of-inference-optimization",
+      "from": "inference_optimization-block-32",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-31-before-inference_optimization-block-32",
+      "from": "inference_optimization-block-31",
+      "to": "inference_optimization-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-32-related_to-inference_optimization-block-30",
+      "from": "inference_optimization-block-32",
+      "to": "inference_optimization-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-33-part_of-inference-optimization",
+      "from": "inference_optimization-block-33",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-32-before-inference_optimization-block-33",
+      "from": "inference_optimization-block-32",
+      "to": "inference_optimization-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-33-related_to-inference_optimization-block-30",
+      "from": "inference_optimization-block-33",
+      "to": "inference_optimization-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-34-part_of-inference-optimization",
+      "from": "inference_optimization-block-34",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-33-before-inference_optimization-block-34",
+      "from": "inference_optimization-block-33",
+      "to": "inference_optimization-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-35-part_of-inference-optimization",
+      "from": "inference_optimization-block-35",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-34-before-inference_optimization-block-35",
+      "from": "inference_optimization-block-34",
+      "to": "inference_optimization-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-35-related_to-inference_optimization-block-34",
+      "from": "inference_optimization-block-35",
+      "to": "inference_optimization-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-36-part_of-inference-optimization",
+      "from": "inference_optimization-block-36",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-35-before-inference_optimization-block-36",
+      "from": "inference_optimization-block-35",
+      "to": "inference_optimization-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-36-related_to-inference_optimization-block-34",
+      "from": "inference_optimization-block-36",
+      "to": "inference_optimization-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-37-part_of-inference-optimization",
+      "from": "inference_optimization-block-37",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-36-before-inference_optimization-block-37",
+      "from": "inference_optimization-block-36",
+      "to": "inference_optimization-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-37-related_to-inference_optimization-block-34",
+      "from": "inference_optimization-block-37",
+      "to": "inference_optimization-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-38-part_of-inference-optimization",
+      "from": "inference_optimization-block-38",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-37-before-inference_optimization-block-38",
+      "from": "inference_optimization-block-37",
+      "to": "inference_optimization-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-39-part_of-inference-optimization",
+      "from": "inference_optimization-block-39",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-38-before-inference_optimization-block-39",
+      "from": "inference_optimization-block-38",
+      "to": "inference_optimization-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-39-related_to-inference_optimization-block-38",
+      "from": "inference_optimization-block-39",
+      "to": "inference_optimization-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-40-part_of-inference-optimization",
+      "from": "inference_optimization-block-40",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-39-before-inference_optimization-block-40",
+      "from": "inference_optimization-block-39",
+      "to": "inference_optimization-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-40-related_to-inference_optimization-block-38",
+      "from": "inference_optimization-block-40",
+      "to": "inference_optimization-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-41-part_of-inference-optimization",
+      "from": "inference_optimization-block-41",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-40-before-inference_optimization-block-41",
+      "from": "inference_optimization-block-40",
+      "to": "inference_optimization-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-41-related_to-inference_optimization-block-38",
+      "from": "inference_optimization-block-41",
+      "to": "inference_optimization-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-42-part_of-inference-optimization",
+      "from": "inference_optimization-block-42",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-41-before-inference_optimization-block-42",
+      "from": "inference_optimization-block-41",
+      "to": "inference_optimization-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-42-related_to-inference_optimization-block-38",
+      "from": "inference_optimization-block-42",
+      "to": "inference_optimization-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-43-part_of-inference-optimization",
+      "from": "inference_optimization-block-43",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-42-before-inference_optimization-block-43",
+      "from": "inference_optimization-block-42",
+      "to": "inference_optimization-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-44-part_of-inference-optimization",
+      "from": "inference_optimization-block-44",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-43-before-inference_optimization-block-44",
+      "from": "inference_optimization-block-43",
+      "to": "inference_optimization-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-45-part_of-inference-optimization",
+      "from": "inference_optimization-block-45",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-44-before-inference_optimization-block-45",
+      "from": "inference_optimization-block-44",
+      "to": "inference_optimization-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-46-part_of-inference-optimization",
+      "from": "inference_optimization-block-46",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-45-before-inference_optimization-block-46",
+      "from": "inference_optimization-block-45",
+      "to": "inference_optimization-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-47-part_of-inference-optimization",
+      "from": "inference_optimization-block-47",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-46-before-inference_optimization-block-47",
+      "from": "inference_optimization-block-46",
+      "to": "inference_optimization-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-47-related_to-inference_optimization-block-46",
+      "from": "inference_optimization-block-47",
+      "to": "inference_optimization-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-48-part_of-inference-optimization",
+      "from": "inference_optimization-block-48",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-47-before-inference_optimization-block-48",
+      "from": "inference_optimization-block-47",
+      "to": "inference_optimization-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-49-part_of-inference-optimization",
+      "from": "inference_optimization-block-49",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-48-before-inference_optimization-block-49",
+      "from": "inference_optimization-block-48",
+      "to": "inference_optimization-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-49-related_to-inference_optimization-block-48",
+      "from": "inference_optimization-block-49",
+      "to": "inference_optimization-block-48",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-50-part_of-inference-optimization",
+      "from": "inference_optimization-block-50",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-49-before-inference_optimization-block-50",
+      "from": "inference_optimization-block-49",
+      "to": "inference_optimization-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-50-related_to-inference_optimization-block-48",
+      "from": "inference_optimization-block-50",
+      "to": "inference_optimization-block-48",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-51-part_of-inference-optimization",
+      "from": "inference_optimization-block-51",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-50-before-inference_optimization-block-51",
+      "from": "inference_optimization-block-50",
+      "to": "inference_optimization-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-52-part_of-inference-optimization",
+      "from": "inference_optimization-block-52",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-51-before-inference_optimization-block-52",
+      "from": "inference_optimization-block-51",
+      "to": "inference_optimization-block-52",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-52-related_to-inference_optimization-block-51",
+      "from": "inference_optimization-block-52",
+      "to": "inference_optimization-block-51",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-53-part_of-inference-optimization",
+      "from": "inference_optimization-block-53",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-52-before-inference_optimization-block-53",
+      "from": "inference_optimization-block-52",
+      "to": "inference_optimization-block-53",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-54-part_of-inference-optimization",
+      "from": "inference_optimization-block-54",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-53-before-inference_optimization-block-54",
+      "from": "inference_optimization-block-53",
+      "to": "inference_optimization-block-54",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-54-related_to-inference_optimization-block-53",
+      "from": "inference_optimization-block-54",
+      "to": "inference_optimization-block-53",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-55-part_of-inference-optimization",
+      "from": "inference_optimization-block-55",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-54-before-inference_optimization-block-55",
+      "from": "inference_optimization-block-54",
+      "to": "inference_optimization-block-55",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-56-part_of-inference-optimization",
+      "from": "inference_optimization-block-56",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-55-before-inference_optimization-block-56",
+      "from": "inference_optimization-block-55",
+      "to": "inference_optimization-block-56",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-56-related_to-inference_optimization-block-55",
+      "from": "inference_optimization-block-56",
+      "to": "inference_optimization-block-55",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-57-part_of-inference-optimization",
+      "from": "inference_optimization-block-57",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-56-before-inference_optimization-block-57",
+      "from": "inference_optimization-block-56",
+      "to": "inference_optimization-block-57",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-57-related_to-inference_optimization-block-55",
+      "from": "inference_optimization-block-57",
+      "to": "inference_optimization-block-55",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-58-part_of-inference-optimization",
+      "from": "inference_optimization-block-58",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-57-before-inference_optimization-block-58",
+      "from": "inference_optimization-block-57",
+      "to": "inference_optimization-block-58",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-59-part_of-inference-optimization",
+      "from": "inference_optimization-block-59",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-58-before-inference_optimization-block-59",
+      "from": "inference_optimization-block-58",
+      "to": "inference_optimization-block-59",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-60-part_of-inference-optimization",
+      "from": "inference_optimization-block-60",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-59-before-inference_optimization-block-60",
+      "from": "inference_optimization-block-59",
+      "to": "inference_optimization-block-60",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-60-related_to-inference_optimization-block-59",
+      "from": "inference_optimization-block-60",
+      "to": "inference_optimization-block-59",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-61-part_of-inference-optimization",
+      "from": "inference_optimization-block-61",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-60-before-inference_optimization-block-61",
+      "from": "inference_optimization-block-60",
+      "to": "inference_optimization-block-61",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-62-part_of-inference-optimization",
+      "from": "inference_optimization-block-62",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-61-before-inference_optimization-block-62",
+      "from": "inference_optimization-block-61",
+      "to": "inference_optimization-block-62",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-62-related_to-inference_optimization-block-61",
+      "from": "inference_optimization-block-62",
+      "to": "inference_optimization-block-61",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-63-part_of-inference-optimization",
+      "from": "inference_optimization-block-63",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-62-before-inference_optimization-block-63",
+      "from": "inference_optimization-block-62",
+      "to": "inference_optimization-block-63",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-64-part_of-inference-optimization",
+      "from": "inference_optimization-block-64",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-63-before-inference_optimization-block-64",
+      "from": "inference_optimization-block-63",
+      "to": "inference_optimization-block-64",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-65-part_of-inference-optimization",
+      "from": "inference_optimization-block-65",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-64-before-inference_optimization-block-65",
+      "from": "inference_optimization-block-64",
+      "to": "inference_optimization-block-65",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-65-related_to-inference_optimization-block-64",
+      "from": "inference_optimization-block-65",
+      "to": "inference_optimization-block-64",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-66-part_of-inference-optimization",
+      "from": "inference_optimization-block-66",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-65-before-inference_optimization-block-66",
+      "from": "inference_optimization-block-65",
+      "to": "inference_optimization-block-66",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-67-part_of-inference-optimization",
+      "from": "inference_optimization-block-67",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-66-before-inference_optimization-block-67",
+      "from": "inference_optimization-block-66",
+      "to": "inference_optimization-block-67",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-67-related_to-inference_optimization-block-66",
+      "from": "inference_optimization-block-67",
+      "to": "inference_optimization-block-66",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-68-part_of-inference-optimization",
+      "from": "inference_optimization-block-68",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-67-before-inference_optimization-block-68",
+      "from": "inference_optimization-block-67",
+      "to": "inference_optimization-block-68",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-69-part_of-inference-optimization",
+      "from": "inference_optimization-block-69",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-68-before-inference_optimization-block-69",
+      "from": "inference_optimization-block-68",
+      "to": "inference_optimization-block-69",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-69-related_to-inference_optimization-block-68",
+      "from": "inference_optimization-block-69",
+      "to": "inference_optimization-block-68",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-70-part_of-inference-optimization",
+      "from": "inference_optimization-block-70",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-69-before-inference_optimization-block-70",
+      "from": "inference_optimization-block-69",
+      "to": "inference_optimization-block-70",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-71-part_of-inference-optimization",
+      "from": "inference_optimization-block-71",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-70-before-inference_optimization-block-71",
+      "from": "inference_optimization-block-70",
+      "to": "inference_optimization-block-71",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-72-part_of-inference-optimization",
+      "from": "inference_optimization-block-72",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-71-before-inference_optimization-block-72",
+      "from": "inference_optimization-block-71",
+      "to": "inference_optimization-block-72",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-72-related_to-inference_optimization-block-71",
+      "from": "inference_optimization-block-72",
+      "to": "inference_optimization-block-71",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-73-part_of-inference-optimization",
+      "from": "inference_optimization-block-73",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-72-before-inference_optimization-block-73",
+      "from": "inference_optimization-block-72",
+      "to": "inference_optimization-block-73",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-74-part_of-inference-optimization",
+      "from": "inference_optimization-block-74",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-73-before-inference_optimization-block-74",
+      "from": "inference_optimization-block-73",
+      "to": "inference_optimization-block-74",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-74-related_to-inference_optimization-block-73",
+      "from": "inference_optimization-block-74",
+      "to": "inference_optimization-block-73",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-75-part_of-inference-optimization",
+      "from": "inference_optimization-block-75",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-74-before-inference_optimization-block-75",
+      "from": "inference_optimization-block-74",
+      "to": "inference_optimization-block-75",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-75-related_to-inference_optimization-block-73",
+      "from": "inference_optimization-block-75",
+      "to": "inference_optimization-block-73",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-76-part_of-inference-optimization",
+      "from": "inference_optimization-block-76",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-75-before-inference_optimization-block-76",
+      "from": "inference_optimization-block-75",
+      "to": "inference_optimization-block-76",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-76-related_to-inference_optimization-block-73",
+      "from": "inference_optimization-block-76",
+      "to": "inference_optimization-block-73",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-77-part_of-inference-optimization",
+      "from": "inference_optimization-block-77",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-76-before-inference_optimization-block-77",
+      "from": "inference_optimization-block-76",
+      "to": "inference_optimization-block-77",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-77-related_to-inference_optimization-block-73",
+      "from": "inference_optimization-block-77",
+      "to": "inference_optimization-block-73",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-78-part_of-inference-optimization",
+      "from": "inference_optimization-block-78",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-77-before-inference_optimization-block-78",
+      "from": "inference_optimization-block-77",
+      "to": "inference_optimization-block-78",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-78-related_to-inference_optimization-block-73",
+      "from": "inference_optimization-block-78",
+      "to": "inference_optimization-block-73",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-79-part_of-inference-optimization",
+      "from": "inference_optimization-block-79",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-78-before-inference_optimization-block-79",
+      "from": "inference_optimization-block-78",
+      "to": "inference_optimization-block-79",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-79-related_to-inference_optimization-block-73",
+      "from": "inference_optimization-block-79",
+      "to": "inference_optimization-block-73",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-80-part_of-inference-optimization",
+      "from": "inference_optimization-block-80",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-79-before-inference_optimization-block-80",
+      "from": "inference_optimization-block-79",
+      "to": "inference_optimization-block-80",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-80-related_to-inference_optimization-block-73",
+      "from": "inference_optimization-block-80",
+      "to": "inference_optimization-block-73",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-81-part_of-inference-optimization",
+      "from": "inference_optimization-block-81",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-80-before-inference_optimization-block-81",
+      "from": "inference_optimization-block-80",
+      "to": "inference_optimization-block-81",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-81-related_to-inference_optimization-block-73",
+      "from": "inference_optimization-block-81",
+      "to": "inference_optimization-block-73",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-82-part_of-inference-optimization",
+      "from": "inference_optimization-block-82",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-81-before-inference_optimization-block-82",
+      "from": "inference_optimization-block-81",
+      "to": "inference_optimization-block-82",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-82-related_to-inference_optimization-block-73",
+      "from": "inference_optimization-block-82",
+      "to": "inference_optimization-block-73",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-83-part_of-inference-optimization",
+      "from": "inference_optimization-block-83",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-82-before-inference_optimization-block-83",
+      "from": "inference_optimization-block-82",
+      "to": "inference_optimization-block-83",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-83-related_to-inference_optimization-block-73",
+      "from": "inference_optimization-block-83",
+      "to": "inference_optimization-block-73",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-84-part_of-inference-optimization",
+      "from": "inference_optimization-block-84",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-83-before-inference_optimization-block-84",
+      "from": "inference_optimization-block-83",
+      "to": "inference_optimization-block-84",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-85-part_of-inference-optimization",
+      "from": "inference_optimization-block-85",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-84-before-inference_optimization-block-85",
+      "from": "inference_optimization-block-84",
+      "to": "inference_optimization-block-85",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-85-related_to-inference_optimization-block-84",
+      "from": "inference_optimization-block-85",
+      "to": "inference_optimization-block-84",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-86-part_of-inference-optimization",
+      "from": "inference_optimization-block-86",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-85-before-inference_optimization-block-86",
+      "from": "inference_optimization-block-85",
+      "to": "inference_optimization-block-86",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-86-related_to-inference_optimization-block-84",
+      "from": "inference_optimization-block-86",
+      "to": "inference_optimization-block-84",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-87-part_of-inference-optimization",
+      "from": "inference_optimization-block-87",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-86-before-inference_optimization-block-87",
+      "from": "inference_optimization-block-86",
+      "to": "inference_optimization-block-87",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-87-related_to-inference_optimization-block-84",
+      "from": "inference_optimization-block-87",
+      "to": "inference_optimization-block-84",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-88-part_of-inference-optimization",
+      "from": "inference_optimization-block-88",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-87-before-inference_optimization-block-88",
+      "from": "inference_optimization-block-87",
+      "to": "inference_optimization-block-88",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-88-related_to-inference_optimization-block-84",
+      "from": "inference_optimization-block-88",
+      "to": "inference_optimization-block-84",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-89-part_of-inference-optimization",
+      "from": "inference_optimization-block-89",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-88-before-inference_optimization-block-89",
+      "from": "inference_optimization-block-88",
+      "to": "inference_optimization-block-89",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-89-related_to-inference_optimization-block-84",
+      "from": "inference_optimization-block-89",
+      "to": "inference_optimization-block-84",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-90-part_of-inference-optimization",
+      "from": "inference_optimization-block-90",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-89-before-inference_optimization-block-90",
+      "from": "inference_optimization-block-89",
+      "to": "inference_optimization-block-90",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-90-related_to-inference_optimization-block-84",
+      "from": "inference_optimization-block-90",
+      "to": "inference_optimization-block-84",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-91-part_of-inference-optimization",
+      "from": "inference_optimization-block-91",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-90-before-inference_optimization-block-91",
+      "from": "inference_optimization-block-90",
+      "to": "inference_optimization-block-91",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-91-related_to-inference_optimization-block-84",
+      "from": "inference_optimization-block-91",
+      "to": "inference_optimization-block-84",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-92-part_of-inference-optimization",
+      "from": "inference_optimization-block-92",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-91-before-inference_optimization-block-92",
+      "from": "inference_optimization-block-91",
+      "to": "inference_optimization-block-92",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-92-related_to-inference_optimization-block-84",
+      "from": "inference_optimization-block-92",
+      "to": "inference_optimization-block-84",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-93-part_of-inference-optimization",
+      "from": "inference_optimization-block-93",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-92-before-inference_optimization-block-93",
+      "from": "inference_optimization-block-92",
+      "to": "inference_optimization-block-93",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-93-related_to-inference_optimization-block-84",
+      "from": "inference_optimization-block-93",
+      "to": "inference_optimization-block-84",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-94-part_of-inference-optimization",
+      "from": "inference_optimization-block-94",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-93-before-inference_optimization-block-94",
+      "from": "inference_optimization-block-93",
+      "to": "inference_optimization-block-94",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-94-related_to-inference_optimization-block-84",
+      "from": "inference_optimization-block-94",
+      "to": "inference_optimization-block-84",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-95-part_of-inference-optimization",
+      "from": "inference_optimization-block-95",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-94-before-inference_optimization-block-95",
+      "from": "inference_optimization-block-94",
+      "to": "inference_optimization-block-95",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-96-part_of-inference-optimization",
+      "from": "inference_optimization-block-96",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-95-before-inference_optimization-block-96",
+      "from": "inference_optimization-block-95",
+      "to": "inference_optimization-block-96",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-96-related_to-inference_optimization-block-95",
+      "from": "inference_optimization-block-96",
+      "to": "inference_optimization-block-95",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-97-part_of-inference-optimization",
+      "from": "inference_optimization-block-97",
+      "to": "inference-optimization",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-96-before-inference_optimization-block-97",
+      "from": "inference_optimization-block-96",
+      "to": "inference_optimization-block-97",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-block-97-related_to-inference_optimization-block-95",
+      "from": "inference_optimization-block-97",
+      "to": "inference_optimization-block-95",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-1-part_of-inference_optimization-block-1",
+      "from": "inference_optimization-stmt-1",
+      "to": "inference_optimization-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-2-part_of-inference_optimization-block-1",
+      "from": "inference_optimization-stmt-2",
+      "to": "inference_optimization-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-3-part_of-inference_optimization-block-1",
+      "from": "inference_optimization-stmt-3",
+      "to": "inference_optimization-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-4-part_of-inference_optimization-block-2",
+      "from": "inference_optimization-stmt-4",
+      "to": "inference_optimization-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-5-part_of-inference_optimization-block-5",
+      "from": "inference_optimization-stmt-5",
+      "to": "inference_optimization-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-6-part_of-inference_optimization-block-6",
+      "from": "inference_optimization-stmt-6",
+      "to": "inference_optimization-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-7-part_of-inference_optimization-block-7",
+      "from": "inference_optimization-stmt-7",
+      "to": "inference_optimization-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-8-part_of-inference_optimization-block-8",
+      "from": "inference_optimization-stmt-8",
+      "to": "inference_optimization-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-9-part_of-inference_optimization-block-9",
+      "from": "inference_optimization-stmt-9",
+      "to": "inference_optimization-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-10-part_of-inference_optimization-block-10",
+      "from": "inference_optimization-stmt-10",
+      "to": "inference_optimization-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-11-part_of-inference_optimization-block-13",
+      "from": "inference_optimization-stmt-11",
+      "to": "inference_optimization-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-12-part_of-inference_optimization-block-14",
+      "from": "inference_optimization-stmt-12",
+      "to": "inference_optimization-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-13-part_of-inference_optimization-block-15",
+      "from": "inference_optimization-stmt-13",
+      "to": "inference_optimization-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-14-part_of-inference_optimization-block-16",
+      "from": "inference_optimization-stmt-14",
+      "to": "inference_optimization-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-15-part_of-inference_optimization-block-17",
+      "from": "inference_optimization-stmt-15",
+      "to": "inference_optimization-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-16-part_of-inference_optimization-block-18",
+      "from": "inference_optimization-stmt-16",
+      "to": "inference_optimization-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-17-part_of-inference_optimization-block-19",
+      "from": "inference_optimization-stmt-17",
+      "to": "inference_optimization-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-18-part_of-inference_optimization-block-20",
+      "from": "inference_optimization-stmt-18",
+      "to": "inference_optimization-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-19-part_of-inference_optimization-block-21",
+      "from": "inference_optimization-stmt-19",
+      "to": "inference_optimization-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-20-part_of-inference_optimization-block-24",
+      "from": "inference_optimization-stmt-20",
+      "to": "inference_optimization-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-21-part_of-inference_optimization-block-25",
+      "from": "inference_optimization-stmt-21",
+      "to": "inference_optimization-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-22-part_of-inference_optimization-block-25",
+      "from": "inference_optimization-stmt-22",
+      "to": "inference_optimization-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-23-part_of-inference_optimization-block-28",
+      "from": "inference_optimization-stmt-23",
+      "to": "inference_optimization-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-24-part_of-inference_optimization-block-29",
+      "from": "inference_optimization-stmt-24",
+      "to": "inference_optimization-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-25-part_of-inference_optimization-block-31",
+      "from": "inference_optimization-stmt-25",
+      "to": "inference_optimization-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-26-part_of-inference_optimization-block-32",
+      "from": "inference_optimization-stmt-26",
+      "to": "inference_optimization-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-27-part_of-inference_optimization-block-32",
+      "from": "inference_optimization-stmt-27",
+      "to": "inference_optimization-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-28-part_of-inference_optimization-block-33",
+      "from": "inference_optimization-stmt-28",
+      "to": "inference_optimization-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-29-part_of-inference_optimization-block-35",
+      "from": "inference_optimization-stmt-29",
+      "to": "inference_optimization-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-30-part_of-inference_optimization-block-36",
+      "from": "inference_optimization-stmt-30",
+      "to": "inference_optimization-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-31-part_of-inference_optimization-block-37",
+      "from": "inference_optimization-stmt-31",
+      "to": "inference_optimization-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-32-part_of-inference_optimization-block-39",
+      "from": "inference_optimization-stmt-32",
+      "to": "inference_optimization-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-33-part_of-inference_optimization-block-39",
+      "from": "inference_optimization-stmt-33",
+      "to": "inference_optimization-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-34-part_of-inference_optimization-block-40",
+      "from": "inference_optimization-stmt-34",
+      "to": "inference_optimization-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-35-part_of-inference_optimization-block-41",
+      "from": "inference_optimization-stmt-35",
+      "to": "inference_optimization-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-36-part_of-inference_optimization-block-47",
+      "from": "inference_optimization-stmt-36",
+      "to": "inference_optimization-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-37-part_of-inference_optimization-block-47",
+      "from": "inference_optimization-stmt-37",
+      "to": "inference_optimization-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-38-part_of-inference_optimization-block-49",
+      "from": "inference_optimization-stmt-38",
+      "to": "inference_optimization-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-39-part_of-inference_optimization-block-49",
+      "from": "inference_optimization-stmt-39",
+      "to": "inference_optimization-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-40-part_of-inference_optimization-block-50",
+      "from": "inference_optimization-stmt-40",
+      "to": "inference_optimization-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-41-part_of-inference_optimization-block-50",
+      "from": "inference_optimization-stmt-41",
+      "to": "inference_optimization-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-42-part_of-inference_optimization-block-52",
+      "from": "inference_optimization-stmt-42",
+      "to": "inference_optimization-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-43-part_of-inference_optimization-block-54",
+      "from": "inference_optimization-stmt-43",
+      "to": "inference_optimization-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-44-part_of-inference_optimization-block-54",
+      "from": "inference_optimization-stmt-44",
+      "to": "inference_optimization-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-45-part_of-inference_optimization-block-54",
+      "from": "inference_optimization-stmt-45",
+      "to": "inference_optimization-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-46-part_of-inference_optimization-block-56",
+      "from": "inference_optimization-stmt-46",
+      "to": "inference_optimization-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-47-part_of-inference_optimization-block-57",
+      "from": "inference_optimization-stmt-47",
+      "to": "inference_optimization-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-48-part_of-inference_optimization-block-60",
+      "from": "inference_optimization-stmt-48",
+      "to": "inference_optimization-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-49-part_of-inference_optimization-block-60",
+      "from": "inference_optimization-stmt-49",
+      "to": "inference_optimization-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-50-part_of-inference_optimization-block-62",
+      "from": "inference_optimization-stmt-50",
+      "to": "inference_optimization-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-51-part_of-inference_optimization-block-62",
+      "from": "inference_optimization-stmt-51",
+      "to": "inference_optimization-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-52-part_of-inference_optimization-block-65",
+      "from": "inference_optimization-stmt-52",
+      "to": "inference_optimization-block-65",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-53-part_of-inference_optimization-block-65",
+      "from": "inference_optimization-stmt-53",
+      "to": "inference_optimization-block-65",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-54-part_of-inference_optimization-block-67",
+      "from": "inference_optimization-stmt-54",
+      "to": "inference_optimization-block-67",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-55-part_of-inference_optimization-block-67",
+      "from": "inference_optimization-stmt-55",
+      "to": "inference_optimization-block-67",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-56-part_of-inference_optimization-block-67",
+      "from": "inference_optimization-stmt-56",
+      "to": "inference_optimization-block-67",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-57-part_of-inference_optimization-block-69",
+      "from": "inference_optimization-stmt-57",
+      "to": "inference_optimization-block-69",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-58-part_of-inference_optimization-block-69",
+      "from": "inference_optimization-stmt-58",
+      "to": "inference_optimization-block-69",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-59-part_of-inference_optimization-block-72",
+      "from": "inference_optimization-stmt-59",
+      "to": "inference_optimization-block-72",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-60-part_of-inference_optimization-block-74",
+      "from": "inference_optimization-stmt-60",
+      "to": "inference_optimization-block-74",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-61-part_of-inference_optimization-block-75",
+      "from": "inference_optimization-stmt-61",
+      "to": "inference_optimization-block-75",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-62-part_of-inference_optimization-block-76",
+      "from": "inference_optimization-stmt-62",
+      "to": "inference_optimization-block-76",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-63-part_of-inference_optimization-block-77",
+      "from": "inference_optimization-stmt-63",
+      "to": "inference_optimization-block-77",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-64-part_of-inference_optimization-block-78",
+      "from": "inference_optimization-stmt-64",
+      "to": "inference_optimization-block-78",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-65-part_of-inference_optimization-block-79",
+      "from": "inference_optimization-stmt-65",
+      "to": "inference_optimization-block-79",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-66-part_of-inference_optimization-block-80",
+      "from": "inference_optimization-stmt-66",
+      "to": "inference_optimization-block-80",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-67-part_of-inference_optimization-block-81",
+      "from": "inference_optimization-stmt-67",
+      "to": "inference_optimization-block-81",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-68-part_of-inference_optimization-block-82",
+      "from": "inference_optimization-stmt-68",
+      "to": "inference_optimization-block-82",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-69-part_of-inference_optimization-block-83",
+      "from": "inference_optimization-stmt-69",
+      "to": "inference_optimization-block-83",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-70-part_of-inference_optimization-block-85",
+      "from": "inference_optimization-stmt-70",
+      "to": "inference_optimization-block-85",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-71-part_of-inference_optimization-block-86",
+      "from": "inference_optimization-stmt-71",
+      "to": "inference_optimization-block-86",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-72-part_of-inference_optimization-block-87",
+      "from": "inference_optimization-stmt-72",
+      "to": "inference_optimization-block-87",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-73-part_of-inference_optimization-block-88",
+      "from": "inference_optimization-stmt-73",
+      "to": "inference_optimization-block-88",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-74-part_of-inference_optimization-block-89",
+      "from": "inference_optimization-stmt-74",
+      "to": "inference_optimization-block-89",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-75-part_of-inference_optimization-block-90",
+      "from": "inference_optimization-stmt-75",
+      "to": "inference_optimization-block-90",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-76-part_of-inference_optimization-block-91",
+      "from": "inference_optimization-stmt-76",
+      "to": "inference_optimization-block-91",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-77-part_of-inference_optimization-block-92",
+      "from": "inference_optimization-stmt-77",
+      "to": "inference_optimization-block-92",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-78-part_of-inference_optimization-block-93",
+      "from": "inference_optimization-stmt-78",
+      "to": "inference_optimization-block-93",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-79-part_of-inference_optimization-block-94",
+      "from": "inference_optimization-stmt-79",
+      "to": "inference_optimization-block-94",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-80-part_of-inference_optimization-block-97",
+      "from": "inference_optimization-stmt-80",
+      "to": "inference_optimization-block-97",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inference_optimization-stmt-81-part_of-inference_optimization-block-97",
+      "from": "inference_optimization-stmt-81",
+      "to": "inference_optimization-block-97",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "inference_optimization-stmt-1",
       "quote": "Training a frontier model costs US Dollar 100M+; serving it can cost **US Dollar 1M+ per day at scale**.",
+      "block_id": "inference_optimization-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-2",
       "quote": "Inference optimization makes LLMs economically viable.",
+      "block_id": "inference_optimization-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-3",
       "quote": "The frontier in 2025: serving millions of tokens per second across a large cluster with sub-100 ms latency.",
+      "block_id": "inference_optimization-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-4",
       "quote": "This chapter covers every lever: quantization, KV-cache management, paged attention, FlashAttention, speculative decoding, batching, distillation, and the serving stacks that tie it together.",
+      "block_id": "inference_optimization-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-5",
       "quote": "For a single token generation step on a 70B model (fp16):",
+      "block_id": "inference_optimization-block-5",
       "section": "The Inference Math",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-6",
       "quote": "| Component | Memory / Compute |",
+      "block_id": "inference_optimization-block-6",
       "section": "The Inference Math",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-7",
       "quote": "| Read all weights from HBM (70B bf16, split over 2 H100s) | 70 GB ÷ 3 TB/s ≈ 23 ms |",
+      "block_id": "inference_optimization-block-7",
       "section": "The Inference Math",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-8",
       "quote": "| Compute matmul (forward pass) | ~10 ms with batch=1, ~50 TFLOPS |",
+      "block_id": "inference_optimization-block-8",
       "section": "The Inference Math",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-9",
       "quote": "| Generate one token | dominated by memory bandwidth |",
+      "block_id": "inference_optimization-block-9",
       "section": "The Inference Math",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-10",
       "quote": "LLM inference is **memory-bandwidth bound**, not compute-bound.",
+      "block_id": "inference_optimization-block-10",
       "section": "The Inference Math",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-11",
-      "quote": "* **Batching helps** (amortize weight read across many requests).",
-      "section": "The Inference Math",
+      "quote": "Reduce the bit precision of model weights:",
+      "block_id": "inference_optimization-block-13",
+      "section": "Weight Quantization",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-12",
-      "quote": "* **Quantization helps** (less data to move).",
-      "section": "The Inference Math",
+      "quote": "| Format | Bits/weight | 70B size | Perplexity increase |",
+      "block_id": "inference_optimization-block-14",
+      "section": "Weight Quantization",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-13",
-      "quote": "* **Caching helps** (avoid recomputing).",
-      "section": "The Inference Math",
+      "quote": "| FP32 | 32 | 280 GB | Baseline |",
+      "block_id": "inference_optimization-block-15",
+      "section": "Weight Quantization",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-14",
-      "quote": "* **Smaller models help** (less memory pressure).",
-      "section": "The Inference Math",
+      "quote": "| FP16 / BF16 | 16 | 140 GB | ~0% |",
+      "block_id": "inference_optimization-block-16",
+      "section": "Weight Quantization",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-15",
-      "quote": "Reduce the bit precision of model weights:",
+      "quote": "| INT8 | 8 | 70 GB | <0.5% |",
+      "block_id": "inference_optimization-block-17",
       "section": "Weight Quantization",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-16",
-      "quote": "| Format | Bits/weight | 70B size | Perplexity increase |",
+      "quote": "| INT4 (GPTQ, AWQ) | 4 | 35 GB | 1–3% |",
+      "block_id": "inference_optimization-block-18",
       "section": "Weight Quantization",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-17",
-      "quote": "| FP32 | 32 | 280 GB | Baseline |",
+      "quote": "| INT3 (QuIP, QuIP#) | 3 | 26 GB | 3–7% |",
+      "block_id": "inference_optimization-block-19",
       "section": "Weight Quantization",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-18",
-      "quote": "| FP16 / BF16 | 16 | 140 GB | ~0% |",
+      "quote": "| INT2 (QuIP#) | 2 | 17 GB | 5–15% |",
+      "block_id": "inference_optimization-block-20",
       "section": "Weight Quantization",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-19",
-      "quote": "| INT8 | 8 | 70 GB | <0.5% |",
+      "quote": "| 1.58-bit (BitNet b1.58) | 1.58 | 13 GB | Comparable to FP16 at scale |",
+      "block_id": "inference_optimization-block-21",
       "section": "Weight Quantization",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-20",
-      "quote": "| INT4 (GPTQ, AWQ) | 4 | 35 GB | 1–3% |",
-      "section": "Weight Quantization",
+      "quote": "The KV-cache is the dominant memory cost for long contexts.",
+      "block_id": "inference_optimization-block-24",
+      "section": "KV-Cache Quantization",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-21",
-      "quote": "| INT3 (QuIP, QuIP#) | 3 | 26 GB | 3–7% |",
-      "section": "Weight Quantization",
+      "quote": "Used by vLLM, TGI, and most production stacks.",
+      "block_id": "inference_optimization-block-25",
+      "section": "KV-Cache Quantization",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-22",
-      "quote": "| INT2 (QuIP#) | 2 | 17 GB | 5–15% |",
-      "section": "Weight Quantization",
+      "quote": "Critical for serving 100K+ contexts.",
+      "block_id": "inference_optimization-block-25",
+      "section": "KV-Cache Quantization",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-23",
-      "quote": "| 1.58-bit (BitNet b1.58) | 1.58 | 13 GB | Comparable to FP16 at scale |",
-      "section": "Weight Quantization",
+      "quote": "One caveat ties these together: the outlier coordinates that implement attention sinks — the “massive activations” that grow orders of magnitude larger than their neighbours — are exactly the values that low-precision KV quantization handles worst, so aggressive INT4 caching can disturb sink behaviour unless the scheme protects outliers (\\cite[Sun et al., 2024]{sun2024massive}).",
+      "block_id": "inference_optimization-block-28",
+      "section": "KV-Cache Optimizations",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-24",
-      "quote": "* **GPTQ** (\\cite[Frantar et al., 2022]{frantar2022gptq}): post-training quantization using second-order information.",
-      "section": "Weight Quantization",
+      "quote": "A 70B model with GQA + INT8 KV + prefix caching can serve 128K context to roughly 20–30 concurrent users on a single 8xH100 node (the 335 GB of fp16 KV per user drops to ~21 GB with GQA and INT8, and an 8xH100 node holds 640 GB).",
+      "block_id": "inference_optimization-block-29",
+      "section": "KV-Cache Optimizations",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-25",
-      "quote": "* **AWQ** (\\cite[Lin et al., 2023]{lin2023awq}): activation-aware weight quantization.",
-      "section": "Weight Quantization",
+      "quote": "FlashAttention computes the same result in tiles, with the softmax applied incrementally:",
+      "block_id": "inference_optimization-block-31",
+      "section": "FlashAttention",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-26",
-      "quote": "Identifies salient weight channels and preserves them at higher precision.",
-      "section": "Weight Quantization",
+      "quote": "FlashAttention-2 (2023): further 2× speedup via better work partitioning.",
+      "block_id": "inference_optimization-block-32",
+      "section": "FlashAttention",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-27",
-      "quote": "* **SmoothQuant** (\\cite[Xiao et al., 2022]{xiao2022smoothquant}): migrates quantization difficulty from activations to weights.",
-      "section": "Weight Quantization",
+      "quote": "FlashAttention-3 (2024): asynchronous warp specialization on H100, FP8 support, ~2× over FA-2.",
+      "block_id": "inference_optimization-block-32",
+      "section": "FlashAttention",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-28",
-      "quote": "* **BitsAndBytes** (\\cite[Dettmers et al., 2022]{dettmers2022llmint8}): k-bit quantization for PyTorch (popular for QLoRA).",
-      "section": "Weight Quantization",
+      "quote": "FlashAttention is now standard in **all** major training and inference stacks (PyTorch SDPA, vLLM, TGI, TensorRT-LLM, llama.cpp).",
+      "block_id": "inference_optimization-block-33",
+      "section": "FlashAttention",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-29",
-      "quote": "* **GGUF** (llama.cpp): many quantization schemes in a single file (Q2_K, Q3_K, Q4_K_M, Q5_K_M, Q6_K, Q8_0).",
-      "section": "Weight Quantization",
+      "quote": "The OS-virtual-memory approach to KV management (\\cite[Kwon et al., 2023]{kwon2023vllm}):",
+      "block_id": "inference_optimization-block-35",
+      "section": "Paged Attention",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-30",
-      "quote": "* **BitNet** (\\cite[Ma et al., 2024]{ma2024bitnet}): 1.58-bit ternary quantization.",
-      "section": "Weight Quantization",
+      "quote": "Effect: **2–4× throughput improvement** over contiguous allocation for chat workloads with varied sequence lengths.",
+      "block_id": "inference_optimization-block-36",
+      "section": "Paged Attention",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-31",
-      "quote": "Surprisingly competitive at scale.",
-      "section": "Weight Quantization",
+      "quote": "The vLLM paper showed 14–24× throughput vs. naïve HuggingFace serving at high concurrency.",
+      "block_id": "inference_optimization-block-37",
+      "section": "Paged Attention",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-32",
-      "quote": "* **QuIP#** (\\cite[Chee et al., 2024]{che2024quip}): lattice-based 2-bit quantization with incoherence processing.",
-      "section": "Weight Quantization",
+      "quote": "LLM decoding is sequential: each token requires a full forward pass.",
+      "block_id": "inference_optimization-block-39",
+      "section": "Speculative Decoding",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-33",
-      "quote": "The KV-cache is the dominant memory cost for long contexts.",
-      "section": "KV-Cache Quantization",
+      "quote": "**Speculative decoding** (\\cite[Leviathan et al., 2023]{leviathan2023speculative}) breaks this:",
+      "block_id": "inference_optimization-block-39",
+      "section": "Speculative Decoding",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-34",
-      "quote": "* **INT8 KV**: ~2× memory reduction, negligible quality loss.",
-      "section": "KV-Cache Quantization",
+      "quote": "Accept the longest prefix where target agrees with draft.",
+      "block_id": "inference_optimization-block-40",
+      "section": "Speculative Decoding",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-35",
-      "quote": "* **INT4 KV**: ~4× memory reduction, 1–2% quality loss.",
-      "section": "KV-Cache Quantization",
+      "quote": "Resample from the target's corrected distribution on the first mismatch.",
+      "block_id": "inference_optimization-block-41",
+      "section": "Speculative Decoding",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-36",
-      "quote": "* **FP8 KV** (H100 native): same as INT8 in effect.",
-      "section": "KV-Cache Quantization",
+      "quote": "Add new requests whenever an old one finishes.",
+      "block_id": "inference_optimization-block-47",
+      "section": "Dynamic Batching",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-37",
-      "quote": "Used by vLLM, TGI, and most production stacks.",
-      "section": "KV-Cache Quantization",
+      "quote": "Better throughput than static; still has stragglers.",
+      "block_id": "inference_optimization-block-47",
+      "section": "Dynamic Batching",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-38",
-      "quote": "Critical for serving 100K+ contexts.",
-      "section": "KV-Cache Quantization",
+      "quote": "After **every** generated token, swap finished sequences out and swap new ones in.",
+      "block_id": "inference_optimization-block-49",
+      "section": "Continuous Batching (Iteration-Level Scheduling)",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-39",
-      "quote": "* **Multi-Query Attention (MQA)** (\\cite[Shazeer, 2019]{shazeer2019mqa}): all query heads share a single K and V head.",
-      "section": "KV-Cache Optimizations",
+      "quote": "The GPU is never idle waiting for stragglers.",
+      "block_id": "inference_optimization-block-49",
+      "section": "Continuous Batching (Iteration-Level Scheduling)",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-40",
-      "quote": "* **Grouped-Query Attention (GQA)** (\\cite[Ainslie et al., 2023]{ainslie2023gqa}): middle ground, 8 KV heads for 64 query heads gives 8× reduction with quality close to MHA.",
-      "section": "KV-Cache Optimizations",
+      "quote": "vLLM, TGI, TensorRT-LLM, and SGLang all implement continuous batching.",
+      "block_id": "inference_optimization-block-50",
+      "section": "Continuous Batching (Iteration-Level Scheduling)",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-41",
-      "quote": "Used by Llama 2/3, Mistral, Qwen.",
-      "section": "KV-Cache Optimizations",
+      "quote": "**Throughput improvement: 10–20×** over static batching for chat workloads.",
+      "block_id": "inference_optimization-block-50",
+      "section": "Continuous Batching (Iteration-Level Scheduling)",
       "kind": "statement"
     },
     {
       "id": "inference_optimization-stmt-42",
-      "quote": "* **Multi-head latent attention (MLA)** (\\cite[DeepSeek-AI, 2024]{deepseek2024v2}): cache a low-rank latent per token and reconstruct the per-head keys and values on the fly.",
-      "section": "KV-Cache Optimizations",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-43",
-      "quote": "DeepSeek-V2 reported a KV cache an order of magnitude smaller than a comparable MHA model.",
-      "section": "KV-Cache Optimizations",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-44",
-      "quote": "* **Sliding Window Attention** (\\cite[Beltagy et al., 2020]{beltagy2020longformer}): only attend to the last $w$ tokens.",
-      "section": "KV-Cache Optimizations",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-45",
-      "quote": "KV memory is $O(w)$ instead of $O(n)$.",
-      "section": "KV-Cache Optimizations",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-46",
-      "quote": "Combine with a few “global” attention layers to preserve long-range context.",
-      "section": "KV-Cache Optimizations",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-47",
-      "quote": "* **Attention sinks / StreamingLLM** (\\cite[Xiao et al., 2024]{xiao2023streaming}): a plain sliding window fails once the very first tokens are evicted, because trained heads park their surplus softmax mass on them.",
-      "section": "KV-Cache Optimizations",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-48",
-      "quote": "Keeping the KV of roughly four initial tokens alongside the recent window restores stable generation over millions of tokens, with no fine-tuning.",
-      "section": "KV-Cache Optimizations",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-49",
-      "quote": "* **Paged Attention** (vLLM, 2023): non-contiguous KV allocation like OS virtual memory.",
-      "section": "KV-Cache Optimizations",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-50",
-      "quote": "Eliminates fragmentation.",
-      "section": "KV-Cache Optimizations",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-51",
-      "quote": "* **Prefix caching**: KV cache for a system prompt is computed once and reused across requests.",
-      "section": "KV-Cache Optimizations",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-52",
-      "quote": "Standard for chatbot APIs.",
-      "section": "KV-Cache Optimizations",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-53",
-      "quote": "* **Cross-request KV sharing**: identical prompts across users share KV blocks.",
-      "section": "KV-Cache Optimizations",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-54",
-      "quote": "One caveat ties these together: the outlier coordinates that implement attention sinks — the “massive activations” that grow orders of magnitude larger than their neighbours — are exactly the values that low-precision KV quantization handles worst, so aggressive INT4 caching can disturb sink behaviour unless the scheme protects outliers (\\cite[Sun et al., 2024]{sun2024massive}).",
-      "section": "KV-Cache Optimizations",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-55",
-      "quote": "A 70B model with GQA + INT8 KV + prefix caching can serve 128K context to roughly 20–30 concurrent users on a single 8xH100 node (the 335 GB of fp16 KV per user drops to ~21 GB with GQA and INT8, and an 8xH100 node holds 640 GB).",
-      "section": "KV-Cache Optimizations",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-56",
-      "quote": "The single biggest speedup for training **and** inference in 2022–2023 (\\cite[Dao et al., 2022]{dao2022flashattention}).",
-      "section": "FlashAttention",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-57",
-      "quote": "Reduces attention memory from $O(n^2)$ to $O(n)$ by **never materializing the full attention matrix**:",
-      "section": "FlashAttention",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-58",
-      "quote": "FlashAttention computes the same result in tiles, with the softmax applied incrementally:",
-      "section": "FlashAttention",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-59",
-      "quote": "This is mathematically equivalent but requires only $O(n)$ memory and exploits **SRAM** (the GPU's fast on-chip cache) to avoid round-trips to HBM.",
-      "section": "FlashAttention",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-60",
-      "quote": "FlashAttention-2 (2023): further 2× speedup via better work partitioning.",
-      "section": "FlashAttention",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-61",
-      "quote": "FlashAttention-3 (2024): asynchronous warp specialization on H100, FP8 support, ~2× over FA-2.",
-      "section": "FlashAttention",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-62",
-      "quote": "FlashAttention is now standard in **all** major training and inference stacks (PyTorch SDPA, vLLM, TGI, TensorRT-LLM, llama.cpp).",
-      "section": "FlashAttention",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-63",
-      "quote": "The OS-virtual-memory approach to KV management (\\cite[Kwon et al., 2023]{kwon2023vllm}):",
-      "section": "Paged Attention",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-64",
-      "quote": "* Allocate KV cache in fixed-size **blocks** (typically 16 tokens).",
-      "section": "Paged Attention",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-65",
-      "quote": "* Each request has a **block table** mapping logical → physical blocks.",
-      "section": "Paged Attention",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-66",
-      "quote": "* Blocks can be **shared** across requests with the same prefix.",
-      "section": "Paged Attention",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-67",
-      "quote": "* No fragmentation; near-100% memory utilization.",
-      "section": "Paged Attention",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-68",
-      "quote": "Effect: **2–4× throughput improvement** over contiguous allocation for chat workloads with varied sequence lengths.",
-      "section": "Paged Attention",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-69",
-      "quote": "The vLLM paper showed 14–24× throughput vs. naïve HuggingFace serving at high concurrency.",
-      "section": "Paged Attention",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-70",
-      "quote": "LLM decoding is sequential: each token requires a full forward pass.",
-      "section": "Speculative Decoding",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-71",
-      "quote": "**Speculative decoding** (\\cite[Leviathan et al., 2023]{leviathan2023speculative}) breaks this:",
-      "section": "Speculative Decoding",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-72",
-      "quote": "A small **draft model** generates $k$ candidate tokens autoregressively.",
-      "section": "Speculative Decoding",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-73",
-      "quote": "The large **target model** verifies all $k$ in a **single parallel forward pass**.",
-      "section": "Speculative Decoding",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-74",
-      "quote": "Accept the longest prefix where target agrees with draft.",
-      "section": "Speculative Decoding",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-75",
-      "quote": "Resample from the target's corrected distribution on the first mismatch.",
-      "section": "Speculative Decoding",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-76",
-      "quote": "If $k = 5$ speculative tokens are drafted and per-token acceptance rate is $\\alpha = 80\\%$, the expected number of tokens accepted per verification step is $\\frac{1 - \\alpha^{k+1}}{1 - \\alpha} = \\frac{1 - 0.8^6}{0.2} \\approx 3.69$.",
-      "section": "Speculative Decoding",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-77",
-      "quote": "* **Self-speculative decoding**: use early-exit from the same model.",
-      "section": "Speculative Decoding",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-78",
-      "quote": "* **Medusa** (\\cite[Cai et al., 2024]{cai2024medusa}): parallel draft heads attached to the main model.",
-      "section": "Speculative Decoding",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-79",
-      "quote": "* **EAGLE** (\\cite[Li et al., 2024]{li2024eagle}): draft at the feature level, not the token level.",
-      "section": "Speculative Decoding",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-80",
-      "quote": "* **Lookahead decoding**: parallel candidate generation with Jacobi iteration.",
-      "section": "Speculative Decoding",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-81",
-      "quote": "Generate one token for $B$ requests simultaneously.",
-      "section": "Static Batching",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-82",
-      "quote": "All requests advance in lockstep.",
-      "section": "Static Batching",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-83",
-      "quote": "Simple but **straggler-bound**: longest request dictates the batch's pace.",
-      "section": "Static Batching",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-84",
-      "quote": "Add new requests whenever an old one finishes.",
-      "section": "Dynamic Batching",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-85",
-      "quote": "Better throughput than static; still has stragglers.",
-      "section": "Dynamic Batching",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-86",
-      "quote": "After **every** generated token, swap finished sequences out and swap new ones in.",
-      "section": "Continuous Batching (Iteration-Level Scheduling)",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-87",
-      "quote": "The GPU is never idle waiting for stragglers.",
-      "section": "Continuous Batching (Iteration-Level Scheduling)",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-88",
-      "quote": "vLLM, TGI, TensorRT-LLM, and SGLang all implement continuous batching.",
-      "section": "Continuous Batching (Iteration-Level Scheduling)",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-89",
-      "quote": "**Throughput improvement: 10–20×** over static batching for chat workloads.",
-      "section": "Continuous Batching (Iteration-Level Scheduling)",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-90",
       "quote": "Same idea as continuous batching but with tighter integration into TensorRT's kernel scheduling.",
+      "block_id": "inference_optimization-block-52",
       "section": "In-flight Batching (NVIDIA TensorRT-LLM)",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-91",
+      "id": "inference_optimization-stmt-43",
       "quote": "A request with a 100K-token prompt would otherwise block the GPU for many seconds.",
+      "block_id": "inference_optimization-block-54",
       "section": "Chunked Prefill",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-92",
+      "id": "inference_optimization-stmt-44",
       "quote": "Chunked prefill splits the prompt into smaller chunks and interleaves them with decode steps of other requests.",
+      "block_id": "inference_optimization-block-54",
       "section": "Chunked Prefill",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-93",
+      "id": "inference_optimization-stmt-45",
       "quote": "Critical for long-context serving.",
+      "block_id": "inference_optimization-block-54",
       "section": "Chunked Prefill",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-94",
+      "id": "inference_optimization-stmt-46",
       "quote": "A small “student” model trained to mimic a larger “teacher”:",
+      "block_id": "inference_optimization-block-56",
       "section": "Distillation Recap",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-95",
-      "quote": "* **Logit distillation**: match full output distribution: $\\mathcal{L} = \\text{KL}(p_T \\| p_S)$",
-      "section": "Distillation Recap",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-96",
-      "quote": "* **Hidden-state distillation**: match intermediate activations.",
-      "section": "Distillation Recap",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-97",
-      "quote": "* **Attention distillation**: match attention matrices.",
-      "section": "Distillation Recap",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-98",
-      "quote": "* **Generative distillation**: train on teacher text outputs.",
-      "section": "Distillation Recap",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-99",
-      "quote": "* **Distillation with reasoning**: student trained on teacher's CoT traces (R1-distill style).",
-      "section": "Distillation Recap",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-100",
+      "id": "inference_optimization-stmt-47",
       "quote": "DeepSeek-R1's distillation experiments (\\cite[Guo et al., 2025]{guo2025deepseekr1}) show that even a small 1.5B student trained on R1's full reasoning traces captures a large fraction of the teacher's math ability for its size — evidence that the reasoning traces themselves carry much of the capability.",
+      "block_id": "inference_optimization-block-57",
       "section": "Distillation Recap",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-101",
+      "id": "inference_optimization-stmt-48",
       "quote": "Split weight matrices across GPUs.",
+      "block_id": "inference_optimization-block-60",
       "section": "Tensor Parallelism",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-102",
+      "id": "inference_optimization-stmt-49",
       "quote": "Each GPU computes a partial output, all-reduces.",
+      "block_id": "inference_optimization-block-60",
       "section": "Tensor Parallelism",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-103",
+      "id": "inference_optimization-stmt-50",
       "quote": "Split layers across GPUs.",
+      "block_id": "inference_optimization-block-62",
       "section": "Pipeline Parallelism",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-104",
+      "id": "inference_optimization-stmt-51",
       "quote": "Required for very large models on low-GPU-count servers.",
+      "block_id": "inference_optimization-block-62",
       "section": "Pipeline Parallelism",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-105",
-      "quote": "For MoE models (Mixtral, DeepSeek-V3), different experts live on different GPUs.",
-      "section": "Expert Parallelism (MoE)",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-106",
-      "quote": "Tokens routed to expert $i$ are sent to GPU $i$.",
-      "section": "Expert Parallelism (MoE)",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-107",
+      "id": "inference_optimization-stmt-52",
       "quote": "For fixed-shape models, the entire inference forward pass can be captured as a **CUDA graph**: a pre-compiled sequence of GPU operations with minimal launch overhead.",
+      "block_id": "inference_optimization-block-65",
       "section": "CUDA Graph Capture",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-108",
+      "id": "inference_optimization-stmt-53",
       "quote": "Reduces per-token latency by ~20%.",
+      "block_id": "inference_optimization-block-65",
       "section": "CUDA Graph Capture",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-109",
+      "id": "inference_optimization-stmt-54",
       "quote": "H100's **Transformer Engine** does FP8 matmuls natively.",
+      "block_id": "inference_optimization-block-67",
       "section": "Mixed Precision (FP8, INT4)",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-110",
+      "id": "inference_optimization-stmt-55",
       "quote": "INT4 path for Hopper is via TensorRT-LLM.",
+      "block_id": "inference_optimization-block-67",
       "section": "Mixed Precision (FP8, INT4)",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-111",
+      "id": "inference_optimization-stmt-56",
       "quote": "Speedups: 1.5–2× over BF16.",
+      "block_id": "inference_optimization-block-67",
       "section": "Mixed Precision (FP8, INT4)",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-112",
+      "id": "inference_optimization-stmt-57",
       "quote": "When the prompt is long and the system has many concurrent decoders, prefill can preempt decode.",
+      "block_id": "inference_optimization-block-69",
       "section": "Speculative Prefill",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-113",
+      "id": "inference_optimization-stmt-58",
       "quote": "Some systems schedule prefill on a separate “prefill pool” of GPUs.",
+      "block_id": "inference_optimization-block-69",
       "section": "Speculative Prefill",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-114",
-      "quote": "* **Exact prompt caching**: identical prompts reuse computed KV.",
-      "section": "Caching Strategies",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-115",
-      "quote": "Standard for system prompts.",
-      "section": "Caching Strategies",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-116",
-      "quote": "* **Semantic caching**: similar prompts (cosine > threshold) reuse responses.",
-      "section": "Caching Strategies",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-117",
-      "quote": "Saves API cost at the application layer.",
-      "section": "Caching Strategies",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-118",
-      "quote": "* **Speculative cache lookup**: precompute common responses (FAQ, help articles).",
-      "section": "Caching Strategies",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-119",
-      "quote": "* **CDN for LLM responses**: edge-cached LLM outputs for high-traffic questions.",
-      "section": "Caching Strategies",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-120",
+      "id": "inference_optimization-stmt-59",
       "quote": "A good caching strategy can reduce effective cost by **5–10×** for chat workloads with predictable queries.",
+      "block_id": "inference_optimization-block-72",
       "section": "Caching Strategies",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-121",
+      "id": "inference_optimization-stmt-60",
       "quote": "| Stack | Best for | Notes |",
+      "block_id": "inference_optimization-block-74",
       "section": "Choosing a Serving Stack",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-122",
+      "id": "inference_optimization-stmt-61",
       "quote": "| **vLLM** | Most production workloads | Paged attention, continuous batching, broadest model support |",
+      "block_id": "inference_optimization-block-75",
       "section": "Choosing a Serving Stack",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-123",
+      "id": "inference_optimization-stmt-62",
       "quote": "| **TGI** | HuggingFace ecosystem | Clean Rust implementation, integrated with Hub |",
+      "block_id": "inference_optimization-block-76",
       "section": "Choosing a Serving Stack",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-124",
+      "id": "inference_optimization-stmt-63",
       "quote": "| **TensorRT-LLM** | Max throughput on NVIDIA | Tightest GPU optimization, requires more setup |",
+      "block_id": "inference_optimization-block-77",
       "section": "Choosing a Serving Stack",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-125",
+      "id": "inference_optimization-stmt-64",
       "quote": "| **SGLang** | Structured generation, agents | Optimized for JSON/grammar output |",
+      "block_id": "inference_optimization-block-78",
       "section": "Choosing a Serving Stack",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-126",
+      "id": "inference_optimization-stmt-65",
       "quote": "| **llama.cpp** | Local / consumer GPUs | GGUF format, single-user |",
+      "block_id": "inference_optimization-block-79",
       "section": "Choosing a Serving Stack",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-127",
+      "id": "inference_optimization-stmt-66",
       "quote": "| **MLX** | Apple Silicon | Optimized for M-series |",
+      "block_id": "inference_optimization-block-80",
       "section": "Choosing a Serving Stack",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-128",
+      "id": "inference_optimization-stmt-67",
       "quote": "| **OpenLLM** | Python-native deployments | Simpler than vLLM for small scale |",
+      "block_id": "inference_optimization-block-81",
       "section": "Choosing a Serving Stack",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-129",
+      "id": "inference_optimization-stmt-68",
       "quote": "| **Ray Serve + vLLM** | Autoscaling multi-model | Cloud-native orchestration |",
+      "block_id": "inference_optimization-block-82",
       "section": "Choosing a Serving Stack",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-130",
+      "id": "inference_optimization-stmt-69",
       "quote": "For most production deployments: **vLLM** is the default in 2025.",
+      "block_id": "inference_optimization-block-83",
       "section": "Choosing a Serving Stack",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-131",
+      "id": "inference_optimization-stmt-70",
       "quote": "For a 70B model on 8x H100:",
+      "block_id": "inference_optimization-block-85",
       "section": "Practical Numbers (2025, approximate)",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-132",
+      "id": "inference_optimization-stmt-71",
       "quote": "| Optimization | Throughput (tokens/s) | vs. baseline |",
+      "block_id": "inference_optimization-block-86",
       "section": "Practical Numbers (2025, approximate)",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-133",
+      "id": "inference_optimization-stmt-72",
       "quote": "| Naïve (HF generate) | 500 | 1× |",
+      "block_id": "inference_optimization-block-87",
       "section": "Practical Numbers (2025, approximate)",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-134",
+      "id": "inference_optimization-stmt-73",
       "quote": "| + Continuous batching | 4,000 | 8× |",
+      "block_id": "inference_optimization-block-88",
       "section": "Practical Numbers (2025, approximate)",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-135",
+      "id": "inference_optimization-stmt-74",
       "quote": "| + Paged attention | 6,000 | 12× |",
+      "block_id": "inference_optimization-block-89",
       "section": "Practical Numbers (2025, approximate)",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-136",
+      "id": "inference_optimization-stmt-75",
       "quote": "| + INT8 quantization | 9,000 | 18× |",
+      "block_id": "inference_optimization-block-90",
       "section": "Practical Numbers (2025, approximate)",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-137",
+      "id": "inference_optimization-stmt-76",
       "quote": "| + INT4 quantization | 12,000 | 24× |",
+      "block_id": "inference_optimization-block-91",
       "section": "Practical Numbers (2025, approximate)",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-138",
+      "id": "inference_optimization-stmt-77",
       "quote": "| + Speculative decoding | 25,000 | 50× |",
+      "block_id": "inference_optimization-block-92",
       "section": "Practical Numbers (2025, approximate)",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-139",
+      "id": "inference_optimization-stmt-78",
       "quote": "| + Multi-node | 100,000+ | 200× |",
+      "block_id": "inference_optimization-block-93",
       "section": "Practical Numbers (2025, approximate)",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-140",
+      "id": "inference_optimization-stmt-79",
       "quote": "Combined, a single 8-GPU node can serve roughly 800 concurrent users generating at 30+ tokens/sec each; a 100-node cluster can serve **tens of thousands** of concurrent users, depending on context length and batching.",
+      "block_id": "inference_optimization-block-94",
       "section": "Practical Numbers (2025, approximate)",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-141",
-      "quote": "* **Sub-quadratic architectures** for inference (see the Beyond Transformers chapter ), Mamba-2, Jamba.",
-      "section": "The Frontier of Inference",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-142",
-      "quote": "* **FP4/FP6 inference**: lower precision for further speedups.",
-      "section": "The Frontier of Inference",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-143",
-      "quote": "* **Network compression**: distilling large reasoning models into small fast ones.",
-      "section": "The Frontier of Inference",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-144",
-      "quote": "* **Distributed speculative decoding**: one draft model serving many target models.",
-      "section": "The Frontier of Inference",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-145",
-      "quote": "* **Energy-aware scheduling**: route to the most power-efficient GPU.",
-      "section": "The Frontier of Inference",
-      "kind": "statement"
-    },
-    {
-      "id": "inference_optimization-stmt-146",
+      "id": "inference_optimization-stmt-80",
       "quote": "For most practitioners in 2025, **vLLM + INT4 + continuous batching + prefix caching + speculative decoding** is the production stack.",
+      "block_id": "inference_optimization-block-97",
       "section": "The Frontier of Inference",
       "kind": "statement"
     },
     {
-      "id": "inference_optimization-stmt-147",
+      "id": "inference_optimization-stmt-81",
       "quote": "It produces ~50× throughput over naïve serving and is the difference between an economically viable LLM product and a bankrupt one.",
+      "block_id": "inference_optimization-block-97",
       "section": "The Frontier of Inference",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "inference_optimization-block-1",
+      "quote": "Training a frontier model costs US Dollar 100M+; serving it can cost **US Dollar 1M+ per day at scale**. Inference optimization makes LLMs economically viable. The frontier in 2025: serving millions of tokens per second across a large cluster with sub-100 ms latency.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "inference_optimization-block-2",
+      "quote": "This chapter covers every lever: quantization, KV-cache management, paged attention, FlashAttention, speculative decoding, batching, distillation, and the serving stacks that tie it together.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "inference_optimization-block-3",
+      "quote": "Making inference cheaper",
+      "kind": "heading",
+      "section": "Making inference cheaper"
+    },
+    {
+      "id": "inference_optimization-block-4",
+      "quote": "The Inference Math",
+      "kind": "heading",
+      "section": "The Inference Math"
+    },
+    {
+      "id": "inference_optimization-block-5",
+      "quote": "For a single token generation step on a 70B model (fp16):",
+      "kind": "paragraph",
+      "section": "The Inference Math"
+    },
+    {
+      "id": "inference_optimization-block-6",
+      "quote": "| Component | Memory / Compute |",
+      "kind": "table-row",
+      "section": "The Inference Math"
+    },
+    {
+      "id": "inference_optimization-block-7",
+      "quote": "| Read all weights from HBM (70B bf16, split over 2 H100s) | 70 GB ÷ 3 TB/s ≈ 23 ms |",
+      "kind": "table-row",
+      "section": "The Inference Math"
+    },
+    {
+      "id": "inference_optimization-block-8",
+      "quote": "| Compute matmul (forward pass) | ~10 ms with batch=1, ~50 TFLOPS |",
+      "kind": "table-row",
+      "section": "The Inference Math"
+    },
+    {
+      "id": "inference_optimization-block-9",
+      "quote": "| Generate one token | dominated by memory bandwidth |",
+      "kind": "table-row",
+      "section": "The Inference Math"
+    },
+    {
+      "id": "inference_optimization-block-10",
+      "quote": "LLM inference is **memory-bandwidth bound**, not compute-bound. This is why:",
+      "kind": "paragraph",
+      "section": "The Inference Math"
+    },
+    {
+      "id": "inference_optimization-block-11",
+      "quote": "Quantization",
+      "kind": "heading",
+      "section": "Quantization"
+    },
+    {
+      "id": "inference_optimization-block-12",
+      "quote": "Weight Quantization",
+      "kind": "heading",
+      "section": "Weight Quantization"
+    },
+    {
+      "id": "inference_optimization-block-13",
+      "quote": "Reduce the bit precision of model weights:",
+      "kind": "paragraph",
+      "section": "Weight Quantization"
+    },
+    {
+      "id": "inference_optimization-block-14",
+      "quote": "| Format | Bits/weight | 70B size | Perplexity increase |",
+      "kind": "table-row",
+      "section": "Weight Quantization"
+    },
+    {
+      "id": "inference_optimization-block-15",
+      "quote": "| FP32 | 32 | 280 GB | Baseline |",
+      "kind": "table-row",
+      "section": "Weight Quantization"
+    },
+    {
+      "id": "inference_optimization-block-16",
+      "quote": "| FP16 / BF16 | 16 | 140 GB | ~0% |",
+      "kind": "table-row",
+      "section": "Weight Quantization"
+    },
+    {
+      "id": "inference_optimization-block-17",
+      "quote": "| INT8 | 8 | 70 GB | <0.5% |",
+      "kind": "table-row",
+      "section": "Weight Quantization"
+    },
+    {
+      "id": "inference_optimization-block-18",
+      "quote": "| INT4 (GPTQ, AWQ) | 4 | 35 GB | 1–3% |",
+      "kind": "table-row",
+      "section": "Weight Quantization"
+    },
+    {
+      "id": "inference_optimization-block-19",
+      "quote": "| INT3 (QuIP, QuIP#) | 3 | 26 GB | 3–7% |",
+      "kind": "table-row",
+      "section": "Weight Quantization"
+    },
+    {
+      "id": "inference_optimization-block-20",
+      "quote": "| INT2 (QuIP#) | 2 | 17 GB | 5–15% |",
+      "kind": "table-row",
+      "section": "Weight Quantization"
+    },
+    {
+      "id": "inference_optimization-block-21",
+      "quote": "| 1.58-bit (BitNet b1.58) | 1.58 | 13 GB | Comparable to FP16 at scale |",
+      "kind": "table-row",
+      "section": "Weight Quantization"
+    },
+    {
+      "id": "inference_optimization-block-22",
+      "quote": "Standard tools:",
+      "kind": "paragraph",
+      "section": "Weight Quantization"
+    },
+    {
+      "id": "inference_optimization-block-23",
+      "quote": "KV-Cache Quantization",
+      "kind": "heading",
+      "section": "KV-Cache Quantization"
+    },
+    {
+      "id": "inference_optimization-block-24",
+      "quote": "The KV-cache is the dominant memory cost for long contexts. Quantizing it:",
+      "kind": "paragraph",
+      "section": "KV-Cache Quantization"
+    },
+    {
+      "id": "inference_optimization-block-25",
+      "quote": "Used by vLLM, TGI, and most production stacks. Critical for serving 100K+ contexts.",
+      "kind": "paragraph",
+      "section": "KV-Cache Quantization"
+    },
+    {
+      "id": "inference_optimization-block-26",
+      "quote": "KV-Cache Optimizations",
+      "kind": "heading",
+      "section": "KV-Cache Optimizations"
+    },
+    {
+      "id": "inference_optimization-block-27",
+      "quote": "Beyond quantization:",
+      "kind": "paragraph",
+      "section": "KV-Cache Optimizations"
+    },
+    {
+      "id": "inference_optimization-block-28",
+      "quote": "One caveat ties these together: the outlier coordinates that implement attention sinks — the “massive activations” that grow orders of magnitude larger than their neighbours — are exactly the values that low-precision KV quantization handles worst, so aggressive INT4 caching can disturb sink behaviour unless the scheme protects outliers (\\cite[Sun et al., 2024]{sun2024massive}).",
+      "kind": "paragraph",
+      "section": "KV-Cache Optimizations"
+    },
+    {
+      "id": "inference_optimization-block-29",
+      "quote": "A 70B model with GQA + INT8 KV + prefix caching can serve 128K context to roughly 20–30 concurrent users on a single 8xH100 node (the 335 GB of fp16 KV per user drops to ~21 GB with GQA and INT8, and an 8xH100 node holds 640 GB).",
+      "kind": "paragraph",
+      "section": "KV-Cache Optimizations"
+    },
+    {
+      "id": "inference_optimization-block-30",
+      "quote": "FlashAttention",
+      "kind": "heading",
+      "section": "FlashAttention"
+    },
+    {
+      "id": "inference_optimization-block-31",
+      "quote": "FlashAttention computes the same result in tiles, with the softmax applied incrementally:",
+      "kind": "paragraph",
+      "section": "FlashAttention"
+    },
+    {
+      "id": "inference_optimization-block-32",
+      "quote": "FlashAttention-2 (2023): further 2× speedup via better work partitioning. FlashAttention-3 (2024): asynchronous warp specialization on H100, FP8 support, ~2× over FA-2.",
+      "kind": "paragraph",
+      "section": "FlashAttention"
+    },
+    {
+      "id": "inference_optimization-block-33",
+      "quote": "FlashAttention is now standard in **all** major training and inference stacks (PyTorch SDPA, vLLM, TGI, TensorRT-LLM, llama.cpp).",
+      "kind": "paragraph",
+      "section": "FlashAttention"
+    },
+    {
+      "id": "inference_optimization-block-34",
+      "quote": "Paged Attention",
+      "kind": "heading",
+      "section": "Paged Attention"
+    },
+    {
+      "id": "inference_optimization-block-35",
+      "quote": "The OS-virtual-memory approach to KV management (\\cite[Kwon et al., 2023]{kwon2023vllm}):",
+      "kind": "paragraph",
+      "section": "Paged Attention"
+    },
+    {
+      "id": "inference_optimization-block-36",
+      "quote": "Effect: **2–4× throughput improvement** over contiguous allocation for chat workloads with varied sequence lengths.",
+      "kind": "paragraph",
+      "section": "Paged Attention"
+    },
+    {
+      "id": "inference_optimization-block-37",
+      "quote": "The vLLM paper showed 14–24× throughput vs. naïve HuggingFace serving at high concurrency.",
+      "kind": "paragraph",
+      "section": "Paged Attention"
+    },
+    {
+      "id": "inference_optimization-block-38",
+      "quote": "Speculative Decoding",
+      "kind": "heading",
+      "section": "Speculative Decoding"
+    },
+    {
+      "id": "inference_optimization-block-39",
+      "quote": "LLM decoding is sequential: each token requires a full forward pass. **Speculative decoding** (\\cite[Leviathan et al., 2023]{leviathan2023speculative}) breaks this:",
+      "kind": "paragraph",
+      "section": "Speculative Decoding"
+    },
+    {
+      "id": "inference_optimization-block-40",
+      "quote": "3. Accept the longest prefix where target agrees with draft.",
+      "kind": "list-item",
+      "section": "Speculative Decoding"
+    },
+    {
+      "id": "inference_optimization-block-41",
+      "quote": "4. Resample from the target's corrected distribution on the first mismatch.",
+      "kind": "list-item",
+      "section": "Speculative Decoding"
+    },
+    {
+      "id": "inference_optimization-block-42",
+      "quote": "Variants:",
+      "kind": "paragraph",
+      "section": "Speculative Decoding"
+    },
+    {
+      "id": "inference_optimization-block-43",
+      "quote": "Batching and hardware",
+      "kind": "heading",
+      "section": "Batching and hardware"
+    },
+    {
+      "id": "inference_optimization-block-44",
+      "quote": "Batching Strategies",
+      "kind": "heading",
+      "section": "Batching Strategies"
+    },
+    {
+      "id": "inference_optimization-block-45",
+      "quote": "Static Batching",
+      "kind": "heading",
+      "section": "Static Batching"
+    },
+    {
+      "id": "inference_optimization-block-46",
+      "quote": "Dynamic Batching",
+      "kind": "heading",
+      "section": "Dynamic Batching"
+    },
+    {
+      "id": "inference_optimization-block-47",
+      "quote": "Add new requests whenever an old one finishes. Better throughput than static; still has stragglers.",
+      "kind": "paragraph",
+      "section": "Dynamic Batching"
+    },
+    {
+      "id": "inference_optimization-block-48",
+      "quote": "Continuous Batching (Iteration-Level Scheduling)",
+      "kind": "heading",
+      "section": "Continuous Batching (Iteration-Level Scheduling)"
+    },
+    {
+      "id": "inference_optimization-block-49",
+      "quote": "After **every** generated token, swap finished sequences out and swap new ones in. The GPU is never idle waiting for stragglers.",
+      "kind": "paragraph",
+      "section": "Continuous Batching (Iteration-Level Scheduling)"
+    },
+    {
+      "id": "inference_optimization-block-50",
+      "quote": "vLLM, TGI, TensorRT-LLM, and SGLang all implement continuous batching. **Throughput improvement: 10–20×** over static batching for chat workloads.",
+      "kind": "paragraph",
+      "section": "Continuous Batching (Iteration-Level Scheduling)"
+    },
+    {
+      "id": "inference_optimization-block-51",
+      "quote": "In-flight Batching (NVIDIA TensorRT-LLM)",
+      "kind": "heading",
+      "section": "In-flight Batching (NVIDIA TensorRT-LLM)"
+    },
+    {
+      "id": "inference_optimization-block-52",
+      "quote": "Same idea as continuous batching but with tighter integration into TensorRT's kernel scheduling.",
+      "kind": "paragraph",
+      "section": "In-flight Batching (NVIDIA TensorRT-LLM)"
+    },
+    {
+      "id": "inference_optimization-block-53",
+      "quote": "Chunked Prefill",
+      "kind": "heading",
+      "section": "Chunked Prefill"
+    },
+    {
+      "id": "inference_optimization-block-54",
+      "quote": "A request with a 100K-token prompt would otherwise block the GPU for many seconds. Chunked prefill splits the prompt into smaller chunks and interleaves them with decode steps of other requests. Critical for long-context serving.",
+      "kind": "paragraph",
+      "section": "Chunked Prefill"
+    },
+    {
+      "id": "inference_optimization-block-55",
+      "quote": "Distillation Recap",
+      "kind": "heading",
+      "section": "Distillation Recap"
+    },
+    {
+      "id": "inference_optimization-block-56",
+      "quote": "A small “student” model trained to mimic a larger “teacher”:",
+      "kind": "paragraph",
+      "section": "Distillation Recap"
+    },
+    {
+      "id": "inference_optimization-block-57",
+      "quote": "DeepSeek-R1's distillation experiments (\\cite[Guo et al., 2025]{guo2025deepseekr1}) show that even a small 1.5B student trained on R1's full reasoning traces captures a large fraction of the teacher's math ability for its size — evidence that the reasoning traces themselves carry much of the capability.",
+      "kind": "paragraph",
+      "section": "Distillation Recap"
+    },
+    {
+      "id": "inference_optimization-block-58",
+      "quote": "Hardware-Specific Tricks",
+      "kind": "heading",
+      "section": "Hardware-Specific Tricks"
+    },
+    {
+      "id": "inference_optimization-block-59",
+      "quote": "Tensor Parallelism",
+      "kind": "heading",
+      "section": "Tensor Parallelism"
+    },
+    {
+      "id": "inference_optimization-block-60",
+      "quote": "Split weight matrices across GPUs. Each GPU computes a partial output, all-reduces. Megatron-style.",
+      "kind": "paragraph",
+      "section": "Tensor Parallelism"
+    },
+    {
+      "id": "inference_optimization-block-61",
+      "quote": "Pipeline Parallelism",
+      "kind": "heading",
+      "section": "Pipeline Parallelism"
+    },
+    {
+      "id": "inference_optimization-block-62",
+      "quote": "Split layers across GPUs. Required for very large models on low-GPU-count servers.",
+      "kind": "paragraph",
+      "section": "Pipeline Parallelism"
+    },
+    {
+      "id": "inference_optimization-block-63",
+      "quote": "Expert Parallelism (MoE)",
+      "kind": "heading",
+      "section": "Expert Parallelism (MoE)"
+    },
+    {
+      "id": "inference_optimization-block-64",
+      "quote": "CUDA Graph Capture",
+      "kind": "heading",
+      "section": "CUDA Graph Capture"
+    },
+    {
+      "id": "inference_optimization-block-65",
+      "quote": "For fixed-shape models, the entire inference forward pass can be captured as a **CUDA graph**: a pre-compiled sequence of GPU operations with minimal launch overhead. Reduces per-token latency by ~20%.",
+      "kind": "paragraph",
+      "section": "CUDA Graph Capture"
+    },
+    {
+      "id": "inference_optimization-block-66",
+      "quote": "Mixed Precision (FP8, INT4)",
+      "kind": "heading",
+      "section": "Mixed Precision (FP8, INT4)"
+    },
+    {
+      "id": "inference_optimization-block-67",
+      "quote": "H100's **Transformer Engine** does FP8 matmuls natively. INT4 path for Hopper is via TensorRT-LLM. Speedups: 1.5–2× over BF16.",
+      "kind": "paragraph",
+      "section": "Mixed Precision (FP8, INT4)"
+    },
+    {
+      "id": "inference_optimization-block-68",
+      "quote": "Speculative Prefill",
+      "kind": "heading",
+      "section": "Speculative Prefill"
+    },
+    {
+      "id": "inference_optimization-block-69",
+      "quote": "When the prompt is long and the system has many concurrent decoders, prefill can preempt decode. Some systems schedule prefill on a separate “prefill pool” of GPUs.",
+      "kind": "paragraph",
+      "section": "Speculative Prefill"
+    },
+    {
+      "id": "inference_optimization-block-70",
+      "quote": "Choosing a stack",
+      "kind": "heading",
+      "section": "Choosing a stack"
+    },
+    {
+      "id": "inference_optimization-block-71",
+      "quote": "Caching Strategies",
+      "kind": "heading",
+      "section": "Caching Strategies"
+    },
+    {
+      "id": "inference_optimization-block-72",
+      "quote": "A good caching strategy can reduce effective cost by **5–10×** for chat workloads with predictable queries.",
+      "kind": "paragraph",
+      "section": "Caching Strategies"
+    },
+    {
+      "id": "inference_optimization-block-73",
+      "quote": "Choosing a Serving Stack",
+      "kind": "heading",
+      "section": "Choosing a Serving Stack"
+    },
+    {
+      "id": "inference_optimization-block-74",
+      "quote": "| Stack | Best for | Notes |",
+      "kind": "table-row",
+      "section": "Choosing a Serving Stack"
+    },
+    {
+      "id": "inference_optimization-block-75",
+      "quote": "| **vLLM** | Most production workloads | Paged attention, continuous batching, broadest model support |",
+      "kind": "table-row",
+      "section": "Choosing a Serving Stack"
+    },
+    {
+      "id": "inference_optimization-block-76",
+      "quote": "| **TGI** | HuggingFace ecosystem | Clean Rust implementation, integrated with Hub |",
+      "kind": "table-row",
+      "section": "Choosing a Serving Stack"
+    },
+    {
+      "id": "inference_optimization-block-77",
+      "quote": "| **TensorRT-LLM** | Max throughput on NVIDIA | Tightest GPU optimization, requires more setup |",
+      "kind": "table-row",
+      "section": "Choosing a Serving Stack"
+    },
+    {
+      "id": "inference_optimization-block-78",
+      "quote": "| **SGLang** | Structured generation, agents | Optimized for JSON/grammar output |",
+      "kind": "table-row",
+      "section": "Choosing a Serving Stack"
+    },
+    {
+      "id": "inference_optimization-block-79",
+      "quote": "| **llama.cpp** | Local / consumer GPUs | GGUF format, single-user |",
+      "kind": "table-row",
+      "section": "Choosing a Serving Stack"
+    },
+    {
+      "id": "inference_optimization-block-80",
+      "quote": "| **MLX** | Apple Silicon | Optimized for M-series |",
+      "kind": "table-row",
+      "section": "Choosing a Serving Stack"
+    },
+    {
+      "id": "inference_optimization-block-81",
+      "quote": "| **OpenLLM** | Python-native deployments | Simpler than vLLM for small scale |",
+      "kind": "table-row",
+      "section": "Choosing a Serving Stack"
+    },
+    {
+      "id": "inference_optimization-block-82",
+      "quote": "| **Ray Serve + vLLM** | Autoscaling multi-model | Cloud-native orchestration |",
+      "kind": "table-row",
+      "section": "Choosing a Serving Stack"
+    },
+    {
+      "id": "inference_optimization-block-83",
+      "quote": "For most production deployments: **vLLM** is the default in 2025.",
+      "kind": "paragraph",
+      "section": "Choosing a Serving Stack"
+    },
+    {
+      "id": "inference_optimization-block-84",
+      "quote": "Practical Numbers (2025, approximate)",
+      "kind": "heading",
+      "section": "Practical Numbers (2025, approximate)"
+    },
+    {
+      "id": "inference_optimization-block-85",
+      "quote": "For a 70B model on 8x H100:",
+      "kind": "paragraph",
+      "section": "Practical Numbers (2025, approximate)"
+    },
+    {
+      "id": "inference_optimization-block-86",
+      "quote": "| Optimization | Throughput (tokens/s) | vs. baseline |",
+      "kind": "table-row",
+      "section": "Practical Numbers (2025, approximate)"
+    },
+    {
+      "id": "inference_optimization-block-87",
+      "quote": "| Naïve (HF generate) | 500 | 1× |",
+      "kind": "table-row",
+      "section": "Practical Numbers (2025, approximate)"
+    },
+    {
+      "id": "inference_optimization-block-88",
+      "quote": "| + Continuous batching | 4,000 | 8× |",
+      "kind": "table-row",
+      "section": "Practical Numbers (2025, approximate)"
+    },
+    {
+      "id": "inference_optimization-block-89",
+      "quote": "| + Paged attention | 6,000 | 12× |",
+      "kind": "table-row",
+      "section": "Practical Numbers (2025, approximate)"
+    },
+    {
+      "id": "inference_optimization-block-90",
+      "quote": "| + INT8 quantization | 9,000 | 18× |",
+      "kind": "table-row",
+      "section": "Practical Numbers (2025, approximate)"
+    },
+    {
+      "id": "inference_optimization-block-91",
+      "quote": "| + INT4 quantization | 12,000 | 24× |",
+      "kind": "table-row",
+      "section": "Practical Numbers (2025, approximate)"
+    },
+    {
+      "id": "inference_optimization-block-92",
+      "quote": "| + Speculative decoding | 25,000 | 50× |",
+      "kind": "table-row",
+      "section": "Practical Numbers (2025, approximate)"
+    },
+    {
+      "id": "inference_optimization-block-93",
+      "quote": "| + Multi-node | 100,000+ | 200× |",
+      "kind": "table-row",
+      "section": "Practical Numbers (2025, approximate)"
+    },
+    {
+      "id": "inference_optimization-block-94",
+      "quote": "Combined, a single 8-GPU node can serve roughly 800 concurrent users generating at 30+ tokens/sec each; a 100-node cluster can serve **tens of thousands** of concurrent users, depending on context length and batching.",
+      "kind": "paragraph",
+      "section": "Practical Numbers (2025, approximate)"
+    },
+    {
+      "id": "inference_optimization-block-95",
+      "quote": "The Frontier of Inference",
+      "kind": "heading",
+      "section": "The Frontier of Inference"
+    },
+    {
+      "id": "inference_optimization-block-96",
+      "quote": "Active research in 2025:",
+      "kind": "paragraph",
+      "section": "The Frontier of Inference"
+    },
+    {
+      "id": "inference_optimization-block-97",
+      "quote": "For most practitioners in 2025, **vLLM + INT4 + continuous batching + prefix caching + speculative decoding** is the production stack. It produces ~50× throughput over naïve serving and is the difference between an economically viable LLM product and a bankrupt one.",
+      "kind": "paragraph",
+      "section": "The Frontier of Inference"
     }
   ]
 }

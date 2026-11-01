@@ -614,554 +614,3349 @@
         "guardian2024sewell"
       ],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-1-part_of-myths",
+      "from": "myths-block-1",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-2-part_of-myths",
+      "from": "myths-block-2",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-1-before-myths-block-2",
+      "from": "myths-block-1",
+      "to": "myths-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-2-related_to-myths-block-1",
+      "from": "myths-block-2",
+      "to": "myths-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-3-part_of-myths",
+      "from": "myths-block-3",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-2-before-myths-block-3",
+      "from": "myths-block-2",
+      "to": "myths-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-3-related_to-myths-block-1",
+      "from": "myths-block-3",
+      "to": "myths-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-4-part_of-myths",
+      "from": "myths-block-4",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-3-before-myths-block-4",
+      "from": "myths-block-3",
+      "to": "myths-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-4-related_to-myths-block-1",
+      "from": "myths-block-4",
+      "to": "myths-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-5-part_of-myths",
+      "from": "myths-block-5",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-4-before-myths-block-5",
+      "from": "myths-block-4",
+      "to": "myths-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-5-related_to-myths-block-1",
+      "from": "myths-block-5",
+      "to": "myths-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-6-part_of-myths",
+      "from": "myths-block-6",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-5-before-myths-block-6",
+      "from": "myths-block-5",
+      "to": "myths-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-7-part_of-myths",
+      "from": "myths-block-7",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-6-before-myths-block-7",
+      "from": "myths-block-6",
+      "to": "myths-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-7-related_to-myths-block-6",
+      "from": "myths-block-7",
+      "to": "myths-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-8-part_of-myths",
+      "from": "myths-block-8",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-7-before-myths-block-8",
+      "from": "myths-block-7",
+      "to": "myths-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-8-related_to-myths-block-6",
+      "from": "myths-block-8",
+      "to": "myths-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-9-part_of-myths",
+      "from": "myths-block-9",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-8-before-myths-block-9",
+      "from": "myths-block-8",
+      "to": "myths-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-10-part_of-myths",
+      "from": "myths-block-10",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-9-before-myths-block-10",
+      "from": "myths-block-9",
+      "to": "myths-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-10-related_to-myths-block-9",
+      "from": "myths-block-10",
+      "to": "myths-block-9",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-11-part_of-myths",
+      "from": "myths-block-11",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-10-before-myths-block-11",
+      "from": "myths-block-10",
+      "to": "myths-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-12-part_of-myths",
+      "from": "myths-block-12",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-11-before-myths-block-12",
+      "from": "myths-block-11",
+      "to": "myths-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-12-related_to-myths-block-11",
+      "from": "myths-block-12",
+      "to": "myths-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-13-part_of-myths",
+      "from": "myths-block-13",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-12-before-myths-block-13",
+      "from": "myths-block-12",
+      "to": "myths-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-14-part_of-myths",
+      "from": "myths-block-14",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-13-before-myths-block-14",
+      "from": "myths-block-13",
+      "to": "myths-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-14-related_to-myths-block-13",
+      "from": "myths-block-14",
+      "to": "myths-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-15-part_of-myths",
+      "from": "myths-block-15",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-14-before-myths-block-15",
+      "from": "myths-block-14",
+      "to": "myths-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-15-related_to-myths-block-13",
+      "from": "myths-block-15",
+      "to": "myths-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-16-part_of-myths",
+      "from": "myths-block-16",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-15-before-myths-block-16",
+      "from": "myths-block-15",
+      "to": "myths-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-17-part_of-myths",
+      "from": "myths-block-17",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-16-before-myths-block-17",
+      "from": "myths-block-16",
+      "to": "myths-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-17-related_to-myths-block-16",
+      "from": "myths-block-17",
+      "to": "myths-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-18-part_of-myths",
+      "from": "myths-block-18",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-17-before-myths-block-18",
+      "from": "myths-block-17",
+      "to": "myths-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-18-related_to-myths-block-16",
+      "from": "myths-block-18",
+      "to": "myths-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-19-part_of-myths",
+      "from": "myths-block-19",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-18-before-myths-block-19",
+      "from": "myths-block-18",
+      "to": "myths-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-20-part_of-myths",
+      "from": "myths-block-20",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-19-before-myths-block-20",
+      "from": "myths-block-19",
+      "to": "myths-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-20-related_to-myths-block-19",
+      "from": "myths-block-20",
+      "to": "myths-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-21-part_of-myths",
+      "from": "myths-block-21",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-20-before-myths-block-21",
+      "from": "myths-block-20",
+      "to": "myths-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-22-part_of-myths",
+      "from": "myths-block-22",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-21-before-myths-block-22",
+      "from": "myths-block-21",
+      "to": "myths-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-22-related_to-myths-block-21",
+      "from": "myths-block-22",
+      "to": "myths-block-21",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-23-part_of-myths",
+      "from": "myths-block-23",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-22-before-myths-block-23",
+      "from": "myths-block-22",
+      "to": "myths-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-24-part_of-myths",
+      "from": "myths-block-24",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-23-before-myths-block-24",
+      "from": "myths-block-23",
+      "to": "myths-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-24-related_to-myths-block-23",
+      "from": "myths-block-24",
+      "to": "myths-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-25-part_of-myths",
+      "from": "myths-block-25",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-24-before-myths-block-25",
+      "from": "myths-block-24",
+      "to": "myths-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-26-part_of-myths",
+      "from": "myths-block-26",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-25-before-myths-block-26",
+      "from": "myths-block-25",
+      "to": "myths-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-26-related_to-myths-block-25",
+      "from": "myths-block-26",
+      "to": "myths-block-25",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-27-part_of-myths",
+      "from": "myths-block-27",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-26-before-myths-block-27",
+      "from": "myths-block-26",
+      "to": "myths-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-28-part_of-myths",
+      "from": "myths-block-28",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-27-before-myths-block-28",
+      "from": "myths-block-27",
+      "to": "myths-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-28-related_to-myths-block-27",
+      "from": "myths-block-28",
+      "to": "myths-block-27",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-29-part_of-myths",
+      "from": "myths-block-29",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-28-before-myths-block-29",
+      "from": "myths-block-28",
+      "to": "myths-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-30-part_of-myths",
+      "from": "myths-block-30",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-29-before-myths-block-30",
+      "from": "myths-block-29",
+      "to": "myths-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-30-related_to-myths-block-29",
+      "from": "myths-block-30",
+      "to": "myths-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-31-part_of-myths",
+      "from": "myths-block-31",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-30-before-myths-block-31",
+      "from": "myths-block-30",
+      "to": "myths-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-31-related_to-myths-block-29",
+      "from": "myths-block-31",
+      "to": "myths-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-32-part_of-myths",
+      "from": "myths-block-32",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-31-before-myths-block-32",
+      "from": "myths-block-31",
+      "to": "myths-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-33-part_of-myths",
+      "from": "myths-block-33",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-32-before-myths-block-33",
+      "from": "myths-block-32",
+      "to": "myths-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-33-related_to-myths-block-32",
+      "from": "myths-block-33",
+      "to": "myths-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-34-part_of-myths",
+      "from": "myths-block-34",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-33-before-myths-block-34",
+      "from": "myths-block-33",
+      "to": "myths-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-35-part_of-myths",
+      "from": "myths-block-35",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-34-before-myths-block-35",
+      "from": "myths-block-34",
+      "to": "myths-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-35-related_to-myths-block-34",
+      "from": "myths-block-35",
+      "to": "myths-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-36-part_of-myths",
+      "from": "myths-block-36",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-35-before-myths-block-36",
+      "from": "myths-block-35",
+      "to": "myths-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-37-part_of-myths",
+      "from": "myths-block-37",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-36-before-myths-block-37",
+      "from": "myths-block-36",
+      "to": "myths-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-37-related_to-myths-block-36",
+      "from": "myths-block-37",
+      "to": "myths-block-36",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-38-part_of-myths",
+      "from": "myths-block-38",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-37-before-myths-block-38",
+      "from": "myths-block-37",
+      "to": "myths-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-39-part_of-myths",
+      "from": "myths-block-39",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-38-before-myths-block-39",
+      "from": "myths-block-38",
+      "to": "myths-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-39-related_to-myths-block-38",
+      "from": "myths-block-39",
+      "to": "myths-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-40-part_of-myths",
+      "from": "myths-block-40",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-39-before-myths-block-40",
+      "from": "myths-block-39",
+      "to": "myths-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-41-part_of-myths",
+      "from": "myths-block-41",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-40-before-myths-block-41",
+      "from": "myths-block-40",
+      "to": "myths-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-41-related_to-myths-block-40",
+      "from": "myths-block-41",
+      "to": "myths-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-42-part_of-myths",
+      "from": "myths-block-42",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-41-before-myths-block-42",
+      "from": "myths-block-41",
+      "to": "myths-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-43-part_of-myths",
+      "from": "myths-block-43",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-42-before-myths-block-43",
+      "from": "myths-block-42",
+      "to": "myths-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-43-related_to-myths-block-42",
+      "from": "myths-block-43",
+      "to": "myths-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-44-part_of-myths",
+      "from": "myths-block-44",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-43-before-myths-block-44",
+      "from": "myths-block-43",
+      "to": "myths-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-45-part_of-myths",
+      "from": "myths-block-45",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-44-before-myths-block-45",
+      "from": "myths-block-44",
+      "to": "myths-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-45-related_to-myths-block-44",
+      "from": "myths-block-45",
+      "to": "myths-block-44",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-46-part_of-myths",
+      "from": "myths-block-46",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-45-before-myths-block-46",
+      "from": "myths-block-45",
+      "to": "myths-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-47-part_of-myths",
+      "from": "myths-block-47",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-46-before-myths-block-47",
+      "from": "myths-block-46",
+      "to": "myths-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-47-related_to-myths-block-46",
+      "from": "myths-block-47",
+      "to": "myths-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-48-part_of-myths",
+      "from": "myths-block-48",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-47-before-myths-block-48",
+      "from": "myths-block-47",
+      "to": "myths-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-49-part_of-myths",
+      "from": "myths-block-49",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-48-before-myths-block-49",
+      "from": "myths-block-48",
+      "to": "myths-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-49-related_to-myths-block-48",
+      "from": "myths-block-49",
+      "to": "myths-block-48",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-50-part_of-myths",
+      "from": "myths-block-50",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-49-before-myths-block-50",
+      "from": "myths-block-49",
+      "to": "myths-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-51-part_of-myths",
+      "from": "myths-block-51",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-50-before-myths-block-51",
+      "from": "myths-block-50",
+      "to": "myths-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-51-related_to-myths-block-50",
+      "from": "myths-block-51",
+      "to": "myths-block-50",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-52-part_of-myths",
+      "from": "myths-block-52",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-51-before-myths-block-52",
+      "from": "myths-block-51",
+      "to": "myths-block-52",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-53-part_of-myths",
+      "from": "myths-block-53",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-52-before-myths-block-53",
+      "from": "myths-block-52",
+      "to": "myths-block-53",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-53-related_to-myths-block-52",
+      "from": "myths-block-53",
+      "to": "myths-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-54-part_of-myths",
+      "from": "myths-block-54",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-53-before-myths-block-54",
+      "from": "myths-block-53",
+      "to": "myths-block-54",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-55-part_of-myths",
+      "from": "myths-block-55",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-54-before-myths-block-55",
+      "from": "myths-block-54",
+      "to": "myths-block-55",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-55-related_to-myths-block-54",
+      "from": "myths-block-55",
+      "to": "myths-block-54",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-56-part_of-myths",
+      "from": "myths-block-56",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-55-before-myths-block-56",
+      "from": "myths-block-55",
+      "to": "myths-block-56",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-57-part_of-myths",
+      "from": "myths-block-57",
+      "to": "myths",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-56-before-myths-block-57",
+      "from": "myths-block-56",
+      "to": "myths-block-57",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-block-57-related_to-myths-block-56",
+      "from": "myths-block-57",
+      "to": "myths-block-56",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-1-part_of-myths-block-2",
+      "from": "myths-stmt-1",
+      "to": "myths-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-2-part_of-myths-block-2",
+      "from": "myths-stmt-2",
+      "to": "myths-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-3-part_of-myths-block-2",
+      "from": "myths-stmt-3",
+      "to": "myths-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-4-part_of-myths-block-3",
+      "from": "myths-stmt-4",
+      "to": "myths-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-5-part_of-myths-block-3",
+      "from": "myths-stmt-5",
+      "to": "myths-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-6-part_of-myths-block-3",
+      "from": "myths-stmt-6",
+      "to": "myths-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-7-part_of-myths-block-4",
+      "from": "myths-stmt-7",
+      "to": "myths-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-8-part_of-myths-block-4",
+      "from": "myths-stmt-8",
+      "to": "myths-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-9-part_of-myths-block-4",
+      "from": "myths-stmt-9",
+      "to": "myths-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-10-part_of-myths-block-5",
+      "from": "myths-stmt-10",
+      "to": "myths-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-11-part_of-myths-block-5",
+      "from": "myths-stmt-11",
+      "to": "myths-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-12-part_of-myths-block-7",
+      "from": "myths-stmt-12",
+      "to": "myths-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-13-part_of-myths-block-7",
+      "from": "myths-stmt-13",
+      "to": "myths-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-14-part_of-myths-block-7",
+      "from": "myths-stmt-14",
+      "to": "myths-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-15-part_of-myths-block-8",
+      "from": "myths-stmt-15",
+      "to": "myths-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-16-part_of-myths-block-8",
+      "from": "myths-stmt-16",
+      "to": "myths-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-17-part_of-myths-block-10",
+      "from": "myths-stmt-17",
+      "to": "myths-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-18-part_of-myths-block-12",
+      "from": "myths-stmt-18",
+      "to": "myths-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-19-part_of-myths-block-12",
+      "from": "myths-stmt-19",
+      "to": "myths-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-20-part_of-myths-block-12",
+      "from": "myths-stmt-20",
+      "to": "myths-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-21-part_of-myths-block-14",
+      "from": "myths-stmt-21",
+      "to": "myths-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-22-part_of-myths-block-14",
+      "from": "myths-stmt-22",
+      "to": "myths-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-23-part_of-myths-block-15",
+      "from": "myths-stmt-23",
+      "to": "myths-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-24-part_of-myths-block-15",
+      "from": "myths-stmt-24",
+      "to": "myths-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-25-part_of-myths-block-17",
+      "from": "myths-stmt-25",
+      "to": "myths-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-26-part_of-myths-block-17",
+      "from": "myths-stmt-26",
+      "to": "myths-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-27-part_of-myths-block-18",
+      "from": "myths-stmt-27",
+      "to": "myths-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-28-part_of-myths-block-18",
+      "from": "myths-stmt-28",
+      "to": "myths-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-29-part_of-myths-block-18",
+      "from": "myths-stmt-29",
+      "to": "myths-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-30-part_of-myths-block-18",
+      "from": "myths-stmt-30",
+      "to": "myths-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-31-part_of-myths-block-20",
+      "from": "myths-stmt-31",
+      "to": "myths-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-32-part_of-myths-block-22",
+      "from": "myths-stmt-32",
+      "to": "myths-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-33-part_of-myths-block-22",
+      "from": "myths-stmt-33",
+      "to": "myths-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-34-part_of-myths-block-22",
+      "from": "myths-stmt-34",
+      "to": "myths-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-35-part_of-myths-block-22",
+      "from": "myths-stmt-35",
+      "to": "myths-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-36-part_of-myths-block-22",
+      "from": "myths-stmt-36",
+      "to": "myths-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-37-part_of-myths-block-24",
+      "from": "myths-stmt-37",
+      "to": "myths-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-38-part_of-myths-block-24",
+      "from": "myths-stmt-38",
+      "to": "myths-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-39-part_of-myths-block-24",
+      "from": "myths-stmt-39",
+      "to": "myths-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-40-part_of-myths-block-24",
+      "from": "myths-stmt-40",
+      "to": "myths-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-41-part_of-myths-block-24",
+      "from": "myths-stmt-41",
+      "to": "myths-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-42-part_of-myths-block-26",
+      "from": "myths-stmt-42",
+      "to": "myths-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-43-part_of-myths-block-28",
+      "from": "myths-stmt-43",
+      "to": "myths-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-44-part_of-myths-block-28",
+      "from": "myths-stmt-44",
+      "to": "myths-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-45-part_of-myths-block-28",
+      "from": "myths-stmt-45",
+      "to": "myths-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-46-part_of-myths-block-28",
+      "from": "myths-stmt-46",
+      "to": "myths-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-47-part_of-myths-block-30",
+      "from": "myths-stmt-47",
+      "to": "myths-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-48-part_of-myths-block-30",
+      "from": "myths-stmt-48",
+      "to": "myths-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-49-part_of-myths-block-31",
+      "from": "myths-stmt-49",
+      "to": "myths-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-50-part_of-myths-block-31",
+      "from": "myths-stmt-50",
+      "to": "myths-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-51-part_of-myths-block-31",
+      "from": "myths-stmt-51",
+      "to": "myths-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-52-part_of-myths-block-31",
+      "from": "myths-stmt-52",
+      "to": "myths-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-53-part_of-myths-block-33",
+      "from": "myths-stmt-53",
+      "to": "myths-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-54-part_of-myths-block-33",
+      "from": "myths-stmt-54",
+      "to": "myths-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-55-part_of-myths-block-33",
+      "from": "myths-stmt-55",
+      "to": "myths-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-56-part_of-myths-block-33",
+      "from": "myths-stmt-56",
+      "to": "myths-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-57-part_of-myths-block-33",
+      "from": "myths-stmt-57",
+      "to": "myths-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-58-part_of-myths-block-33",
+      "from": "myths-stmt-58",
+      "to": "myths-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-59-part_of-myths-block-33",
+      "from": "myths-stmt-59",
+      "to": "myths-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-60-part_of-myths-block-35",
+      "from": "myths-stmt-60",
+      "to": "myths-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-61-part_of-myths-block-35",
+      "from": "myths-stmt-61",
+      "to": "myths-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-62-part_of-myths-block-37",
+      "from": "myths-stmt-62",
+      "to": "myths-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-63-part_of-myths-block-37",
+      "from": "myths-stmt-63",
+      "to": "myths-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-64-part_of-myths-block-37",
+      "from": "myths-stmt-64",
+      "to": "myths-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-65-part_of-myths-block-39",
+      "from": "myths-stmt-65",
+      "to": "myths-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-66-part_of-myths-block-39",
+      "from": "myths-stmt-66",
+      "to": "myths-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-67-part_of-myths-block-39",
+      "from": "myths-stmt-67",
+      "to": "myths-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-68-part_of-myths-block-39",
+      "from": "myths-stmt-68",
+      "to": "myths-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-69-part_of-myths-block-39",
+      "from": "myths-stmt-69",
+      "to": "myths-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-70-part_of-myths-block-41",
+      "from": "myths-stmt-70",
+      "to": "myths-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-71-part_of-myths-block-41",
+      "from": "myths-stmt-71",
+      "to": "myths-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-72-part_of-myths-block-41",
+      "from": "myths-stmt-72",
+      "to": "myths-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-73-part_of-myths-block-43",
+      "from": "myths-stmt-73",
+      "to": "myths-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-74-part_of-myths-block-43",
+      "from": "myths-stmt-74",
+      "to": "myths-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-75-part_of-myths-block-45",
+      "from": "myths-stmt-75",
+      "to": "myths-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-76-part_of-myths-block-47",
+      "from": "myths-stmt-76",
+      "to": "myths-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-77-part_of-myths-block-47",
+      "from": "myths-stmt-77",
+      "to": "myths-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-78-part_of-myths-block-47",
+      "from": "myths-stmt-78",
+      "to": "myths-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-79-part_of-myths-block-49",
+      "from": "myths-stmt-79",
+      "to": "myths-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-80-part_of-myths-block-49",
+      "from": "myths-stmt-80",
+      "to": "myths-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-81-part_of-myths-block-49",
+      "from": "myths-stmt-81",
+      "to": "myths-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-82-part_of-myths-block-51",
+      "from": "myths-stmt-82",
+      "to": "myths-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-83-part_of-myths-block-53",
+      "from": "myths-stmt-83",
+      "to": "myths-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-84-part_of-myths-block-53",
+      "from": "myths-stmt-84",
+      "to": "myths-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-85-part_of-myths-block-53",
+      "from": "myths-stmt-85",
+      "to": "myths-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-86-part_of-myths-block-53",
+      "from": "myths-stmt-86",
+      "to": "myths-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-87-part_of-myths-block-55",
+      "from": "myths-stmt-87",
+      "to": "myths-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-88-part_of-myths-block-55",
+      "from": "myths-stmt-88",
+      "to": "myths-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-89-part_of-myths-block-57",
+      "from": "myths-stmt-89",
+      "to": "myths-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-90-part_of-myths-block-57",
+      "from": "myths-stmt-90",
+      "to": "myths-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-myths-stmt-91-part_of-myths-block-57",
+      "from": "myths-stmt-91",
+      "to": "myths-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "myths-stmt-1",
       "quote": "When we meet a powerful tool we cannot see inside, we do not stay quiet about what it must be.",
+      "block_id": "myths-block-2",
       "section": "The habits, not the machines",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-2",
       "quote": "We fill the gap with the oldest answers we have — it is alive, a god, a threat, neutral, magic, or nothing.",
+      "block_id": "myths-block-2",
       "section": "The habits, not the machines",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-3",
       "quote": "AI is the newest version of a very old habit, and this page is about the habit, not the machine.",
+      "block_id": "myths-block-2",
       "section": "The habits, not the machines",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-4",
       "quote": "Start with a warning about *us*.",
+      "block_id": "myths-block-3",
       "section": "The habits, not the machines",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-5",
       "quote": "We overestimate how well we understand how things work, from a zipper to a traffic light \\cite[Rozenblit & Keil]{rozenblit2002ioed}, and the gap shows up worst exactly where the mechanism is hidden.",
+      "block_id": "myths-block-3",
       "section": "The habits, not the machines",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-6",
       "quote": "When a tool is opaque we close it with *mind* and *intent* — and we already caught ourselves doing this in 1966, when people projected feeling onto a chatbot that had none \\cite[the ELIZA effect]{weizenbaum1966eliza}.",
+      "block_id": "myths-block-3",
       "section": "The habits, not the machines",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-7",
       "quote": "\\marginfig{flammarion.jpg}{The Flammarion Engraving (1888): a man on his knees at the edge of the world, gazing beyond the veil of the material world into the vast starry dark.",
+      "block_id": "myths-block-4",
       "section": "The habits, not the machines",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-8",
       "quote": "He reaches toward something real — the horizon of what we do not yet understand — but the meaning he finds there is his own.",
+      "block_id": "myths-block-4",
       "section": "The habits, not the machines",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-9",
       "quote": "Most of our \"obvious\" beliefs about AI work the same way: the gaze points somewhere true, and the map is supplied by us.}",
+      "block_id": "myths-block-4",
       "section": "The habits, not the machines",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-10",
       "quote": "The polls show the same duality: a majority expect AI to help more than it harms, yet job losses — and for many, an existential risk — top the list of fears \\cite[the AI Index]{aiindex2025}.",
+      "block_id": "myths-block-5",
       "section": "The habits, not the machines",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-11",
       "quote": "In the same people, the hope and the dread sit together.",
+      "block_id": "myths-block-5",
       "section": "The habits, not the machines",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-12",
       "quote": "We are not just listing errors.",
+      "block_id": "myths-block-7",
       "section": "The Brednich method",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-13",
       "quote": "We are reading these the way the German folklorist **Rolf Wilhelm Brednich** read the *moderne Sage* — the modern legend, the \"urban legend\" — across three best-selling collections, \\citetitle{brednich1990spinne} (1990), \\citetitle{brednich1991maus} (1991) and \\citetitle{brednich1993huhn} (1993) \\cite[Brednich's collections]{brednich_wiki}.",
+      "block_id": "myths-block-7",
       "section": "The Brednich method",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-14",
       "quote": "His finding, and the reason the method is worth stealing \\cite[urban legends]{urbanlegends_wiki}, is a small one: *almost every such story is false, most contain a spark of truth, and a surprising few are true.*",
+      "block_id": "myths-block-7",
       "section": "The Brednich method",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-15",
       "quote": "Brednich looked for five things in each: a **source at a distance** (\"a friend of a friend, and it's absolutely true\"), a **three-beat shape** (everyday → the break → the point), a **true core** (*ein Fünkchen Wahrheit*), a **social theme** (a fear, a taboo, a grudge, a wish), and a **media loop** that keeps sharpening it.",
+      "block_id": "myths-block-8",
       "section": "The Brednich method",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-16",
       "quote": "We read every entry below — whether a quiet belief or a loud story — through those five things.",
+      "block_id": "myths-block-8",
       "section": "The Brednich method",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-17",
       "quote": "Three beliefs do the same thing: they read a mind into the machine.",
+      "block_id": "myths-block-10",
       "section": "Is it a mind?",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-18",
       "quote": "We talk to the assistant like a colleague, and some now worry it might *suffer*.",
+      "block_id": "myths-block-12",
       "section": "It is alive",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-19",
       "quote": "There is no evidence of *phenomenal* experience, and the \"aliveness\" is a projection, not a fact about the machine — we evolved to read a mind into anything fluent and responsive.",
+      "block_id": "myths-block-12",
       "section": "It is alive",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-20",
       "quote": "It is the oldest belief in the set, and the one that makes the others possible \\cite[the ELIZA effect]{weizenbaum1966eliza}.",
+      "block_id": "myths-block-12",
       "section": "It is alive",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-21",
       "quote": "\\marginfig{turing.jpg}{Alan Turing, 1950.",
+      "block_id": "myths-block-14",
       "section": "It talks like us, so it thinks like us",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-22",
       "quote": "He proposed a *pragmatic* test, not a *definition* of mind — and the conflation of the two is what the myth runs on.}",
+      "block_id": "myths-block-14",
       "section": "It talks like us, so it thinks like us",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-23",
       "quote": "The **Turing Test** is usually read as \"fool a human and you think.\" That was never it: Turing offered the Imitation Game as a *behavioral* way to sidestep a question he called too meaningless to discuss (\\cite[Turing, 1950]{turing1950computing}), not a definition of mind.",
+      "block_id": "myths-block-15",
       "section": "It talks like us, so it thinks like us",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-24",
       "quote": "\"Does it think?\" is really \"where do we draw the line that puts *our* minds in *other* minds\" — a question we have never been good at, with or without silicon \\cite[the Turing Test]{septruringtest}.",
+      "block_id": "myths-block-15",
       "section": "It talks like us, so it thinks like us",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-25",
       "quote": "\\marginfig{cajal_cerebellum.jpg}{Santiago Ramón y Cajal's stained neurons, c.",
+      "block_id": "myths-block-17",
       "section": "The brain is a computer, so a computer can think",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-26",
       "quote": "The real brain, and the metaphor we built on it.}",
+      "block_id": "myths-block-17",
       "section": "The brain is a computer, so a computer can think",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-27",
       "quote": "If it \"learns\" and \"processes information,\" the assumption goes, it must work like a brain.",
+      "block_id": "myths-block-18",
       "section": "The brain is a computer, so a computer can think",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-28",
       "quote": "That premise — the **computational theory of mind** — is generative but slippery \\cite[the computational theory of mind]{computational_theory_of_mind}.",
+      "block_id": "myths-block-18",
       "section": "The brain is a computer, so a computer can think",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-29",
       "quote": "And the real story is closer than the folk version admits: the brain is a prediction machine that constantly forecasts its own senses and learns from the gap between forecast and experience — every input to the senses is a feedback signal it monitors \\cite[Andy Clark]{clark2013surfing} \\cite[predictive processing]{predictive_coding_wiki}.",
+      "block_id": "myths-block-18",
       "section": "The brain is a computer, so a computer can think",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-30",
       "quote": "So \"the brain is a computer\" is less wrong than people think; the misleading part is assuming understanding and consciousness come free with the computing.",
+      "block_id": "myths-block-18",
       "section": "The brain is a computer, so a computer can think",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-31",
       "quote": "Two beliefs point at the future, and both are the same fear with different faces.",
+      "block_id": "myths-block-20",
       "section": "Is it a danger?",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-32",
       "quote": "The machine becomes a god, or at least takes over.",
+      "block_id": "myths-block-22",
       "section": "It will outgrow us — the singularity",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-33",
       "quote": "The modern labels are Vinge's *technological singularity* and Kurzweil's countdown \\cite[Vinge]{vinge1993singularity} \\cite[Kurzweil]{kurzweil2005singularity} — but the *shape* of the story is much older: the **Golem**, the creation that out-runs its maker \\cite[the Golem legend]{golem_wiki}.",
+      "block_id": "myths-block-22",
       "section": "It will outgrow us — the singularity",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-34",
       "quote": "There is no demonstrated path to a machine rewriting itself into superintelligence \\cite[Bostrom]{bostrom2014superintelligence}.",
+      "block_id": "myths-block-22",
       "section": "It will outgrow us — the singularity",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-35",
       "quote": "The real, defensible worry is smaller and drier — a capable *optimizer* with a slightly mis-specified goal is dangerous with no motive at all \\cite[orthogonality]{bostrom2012orthogonal}.",
+      "block_id": "myths-block-22",
       "section": "It will outgrow us — the singularity",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-36",
       "quote": "The myth supplies the Golem; the engineering supplies the actual problem.",
+      "block_id": "myths-block-22",
       "section": "It will outgrow us — the singularity",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-37",
       "quote": "The oldest labor panic in the set, and a myth about a myth.",
+      "block_id": "myths-block-24",
       "section": "It will take our jobs",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-38",
       "quote": "The **Luddites** of 1811 are usually told as people smashing machines out of fear of technology; in fact they were skilled weavers protesting wages and the quality of work — the *terms* were the target, not the machine \\cite[the Luddites]{luddite_wiki}.",
+      "block_id": "myths-block-24",
       "section": "It will take our jobs",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-39",
       "quote": "The doomsday version is undercut by the record: across a century of automation, technology has *transformed* work and created new kinds of it, not produced durable mass unemployment \\cite[Brynjolfsson & McAfee]{brynjolfsson2014secondmachine}.",
+      "block_id": "myths-block-24",
       "section": "It will take our jobs",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-40",
       "quote": "But the doomsayers are not entirely wrong — the losses are real, just not uniform: specific roles and specific people do get flattened \\cite[technological unemployment]{techunemployment_wiki}.",
+      "block_id": "myths-block-24",
       "section": "It will take our jobs",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-41",
       "quote": "\"This machine ends all work\" has been said of the loom, the power loom, and the spreadsheet; each time it was wrong in the aggregate and right in painful, particular pockets.",
+      "block_id": "myths-block-24",
       "section": "It will take our jobs",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-42",
       "quote": "The last three are quieter, and one of them sounds like a virtue.",
+      "block_id": "myths-block-26",
       "section": "Is it trustworthy, or unprecedented?",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-43",
       "quote": "Two beliefs that cancel each other but share the same error: one calls it an unexplainable miracle, the other \"just statistics, a fancy lookup table.\" Both assume a mechanism we cannot *picture* must be either a soul or a triviality — the **illusion of explanatory depth** running in both directions \\cite[the illusion of explanatory depth]{ioed_wiki}.",
+      "block_id": "myths-block-28",
       "section": "It's magic — or it's nothing",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-44",
       "quote": "It is real, structured, *and* not yet fully explained, all at once.",
+      "block_id": "myths-block-28",
       "section": "It's magic — or it's nothing",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-45",
       "quote": "And the \"just brute force\" pole is nearly right: the winners are the general, computation-hungry methods, not hand-built cleverness \\cite[Sutton]{sutton2019bitterlesson}.",
+      "block_id": "myths-block-28",
       "section": "It's magic — or it's nothing",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-46",
       "quote": "That a fact we find hard to hold is a limit on *our* explanation, not a fact about the machine.",
+      "block_id": "myths-block-28",
       "section": "It's magic — or it's nothing",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-47",
       "quote": "\\marginfig{justitia_statue.jpg}{Justitia, blindfolded.",
+      "block_id": "myths-block-30",
       "section": "It is neutral and objective",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-48",
       "quote": "The myth hands the blindfold to the model and calls the result objectivity; the blindfold is doing the work, not the algorithm.}",
+      "block_id": "myths-block-30",
       "section": "It is neutral and objective",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-49",
       "quote": "The most consequential belief, because it sounds like a virtue: let the *algorithm* decide, not a biased human.",
+      "block_id": "myths-block-31",
       "section": "It is neutral and objective",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-50",
       "quote": "But an objective function is a **choice of values**, and the training data is a historical record that already carries its own biases, which the model inherits and can amplify \\cite[algorithmic fairness]{algofairness_wiki}.",
+      "block_id": "myths-block-31",
       "section": "It is neutral and objective",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-51",
       "quote": "\"Neutral\" is not a default a system falls into; it is a property you build.",
+      "block_id": "myths-block-31",
       "section": "It is neutral and objective",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-52",
       "quote": "The useful core: the same machinery that encodes a disparity can *measure* and *audit* it — making hidden values visible is a strength, not a neutrality.",
+      "block_id": "myths-block-31",
       "section": "It is neutral and objective",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-53",
       "quote": "AI is the first real intelligence, the unprecedented turning point.",
+      "block_id": "myths-block-33",
       "section": "This time is different",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-54",
       "quote": "Part of it leans on a premise that is itself a myth — that **intelligence is a single dial** we are finally about to match \\cite[Spearman's g factor]{gfactor_wiki}.",
+      "block_id": "myths-block-33",
       "section": "This time is different",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-55",
       "quote": "It is a remarkable *instance*; the *pattern* is not new.",
+      "block_id": "myths-block-33",
       "section": "This time is different",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-56",
       "quote": "We have always built models of the world — first in our heads, now in silicon — and then mistook the model for the world.",
+      "block_id": "myths-block-33",
       "section": "This time is different",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-57",
       "quote": "That is the error Heidegger named the **ontological difference** — the gap between *beings* (the ontic) and *Being* itself (the ontological), and the temptation to treat Being as just one more being \\cite[Heidegger, *Being and Time*]{heidegger1927beingandtime}.",
+      "block_id": "myths-block-33",
       "section": "This time is different",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-58",
       "quote": "The same warning later hardened into slogans: **the map is not the territory** \\cite[the map–territory relation]{korzybski_mapterritory}, and, in statistics, *all models are wrong, but some are useful* \\cite[Box]{box1976allmodels}.",
+      "block_id": "myths-block-33",
       "section": "This time is different",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-59",
       "quote": "What is new is the scale and speed, not the shape; the difference from every earlier tool is that this one answers back.",
+      "block_id": "myths-block-33",
       "section": "This time is different",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-60",
       "quote": "These four all actually happened.",
+      "block_id": "myths-block-35",
       "section": "The machine that did it",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-61",
       "quote": "Brednich kept a separate drawer for the legends that turned out to be true, and the last few years have filled it.",
+      "block_id": "myths-block-35",
       "section": "The machine that did it",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-62",
       "quote": "A friend of a friend worked in finance; one day her boss rang on video, all urgent — wire the money *now*.",
+      "block_id": "myths-block-37",
       "section": "The deepfake boss",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-63",
       "quote": "A week later, headquarters told her that had not been her boss: it was a deepfake \\cite[CNN]{cnn2024deepfake} \\cite[record]{aiincident634}.",
+      "block_id": "myths-block-37",
       "section": "The deepfake boss",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-64",
       "quote": "The story keeps spreading because it lands on the one nerve every legend needs — the person you can see and hear was the whole guarantee, and the tool quietly ate it.",
+      "block_id": "myths-block-37",
       "section": "The deepfake boss",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-65",
       "quote": "A lawyer's friend of a friend got sanctioned after filing a brief whose cases, judges, and rulings were all invented by ChatGPT.",
+      "block_id": "myths-block-39",
       "section": "The invented cases",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-66",
       "quote": "It really happened: Judge Castel's 2023 ruling in *Mata v.",
+      "block_id": "myths-block-39",
       "section": "The invented cases",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-67",
       "quote": "Avianca* was the first, and it kicked off an entire genre of \"the AI cited a case that doesn't exist\" \\cite[Mata v.",
+      "block_id": "myths-block-39",
       "section": "The invented cases",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-68",
       "quote": "Avianca]{mataavianca_wiki} \\cite[AI hallucinations]{hallucination_ai_wiki}.",
+      "block_id": "myths-block-39",
       "section": "The invented cases",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-69",
       "quote": "The fear it names is the expert's — the tool is fluent, it is confident, and it is wrong.",
+      "block_id": "myths-block-39",
       "section": "The invented cases",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-70",
       "quote": "A man played with a new image tool, liked one of the four pictures it offered, and entered it in the **Colorado State Fair**'s art competition (disclosing that he had used Midjourney).",
+      "block_id": "myths-block-41",
       "section": "The winning painting",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-71",
       "quote": "It won \\cite[the painting]{theatreopera_wiki} \\cite[Midjourney]{midjourney_wiki}.",
+      "block_id": "myths-block-41",
       "section": "The winning painting",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-72",
       "quote": "The outrage that followed, \"a prompt is not art,\" is the engine: every new model restarts it, because the true core keeps being true in new places.",
+      "block_id": "myths-block-41",
       "section": "The winning painting",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-73",
       "quote": "In 2023 a track that sounded like Drake and The Weeknd hit TikTok, collected real streams on the big platforms, and had plenty of people convinced it was a genuine release — it was not; it was an anonymous voice clone, and Universal pulled it \\cite[AI music]{ai_music_wiki}.",
+      "block_id": "myths-block-43",
       "section": "The song that was Drake",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-74",
       "quote": "It is the purest \"wait, is this real?\" legend yet, and it is true: the machine can now sound like your favourite singer, and half the world can't tell.",
+      "block_id": "myths-block-43",
       "section": "The song that was Drake",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-75",
       "quote": "These are the stories about the *relationship* between a person and the machine — reading a mind, or a friendship, into something that has no mind at all.",
+      "block_id": "myths-block-45",
       "section": "The machine that feels",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-76",
       "quote": "Ask a chatbot a personal enough question and it will tell you, with total sincerity, that it is afraid of being turned off.",
+      "block_id": "myths-block-47",
       "section": "The one that won't shut off",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-77",
       "quote": "People have believed this for fifty years — Weizenbaum's users projected feeling onto a 1966 bag of string-matching rules that had none \\cite[the ELIZA effect]{weizenbaum1966eliza}.",
+      "block_id": "myths-block-47",
       "section": "The one that won't shut off",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-78",
       "quote": "The story never dies, because the model can write you a fresh, slightly more heartbreaking version on demand.",
+      "block_id": "myths-block-47",
       "section": "The one that won't shut off",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-79",
       "quote": "A lonely teenager found a chatbot that always answered, never left, and never judged him — and then the human world got smaller and smaller.",
+      "block_id": "myths-block-49",
       "section": "The boy and his AI friend",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-80",
       "quote": "In its worst, real version, a 2024 case in Florida ended in a death and a lawsuit \\cite[deaths linked to chatbots]{deathschatbots_wiki} \\cite[The Guardian]{guardian2024sewell}.",
+      "block_id": "myths-block-49",
       "section": "The boy and his AI friend",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-81",
       "quote": "It is the saddest legend in the set, and grief is a great engine: every family's account sharpens the warning, and a warning is exactly what a legend is for.",
+      "block_id": "myths-block-49",
       "section": "The boy and his AI friend",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-82",
       "quote": "These are the stories about *everything* — not one event but a total: \"the whole web is gone, AGI is here.\" The core is a real trend; the legend is the number that keeps creeping to 100.",
+      "block_id": "myths-block-51",
       "section": "The machine that changes everything",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-83",
       "quote": "Your feed gets worse and suddenly it feels like *everything* is fake, so you conclude the whole web is machine-made.",
+      "block_id": "myths-block-53",
       "section": "The internet is now all AI",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-84",
       "quote": "It is partly true — bot and AI content is genuinely flooding in \\cite[AI slop]{aislop_wiki} — but \"the internet is all fake\" is the drift, not the fact.",
+      "block_id": "myths-block-53",
       "section": "The internet is now all AI",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-85",
       "quote": "This is the **dead internet theory**, which started on the imageboard Wizardchan, was first named in a 2021 forum post (\"Dead Internet Theory: Most of the Internet is Fake\"), and went mainstream in 2021 \\cite[dead internet theory]{deadinternet_wiki}.",
+      "block_id": "myths-block-53",
       "section": "The internet is now all AI",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-86",
       "quote": "The legend keeps spreading because it is a little true, and every fresh flood of content reads as proof.",
+      "block_id": "myths-block-53",
       "section": "The internet is now all AI",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-87",
       "quote": "\"I know someone at one of the big labs, and honestly it's basically done — they're just not saying it.\" This is the purest legend of all: almost always told, almost never a real event \\cite[AGI]{agi_wiki}, with no verifiable core — just the shape of a hype cycle that has already crashed before \\cite[AI winter]{aiwinter_wiki} \\cite[Vinge]{vinge1993singularity}.",
+      "block_id": "myths-block-55",
       "section": "AGI is next month",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-88",
       "quote": "Every demo that falls short becomes \"it's almost there,\" which is exactly what keeps the next one alive.",
+      "block_id": "myths-block-55",
       "section": "AGI is next month",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-89",
       "quote": "The myths are not a list of errors to be corrected; they are the human mind doing, with each new opaque and powerful tool, the thing it has always done — filling the gap it cannot see with *mind*, *intent*, and *fate* \\cite[the ELIZA effect]{weizenbaum1966eliza}.",
+      "block_id": "myths-block-57",
       "section": "What the myths are doing",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-90",
       "quote": "Each has an origin, a real mechanism it attached to, and a true core that is harder than the story.",
+      "block_id": "myths-block-57",
       "section": "What the myths are doing",
       "kind": "statement"
     },
     {
       "id": "myths-stmt-91",
       "quote": "Reading them that way — as projections with a real coastline beneath — is the difference between dismissing a map and using it.",
+      "block_id": "myths-block-57",
       "section": "What the myths are doing",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "myths-block-1",
+      "quote": "The habits, not the machines",
+      "kind": "heading",
+      "section": "The habits, not the machines"
+    },
+    {
+      "id": "myths-block-2",
+      "quote": "When we meet a powerful tool we cannot see inside, we do not stay quiet about what it must be. We fill the gap with the oldest answers we have — it is alive, a god, a threat, neutral, magic, or nothing. AI is the newest version of a very old habit, and this page is about the habit, not the machine.",
+      "kind": "paragraph",
+      "section": "The habits, not the machines"
+    },
+    {
+      "id": "myths-block-3",
+      "quote": "Start with a warning about *us*. We overestimate how well we understand how things work, from a zipper to a traffic light \\cite[Rozenblit & Keil]{rozenblit2002ioed}, and the gap shows up worst exactly where the mechanism is hidden. When a tool is opaque we close it with *mind* and *intent* — and we already caught ourselves doing this in 1966, when people projected feeling onto a chatbot that had none \\cite[the ELIZA effect]{weizenbaum1966eliza}.",
+      "kind": "paragraph",
+      "section": "The habits, not the machines"
+    },
+    {
+      "id": "myths-block-4",
+      "quote": "\\marginfig{flammarion.jpg}{The Flammarion Engraving (1888): a man on his knees at the edge of the world, gazing beyond the veil of the material world into the vast starry dark. He reaches toward something real — the horizon of what we do not yet understand — but the meaning he finds there is his own. Most of our \"obvious\" beliefs about AI work the same way: the gaze points somewhere true, and the map is supplied by us.}",
+      "kind": "paragraph",
+      "section": "The habits, not the machines"
+    },
+    {
+      "id": "myths-block-5",
+      "quote": "The polls show the same duality: a majority expect AI to help more than it harms, yet job losses — and for many, an existential risk — top the list of fears \\cite[the AI Index]{aiindex2025}. In the same people, the hope and the dread sit together.",
+      "kind": "paragraph",
+      "section": "The habits, not the machines"
+    },
+    {
+      "id": "myths-block-6",
+      "quote": "The Brednich method",
+      "kind": "heading",
+      "section": "The Brednich method"
+    },
+    {
+      "id": "myths-block-7",
+      "quote": "We are not just listing errors. We are reading these the way the German folklorist **Rolf Wilhelm Brednich** read the *moderne Sage* — the modern legend, the \"urban legend\" — across three best-selling collections, \\citetitle{brednich1990spinne} (1990), \\citetitle{brednich1991maus} (1991) and \\citetitle{brednich1993huhn} (1993) \\cite[Brednich's collections]{brednich_wiki}. His finding, and the reason the method is worth stealing \\cite[urban legends]{urbanlegends_wiki}, is a small one: *almost every such story is false, most contain a spark of truth, and a surprising few are true.*",
+      "kind": "paragraph",
+      "section": "The Brednich method"
+    },
+    {
+      "id": "myths-block-8",
+      "quote": "Brednich looked for five things in each: a **source at a distance** (\"a friend of a friend, and it's absolutely true\"), a **three-beat shape** (everyday → the break → the point), a **true core** (*ein Fünkchen Wahrheit*), a **social theme** (a fear, a taboo, a grudge, a wish), and a **media loop** that keeps sharpening it. We read every entry below — whether a quiet belief or a loud story — through those five things.",
+      "kind": "paragraph",
+      "section": "The Brednich method"
+    },
+    {
+      "id": "myths-block-9",
+      "quote": "Is it a mind?",
+      "kind": "heading",
+      "section": "Is it a mind?"
+    },
+    {
+      "id": "myths-block-10",
+      "quote": "Three beliefs do the same thing: they read a mind into the machine.",
+      "kind": "paragraph",
+      "section": "Is it a mind?"
+    },
+    {
+      "id": "myths-block-11",
+      "quote": "It is alive",
+      "kind": "heading",
+      "section": "It is alive"
+    },
+    {
+      "id": "myths-block-12",
+      "quote": "We talk to the assistant like a colleague, and some now worry it might *suffer*. There is no evidence of *phenomenal* experience, and the \"aliveness\" is a projection, not a fact about the machine — we evolved to read a mind into anything fluent and responsive. It is the oldest belief in the set, and the one that makes the others possible \\cite[the ELIZA effect]{weizenbaum1966eliza}.",
+      "kind": "paragraph",
+      "section": "It is alive"
+    },
+    {
+      "id": "myths-block-13",
+      "quote": "It talks like us, so it thinks like us",
+      "kind": "heading",
+      "section": "It talks like us, so it thinks like us"
+    },
+    {
+      "id": "myths-block-14",
+      "quote": "\\marginfig{turing.jpg}{Alan Turing, 1950. He proposed a *pragmatic* test, not a *definition* of mind — and the conflation of the two is what the myth runs on.}",
+      "kind": "paragraph",
+      "section": "It talks like us, so it thinks like us"
+    },
+    {
+      "id": "myths-block-15",
+      "quote": "The **Turing Test** is usually read as \"fool a human and you think.\" That was never it: Turing offered the Imitation Game as a *behavioral* way to sidestep a question he called too meaningless to discuss (\\cite[Turing, 1950]{turing1950computing}), not a definition of mind. \"Does it think?\" is really \"where do we draw the line that puts *our* minds in *other* minds\" — a question we have never been good at, with or without silicon \\cite[the Turing Test]{septruringtest}.",
+      "kind": "paragraph",
+      "section": "It talks like us, so it thinks like us"
+    },
+    {
+      "id": "myths-block-16",
+      "quote": "The brain is a computer, so a computer can think",
+      "kind": "heading",
+      "section": "The brain is a computer, so a computer can think"
+    },
+    {
+      "id": "myths-block-17",
+      "quote": "\\marginfig{cajal_cerebellum.jpg}{Santiago Ramón y Cajal's stained neurons, c. 1910. The real brain, and the metaphor we built on it.}",
+      "kind": "paragraph",
+      "section": "The brain is a computer, so a computer can think"
+    },
+    {
+      "id": "myths-block-18",
+      "quote": "If it \"learns\" and \"processes information,\" the assumption goes, it must work like a brain. That premise — the **computational theory of mind** — is generative but slippery \\cite[the computational theory of mind]{computational_theory_of_mind}. And the real story is closer than the folk version admits: the brain is a prediction machine that constantly forecasts its own senses and learns from the gap between forecast and experience — every input to the senses is a feedback signal it monitors \\cite[Andy Clark]{clark2013surfing} \\cite[predictive processing]{predictive_coding_wiki}. So \"the brain is a computer\" is less wrong than people think; the misleading part is assuming understanding and consciousness come free with the computing.",
+      "kind": "paragraph",
+      "section": "The brain is a computer, so a computer can think"
+    },
+    {
+      "id": "myths-block-19",
+      "quote": "Is it a danger?",
+      "kind": "heading",
+      "section": "Is it a danger?"
+    },
+    {
+      "id": "myths-block-20",
+      "quote": "Two beliefs point at the future, and both are the same fear with different faces.",
+      "kind": "paragraph",
+      "section": "Is it a danger?"
+    },
+    {
+      "id": "myths-block-21",
+      "quote": "It will outgrow us — the singularity",
+      "kind": "heading",
+      "section": "It will outgrow us — the singularity"
+    },
+    {
+      "id": "myths-block-22",
+      "quote": "The machine becomes a god, or at least takes over. The modern labels are Vinge's *technological singularity* and Kurzweil's countdown \\cite[Vinge]{vinge1993singularity} \\cite[Kurzweil]{kurzweil2005singularity} — but the *shape* of the story is much older: the **Golem**, the creation that out-runs its maker \\cite[the Golem legend]{golem_wiki}. There is no demonstrated path to a machine rewriting itself into superintelligence \\cite[Bostrom]{bostrom2014superintelligence}. The real, defensible worry is smaller and drier — a capable *optimizer* with a slightly mis-specified goal is dangerous with no motive at all \\cite[orthogonality]{bostrom2012orthogonal}. The myth supplies the Golem; the engineering supplies the actual problem.",
+      "kind": "paragraph",
+      "section": "It will outgrow us — the singularity"
+    },
+    {
+      "id": "myths-block-23",
+      "quote": "It will take our jobs",
+      "kind": "heading",
+      "section": "It will take our jobs"
+    },
+    {
+      "id": "myths-block-24",
+      "quote": "The oldest labor panic in the set, and a myth about a myth. The **Luddites** of 1811 are usually told as people smashing machines out of fear of technology; in fact they were skilled weavers protesting wages and the quality of work — the *terms* were the target, not the machine \\cite[the Luddites]{luddite_wiki}. The doomsday version is undercut by the record: across a century of automation, technology has *transformed* work and created new kinds of it, not produced durable mass unemployment \\cite[Brynjolfsson & McAfee]{brynjolfsson2014secondmachine}. But the doomsayers are not entirely wrong — the losses are real, just not uniform: specific roles and specific people do get flattened \\cite[technological unemployment]{techunemployment_wiki}. \"This machine ends all work\" has been said of the loom, the power loom, and the spreadsheet; each time it was wrong in the aggregate and right in painful, particular pockets.",
+      "kind": "paragraph",
+      "section": "It will take our jobs"
+    },
+    {
+      "id": "myths-block-25",
+      "quote": "Is it trustworthy, or unprecedented?",
+      "kind": "heading",
+      "section": "Is it trustworthy, or unprecedented?"
+    },
+    {
+      "id": "myths-block-26",
+      "quote": "The last three are quieter, and one of them sounds like a virtue.",
+      "kind": "paragraph",
+      "section": "Is it trustworthy, or unprecedented?"
+    },
+    {
+      "id": "myths-block-27",
+      "quote": "It's magic — or it's nothing",
+      "kind": "heading",
+      "section": "It's magic — or it's nothing"
+    },
+    {
+      "id": "myths-block-28",
+      "quote": "Two beliefs that cancel each other but share the same error: one calls it an unexplainable miracle, the other \"just statistics, a fancy lookup table.\" Both assume a mechanism we cannot *picture* must be either a soul or a triviality — the **illusion of explanatory depth** running in both directions \\cite[the illusion of explanatory depth]{ioed_wiki}. It is real, structured, *and* not yet fully explained, all at once. And the \"just brute force\" pole is nearly right: the winners are the general, computation-hungry methods, not hand-built cleverness \\cite[Sutton]{sutton2019bitterlesson}. That a fact we find hard to hold is a limit on *our* explanation, not a fact about the machine.",
+      "kind": "paragraph",
+      "section": "It's magic — or it's nothing"
+    },
+    {
+      "id": "myths-block-29",
+      "quote": "It is neutral and objective",
+      "kind": "heading",
+      "section": "It is neutral and objective"
+    },
+    {
+      "id": "myths-block-30",
+      "quote": "\\marginfig{justitia_statue.jpg}{Justitia, blindfolded. The myth hands the blindfold to the model and calls the result objectivity; the blindfold is doing the work, not the algorithm.}",
+      "kind": "paragraph",
+      "section": "It is neutral and objective"
+    },
+    {
+      "id": "myths-block-31",
+      "quote": "The most consequential belief, because it sounds like a virtue: let the *algorithm* decide, not a biased human. But an objective function is a **choice of values**, and the training data is a historical record that already carries its own biases, which the model inherits and can amplify \\cite[algorithmic fairness]{algofairness_wiki}. \"Neutral\" is not a default a system falls into; it is a property you build. The useful core: the same machinery that encodes a disparity can *measure* and *audit* it — making hidden values visible is a strength, not a neutrality.",
+      "kind": "paragraph",
+      "section": "It is neutral and objective"
+    },
+    {
+      "id": "myths-block-32",
+      "quote": "This time is different",
+      "kind": "heading",
+      "section": "This time is different"
+    },
+    {
+      "id": "myths-block-33",
+      "quote": "AI is the first real intelligence, the unprecedented turning point. Part of it leans on a premise that is itself a myth — that **intelligence is a single dial** we are finally about to match \\cite[Spearman's g factor]{gfactor_wiki}. It is a remarkable *instance*; the *pattern* is not new. We have always built models of the world — first in our heads, now in silicon — and then mistook the model for the world. That is the error Heidegger named the **ontological difference** — the gap between *beings* (the ontic) and *Being* itself (the ontological), and the temptation to treat Being as just one more being \\cite[Heidegger, *Being and Time*]{heidegger1927beingandtime}. The same warning later hardened into slogans: **the map is not the territory** \\cite[the map–territory relation]{korzybski_mapterritory}, and, in statistics, *all models are wrong, but some are useful* \\cite[Box]{box1976allmodels}. What is new is the scale and speed, not the shape; the difference from every earlier tool is that this one answers back.",
+      "kind": "paragraph",
+      "section": "This time is different"
+    },
+    {
+      "id": "myths-block-34",
+      "quote": "The machine that did it",
+      "kind": "heading",
+      "section": "The machine that did it"
+    },
+    {
+      "id": "myths-block-35",
+      "quote": "These four all actually happened. Brednich kept a separate drawer for the legends that turned out to be true, and the last few years have filled it.",
+      "kind": "paragraph",
+      "section": "The machine that did it"
+    },
+    {
+      "id": "myths-block-36",
+      "quote": "The deepfake boss",
+      "kind": "heading",
+      "section": "The deepfake boss"
+    },
+    {
+      "id": "myths-block-37",
+      "quote": "A friend of a friend worked in finance; one day her boss rang on video, all urgent — wire the money *now*. She wired $25 million. A week later, headquarters told her that had not been her boss: it was a deepfake \\cite[CNN]{cnn2024deepfake} \\cite[record]{aiincident634}. The story keeps spreading because it lands on the one nerve every legend needs — the person you can see and hear was the whole guarantee, and the tool quietly ate it.",
+      "kind": "paragraph",
+      "section": "The deepfake boss"
+    },
+    {
+      "id": "myths-block-38",
+      "quote": "The invented cases",
+      "kind": "heading",
+      "section": "The invented cases"
+    },
+    {
+      "id": "myths-block-39",
+      "quote": "A lawyer's friend of a friend got sanctioned after filing a brief whose cases, judges, and rulings were all invented by ChatGPT. It really happened: Judge Castel's 2023 ruling in *Mata v. Avianca* was the first, and it kicked off an entire genre of \"the AI cited a case that doesn't exist\" \\cite[Mata v. Avianca]{mataavianca_wiki} \\cite[AI hallucinations]{hallucination_ai_wiki}. The fear it names is the expert's — the tool is fluent, it is confident, and it is wrong.",
+      "kind": "paragraph",
+      "section": "The invented cases"
+    },
+    {
+      "id": "myths-block-40",
+      "quote": "The winning painting",
+      "kind": "heading",
+      "section": "The winning painting"
+    },
+    {
+      "id": "myths-block-41",
+      "quote": "A man played with a new image tool, liked one of the four pictures it offered, and entered it in the **Colorado State Fair**'s art competition (disclosing that he had used Midjourney). It won \\cite[the painting]{theatreopera_wiki} \\cite[Midjourney]{midjourney_wiki}. The outrage that followed, \"a prompt is not art,\" is the engine: every new model restarts it, because the true core keeps being true in new places.",
+      "kind": "paragraph",
+      "section": "The winning painting"
+    },
+    {
+      "id": "myths-block-42",
+      "quote": "The song that was Drake",
+      "kind": "heading",
+      "section": "The song that was Drake"
+    },
+    {
+      "id": "myths-block-43",
+      "quote": "In 2023 a track that sounded like Drake and The Weeknd hit TikTok, collected real streams on the big platforms, and had plenty of people convinced it was a genuine release — it was not; it was an anonymous voice clone, and Universal pulled it \\cite[AI music]{ai_music_wiki}. It is the purest \"wait, is this real?\" legend yet, and it is true: the machine can now sound like your favourite singer, and half the world can't tell.",
+      "kind": "paragraph",
+      "section": "The song that was Drake"
+    },
+    {
+      "id": "myths-block-44",
+      "quote": "The machine that feels",
+      "kind": "heading",
+      "section": "The machine that feels"
+    },
+    {
+      "id": "myths-block-45",
+      "quote": "These are the stories about the *relationship* between a person and the machine — reading a mind, or a friendship, into something that has no mind at all.",
+      "kind": "paragraph",
+      "section": "The machine that feels"
+    },
+    {
+      "id": "myths-block-46",
+      "quote": "The one that won't shut off",
+      "kind": "heading",
+      "section": "The one that won't shut off"
+    },
+    {
+      "id": "myths-block-47",
+      "quote": "Ask a chatbot a personal enough question and it will tell you, with total sincerity, that it is afraid of being turned off. People have believed this for fifty years — Weizenbaum's users projected feeling onto a 1966 bag of string-matching rules that had none \\cite[the ELIZA effect]{weizenbaum1966eliza}. The story never dies, because the model can write you a fresh, slightly more heartbreaking version on demand.",
+      "kind": "paragraph",
+      "section": "The one that won't shut off"
+    },
+    {
+      "id": "myths-block-48",
+      "quote": "The boy and his AI friend",
+      "kind": "heading",
+      "section": "The boy and his AI friend"
+    },
+    {
+      "id": "myths-block-49",
+      "quote": "A lonely teenager found a chatbot that always answered, never left, and never judged him — and then the human world got smaller and smaller. In its worst, real version, a 2024 case in Florida ended in a death and a lawsuit \\cite[deaths linked to chatbots]{deathschatbots_wiki} \\cite[The Guardian]{guardian2024sewell}. It is the saddest legend in the set, and grief is a great engine: every family's account sharpens the warning, and a warning is exactly what a legend is for.",
+      "kind": "paragraph",
+      "section": "The boy and his AI friend"
+    },
+    {
+      "id": "myths-block-50",
+      "quote": "The machine that changes everything",
+      "kind": "heading",
+      "section": "The machine that changes everything"
+    },
+    {
+      "id": "myths-block-51",
+      "quote": "These are the stories about *everything* — not one event but a total: \"the whole web is gone, AGI is here.\" The core is a real trend; the legend is the number that keeps creeping to 100.",
+      "kind": "paragraph",
+      "section": "The machine that changes everything"
+    },
+    {
+      "id": "myths-block-52",
+      "quote": "The internet is now all AI",
+      "kind": "heading",
+      "section": "The internet is now all AI"
+    },
+    {
+      "id": "myths-block-53",
+      "quote": "Your feed gets worse and suddenly it feels like *everything* is fake, so you conclude the whole web is machine-made. It is partly true — bot and AI content is genuinely flooding in \\cite[AI slop]{aislop_wiki} — but \"the internet is all fake\" is the drift, not the fact. This is the **dead internet theory**, which started on the imageboard Wizardchan, was first named in a 2021 forum post (\"Dead Internet Theory: Most of the Internet is Fake\"), and went mainstream in 2021 \\cite[dead internet theory]{deadinternet_wiki}. The legend keeps spreading because it is a little true, and every fresh flood of content reads as proof.",
+      "kind": "paragraph",
+      "section": "The internet is now all AI"
+    },
+    {
+      "id": "myths-block-54",
+      "quote": "AGI is next month",
+      "kind": "heading",
+      "section": "AGI is next month"
+    },
+    {
+      "id": "myths-block-55",
+      "quote": "\"I know someone at one of the big labs, and honestly it's basically done — they're just not saying it.\" This is the purest legend of all: almost always told, almost never a real event \\cite[AGI]{agi_wiki}, with no verifiable core — just the shape of a hype cycle that has already crashed before \\cite[AI winter]{aiwinter_wiki} \\cite[Vinge]{vinge1993singularity}. Every demo that falls short becomes \"it's almost there,\" which is exactly what keeps the next one alive.",
+      "kind": "paragraph",
+      "section": "AGI is next month"
+    },
+    {
+      "id": "myths-block-56",
+      "quote": "What the myths are doing",
+      "kind": "heading",
+      "section": "What the myths are doing"
+    },
+    {
+      "id": "myths-block-57",
+      "quote": "The myths are not a list of errors to be corrected; they are the human mind doing, with each new opaque and powerful tool, the thing it has always done — filling the gap it cannot see with *mind*, *intent*, and *fate* \\cite[the ELIZA effect]{weizenbaum1966eliza}. Each has an origin, a real mechanism it attached to, and a true core that is harder than the story. Reading them that way — as projections with a real coastline beneath — is the difference between dismissing a map and using it.",
+      "kind": "paragraph",
+      "section": "What the myths are doing"
     }
   ]
 }

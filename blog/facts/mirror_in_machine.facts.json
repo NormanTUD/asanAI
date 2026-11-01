@@ -667,524 +667,2212 @@
         "caucheteux2023predictive"
       ],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-1-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-1",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-2-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-2",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-1-before-mirror_in_machine-block-2",
+      "from": "mirror_in_machine-block-1",
+      "to": "mirror_in_machine-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-2-related_to-mirror_in_machine-block-1",
+      "from": "mirror_in_machine-block-2",
+      "to": "mirror_in_machine-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-3-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-3",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-2-before-mirror_in_machine-block-3",
+      "from": "mirror_in_machine-block-2",
+      "to": "mirror_in_machine-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-3-related_to-mirror_in_machine-block-1",
+      "from": "mirror_in_machine-block-3",
+      "to": "mirror_in_machine-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-4-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-4",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-3-before-mirror_in_machine-block-4",
+      "from": "mirror_in_machine-block-3",
+      "to": "mirror_in_machine-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-5-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-5",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-4-before-mirror_in_machine-block-5",
+      "from": "mirror_in_machine-block-4",
+      "to": "mirror_in_machine-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-6-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-6",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-5-before-mirror_in_machine-block-6",
+      "from": "mirror_in_machine-block-5",
+      "to": "mirror_in_machine-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-6-related_to-mirror_in_machine-block-5",
+      "from": "mirror_in_machine-block-6",
+      "to": "mirror_in_machine-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-7-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-7",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-6-before-mirror_in_machine-block-7",
+      "from": "mirror_in_machine-block-6",
+      "to": "mirror_in_machine-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-7-related_to-mirror_in_machine-block-5",
+      "from": "mirror_in_machine-block-7",
+      "to": "mirror_in_machine-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-8-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-8",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-7-before-mirror_in_machine-block-8",
+      "from": "mirror_in_machine-block-7",
+      "to": "mirror_in_machine-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-8-related_to-mirror_in_machine-block-5",
+      "from": "mirror_in_machine-block-8",
+      "to": "mirror_in_machine-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-9-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-9",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-8-before-mirror_in_machine-block-9",
+      "from": "mirror_in_machine-block-8",
+      "to": "mirror_in_machine-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-9-related_to-mirror_in_machine-block-5",
+      "from": "mirror_in_machine-block-9",
+      "to": "mirror_in_machine-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-10-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-10",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-9-before-mirror_in_machine-block-10",
+      "from": "mirror_in_machine-block-9",
+      "to": "mirror_in_machine-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-10-related_to-mirror_in_machine-block-5",
+      "from": "mirror_in_machine-block-10",
+      "to": "mirror_in_machine-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-11-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-11",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-10-before-mirror_in_machine-block-11",
+      "from": "mirror_in_machine-block-10",
+      "to": "mirror_in_machine-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-12-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-12",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-11-before-mirror_in_machine-block-12",
+      "from": "mirror_in_machine-block-11",
+      "to": "mirror_in_machine-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-12-related_to-mirror_in_machine-block-11",
+      "from": "mirror_in_machine-block-12",
+      "to": "mirror_in_machine-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-13-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-13",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-12-before-mirror_in_machine-block-13",
+      "from": "mirror_in_machine-block-12",
+      "to": "mirror_in_machine-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-13-related_to-mirror_in_machine-block-11",
+      "from": "mirror_in_machine-block-13",
+      "to": "mirror_in_machine-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-14-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-14",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-13-before-mirror_in_machine-block-14",
+      "from": "mirror_in_machine-block-13",
+      "to": "mirror_in_machine-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-14-related_to-mirror_in_machine-block-11",
+      "from": "mirror_in_machine-block-14",
+      "to": "mirror_in_machine-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-15-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-15",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-14-before-mirror_in_machine-block-15",
+      "from": "mirror_in_machine-block-14",
+      "to": "mirror_in_machine-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-16-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-16",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-15-before-mirror_in_machine-block-16",
+      "from": "mirror_in_machine-block-15",
+      "to": "mirror_in_machine-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-17-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-17",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-16-before-mirror_in_machine-block-17",
+      "from": "mirror_in_machine-block-16",
+      "to": "mirror_in_machine-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-17-related_to-mirror_in_machine-block-16",
+      "from": "mirror_in_machine-block-17",
+      "to": "mirror_in_machine-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-18-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-18",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-17-before-mirror_in_machine-block-18",
+      "from": "mirror_in_machine-block-17",
+      "to": "mirror_in_machine-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-19-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-19",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-18-before-mirror_in_machine-block-19",
+      "from": "mirror_in_machine-block-18",
+      "to": "mirror_in_machine-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-19-related_to-mirror_in_machine-block-18",
+      "from": "mirror_in_machine-block-19",
+      "to": "mirror_in_machine-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-20-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-20",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-19-before-mirror_in_machine-block-20",
+      "from": "mirror_in_machine-block-19",
+      "to": "mirror_in_machine-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-20-related_to-mirror_in_machine-block-18",
+      "from": "mirror_in_machine-block-20",
+      "to": "mirror_in_machine-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-21-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-21",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-20-before-mirror_in_machine-block-21",
+      "from": "mirror_in_machine-block-20",
+      "to": "mirror_in_machine-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-21-related_to-mirror_in_machine-block-18",
+      "from": "mirror_in_machine-block-21",
+      "to": "mirror_in_machine-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-22-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-22",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-21-before-mirror_in_machine-block-22",
+      "from": "mirror_in_machine-block-21",
+      "to": "mirror_in_machine-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-23-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-23",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-22-before-mirror_in_machine-block-23",
+      "from": "mirror_in_machine-block-22",
+      "to": "mirror_in_machine-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-24-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-24",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-23-before-mirror_in_machine-block-24",
+      "from": "mirror_in_machine-block-23",
+      "to": "mirror_in_machine-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-24-related_to-mirror_in_machine-block-23",
+      "from": "mirror_in_machine-block-24",
+      "to": "mirror_in_machine-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-25-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-25",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-24-before-mirror_in_machine-block-25",
+      "from": "mirror_in_machine-block-24",
+      "to": "mirror_in_machine-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-25-related_to-mirror_in_machine-block-23",
+      "from": "mirror_in_machine-block-25",
+      "to": "mirror_in_machine-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-26-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-26",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-25-before-mirror_in_machine-block-26",
+      "from": "mirror_in_machine-block-25",
+      "to": "mirror_in_machine-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-27-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-27",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-26-before-mirror_in_machine-block-27",
+      "from": "mirror_in_machine-block-26",
+      "to": "mirror_in_machine-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-27-related_to-mirror_in_machine-block-26",
+      "from": "mirror_in_machine-block-27",
+      "to": "mirror_in_machine-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-28-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-28",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-27-before-mirror_in_machine-block-28",
+      "from": "mirror_in_machine-block-27",
+      "to": "mirror_in_machine-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-28-related_to-mirror_in_machine-block-26",
+      "from": "mirror_in_machine-block-28",
+      "to": "mirror_in_machine-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-29-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-29",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-28-before-mirror_in_machine-block-29",
+      "from": "mirror_in_machine-block-28",
+      "to": "mirror_in_machine-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-29-related_to-mirror_in_machine-block-26",
+      "from": "mirror_in_machine-block-29",
+      "to": "mirror_in_machine-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-30-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-30",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-29-before-mirror_in_machine-block-30",
+      "from": "mirror_in_machine-block-29",
+      "to": "mirror_in_machine-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-31-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-31",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-30-before-mirror_in_machine-block-31",
+      "from": "mirror_in_machine-block-30",
+      "to": "mirror_in_machine-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-31-related_to-mirror_in_machine-block-30",
+      "from": "mirror_in_machine-block-31",
+      "to": "mirror_in_machine-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-32-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-32",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-31-before-mirror_in_machine-block-32",
+      "from": "mirror_in_machine-block-31",
+      "to": "mirror_in_machine-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-32-related_to-mirror_in_machine-block-30",
+      "from": "mirror_in_machine-block-32",
+      "to": "mirror_in_machine-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-33-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-33",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-32-before-mirror_in_machine-block-33",
+      "from": "mirror_in_machine-block-32",
+      "to": "mirror_in_machine-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-33-related_to-mirror_in_machine-block-30",
+      "from": "mirror_in_machine-block-33",
+      "to": "mirror_in_machine-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-34-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-34",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-33-before-mirror_in_machine-block-34",
+      "from": "mirror_in_machine-block-33",
+      "to": "mirror_in_machine-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-34-related_to-mirror_in_machine-block-30",
+      "from": "mirror_in_machine-block-34",
+      "to": "mirror_in_machine-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-35-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-35",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-34-before-mirror_in_machine-block-35",
+      "from": "mirror_in_machine-block-34",
+      "to": "mirror_in_machine-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-35-related_to-mirror_in_machine-block-30",
+      "from": "mirror_in_machine-block-35",
+      "to": "mirror_in_machine-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-36-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-36",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-35-before-mirror_in_machine-block-36",
+      "from": "mirror_in_machine-block-35",
+      "to": "mirror_in_machine-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-36-related_to-mirror_in_machine-block-30",
+      "from": "mirror_in_machine-block-36",
+      "to": "mirror_in_machine-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-37-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-37",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-36-before-mirror_in_machine-block-37",
+      "from": "mirror_in_machine-block-36",
+      "to": "mirror_in_machine-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-37-related_to-mirror_in_machine-block-30",
+      "from": "mirror_in_machine-block-37",
+      "to": "mirror_in_machine-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-38-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-38",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-37-before-mirror_in_machine-block-38",
+      "from": "mirror_in_machine-block-37",
+      "to": "mirror_in_machine-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-38-related_to-mirror_in_machine-block-30",
+      "from": "mirror_in_machine-block-38",
+      "to": "mirror_in_machine-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-39-part_of-mirror-in-machine",
+      "from": "mirror_in_machine-block-39",
+      "to": "mirror-in-machine",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-38-before-mirror_in_machine-block-39",
+      "from": "mirror_in_machine-block-38",
+      "to": "mirror_in_machine-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-block-39-related_to-mirror_in_machine-block-30",
+      "from": "mirror_in_machine-block-39",
+      "to": "mirror_in_machine-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-1-part_of-mirror_in_machine-block-2",
+      "from": "mirror_in_machine-stmt-1",
+      "to": "mirror_in_machine-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-2-part_of-mirror_in_machine-block-2",
+      "from": "mirror_in_machine-stmt-2",
+      "to": "mirror_in_machine-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-3-part_of-mirror_in_machine-block-3",
+      "from": "mirror_in_machine-stmt-3",
+      "to": "mirror_in_machine-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-4-part_of-mirror_in_machine-block-3",
+      "from": "mirror_in_machine-stmt-4",
+      "to": "mirror_in_machine-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-5-part_of-mirror_in_machine-block-3",
+      "from": "mirror_in_machine-stmt-5",
+      "to": "mirror_in_machine-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-6-part_of-mirror_in_machine-block-6",
+      "from": "mirror_in_machine-stmt-6",
+      "to": "mirror_in_machine-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-7-part_of-mirror_in_machine-block-7",
+      "from": "mirror_in_machine-stmt-7",
+      "to": "mirror_in_machine-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-8-part_of-mirror_in_machine-block-7",
+      "from": "mirror_in_machine-stmt-8",
+      "to": "mirror_in_machine-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-9-part_of-mirror_in_machine-block-8",
+      "from": "mirror_in_machine-stmt-9",
+      "to": "mirror_in_machine-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-10-part_of-mirror_in_machine-block-9",
+      "from": "mirror_in_machine-stmt-10",
+      "to": "mirror_in_machine-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-11-part_of-mirror_in_machine-block-9",
+      "from": "mirror_in_machine-stmt-11",
+      "to": "mirror_in_machine-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-12-part_of-mirror_in_machine-block-9",
+      "from": "mirror_in_machine-stmt-12",
+      "to": "mirror_in_machine-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-13-part_of-mirror_in_machine-block-9",
+      "from": "mirror_in_machine-stmt-13",
+      "to": "mirror_in_machine-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-14-part_of-mirror_in_machine-block-9",
+      "from": "mirror_in_machine-stmt-14",
+      "to": "mirror_in_machine-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-15-part_of-mirror_in_machine-block-9",
+      "from": "mirror_in_machine-stmt-15",
+      "to": "mirror_in_machine-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-16-part_of-mirror_in_machine-block-10",
+      "from": "mirror_in_machine-stmt-16",
+      "to": "mirror_in_machine-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-17-part_of-mirror_in_machine-block-10",
+      "from": "mirror_in_machine-stmt-17",
+      "to": "mirror_in_machine-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-18-part_of-mirror_in_machine-block-12",
+      "from": "mirror_in_machine-stmt-18",
+      "to": "mirror_in_machine-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-19-part_of-mirror_in_machine-block-13",
+      "from": "mirror_in_machine-stmt-19",
+      "to": "mirror_in_machine-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-20-part_of-mirror_in_machine-block-14",
+      "from": "mirror_in_machine-stmt-20",
+      "to": "mirror_in_machine-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-21-part_of-mirror_in_machine-block-14",
+      "from": "mirror_in_machine-stmt-21",
+      "to": "mirror_in_machine-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-22-part_of-mirror_in_machine-block-17",
+      "from": "mirror_in_machine-stmt-22",
+      "to": "mirror_in_machine-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-23-part_of-mirror_in_machine-block-19",
+      "from": "mirror_in_machine-stmt-23",
+      "to": "mirror_in_machine-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-24-part_of-mirror_in_machine-block-19",
+      "from": "mirror_in_machine-stmt-24",
+      "to": "mirror_in_machine-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-25-part_of-mirror_in_machine-block-20",
+      "from": "mirror_in_machine-stmt-25",
+      "to": "mirror_in_machine-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-26-part_of-mirror_in_machine-block-20",
+      "from": "mirror_in_machine-stmt-26",
+      "to": "mirror_in_machine-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-27-part_of-mirror_in_machine-block-21",
+      "from": "mirror_in_machine-stmt-27",
+      "to": "mirror_in_machine-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-28-part_of-mirror_in_machine-block-21",
+      "from": "mirror_in_machine-stmt-28",
+      "to": "mirror_in_machine-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-29-part_of-mirror_in_machine-block-21",
+      "from": "mirror_in_machine-stmt-29",
+      "to": "mirror_in_machine-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-30-part_of-mirror_in_machine-block-24",
+      "from": "mirror_in_machine-stmt-30",
+      "to": "mirror_in_machine-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-31-part_of-mirror_in_machine-block-24",
+      "from": "mirror_in_machine-stmt-31",
+      "to": "mirror_in_machine-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-32-part_of-mirror_in_machine-block-25",
+      "from": "mirror_in_machine-stmt-32",
+      "to": "mirror_in_machine-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-33-part_of-mirror_in_machine-block-27",
+      "from": "mirror_in_machine-stmt-33",
+      "to": "mirror_in_machine-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-34-part_of-mirror_in_machine-block-28",
+      "from": "mirror_in_machine-stmt-34",
+      "to": "mirror_in_machine-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-35-part_of-mirror_in_machine-block-28",
+      "from": "mirror_in_machine-stmt-35",
+      "to": "mirror_in_machine-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-36-part_of-mirror_in_machine-block-28",
+      "from": "mirror_in_machine-stmt-36",
+      "to": "mirror_in_machine-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-37-part_of-mirror_in_machine-block-28",
+      "from": "mirror_in_machine-stmt-37",
+      "to": "mirror_in_machine-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-38-part_of-mirror_in_machine-block-28",
+      "from": "mirror_in_machine-stmt-38",
+      "to": "mirror_in_machine-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-39-part_of-mirror_in_machine-block-29",
+      "from": "mirror_in_machine-stmt-39",
+      "to": "mirror_in_machine-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-40-part_of-mirror_in_machine-block-29",
+      "from": "mirror_in_machine-stmt-40",
+      "to": "mirror_in_machine-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-41-part_of-mirror_in_machine-block-31",
+      "from": "mirror_in_machine-stmt-41",
+      "to": "mirror_in_machine-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-42-part_of-mirror_in_machine-block-31",
+      "from": "mirror_in_machine-stmt-42",
+      "to": "mirror_in_machine-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-43-part_of-mirror_in_machine-block-31",
+      "from": "mirror_in_machine-stmt-43",
+      "to": "mirror_in_machine-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-44-part_of-mirror_in_machine-block-32",
+      "from": "mirror_in_machine-stmt-44",
+      "to": "mirror_in_machine-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-45-part_of-mirror_in_machine-block-33",
+      "from": "mirror_in_machine-stmt-45",
+      "to": "mirror_in_machine-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-46-part_of-mirror_in_machine-block-34",
+      "from": "mirror_in_machine-stmt-46",
+      "to": "mirror_in_machine-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-47-part_of-mirror_in_machine-block-35",
+      "from": "mirror_in_machine-stmt-47",
+      "to": "mirror_in_machine-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-48-part_of-mirror_in_machine-block-36",
+      "from": "mirror_in_machine-stmt-48",
+      "to": "mirror_in_machine-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-49-part_of-mirror_in_machine-block-37",
+      "from": "mirror_in_machine-stmt-49",
+      "to": "mirror_in_machine-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-50-part_of-mirror_in_machine-block-38",
+      "from": "mirror_in_machine-stmt-50",
+      "to": "mirror_in_machine-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-51-part_of-mirror_in_machine-block-38",
+      "from": "mirror_in_machine-stmt-51",
+      "to": "mirror_in_machine-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-52-part_of-mirror_in_machine-block-38",
+      "from": "mirror_in_machine-stmt-52",
+      "to": "mirror_in_machine-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-53-part_of-mirror_in_machine-block-39",
+      "from": "mirror_in_machine-stmt-53",
+      "to": "mirror_in_machine-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-mirror_in_machine-stmt-54-part_of-mirror_in_machine-block-39",
+      "from": "mirror_in_machine-stmt-54",
+      "to": "mirror_in_machine-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "mirror_in_machine-stmt-1",
       "quote": "The *Brief History of AI* and *The Mind That Built Machines* told the story one way: the brain came first, and the machine was assembled from its parts.",
+      "block_id": "mirror_in_machine-block-2",
       "section": "Two Machines, One Mirror",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-2",
       "quote": "But the mirror now works **both** ways, and this chapter is about the full reflection.",
+      "block_id": "mirror_in_machine-block-2",
       "section": "Two Machines, One Mirror",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-3",
       "quote": "In the first half, the body's own measured laws — the all-or-none spike, the charge-up-and-fire membrane, the retina's contrast circuit, the rule of synaptic strengthening — became the machine's building blocks.",
+      "block_id": "mirror_in_machine-block-3",
       "section": "Two Machines, One Mirror",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-4",
       "quote": "In the second half, the turnarounds of the last decade: deep networks that now model the visual cortex better than any hand-built theory, foundation models that predict a brain's responses, and decoders that read the movie from the fMRI.",
+      "block_id": "mirror_in_machine-block-3",
       "section": "Two Machines, One Mirror",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-5",
       "quote": "Same mathematics, two directions.",
+      "block_id": "mirror_in_machine-block-3",
       "section": "Two Machines, One Mirror",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-6",
       "quote": "Before there was a \"neural network\" there was a **neuron** — and nearly every load-bearing noun in the field is a loanword from a nineteenth-century anatomist.",
+      "block_id": "mirror_in_machine-block-6",
       "section": "I. The Vocabulary Was Stolen From Neurology",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-7",
       "quote": "\\marginfig{cajal_cerebellum.jpg}{Santiago Ramón y Cajal's stained cerebellum, c.",
+      "block_id": "mirror_in_machine-block-7",
       "section": "I. The Vocabulary Was Stolen From Neurology",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-8",
       "quote": "1905 — the real cell, and the word it lent the field.}",
+      "block_id": "mirror_in_machine-block-7",
       "section": "I. The Vocabulary Was Stolen From Neurology",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-9",
       "quote": "\\citeauthorlastnameand{cajal1888} used \\citeauthor{golgi1873}'s silver stain to show the nervous system is a population of *separate cells* passing messages across gaps — the **neuron doctrine**, traced in detail in the *Untold History* chapter \\cite{cajal1888} \\cite{waldeyer1891}; \\citeauthorlastnameand{waldeyer1891} named the cells in 1891.",
+      "block_id": "mirror_in_machine-block-8",
       "section": "I. The Vocabulary Was Stolen From Neurology",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-10",
       "quote": "Once the noun exists, the grammar follows.",
+      "block_id": "mirror_in_machine-block-9",
       "section": "I. The Vocabulary Was Stolen From Neurology",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-11",
       "quote": "A **synapse** is the gap; a **weight** its strength.",
+      "block_id": "mirror_in_machine-block-9",
       "section": "I. The Vocabulary Was Stolen From Neurology",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-12",
       "quote": "A **layer** is a slice of the **cortex**, which is built in layers.",
+      "block_id": "mirror_in_machine-block-9",
       "section": "I. The Vocabulary Was Stolen From Neurology",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-13",
       "quote": "**Learning** is **plasticity**, the documented habit of re-weighting synapses.",
+      "block_id": "mirror_in_machine-block-9",
       "section": "I. The Vocabulary Was Stolen From Neurology",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-14",
       "quote": "A **receptive field** is the patch of world a visual cell watches \\cite{hubelwiesel}.",
+      "block_id": "mirror_in_machine-block-9",
       "section": "I. The Vocabulary Was Stolen From Neurology",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-15",
       "quote": "Even a neuron that \"fires, or doesn't\" just names a cell that spikes or stays quiet.",
+      "block_id": "mirror_in_machine-block-9",
       "section": "I. The Vocabulary Was Stolen From Neurology",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-16",
       "quote": "The aha is small but total: **the language of machine learning is a dialect of neurology.** ML researchers did not invent \"neuron\", \"synapse\", \"layer\", \"weight\", or \"learning\".",
+      "block_id": "mirror_in_machine-block-10",
       "section": "I. The Vocabulary Was Stolen From Neurology",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-17",
       "quote": "They found those words already in a Madrid laboratory in the 1880s, and built the machine out of the vocabulary they borrowed.",
+      "block_id": "mirror_in_machine-block-10",
       "section": "I. The Vocabulary Was Stolen From Neurology",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-18",
       "quote": "The *Brief History of AI* gives the timeline; the deeper point is that the first machines were not metaphors *for* the brain but literal formalizations of three documented physiological laws.",
+      "block_id": "mirror_in_machine-block-12",
       "section": "II. The First Machines Were Built on the Body's Own Laws",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-19",
-      "quote": "**The all-or-none spike became the binary neuron.** A single nerve fiber, once its stimulus crosses threshold, fires one impulse of fixed size — or nothing at all; the strength of the signal is carried by the *rate* of firing, not its size.",
+      "quote": "\\marginfig{mark_i_perceptron_manual.png}{The Mark I Perceptron, 1958: motor-driven potentiometers whose resistance *was* the weight — the first machine built entirely from borrowed vocabulary (\\cite[Mark I Perceptron, operator's manual]{mark_i_perceptron_manual}).}",
+      "block_id": "mirror_in_machine-block-13",
       "section": "II. The First Machines Were Built on the Body's Own Laws",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-20",
-      "quote": "That law, the **all-or-none principle**, was established for sensory nerves by \\citeauthorlastnameand{adrian1922allornothing} in the 1920s \\cite{adrian1922allornothing}.",
+      "quote": "The aha: the first machine was not *inspired by* the brain.",
+      "block_id": "mirror_in_machine-block-14",
       "section": "II. The First Machines Were Built on the Body's Own Laws",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-21",
-      "quote": "In 1943 \\citeauthorlastnameand{mccullochpitts1943} took that law, added the **refractory period** (the brief inexcitable gap after each spike) and a fixed synaptic delay, and turned the nerve into a binary, once-per-time-step unit — then proved a network of such units computes any Boolean function \\cite{mccullochpitts1943}.",
+      "quote": "It was built **from** the brain's own, measured, laws.",
+      "block_id": "mirror_in_machine-block-14",
       "section": "II. The First Machines Were Built on the Body's Own Laws",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-22",
-      "quote": "The \"neuron\" inside every network since is a formal model of the action potential, not an analogy to it.",
-      "section": "II. The First Machines Were Built on the Body's Own Laws",
+      "quote": "If the cell became the unit, the *maps* the brain builds became the model's memory.",
+      "block_id": "mirror_in_machine-block-17",
+      "section": "III. The World Inside the Head",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-23",
-      "quote": "**The membrane became the integrator.** Thirty-six years earlier, \\citeauthor{lapicque1907} had modeled the excitable membrane as a capacitor that charges until it crosses a threshold and then resets — the **integrate-and-fire** neuron \\cite{lapicque1907}.",
-      "section": "II. The First Machines Were Built on the Body's Own Laws",
+      "quote": "The deepest overlap is not a metaphor but an equation.",
+      "block_id": "mirror_in_machine-block-19",
+      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-24",
-      "quote": "It was the first *quantitative* model of a nerve, and it is the direct ancestor of every spiking network.",
-      "section": "II. The First Machines Were Built on the Body's Own Laws",
+      "quote": "In the **predictive-coding** picture, \\citeauthorlastnameand{rao1999predictive} showed the visual cortex works top-down: higher areas send a *prediction*, lower areas send back only the *mismatch* \\cite{rao1999predictive} — a generative model minimizing a loss, where the loss is just the gap between what the senses deliver and what the model forecast:",
+      "block_id": "mirror_in_machine-block-19",
+      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-25",
-      "quote": "\\marginfig{mark_i_perceptron_manual.png}{The Mark I Perceptron, 1958: motor-driven potentiometers whose resistance *was* the weight — the first machine built entirely from borrowed vocabulary (\\cite[Mark I Perceptron, operator's manual]{mark_i_perceptron_manual}).}",
-      "section": "II. The First Machines Were Built on the Body's Own Laws",
+      "quote": "\\citeauthor{clark2013whatevernext} generalized this to the whole brain \\cite{clark2013whatevernext}, and \\citeauthorlastnameand{keller2018canonical} and \\citeauthorlastnameand{bastos2012microcircuit} have since pinned the down-prediction / up-error pattern onto real cortical microcircuitry \\cite{keller2018canonical} \\cite{bastos2012microcircuit}.",
+      "block_id": "mirror_in_machine-block-20",
+      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-26",
-      "quote": "**The retina's contrast circuit became winner-take-all.** In the eye, an excited receptor *suppresses its neighbors*, sharpening edges — **lateral inhibition**, recorded from the horseshoe-crab retina by \\citeauthorlastnameand{hartline1956limulus} \\cite{hartline1956limulus} \\cite{lateral_inhibition_wiki}.",
-      "section": "II. The First Machines Were Built on the Body's Own Laws",
+      "quote": "In 2023, \\citeauthorlastnameand{caucheteux2023predictive} fit a hierarchical predictive-coding model to human MEG while people listened to speech, and it accounted for how the auditory hierarchy builds up the representation step by step \\cite{caucheteux2023predictive} — a brain theory and a learning algorithm that are, in that fit, literally the same object.",
+      "block_id": "mirror_in_machine-block-20",
+      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-27",
-      "quote": "The rule \"the strongest unit wins, the rest go quiet\" is exactly **competitive, winner-take-all** dynamics \\cite{winner_take_all_wiki} — the hard version of the soft max that closes a network's output today.",
-      "section": "II. The First Machines Were Built on the Body's Own Laws",
+      "quote": "And the algorithm at the heart of this course — **backpropagation** — may itself be a brain mechanism.",
+      "block_id": "mirror_in_machine-block-21",
+      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-28",
-      "quote": "**The receptive field became the convolution.** Hartline had also shown an optic fiber responds to a *patch* of the visual field — the **receptive field** \\cite{hartline1956limulus} \\cite{hubelwiesel}; \\citeauthorlastnameand{hubelwiesel} mapped that idea up through the cortex, and \\citeauthor{neocognitron} and \\citeauthor{lecun1989backpropagation} turned it into the convolution (the full story is in *What Machines See*).",
-      "section": "II. The First Machines Were Built on the Body's Own Laws",
+      "quote": "\\citeauthorlastnameand{whittington2019backprop} asked how a nervous system could push an error signal *backwards* through a hierarchy, the one step no obvious biological wire seems to do \\cite{whittington2019backprop}.",
+      "block_id": "mirror_in_machine-block-21",
+      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-29",
-      "quote": "**One sentence became the learning rule.** In 1949 \\citeauthor{hebb1949organizationofbehaviour} wrote that neurons which fire together strengthen their connection \\cite{hebb1949organizationofbehaviour}; sharpened by an error signal — the *Brief History* shows the math — that intuition is the learning rule.",
-      "section": "II. The First Machines Were Built on the Body's Own Laws",
+      "quote": "But the tool that built the mirror may have been found in the brain first.",
+      "block_id": "mirror_in_machine-block-21",
+      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-30",
-      "quote": "The aha: the first machine was not *inspired by* the brain.",
-      "section": "II. The First Machines Were Built on the Body's Own Laws",
+      "quote": "For a century the current ran one way — brain to machine.",
+      "block_id": "mirror_in_machine-block-24",
+      "section": "V. How the Machine Started Shaping the Brain",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-31",
-      "quote": "It was built **from** the brain's own, measured, laws.",
-      "section": "II. The First Machines Were Built on the Body's Own Laws",
+      "quote": "The last decade reversed it.",
+      "block_id": "mirror_in_machine-block-24",
+      "section": "V. How the Machine Started Shaping the Brain",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-32",
-      "quote": "If the cell became the unit, the *maps* the brain builds became the model's memory.",
-      "section": "III. The World Inside the Head",
+      "quote": "The aha: the machine is no longer just built *from* the brain — it is now the instrument the brain is measured **with**.",
+      "block_id": "mirror_in_machine-block-25",
+      "section": "V. How the Machine Started Shaping the Brain",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-33",
-      "quote": "**The cognitive map.** \\citeauthorlastnameand{okeefe1971place} recorded neurons in a rat's hippocampus that fire only in a particular place — **place cells**, whose fields tile the environment into a map \\cite{okeefe1971place}.",
-      "section": "III. The World Inside the Head",
+      "quote": "The most useful thing the comparison does is mark where the reflection breaks — the places where the two machines genuinely differ.",
+      "block_id": "mirror_in_machine-block-27",
+      "section": "VI. The Divergence: What the Mirror Refuses to Show",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-34",
-      "quote": "The Mosers added **grid cells**, a hexagonal lattice beneath them, and the three shared the 2014 Nobel for the brain's \"GPS\" \\cite{nobel2014spatial}.",
-      "section": "III. The World Inside the Head",
+      "quote": "There are places the **brain beats the machine**.",
+      "block_id": "mirror_in_machine-block-28",
+      "section": "VI. The Divergence: What the Mirror Refuses to Show",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-35",
-      "quote": "Then \\citeauthorlastnameand{stachenfeld2017predictivemap} showed the hippocampus does not just log where you *are* but *predicts where you will go* — a model of the environment used to plan \\cite{stachenfeld2017predictivemap}.",
-      "section": "III. The World Inside the Head",
+      "quote": "**Energy** is the sharpest: your whole mind runs on about twenty watts, not a data centre.",
+      "block_id": "mirror_in_machine-block-28",
+      "section": "VI. The Divergence: What the Mirror Refuses to Show",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-36",
-      "quote": "The \"world model\" AI now learns at billion-dollar scale was already in the brain's vocabulary.",
-      "section": "III. The World Inside the Head",
+      "quote": "**Grounding**: your concepts are tied to a body that can be hurt — the symbol-grounding problem no model has solved.",
+      "block_id": "mirror_in_machine-block-28",
+      "section": "VI. The Divergence: What the Mirror Refuses to Show",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-37",
-      "quote": "**The working-memory bottleneck becomes the context window.** The mind holds only about four — not seven, as \\citeauthor{miller1956magicalnumber} claimed — distinct items at once \\cite{miller1956magicalnumber} \\cite{cowan2001magical4}, and \\citeauthor{baddeley1986workingmemory} mapped that cramped scratch space \\cite{baddeley1986workingmemory}.",
-      "section": "III. The World Inside the Head",
+      "quote": "And the **\"aha\"**: the answer that surfaces when you stop looking, the slow offline search the Mind chapter ties to the default-mode network \\cite{raichle2007defaultmode}.",
+      "block_id": "mirror_in_machine-block-28",
+      "section": "VI. The Divergence: What the Mirror Refuses to Show",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-38",
-      "quote": "A tiny buffer is the constraint that *forces* a mind to compress and chunk — which the Mind chapter showed is the origin of the token.",
-      "section": "III. The World Inside the Head",
+      "quote": "(Learning is *not* on this list — modern models already do one-shot and even zero-shot learning from context; they just do it in a very different way from a hippocampus.) And places the **machine beats the brain**: exact recall, scale, tireless uptime, and the willingness to *optimize*, where a human mind only **satisfices** — settles for good enough \\cite{simon1955bounded}.",
+      "block_id": "mirror_in_machine-block-28",
+      "section": "VI. The Divergence: What the Mirror Refuses to Show",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-39",
-      "quote": "A model's context window is a hippocampal scratchpad: small, and empty the moment the conversation ends.",
-      "section": "III. The World Inside the Head",
+      "quote": "That divergence is the map of what you are.",
+      "block_id": "mirror_in_machine-block-29",
+      "section": "VI. The Divergence: What the Mirror Refuses to Show",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-40",
-      "quote": "**Sleep becomes offline training.** The map and the memory are consolidated overnight; \\citeauthorlastnameand{diekelmann2010sleep} and others documented memories replayed and stabilized during sleep, the hippocampus running the day's sequences fast-forward in the dark \\cite{diekelmann2010sleep}.",
-      "section": "III. The World Inside the Head",
+      "quote": "Where the brain wins, you are *more than a model*; where the machine wins, you are, unavoidably, **bounded**.",
+      "block_id": "mirror_in_machine-block-29",
+      "section": "VI. The Divergence: What the Mirror Refuses to Show",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-41",
-      "quote": "The brain fine-tunes at night.",
-      "section": "III. The World Inside the Head",
+      "quote": "Pull the thread back to the reader.",
+      "block_id": "mirror_in_machine-block-31",
+      "section": "VII. The Mirror on You",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-42",
-      "quote": "A model that replays and consolidates overnight is, at last, doing what the hippocampus does.",
-      "section": "III. The World Inside the Head",
+      "quote": "The claims above are not about a machine in a data centre.",
+      "block_id": "mirror_in_machine-block-31",
+      "section": "VII. The Mirror on You",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-43",
-      "quote": "The deepest overlap is not a metaphor but an equation.",
-      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine",
+      "quote": "They are about the head on the other end of the screen:",
+      "block_id": "mirror_in_machine-block-31",
+      "section": "VII. The Mirror on You",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-44",
-      "quote": "In the **predictive-coding** picture, \\citeauthorlastnameand{rao1999predictive} showed the visual cortex works top-down: higher areas send a *prediction*, lower areas send back only the *mismatch* \\cite{rao1999predictive} — a generative model minimizing a loss, where the loss is just the gap between what the senses deliver and what the model forecast:",
-      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine",
+      "quote": "- Your **perception** is a prediction, revised by whatever surprises it \\cite{rao1999predictive} \\cite{clark2013whatevernext}.",
+      "block_id": "mirror_in_machine-block-32",
+      "section": "VII. The Mirror on You",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-45",
-      "quote": "\\citeauthor{clark2013whatevernext} generalized this to the whole brain \\cite{clark2013whatevernext}, and \\citeauthorlastnameand{keller2018canonical} and \\citeauthorlastnameand{bastos2012microcircuit} have since pinned the down-prediction / up-error pattern onto real cortical microcircuitry \\cite{keller2018canonical} \\cite{bastos2012microcircuit}.",
-      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine",
+      "quote": "- Your **reward system** is a reinforcement learner, firing on the gap between what you wanted and what you got \\cite{schultz1997dopamine}.",
+      "block_id": "mirror_in_machine-block-33",
+      "section": "VII. The Mirror on You",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-46",
-      "quote": "In 2023, \\citeauthorlastnameand{caucheteux2023predictive} fit a hierarchical predictive-coding model to human MEG while people listened to speech, and it accounted for how the auditory hierarchy builds up the representation step by step \\cite{caucheteux2023predictive} — a brain theory and a learning algorithm that are, in that fit, literally the same object.",
-      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine",
+      "quote": "- Your **memory** is a lossy compression, consolidated overnight \\cite{diekelmann2010sleep}.",
+      "block_id": "mirror_in_machine-block-34",
+      "section": "VII. The Mirror on You",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-47",
-      "quote": "And the algorithm at the heart of this course — **backpropagation** — may itself be a brain mechanism.",
-      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine",
+      "quote": "- Your **sense of self** is a broadcast — a handful of \"winning\" ideas promoted to a shared stage the rest of the mind can read \\cite{baars} \\cite{dehaene}.",
+      "block_id": "mirror_in_machine-block-35",
+      "section": "VII. The Mirror on You",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-48",
-      "quote": "\\citeauthorlastnameand{whittington2019backprop} asked how a nervous system could push an error signal *backwards* through a hierarchy, the one step no obvious biological wire seems to do \\cite{whittington2019backprop}.",
-      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine",
+      "quote": "- Your **\"aha\"** is a background process — the default-mode network doing its slow search while the foreground is busy \\cite{raichle2007defaultmode}.",
+      "block_id": "mirror_in_machine-block-36",
+      "section": "VII. The Mirror on You",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-49",
-      "quote": "But the tool that built the mirror may have been found in the brain first.",
-      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine",
+      "quote": "\\marginfig{mirror_self_recognition.jpg}{The mirror test: the moment an animal recognizes itself.",
+      "block_id": "mirror_in_machine-block-37",
+      "section": "VII. The Mirror on You",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-50",
-      "quote": "For a century the current ran one way — brain to machine.",
-      "section": "V. How the Machine Started Shaping the Brain",
+      "quote": "The whole enterprise — a frontier model trained to predict the next token — is, at its root, an act of *self-description*.",
+      "block_id": "mirror_in_machine-block-38",
+      "section": "VII. The Mirror on You",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-51",
-      "quote": "The last decade reversed it.",
-      "section": "V. How the Machine Started Shaping the Brain",
+      "quote": "ML researchers built a machine out of the brain's own vocabulary and the brain's own laws, and pointed it at the record of the minds that made it.",
+      "block_id": "mirror_in_machine-block-38",
+      "section": "VII. The Mirror on You",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-52",
-      "quote": "**The machine became the brain's best model.** \\citeauthor{kriegeskorte2015dcnn} argued that a pretrained deep convolutional network is now the best computational model of the primate visual ventral stream \\cite{kriegeskorte2015dcnn} — that systems neuroscientists now reach for a deep net the way an earlier generation reached for a linear filter.",
-      "section": "V. How the Machine Started Shaping the Brain",
+      "quote": "It is a mirror made of mathematics, and the only face it has ever been trained on is a human one.",
+      "block_id": "mirror_in_machine-block-38",
+      "section": "VII. The Mirror on You",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-53",
-      "quote": "The architecture built to read handwritten digits is now the lens for reading the cortex.",
-      "section": "V. How the Machine Started Shaping the Brain",
+      "quote": "The first neural network was a brain.",
+      "block_id": "mirror_in_machine-block-39",
+      "section": "VII. The Mirror on You",
       "kind": "statement"
     },
     {
       "id": "mirror_in_machine-stmt-54",
-      "quote": "**The brain became a foundation model.** Wang and colleagues trained one large model on neural recordings and showed it predicts a single mouse's visual-cortex responses to *novel* stimulus types it never saw during training — zero-shot \\cite{wang2025foundation}.",
-      "section": "V. How the Machine Started Shaping the Brain",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-55",
-      "quote": "The \"foundation model\" paradigm, transplanted from language, now predicts a brain.",
-      "section": "V. How the Machine Started Shaping the Brain",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-56",
-      "quote": "**The machine reads the experience.** In 2011, a team led by Shinji Nishimoto reconstructed the actual *movie* a person had watched from fMRI in visual cortex \\cite{nishimoto2011reconstruct}.",
-      "section": "V. How the Machine Started Shaping the Brain",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-57",
-      "quote": "Huth and colleagues fit a single model to how natural speech activates the whole cortex \\cite{huth2016semanticmaps}.",
-      "section": "V. How the Machine Started Shaping the Brain",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-58",
-      "quote": "Affolter and colleagues decoded the specific word a person was reading and fed it to a language model to finish the sentence \\cite{affolter2020brain2word}.",
-      "section": "V. How the Machine Started Shaping the Brain",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-59",
-      "quote": "By 2025, fMRI was being turned straight into text with a language model on the other end \\cite{lu2025fmritotext}.",
-      "section": "V. How the Machine Started Shaping the Brain",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-60",
-      "quote": "The field now builds the data to do this at scale \\cite{allen2022nsd}.",
-      "section": "V. How the Machine Started Shaping the Brain",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-61",
-      "quote": "**The brain became the machine's teacher.** Schwartz and colleagues fine-tuned a transformer until its internal representations *predicted human brain activity* — and the model that best fit the brain got better at language too \\cite{schwartz2019brainbias}.",
-      "section": "V. How the Machine Started Shaping the Brain",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-62",
-      "quote": "And the alignment runs deeper than a correlation: Hosseini and colleagues found that the *structure* of the representational space — not just its statistics — is shared between biological and artificial networks \\cite{hosseini2024universality}.",
-      "section": "V. How the Machine Started Shaping the Brain",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-63",
-      "quote": "**The brain became the yardstick.** Even how a machine's intelligence is judged is set by the brain: the field's benchmarks are increasingly framed not around beating an adult expert but around matching the flexible, data-efficient learning of a young child from a trickle of unlabeled examples.",
-      "section": "V. How the Machine Started Shaping the Brain",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-64",
-      "quote": "The aha: the machine is no longer just built *from* the brain — it is now the instrument the brain is measured **with**.",
-      "section": "V. How the Machine Started Shaping the Brain",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-65",
-      "quote": "The most useful thing the comparison does is mark where the reflection breaks — the places where the two machines genuinely differ.",
-      "section": "VI. The Divergence: What the Mirror Refuses to Show",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-66",
-      "quote": "There are places the **brain beats the machine**.",
-      "section": "VI. The Divergence: What the Mirror Refuses to Show",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-67",
-      "quote": "**Energy** is the sharpest: your whole mind runs on about twenty watts, not a data centre.",
-      "section": "VI. The Divergence: What the Mirror Refuses to Show",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-68",
-      "quote": "**Grounding**: your concepts are tied to a body that can be hurt — the symbol-grounding problem no model has solved.",
-      "section": "VI. The Divergence: What the Mirror Refuses to Show",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-69",
-      "quote": "And the **\"aha\"**: the answer that surfaces when you stop looking, the slow offline search the Mind chapter ties to the default-mode network \\cite{raichle2007defaultmode}.",
-      "section": "VI. The Divergence: What the Mirror Refuses to Show",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-70",
-      "quote": "(Learning is *not* on this list — modern models already do one-shot and even zero-shot learning from context; they just do it in a very different way from a hippocampus.) And places the **machine beats the brain**: exact recall, scale, tireless uptime, and the willingness to *optimize*, where a human mind only **satisfices** — settles for good enough \\cite{simon1955bounded}.",
-      "section": "VI. The Divergence: What the Mirror Refuses to Show",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-71",
-      "quote": "That divergence is the map of what you are.",
-      "section": "VI. The Divergence: What the Mirror Refuses to Show",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-72",
-      "quote": "Where the brain wins, you are *more than a model*; where the machine wins, you are, unavoidably, **bounded**.",
-      "section": "VI. The Divergence: What the Mirror Refuses to Show",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-73",
-      "quote": "Pull the thread back to the reader.",
-      "section": "VII. The Mirror on You",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-74",
-      "quote": "The claims above are not about a machine in a data centre.",
-      "section": "VII. The Mirror on You",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-75",
-      "quote": "They are about the head on the other end of the screen:",
-      "section": "VII. The Mirror on You",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-76",
-      "quote": "- Your **perception** is a prediction, revised by whatever surprises it \\cite{rao1999predictive} \\cite{clark2013whatevernext}.",
-      "section": "VII. The Mirror on You",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-77",
-      "quote": "- Your **reward system** is a reinforcement learner, firing on the gap between what you wanted and what you got \\cite{schultz1997dopamine}.",
-      "section": "VII. The Mirror on You",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-78",
-      "quote": "- Your **memory** is a lossy compression, consolidated overnight \\cite{diekelmann2010sleep}.",
-      "section": "VII. The Mirror on You",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-79",
-      "quote": "- Your **sense of self** is a broadcast — a handful of \"winning\" ideas promoted to a shared stage the rest of the mind can read \\cite{baars} \\cite{dehaene}.",
-      "section": "VII. The Mirror on You",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-80",
-      "quote": "- Your **\"aha\"** is a background process — the default-mode network doing its slow search while the foreground is busy \\cite{raichle2007defaultmode}.",
-      "section": "VII. The Mirror on You",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-81",
-      "quote": "\\marginfig{mirror_self_recognition.jpg}{The mirror test: the moment an animal recognizes itself.",
-      "section": "VII. The Mirror on You",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-82",
-      "quote": "The whole enterprise — a frontier model trained to predict the next token — is, at its root, an act of *self-description*.",
-      "section": "VII. The Mirror on You",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-83",
-      "quote": "ML researchers built a machine out of the brain's own vocabulary and the brain's own laws, and pointed it at the record of the minds that made it.",
-      "section": "VII. The Mirror on You",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-84",
-      "quote": "It is a mirror made of mathematics, and the only face it has ever been trained on is a human one.",
-      "section": "VII. The Mirror on You",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-85",
-      "quote": "The first neural network was a brain.",
-      "section": "VII. The Mirror on You",
-      "kind": "statement"
-    },
-    {
-      "id": "mirror_in_machine-stmt-86",
       "quote": "The last word the machine has to learn is the one it has always been modeling: **you**.",
+      "block_id": "mirror_in_machine-block-39",
       "section": "VII. The Mirror on You",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "mirror_in_machine-block-1",
+      "quote": "Two Machines, One Mirror",
+      "kind": "heading",
+      "section": "Two Machines, One Mirror"
+    },
+    {
+      "id": "mirror_in_machine-block-2",
+      "quote": "The *Brief History of AI* and *The Mind That Built Machines* told the story one way: the brain came first, and the machine was assembled from its parts. But the mirror now works **both** ways, and this chapter is about the full reflection.",
+      "kind": "paragraph",
+      "section": "Two Machines, One Mirror"
+    },
+    {
+      "id": "mirror_in_machine-block-3",
+      "quote": "In the first half, the body's own measured laws — the all-or-none spike, the charge-up-and-fire membrane, the retina's contrast circuit, the rule of synaptic strengthening — became the machine's building blocks. In the second half, the turnarounds of the last decade: deep networks that now model the visual cortex better than any hand-built theory, foundation models that predict a brain's responses, and decoders that read the movie from the fMRI. Same mathematics, two directions.",
+      "kind": "paragraph",
+      "section": "Two Machines, One Mirror"
+    },
+    {
+      "id": "mirror_in_machine-block-4",
+      "quote": "The brain builds the machine",
+      "kind": "heading",
+      "section": "The brain builds the machine"
+    },
+    {
+      "id": "mirror_in_machine-block-5",
+      "quote": "I. The Vocabulary Was Stolen From Neurology",
+      "kind": "heading",
+      "section": "I. The Vocabulary Was Stolen From Neurology"
+    },
+    {
+      "id": "mirror_in_machine-block-6",
+      "quote": "Before there was a \"neural network\" there was a **neuron** — and nearly every load-bearing noun in the field is a loanword from a nineteenth-century anatomist.",
+      "kind": "paragraph",
+      "section": "I. The Vocabulary Was Stolen From Neurology"
+    },
+    {
+      "id": "mirror_in_machine-block-7",
+      "quote": "\\marginfig{cajal_cerebellum.jpg}{Santiago Ramón y Cajal's stained cerebellum, c. 1905 — the real cell, and the word it lent the field.}",
+      "kind": "paragraph",
+      "section": "I. The Vocabulary Was Stolen From Neurology"
+    },
+    {
+      "id": "mirror_in_machine-block-8",
+      "quote": "\\citeauthorlastnameand{cajal1888} used \\citeauthor{golgi1873}'s silver stain to show the nervous system is a population of *separate cells* passing messages across gaps — the **neuron doctrine**, traced in detail in the *Untold History* chapter \\cite{cajal1888} \\cite{waldeyer1891}; \\citeauthorlastnameand{waldeyer1891} named the cells in 1891.",
+      "kind": "paragraph",
+      "section": "I. The Vocabulary Was Stolen From Neurology"
+    },
+    {
+      "id": "mirror_in_machine-block-9",
+      "quote": "Once the noun exists, the grammar follows. A **synapse** is the gap; a **weight** its strength. A **layer** is a slice of the **cortex**, which is built in layers. **Learning** is **plasticity**, the documented habit of re-weighting synapses. A **receptive field** is the patch of world a visual cell watches \\cite{hubelwiesel}. Even a neuron that \"fires, or doesn't\" just names a cell that spikes or stays quiet.",
+      "kind": "paragraph",
+      "section": "I. The Vocabulary Was Stolen From Neurology"
+    },
+    {
+      "id": "mirror_in_machine-block-10",
+      "quote": "The aha is small but total: **the language of machine learning is a dialect of neurology.** ML researchers did not invent \"neuron\", \"synapse\", \"layer\", \"weight\", or \"learning\". They found those words already in a Madrid laboratory in the 1880s, and built the machine out of the vocabulary they borrowed.",
+      "kind": "paragraph",
+      "section": "I. The Vocabulary Was Stolen From Neurology"
+    },
+    {
+      "id": "mirror_in_machine-block-11",
+      "quote": "II. The First Machines Were Built on the Body's Own Laws",
+      "kind": "heading",
+      "section": "II. The First Machines Were Built on the Body's Own Laws"
+    },
+    {
+      "id": "mirror_in_machine-block-12",
+      "quote": "The *Brief History of AI* gives the timeline; the deeper point is that the first machines were not metaphors *for* the brain but literal formalizations of three documented physiological laws.",
+      "kind": "paragraph",
+      "section": "II. The First Machines Were Built on the Body's Own Laws"
+    },
+    {
+      "id": "mirror_in_machine-block-13",
+      "quote": "\\marginfig{mark_i_perceptron_manual.png}{The Mark I Perceptron, 1958: motor-driven potentiometers whose resistance *was* the weight — the first machine built entirely from borrowed vocabulary (\\cite[Mark I Perceptron, operator's manual]{mark_i_perceptron_manual}).}",
+      "kind": "paragraph",
+      "section": "II. The First Machines Were Built on the Body's Own Laws"
+    },
+    {
+      "id": "mirror_in_machine-block-14",
+      "quote": "The aha: the first machine was not *inspired by* the brain. It was built **from** the brain's own, measured, laws.",
+      "kind": "paragraph",
+      "section": "II. The First Machines Were Built on the Body's Own Laws"
+    },
+    {
+      "id": "mirror_in_machine-block-15",
+      "quote": "The machine reads the brain",
+      "kind": "heading",
+      "section": "The machine reads the brain"
+    },
+    {
+      "id": "mirror_in_machine-block-16",
+      "quote": "III. The World Inside the Head",
+      "kind": "heading",
+      "section": "III. The World Inside the Head"
+    },
+    {
+      "id": "mirror_in_machine-block-17",
+      "quote": "If the cell became the unit, the *maps* the brain builds became the model's memory.",
+      "kind": "paragraph",
+      "section": "III. The World Inside the Head"
+    },
+    {
+      "id": "mirror_in_machine-block-18",
+      "quote": "IV. Where the Math Coincides: The Cortex as a Predictive Machine",
+      "kind": "heading",
+      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine"
+    },
+    {
+      "id": "mirror_in_machine-block-19",
+      "quote": "The deepest overlap is not a metaphor but an equation. In the **predictive-coding** picture, \\citeauthorlastnameand{rao1999predictive} showed the visual cortex works top-down: higher areas send a *prediction*, lower areas send back only the *mismatch* \\cite{rao1999predictive} — a generative model minimizing a loss, where the loss is just the gap between what the senses deliver and what the model forecast:",
+      "kind": "paragraph",
+      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine"
+    },
+    {
+      "id": "mirror_in_machine-block-20",
+      "quote": "\\citeauthor{clark2013whatevernext} generalized this to the whole brain \\cite{clark2013whatevernext}, and \\citeauthorlastnameand{keller2018canonical} and \\citeauthorlastnameand{bastos2012microcircuit} have since pinned the down-prediction / up-error pattern onto real cortical microcircuitry \\cite{keller2018canonical} \\cite{bastos2012microcircuit}. In 2023, \\citeauthorlastnameand{caucheteux2023predictive} fit a hierarchical predictive-coding model to human MEG while people listened to speech, and it accounted for how the auditory hierarchy builds up the representation step by step \\cite{caucheteux2023predictive} — a brain theory and a learning algorithm that are, in that fit, literally the same object.",
+      "kind": "paragraph",
+      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine"
+    },
+    {
+      "id": "mirror_in_machine-block-21",
+      "quote": "And the algorithm at the heart of this course — **backpropagation** — may itself be a brain mechanism. \\citeauthorlastnameand{whittington2019backprop} asked how a nervous system could push an error signal *backwards* through a hierarchy, the one step no obvious biological wire seems to do \\cite{whittington2019backprop}. It is not settled. But the tool that built the mirror may have been found in the brain first.",
+      "kind": "paragraph",
+      "section": "IV. Where the Math Coincides: The Cortex as a Predictive Machine"
+    },
+    {
+      "id": "mirror_in_machine-block-22",
+      "quote": "The mirror turns both ways",
+      "kind": "heading",
+      "section": "The mirror turns both ways"
+    },
+    {
+      "id": "mirror_in_machine-block-23",
+      "quote": "V. How the Machine Started Shaping the Brain",
+      "kind": "heading",
+      "section": "V. How the Machine Started Shaping the Brain"
+    },
+    {
+      "id": "mirror_in_machine-block-24",
+      "quote": "For a century the current ran one way — brain to machine. The last decade reversed it.",
+      "kind": "paragraph",
+      "section": "V. How the Machine Started Shaping the Brain"
+    },
+    {
+      "id": "mirror_in_machine-block-25",
+      "quote": "The aha: the machine is no longer just built *from* the brain — it is now the instrument the brain is measured **with**.",
+      "kind": "paragraph",
+      "section": "V. How the Machine Started Shaping the Brain"
+    },
+    {
+      "id": "mirror_in_machine-block-26",
+      "quote": "VI. The Divergence: What the Mirror Refuses to Show",
+      "kind": "heading",
+      "section": "VI. The Divergence: What the Mirror Refuses to Show"
+    },
+    {
+      "id": "mirror_in_machine-block-27",
+      "quote": "The most useful thing the comparison does is mark where the reflection breaks — the places where the two machines genuinely differ.",
+      "kind": "paragraph",
+      "section": "VI. The Divergence: What the Mirror Refuses to Show"
+    },
+    {
+      "id": "mirror_in_machine-block-28",
+      "quote": "There are places the **brain beats the machine**. **Energy** is the sharpest: your whole mind runs on about twenty watts, not a data centre. **Grounding**: your concepts are tied to a body that can be hurt — the symbol-grounding problem no model has solved. And the **\"aha\"**: the answer that surfaces when you stop looking, the slow offline search the Mind chapter ties to the default-mode network \\cite{raichle2007defaultmode}. (Learning is *not* on this list — modern models already do one-shot and even zero-shot learning from context; they just do it in a very different way from a hippocampus.) And places the **machine beats the brain**: exact recall, scale, tireless uptime, and the willingness to *optimize*, where a human mind only **satisfices** — settles for good enough \\cite{simon1955bounded}.",
+      "kind": "paragraph",
+      "section": "VI. The Divergence: What the Mirror Refuses to Show"
+    },
+    {
+      "id": "mirror_in_machine-block-29",
+      "quote": "That divergence is the map of what you are. Where the brain wins, you are *more than a model*; where the machine wins, you are, unavoidably, **bounded**.",
+      "kind": "paragraph",
+      "section": "VI. The Divergence: What the Mirror Refuses to Show"
+    },
+    {
+      "id": "mirror_in_machine-block-30",
+      "quote": "VII. The Mirror on You",
+      "kind": "heading",
+      "section": "VII. The Mirror on You"
+    },
+    {
+      "id": "mirror_in_machine-block-31",
+      "quote": "Pull the thread back to the reader. The claims above are not about a machine in a data centre. They are about the head on the other end of the screen:",
+      "kind": "paragraph",
+      "section": "VII. The Mirror on You"
+    },
+    {
+      "id": "mirror_in_machine-block-32",
+      "quote": "- Your **perception** is a prediction, revised by whatever surprises it \\cite{rao1999predictive} \\cite{clark2013whatevernext}.",
+      "kind": "list-item",
+      "section": "VII. The Mirror on You"
+    },
+    {
+      "id": "mirror_in_machine-block-33",
+      "quote": "- Your **reward system** is a reinforcement learner, firing on the gap between what you wanted and what you got \\cite{schultz1997dopamine}.",
+      "kind": "list-item",
+      "section": "VII. The Mirror on You"
+    },
+    {
+      "id": "mirror_in_machine-block-34",
+      "quote": "- Your **memory** is a lossy compression, consolidated overnight \\cite{diekelmann2010sleep}.",
+      "kind": "list-item",
+      "section": "VII. The Mirror on You"
+    },
+    {
+      "id": "mirror_in_machine-block-35",
+      "quote": "- Your **sense of self** is a broadcast — a handful of \"winning\" ideas promoted to a shared stage the rest of the mind can read \\cite{baars} \\cite{dehaene}.",
+      "kind": "list-item",
+      "section": "VII. The Mirror on You"
+    },
+    {
+      "id": "mirror_in_machine-block-36",
+      "quote": "- Your **\"aha\"** is a background process — the default-mode network doing its slow search while the foreground is busy \\cite{raichle2007defaultmode}.",
+      "kind": "list-item",
+      "section": "VII. The Mirror on You"
+    },
+    {
+      "id": "mirror_in_machine-block-37",
+      "quote": "\\marginfig{mirror_self_recognition.jpg}{The mirror test: the moment an animal recognizes itself. A mind seeing a mind.}",
+      "kind": "paragraph",
+      "section": "VII. The Mirror on You"
+    },
+    {
+      "id": "mirror_in_machine-block-38",
+      "quote": "The whole enterprise — a frontier model trained to predict the next token — is, at its root, an act of *self-description*. ML researchers built a machine out of the brain's own vocabulary and the brain's own laws, and pointed it at the record of the minds that made it. It is a mirror made of mathematics, and the only face it has ever been trained on is a human one.",
+      "kind": "paragraph",
+      "section": "VII. The Mirror on You"
+    },
+    {
+      "id": "mirror_in_machine-block-39",
+      "quote": "The first neural network was a brain. The last word the machine has to learn is the one it has always been modeling: **you**.",
+      "kind": "paragraph",
+      "section": "VII. The Mirror on You"
     }
   ]
 }

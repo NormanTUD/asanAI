@@ -572,410 +572,2051 @@
         "catalogingtheworld"
       ],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-1-part_of-information-market",
+      "from": "information_market-block-1",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-2-part_of-information-market",
+      "from": "information_market-block-2",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-1-before-information_market-block-2",
+      "from": "information_market-block-1",
+      "to": "information_market-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-3-part_of-information-market",
+      "from": "information_market-block-3",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-2-before-information_market-block-3",
+      "from": "information_market-block-2",
+      "to": "information_market-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-4-part_of-information-market",
+      "from": "information_market-block-4",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-3-before-information_market-block-4",
+      "from": "information_market-block-3",
+      "to": "information_market-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-4-related_to-information_market-block-3",
+      "from": "information_market-block-4",
+      "to": "information_market-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-5-part_of-information-market",
+      "from": "information_market-block-5",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-4-before-information_market-block-5",
+      "from": "information_market-block-4",
+      "to": "information_market-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-5-related_to-information_market-block-3",
+      "from": "information_market-block-5",
+      "to": "information_market-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-6-part_of-information-market",
+      "from": "information_market-block-6",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-5-before-information_market-block-6",
+      "from": "information_market-block-5",
+      "to": "information_market-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-6-related_to-information_market-block-3",
+      "from": "information_market-block-6",
+      "to": "information_market-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-7-part_of-information-market",
+      "from": "information_market-block-7",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-6-before-information_market-block-7",
+      "from": "information_market-block-6",
+      "to": "information_market-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-8-part_of-information-market",
+      "from": "information_market-block-8",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-7-before-information_market-block-8",
+      "from": "information_market-block-7",
+      "to": "information_market-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-8-related_to-information_market-block-7",
+      "from": "information_market-block-8",
+      "to": "information_market-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-9-part_of-information-market",
+      "from": "information_market-block-9",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-8-before-information_market-block-9",
+      "from": "information_market-block-8",
+      "to": "information_market-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-9-related_to-information_market-block-7",
+      "from": "information_market-block-9",
+      "to": "information_market-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-10-part_of-information-market",
+      "from": "information_market-block-10",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-9-before-information_market-block-10",
+      "from": "information_market-block-9",
+      "to": "information_market-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-10-related_to-information_market-block-7",
+      "from": "information_market-block-10",
+      "to": "information_market-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-11-part_of-information-market",
+      "from": "information_market-block-11",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-10-before-information_market-block-11",
+      "from": "information_market-block-10",
+      "to": "information_market-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-12-part_of-information-market",
+      "from": "information_market-block-12",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-11-before-information_market-block-12",
+      "from": "information_market-block-11",
+      "to": "information_market-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-12-related_to-information_market-block-11",
+      "from": "information_market-block-12",
+      "to": "information_market-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-13-part_of-information-market",
+      "from": "information_market-block-13",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-12-before-information_market-block-13",
+      "from": "information_market-block-12",
+      "to": "information_market-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-13-related_to-information_market-block-11",
+      "from": "information_market-block-13",
+      "to": "information_market-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-14-part_of-information-market",
+      "from": "information_market-block-14",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-13-before-information_market-block-14",
+      "from": "information_market-block-13",
+      "to": "information_market-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-14-related_to-information_market-block-11",
+      "from": "information_market-block-14",
+      "to": "information_market-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-15-part_of-information-market",
+      "from": "information_market-block-15",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-14-before-information_market-block-15",
+      "from": "information_market-block-14",
+      "to": "information_market-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-16-part_of-information-market",
+      "from": "information_market-block-16",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-15-before-information_market-block-16",
+      "from": "information_market-block-15",
+      "to": "information_market-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-17-part_of-information-market",
+      "from": "information_market-block-17",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-16-before-information_market-block-17",
+      "from": "information_market-block-16",
+      "to": "information_market-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-17-related_to-information_market-block-16",
+      "from": "information_market-block-17",
+      "to": "information_market-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-18-part_of-information-market",
+      "from": "information_market-block-18",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-17-before-information_market-block-18",
+      "from": "information_market-block-17",
+      "to": "information_market-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-18-related_to-information_market-block-16",
+      "from": "information_market-block-18",
+      "to": "information_market-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-19-part_of-information-market",
+      "from": "information_market-block-19",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-18-before-information_market-block-19",
+      "from": "information_market-block-18",
+      "to": "information_market-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-19-related_to-information_market-block-16",
+      "from": "information_market-block-19",
+      "to": "information_market-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-20-part_of-information-market",
+      "from": "information_market-block-20",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-19-before-information_market-block-20",
+      "from": "information_market-block-19",
+      "to": "information_market-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-21-part_of-information-market",
+      "from": "information_market-block-21",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-20-before-information_market-block-21",
+      "from": "information_market-block-20",
+      "to": "information_market-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-21-related_to-information_market-block-20",
+      "from": "information_market-block-21",
+      "to": "information_market-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-22-part_of-information-market",
+      "from": "information_market-block-22",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-21-before-information_market-block-22",
+      "from": "information_market-block-21",
+      "to": "information_market-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-22-related_to-information_market-block-20",
+      "from": "information_market-block-22",
+      "to": "information_market-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-23-part_of-information-market",
+      "from": "information_market-block-23",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-22-before-information_market-block-23",
+      "from": "information_market-block-22",
+      "to": "information_market-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-24-part_of-information-market",
+      "from": "information_market-block-24",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-23-before-information_market-block-24",
+      "from": "information_market-block-23",
+      "to": "information_market-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-24-related_to-information_market-block-23",
+      "from": "information_market-block-24",
+      "to": "information_market-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-25-part_of-information-market",
+      "from": "information_market-block-25",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-24-before-information_market-block-25",
+      "from": "information_market-block-24",
+      "to": "information_market-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-25-related_to-information_market-block-23",
+      "from": "information_market-block-25",
+      "to": "information_market-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-26-part_of-information-market",
+      "from": "information_market-block-26",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-25-before-information_market-block-26",
+      "from": "information_market-block-25",
+      "to": "information_market-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-26-related_to-information_market-block-23",
+      "from": "information_market-block-26",
+      "to": "information_market-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-27-part_of-information-market",
+      "from": "information_market-block-27",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-26-before-information_market-block-27",
+      "from": "information_market-block-26",
+      "to": "information_market-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-28-part_of-information-market",
+      "from": "information_market-block-28",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-27-before-information_market-block-28",
+      "from": "information_market-block-27",
+      "to": "information_market-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-28-related_to-information_market-block-27",
+      "from": "information_market-block-28",
+      "to": "information_market-block-27",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-29-part_of-information-market",
+      "from": "information_market-block-29",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-28-before-information_market-block-29",
+      "from": "information_market-block-28",
+      "to": "information_market-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-29-related_to-information_market-block-27",
+      "from": "information_market-block-29",
+      "to": "information_market-block-27",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-30-part_of-information-market",
+      "from": "information_market-block-30",
+      "to": "information-market",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-29-before-information_market-block-30",
+      "from": "information_market-block-29",
+      "to": "information_market-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-block-30-related_to-information_market-block-27",
+      "from": "information_market-block-30",
+      "to": "information_market-block-27",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-1-part_of-information_market-block-1",
+      "from": "information_market-stmt-1",
+      "to": "information_market-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-2-part_of-information_market-block-1",
+      "from": "information_market-stmt-2",
+      "to": "information_market-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-3-part_of-information_market-block-1",
+      "from": "information_market-stmt-3",
+      "to": "information_market-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-4-part_of-information_market-block-1",
+      "from": "information_market-stmt-4",
+      "to": "information_market-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-5-part_of-information_market-block-1",
+      "from": "information_market-stmt-5",
+      "to": "information_market-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-6-part_of-information_market-block-4",
+      "from": "information_market-stmt-6",
+      "to": "information_market-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-7-part_of-information_market-block-4",
+      "from": "information_market-stmt-7",
+      "to": "information_market-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-8-part_of-information_market-block-4",
+      "from": "information_market-stmt-8",
+      "to": "information_market-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-9-part_of-information_market-block-4",
+      "from": "information_market-stmt-9",
+      "to": "information_market-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-10-part_of-information_market-block-4",
+      "from": "information_market-stmt-10",
+      "to": "information_market-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-11-part_of-information_market-block-5",
+      "from": "information_market-stmt-11",
+      "to": "information_market-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-12-part_of-information_market-block-5",
+      "from": "information_market-stmt-12",
+      "to": "information_market-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-13-part_of-information_market-block-6",
+      "from": "information_market-stmt-13",
+      "to": "information_market-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-14-part_of-information_market-block-6",
+      "from": "information_market-stmt-14",
+      "to": "information_market-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-15-part_of-information_market-block-6",
+      "from": "information_market-stmt-15",
+      "to": "information_market-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-16-part_of-information_market-block-8",
+      "from": "information_market-stmt-16",
+      "to": "information_market-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-17-part_of-information_market-block-8",
+      "from": "information_market-stmt-17",
+      "to": "information_market-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-18-part_of-information_market-block-8",
+      "from": "information_market-stmt-18",
+      "to": "information_market-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-19-part_of-information_market-block-9",
+      "from": "information_market-stmt-19",
+      "to": "information_market-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-20-part_of-information_market-block-9",
+      "from": "information_market-stmt-20",
+      "to": "information_market-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-21-part_of-information_market-block-9",
+      "from": "information_market-stmt-21",
+      "to": "information_market-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-22-part_of-information_market-block-9",
+      "from": "information_market-stmt-22",
+      "to": "information_market-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-23-part_of-information_market-block-10",
+      "from": "information_market-stmt-23",
+      "to": "information_market-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-24-part_of-information_market-block-10",
+      "from": "information_market-stmt-24",
+      "to": "information_market-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-25-part_of-information_market-block-12",
+      "from": "information_market-stmt-25",
+      "to": "information_market-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-26-part_of-information_market-block-12",
+      "from": "information_market-stmt-26",
+      "to": "information_market-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-27-part_of-information_market-block-12",
+      "from": "information_market-stmt-27",
+      "to": "information_market-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-28-part_of-information_market-block-12",
+      "from": "information_market-stmt-28",
+      "to": "information_market-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-29-part_of-information_market-block-13",
+      "from": "information_market-stmt-29",
+      "to": "information_market-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-30-part_of-information_market-block-13",
+      "from": "information_market-stmt-30",
+      "to": "information_market-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-31-part_of-information_market-block-13",
+      "from": "information_market-stmt-31",
+      "to": "information_market-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-32-part_of-information_market-block-14",
+      "from": "information_market-stmt-32",
+      "to": "information_market-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-33-part_of-information_market-block-14",
+      "from": "information_market-stmt-33",
+      "to": "information_market-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-34-part_of-information_market-block-14",
+      "from": "information_market-stmt-34",
+      "to": "information_market-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-35-part_of-information_market-block-17",
+      "from": "information_market-stmt-35",
+      "to": "information_market-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-36-part_of-information_market-block-17",
+      "from": "information_market-stmt-36",
+      "to": "information_market-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-37-part_of-information_market-block-18",
+      "from": "information_market-stmt-37",
+      "to": "information_market-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-38-part_of-information_market-block-18",
+      "from": "information_market-stmt-38",
+      "to": "information_market-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-39-part_of-information_market-block-18",
+      "from": "information_market-stmt-39",
+      "to": "information_market-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-40-part_of-information_market-block-18",
+      "from": "information_market-stmt-40",
+      "to": "information_market-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-41-part_of-information_market-block-19",
+      "from": "information_market-stmt-41",
+      "to": "information_market-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-42-part_of-information_market-block-21",
+      "from": "information_market-stmt-42",
+      "to": "information_market-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-43-part_of-information_market-block-21",
+      "from": "information_market-stmt-43",
+      "to": "information_market-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-44-part_of-information_market-block-21",
+      "from": "information_market-stmt-44",
+      "to": "information_market-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-45-part_of-information_market-block-21",
+      "from": "information_market-stmt-45",
+      "to": "information_market-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-46-part_of-information_market-block-22",
+      "from": "information_market-stmt-46",
+      "to": "information_market-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-47-part_of-information_market-block-22",
+      "from": "information_market-stmt-47",
+      "to": "information_market-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-48-part_of-information_market-block-24",
+      "from": "information_market-stmt-48",
+      "to": "information_market-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-49-part_of-information_market-block-24",
+      "from": "information_market-stmt-49",
+      "to": "information_market-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-50-part_of-information_market-block-24",
+      "from": "information_market-stmt-50",
+      "to": "information_market-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-51-part_of-information_market-block-25",
+      "from": "information_market-stmt-51",
+      "to": "information_market-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-52-part_of-information_market-block-25",
+      "from": "information_market-stmt-52",
+      "to": "information_market-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-53-part_of-information_market-block-25",
+      "from": "information_market-stmt-53",
+      "to": "information_market-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-54-part_of-information_market-block-25",
+      "from": "information_market-stmt-54",
+      "to": "information_market-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-55-part_of-information_market-block-26",
+      "from": "information_market-stmt-55",
+      "to": "information_market-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-56-part_of-information_market-block-28",
+      "from": "information_market-stmt-56",
+      "to": "information_market-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-57-part_of-information_market-block-29",
+      "from": "information_market-stmt-57",
+      "to": "information_market-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-58-part_of-information_market-block-29",
+      "from": "information_market-stmt-58",
+      "to": "information_market-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-59-part_of-information_market-block-29",
+      "from": "information_market-stmt-59",
+      "to": "information_market-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-60-part_of-information_market-block-29",
+      "from": "information_market-stmt-60",
+      "to": "information_market-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-61-part_of-information_market-block-29",
+      "from": "information_market-stmt-61",
+      "to": "information_market-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-62-part_of-information_market-block-30",
+      "from": "information_market-stmt-62",
+      "to": "information_market-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-information_market-stmt-63-part_of-information_market-block-30",
+      "from": "information_market-stmt-63",
+      "to": "information_market-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "information_market-stmt-1",
       "quote": "We speak of \"the information age\" as if information became valuable only recently.",
+      "block_id": "information_market-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-2",
       "quote": "Information has been a **commodity** — something produced, shipped, priced, and traded — for centuries.",
+      "block_id": "information_market-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-3",
       "quote": "But a commodity is not just \"valuable things\"; a commodity is valuable *because it moves*.",
+      "block_id": "information_market-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-4",
       "quote": "It has producers, a price, a channel, and buyers.",
+      "block_id": "information_market-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-5",
       "quote": "So the question this chapter asks is not \"when did information become important?\" but **how was a *market* for it built** — because a market, with a flow, is the thing everything after it (the encyclopedia, the database, the web) runs on.",
+      "block_id": "information_market-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-6",
       "quote": "The first layer is the **market** itself.",
+      "block_id": "information_market-block-4",
       "section": "News becomes a commodity: the Fugger network (16th c.)",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-7",
       "quote": "In the sixteenth century, in the banking city of Augsburg, the Fugger family ran one of Europe's largest information networks \\cite[the Fugger news market, Wikipedia]{fuggernews}.",
+      "block_id": "information_market-block-4",
       "section": "News becomes a commodity: the Fugger network (16th c.)",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-8",
       "quote": "Bankers and merchants lived on *information*: a rumor of war, a price in Venice, a ship lost at sea — any of these was money, and it was money that *decayed*.",
+      "block_id": "information_market-block-4",
       "section": "News becomes a commodity: the Fugger network (16th c.)",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-9",
       "quote": "So the Fuggers ran a web of correspondents across Europe.",
+      "block_id": "information_market-block-4",
       "section": "News becomes a commodity: the Fugger network (16th c.)",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-10",
       "quote": "A letter describing a significant event was copied and circulated as a news report; and a common device was a plain listing of current prices, the circulation of which quickened international trade \\cite[News — early news networks, Wikipedia]{fuggernews}.",
+      "block_id": "information_market-block-4",
       "section": "News becomes a commodity: the Fugger network (16th c.)",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-11",
       "quote": "This is the *Relation*, the German newssheet — and it is the first place we can point to news as a **product**: something a producer makes, ships out, and a buyer receives.",
+      "block_id": "information_market-block-5",
       "section": "News becomes a commodity: the Fugger network (16th c.)",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-12",
       "quote": "Information has become the thing that is *sold*.",
+      "block_id": "information_market-block-5",
       "section": "News becomes a commodity: the Fugger network (16th c.)",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-13",
       "quote": "Title page of a German *Relation* — the earliest surviving sheet of the genre, here Johann Carolus's Strasbourg *Relation* (1605/1609), recognized as the world's first newspaper.",
+      "block_id": "information_market-block-6",
       "section": "News becomes a commodity: the Fugger network (16th c.)",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-14",
       "quote": "The Fugger network of Augsburg dealt in this same form of news.",
+      "block_id": "information_market-block-6",
       "section": "News becomes a commodity: the Fugger network (16th c.)",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-15",
       "quote": "Public domain (University of Heidelberg scan).",
+      "block_id": "information_market-block-6",
       "section": "News becomes a commodity: the Fugger network (16th c.)",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-16",
       "quote": "A commodity needs a **public**.",
+      "block_id": "information_market-block-8",
       "section": "The coffee-house public sphere",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-17",
       "quote": "In the seventeenth and eighteenth centuries the venue was the coffee house.",
+      "block_id": "information_market-block-8",
       "section": "The coffee-house public sphere",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-18",
       "quote": "The sociologist \\citeauthor{habermaspublicsphere} (\\citeyear{habermaspublicsphere}) later named what was happening there: the **public sphere** — a space that was physically a coffee house in Britain, a salon in France, a reading society in Germany, where private individuals gathered to talk about *printed matter* as a shared reality \\cite[the coffee-house public sphere, Habermas]{habermaspublicsphere}.",
+      "block_id": "information_market-block-8",
       "section": "The coffee-house public sphere",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-19",
       "quote": "The authority is not in any single person's rank, title, or lineage.",
+      "block_id": "information_market-block-9",
       "section": "The coffee-house public sphere",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-20",
       "quote": "It is in the **forum**: you argued a point, but you argued it to a public that had *read the same paper*.",
+      "block_id": "information_market-block-9",
       "section": "The coffee-house public sphere",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-21",
       "quote": "Information stopped being a private possession in the head of the Fugger banker and became the raw material of a collective, argument-generating public.",
+      "block_id": "information_market-block-9",
       "section": "The coffee-house public sphere",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-22",
       "quote": "The news sheet (the commodity) and the coffee house (the venue) are two halves of the same invention: a way for a *society* to share and contest what it knows.",
+      "block_id": "information_market-block-9",
       "section": "The coffee-house public sphere",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-23",
       "quote": "\\marginfig{coffee_house_1674.png}{A London coffee house, 1674 — the physical venue of the early public sphere.",
+      "block_id": "information_market-block-10",
       "section": "The coffee-house public sphere",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-24",
       "quote": "Public domain engraving.}",
+      "block_id": "information_market-block-10",
       "section": "The coffee-house public sphere",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-25",
       "quote": "The urge to gather *all* knowledge into one place is far older than the Enlightenment.",
+      "block_id": "information_market-block-12",
       "section": "Before the Encyclopédie: Isidore of Seville",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-26",
       "quote": "Nearly eleven centuries before Diderot, in Visigothic Spain, the archbishop \\cite[Isidore of Seville]{isidoreofseville} (c.",
+      "block_id": "information_market-block-12",
       "section": "Before the Encyclopédie: Isidore of Seville",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-27",
       "quote": "560–636) compiled the *\\citetitle{etymologiae}* — a twenty-book encyclopedia that tried to capture the whole of ancient learning in a single ordered work.",
+      "block_id": "information_market-block-12",
       "section": "Before the Encyclopédie: Isidore of Seville",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-28",
       "quote": "Its modern translators call it \"arguably the most influential book, after the Bible, in the learned world of the Latin West for nearly a thousand years\" \\cite{etymologiae}.",
+      "block_id": "information_market-block-12",
       "section": "Before the Encyclopédie: Isidore of Seville",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-29",
       "quote": "Isidore did not merely store the classics; he reorganized them.",
+      "block_id": "information_market-block-13",
       "section": "Before the Encyclopédie: Isidore of Seville",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-30",
       "quote": "Drawing on hundreds of earlier authors — Pliny, Solinus, Servius, the church fathers — he sorted everything from grammar, rhetoric, and the mathematical *quadrivium* to medicine, law, animals, geography, and the making of furniture into twenty books, each a folder in one universal filing cabinet \\cite{etymologiae}.",
+      "block_id": "information_market-block-13",
       "section": "Before the Encyclopédie: Isidore of Seville",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-31",
       "quote": "The *Etymologiae* became *the* textbook of the Middle Ages, copied in nearly a thousand surviving manuscripts; so completely did it stand in for the originals that some classical works stopped being copied and were lost, surviving only as his excerpts \\cite{etymologiae}.",
+      "block_id": "information_market-block-13",
       "section": "Before the Encyclopédie: Isidore of Seville",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-32",
       "quote": "It is a fitting accident of history, then, that the Catholic Church has come to regard Isidore as the patron saint of the internet — and of computer users and programmers.",
+      "block_id": "information_market-block-14",
       "section": "Before the Encyclopédie: Isidore of Seville",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-33",
       "quote": "The identification is best described as a popular, informal patronage: in the early 2000s Catholic internet groups and a Vatican media office promoted Isidore for the role, but no formal papal decree is documented, which is itself a very Isidorean sort of uncertainty (\\cite[Shachtman, 2002]{wired2002isidore}).",
+      "block_id": "information_market-block-14",
       "section": "Before the Encyclopédie: Isidore of Seville",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-34",
       "quote": "A seventh-century bishop who tried to put the whole world into twenty books is, at the very least, the right ancestor for the thing this chapter is about.",
+      "block_id": "information_market-block-14",
       "section": "Before the Encyclopédie: Isidore of Seville",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-35",
       "quote": "If the coffee house was where information was *discussed*, the Encyclopédie was the great eighteenth-century attempt to **collect** it.",
+      "block_id": "information_market-block-17",
       "section": "The Encyclopédie: compiling everything at once",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-36",
       "quote": "Between 1751 and 1772, \\citeauthor{encyclopedie} and some hundred and forty contributors set out to put *all* known knowledge into a single work — the sciences, the arts, the trades — and, crucially, to **cross-reference** the articles to one another: a device the history of the book calls \"a kind of precursor to the hyperlink\" \\cite[the Encyclopédie, Diderot & d'Alembert]{encyclopedie}.",
+      "block_id": "information_market-block-17",
       "section": "The Encyclopédie: compiling everything at once",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-37",
       "quote": "The ambition was not merely to *store* knowledge but to *connect* it — and in doing so, to change how people thought.",
+      "block_id": "information_market-block-18",
       "section": "The Encyclopédie: compiling everything at once",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-38",
       "quote": "This is the **corpus** in its first systematic form: a body of text, organized and internally linked, large enough that it becomes an object in its own right.",
+      "block_id": "information_market-block-18",
       "section": "The Encyclopédie: compiling everything at once",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-39",
       "quote": "You can now point at \"the Encyclopédie\" the way you later point at \"the web\" — as a single, structured, interlinked thing.",
+      "block_id": "information_market-block-18",
       "section": "The Encyclopédie: compiling everything at once",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-40",
       "quote": "Two centuries after Diderot, that object has a new name: the *training corpus* \\cite[the Encyclopédie, Diderot & d'Alembert]{encyclopedie}.",
+      "block_id": "information_market-block-18",
       "section": "The Encyclopédie: compiling everything at once",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-41",
       "quote": "Title page of the *Encyclopédie, ou dictionnaire raisonné des sciences, des arts et des métiers* (Diderot & d'Alembert, 1751).",
+      "block_id": "information_market-block-19",
       "section": "The Encyclopédie: compiling everything at once",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-42",
       "quote": "The final layer is the one that was missing from the story for a hundred years, because it was almost lost.",
+      "block_id": "information_market-block-21",
       "section": "Paul Otlet and the Mundaneum: the library that wanted to be the world",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-43",
       "quote": "In 1910 two Belgian lawyers — \\cite[Paul Otlet]{paulotlet} and Henri La Fontaine — built the **Mundaneum** in Brussels \\cite[the Mundaneum, Wikipedia]{mundaneum}.",
+      "block_id": "information_market-block-21",
       "section": "Paul Otlet and the Mundaneum: the library that wanted to be the world",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-44",
       "quote": "It was a *documentation of the world*: every book, article, and fact they could collect reduced to a standardized index card, classified by the Universal Decimal Classification and **cross-indexed**, so that a single fact sat in many drawers at once.",
+      "block_id": "information_market-block-21",
       "section": "Paul Otlet and the Mundaneum: the library that wanted to be the world",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-45",
       "quote": "At its height the building held more than twelve million cards — a physical model of the whole of human knowledge, *networked by index* \\cite[the Mundaneum, Wikipedia]{mundaneum}.",
+      "block_id": "information_market-block-21",
       "section": "Paul Otlet and the Mundaneum: the library that wanted to be the world",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-46",
       "quote": "\\marginfig{paul_otlet.jpg}{\\cite[Paul Otlet (1868–1944)]{paulotlet} at his office, 1937.",
+      "block_id": "information_market-block-22",
       "section": "Paul Otlet and the Mundaneum: the library that wanted to be the world",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-47",
       "quote": "Public domain (Mundaneum).}",
+      "block_id": "information_market-block-22",
       "section": "Paul Otlet and the Mundaneum: the library that wanted to be the world",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-48",
       "quote": "In 1934 Otlet published the \\cite[Traité de Documentation]{traitededocumentation}, and with it the vision that the next forty years would chase.",
+      "block_id": "information_market-block-24",
       "section": "1934: the paper internet",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-49",
       "quote": "He described a network of what he called \"electric telescopes\" — a *worldwide network* (a *réseau mondial*) of interlinked documents, held in a central repository, that anyone could consult from their own armchair: a moving image of the world, projected on a personal screen \\cite[Wright, Cataloging the World (2014)]{catalogingtheworld}.",
+      "block_id": "information_market-block-24",
       "section": "1934: the paper internet",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-50",
       "quote": "He called that central repository the **mundotheque** — his word for a \"world-library\" that would display any document on demand, from anywhere \\cite[the Mundaneum, Wikipedia]{mundaneum}.",
+      "block_id": "information_market-block-24",
       "section": "1934: the paper internet",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-51",
       "quote": "Read that again: a network of linked documents, *retrievable by query, from a distance, on demand*.",
+      "block_id": "information_market-block-25",
       "section": "1934: the paper internet",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-52",
       "quote": "In 1934, with paper cards and telegraph lines, Otlet was describing a **paper internet** — before the word \"internet\" was ever applied to a network of computers.",
+      "block_id": "information_market-block-25",
       "section": "1934: the paper internet",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-53",
       "quote": "His 1934 vision directly prefigured the *Memex* that Vannevar Bush would make famous a decade later, and the [World Wide Web](untold_history_iii.php) that came after that.",
+      "block_id": "information_market-block-25",
       "section": "1934: the paper internet",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-54",
       "quote": "This is the hinge the course has been building toward: the moment the *corpus* stops being a thing you read in a room and becomes a thing you **query from anywhere**.",
+      "block_id": "information_market-block-25",
       "section": "1934: the paper internet",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-55",
       "quote": "\\marginfig{palais_mondial_1930.jpg}{Otlet and Henri La Fontaine at the gates of the Palais Mondial, 1930 — the physical home of the Mundaneum's twelve million cross-indexed cards.",
+      "block_id": "information_market-block-26",
       "section": "1934: the paper internet",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-56",
       "quote": "Step back, and this whole chapter is the slow construction of a **system for information**, in four layers — each a displaced prerequisite of the one you use today:",
+      "block_id": "information_market-block-28",
       "section": "The payoff: four layers, one system",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-57",
-      "quote": "* **A market** — news as a priced, shipped commodity (the Fugger network, 16th c.).",
+      "quote": "The mapping onto the present is not decoration.",
+      "block_id": "information_market-block-29",
       "section": "The payoff: four layers, one system",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-58",
-      "quote": "* **A public** — a venue where the commodity is shared and argued (the coffee house, 17th–18th c.).",
+      "quote": "A search engine is the coffee house made global.",
+      "block_id": "information_market-block-29",
       "section": "The payoff: four layers, one system",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-59",
-      "quote": "* **A corpus** — the attempt to collect and cross-link all of it (Isidore's *Etymologiae*, 7th c.; the Encyclopédie, 1751–72).",
+      "quote": "A [vector database](vectorsearch.php) is the Mundaneum's twelve million cards, now floating in a metric space and retrieved by similarity instead of by drawer.",
+      "block_id": "information_market-block-29",
       "section": "The payoff: four layers, one system",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-60",
-      "quote": "* **A network** — the attempt to make the whole of it retrievable on demand (Otlet's paper internet, 1934).",
+      "quote": "And the [training corpus](training_data.php) — the entire crawlable web that modern models are trained on — is the Encyclopédie's dream of *all knowledge, cross-referenced*, finally achieved at a scale Diderot could not have imagined.",
+      "block_id": "information_market-block-29",
       "section": "The payoff: four layers, one system",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-61",
-      "quote": "The mapping onto the present is not decoration.",
+      "quote": "The next chapter, [The Untold History of AI](untold_history_iii.php), follows this arc to its end: Vannevar Bush, whose *Memex* of 1945 carried Otlet's \"read the world from your armchair\" vision into the age of electronics, and the chain that became the web.",
+      "block_id": "information_market-block-29",
       "section": "The payoff: four layers, one system",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-62",
-      "quote": "A search engine is the coffee house made global.",
+      "quote": "> Information became a **commodity** (the Fugger news market), then a **public** (the coffee house), then a **corpus** (the Encyclopédie), and finally a **network** — Otlet's Mundaneum and 1934 \"paper internet,\" a Memex before Bush.",
+      "block_id": "information_market-block-30",
       "section": "The payoff: four layers, one system",
       "kind": "statement"
     },
     {
       "id": "information_market-stmt-63",
-      "quote": "A [vector database](vectorsearch.php) is the Mundaneum's twelve million cards, now floating in a metric space and retrieved by similarity instead of by drawer.",
-      "section": "The payoff: four layers, one system",
-      "kind": "statement"
-    },
-    {
-      "id": "information_market-stmt-64",
-      "quote": "And the [training corpus](training_data.php) — the entire crawlable web that modern models are trained on — is the Encyclopédie's dream of *all knowledge, cross-referenced*, finally achieved at a scale Diderot could not have imagined.",
-      "section": "The payoff: four layers, one system",
-      "kind": "statement"
-    },
-    {
-      "id": "information_market-stmt-65",
-      "quote": "The next chapter, [The Untold History of AI](untold_history_iii.php), follows this arc to its end: Vannevar Bush, whose *Memex* of 1945 carried Otlet's \"read the world from your armchair\" vision into the age of electronics, and the chain that became the web.",
-      "section": "The payoff: four layers, one system",
-      "kind": "statement"
-    },
-    {
-      "id": "information_market-stmt-66",
-      "quote": "> Information became a **commodity** (the Fugger news market), then a **public** (the coffee house), then a **corpus** (the Encyclopédie), and finally a **network** — Otlet's Mundaneum and 1934 \"paper internet,\" a Memex before Bush.",
-      "section": "The payoff: four layers, one system",
-      "kind": "statement"
-    },
-    {
-      "id": "information_market-stmt-67",
       "quote": "Every layer is a displaced prerequisite of the retrieval system you use today.",
+      "block_id": "information_market-block-30",
       "section": "The payoff: four layers, one system",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "information_market-block-1",
+      "quote": "We speak of \"the information age\" as if information became valuable only recently. It did not. Information has been a **commodity** — something produced, shipped, priced, and traded — for centuries. But a commodity is not just \"valuable things\"; a commodity is valuable *because it moves*. It has producers, a price, a channel, and buyers. So the question this chapter asks is not \"when did information become important?\" but **how was a *market* for it built** — because a market, with a flow, is the thing everything after it (the encyclopedia, the database, the web) runs on.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "information_market-block-2",
+      "quote": "Compiling knowledge before the web",
+      "kind": "heading",
+      "section": "Compiling knowledge before the web"
+    },
+    {
+      "id": "information_market-block-3",
+      "quote": "News becomes a commodity: the Fugger network (16th c.)",
+      "kind": "heading",
+      "section": "News becomes a commodity: the Fugger network (16th c.)"
+    },
+    {
+      "id": "information_market-block-4",
+      "quote": "The first layer is the **market** itself. In the sixteenth century, in the banking city of Augsburg, the Fugger family ran one of Europe's largest information networks \\cite[the Fugger news market, Wikipedia]{fuggernews}. Bankers and merchants lived on *information*: a rumor of war, a price in Venice, a ship lost at sea — any of these was money, and it was money that *decayed*. So the Fuggers ran a web of correspondents across Europe. A letter describing a significant event was copied and circulated as a news report; and a common device was a plain listing of current prices, the circulation of which quickened international trade \\cite[News — early news networks, Wikipedia]{fuggernews}.",
+      "kind": "paragraph",
+      "section": "News becomes a commodity: the Fugger network (16th c.)"
+    },
+    {
+      "id": "information_market-block-5",
+      "quote": "This is the *Relation*, the German newssheet — and it is the first place we can point to news as a **product**: something a producer makes, ships out, and a buyer receives. Information has become the thing that is *sold*.",
+      "kind": "paragraph",
+      "section": "News becomes a commodity: the Fugger network (16th c.)"
+    },
+    {
+      "id": "information_market-block-6",
+      "quote": "Title page of a German *Relation* — the earliest surviving sheet of the genre, here Johann Carolus's Strasbourg *Relation* (1605/1609), recognized as the world's first newspaper. The Fugger network of Augsburg dealt in this same form of news. Public domain (University of Heidelberg scan).",
+      "kind": "paragraph",
+      "section": "News becomes a commodity: the Fugger network (16th c.)"
+    },
+    {
+      "id": "information_market-block-7",
+      "quote": "The coffee-house public sphere",
+      "kind": "heading",
+      "section": "The coffee-house public sphere"
+    },
+    {
+      "id": "information_market-block-8",
+      "quote": "A commodity needs a **public**. In the seventeenth and eighteenth centuries the venue was the coffee house. The sociologist \\citeauthor{habermaspublicsphere} (\\citeyear{habermaspublicsphere}) later named what was happening there: the **public sphere** — a space that was physically a coffee house in Britain, a salon in France, a reading society in Germany, where private individuals gathered to talk about *printed matter* as a shared reality \\cite[the coffee-house public sphere, Habermas]{habermaspublicsphere}.",
+      "kind": "paragraph",
+      "section": "The coffee-house public sphere"
+    },
+    {
+      "id": "information_market-block-9",
+      "quote": "Notice what is new. The authority is not in any single person's rank, title, or lineage. It is in the **forum**: you argued a point, but you argued it to a public that had *read the same paper*. Information stopped being a private possession in the head of the Fugger banker and became the raw material of a collective, argument-generating public. The news sheet (the commodity) and the coffee house (the venue) are two halves of the same invention: a way for a *society* to share and contest what it knows.",
+      "kind": "paragraph",
+      "section": "The coffee-house public sphere"
+    },
+    {
+      "id": "information_market-block-10",
+      "quote": "\\marginfig{coffee_house_1674.png}{A London coffee house, 1674 — the physical venue of the early public sphere. Public domain engraving.}",
+      "kind": "paragraph",
+      "section": "The coffee-house public sphere"
+    },
+    {
+      "id": "information_market-block-11",
+      "quote": "Before the Encyclopédie: Isidore of Seville",
+      "kind": "heading",
+      "section": "Before the Encyclopédie: Isidore of Seville"
+    },
+    {
+      "id": "information_market-block-12",
+      "quote": "The urge to gather *all* knowledge into one place is far older than the Enlightenment. Nearly eleven centuries before Diderot, in Visigothic Spain, the archbishop \\cite[Isidore of Seville]{isidoreofseville} (c. 560–636) compiled the *\\citetitle{etymologiae}* — a twenty-book encyclopedia that tried to capture the whole of ancient learning in a single ordered work. Its modern translators call it \"arguably the most influential book, after the Bible, in the learned world of the Latin West for nearly a thousand years\" \\cite{etymologiae}.",
+      "kind": "paragraph",
+      "section": "Before the Encyclopédie: Isidore of Seville"
+    },
+    {
+      "id": "information_market-block-13",
+      "quote": "Isidore did not merely store the classics; he reorganized them. Drawing on hundreds of earlier authors — Pliny, Solinus, Servius, the church fathers — he sorted everything from grammar, rhetoric, and the mathematical *quadrivium* to medicine, law, animals, geography, and the making of furniture into twenty books, each a folder in one universal filing cabinet \\cite{etymologiae}. The *Etymologiae* became *the* textbook of the Middle Ages, copied in nearly a thousand surviving manuscripts; so completely did it stand in for the originals that some classical works stopped being copied and were lost, surviving only as his excerpts \\cite{etymologiae}.",
+      "kind": "paragraph",
+      "section": "Before the Encyclopédie: Isidore of Seville"
+    },
+    {
+      "id": "information_market-block-14",
+      "quote": "It is a fitting accident of history, then, that the Catholic Church has come to regard Isidore as the patron saint of the internet — and of computer users and programmers. The identification is best described as a popular, informal patronage: in the early 2000s Catholic internet groups and a Vatican media office promoted Isidore for the role, but no formal papal decree is documented, which is itself a very Isidorean sort of uncertainty (\\cite[Shachtman, 2002]{wired2002isidore}). A seventh-century bishop who tried to put the whole world into twenty books is, at the very least, the right ancestor for the thing this chapter is about.",
+      "kind": "paragraph",
+      "section": "Before the Encyclopédie: Isidore of Seville"
+    },
+    {
+      "id": "information_market-block-15",
+      "quote": "The Encyclopédie and the Mundaneum",
+      "kind": "heading",
+      "section": "The Encyclopédie and the Mundaneum"
+    },
+    {
+      "id": "information_market-block-16",
+      "quote": "The Encyclopédie: compiling everything at once",
+      "kind": "heading",
+      "section": "The Encyclopédie: compiling everything at once"
+    },
+    {
+      "id": "information_market-block-17",
+      "quote": "If the coffee house was where information was *discussed*, the Encyclopédie was the great eighteenth-century attempt to **collect** it. Between 1751 and 1772, \\citeauthor{encyclopedie} and some hundred and forty contributors set out to put *all* known knowledge into a single work — the sciences, the arts, the trades — and, crucially, to **cross-reference** the articles to one another: a device the history of the book calls \"a kind of precursor to the hyperlink\" \\cite[the Encyclopédie, Diderot & d'Alembert]{encyclopedie}.",
+      "kind": "paragraph",
+      "section": "The Encyclopédie: compiling everything at once"
+    },
+    {
+      "id": "information_market-block-18",
+      "quote": "The ambition was not merely to *store* knowledge but to *connect* it — and in doing so, to change how people thought. This is the **corpus** in its first systematic form: a body of text, organized and internally linked, large enough that it becomes an object in its own right. You can now point at \"the Encyclopédie\" the way you later point at \"the web\" — as a single, structured, interlinked thing. Two centuries after Diderot, that object has a new name: the *training corpus* \\cite[the Encyclopédie, Diderot & d'Alembert]{encyclopedie}.",
+      "kind": "paragraph",
+      "section": "The Encyclopédie: compiling everything at once"
+    },
+    {
+      "id": "information_market-block-19",
+      "quote": "Title page of the *Encyclopédie, ou dictionnaire raisonné des sciences, des arts et des métiers* (Diderot & d'Alembert, 1751). Public domain.",
+      "kind": "paragraph",
+      "section": "The Encyclopédie: compiling everything at once"
+    },
+    {
+      "id": "information_market-block-20",
+      "quote": "Paul Otlet and the Mundaneum: the library that wanted to be the world",
+      "kind": "heading",
+      "section": "Paul Otlet and the Mundaneum: the library that wanted to be the world"
+    },
+    {
+      "id": "information_market-block-21",
+      "quote": "The final layer is the one that was missing from the story for a hundred years, because it was almost lost. In 1910 two Belgian lawyers — \\cite[Paul Otlet]{paulotlet} and Henri La Fontaine — built the **Mundaneum** in Brussels \\cite[the Mundaneum, Wikipedia]{mundaneum}. It was a *documentation of the world*: every book, article, and fact they could collect reduced to a standardized index card, classified by the Universal Decimal Classification and **cross-indexed**, so that a single fact sat in many drawers at once. At its height the building held more than twelve million cards — a physical model of the whole of human knowledge, *networked by index* \\cite[the Mundaneum, Wikipedia]{mundaneum}.",
+      "kind": "paragraph",
+      "section": "Paul Otlet and the Mundaneum: the library that wanted to be the world"
+    },
+    {
+      "id": "information_market-block-22",
+      "quote": "\\marginfig{paul_otlet.jpg}{\\cite[Paul Otlet (1868–1944)]{paulotlet} at his office, 1937. Public domain (Mundaneum).}",
+      "kind": "paragraph",
+      "section": "Paul Otlet and the Mundaneum: the library that wanted to be the world"
+    },
+    {
+      "id": "information_market-block-23",
+      "quote": "1934: the paper internet",
+      "kind": "heading",
+      "section": "1934: the paper internet"
+    },
+    {
+      "id": "information_market-block-24",
+      "quote": "In 1934 Otlet published the \\cite[Traité de Documentation]{traitededocumentation}, and with it the vision that the next forty years would chase. He described a network of what he called \"electric telescopes\" — a *worldwide network* (a *réseau mondial*) of interlinked documents, held in a central repository, that anyone could consult from their own armchair: a moving image of the world, projected on a personal screen \\cite[Wright, Cataloging the World (2014)]{catalogingtheworld}. He called that central repository the **mundotheque** — his word for a \"world-library\" that would display any document on demand, from anywhere \\cite[the Mundaneum, Wikipedia]{mundaneum}.",
+      "kind": "paragraph",
+      "section": "1934: the paper internet"
+    },
+    {
+      "id": "information_market-block-25",
+      "quote": "Read that again: a network of linked documents, *retrievable by query, from a distance, on demand*. In 1934, with paper cards and telegraph lines, Otlet was describing a **paper internet** — before the word \"internet\" was ever applied to a network of computers. His 1934 vision directly prefigured the *Memex* that Vannevar Bush would make famous a decade later, and the [World Wide Web](untold_history_iii.php) that came after that. This is the hinge the course has been building toward: the moment the *corpus* stops being a thing you read in a room and becomes a thing you **query from anywhere**.",
+      "kind": "paragraph",
+      "section": "1934: the paper internet"
+    },
+    {
+      "id": "information_market-block-26",
+      "quote": "\\marginfig{palais_mondial_1930.jpg}{Otlet and Henri La Fontaine at the gates of the Palais Mondial, 1930 — the physical home of the Mundaneum's twelve million cross-indexed cards. Public domain (Mundaneum).}",
+      "kind": "paragraph",
+      "section": "1934: the paper internet"
+    },
+    {
+      "id": "information_market-block-27",
+      "quote": "The payoff: four layers, one system",
+      "kind": "heading",
+      "section": "The payoff: four layers, one system"
+    },
+    {
+      "id": "information_market-block-28",
+      "quote": "Step back, and this whole chapter is the slow construction of a **system for information**, in four layers — each a displaced prerequisite of the one you use today:",
+      "kind": "paragraph",
+      "section": "The payoff: four layers, one system"
+    },
+    {
+      "id": "information_market-block-29",
+      "quote": "The mapping onto the present is not decoration. A search engine is the coffee house made global. A [vector database](vectorsearch.php) is the Mundaneum's twelve million cards, now floating in a metric space and retrieved by similarity instead of by drawer. And the [training corpus](training_data.php) — the entire crawlable web that modern models are trained on — is the Encyclopédie's dream of *all knowledge, cross-referenced*, finally achieved at a scale Diderot could not have imagined. The next chapter, [The Untold History of AI](untold_history_iii.php), follows this arc to its end: Vannevar Bush, whose *Memex* of 1945 carried Otlet's \"read the world from your armchair\" vision into the age of electronics, and the chain that became the web.",
+      "kind": "paragraph",
+      "section": "The payoff: four layers, one system"
+    },
+    {
+      "id": "information_market-block-30",
+      "quote": "> Information became a **commodity** (the Fugger news market), then a **public** (the coffee house), then a **corpus** (the Encyclopédie), and finally a **network** — Otlet's Mundaneum and 1934 \"paper internet,\" a Memex before Bush. Every layer is a displaced prerequisite of the retrieval system you use today.",
+      "kind": "paragraph",
+      "section": "The payoff: four layers, one system"
     }
   ]
 }

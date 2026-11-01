@@ -436,596 +436,3117 @@
         "hendrycks2021math"
       ],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-1-part_of-reasoning",
+      "from": "reasoning-block-1",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-2-part_of-reasoning",
+      "from": "reasoning-block-2",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-1-before-reasoning-block-2",
+      "from": "reasoning-block-1",
+      "to": "reasoning-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-2-related_to-reasoning-block-1",
+      "from": "reasoning-block-2",
+      "to": "reasoning-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-3-part_of-reasoning",
+      "from": "reasoning-block-3",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-2-before-reasoning-block-3",
+      "from": "reasoning-block-2",
+      "to": "reasoning-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-4-part_of-reasoning",
+      "from": "reasoning-block-4",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-3-before-reasoning-block-4",
+      "from": "reasoning-block-3",
+      "to": "reasoning-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-5-part_of-reasoning",
+      "from": "reasoning-block-5",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-4-before-reasoning-block-5",
+      "from": "reasoning-block-4",
+      "to": "reasoning-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-5-related_to-reasoning-block-4",
+      "from": "reasoning-block-5",
+      "to": "reasoning-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-6-part_of-reasoning",
+      "from": "reasoning-block-6",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-5-before-reasoning-block-6",
+      "from": "reasoning-block-5",
+      "to": "reasoning-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-7-part_of-reasoning",
+      "from": "reasoning-block-7",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-6-before-reasoning-block-7",
+      "from": "reasoning-block-6",
+      "to": "reasoning-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-7-related_to-reasoning-block-6",
+      "from": "reasoning-block-7",
+      "to": "reasoning-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-8-part_of-reasoning",
+      "from": "reasoning-block-8",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-7-before-reasoning-block-8",
+      "from": "reasoning-block-7",
+      "to": "reasoning-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-8-related_to-reasoning-block-6",
+      "from": "reasoning-block-8",
+      "to": "reasoning-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-9-part_of-reasoning",
+      "from": "reasoning-block-9",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-8-before-reasoning-block-9",
+      "from": "reasoning-block-8",
+      "to": "reasoning-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-9-related_to-reasoning-block-6",
+      "from": "reasoning-block-9",
+      "to": "reasoning-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-10-part_of-reasoning",
+      "from": "reasoning-block-10",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-9-before-reasoning-block-10",
+      "from": "reasoning-block-9",
+      "to": "reasoning-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-10-related_to-reasoning-block-6",
+      "from": "reasoning-block-10",
+      "to": "reasoning-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-11-part_of-reasoning",
+      "from": "reasoning-block-11",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-10-before-reasoning-block-11",
+      "from": "reasoning-block-10",
+      "to": "reasoning-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-11-related_to-reasoning-block-6",
+      "from": "reasoning-block-11",
+      "to": "reasoning-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-12-part_of-reasoning",
+      "from": "reasoning-block-12",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-11-before-reasoning-block-12",
+      "from": "reasoning-block-11",
+      "to": "reasoning-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-12-related_to-reasoning-block-6",
+      "from": "reasoning-block-12",
+      "to": "reasoning-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-13-part_of-reasoning",
+      "from": "reasoning-block-13",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-12-before-reasoning-block-13",
+      "from": "reasoning-block-12",
+      "to": "reasoning-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-13-related_to-reasoning-block-6",
+      "from": "reasoning-block-13",
+      "to": "reasoning-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-14-part_of-reasoning",
+      "from": "reasoning-block-14",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-13-before-reasoning-block-14",
+      "from": "reasoning-block-13",
+      "to": "reasoning-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-14-related_to-reasoning-block-6",
+      "from": "reasoning-block-14",
+      "to": "reasoning-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-15-part_of-reasoning",
+      "from": "reasoning-block-15",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-14-before-reasoning-block-15",
+      "from": "reasoning-block-14",
+      "to": "reasoning-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-15-related_to-reasoning-block-6",
+      "from": "reasoning-block-15",
+      "to": "reasoning-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-16-part_of-reasoning",
+      "from": "reasoning-block-16",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-15-before-reasoning-block-16",
+      "from": "reasoning-block-15",
+      "to": "reasoning-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-16-related_to-reasoning-block-6",
+      "from": "reasoning-block-16",
+      "to": "reasoning-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-17-part_of-reasoning",
+      "from": "reasoning-block-17",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-16-before-reasoning-block-17",
+      "from": "reasoning-block-16",
+      "to": "reasoning-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-18-part_of-reasoning",
+      "from": "reasoning-block-18",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-17-before-reasoning-block-18",
+      "from": "reasoning-block-17",
+      "to": "reasoning-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-18-related_to-reasoning-block-17",
+      "from": "reasoning-block-18",
+      "to": "reasoning-block-17",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-19-part_of-reasoning",
+      "from": "reasoning-block-19",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-18-before-reasoning-block-19",
+      "from": "reasoning-block-18",
+      "to": "reasoning-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-19-related_to-reasoning-block-17",
+      "from": "reasoning-block-19",
+      "to": "reasoning-block-17",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-20-part_of-reasoning",
+      "from": "reasoning-block-20",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-19-before-reasoning-block-20",
+      "from": "reasoning-block-19",
+      "to": "reasoning-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-20-related_to-reasoning-block-17",
+      "from": "reasoning-block-20",
+      "to": "reasoning-block-17",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-21-part_of-reasoning",
+      "from": "reasoning-block-21",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-20-before-reasoning-block-21",
+      "from": "reasoning-block-20",
+      "to": "reasoning-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-22-part_of-reasoning",
+      "from": "reasoning-block-22",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-21-before-reasoning-block-22",
+      "from": "reasoning-block-21",
+      "to": "reasoning-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-22-related_to-reasoning-block-21",
+      "from": "reasoning-block-22",
+      "to": "reasoning-block-21",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-23-part_of-reasoning",
+      "from": "reasoning-block-23",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-22-before-reasoning-block-23",
+      "from": "reasoning-block-22",
+      "to": "reasoning-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-23-related_to-reasoning-block-21",
+      "from": "reasoning-block-23",
+      "to": "reasoning-block-21",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-24-part_of-reasoning",
+      "from": "reasoning-block-24",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-23-before-reasoning-block-24",
+      "from": "reasoning-block-23",
+      "to": "reasoning-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-24-related_to-reasoning-block-21",
+      "from": "reasoning-block-24",
+      "to": "reasoning-block-21",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-25-part_of-reasoning",
+      "from": "reasoning-block-25",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-24-before-reasoning-block-25",
+      "from": "reasoning-block-24",
+      "to": "reasoning-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-25-related_to-reasoning-block-21",
+      "from": "reasoning-block-25",
+      "to": "reasoning-block-21",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-26-part_of-reasoning",
+      "from": "reasoning-block-26",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-25-before-reasoning-block-26",
+      "from": "reasoning-block-25",
+      "to": "reasoning-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-27-part_of-reasoning",
+      "from": "reasoning-block-27",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-26-before-reasoning-block-27",
+      "from": "reasoning-block-26",
+      "to": "reasoning-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-28-part_of-reasoning",
+      "from": "reasoning-block-28",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-27-before-reasoning-block-28",
+      "from": "reasoning-block-27",
+      "to": "reasoning-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-28-related_to-reasoning-block-27",
+      "from": "reasoning-block-28",
+      "to": "reasoning-block-27",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-29-part_of-reasoning",
+      "from": "reasoning-block-29",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-28-before-reasoning-block-29",
+      "from": "reasoning-block-28",
+      "to": "reasoning-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-29-related_to-reasoning-block-27",
+      "from": "reasoning-block-29",
+      "to": "reasoning-block-27",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-30-part_of-reasoning",
+      "from": "reasoning-block-30",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-29-before-reasoning-block-30",
+      "from": "reasoning-block-29",
+      "to": "reasoning-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-30-related_to-reasoning-block-27",
+      "from": "reasoning-block-30",
+      "to": "reasoning-block-27",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-31-part_of-reasoning",
+      "from": "reasoning-block-31",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-30-before-reasoning-block-31",
+      "from": "reasoning-block-30",
+      "to": "reasoning-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-32-part_of-reasoning",
+      "from": "reasoning-block-32",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-31-before-reasoning-block-32",
+      "from": "reasoning-block-31",
+      "to": "reasoning-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-32-related_to-reasoning-block-31",
+      "from": "reasoning-block-32",
+      "to": "reasoning-block-31",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-33-part_of-reasoning",
+      "from": "reasoning-block-33",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-32-before-reasoning-block-33",
+      "from": "reasoning-block-32",
+      "to": "reasoning-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-33-related_to-reasoning-block-31",
+      "from": "reasoning-block-33",
+      "to": "reasoning-block-31",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-34-part_of-reasoning",
+      "from": "reasoning-block-34",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-33-before-reasoning-block-34",
+      "from": "reasoning-block-33",
+      "to": "reasoning-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-35-part_of-reasoning",
+      "from": "reasoning-block-35",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-34-before-reasoning-block-35",
+      "from": "reasoning-block-34",
+      "to": "reasoning-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-35-related_to-reasoning-block-34",
+      "from": "reasoning-block-35",
+      "to": "reasoning-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-36-part_of-reasoning",
+      "from": "reasoning-block-36",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-35-before-reasoning-block-36",
+      "from": "reasoning-block-35",
+      "to": "reasoning-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-36-related_to-reasoning-block-34",
+      "from": "reasoning-block-36",
+      "to": "reasoning-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-37-part_of-reasoning",
+      "from": "reasoning-block-37",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-36-before-reasoning-block-37",
+      "from": "reasoning-block-36",
+      "to": "reasoning-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-37-related_to-reasoning-block-34",
+      "from": "reasoning-block-37",
+      "to": "reasoning-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-38-part_of-reasoning",
+      "from": "reasoning-block-38",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-37-before-reasoning-block-38",
+      "from": "reasoning-block-37",
+      "to": "reasoning-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-38-related_to-reasoning-block-34",
+      "from": "reasoning-block-38",
+      "to": "reasoning-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-39-part_of-reasoning",
+      "from": "reasoning-block-39",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-38-before-reasoning-block-39",
+      "from": "reasoning-block-38",
+      "to": "reasoning-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-39-related_to-reasoning-block-34",
+      "from": "reasoning-block-39",
+      "to": "reasoning-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-40-part_of-reasoning",
+      "from": "reasoning-block-40",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-39-before-reasoning-block-40",
+      "from": "reasoning-block-39",
+      "to": "reasoning-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-40-related_to-reasoning-block-34",
+      "from": "reasoning-block-40",
+      "to": "reasoning-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-41-part_of-reasoning",
+      "from": "reasoning-block-41",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-40-before-reasoning-block-41",
+      "from": "reasoning-block-40",
+      "to": "reasoning-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-41-related_to-reasoning-block-34",
+      "from": "reasoning-block-41",
+      "to": "reasoning-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-42-part_of-reasoning",
+      "from": "reasoning-block-42",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-41-before-reasoning-block-42",
+      "from": "reasoning-block-41",
+      "to": "reasoning-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-43-part_of-reasoning",
+      "from": "reasoning-block-43",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-42-before-reasoning-block-43",
+      "from": "reasoning-block-42",
+      "to": "reasoning-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-43-related_to-reasoning-block-42",
+      "from": "reasoning-block-43",
+      "to": "reasoning-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-44-part_of-reasoning",
+      "from": "reasoning-block-44",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-43-before-reasoning-block-44",
+      "from": "reasoning-block-43",
+      "to": "reasoning-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-44-related_to-reasoning-block-42",
+      "from": "reasoning-block-44",
+      "to": "reasoning-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-45-part_of-reasoning",
+      "from": "reasoning-block-45",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-44-before-reasoning-block-45",
+      "from": "reasoning-block-44",
+      "to": "reasoning-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-45-related_to-reasoning-block-42",
+      "from": "reasoning-block-45",
+      "to": "reasoning-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-46-part_of-reasoning",
+      "from": "reasoning-block-46",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-45-before-reasoning-block-46",
+      "from": "reasoning-block-45",
+      "to": "reasoning-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-47-part_of-reasoning",
+      "from": "reasoning-block-47",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-46-before-reasoning-block-47",
+      "from": "reasoning-block-46",
+      "to": "reasoning-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-48-part_of-reasoning",
+      "from": "reasoning-block-48",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-47-before-reasoning-block-48",
+      "from": "reasoning-block-47",
+      "to": "reasoning-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-48-related_to-reasoning-block-47",
+      "from": "reasoning-block-48",
+      "to": "reasoning-block-47",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-49-part_of-reasoning",
+      "from": "reasoning-block-49",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-48-before-reasoning-block-49",
+      "from": "reasoning-block-48",
+      "to": "reasoning-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-49-related_to-reasoning-block-47",
+      "from": "reasoning-block-49",
+      "to": "reasoning-block-47",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-50-part_of-reasoning",
+      "from": "reasoning-block-50",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-49-before-reasoning-block-50",
+      "from": "reasoning-block-49",
+      "to": "reasoning-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-50-related_to-reasoning-block-47",
+      "from": "reasoning-block-50",
+      "to": "reasoning-block-47",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-51-part_of-reasoning",
+      "from": "reasoning-block-51",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-50-before-reasoning-block-51",
+      "from": "reasoning-block-50",
+      "to": "reasoning-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-52-part_of-reasoning",
+      "from": "reasoning-block-52",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-51-before-reasoning-block-52",
+      "from": "reasoning-block-51",
+      "to": "reasoning-block-52",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-52-related_to-reasoning-block-51",
+      "from": "reasoning-block-52",
+      "to": "reasoning-block-51",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-53-part_of-reasoning",
+      "from": "reasoning-block-53",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-52-before-reasoning-block-53",
+      "from": "reasoning-block-52",
+      "to": "reasoning-block-53",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-53-related_to-reasoning-block-51",
+      "from": "reasoning-block-53",
+      "to": "reasoning-block-51",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-54-part_of-reasoning",
+      "from": "reasoning-block-54",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-53-before-reasoning-block-54",
+      "from": "reasoning-block-53",
+      "to": "reasoning-block-54",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-54-related_to-reasoning-block-51",
+      "from": "reasoning-block-54",
+      "to": "reasoning-block-51",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-55-part_of-reasoning",
+      "from": "reasoning-block-55",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-54-before-reasoning-block-55",
+      "from": "reasoning-block-54",
+      "to": "reasoning-block-55",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-55-related_to-reasoning-block-51",
+      "from": "reasoning-block-55",
+      "to": "reasoning-block-51",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-56-part_of-reasoning",
+      "from": "reasoning-block-56",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-55-before-reasoning-block-56",
+      "from": "reasoning-block-55",
+      "to": "reasoning-block-56",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-56-related_to-reasoning-block-51",
+      "from": "reasoning-block-56",
+      "to": "reasoning-block-51",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-57-part_of-reasoning",
+      "from": "reasoning-block-57",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-56-before-reasoning-block-57",
+      "from": "reasoning-block-56",
+      "to": "reasoning-block-57",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-58-part_of-reasoning",
+      "from": "reasoning-block-58",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-57-before-reasoning-block-58",
+      "from": "reasoning-block-57",
+      "to": "reasoning-block-58",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-58-related_to-reasoning-block-57",
+      "from": "reasoning-block-58",
+      "to": "reasoning-block-57",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-59-part_of-reasoning",
+      "from": "reasoning-block-59",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-58-before-reasoning-block-59",
+      "from": "reasoning-block-58",
+      "to": "reasoning-block-59",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-59-related_to-reasoning-block-57",
+      "from": "reasoning-block-59",
+      "to": "reasoning-block-57",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-60-part_of-reasoning",
+      "from": "reasoning-block-60",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-59-before-reasoning-block-60",
+      "from": "reasoning-block-59",
+      "to": "reasoning-block-60",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-60-related_to-reasoning-block-57",
+      "from": "reasoning-block-60",
+      "to": "reasoning-block-57",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-61-part_of-reasoning",
+      "from": "reasoning-block-61",
+      "to": "reasoning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-60-before-reasoning-block-61",
+      "from": "reasoning-block-60",
+      "to": "reasoning-block-61",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-block-61-related_to-reasoning-block-57",
+      "from": "reasoning-block-61",
+      "to": "reasoning-block-57",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-1-part_of-reasoning-block-1",
+      "from": "reasoning-stmt-1",
+      "to": "reasoning-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-2-part_of-reasoning-block-1",
+      "from": "reasoning-stmt-2",
+      "to": "reasoning-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-3-part_of-reasoning-block-1",
+      "from": "reasoning-stmt-3",
+      "to": "reasoning-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-4-part_of-reasoning-block-2",
+      "from": "reasoning-stmt-4",
+      "to": "reasoning-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-5-part_of-reasoning-block-5",
+      "from": "reasoning-stmt-5",
+      "to": "reasoning-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-6-part_of-reasoning-block-5",
+      "from": "reasoning-stmt-6",
+      "to": "reasoning-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-7-part_of-reasoning-block-5",
+      "from": "reasoning-stmt-7",
+      "to": "reasoning-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-8-part_of-reasoning-block-8",
+      "from": "reasoning-stmt-8",
+      "to": "reasoning-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-9-part_of-reasoning-block-9",
+      "from": "reasoning-stmt-9",
+      "to": "reasoning-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-10-part_of-reasoning-block-10",
+      "from": "reasoning-stmt-10",
+      "to": "reasoning-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-11-part_of-reasoning-block-11",
+      "from": "reasoning-stmt-11",
+      "to": "reasoning-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-12-part_of-reasoning-block-12",
+      "from": "reasoning-stmt-12",
+      "to": "reasoning-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-13-part_of-reasoning-block-13",
+      "from": "reasoning-stmt-13",
+      "to": "reasoning-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-14-part_of-reasoning-block-14",
+      "from": "reasoning-stmt-14",
+      "to": "reasoning-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-15-part_of-reasoning-block-15",
+      "from": "reasoning-stmt-15",
+      "to": "reasoning-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-16-part_of-reasoning-block-16",
+      "from": "reasoning-stmt-16",
+      "to": "reasoning-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-17-part_of-reasoning-block-18",
+      "from": "reasoning-stmt-17",
+      "to": "reasoning-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-18-part_of-reasoning-block-19",
+      "from": "reasoning-stmt-18",
+      "to": "reasoning-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-19-part_of-reasoning-block-20",
+      "from": "reasoning-stmt-19",
+      "to": "reasoning-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-20-part_of-reasoning-block-22",
+      "from": "reasoning-stmt-20",
+      "to": "reasoning-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-21-part_of-reasoning-block-23",
+      "from": "reasoning-stmt-21",
+      "to": "reasoning-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-22-part_of-reasoning-block-24",
+      "from": "reasoning-stmt-22",
+      "to": "reasoning-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-23-part_of-reasoning-block-25",
+      "from": "reasoning-stmt-23",
+      "to": "reasoning-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-24-part_of-reasoning-block-25",
+      "from": "reasoning-stmt-24",
+      "to": "reasoning-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-25-part_of-reasoning-block-25",
+      "from": "reasoning-stmt-25",
+      "to": "reasoning-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-26-part_of-reasoning-block-28",
+      "from": "reasoning-stmt-26",
+      "to": "reasoning-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-27-part_of-reasoning-block-29",
+      "from": "reasoning-stmt-27",
+      "to": "reasoning-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-28-part_of-reasoning-block-29",
+      "from": "reasoning-stmt-28",
+      "to": "reasoning-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-29-part_of-reasoning-block-30",
+      "from": "reasoning-stmt-29",
+      "to": "reasoning-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-30-part_of-reasoning-block-30",
+      "from": "reasoning-stmt-30",
+      "to": "reasoning-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-31-part_of-reasoning-block-30",
+      "from": "reasoning-stmt-31",
+      "to": "reasoning-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-32-part_of-reasoning-block-30",
+      "from": "reasoning-stmt-32",
+      "to": "reasoning-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-33-part_of-reasoning-block-32",
+      "from": "reasoning-stmt-33",
+      "to": "reasoning-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-34-part_of-reasoning-block-32",
+      "from": "reasoning-stmt-34",
+      "to": "reasoning-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-35-part_of-reasoning-block-32",
+      "from": "reasoning-stmt-35",
+      "to": "reasoning-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-36-part_of-reasoning-block-33",
+      "from": "reasoning-stmt-36",
+      "to": "reasoning-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-37-part_of-reasoning-block-35",
+      "from": "reasoning-stmt-37",
+      "to": "reasoning-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-38-part_of-reasoning-block-35",
+      "from": "reasoning-stmt-38",
+      "to": "reasoning-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-39-part_of-reasoning-block-37",
+      "from": "reasoning-stmt-39",
+      "to": "reasoning-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-40-part_of-reasoning-block-38",
+      "from": "reasoning-stmt-40",
+      "to": "reasoning-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-41-part_of-reasoning-block-39",
+      "from": "reasoning-stmt-41",
+      "to": "reasoning-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-42-part_of-reasoning-block-40",
+      "from": "reasoning-stmt-42",
+      "to": "reasoning-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-43-part_of-reasoning-block-40",
+      "from": "reasoning-stmt-43",
+      "to": "reasoning-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-44-part_of-reasoning-block-41",
+      "from": "reasoning-stmt-44",
+      "to": "reasoning-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-45-part_of-reasoning-block-43",
+      "from": "reasoning-stmt-45",
+      "to": "reasoning-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-46-part_of-reasoning-block-44",
+      "from": "reasoning-stmt-46",
+      "to": "reasoning-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-47-part_of-reasoning-block-45",
+      "from": "reasoning-stmt-47",
+      "to": "reasoning-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-48-part_of-reasoning-block-45",
+      "from": "reasoning-stmt-48",
+      "to": "reasoning-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-49-part_of-reasoning-block-48",
+      "from": "reasoning-stmt-49",
+      "to": "reasoning-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-50-part_of-reasoning-block-49",
+      "from": "reasoning-stmt-50",
+      "to": "reasoning-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-51-part_of-reasoning-block-50",
+      "from": "reasoning-stmt-51",
+      "to": "reasoning-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-52-part_of-reasoning-block-50",
+      "from": "reasoning-stmt-52",
+      "to": "reasoning-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-53-part_of-reasoning-block-52",
+      "from": "reasoning-stmt-53",
+      "to": "reasoning-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-54-part_of-reasoning-block-53",
+      "from": "reasoning-stmt-54",
+      "to": "reasoning-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-55-part_of-reasoning-block-53",
+      "from": "reasoning-stmt-55",
+      "to": "reasoning-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-56-part_of-reasoning-block-54",
+      "from": "reasoning-stmt-56",
+      "to": "reasoning-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-57-part_of-reasoning-block-55",
+      "from": "reasoning-stmt-57",
+      "to": "reasoning-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-58-part_of-reasoning-block-56",
+      "from": "reasoning-stmt-58",
+      "to": "reasoning-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-59-part_of-reasoning-block-58",
+      "from": "reasoning-stmt-59",
+      "to": "reasoning-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-60-part_of-reasoning-block-59",
+      "from": "reasoning-stmt-60",
+      "to": "reasoning-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-61-part_of-reasoning-block-60",
+      "from": "reasoning-stmt-61",
+      "to": "reasoning-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-62-part_of-reasoning-block-61",
+      "from": "reasoning-stmt-62",
+      "to": "reasoning-block-61",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reasoning-stmt-63-part_of-reasoning-block-61",
+      "from": "reasoning-stmt-63",
+      "to": "reasoning-block-61",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "reasoning-stmt-1",
       "quote": "For most of the LLM era, scaling meant **training**: bigger models on more tokens.",
+      "block_id": "reasoning-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-2",
       "quote": "In late 2024, OpenAI's **o1**, followed in January 2025 by DeepSeek's **R1**, introduced a different scaling axis: **reasoning at inference time**.",
+      "block_id": "reasoning-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-3",
       "quote": "The model thinks longer, explores more paths, verifies its answers, and gets dramatically better at math, code, and logic.",
+      "block_id": "reasoning-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-4",
       "quote": "This chapter covers the techniques behind reasoning models, from the cheap and effective (prompting tricks) to the heavyweight (RL-trained chain-of-thought).",
+      "block_id": "reasoning-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-5",
-      "quote": "* The **algorithm** behind R1 (GRPO) lives in the Reinforcement Learning chapter .",
-      "section": "",
+      "quote": "The **magic phrase** *“Let's think step by step”*, added to a zero-shot prompt, was introduced by (\\cite[Kojima et al., 2022]{kojima2022zeroshot}) and dramatically improves performance on arithmetic, commonsense, and symbolic reasoning tasks.",
+      "block_id": "reasoning-block-5",
+      "section": "Chain-of-Thought Prompting",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-6",
-      "quote": "* The **training pipeline** (SFT → RLHF → DPO) lives in the Fine-Tuning chapter .",
-      "section": "",
+      "quote": "Independently and almost simultaneously, (\\cite[Wei et al., 2022]{wei2022cot}) showed that **few-shot** chain-of-thought prompting, providing hand-written reasoning exemplars in the prompt, achieves an even larger effect.",
+      "block_id": "reasoning-block-5",
+      "section": "Chain-of-Thought Prompting",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-7",
-      "quote": "* **CoT + tool use** as a control loop lives in the AI Agents chapter § ReAct.",
-      "section": "",
+      "quote": "The model in both cases decomposes the problem into intermediate steps rather than jumping to an answer.",
+      "block_id": "reasoning-block-5",
+      "section": "Chain-of-Thought Prompting",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-8",
-      "quote": "* What **reason** and **reasoning** even *are*, philosophically, is unpacked in the Philosophy chapter § What is Reason?",
-      "section": "",
+      "quote": "| **Zero-shot CoT** | 2022 | *“Let's think step by step”* |",
+      "block_id": "reasoning-block-8",
+      "section": "Variants",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-9",
-      "quote": "The **magic phrase** *“Let's think step by step”*, added to a zero-shot prompt, was introduced by (\\cite[Kojima et al., 2022]{kojima2022zeroshot}) and dramatically improves performance on arithmetic, commonsense, and symbolic reasoning tasks.",
-      "section": "Chain-of-Thought Prompting",
+      "quote": "| **Few-shot CoT** | 2022 | Hand-written reasoning examples |",
+      "block_id": "reasoning-block-9",
+      "section": "Variants",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-10",
-      "quote": "Independently and almost simultaneously, (\\cite[Wei et al., 2022]{wei2022cot}) showed that **few-shot** chain-of-thought prompting, providing hand-written reasoning exemplars in the prompt, achieves an even larger effect.",
-      "section": "Chain-of-Thought Prompting",
+      "quote": "| **Least-to-most prompting** | 2022 | Decompose into subproblems, solve sequentially |",
+      "block_id": "reasoning-block-10",
+      "section": "Variants",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-11",
-      "quote": "The model in both cases decomposes the problem into intermediate steps rather than jumping to an answer.",
-      "section": "Chain-of-Thought Prompting",
+      "quote": "| **Tree of Thoughts (ToT)** (\\cite[Yao et al., 2023]{yao2023tot}) | 2023 | BFS/DFS over partial reasoning paths with self-evaluation |",
+      "block_id": "reasoning-block-11",
+      "section": "Variants",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-12",
-      "quote": "where $z$ is a chain-of-thought (a sequence of intermediate reasoning tokens).",
-      "section": "Chain-of-Thought Prompting",
+      "quote": "| **Graph of Thoughts (GoT)** | 2023 | DAG of thoughts, with merging and feedback |",
+      "block_id": "reasoning-block-12",
+      "section": "Variants",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-13",
-      "quote": "Marginalizing over $z$ gives the answer distribution; the prompt induces the model to sample informative $z$'s.",
-      "section": "Chain-of-Thought Prompting",
+      "quote": "| **Skeleton-of-Thought** | 2023 | Generate outline first, then fill in each section in parallel |",
+      "block_id": "reasoning-block-13",
+      "section": "Variants",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-14",
-      "quote": "**Few-shot CoT**: include examples of step-by-step solutions in the prompt.",
-      "section": "Chain-of-Thought Prompting",
+      "quote": "| **Self-Refine** (\\cite[Madaan et al., 2023]{madaan2023selfrefine}) | 2023 | Generate, critique, refine iteratively |",
+      "block_id": "reasoning-block-14",
+      "section": "Variants",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-15",
-      "quote": "**Zero-shot CoT**: just add the magic phrase.",
-      "section": "Chain-of-Thought Prompting",
+      "quote": "| **Chain-of-Density** | 2023 | Iterative summarization with increasing entity density |",
+      "block_id": "reasoning-block-15",
+      "section": "Variants",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-16",
-      "quote": "| **Zero-shot CoT** | 2022 | *“Let's think step by step”* |",
+      "quote": "| **ReAct** (\\cite[Yao et al., 2023]{yao2023react}) | 2023 | Interleave reasoning with tool use |",
+      "block_id": "reasoning-block-16",
       "section": "Variants",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-17",
-      "quote": "| **Few-shot CoT** | 2022 | Hand-written reasoning examples |",
-      "section": "Variants",
+      "quote": "The simplest and most reliable inference-time scaling trick (\\cite[Wang et al., 2022]{wang2022selfconsistency}):",
+      "block_id": "reasoning-block-18",
+      "section": "Self-Consistency",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-18",
-      "quote": "| **Self-consistency** | 2022 | Sample $k$ CoTs, take majority vote on answers |",
-      "section": "Variants",
+      "quote": "Extract the final answer from each: $\\{y^{(1)}, \\dots, y^{(k)}\\}$.",
+      "block_id": "reasoning-block-19",
+      "section": "Self-Consistency",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-19",
-      "quote": "| **Least-to-most prompting** | 2022 | Decompose into subproblems, solve sequentially |",
-      "section": "Variants",
+      "quote": "Take the **majority vote**: $\\hat y = \\text{mode}(y^{(1)}, \\dots, y^{(k)})$.",
+      "block_id": "reasoning-block-20",
+      "section": "Self-Consistency",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-20",
-      "quote": "| **Tree of Thoughts (ToT)** (\\cite[Yao et al., 2023]{yao2023tot}) | 2023 | BFS/DFS over partial reasoning paths with self-evaluation |",
-      "section": "Variants",
+      "quote": "Tree of Thoughts (\\cite[Yao et al., 2023]{yao2023tot}) explores a branching tree of candidate thoughts rather than a linear chain:",
+      "block_id": "reasoning-block-22",
+      "section": "Tree of Thoughts",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-21",
-      "quote": "| **Graph of Thoughts (GoT)** | 2023 | DAG of thoughts, with merging and feedback |",
-      "section": "Variants",
+      "quote": "**Evaluate** each candidate (by prompting the model itself).",
+      "block_id": "reasoning-block-23",
+      "section": "Tree of Thoughts",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-22",
-      "quote": "| **Skeleton-of-Thought** | 2023 | Generate outline first, then fill in each section in parallel |",
-      "section": "Variants",
+      "quote": "**Backtrack** if a path looks unpromising.",
+      "block_id": "reasoning-block-24",
+      "section": "Tree of Thoughts",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-23",
-      "quote": "| **Self-Refine** (\\cite[Madaan et al., 2023]{madaan2023selfrefine}) | 2023 | Generate, critique, refine iteratively |",
-      "section": "Variants",
+      "quote": "\\marginfig{theseus_minotaur_mosaic.jpg}{Theseus threading the labyrinth of the Minotaur (mosaic from the *House of the Labyrinth*, Pompeii).",
+      "block_id": "reasoning-block-25",
+      "section": "Tree of Thoughts",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-24",
-      "quote": "| **Chain-of-Density** | 2023 | Iterative summarization with increasing entity density |",
-      "section": "Variants",
+      "quote": "Tree of Thoughts is the same discipline: explore a branching path, evaluate each junction, backtrack when a route looks unpromising — and keep a thread, here a value estimate, so you never get lost in the tree.",
+      "block_id": "reasoning-block-25",
+      "section": "Tree of Thoughts",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-25",
-      "quote": "| **Verifier-guided search** | 2023 | Generate $k$ candidates, score with a learned verifier |",
-      "section": "Variants",
+      "quote": "[Mosaic: ancient Roman, public domain](https://commons.wikimedia.org/wiki/File:Theseus_and_the_Minotaur_mosaic_Room_42_(Mau-Overbeck_1884_plans)_House_of_the_Labyrinth_Pompeii.jpg)}",
+      "block_id": "reasoning-block-25",
+      "section": "Tree of Thoughts",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-26",
-      "quote": "| **ReAct** (\\cite[Yao et al., 2023]{yao2023react}) | 2023 | Interleave reasoning with tool use |",
-      "section": "Variants",
+      "quote": "OpenAI's o1 (September 2024) and DeepSeek's R1 (January 2025) pushed reasoning further by **training the model to think longer**:",
+      "block_id": "reasoning-block-28",
+      "section": "The o1 / R1 Paradigm: Inference-Time Training",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-27",
-      "quote": "The simplest and most reliable inference-time scaling trick (\\cite[Wang et al., 2022]{wang2022selfconsistency}):",
-      "section": "Self-Consistency",
+      "quote": "DeepSeek's **R1-Zero** was trained purely with RL (no SFT) using a technique called **GRPO** (\\cite[Shao et al., 2024]{shao2024grpo} Policy Optimization), which scores groups of sampled responses and updates the policy to favour the best in each group.",
+      "block_id": "reasoning-block-29",
+      "section": "The o1 / R1 Paradigm: Inference-Time Training",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-28",
-      "quote": "Sample $k$ independent CoTs from the model: $\\{z^{(1)}, \\dots, z^{(k)}\\}$.",
-      "section": "Self-Consistency",
+      "quote": "This produced emergent long-CoT behaviour without explicit supervision on reasoning traces; the released R1 model then added a cold-start SFT phase to stabilize the learned traces.",
+      "block_id": "reasoning-block-29",
+      "section": "The o1 / R1 Paradigm: Inference-Time Training",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-29",
-      "quote": "Extract the final answer from each: $\\{y^{(1)}, \\dots, y^{(k)}\\}$.",
-      "section": "Self-Consistency",
+      "quote": "R1's emergent long chain-of-thought is **not magic**.",
+      "block_id": "reasoning-block-30",
+      "section": "The o1 / R1 Paradigm: Inference-Time Training",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-30",
-      "quote": "Take the **majority vote**: $\\hat y = \\text{mode}(y^{(1)}, \\dots, y^{(k)})$.",
-      "section": "Self-Consistency",
+      "quote": "It is what falls out when you apply **Group Relative Policy Optimization** to a base model and reward it for getting verifiable answers right.",
+      "block_id": "reasoning-block-30",
+      "section": "The o1 / R1 Paradigm: Inference-Time Training",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-31",
-      "quote": "This works because **diverse reasoning paths converge on the same answer** when the model is correct, but **diverge when it is uncertain**.",
-      "section": "Self-Consistency",
+      "quote": "The full algorithm, group sampling, group-relative advantage, PPO-style clipped objective without a critic, lives in the Reinforcement Learning chapter § GRPO.",
+      "block_id": "reasoning-block-30",
+      "section": "The o1 / R1 Paradigm: Inference-Time Training",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-32",
-      "quote": "Self-consistency gives 10–20% accuracy gains on GSM8K and similar benchmarks at $k=40$.",
-      "section": "Self-Consistency",
+      "quote": "If a single line is all you remember: *R1 is what GRPO looks like when you let it run for a million steps on math problems*.",
+      "block_id": "reasoning-block-30",
+      "section": "The o1 / R1 Paradigm: Inference-Time Training",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-33",
-      "quote": "The cost is $k \\times$ more inference, but no retraining required.",
-      "section": "Self-Consistency",
+      "quote": "The hypothesis: **a hard problem is easier to solve step-by-step than in one forward pass**, because each intermediate step reduces the conditional entropy of the next.",
+      "block_id": "reasoning-block-32",
+      "section": "Why It Works",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-34",
-      "quote": "Tree of Thoughts (\\cite[Yao et al., 2023]{yao2023tot}) explores a branching tree of candidate thoughts rather than a linear chain:",
-      "section": "Tree of Thoughts",
+      "quote": "A 100-token CoT might involve ~10 reasoning “chunks”, each of which the model has seen many times in pretraining.",
+      "block_id": "reasoning-block-32",
+      "section": "Why It Works",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-35",
-      "quote": "**Generate** $b$ candidate thoughts at each step.",
-      "section": "Tree of Thoughts",
+      "quote": "The model is essentially **decomposing a single hard prediction into many easy ones**.",
+      "block_id": "reasoning-block-32",
+      "section": "Why It Works",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-36",
-      "quote": "**Evaluate** each candidate (by prompting the model itself).",
-      "section": "Tree of Thoughts",
+      "quote": "Forcing the model to verify its own work (critique-then-revise, search over candidates) gives another order-of-magnitude improvement on hard math and code.",
+      "block_id": "reasoning-block-33",
+      "section": "Why It Works",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-37",
-      "quote": "**Search**: BFS or DFS, keeping the top-$n$ candidates by evaluation score.",
-      "section": "Tree of Thoughts",
+      "quote": "A **reward model** (used in \\cite[Ouyang et al., 2022]{ouyang2022instructgpt}, see the Fine-Tuning chapter ) scores the *final* output.",
+      "block_id": "reasoning-block-35",
+      "section": "Process Reward Models (PRMs)",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-38",
-      "quote": "**Backtrack** if a path looks unpromising.",
-      "section": "Tree of Thoughts",
+      "quote": "A **Process Reward Model** scores every **step** of a reasoning trace.",
+      "block_id": "reasoning-block-35",
+      "section": "Process Reward Models (PRMs)",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-39",
-      "quote": "ToT can solve problems that linear CoT cannot (e.g., 24-game, crossword puzzles), at the cost of $O(b^d)$ model calls for depth $d$.",
-      "section": "Tree of Thoughts",
+      "quote": "Collect model-generated CoTs.",
+      "block_id": "reasoning-block-37",
+      "section": "Process Reward Models (PRMs)",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-40",
-      "quote": "\\marginfig{theseus_minotaur_mosaic.jpg}{Theseus threading the labyrinth of the Minotaur (mosaic from the *House of the Labyrinth*, Pompeii).",
-      "section": "Tree of Thoughts",
+      "quote": "Have humans label each step as correct / incorrect.",
+      "block_id": "reasoning-block-38",
+      "section": "Process Reward Models (PRMs)",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-41",
-      "quote": "Tree of Thoughts is the same discipline: explore a branching path, evaluate each junction, backtrack when a route looks unpromising — and keep a thread, here a value estimate, so you never get lost in the tree.",
-      "section": "Tree of Thoughts",
+      "quote": "Train a classifier on (state, step) → score.",
+      "block_id": "reasoning-block-39",
+      "section": "Process Reward Models (PRMs)",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-42",
-      "quote": "[Mosaic: ancient Roman, public domain](https://commons.wikimedia.org/wiki/File:Theseus_and_the_Minotaur_mosaic_Room_42_(Mau-Overbeck_1884_plans)_House_of_the_Labyrinth_Pompeii.jpg)}",
-      "section": "Tree of Thoughts",
+      "quote": "At inference, beam search guided by the PRM dramatically improves accuracy on math (used in systems such as Qwen-QwQ and many open-source replicas; OpenAI has not published o1's exact method).",
+      "block_id": "reasoning-block-40",
+      "section": "Process Reward Models (PRMs)",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-43",
-      "quote": "OpenAI's o1 (September 2024) and DeepSeek's R1 (January 2025) pushed reasoning further by **training the model to think longer**:",
-      "section": "The o1 / R1 Paradigm: Inference-Time Training",
+      "quote": "The cost is labelling data; synthetic PRMs (auto-labelling using a stronger model) are now competitive.",
+      "block_id": "reasoning-block-40",
+      "section": "Process Reward Models (PRMs)",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-44",
-      "quote": "* The model is fine-tuned on **long, detailed chain-of-thought traces** that include backtracking, self-correction, and verification.",
-      "section": "The o1 / R1 Paradigm: Inference-Time Training",
+      "quote": "The Math-Shepherd method (\\cite[Zhang et al., 2024]{zhang2024mathshepherd}) auto-labels step correctness by checking whether later steps can reach the correct final answer from this point, eliminating the need for human step labels.",
+      "block_id": "reasoning-block-41",
+      "section": "Process Reward Models (PRMs)",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-45",
-      "quote": "* At inference, the model produces **thousands of tokens of internal reasoning** before answering.",
-      "section": "The o1 / R1 Paradigm: Inference-Time Training",
+      "quote": "\\citetitle{snell2024testtime} (\\citeyear{snell2024testtime}) and others have shown that **inference-time compute scaling** follows a power law similar to training-time scaling:",
+      "block_id": "reasoning-block-43",
+      "section": "Inference-Time Scaling Laws",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-46",
-      "quote": "* **Test-time compute scaling**: performance improves monotonically with the number of reasoning tokens the model is allowed to use.",
-      "section": "The o1 / R1 Paradigm: Inference-Time Training",
+      "quote": "For o1-style reasoning on competition math (approximate values along the curve):",
+      "block_id": "reasoning-block-44",
+      "section": "Inference-Time Scaling Laws",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-47",
-      "quote": "DeepSeek's **R1-Zero** was trained purely with RL (no SFT) using a technique called **GRPO** (\\cite[Shao et al., 2024]{shao2024grpo} Policy Optimization), which scores groups of sampled responses and updates the policy to favour the best in each group.",
-      "section": "The o1 / R1 Paradigm: Inference-Time Training",
+      "quote": "Compare this with training: achieving 85% on AIME by training would require either a much larger base model or domain-specific data.",
+      "block_id": "reasoning-block-45",
+      "section": "Inference-Time Scaling Laws",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-48",
-      "quote": "This produced emergent long-CoT behaviour without explicit supervision on reasoning traces; the released R1 model then added a cold-start SFT phase to stabilize the learned traces.",
-      "section": "The o1 / R1 Paradigm: Inference-Time Training",
+      "quote": "**Inference-time scaling is often cheaper and more flexible**.",
+      "block_id": "reasoning-block-45",
+      "section": "Inference-Time Scaling Laws",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-49",
-      "quote": "R1's emergent long chain-of-thought is **not magic**.",
-      "section": "The o1 / R1 Paradigm: Inference-Time Training",
+      "quote": "Reasoning improves performance on tasks where:",
+      "block_id": "reasoning-block-48",
+      "section": "When Reasoning Helps (and When It Doesn't)",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-50",
-      "quote": "It is what falls out when you apply **Group Relative Policy Optimization** to a base model and reward it for getting verifiable answers right.",
-      "section": "The o1 / R1 Paradigm: Inference-Time Training",
+      "quote": "It does **not** help with:",
+      "block_id": "reasoning-block-49",
+      "section": "When Reasoning Helps (and When It Doesn't)",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-51",
-      "quote": "The full algorithm, group sampling, group-relative advantage, PPO-style clipped objective without a critic, lives in the Reinforcement Learning chapter § GRPO.",
-      "section": "The o1 / R1 Paradigm: Inference-Time Training",
+      "quote": "The bitter lesson still applies: **scale helps**.",
+      "block_id": "reasoning-block-50",
+      "section": "When Reasoning Helps (and When It Doesn't)",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-52",
-      "quote": "If a single line is all you remember: *R1 is what GRPO looks like when you let it run for a million steps on math problems*.",
-      "section": "The o1 / R1 Paradigm: Inference-Time Training",
+      "quote": "But now you have two knobs, training and inference.",
+      "block_id": "reasoning-block-50",
+      "section": "When Reasoning Helps (and When It Doesn't)",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-53",
-      "quote": "The hypothesis: **a hard problem is easier to solve step-by-step than in one forward pass**, because each intermediate step reduces the conditional entropy of the next.",
-      "section": "Why It Works",
+      "quote": "For practitioners building with today's models:",
+      "block_id": "reasoning-block-52",
+      "section": "Practical Patterns for Reasoning",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-54",
-      "quote": "A 100-token CoT might involve ~10 reasoning “chunks”, each of which the model has seen many times in pretraining.",
-      "section": "Why It Works",
+      "quote": "**For easy tasks**: zero-shot prompting suffices.",
+      "block_id": "reasoning-block-53",
+      "section": "Practical Patterns for Reasoning",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-55",
-      "quote": "The model is essentially **decomposing a single hard prediction into many easy ones**.",
-      "section": "Why It Works",
+      "quote": "Don't pay for reasoning tokens you don't need.",
+      "block_id": "reasoning-block-53",
+      "section": "Practical Patterns for Reasoning",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-56",
-      "quote": "Forcing the model to verify its own work (critique-then-revise, search over candidates) gives another order-of-magnitude improvement on hard math and code.",
-      "section": "Why It Works",
+      "quote": "**For medium tasks**: few-shot CoT, or enable the model's built-in thinking mode.",
+      "block_id": "reasoning-block-54",
+      "section": "Practical Patterns for Reasoning",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-57",
-      "quote": "A **reward model** (used in \\cite[Ouyang et al., 2022]{ouyang2022instructgpt}, see the Fine-Tuning chapter ) scores the *final* output.",
-      "section": "Process Reward Models (PRMs)",
+      "quote": "**For multi-step tasks**: ReAct (Reason + Act), or chain agents with explicit tool use.",
+      "block_id": "reasoning-block-55",
+      "section": "Practical Patterns for Reasoning",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-58",
-      "quote": "A **Process Reward Model** scores every **step** of a reasoning trace.",
-      "section": "Process Reward Models (PRMs)",
+      "quote": "The frontier of research is **meta-reasoning**: training the model to *decide how much to think* based on the problem.",
+      "block_id": "reasoning-block-56",
+      "section": "Practical Patterns for Reasoning",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-59",
-      "quote": "Collect model-generated CoTs.",
-      "section": "Process Reward Models (PRMs)",
+      "quote": "| Method | Compute cost | When to use |",
+      "block_id": "reasoning-block-58",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-60",
-      "quote": "Have humans label each step as correct / incorrect.",
-      "section": "Process Reward Models (PRMs)",
+      "quote": "| Zero-shot CoT | $1\\times$ | Quick win on MATH (\\cite[Hendrycks et al., 2021]{hendrycks2021math}) |",
+      "block_id": "reasoning-block-59",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-61",
-      "quote": "Train a classifier on (state, step) → score.",
-      "section": "Process Reward Models (PRMs)",
+      "quote": "| o1-style long thinking | $10{-}100\\times$ | Hard math, code, science |",
+      "block_id": "reasoning-block-60",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-62",
-      "quote": "At inference, beam search guided by the PRM dramatically improves accuracy on math (used in systems such as Qwen-QwQ and many open-source replicas; OpenAI has not published o1's exact method).",
-      "section": "Process Reward Models (PRMs)",
+      "quote": "The era of “scale by training” is now supplemented by **scale by thinking**.",
+      "block_id": "reasoning-block-61",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "reasoning-stmt-63",
-      "quote": "The cost is labelling data; synthetic PRMs (auto-labelling using a stronger model) are now competitive.",
-      "section": "Process Reward Models (PRMs)",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-64",
-      "quote": "The Math-Shepherd method (\\cite[Zhang et al., 2024]{zhang2024mathshepherd}) auto-labels step correctness by checking whether later steps can reach the correct final answer from this point, eliminating the need for human step labels.",
-      "section": "Process Reward Models (PRMs)",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-65",
-      "quote": "\\citetitle{snell2024testtime} (\\citeyear{snell2024testtime}) and others have shown that **inference-time compute scaling** follows a power law similar to training-time scaling:",
-      "section": "Inference-Time Scaling Laws",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-66",
-      "quote": "where $n$ is the number of reasoning tokens or search depth.",
-      "section": "Inference-Time Scaling Laws",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-67",
-      "quote": "The exponent $b$ depends on problem difficulty: easy problems saturate quickly, hard problems benefit enormously.",
-      "section": "Inference-Time Scaling Laws",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-68",
-      "quote": "For o1-style reasoning on competition math (approximate values along the curve):",
-      "section": "Inference-Time Scaling Laws",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-69",
-      "quote": "* $n = 100$ tokens: 50% accuracy",
-      "section": "Inference-Time Scaling Laws",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-70",
-      "quote": "* $n = 1{,}000$ tokens: 60% accuracy",
-      "section": "Inference-Time Scaling Laws",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-71",
-      "quote": "* $n = 10{,}000$ tokens: 72% accuracy",
-      "section": "Inference-Time Scaling Laws",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-72",
-      "quote": "Compare this with training: achieving 85% on AIME by training would require either a much larger base model or domain-specific data.",
-      "section": "Inference-Time Scaling Laws",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-73",
-      "quote": "**Inference-time scaling is often cheaper and more flexible**.",
-      "section": "Inference-Time Scaling Laws",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-74",
-      "quote": "Reasoning improves performance on tasks where:",
-      "section": "When Reasoning Helps (and When It Doesn't)",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-75",
-      "quote": "* The problem can be **decomposed** into verifiable substeps.",
-      "section": "When Reasoning Helps (and When It Doesn't)",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-76",
-      "quote": "* The model has the relevant **knowledge** in its weights (it just needs to compose it).",
-      "section": "When Reasoning Helps (and When It Doesn't)",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-77",
-      "quote": "* More compute at inference is **affordable** (latency, cost).",
-      "section": "When Reasoning Helps (and When It Doesn't)",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-78",
-      "quote": "It does **not** help with:",
-      "section": "When Reasoning Helps (and When It Doesn't)",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-79",
-      "quote": "* **Factual recall** (the model either knows the date of the Battle of Hastings or it doesn't).",
-      "section": "When Reasoning Helps (and When It Doesn't)",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-80",
-      "quote": "* **Subjective tasks** (creative writing, preference, there's no “correct” reasoning path).",
-      "section": "When Reasoning Helps (and When It Doesn't)",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-81",
-      "quote": "* **Hard perception** (recognizing fine-grained visual details).",
-      "section": "When Reasoning Helps (and When It Doesn't)",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-82",
-      "quote": "* **Distribution shift** (if the test prompt is unlike any training example, no amount of thinking will help).",
-      "section": "When Reasoning Helps (and When It Doesn't)",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-83",
-      "quote": "The bitter lesson still applies: **scale helps**.",
-      "section": "When Reasoning Helps (and When It Doesn't)",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-84",
-      "quote": "But now you have two knobs, training and inference.",
-      "section": "When Reasoning Helps (and When It Doesn't)",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-85",
-      "quote": "For practitioners building with today's models:",
-      "section": "Practical Patterns for Reasoning",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-86",
-      "quote": "**For easy tasks**: zero-shot prompting suffices.",
-      "section": "Practical Patterns for Reasoning",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-87",
-      "quote": "Don't pay for reasoning tokens you don't need.",
-      "section": "Practical Patterns for Reasoning",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-88",
-      "quote": "**For medium tasks**: few-shot CoT, or enable the model's built-in thinking mode.",
-      "section": "Practical Patterns for Reasoning",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-89",
-      "quote": "**For hard tasks**: best-of-$n$ sampling + verifier.",
-      "section": "Practical Patterns for Reasoning",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-90",
-      "quote": "Use a cheaper model for $n$ candidates, an expensive model for the final judgement.",
-      "section": "Practical Patterns for Reasoning",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-91",
-      "quote": "**For multi-step tasks**: ReAct (Reason + Act), or chain agents with explicit tool use.",
-      "section": "Practical Patterns for Reasoning",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-92",
-      "quote": "The frontier of research is **meta-reasoning**: training the model to *decide how much to think* based on the problem.",
-      "section": "Practical Patterns for Reasoning",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-93",
-      "quote": "| Method | Compute cost | When to use |",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-94",
-      "quote": "| Zero-shot CoT | $1\\times$ | Quick win on MATH (\\cite[Hendrycks et al., 2021]{hendrycks2021math}) |",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-95",
-      "quote": "| o1-style long thinking | $10{-}100\\times$ | Hard math, code, science |",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-96",
-      "quote": "| Process Reward Model search | $k \\cdot d\\times$ | Maximum accuracy on verifiable tasks |",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-97",
-      "quote": "The era of “scale by training” is now supplemented by **scale by thinking**.",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "reasoning-stmt-98",
       "quote": "The frontier in 2025 is figuring out how to spend inference compute *adaptively*, think hard when it matters, save tokens when it doesn't.",
+      "block_id": "reasoning-block-61",
       "section": "Summary",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "reasoning-block-1",
+      "quote": "For most of the LLM era, scaling meant **training**: bigger models on more tokens. In late 2024, OpenAI's **o1**, followed in January 2025 by DeepSeek's **R1**, introduced a different scaling axis: **reasoning at inference time**. The model thinks longer, explores more paths, verifies its answers, and gets dramatically better at math, code, and logic.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "reasoning-block-2",
+      "quote": "This chapter covers the techniques behind reasoning models, from the cheap and effective (prompting tricks) to the heavyweight (RL-trained chain-of-thought).",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "reasoning-block-3",
+      "quote": "Prompting: thinking in the open",
+      "kind": "heading",
+      "section": "Prompting: thinking in the open"
+    },
+    {
+      "id": "reasoning-block-4",
+      "quote": "Chain-of-Thought Prompting",
+      "kind": "heading",
+      "section": "Chain-of-Thought Prompting"
+    },
+    {
+      "id": "reasoning-block-5",
+      "quote": "The **magic phrase** *“Let's think step by step”*, added to a zero-shot prompt, was introduced by (\\cite[Kojima et al., 2022]{kojima2022zeroshot}) and dramatically improves performance on arithmetic, commonsense, and symbolic reasoning tasks. Independently and almost simultaneously, (\\cite[Wei et al., 2022]{wei2022cot}) showed that **few-shot** chain-of-thought prompting, providing hand-written reasoning exemplars in the prompt, achieves an even larger effect. The model in both cases decomposes the problem into intermediate steps rather than jumping to an answer.",
+      "kind": "paragraph",
+      "section": "Chain-of-Thought Prompting"
+    },
+    {
+      "id": "reasoning-block-6",
+      "quote": "Variants",
+      "kind": "heading",
+      "section": "Variants"
+    },
+    {
+      "id": "reasoning-block-7",
+      "quote": "| Method | Year | Idea |",
+      "kind": "table-row",
+      "section": "Variants"
+    },
+    {
+      "id": "reasoning-block-8",
+      "quote": "| **Zero-shot CoT** | 2022 | *“Let's think step by step”* |",
+      "kind": "table-row",
+      "section": "Variants"
+    },
+    {
+      "id": "reasoning-block-9",
+      "quote": "| **Few-shot CoT** | 2022 | Hand-written reasoning examples |",
+      "kind": "table-row",
+      "section": "Variants"
+    },
+    {
+      "id": "reasoning-block-10",
+      "quote": "| **Least-to-most prompting** | 2022 | Decompose into subproblems, solve sequentially |",
+      "kind": "table-row",
+      "section": "Variants"
+    },
+    {
+      "id": "reasoning-block-11",
+      "quote": "| **Tree of Thoughts (ToT)** (\\cite[Yao et al., 2023]{yao2023tot}) | 2023 | BFS/DFS over partial reasoning paths with self-evaluation |",
+      "kind": "table-row",
+      "section": "Variants"
+    },
+    {
+      "id": "reasoning-block-12",
+      "quote": "| **Graph of Thoughts (GoT)** | 2023 | DAG of thoughts, with merging and feedback |",
+      "kind": "table-row",
+      "section": "Variants"
+    },
+    {
+      "id": "reasoning-block-13",
+      "quote": "| **Skeleton-of-Thought** | 2023 | Generate outline first, then fill in each section in parallel |",
+      "kind": "table-row",
+      "section": "Variants"
+    },
+    {
+      "id": "reasoning-block-14",
+      "quote": "| **Self-Refine** (\\cite[Madaan et al., 2023]{madaan2023selfrefine}) | 2023 | Generate, critique, refine iteratively |",
+      "kind": "table-row",
+      "section": "Variants"
+    },
+    {
+      "id": "reasoning-block-15",
+      "quote": "| **Chain-of-Density** | 2023 | Iterative summarization with increasing entity density |",
+      "kind": "table-row",
+      "section": "Variants"
+    },
+    {
+      "id": "reasoning-block-16",
+      "quote": "| **ReAct** (\\cite[Yao et al., 2023]{yao2023react}) | 2023 | Interleave reasoning with tool use |",
+      "kind": "table-row",
+      "section": "Variants"
+    },
+    {
+      "id": "reasoning-block-17",
+      "quote": "Self-Consistency",
+      "kind": "heading",
+      "section": "Self-Consistency"
+    },
+    {
+      "id": "reasoning-block-18",
+      "quote": "The simplest and most reliable inference-time scaling trick (\\cite[Wang et al., 2022]{wang2022selfconsistency}):",
+      "kind": "paragraph",
+      "section": "Self-Consistency"
+    },
+    {
+      "id": "reasoning-block-19",
+      "quote": "2. Extract the final answer from each: $\\{y^{(1)}, \\dots, y^{(k)}\\}$.",
+      "kind": "list-item",
+      "section": "Self-Consistency"
+    },
+    {
+      "id": "reasoning-block-20",
+      "quote": "3. Take the **majority vote**: $\\hat y = \\text{mode}(y^{(1)}, \\dots, y^{(k)})$.",
+      "kind": "list-item",
+      "section": "Self-Consistency"
+    },
+    {
+      "id": "reasoning-block-21",
+      "quote": "Tree of Thoughts",
+      "kind": "heading",
+      "section": "Tree of Thoughts"
+    },
+    {
+      "id": "reasoning-block-22",
+      "quote": "Tree of Thoughts (\\cite[Yao et al., 2023]{yao2023tot}) explores a branching tree of candidate thoughts rather than a linear chain:",
+      "kind": "paragraph",
+      "section": "Tree of Thoughts"
+    },
+    {
+      "id": "reasoning-block-23",
+      "quote": "2. **Evaluate** each candidate (by prompting the model itself).",
+      "kind": "list-item",
+      "section": "Tree of Thoughts"
+    },
+    {
+      "id": "reasoning-block-24",
+      "quote": "4. **Backtrack** if a path looks unpromising.",
+      "kind": "list-item",
+      "section": "Tree of Thoughts"
+    },
+    {
+      "id": "reasoning-block-25",
+      "quote": "\\marginfig{theseus_minotaur_mosaic.jpg}{Theseus threading the labyrinth of the Minotaur (mosaic from the *House of the Labyrinth*, Pompeii). Tree of Thoughts is the same discipline: explore a branching path, evaluate each junction, backtrack when a route looks unpromising — and keep a thread, here a value estimate, so you never get lost in the tree. [Mosaic: ancient Roman, public domain](https://commons.wikimedia.org/wiki/File:Theseus_and_the_Minotaur_mosaic_Room_42_(Mau-Overbeck_1884_plans)_House_of_the_Labyrinth_Pompeii.jpg)}",
+      "kind": "paragraph",
+      "section": "Tree of Thoughts"
+    },
+    {
+      "id": "reasoning-block-26",
+      "quote": "The o1 / R1 paradigm: learning to think",
+      "kind": "heading",
+      "section": "The o1 / R1 paradigm: learning to think"
+    },
+    {
+      "id": "reasoning-block-27",
+      "quote": "The o1 / R1 Paradigm: Inference-Time Training",
+      "kind": "heading",
+      "section": "The o1 / R1 Paradigm: Inference-Time Training"
+    },
+    {
+      "id": "reasoning-block-28",
+      "quote": "OpenAI's o1 (September 2024) and DeepSeek's R1 (January 2025) pushed reasoning further by **training the model to think longer**:",
+      "kind": "paragraph",
+      "section": "The o1 / R1 Paradigm: Inference-Time Training"
+    },
+    {
+      "id": "reasoning-block-29",
+      "quote": "DeepSeek's **R1-Zero** was trained purely with RL (no SFT) using a technique called **GRPO** (\\cite[Shao et al., 2024]{shao2024grpo} Policy Optimization), which scores groups of sampled responses and updates the policy to favour the best in each group. This produced emergent long-CoT behaviour without explicit supervision on reasoning traces; the released R1 model then added a cold-start SFT phase to stabilize the learned traces.",
+      "kind": "paragraph",
+      "section": "The o1 / R1 Paradigm: Inference-Time Training"
+    },
+    {
+      "id": "reasoning-block-30",
+      "quote": "R1's emergent long chain-of-thought is **not magic**. It is what falls out when you apply **Group Relative Policy Optimization** to a base model and reward it for getting verifiable answers right. The full algorithm, group sampling, group-relative advantage, PPO-style clipped objective without a critic, lives in the Reinforcement Learning chapter § GRPO. If a single line is all you remember: *R1 is what GRPO looks like when you let it run for a million steps on math problems*.",
+      "kind": "paragraph",
+      "section": "The o1 / R1 Paradigm: Inference-Time Training"
+    },
+    {
+      "id": "reasoning-block-31",
+      "quote": "Why It Works",
+      "kind": "heading",
+      "section": "Why It Works"
+    },
+    {
+      "id": "reasoning-block-32",
+      "quote": "The hypothesis: **a hard problem is easier to solve step-by-step than in one forward pass**, because each intermediate step reduces the conditional entropy of the next. A 100-token CoT might involve ~10 reasoning “chunks”, each of which the model has seen many times in pretraining. The model is essentially **decomposing a single hard prediction into many easy ones**.",
+      "kind": "paragraph",
+      "section": "Why It Works"
+    },
+    {
+      "id": "reasoning-block-33",
+      "quote": "Forcing the model to verify its own work (critique-then-revise, search over candidates) gives another order-of-magnitude improvement on hard math and code.",
+      "kind": "paragraph",
+      "section": "Why It Works"
+    },
+    {
+      "id": "reasoning-block-34",
+      "quote": "Process Reward Models (PRMs)",
+      "kind": "heading",
+      "section": "Process Reward Models (PRMs)"
+    },
+    {
+      "id": "reasoning-block-35",
+      "quote": "A **reward model** (used in \\cite[Ouyang et al., 2022]{ouyang2022instructgpt}, see the Fine-Tuning chapter ) scores the *final* output. A **Process Reward Model** scores every **step** of a reasoning trace.",
+      "kind": "paragraph",
+      "section": "Process Reward Models (PRMs)"
+    },
+    {
+      "id": "reasoning-block-36",
+      "quote": "Training a PRM:",
+      "kind": "paragraph",
+      "section": "Process Reward Models (PRMs)"
+    },
+    {
+      "id": "reasoning-block-37",
+      "quote": "1. Collect model-generated CoTs.",
+      "kind": "list-item",
+      "section": "Process Reward Models (PRMs)"
+    },
+    {
+      "id": "reasoning-block-38",
+      "quote": "2. Have humans label each step as correct / incorrect.",
+      "kind": "list-item",
+      "section": "Process Reward Models (PRMs)"
+    },
+    {
+      "id": "reasoning-block-39",
+      "quote": "3. Train a classifier on (state, step) → score.",
+      "kind": "list-item",
+      "section": "Process Reward Models (PRMs)"
+    },
+    {
+      "id": "reasoning-block-40",
+      "quote": "At inference, beam search guided by the PRM dramatically improves accuracy on math (used in systems such as Qwen-QwQ and many open-source replicas; OpenAI has not published o1's exact method). The cost is labelling data; synthetic PRMs (auto-labelling using a stronger model) are now competitive.",
+      "kind": "paragraph",
+      "section": "Process Reward Models (PRMs)"
+    },
+    {
+      "id": "reasoning-block-41",
+      "quote": "The Math-Shepherd method (\\cite[Zhang et al., 2024]{zhang2024mathshepherd}) auto-labels step correctness by checking whether later steps can reach the correct final answer from this point, eliminating the need for human step labels.",
+      "kind": "paragraph",
+      "section": "Process Reward Models (PRMs)"
+    },
+    {
+      "id": "reasoning-block-42",
+      "quote": "Inference-Time Scaling Laws",
+      "kind": "heading",
+      "section": "Inference-Time Scaling Laws"
+    },
+    {
+      "id": "reasoning-block-43",
+      "quote": "\\citetitle{snell2024testtime} (\\citeyear{snell2024testtime}) and others have shown that **inference-time compute scaling** follows a power law similar to training-time scaling:",
+      "kind": "paragraph",
+      "section": "Inference-Time Scaling Laws"
+    },
+    {
+      "id": "reasoning-block-44",
+      "quote": "For o1-style reasoning on competition math (approximate values along the curve):",
+      "kind": "paragraph",
+      "section": "Inference-Time Scaling Laws"
+    },
+    {
+      "id": "reasoning-block-45",
+      "quote": "Compare this with training: achieving 85% on AIME by training would require either a much larger base model or domain-specific data. **Inference-time scaling is often cheaper and more flexible**.",
+      "kind": "paragraph",
+      "section": "Inference-Time Scaling Laws"
+    },
+    {
+      "id": "reasoning-block-46",
+      "quote": "Using reasoning well",
+      "kind": "heading",
+      "section": "Using reasoning well"
+    },
+    {
+      "id": "reasoning-block-47",
+      "quote": "When Reasoning Helps (and When It Doesn't)",
+      "kind": "heading",
+      "section": "When Reasoning Helps (and When It Doesn't)"
+    },
+    {
+      "id": "reasoning-block-48",
+      "quote": "Reasoning improves performance on tasks where:",
+      "kind": "paragraph",
+      "section": "When Reasoning Helps (and When It Doesn't)"
+    },
+    {
+      "id": "reasoning-block-49",
+      "quote": "It does **not** help with:",
+      "kind": "paragraph",
+      "section": "When Reasoning Helps (and When It Doesn't)"
+    },
+    {
+      "id": "reasoning-block-50",
+      "quote": "The bitter lesson still applies: **scale helps**. But now you have two knobs, training and inference.",
+      "kind": "paragraph",
+      "section": "When Reasoning Helps (and When It Doesn't)"
+    },
+    {
+      "id": "reasoning-block-51",
+      "quote": "Practical Patterns for Reasoning",
+      "kind": "heading",
+      "section": "Practical Patterns for Reasoning"
+    },
+    {
+      "id": "reasoning-block-52",
+      "quote": "For practitioners building with today's models:",
+      "kind": "paragraph",
+      "section": "Practical Patterns for Reasoning"
+    },
+    {
+      "id": "reasoning-block-53",
+      "quote": "1. **For easy tasks**: zero-shot prompting suffices. Don't pay for reasoning tokens you don't need.",
+      "kind": "list-item",
+      "section": "Practical Patterns for Reasoning"
+    },
+    {
+      "id": "reasoning-block-54",
+      "quote": "2. **For medium tasks**: few-shot CoT, or enable the model's built-in thinking mode.",
+      "kind": "list-item",
+      "section": "Practical Patterns for Reasoning"
+    },
+    {
+      "id": "reasoning-block-55",
+      "quote": "4. **For multi-step tasks**: ReAct (Reason + Act), or chain agents with explicit tool use.",
+      "kind": "list-item",
+      "section": "Practical Patterns for Reasoning"
+    },
+    {
+      "id": "reasoning-block-56",
+      "quote": "The frontier of research is **meta-reasoning**: training the model to *decide how much to think* based on the problem.",
+      "kind": "paragraph",
+      "section": "Practical Patterns for Reasoning"
+    },
+    {
+      "id": "reasoning-block-57",
+      "quote": "Summary",
+      "kind": "heading",
+      "section": "Summary"
+    },
+    {
+      "id": "reasoning-block-58",
+      "quote": "| Method | Compute cost | When to use |",
+      "kind": "table-row",
+      "section": "Summary"
+    },
+    {
+      "id": "reasoning-block-59",
+      "quote": "| Zero-shot CoT | $1\\times$ | Quick win on MATH (\\cite[Hendrycks et al., 2021]{hendrycks2021math}) |",
+      "kind": "table-row",
+      "section": "Summary"
+    },
+    {
+      "id": "reasoning-block-60",
+      "quote": "| o1-style long thinking | $10{-}100\\times$ | Hard math, code, science |",
+      "kind": "table-row",
+      "section": "Summary"
+    },
+    {
+      "id": "reasoning-block-61",
+      "quote": "The era of “scale by training” is now supplemented by **scale by thinking**. The frontier in 2025 is figuring out how to spend inference compute *adaptively*, think hard when it matters, save tokens when it doesn't.",
+      "kind": "paragraph",
+      "section": "Summary"
     }
   ]
 }

@@ -266,500 +266,2679 @@
       "quote": "part: 4",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-1-part_of-multimodal",
+      "from": "multimodal-block-1",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-2-part_of-multimodal",
+      "from": "multimodal-block-2",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-1-before-multimodal-block-2",
+      "from": "multimodal-block-1",
+      "to": "multimodal-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-2-related_to-multimodal-block-1",
+      "from": "multimodal-block-2",
+      "to": "multimodal-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-3-part_of-multimodal",
+      "from": "multimodal-block-3",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-2-before-multimodal-block-3",
+      "from": "multimodal-block-2",
+      "to": "multimodal-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-4-part_of-multimodal",
+      "from": "multimodal-block-4",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-3-before-multimodal-block-4",
+      "from": "multimodal-block-3",
+      "to": "multimodal-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-5-part_of-multimodal",
+      "from": "multimodal-block-5",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-4-before-multimodal-block-5",
+      "from": "multimodal-block-4",
+      "to": "multimodal-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-5-related_to-multimodal-block-4",
+      "from": "multimodal-block-5",
+      "to": "multimodal-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-6-part_of-multimodal",
+      "from": "multimodal-block-6",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-5-before-multimodal-block-6",
+      "from": "multimodal-block-5",
+      "to": "multimodal-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-6-related_to-multimodal-block-4",
+      "from": "multimodal-block-6",
+      "to": "multimodal-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-7-part_of-multimodal",
+      "from": "multimodal-block-7",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-6-before-multimodal-block-7",
+      "from": "multimodal-block-6",
+      "to": "multimodal-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-8-part_of-multimodal",
+      "from": "multimodal-block-8",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-7-before-multimodal-block-8",
+      "from": "multimodal-block-7",
+      "to": "multimodal-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-8-related_to-multimodal-block-7",
+      "from": "multimodal-block-8",
+      "to": "multimodal-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-9-part_of-multimodal",
+      "from": "multimodal-block-9",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-8-before-multimodal-block-9",
+      "from": "multimodal-block-8",
+      "to": "multimodal-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-9-related_to-multimodal-block-7",
+      "from": "multimodal-block-9",
+      "to": "multimodal-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-10-part_of-multimodal",
+      "from": "multimodal-block-10",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-9-before-multimodal-block-10",
+      "from": "multimodal-block-9",
+      "to": "multimodal-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-10-related_to-multimodal-block-7",
+      "from": "multimodal-block-10",
+      "to": "multimodal-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-11-part_of-multimodal",
+      "from": "multimodal-block-11",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-10-before-multimodal-block-11",
+      "from": "multimodal-block-10",
+      "to": "multimodal-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-11-related_to-multimodal-block-7",
+      "from": "multimodal-block-11",
+      "to": "multimodal-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-12-part_of-multimodal",
+      "from": "multimodal-block-12",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-11-before-multimodal-block-12",
+      "from": "multimodal-block-11",
+      "to": "multimodal-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-13-part_of-multimodal",
+      "from": "multimodal-block-13",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-12-before-multimodal-block-13",
+      "from": "multimodal-block-12",
+      "to": "multimodal-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-13-related_to-multimodal-block-12",
+      "from": "multimodal-block-13",
+      "to": "multimodal-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-14-part_of-multimodal",
+      "from": "multimodal-block-14",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-13-before-multimodal-block-14",
+      "from": "multimodal-block-13",
+      "to": "multimodal-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-15-part_of-multimodal",
+      "from": "multimodal-block-15",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-14-before-multimodal-block-15",
+      "from": "multimodal-block-14",
+      "to": "multimodal-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-16-part_of-multimodal",
+      "from": "multimodal-block-16",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-15-before-multimodal-block-16",
+      "from": "multimodal-block-15",
+      "to": "multimodal-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-16-related_to-multimodal-block-15",
+      "from": "multimodal-block-16",
+      "to": "multimodal-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-17-part_of-multimodal",
+      "from": "multimodal-block-17",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-16-before-multimodal-block-17",
+      "from": "multimodal-block-16",
+      "to": "multimodal-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-18-part_of-multimodal",
+      "from": "multimodal-block-18",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-17-before-multimodal-block-18",
+      "from": "multimodal-block-17",
+      "to": "multimodal-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-18-related_to-multimodal-block-17",
+      "from": "multimodal-block-18",
+      "to": "multimodal-block-17",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-19-part_of-multimodal",
+      "from": "multimodal-block-19",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-18-before-multimodal-block-19",
+      "from": "multimodal-block-18",
+      "to": "multimodal-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-19-related_to-multimodal-block-17",
+      "from": "multimodal-block-19",
+      "to": "multimodal-block-17",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-20-part_of-multimodal",
+      "from": "multimodal-block-20",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-19-before-multimodal-block-20",
+      "from": "multimodal-block-19",
+      "to": "multimodal-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-20-related_to-multimodal-block-17",
+      "from": "multimodal-block-20",
+      "to": "multimodal-block-17",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-21-part_of-multimodal",
+      "from": "multimodal-block-21",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-20-before-multimodal-block-21",
+      "from": "multimodal-block-20",
+      "to": "multimodal-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-22-part_of-multimodal",
+      "from": "multimodal-block-22",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-21-before-multimodal-block-22",
+      "from": "multimodal-block-21",
+      "to": "multimodal-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-22-related_to-multimodal-block-21",
+      "from": "multimodal-block-22",
+      "to": "multimodal-block-21",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-23-part_of-multimodal",
+      "from": "multimodal-block-23",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-22-before-multimodal-block-23",
+      "from": "multimodal-block-22",
+      "to": "multimodal-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-24-part_of-multimodal",
+      "from": "multimodal-block-24",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-23-before-multimodal-block-24",
+      "from": "multimodal-block-23",
+      "to": "multimodal-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-24-related_to-multimodal-block-23",
+      "from": "multimodal-block-24",
+      "to": "multimodal-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-25-part_of-multimodal",
+      "from": "multimodal-block-25",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-24-before-multimodal-block-25",
+      "from": "multimodal-block-24",
+      "to": "multimodal-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-26-part_of-multimodal",
+      "from": "multimodal-block-26",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-25-before-multimodal-block-26",
+      "from": "multimodal-block-25",
+      "to": "multimodal-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-26-related_to-multimodal-block-25",
+      "from": "multimodal-block-26",
+      "to": "multimodal-block-25",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-27-part_of-multimodal",
+      "from": "multimodal-block-27",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-26-before-multimodal-block-27",
+      "from": "multimodal-block-26",
+      "to": "multimodal-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-27-related_to-multimodal-block-25",
+      "from": "multimodal-block-27",
+      "to": "multimodal-block-25",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-28-part_of-multimodal",
+      "from": "multimodal-block-28",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-27-before-multimodal-block-28",
+      "from": "multimodal-block-27",
+      "to": "multimodal-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-28-related_to-multimodal-block-25",
+      "from": "multimodal-block-28",
+      "to": "multimodal-block-25",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-29-part_of-multimodal",
+      "from": "multimodal-block-29",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-28-before-multimodal-block-29",
+      "from": "multimodal-block-28",
+      "to": "multimodal-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-29-related_to-multimodal-block-25",
+      "from": "multimodal-block-29",
+      "to": "multimodal-block-25",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-30-part_of-multimodal",
+      "from": "multimodal-block-30",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-29-before-multimodal-block-30",
+      "from": "multimodal-block-29",
+      "to": "multimodal-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-30-related_to-multimodal-block-25",
+      "from": "multimodal-block-30",
+      "to": "multimodal-block-25",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-31-part_of-multimodal",
+      "from": "multimodal-block-31",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-30-before-multimodal-block-31",
+      "from": "multimodal-block-30",
+      "to": "multimodal-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-31-related_to-multimodal-block-25",
+      "from": "multimodal-block-31",
+      "to": "multimodal-block-25",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-32-part_of-multimodal",
+      "from": "multimodal-block-32",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-31-before-multimodal-block-32",
+      "from": "multimodal-block-31",
+      "to": "multimodal-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-33-part_of-multimodal",
+      "from": "multimodal-block-33",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-32-before-multimodal-block-33",
+      "from": "multimodal-block-32",
+      "to": "multimodal-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-34-part_of-multimodal",
+      "from": "multimodal-block-34",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-33-before-multimodal-block-34",
+      "from": "multimodal-block-33",
+      "to": "multimodal-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-34-related_to-multimodal-block-33",
+      "from": "multimodal-block-34",
+      "to": "multimodal-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-35-part_of-multimodal",
+      "from": "multimodal-block-35",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-34-before-multimodal-block-35",
+      "from": "multimodal-block-34",
+      "to": "multimodal-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-35-related_to-multimodal-block-33",
+      "from": "multimodal-block-35",
+      "to": "multimodal-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-36-part_of-multimodal",
+      "from": "multimodal-block-36",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-35-before-multimodal-block-36",
+      "from": "multimodal-block-35",
+      "to": "multimodal-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-36-related_to-multimodal-block-33",
+      "from": "multimodal-block-36",
+      "to": "multimodal-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-37-part_of-multimodal",
+      "from": "multimodal-block-37",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-36-before-multimodal-block-37",
+      "from": "multimodal-block-36",
+      "to": "multimodal-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-37-related_to-multimodal-block-33",
+      "from": "multimodal-block-37",
+      "to": "multimodal-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-38-part_of-multimodal",
+      "from": "multimodal-block-38",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-37-before-multimodal-block-38",
+      "from": "multimodal-block-37",
+      "to": "multimodal-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-38-related_to-multimodal-block-33",
+      "from": "multimodal-block-38",
+      "to": "multimodal-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-39-part_of-multimodal",
+      "from": "multimodal-block-39",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-38-before-multimodal-block-39",
+      "from": "multimodal-block-38",
+      "to": "multimodal-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-39-related_to-multimodal-block-33",
+      "from": "multimodal-block-39",
+      "to": "multimodal-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-40-part_of-multimodal",
+      "from": "multimodal-block-40",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-39-before-multimodal-block-40",
+      "from": "multimodal-block-39",
+      "to": "multimodal-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-40-related_to-multimodal-block-33",
+      "from": "multimodal-block-40",
+      "to": "multimodal-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-41-part_of-multimodal",
+      "from": "multimodal-block-41",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-40-before-multimodal-block-41",
+      "from": "multimodal-block-40",
+      "to": "multimodal-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-41-related_to-multimodal-block-33",
+      "from": "multimodal-block-41",
+      "to": "multimodal-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-42-part_of-multimodal",
+      "from": "multimodal-block-42",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-41-before-multimodal-block-42",
+      "from": "multimodal-block-41",
+      "to": "multimodal-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-42-related_to-multimodal-block-33",
+      "from": "multimodal-block-42",
+      "to": "multimodal-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-43-part_of-multimodal",
+      "from": "multimodal-block-43",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-42-before-multimodal-block-43",
+      "from": "multimodal-block-42",
+      "to": "multimodal-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-44-part_of-multimodal",
+      "from": "multimodal-block-44",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-43-before-multimodal-block-44",
+      "from": "multimodal-block-43",
+      "to": "multimodal-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-44-related_to-multimodal-block-43",
+      "from": "multimodal-block-44",
+      "to": "multimodal-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-45-part_of-multimodal",
+      "from": "multimodal-block-45",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-44-before-multimodal-block-45",
+      "from": "multimodal-block-44",
+      "to": "multimodal-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-46-part_of-multimodal",
+      "from": "multimodal-block-46",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-45-before-multimodal-block-46",
+      "from": "multimodal-block-45",
+      "to": "multimodal-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-47-part_of-multimodal",
+      "from": "multimodal-block-47",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-46-before-multimodal-block-47",
+      "from": "multimodal-block-46",
+      "to": "multimodal-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-47-related_to-multimodal-block-46",
+      "from": "multimodal-block-47",
+      "to": "multimodal-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-48-part_of-multimodal",
+      "from": "multimodal-block-48",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-47-before-multimodal-block-48",
+      "from": "multimodal-block-47",
+      "to": "multimodal-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-48-related_to-multimodal-block-46",
+      "from": "multimodal-block-48",
+      "to": "multimodal-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-49-part_of-multimodal",
+      "from": "multimodal-block-49",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-48-before-multimodal-block-49",
+      "from": "multimodal-block-48",
+      "to": "multimodal-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-49-related_to-multimodal-block-46",
+      "from": "multimodal-block-49",
+      "to": "multimodal-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-50-part_of-multimodal",
+      "from": "multimodal-block-50",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-49-before-multimodal-block-50",
+      "from": "multimodal-block-49",
+      "to": "multimodal-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-50-related_to-multimodal-block-46",
+      "from": "multimodal-block-50",
+      "to": "multimodal-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-51-part_of-multimodal",
+      "from": "multimodal-block-51",
+      "to": "multimodal",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-50-before-multimodal-block-51",
+      "from": "multimodal-block-50",
+      "to": "multimodal-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-block-51-related_to-multimodal-block-46",
+      "from": "multimodal-block-51",
+      "to": "multimodal-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-1-part_of-multimodal-block-1",
+      "from": "multimodal-stmt-1",
+      "to": "multimodal-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-2-part_of-multimodal-block-1",
+      "from": "multimodal-stmt-2",
+      "to": "multimodal-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-3-part_of-multimodal-block-1",
+      "from": "multimodal-stmt-3",
+      "to": "multimodal-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-4-part_of-multimodal-block-1",
+      "from": "multimodal-stmt-4",
+      "to": "multimodal-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-5-part_of-multimodal-block-2",
+      "from": "multimodal-stmt-5",
+      "to": "multimodal-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-6-part_of-multimodal-block-5",
+      "from": "multimodal-stmt-6",
+      "to": "multimodal-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-7-part_of-multimodal-block-5",
+      "from": "multimodal-stmt-7",
+      "to": "multimodal-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-8-part_of-multimodal-block-5",
+      "from": "multimodal-stmt-8",
+      "to": "multimodal-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-9-part_of-multimodal-block-5",
+      "from": "multimodal-stmt-9",
+      "to": "multimodal-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-10-part_of-multimodal-block-6",
+      "from": "multimodal-stmt-10",
+      "to": "multimodal-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-11-part_of-multimodal-block-6",
+      "from": "multimodal-stmt-11",
+      "to": "multimodal-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-12-part_of-multimodal-block-8",
+      "from": "multimodal-stmt-12",
+      "to": "multimodal-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-13-part_of-multimodal-block-9",
+      "from": "multimodal-stmt-13",
+      "to": "multimodal-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-14-part_of-multimodal-block-10",
+      "from": "multimodal-stmt-14",
+      "to": "multimodal-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-15-part_of-multimodal-block-10",
+      "from": "multimodal-stmt-15",
+      "to": "multimodal-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-16-part_of-multimodal-block-10",
+      "from": "multimodal-stmt-16",
+      "to": "multimodal-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-17-part_of-multimodal-block-11",
+      "from": "multimodal-stmt-17",
+      "to": "multimodal-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-18-part_of-multimodal-block-13",
+      "from": "multimodal-stmt-18",
+      "to": "multimodal-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-19-part_of-multimodal-block-13",
+      "from": "multimodal-stmt-19",
+      "to": "multimodal-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-20-part_of-multimodal-block-13",
+      "from": "multimodal-stmt-20",
+      "to": "multimodal-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-21-part_of-multimodal-block-16",
+      "from": "multimodal-stmt-21",
+      "to": "multimodal-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-22-part_of-multimodal-block-16",
+      "from": "multimodal-stmt-22",
+      "to": "multimodal-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-23-part_of-multimodal-block-18",
+      "from": "multimodal-stmt-23",
+      "to": "multimodal-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-24-part_of-multimodal-block-18",
+      "from": "multimodal-stmt-24",
+      "to": "multimodal-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-25-part_of-multimodal-block-19",
+      "from": "multimodal-stmt-25",
+      "to": "multimodal-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-26-part_of-multimodal-block-19",
+      "from": "multimodal-stmt-26",
+      "to": "multimodal-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-27-part_of-multimodal-block-19",
+      "from": "multimodal-stmt-27",
+      "to": "multimodal-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-28-part_of-multimodal-block-20",
+      "from": "multimodal-stmt-28",
+      "to": "multimodal-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-29-part_of-multimodal-block-20",
+      "from": "multimodal-stmt-29",
+      "to": "multimodal-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-30-part_of-multimodal-block-22",
+      "from": "multimodal-stmt-30",
+      "to": "multimodal-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-31-part_of-multimodal-block-22",
+      "from": "multimodal-stmt-31",
+      "to": "multimodal-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-32-part_of-multimodal-block-24",
+      "from": "multimodal-stmt-32",
+      "to": "multimodal-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-33-part_of-multimodal-block-24",
+      "from": "multimodal-stmt-33",
+      "to": "multimodal-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-34-part_of-multimodal-block-24",
+      "from": "multimodal-stmt-34",
+      "to": "multimodal-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-35-part_of-multimodal-block-24",
+      "from": "multimodal-stmt-35",
+      "to": "multimodal-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-36-part_of-multimodal-block-26",
+      "from": "multimodal-stmt-36",
+      "to": "multimodal-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-37-part_of-multimodal-block-27",
+      "from": "multimodal-stmt-37",
+      "to": "multimodal-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-38-part_of-multimodal-block-28",
+      "from": "multimodal-stmt-38",
+      "to": "multimodal-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-39-part_of-multimodal-block-29",
+      "from": "multimodal-stmt-39",
+      "to": "multimodal-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-40-part_of-multimodal-block-30",
+      "from": "multimodal-stmt-40",
+      "to": "multimodal-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-41-part_of-multimodal-block-31",
+      "from": "multimodal-stmt-41",
+      "to": "multimodal-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-42-part_of-multimodal-block-31",
+      "from": "multimodal-stmt-42",
+      "to": "multimodal-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-43-part_of-multimodal-block-34",
+      "from": "multimodal-stmt-43",
+      "to": "multimodal-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-44-part_of-multimodal-block-35",
+      "from": "multimodal-stmt-44",
+      "to": "multimodal-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-45-part_of-multimodal-block-36",
+      "from": "multimodal-stmt-45",
+      "to": "multimodal-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-46-part_of-multimodal-block-37",
+      "from": "multimodal-stmt-46",
+      "to": "multimodal-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-47-part_of-multimodal-block-38",
+      "from": "multimodal-stmt-47",
+      "to": "multimodal-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-48-part_of-multimodal-block-39",
+      "from": "multimodal-stmt-48",
+      "to": "multimodal-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-49-part_of-multimodal-block-40",
+      "from": "multimodal-stmt-49",
+      "to": "multimodal-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-50-part_of-multimodal-block-41",
+      "from": "multimodal-stmt-50",
+      "to": "multimodal-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-51-part_of-multimodal-block-42",
+      "from": "multimodal-stmt-51",
+      "to": "multimodal-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-52-part_of-multimodal-block-42",
+      "from": "multimodal-stmt-52",
+      "to": "multimodal-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-53-part_of-multimodal-block-44",
+      "from": "multimodal-stmt-53",
+      "to": "multimodal-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-54-part_of-multimodal-block-47",
+      "from": "multimodal-stmt-54",
+      "to": "multimodal-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-55-part_of-multimodal-block-48",
+      "from": "multimodal-stmt-55",
+      "to": "multimodal-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-56-part_of-multimodal-block-49",
+      "from": "multimodal-stmt-56",
+      "to": "multimodal-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-57-part_of-multimodal-block-50",
+      "from": "multimodal-stmt-57",
+      "to": "multimodal-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-58-part_of-multimodal-block-51",
+      "from": "multimodal-stmt-58",
+      "to": "multimodal-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-multimodal-stmt-59-part_of-multimodal-block-51",
+      "from": "multimodal-stmt-59",
+      "to": "multimodal-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "multimodal-stmt-1",
       "quote": "A pure text model is blind.",
+      "block_id": "multimodal-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-2",
       "quote": "It has never seen a colour, a face, or a curve.",
+      "block_id": "multimodal-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-3",
       "quote": "**Multimodal** models remove this handicap: a single network that ingests **images, text, audio, video**, and reasons across them.",
+      "block_id": "multimodal-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-4",
       "quote": "The 2024–2025 generation (GPT-4o, Claude 3.5 Sonnet, Gemini 1.5, InternVL-2, LLaVA-OneVision) is multimodal by default; text-only models are increasingly a special case.",
+      "block_id": "multimodal-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-5",
       "quote": "This chapter traces the technical lineage from pixels-as-tensors (see the Computer Vision chapter ) to **pixels-as-tokens** that an LLM can read.",
+      "block_id": "multimodal-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-6",
       "quote": "A trained text model lives in a **language embedding space** $\\mathbb{R}^d$ where “king” and “queen” sit close together.",
+      "block_id": "multimodal-block-5",
       "section": "The Two Towers: Why Aligning Spaces Is Hard",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-7",
       "quote": "An image encoder (a CNN or Vision Transformer) lives in a **visual embedding space** $\\mathbb{R}^{d'}$ where two photographs of the same cat also sit close together.",
+      "block_id": "multimodal-block-5",
       "section": "The Two Towers: Why Aligning Spaces Is Hard",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-8",
       "quote": "The problem: these two spaces are not the same.",
+      "block_id": "multimodal-block-5",
       "section": "The Two Towers: Why Aligning Spaces Is Hard",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-9",
       "quote": "You cannot, in general, do $\\vec{v}_\\text{cat\\,image} - \\vec{v}_\\text{dog\\,image} \\approx \\vec{v}_\\text{“cat”} - \\vec{v}_\\text{“dog”}$ until they have been aligned.",
+      "block_id": "multimodal-block-5",
       "section": "The Two Towers: Why Aligning Spaces Is Hard",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-10",
       "quote": "The simplest alignment is **contrastive learning**: pull matched (image, caption) pairs together, push mismatched pairs apart.",
+      "block_id": "multimodal-block-6",
       "section": "The Two Towers: Why Aligning Spaces Is Hard",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-11",
       "quote": "This is exactly what **CLIP** does.",
+      "block_id": "multimodal-block-6",
       "section": "The Two Towers: Why Aligning Spaces Is Hard",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-12",
       "quote": "Published by \\cite[Radford et al. (OpenAI), 2021]{radford2021clip}, CLIP trains two encoders simultaneously on ~400 million (image, text) pairs scraped from the public web:",
+      "block_id": "multimodal-block-8",
       "section": "CLIP: Contrastive Language-Image Pre-training",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-13",
-      "quote": "* An **image encoder** $f_\\theta : \\text{Image} \\to \\mathbb{R}^d$ (originally a ResNet-50, later a ViT-L/14).",
+      "quote": "where $\\mathbf{I}_i = f_\\theta(\\text{image}_i)$, $\\mathbf{T}_i = g_\\phi(\\text{text}_i)$, and $\\tau$ is a learnable temperature.",
+      "block_id": "multimodal-block-9",
       "section": "CLIP: Contrastive Language-Image Pre-training",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-14",
-      "quote": "* A **text encoder** $g_\\phi : \\text{Text} \\to \\mathbb{R}^d$ (a Transformer).",
+      "quote": "After training, CLIP exhibits **zero-shot image classification**: write a prompt like *“a photo of a {label}”* for every candidate class, encode all prompts, encode the image, pick the prompt with highest cosine similarity.",
+      "block_id": "multimodal-block-10",
       "section": "CLIP: Contrastive Language-Image Pre-training",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-15",
-      "quote": "Both are L2-normalized to live on the unit sphere, so cosine similarity equals dot product.",
+      "quote": "No fine-tuning, no classifier head.",
+      "block_id": "multimodal-block-10",
       "section": "CLIP: Contrastive Language-Image Pre-training",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-16",
-      "quote": "For a batch of $N$ matched pairs, CLIP computes an $N \\times N$ similarity matrix and trains both encoders to maximize the diagonal (matched pairs) and minimize the off-diagonal (mismatched pairs) via a **symmetric cross-entropy loss**:",
+      "quote": "CLIP matched the accuracy of fully-supervised ResNet-50 on ImageNet without ever seeing an ImageNet label.",
+      "block_id": "multimodal-block-10",
       "section": "CLIP: Contrastive Language-Image Pre-training",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-17",
-      "quote": "where $\\mathbf{I}_i = f_\\theta(\\text{image}_i)$, $\\mathbf{T}_i = g_\\phi(\\text{text}_i)$, and $\\tau$ is a learnable temperature.",
+      "quote": "This is the foundation of every modern vision-language model.",
+      "block_id": "multimodal-block-11",
       "section": "CLIP: Contrastive Language-Image Pre-training",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-18",
-      "quote": "After training, CLIP exhibits **zero-shot image classification**: write a prompt like *“a photo of a {label}”* for every candidate class, encode all prompts, encode the image, pick the prompt with highest cosine similarity.",
-      "section": "CLIP: Contrastive Language-Image Pre-training",
+      "quote": "This is the deep conceptual shift: **an image is no longer “a grid to be convolved”; it is a sequence to be attended to**.",
+      "block_id": "multimodal-block-13",
+      "section": "Vision Transformers: Turning Pixels into Tokens",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-19",
-      "quote": "No fine-tuning, no classifier head.",
-      "section": "CLIP: Contrastive Language-Image Pre-training",
+      "quote": "The same Transformer block that processes word tokens now processes visual tokens.",
+      "block_id": "multimodal-block-13",
+      "section": "Vision Transformers: Turning Pixels into Tokens",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-20",
-      "quote": "CLIP matched the accuracy of fully-supervised ResNet-50 on ImageNet without ever seeing an ImageNet label.",
-      "section": "CLIP: Contrastive Language-Image Pre-training",
+      "quote": "The architecture becomes modality-agnostic.",
+      "block_id": "multimodal-block-13",
+      "section": "Vision Transformers: Turning Pixels into Tokens",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-21",
-      "quote": "This is the foundation of every modern vision-language model.",
-      "section": "CLIP: Contrastive Language-Image Pre-training",
+      "quote": "The challenge: a pretrained text-only LLM has never seen a pixel.",
+      "block_id": "multimodal-block-16",
+      "section": "Multimodal LLMs: How a Text Model Learns to See",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-22",
-      "quote": "A Vision Transformer (ViT, \\cite[Dosovitskiy et al., 2021]{dosovitskiy2021vit}) treats an image as a **sequence of patches**.",
-      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "quote": "Three architectural patterns have emerged (often combined):",
+      "block_id": "multimodal-block-16",
+      "section": "Multimodal LLMs: How a Text Model Learns to See",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-23",
-      "quote": "For an image of $H \\times W \\times 3$ pixels with patch size $P \\times P$:",
-      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "quote": "A pretrained vision encoder (e.g., CLIP-ViT) produces a sequence of visual tokens.",
+      "block_id": "multimodal-block-18",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-24",
-      "quote": "Each patch is linearly projected to a $d$-dimensional vector (the patch embedding), a learnable `[CLS]` token is prepended, and 1-D positional embeddings are added.",
-      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "quote": "A small **projection MLP** maps each visual token from the vision space into the LLM's text-token embedding space:",
+      "block_id": "multimodal-block-18",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-25",
-      "quote": "The resulting sequence of $n+1$ vectors is fed to a standard Transformer encoder.",
-      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "quote": "The projected visual tokens are concatenated with the text-token sequence and fed to the LLM as if they were ordinary words.",
+      "block_id": "multimodal-block-19",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-26",
-      "quote": "The `[CLS]` token's final hidden state is the image representation.",
-      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "quote": "**Only the projection layer is trained initially**; the LLM is frozen.",
+      "block_id": "multimodal-block-19",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-27",
-      "quote": "For a $224 \\times 224$ image with $P=16$: $n = 196$ patches.",
-      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "quote": "The visual tokens literally become “foreign-language words” the LLM learns to read.",
+      "block_id": "multimodal-block-19",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-28",
-      "quote": "ViT-L/14 processes this with 24 layers, 16 heads, $d=1024$, yielding ~304M parameters.",
-      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "quote": "LLaVA-1.5 (\\cite[Liu et al., 2023]{liu2023llava}) used a 7B Vicuna LLM + CLIP-ViT-L/14 + a 2-layer MLP projector.",
+      "block_id": "multimodal-block-20",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-29",
-      "quote": "Modern ViTs (EVA-02, SigLIP) push to $P=14$ patches on $448 \\times 448$ inputs, yielding $>1000$ tokens per image.",
-      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "quote": "With ~600k image-instruction pairs, it reached 78.5% on VQAv2, competitive with GPT-4 on several multimodal benchmarks.",
+      "block_id": "multimodal-block-20",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-30",
-      "quote": "This is the deep conceptual shift: **an image is no longer “a grid to be convolved”; it is a sequence to be attended to**.",
-      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "quote": "The vision tokens are not concatenated into the text sequence; instead, the LLM's self-attention layers are augmented with **cross-attention blocks** that read from the visual sequence at every layer.",
+      "block_id": "multimodal-block-22",
+      "section": "Pattern 2: Cross-Attention (Flamingo-style)",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-31",
-      "quote": "The same Transformer block that processes word tokens now processes visual tokens.",
-      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "quote": "Flamingo (\\cite[Alayrac et al., 2022]{alayrac2022flamingo}) interleaved gated cross-attention layers between frozen Transformer blocks, training only the cross-attention and a Perceiver Resampler that compressed variable-length image features into a fixed 64-token representation.",
+      "block_id": "multimodal-block-22",
+      "section": "Pattern 2: Cross-Attention (Flamingo-style)",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-32",
-      "quote": "The architecture becomes modality-agnostic.",
-      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "quote": "The Transformer is trained from scratch on interleaved image, audio, text, and video tokens.",
+      "block_id": "multimodal-block-24",
+      "section": "Pattern 3: Native Multimodality (GPT-4o, Gemini)",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-33",
-      "quote": "The challenge: a pretrained text-only LLM has never seen a pixel.",
-      "section": "Multimodal LLMs: How a Text Model Learns to See",
+      "quote": "There is no projection layer; the model has always seen pixels as first-class tokens.",
+      "block_id": "multimodal-block-24",
+      "section": "Pattern 3: Native Multimodality (GPT-4o, Gemini)",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-34",
-      "quote": "Three architectural patterns have emerged (often combined):",
-      "section": "Multimodal LLMs: How a Text Model Learns to See",
+      "quote": "Tokens representing 1/24-second audio frames, $16 \\times 16$ image patches, and BPE text tokens all flow through the same residual stream.",
+      "block_id": "multimodal-block-24",
+      "section": "Pattern 3: Native Multimodality (GPT-4o, Gemini)",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-35",
-      "quote": "A pretrained vision encoder (e.g., CLIP-ViT) produces a sequence of visual tokens.",
-      "section": "Pattern 1: Projection Layer (LLaVA-style)",
+      "quote": "(The text side is BPE, a **compression** algorithm repurposed as a tokenizer: it fuses frequent patterns into short-ID tokens, so the text enters already in a shorter, lossless form.) This requires vast multimodal training data (trillions of tokens), but produces the most coherent cross-modal reasoning.",
+      "block_id": "multimodal-block-24",
+      "section": "Pattern 3: Native Multimodality (GPT-4o, Gemini)",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-36",
-      "quote": "A small **projection MLP** maps each visual token from the vision space into the LLM's text-token embedding space:",
-      "section": "Pattern 1: Projection Layer (LLaVA-style)",
+      "quote": "Take the prompt *“What is unusual about this image?”* with an attached photo.",
+      "block_id": "multimodal-block-26",
+      "section": "How a Multimodal LLM Answers a Question",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-37",
-      "quote": "The projected visual tokens are concatenated with the text-token sequence and fed to the LLM as if they were ordinary words.",
-      "section": "Pattern 1: Projection Layer (LLaVA-style)",
+      "quote": "**Project** them into the LLM's token space (or feed via cross-attention).",
+      "block_id": "multimodal-block-27",
+      "section": "How a Multimodal LLM Answers a Question",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-38",
-      "quote": "**Only the projection layer is trained initially**; the LLM is frozen.",
-      "section": "Pattern 1: Projection Layer (LLaVA-style)",
+      "quote": "**Tokenize** the text prompt as usual.",
+      "block_id": "multimodal-block-28",
+      "section": "How a Multimodal LLM Answers a Question",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-39",
-      "quote": "The visual tokens literally become “foreign-language words” the LLM learns to read.",
-      "section": "Pattern 1: Projection Layer (LLaVA-style)",
+      "quote": "**Concatenate**: $\\text{[visual tokens] [text tokens]}$.",
+      "block_id": "multimodal-block-29",
+      "section": "How a Multimodal LLM Answers a Question",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-40",
-      "quote": "LLaVA-1.5 (\\cite[Liu et al., 2023]{liu2023llava}) used a 7B Vicuna LLM + CLIP-ViT-L/14 + a 2-layer MLP projector.",
-      "section": "Pattern 1: Projection Layer (LLaVA-style)",
+      "quote": "**Autoregressive generation** as in any LLM: predict the next text token conditioned on the joint sequence.",
+      "block_id": "multimodal-block-30",
+      "section": "How a Multimodal LLM Answers a Question",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-41",
-      "quote": "With ~600k image-instruction pairs, it reached 78.5% on VQAv2, competitive with GPT-4 on several multimodal benchmarks.",
-      "section": "Pattern 1: Projection Layer (LLaVA-style)",
+      "quote": "The LLM treats the visual tokens as if they were a foreign language it has been taught to read.",
+      "block_id": "multimodal-block-31",
+      "section": "How a Multimodal LLM Answers a Question",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-42",
-      "quote": "The vision tokens are not concatenated into the text sequence; instead, the LLM's self-attention layers are augmented with **cross-attention blocks** that read from the visual sequence at every layer.",
-      "section": "Pattern 2: Cross-Attention (Flamingo-style)",
+      "quote": "No new attention mechanism is required, the same Q/K/V machinery already described in the Attention chapter handles the cross-modal mixing, because visual and text tokens occupy the same vector space.",
+      "block_id": "multimodal-block-31",
+      "section": "How a Multimodal LLM Answers a Question",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-43",
-      "quote": "Flamingo (\\cite[Alayrac et al., 2022]{alayrac2022flamingo}) interleaved gated cross-attention layers between frozen Transformer blocks, training only the cross-attention and a Perceiver Resampler that compressed variable-length image features into a fixed 64-token representation.",
-      "section": "Pattern 2: Cross-Attention (Flamingo-style)",
+      "quote": "| Benchmark | What it tests | Why it matters |",
+      "block_id": "multimodal-block-34",
+      "section": "Visual Question Answering Benchmarks",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-44",
-      "quote": "The Transformer is trained from scratch on interleaved image, audio, text, and video tokens.",
-      "section": "Pattern 3: Native Multimodality (GPT-4o, Gemini)",
+      "quote": "| **VQA v2** | Simple visual question answering | The original VQA benchmark; saturated |",
+      "block_id": "multimodal-block-35",
+      "section": "Visual Question Answering Benchmarks",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-45",
-      "quote": "There is no projection layer; the model has always seen pixels as first-class tokens.",
-      "section": "Pattern 3: Native Multimodality (GPT-4o, Gemini)",
+      "quote": "| **MMMU** | Multi-discipline college-level multimodal reasoning | Requires expert knowledge + image understanding |",
+      "block_id": "multimodal-block-36",
+      "section": "Visual Question Answering Benchmarks",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-46",
-      "quote": "Tokens representing 1/24-second audio frames, $16 \\times 16$ image patches, and BPE text tokens all flow through the same residual stream.",
-      "section": "Pattern 3: Native Multimodality (GPT-4o, Gemini)",
+      "quote": "| **MMVet** | Integrated multimodal capabilities | Tests composition of recognition + reasoning + OCR |",
+      "block_id": "multimodal-block-37",
+      "section": "Visual Question Answering Benchmarks",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-47",
-      "quote": "(The text side is BPE, a **compression** algorithm repurposed as a tokenizer: it fuses frequent patterns into short-ID tokens, so the text enters already in a shorter, lossless form.) This requires vast multimodal training data (trillions of tokens), but produces the most coherent cross-modal reasoning.",
-      "section": "Pattern 3: Native Multimodality (GPT-4o, Gemini)",
+      "quote": "| **MathVista** | Mathematical reasoning in visual contexts | Diagrams, plots, geometric figures |",
+      "block_id": "multimodal-block-38",
+      "section": "Visual Question Answering Benchmarks",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-48",
-      "quote": "Take the prompt *“What is unusual about this image?”* with an attached photo.",
-      "section": "How a Multimodal LLM Answers a Question",
+      "quote": "| **DocVQA** | Reading text inside images | Critical for invoices, receipts, forms |",
+      "block_id": "multimodal-block-39",
+      "section": "Visual Question Answering Benchmarks",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-49",
-      "quote": "**Encode** the image with the vision tower → sequence of $n$ visual tokens.",
-      "section": "How a Multimodal LLM Answers a Question",
+      "quote": "| **MM-Bench** | Broad multimodal evaluation | Now multilingual |",
+      "block_id": "multimodal-block-40",
+      "section": "Visual Question Answering Benchmarks",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-50",
-      "quote": "**Project** them into the LLM's token space (or feed via cross-attention).",
-      "section": "How a Multimodal LLM Answers a Question",
+      "quote": "| **RealWorldQA** | Real-world spatial reasoning | Self-driving, robotics |",
+      "block_id": "multimodal-block-41",
+      "section": "Visual Question Answering Benchmarks",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-51",
-      "quote": "**Tokenize** the text prompt as usual.",
-      "section": "How a Multimodal LLM Answers a Question",
+      "quote": "The leaderboard has shifted dramatically: when MMMU appeared in 2023, text-only models sat near the random baseline.",
+      "block_id": "multimodal-block-42",
+      "section": "Visual Question Answering Benchmarks",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-52",
-      "quote": "**Concatenate**: $\\text{[visual tokens] [text tokens]}$.",
-      "section": "How a Multimodal LLM Answers a Question",
+      "quote": "By 2025, top models (GPT-4o, Claude 3.5, Gemini 1.5 Pro) exceed 70%, and on VQA v2 they exceed 85%.",
+      "block_id": "multimodal-block-42",
+      "section": "Visual Question Answering Benchmarks",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-53",
-      "quote": "**Autoregressive generation** as in any LLM: predict the next text token conditioned on the joint sequence.",
-      "section": "How a Multimodal LLM Answers a Question",
+      "quote": "Multimodal does **not** mean omnipotent:",
+      "block_id": "multimodal-block-44",
+      "section": "The Limits of Multimodal LLMs",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-54",
-      "quote": "The LLM treats the visual tokens as if they were a foreign language it has been taught to read.",
-      "section": "How a Multimodal LLM Answers a Question",
+      "quote": "Multimodal LLMs are conceptually simple:",
+      "block_id": "multimodal-block-47",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-55",
-      "quote": "No new attention mechanism is required, the same Q/K/V machinery already described in the Attention chapter handles the cross-modal mixing, because visual and text tokens occupy the same vector space.",
-      "section": "How a Multimodal LLM Answers a Question",
+      "quote": "**Encode** each modality into a sequence of vectors.",
+      "block_id": "multimodal-block-48",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-56",
-      "quote": "| Benchmark | What it tests | Why it matters |",
-      "section": "Visual Question Answering Benchmarks",
+      "quote": "**Project** all modalities into a shared token space (or use cross-attention).",
+      "block_id": "multimodal-block-49",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-57",
-      "quote": "| **VQA v2** | Simple visual question answering | The original VQA benchmark; saturated |",
-      "section": "Visual Question Answering Benchmarks",
+      "quote": "**Train** the model as a normal next-token predictor on the joint sequence.",
+      "block_id": "multimodal-block-50",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-58",
-      "quote": "| **MMMU** | Multi-discipline college-level multimodal reasoning | Requires expert knowledge + image understanding |",
-      "section": "Visual Question Answering Benchmarks",
+      "quote": "The hard parts are data (curating billions of matched image-text-audio samples, see the Training Data chapter), compute (vision towers + LLMs + alignment data = massive training runs), and evaluation (the benchmarks above are still being developed).",
+      "block_id": "multimodal-block-51",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "multimodal-stmt-59",
-      "quote": "| **MMVet** | Integrated multimodal capabilities | Tests composition of recognition + reasoning + OCR |",
-      "section": "Visual Question Answering Benchmarks",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-60",
-      "quote": "| **MathVista** | Mathematical reasoning in visual contexts | Diagrams, plots, geometric figures |",
-      "section": "Visual Question Answering Benchmarks",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-61",
-      "quote": "| **DocVQA** | Reading text inside images | Critical for invoices, receipts, forms |",
-      "section": "Visual Question Answering Benchmarks",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-62",
-      "quote": "| **MM-Bench** | Broad multimodal evaluation | Now multilingual |",
-      "section": "Visual Question Answering Benchmarks",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-63",
-      "quote": "| **RealWorldQA** | Real-world spatial reasoning | Self-driving, robotics |",
-      "section": "Visual Question Answering Benchmarks",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-64",
-      "quote": "The leaderboard has shifted dramatically: when MMMU appeared in 2023, text-only models sat near the random baseline.",
-      "section": "Visual Question Answering Benchmarks",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-65",
-      "quote": "By 2025, top models (GPT-4o, Claude 3.5, Gemini 1.5 Pro) exceed 70%, and on VQA v2 they exceed 85%.",
-      "section": "Visual Question Answering Benchmarks",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-66",
-      "quote": "Multimodal does **not** mean omnipotent:",
-      "section": "The Limits of Multimodal LLMs",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-67",
-      "quote": "* **Spatial reasoning**: counting objects (“how many apples?”), understanding left/right relationships, depth ordering, all surprisingly weak.",
-      "section": "The Limits of Multimodal LLMs",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-68",
-      "quote": "* **Hallucination amplifies**: an LLM that hallucinates text can hallucinate “the dog is brown” when no dog is present.",
-      "section": "The Limits of Multimodal LLMs",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-69",
-      "quote": "* **OCR is brittle**: handwritten text, unusual fonts, or cluttered scenes cause systematic failures.",
-      "section": "The Limits of Multimodal LLMs",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-70",
-      "quote": "* **Adversarial fragility**: imperceptible pixel perturbations (see the Security chapter) can flip a model's answer.",
-      "section": "The Limits of Multimodal LLMs",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-71",
-      "quote": "* **Resolution wall**: a 1024-token visual sequence compresses 1024×1024 pixels into 1024 vectors.",
-      "section": "The Limits of Multimodal LLMs",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-72",
-      "quote": "Mitigations: any-resolution ViTs, “image cropping” at inference, native higher resolutions.",
-      "section": "The Limits of Multimodal LLMs",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-73",
-      "quote": "* **Any-to-any models**: GPT-4o, Gemini 2, and others can take image, audio, video *and* produce any of them, generating speech, singing, or video from a text prompt.",
-      "section": "What's Next",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-74",
-      "quote": "* **Video as a long sequence of patches**: video tokens are simply more frames stacked in time.",
-      "section": "What's Next",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-75",
-      "quote": "Gemini 1.5 Pro accepts up to 1 hour of video at native resolution.",
-      "section": "What's Next",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-76",
-      "quote": "* **Embodied multimodal**: robots that fuse camera, lidar, proprioception, and language in one model (RT-2, PaLM-E, OpenVLA).",
-      "section": "What's Next",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-77",
-      "quote": "Multimodal LLMs are conceptually simple:",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-78",
-      "quote": "**Encode** each modality into a sequence of vectors.",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-79",
-      "quote": "**Project** all modalities into a shared token space (or use cross-attention).",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-80",
-      "quote": "**Train** the model as a normal next-token predictor on the joint sequence.",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-81",
-      "quote": "The hard parts are data (curating billions of matched image-text-audio samples, see the Training Data chapter), compute (vision towers + LLMs + alignment data = massive training runs), and evaluation (the benchmarks above are still being developed).",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "multimodal-stmt-82",
       "quote": "But the architectural recipe is now standard and reproducible, which is why every frontier lab ships multimodal-by-default in 2025.",
+      "block_id": "multimodal-block-51",
       "section": "Summary",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "multimodal-block-1",
+      "quote": "A pure text model is blind. It has never seen a colour, a face, or a curve. **Multimodal** models remove this handicap: a single network that ingests **images, text, audio, video**, and reasons across them. The 2024–2025 generation (GPT-4o, Claude 3.5 Sonnet, Gemini 1.5, InternVL-2, LLaVA-OneVision) is multimodal by default; text-only models are increasingly a special case.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "multimodal-block-2",
+      "quote": "This chapter traces the technical lineage from pixels-as-tensors (see the Computer Vision chapter ) to **pixels-as-tokens** that an LLM can read.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "multimodal-block-3",
+      "quote": "Aligning the modalities",
+      "kind": "heading",
+      "section": "Aligning the modalities"
+    },
+    {
+      "id": "multimodal-block-4",
+      "quote": "The Two Towers: Why Aligning Spaces Is Hard",
+      "kind": "heading",
+      "section": "The Two Towers: Why Aligning Spaces Is Hard"
+    },
+    {
+      "id": "multimodal-block-5",
+      "quote": "A trained text model lives in a **language embedding space** $\\mathbb{R}^d$ where “king” and “queen” sit close together. An image encoder (a CNN or Vision Transformer) lives in a **visual embedding space** $\\mathbb{R}^{d'}$ where two photographs of the same cat also sit close together. The problem: these two spaces are not the same. You cannot, in general, do $\\vec{v}_\\text{cat\\,image} - \\vec{v}_\\text{dog\\,image} \\approx \\vec{v}_\\text{“cat”} - \\vec{v}_\\text{“dog”}$ until they have been aligned.",
+      "kind": "paragraph",
+      "section": "The Two Towers: Why Aligning Spaces Is Hard"
+    },
+    {
+      "id": "multimodal-block-6",
+      "quote": "The simplest alignment is **contrastive learning**: pull matched (image, caption) pairs together, push mismatched pairs apart. This is exactly what **CLIP** does.",
+      "kind": "paragraph",
+      "section": "The Two Towers: Why Aligning Spaces Is Hard"
+    },
+    {
+      "id": "multimodal-block-7",
+      "quote": "CLIP: Contrastive Language-Image Pre-training",
+      "kind": "heading",
+      "section": "CLIP: Contrastive Language-Image Pre-training"
+    },
+    {
+      "id": "multimodal-block-8",
+      "quote": "Published by \\cite[Radford et al. (OpenAI), 2021]{radford2021clip}, CLIP trains two encoders simultaneously on ~400 million (image, text) pairs scraped from the public web:",
+      "kind": "paragraph",
+      "section": "CLIP: Contrastive Language-Image Pre-training"
+    },
+    {
+      "id": "multimodal-block-9",
+      "quote": "where $\\mathbf{I}_i = f_\\theta(\\text{image}_i)$, $\\mathbf{T}_i = g_\\phi(\\text{text}_i)$, and $\\tau$ is a learnable temperature.",
+      "kind": "paragraph",
+      "section": "CLIP: Contrastive Language-Image Pre-training"
+    },
+    {
+      "id": "multimodal-block-10",
+      "quote": "After training, CLIP exhibits **zero-shot image classification**: write a prompt like *“a photo of a {label}”* for every candidate class, encode all prompts, encode the image, pick the prompt with highest cosine similarity. No fine-tuning, no classifier head. CLIP matched the accuracy of fully-supervised ResNet-50 on ImageNet without ever seeing an ImageNet label.",
+      "kind": "paragraph",
+      "section": "CLIP: Contrastive Language-Image Pre-training"
+    },
+    {
+      "id": "multimodal-block-11",
+      "quote": "This is the foundation of every modern vision-language model.",
+      "kind": "paragraph",
+      "section": "CLIP: Contrastive Language-Image Pre-training"
+    },
+    {
+      "id": "multimodal-block-12",
+      "quote": "Vision Transformers: Turning Pixels into Tokens",
+      "kind": "heading",
+      "section": "Vision Transformers: Turning Pixels into Tokens"
+    },
+    {
+      "id": "multimodal-block-13",
+      "quote": "This is the deep conceptual shift: **an image is no longer “a grid to be convolved”; it is a sequence to be attended to**. The same Transformer block that processes word tokens now processes visual tokens. The architecture becomes modality-agnostic.",
+      "kind": "paragraph",
+      "section": "Vision Transformers: Turning Pixels into Tokens"
+    },
+    {
+      "id": "multimodal-block-14",
+      "quote": "Multimodal LLMs",
+      "kind": "heading",
+      "section": "Multimodal LLMs"
+    },
+    {
+      "id": "multimodal-block-15",
+      "quote": "Multimodal LLMs: How a Text Model Learns to See",
+      "kind": "heading",
+      "section": "Multimodal LLMs: How a Text Model Learns to See"
+    },
+    {
+      "id": "multimodal-block-16",
+      "quote": "The challenge: a pretrained text-only LLM has never seen a pixel. Three architectural patterns have emerged (often combined):",
+      "kind": "paragraph",
+      "section": "Multimodal LLMs: How a Text Model Learns to See"
+    },
+    {
+      "id": "multimodal-block-17",
+      "quote": "Pattern 1: Projection Layer (LLaVA-style)",
+      "kind": "heading",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)"
+    },
+    {
+      "id": "multimodal-block-18",
+      "quote": "A pretrained vision encoder (e.g., CLIP-ViT) produces a sequence of visual tokens. A small **projection MLP** maps each visual token from the vision space into the LLM's text-token embedding space:",
+      "kind": "paragraph",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)"
+    },
+    {
+      "id": "multimodal-block-19",
+      "quote": "The projected visual tokens are concatenated with the text-token sequence and fed to the LLM as if they were ordinary words. **Only the projection layer is trained initially**; the LLM is frozen. The visual tokens literally become “foreign-language words” the LLM learns to read.",
+      "kind": "paragraph",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)"
+    },
+    {
+      "id": "multimodal-block-20",
+      "quote": "LLaVA-1.5 (\\cite[Liu et al., 2023]{liu2023llava}) used a 7B Vicuna LLM + CLIP-ViT-L/14 + a 2-layer MLP projector. With ~600k image-instruction pairs, it reached 78.5% on VQAv2, competitive with GPT-4 on several multimodal benchmarks.",
+      "kind": "paragraph",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)"
+    },
+    {
+      "id": "multimodal-block-21",
+      "quote": "Pattern 2: Cross-Attention (Flamingo-style)",
+      "kind": "heading",
+      "section": "Pattern 2: Cross-Attention (Flamingo-style)"
+    },
+    {
+      "id": "multimodal-block-22",
+      "quote": "The vision tokens are not concatenated into the text sequence; instead, the LLM's self-attention layers are augmented with **cross-attention blocks** that read from the visual sequence at every layer. Flamingo (\\cite[Alayrac et al., 2022]{alayrac2022flamingo}) interleaved gated cross-attention layers between frozen Transformer blocks, training only the cross-attention and a Perceiver Resampler that compressed variable-length image features into a fixed 64-token representation.",
+      "kind": "paragraph",
+      "section": "Pattern 2: Cross-Attention (Flamingo-style)"
+    },
+    {
+      "id": "multimodal-block-23",
+      "quote": "Pattern 3: Native Multimodality (GPT-4o, Gemini)",
+      "kind": "heading",
+      "section": "Pattern 3: Native Multimodality (GPT-4o, Gemini)"
+    },
+    {
+      "id": "multimodal-block-24",
+      "quote": "The Transformer is trained from scratch on interleaved image, audio, text, and video tokens. There is no projection layer; the model has always seen pixels as first-class tokens. Tokens representing 1/24-second audio frames, $16 \\times 16$ image patches, and BPE text tokens all flow through the same residual stream. (The text side is BPE, a **compression** algorithm repurposed as a tokenizer: it fuses frequent patterns into short-ID tokens, so the text enters already in a shorter, lossless form.) This requires vast multimodal training data (trillions of tokens), but produces the most coherent cross-modal reasoning.",
+      "kind": "paragraph",
+      "section": "Pattern 3: Native Multimodality (GPT-4o, Gemini)"
+    },
+    {
+      "id": "multimodal-block-25",
+      "quote": "How a Multimodal LLM Answers a Question",
+      "kind": "heading",
+      "section": "How a Multimodal LLM Answers a Question"
+    },
+    {
+      "id": "multimodal-block-26",
+      "quote": "Take the prompt *“What is unusual about this image?”* with an attached photo. The pipeline:",
+      "kind": "paragraph",
+      "section": "How a Multimodal LLM Answers a Question"
+    },
+    {
+      "id": "multimodal-block-27",
+      "quote": "2. **Project** them into the LLM's token space (or feed via cross-attention).",
+      "kind": "list-item",
+      "section": "How a Multimodal LLM Answers a Question"
+    },
+    {
+      "id": "multimodal-block-28",
+      "quote": "3. **Tokenize** the text prompt as usual.",
+      "kind": "list-item",
+      "section": "How a Multimodal LLM Answers a Question"
+    },
+    {
+      "id": "multimodal-block-29",
+      "quote": "4. **Concatenate**: $\\text{[visual tokens] [text tokens]}$.",
+      "kind": "list-item",
+      "section": "How a Multimodal LLM Answers a Question"
+    },
+    {
+      "id": "multimodal-block-30",
+      "quote": "5. **Autoregressive generation** as in any LLM: predict the next text token conditioned on the joint sequence.",
+      "kind": "list-item",
+      "section": "How a Multimodal LLM Answers a Question"
+    },
+    {
+      "id": "multimodal-block-31",
+      "quote": "The LLM treats the visual tokens as if they were a foreign language it has been taught to read. No new attention mechanism is required, the same Q/K/V machinery already described in the Attention chapter handles the cross-modal mixing, because visual and text tokens occupy the same vector space.",
+      "kind": "paragraph",
+      "section": "How a Multimodal LLM Answers a Question"
+    },
+    {
+      "id": "multimodal-block-32",
+      "quote": "Evaluation and limits",
+      "kind": "heading",
+      "section": "Evaluation and limits"
+    },
+    {
+      "id": "multimodal-block-33",
+      "quote": "Visual Question Answering Benchmarks",
+      "kind": "heading",
+      "section": "Visual Question Answering Benchmarks"
+    },
+    {
+      "id": "multimodal-block-34",
+      "quote": "| Benchmark | What it tests | Why it matters |",
+      "kind": "table-row",
+      "section": "Visual Question Answering Benchmarks"
+    },
+    {
+      "id": "multimodal-block-35",
+      "quote": "| **VQA v2** | Simple visual question answering | The original VQA benchmark; saturated |",
+      "kind": "table-row",
+      "section": "Visual Question Answering Benchmarks"
+    },
+    {
+      "id": "multimodal-block-36",
+      "quote": "| **MMMU** | Multi-discipline college-level multimodal reasoning | Requires expert knowledge + image understanding |",
+      "kind": "table-row",
+      "section": "Visual Question Answering Benchmarks"
+    },
+    {
+      "id": "multimodal-block-37",
+      "quote": "| **MMVet** | Integrated multimodal capabilities | Tests composition of recognition + reasoning + OCR |",
+      "kind": "table-row",
+      "section": "Visual Question Answering Benchmarks"
+    },
+    {
+      "id": "multimodal-block-38",
+      "quote": "| **MathVista** | Mathematical reasoning in visual contexts | Diagrams, plots, geometric figures |",
+      "kind": "table-row",
+      "section": "Visual Question Answering Benchmarks"
+    },
+    {
+      "id": "multimodal-block-39",
+      "quote": "| **DocVQA** | Reading text inside images | Critical for invoices, receipts, forms |",
+      "kind": "table-row",
+      "section": "Visual Question Answering Benchmarks"
+    },
+    {
+      "id": "multimodal-block-40",
+      "quote": "| **MM-Bench** | Broad multimodal evaluation | Now multilingual |",
+      "kind": "table-row",
+      "section": "Visual Question Answering Benchmarks"
+    },
+    {
+      "id": "multimodal-block-41",
+      "quote": "| **RealWorldQA** | Real-world spatial reasoning | Self-driving, robotics |",
+      "kind": "table-row",
+      "section": "Visual Question Answering Benchmarks"
+    },
+    {
+      "id": "multimodal-block-42",
+      "quote": "The leaderboard has shifted dramatically: when MMMU appeared in 2023, text-only models sat near the random baseline. By 2025, top models (GPT-4o, Claude 3.5, Gemini 1.5 Pro) exceed 70%, and on VQA v2 they exceed 85%.",
+      "kind": "paragraph",
+      "section": "Visual Question Answering Benchmarks"
+    },
+    {
+      "id": "multimodal-block-43",
+      "quote": "The Limits of Multimodal LLMs",
+      "kind": "heading",
+      "section": "The Limits of Multimodal LLMs"
+    },
+    {
+      "id": "multimodal-block-44",
+      "quote": "Multimodal does **not** mean omnipotent:",
+      "kind": "paragraph",
+      "section": "The Limits of Multimodal LLMs"
+    },
+    {
+      "id": "multimodal-block-45",
+      "quote": "What's Next",
+      "kind": "heading",
+      "section": "What's Next"
+    },
+    {
+      "id": "multimodal-block-46",
+      "quote": "Summary",
+      "kind": "heading",
+      "section": "Summary"
+    },
+    {
+      "id": "multimodal-block-47",
+      "quote": "Multimodal LLMs are conceptually simple:",
+      "kind": "paragraph",
+      "section": "Summary"
+    },
+    {
+      "id": "multimodal-block-48",
+      "quote": "1. **Encode** each modality into a sequence of vectors.",
+      "kind": "list-item",
+      "section": "Summary"
+    },
+    {
+      "id": "multimodal-block-49",
+      "quote": "2. **Project** all modalities into a shared token space (or use cross-attention).",
+      "kind": "list-item",
+      "section": "Summary"
+    },
+    {
+      "id": "multimodal-block-50",
+      "quote": "3. **Train** the model as a normal next-token predictor on the joint sequence.",
+      "kind": "list-item",
+      "section": "Summary"
+    },
+    {
+      "id": "multimodal-block-51",
+      "quote": "The hard parts are data (curating billions of matched image-text-audio samples, see the Training Data chapter), compute (vision towers + LLMs + alignment data = massive training runs), and evaluation (the benchmarks above are still being developed). But the architectural recipe is now standard and reproducible, which is why every frontier lab ships multimodal-by-default in 2025.",
+      "kind": "paragraph",
+      "section": "Summary"
     }
   ]
 }

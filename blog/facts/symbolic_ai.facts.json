@@ -978,860 +978,4834 @@
       "quote": "**UMLS**: medical KG (3M+ concepts)",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-1-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-1",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-2-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-2",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-1-before-symbolic_ai-block-2",
+      "from": "symbolic_ai-block-1",
+      "to": "symbolic_ai-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-2-related_to-symbolic_ai-block-1",
+      "from": "symbolic_ai-block-2",
+      "to": "symbolic_ai-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-3-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-3",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-2-before-symbolic_ai-block-3",
+      "from": "symbolic_ai-block-2",
+      "to": "symbolic_ai-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-4-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-4",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-3-before-symbolic_ai-block-4",
+      "from": "symbolic_ai-block-3",
+      "to": "symbolic_ai-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-4-related_to-symbolic_ai-block-3",
+      "from": "symbolic_ai-block-4",
+      "to": "symbolic_ai-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-5-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-5",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-4-before-symbolic_ai-block-5",
+      "from": "symbolic_ai-block-4",
+      "to": "symbolic_ai-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-6-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-6",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-5-before-symbolic_ai-block-6",
+      "from": "symbolic_ai-block-5",
+      "to": "symbolic_ai-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-6-related_to-symbolic_ai-block-5",
+      "from": "symbolic_ai-block-6",
+      "to": "symbolic_ai-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-7-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-7",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-6-before-symbolic_ai-block-7",
+      "from": "symbolic_ai-block-6",
+      "to": "symbolic_ai-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-8-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-8",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-7-before-symbolic_ai-block-8",
+      "from": "symbolic_ai-block-7",
+      "to": "symbolic_ai-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-8-related_to-symbolic_ai-block-7",
+      "from": "symbolic_ai-block-8",
+      "to": "symbolic_ai-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-9-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-9",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-8-before-symbolic_ai-block-9",
+      "from": "symbolic_ai-block-8",
+      "to": "symbolic_ai-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-9-related_to-symbolic_ai-block-7",
+      "from": "symbolic_ai-block-9",
+      "to": "symbolic_ai-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-10-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-10",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-9-before-symbolic_ai-block-10",
+      "from": "symbolic_ai-block-9",
+      "to": "symbolic_ai-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-10-related_to-symbolic_ai-block-7",
+      "from": "symbolic_ai-block-10",
+      "to": "symbolic_ai-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-11-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-11",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-10-before-symbolic_ai-block-11",
+      "from": "symbolic_ai-block-10",
+      "to": "symbolic_ai-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-11-related_to-symbolic_ai-block-7",
+      "from": "symbolic_ai-block-11",
+      "to": "symbolic_ai-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-12-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-12",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-11-before-symbolic_ai-block-12",
+      "from": "symbolic_ai-block-11",
+      "to": "symbolic_ai-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-12-related_to-symbolic_ai-block-7",
+      "from": "symbolic_ai-block-12",
+      "to": "symbolic_ai-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-13-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-13",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-12-before-symbolic_ai-block-13",
+      "from": "symbolic_ai-block-12",
+      "to": "symbolic_ai-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-13-related_to-symbolic_ai-block-7",
+      "from": "symbolic_ai-block-13",
+      "to": "symbolic_ai-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-14-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-14",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-13-before-symbolic_ai-block-14",
+      "from": "symbolic_ai-block-13",
+      "to": "symbolic_ai-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-14-related_to-symbolic_ai-block-7",
+      "from": "symbolic_ai-block-14",
+      "to": "symbolic_ai-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-15-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-15",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-14-before-symbolic_ai-block-15",
+      "from": "symbolic_ai-block-14",
+      "to": "symbolic_ai-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-15-related_to-symbolic_ai-block-7",
+      "from": "symbolic_ai-block-15",
+      "to": "symbolic_ai-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-16-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-16",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-15-before-symbolic_ai-block-16",
+      "from": "symbolic_ai-block-15",
+      "to": "symbolic_ai-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-17-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-17",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-16-before-symbolic_ai-block-17",
+      "from": "symbolic_ai-block-16",
+      "to": "symbolic_ai-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-17-related_to-symbolic_ai-block-16",
+      "from": "symbolic_ai-block-17",
+      "to": "symbolic_ai-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-18-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-18",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-17-before-symbolic_ai-block-18",
+      "from": "symbolic_ai-block-17",
+      "to": "symbolic_ai-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-18-related_to-symbolic_ai-block-16",
+      "from": "symbolic_ai-block-18",
+      "to": "symbolic_ai-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-19-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-19",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-18-before-symbolic_ai-block-19",
+      "from": "symbolic_ai-block-18",
+      "to": "symbolic_ai-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-19-related_to-symbolic_ai-block-16",
+      "from": "symbolic_ai-block-19",
+      "to": "symbolic_ai-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-20-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-20",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-19-before-symbolic_ai-block-20",
+      "from": "symbolic_ai-block-19",
+      "to": "symbolic_ai-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-20-related_to-symbolic_ai-block-16",
+      "from": "symbolic_ai-block-20",
+      "to": "symbolic_ai-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-21-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-21",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-20-before-symbolic_ai-block-21",
+      "from": "symbolic_ai-block-20",
+      "to": "symbolic_ai-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-21-related_to-symbolic_ai-block-16",
+      "from": "symbolic_ai-block-21",
+      "to": "symbolic_ai-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-22-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-22",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-21-before-symbolic_ai-block-22",
+      "from": "symbolic_ai-block-21",
+      "to": "symbolic_ai-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-22-related_to-symbolic_ai-block-16",
+      "from": "symbolic_ai-block-22",
+      "to": "symbolic_ai-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-23-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-23",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-22-before-symbolic_ai-block-23",
+      "from": "symbolic_ai-block-22",
+      "to": "symbolic_ai-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-23-related_to-symbolic_ai-block-16",
+      "from": "symbolic_ai-block-23",
+      "to": "symbolic_ai-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-24-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-24",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-23-before-symbolic_ai-block-24",
+      "from": "symbolic_ai-block-23",
+      "to": "symbolic_ai-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-24-related_to-symbolic_ai-block-16",
+      "from": "symbolic_ai-block-24",
+      "to": "symbolic_ai-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-25-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-25",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-24-before-symbolic_ai-block-25",
+      "from": "symbolic_ai-block-24",
+      "to": "symbolic_ai-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-25-related_to-symbolic_ai-block-16",
+      "from": "symbolic_ai-block-25",
+      "to": "symbolic_ai-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-26-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-26",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-25-before-symbolic_ai-block-26",
+      "from": "symbolic_ai-block-25",
+      "to": "symbolic_ai-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-27-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-27",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-26-before-symbolic_ai-block-27",
+      "from": "symbolic_ai-block-26",
+      "to": "symbolic_ai-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-28-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-28",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-27-before-symbolic_ai-block-28",
+      "from": "symbolic_ai-block-27",
+      "to": "symbolic_ai-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-28-related_to-symbolic_ai-block-27",
+      "from": "symbolic_ai-block-28",
+      "to": "symbolic_ai-block-27",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-29-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-29",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-28-before-symbolic_ai-block-29",
+      "from": "symbolic_ai-block-28",
+      "to": "symbolic_ai-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-30-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-30",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-29-before-symbolic_ai-block-30",
+      "from": "symbolic_ai-block-29",
+      "to": "symbolic_ai-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-30-related_to-symbolic_ai-block-29",
+      "from": "symbolic_ai-block-30",
+      "to": "symbolic_ai-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-31-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-31",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-30-before-symbolic_ai-block-31",
+      "from": "symbolic_ai-block-30",
+      "to": "symbolic_ai-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-32-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-32",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-31-before-symbolic_ai-block-32",
+      "from": "symbolic_ai-block-31",
+      "to": "symbolic_ai-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-32-related_to-symbolic_ai-block-31",
+      "from": "symbolic_ai-block-32",
+      "to": "symbolic_ai-block-31",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-33-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-33",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-32-before-symbolic_ai-block-33",
+      "from": "symbolic_ai-block-32",
+      "to": "symbolic_ai-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-34-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-34",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-33-before-symbolic_ai-block-34",
+      "from": "symbolic_ai-block-33",
+      "to": "symbolic_ai-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-34-related_to-symbolic_ai-block-33",
+      "from": "symbolic_ai-block-34",
+      "to": "symbolic_ai-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-35-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-35",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-34-before-symbolic_ai-block-35",
+      "from": "symbolic_ai-block-34",
+      "to": "symbolic_ai-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-35-related_to-symbolic_ai-block-33",
+      "from": "symbolic_ai-block-35",
+      "to": "symbolic_ai-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-36-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-36",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-35-before-symbolic_ai-block-36",
+      "from": "symbolic_ai-block-35",
+      "to": "symbolic_ai-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-37-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-37",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-36-before-symbolic_ai-block-37",
+      "from": "symbolic_ai-block-36",
+      "to": "symbolic_ai-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-37-related_to-symbolic_ai-block-36",
+      "from": "symbolic_ai-block-37",
+      "to": "symbolic_ai-block-36",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-38-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-38",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-37-before-symbolic_ai-block-38",
+      "from": "symbolic_ai-block-37",
+      "to": "symbolic_ai-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-38-related_to-symbolic_ai-block-36",
+      "from": "symbolic_ai-block-38",
+      "to": "symbolic_ai-block-36",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-39-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-39",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-38-before-symbolic_ai-block-39",
+      "from": "symbolic_ai-block-38",
+      "to": "symbolic_ai-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-40-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-40",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-39-before-symbolic_ai-block-40",
+      "from": "symbolic_ai-block-39",
+      "to": "symbolic_ai-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-40-related_to-symbolic_ai-block-39",
+      "from": "symbolic_ai-block-40",
+      "to": "symbolic_ai-block-39",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-41-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-41",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-40-before-symbolic_ai-block-41",
+      "from": "symbolic_ai-block-40",
+      "to": "symbolic_ai-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-41-related_to-symbolic_ai-block-39",
+      "from": "symbolic_ai-block-41",
+      "to": "symbolic_ai-block-39",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-42-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-42",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-41-before-symbolic_ai-block-42",
+      "from": "symbolic_ai-block-41",
+      "to": "symbolic_ai-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-42-related_to-symbolic_ai-block-39",
+      "from": "symbolic_ai-block-42",
+      "to": "symbolic_ai-block-39",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-43-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-43",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-42-before-symbolic_ai-block-43",
+      "from": "symbolic_ai-block-42",
+      "to": "symbolic_ai-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-43-related_to-symbolic_ai-block-39",
+      "from": "symbolic_ai-block-43",
+      "to": "symbolic_ai-block-39",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-44-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-44",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-43-before-symbolic_ai-block-44",
+      "from": "symbolic_ai-block-43",
+      "to": "symbolic_ai-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-45-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-45",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-44-before-symbolic_ai-block-45",
+      "from": "symbolic_ai-block-44",
+      "to": "symbolic_ai-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-45-related_to-symbolic_ai-block-44",
+      "from": "symbolic_ai-block-45",
+      "to": "symbolic_ai-block-44",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-46-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-46",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-45-before-symbolic_ai-block-46",
+      "from": "symbolic_ai-block-45",
+      "to": "symbolic_ai-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-47-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-47",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-46-before-symbolic_ai-block-47",
+      "from": "symbolic_ai-block-46",
+      "to": "symbolic_ai-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-47-related_to-symbolic_ai-block-46",
+      "from": "symbolic_ai-block-47",
+      "to": "symbolic_ai-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-48-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-48",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-47-before-symbolic_ai-block-48",
+      "from": "symbolic_ai-block-47",
+      "to": "symbolic_ai-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-48-related_to-symbolic_ai-block-46",
+      "from": "symbolic_ai-block-48",
+      "to": "symbolic_ai-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-49-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-49",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-48-before-symbolic_ai-block-49",
+      "from": "symbolic_ai-block-48",
+      "to": "symbolic_ai-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-50-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-50",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-49-before-symbolic_ai-block-50",
+      "from": "symbolic_ai-block-49",
+      "to": "symbolic_ai-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-51-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-51",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-50-before-symbolic_ai-block-51",
+      "from": "symbolic_ai-block-50",
+      "to": "symbolic_ai-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-51-related_to-symbolic_ai-block-50",
+      "from": "symbolic_ai-block-51",
+      "to": "symbolic_ai-block-50",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-52-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-52",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-51-before-symbolic_ai-block-52",
+      "from": "symbolic_ai-block-51",
+      "to": "symbolic_ai-block-52",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-52-related_to-symbolic_ai-block-50",
+      "from": "symbolic_ai-block-52",
+      "to": "symbolic_ai-block-50",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-53-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-53",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-52-before-symbolic_ai-block-53",
+      "from": "symbolic_ai-block-52",
+      "to": "symbolic_ai-block-53",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-53-related_to-symbolic_ai-block-50",
+      "from": "symbolic_ai-block-53",
+      "to": "symbolic_ai-block-50",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-54-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-54",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-53-before-symbolic_ai-block-54",
+      "from": "symbolic_ai-block-53",
+      "to": "symbolic_ai-block-54",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-55-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-55",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-54-before-symbolic_ai-block-55",
+      "from": "symbolic_ai-block-54",
+      "to": "symbolic_ai-block-55",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-55-related_to-symbolic_ai-block-54",
+      "from": "symbolic_ai-block-55",
+      "to": "symbolic_ai-block-54",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-56-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-56",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-55-before-symbolic_ai-block-56",
+      "from": "symbolic_ai-block-55",
+      "to": "symbolic_ai-block-56",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-57-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-57",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-56-before-symbolic_ai-block-57",
+      "from": "symbolic_ai-block-56",
+      "to": "symbolic_ai-block-57",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-57-related_to-symbolic_ai-block-56",
+      "from": "symbolic_ai-block-57",
+      "to": "symbolic_ai-block-56",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-58-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-58",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-57-before-symbolic_ai-block-58",
+      "from": "symbolic_ai-block-57",
+      "to": "symbolic_ai-block-58",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-58-related_to-symbolic_ai-block-56",
+      "from": "symbolic_ai-block-58",
+      "to": "symbolic_ai-block-56",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-59-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-59",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-58-before-symbolic_ai-block-59",
+      "from": "symbolic_ai-block-58",
+      "to": "symbolic_ai-block-59",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-59-related_to-symbolic_ai-block-56",
+      "from": "symbolic_ai-block-59",
+      "to": "symbolic_ai-block-56",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-60-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-60",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-59-before-symbolic_ai-block-60",
+      "from": "symbolic_ai-block-59",
+      "to": "symbolic_ai-block-60",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-60-related_to-symbolic_ai-block-56",
+      "from": "symbolic_ai-block-60",
+      "to": "symbolic_ai-block-56",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-61-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-61",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-60-before-symbolic_ai-block-61",
+      "from": "symbolic_ai-block-60",
+      "to": "symbolic_ai-block-61",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-61-related_to-symbolic_ai-block-56",
+      "from": "symbolic_ai-block-61",
+      "to": "symbolic_ai-block-56",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-62-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-62",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-61-before-symbolic_ai-block-62",
+      "from": "symbolic_ai-block-61",
+      "to": "symbolic_ai-block-62",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-62-related_to-symbolic_ai-block-56",
+      "from": "symbolic_ai-block-62",
+      "to": "symbolic_ai-block-56",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-63-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-63",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-62-before-symbolic_ai-block-63",
+      "from": "symbolic_ai-block-62",
+      "to": "symbolic_ai-block-63",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-64-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-64",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-63-before-symbolic_ai-block-64",
+      "from": "symbolic_ai-block-63",
+      "to": "symbolic_ai-block-64",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-64-related_to-symbolic_ai-block-63",
+      "from": "symbolic_ai-block-64",
+      "to": "symbolic_ai-block-63",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-65-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-65",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-64-before-symbolic_ai-block-65",
+      "from": "symbolic_ai-block-64",
+      "to": "symbolic_ai-block-65",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-65-related_to-symbolic_ai-block-63",
+      "from": "symbolic_ai-block-65",
+      "to": "symbolic_ai-block-63",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-66-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-66",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-65-before-symbolic_ai-block-66",
+      "from": "symbolic_ai-block-65",
+      "to": "symbolic_ai-block-66",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-66-related_to-symbolic_ai-block-63",
+      "from": "symbolic_ai-block-66",
+      "to": "symbolic_ai-block-63",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-67-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-67",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-66-before-symbolic_ai-block-67",
+      "from": "symbolic_ai-block-66",
+      "to": "symbolic_ai-block-67",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-67-related_to-symbolic_ai-block-63",
+      "from": "symbolic_ai-block-67",
+      "to": "symbolic_ai-block-63",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-68-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-68",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-67-before-symbolic_ai-block-68",
+      "from": "symbolic_ai-block-67",
+      "to": "symbolic_ai-block-68",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-68-related_to-symbolic_ai-block-63",
+      "from": "symbolic_ai-block-68",
+      "to": "symbolic_ai-block-63",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-69-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-69",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-68-before-symbolic_ai-block-69",
+      "from": "symbolic_ai-block-68",
+      "to": "symbolic_ai-block-69",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-69-related_to-symbolic_ai-block-63",
+      "from": "symbolic_ai-block-69",
+      "to": "symbolic_ai-block-63",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-70-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-70",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-69-before-symbolic_ai-block-70",
+      "from": "symbolic_ai-block-69",
+      "to": "symbolic_ai-block-70",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-70-related_to-symbolic_ai-block-63",
+      "from": "symbolic_ai-block-70",
+      "to": "symbolic_ai-block-63",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-71-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-71",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-70-before-symbolic_ai-block-71",
+      "from": "symbolic_ai-block-70",
+      "to": "symbolic_ai-block-71",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-71-related_to-symbolic_ai-block-63",
+      "from": "symbolic_ai-block-71",
+      "to": "symbolic_ai-block-63",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-72-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-72",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-71-before-symbolic_ai-block-72",
+      "from": "symbolic_ai-block-71",
+      "to": "symbolic_ai-block-72",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-73-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-73",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-72-before-symbolic_ai-block-73",
+      "from": "symbolic_ai-block-72",
+      "to": "symbolic_ai-block-73",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-73-related_to-symbolic_ai-block-72",
+      "from": "symbolic_ai-block-73",
+      "to": "symbolic_ai-block-72",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-74-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-74",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-73-before-symbolic_ai-block-74",
+      "from": "symbolic_ai-block-73",
+      "to": "symbolic_ai-block-74",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-75-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-75",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-74-before-symbolic_ai-block-75",
+      "from": "symbolic_ai-block-74",
+      "to": "symbolic_ai-block-75",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-75-related_to-symbolic_ai-block-74",
+      "from": "symbolic_ai-block-75",
+      "to": "symbolic_ai-block-74",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-76-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-76",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-75-before-symbolic_ai-block-76",
+      "from": "symbolic_ai-block-75",
+      "to": "symbolic_ai-block-76",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-77-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-77",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-76-before-symbolic_ai-block-77",
+      "from": "symbolic_ai-block-76",
+      "to": "symbolic_ai-block-77",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-77-related_to-symbolic_ai-block-76",
+      "from": "symbolic_ai-block-77",
+      "to": "symbolic_ai-block-76",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-78-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-78",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-77-before-symbolic_ai-block-78",
+      "from": "symbolic_ai-block-77",
+      "to": "symbolic_ai-block-78",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-79-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-79",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-78-before-symbolic_ai-block-79",
+      "from": "symbolic_ai-block-78",
+      "to": "symbolic_ai-block-79",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-79-related_to-symbolic_ai-block-78",
+      "from": "symbolic_ai-block-79",
+      "to": "symbolic_ai-block-78",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-80-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-80",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-79-before-symbolic_ai-block-80",
+      "from": "symbolic_ai-block-79",
+      "to": "symbolic_ai-block-80",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-81-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-81",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-80-before-symbolic_ai-block-81",
+      "from": "symbolic_ai-block-80",
+      "to": "symbolic_ai-block-81",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-82-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-82",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-81-before-symbolic_ai-block-82",
+      "from": "symbolic_ai-block-81",
+      "to": "symbolic_ai-block-82",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-82-related_to-symbolic_ai-block-81",
+      "from": "symbolic_ai-block-82",
+      "to": "symbolic_ai-block-81",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-83-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-83",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-82-before-symbolic_ai-block-83",
+      "from": "symbolic_ai-block-82",
+      "to": "symbolic_ai-block-83",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-83-related_to-symbolic_ai-block-81",
+      "from": "symbolic_ai-block-83",
+      "to": "symbolic_ai-block-81",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-84-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-84",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-83-before-symbolic_ai-block-84",
+      "from": "symbolic_ai-block-83",
+      "to": "symbolic_ai-block-84",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-85-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-85",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-84-before-symbolic_ai-block-85",
+      "from": "symbolic_ai-block-84",
+      "to": "symbolic_ai-block-85",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-86-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-86",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-85-before-symbolic_ai-block-86",
+      "from": "symbolic_ai-block-85",
+      "to": "symbolic_ai-block-86",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-86-related_to-symbolic_ai-block-85",
+      "from": "symbolic_ai-block-86",
+      "to": "symbolic_ai-block-85",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-87-part_of-symbolic-ai",
+      "from": "symbolic_ai-block-87",
+      "to": "symbolic-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-86-before-symbolic_ai-block-87",
+      "from": "symbolic_ai-block-86",
+      "to": "symbolic_ai-block-87",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-block-87-related_to-symbolic_ai-block-85",
+      "from": "symbolic_ai-block-87",
+      "to": "symbolic_ai-block-85",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-1-part_of-symbolic_ai-block-1",
+      "from": "symbolic_ai-stmt-1",
+      "to": "symbolic_ai-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-2-part_of-symbolic_ai-block-1",
+      "from": "symbolic_ai-stmt-2",
+      "to": "symbolic_ai-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-3-part_of-symbolic_ai-block-1",
+      "from": "symbolic_ai-stmt-3",
+      "to": "symbolic_ai-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-4-part_of-symbolic_ai-block-2",
+      "from": "symbolic_ai-stmt-4",
+      "to": "symbolic_ai-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-5-part_of-symbolic_ai-block-4",
+      "from": "symbolic_ai-stmt-5",
+      "to": "symbolic_ai-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-6-part_of-symbolic_ai-block-4",
+      "from": "symbolic_ai-stmt-6",
+      "to": "symbolic_ai-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-7-part_of-symbolic_ai-block-4",
+      "from": "symbolic_ai-stmt-7",
+      "to": "symbolic_ai-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-8-part_of-symbolic_ai-block-4",
+      "from": "symbolic_ai-stmt-8",
+      "to": "symbolic_ai-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-9-part_of-symbolic_ai-block-6",
+      "from": "symbolic_ai-stmt-9",
+      "to": "symbolic_ai-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-10-part_of-symbolic_ai-block-6",
+      "from": "symbolic_ai-stmt-10",
+      "to": "symbolic_ai-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-11-part_of-symbolic_ai-block-6",
+      "from": "symbolic_ai-stmt-11",
+      "to": "symbolic_ai-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-12-part_of-symbolic_ai-block-6",
+      "from": "symbolic_ai-stmt-12",
+      "to": "symbolic_ai-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-13-part_of-symbolic_ai-block-8",
+      "from": "symbolic_ai-stmt-13",
+      "to": "symbolic_ai-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-14-part_of-symbolic_ai-block-8",
+      "from": "symbolic_ai-stmt-14",
+      "to": "symbolic_ai-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-15-part_of-symbolic_ai-block-8",
+      "from": "symbolic_ai-stmt-15",
+      "to": "symbolic_ai-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-16-part_of-symbolic_ai-block-9",
+      "from": "symbolic_ai-stmt-16",
+      "to": "symbolic_ai-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-17-part_of-symbolic_ai-block-9",
+      "from": "symbolic_ai-stmt-17",
+      "to": "symbolic_ai-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-18-part_of-symbolic_ai-block-9",
+      "from": "symbolic_ai-stmt-18",
+      "to": "symbolic_ai-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-19-part_of-symbolic_ai-block-10",
+      "from": "symbolic_ai-stmt-19",
+      "to": "symbolic_ai-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-20-part_of-symbolic_ai-block-10",
+      "from": "symbolic_ai-stmt-20",
+      "to": "symbolic_ai-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-21-part_of-symbolic_ai-block-10",
+      "from": "symbolic_ai-stmt-21",
+      "to": "symbolic_ai-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-22-part_of-symbolic_ai-block-10",
+      "from": "symbolic_ai-stmt-22",
+      "to": "symbolic_ai-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-23-part_of-symbolic_ai-block-10",
+      "from": "symbolic_ai-stmt-23",
+      "to": "symbolic_ai-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-24-part_of-symbolic_ai-block-10",
+      "from": "symbolic_ai-stmt-24",
+      "to": "symbolic_ai-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-25-part_of-symbolic_ai-block-10",
+      "from": "symbolic_ai-stmt-25",
+      "to": "symbolic_ai-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-26-part_of-symbolic_ai-block-11",
+      "from": "symbolic_ai-stmt-26",
+      "to": "symbolic_ai-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-27-part_of-symbolic_ai-block-11",
+      "from": "symbolic_ai-stmt-27",
+      "to": "symbolic_ai-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-28-part_of-symbolic_ai-block-11",
+      "from": "symbolic_ai-stmt-28",
+      "to": "symbolic_ai-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-29-part_of-symbolic_ai-block-12",
+      "from": "symbolic_ai-stmt-29",
+      "to": "symbolic_ai-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-30-part_of-symbolic_ai-block-12",
+      "from": "symbolic_ai-stmt-30",
+      "to": "symbolic_ai-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-31-part_of-symbolic_ai-block-12",
+      "from": "symbolic_ai-stmt-31",
+      "to": "symbolic_ai-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-32-part_of-symbolic_ai-block-12",
+      "from": "symbolic_ai-stmt-32",
+      "to": "symbolic_ai-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-33-part_of-symbolic_ai-block-12",
+      "from": "symbolic_ai-stmt-33",
+      "to": "symbolic_ai-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-34-part_of-symbolic_ai-block-12",
+      "from": "symbolic_ai-stmt-34",
+      "to": "symbolic_ai-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-35-part_of-symbolic_ai-block-12",
+      "from": "symbolic_ai-stmt-35",
+      "to": "symbolic_ai-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-36-part_of-symbolic_ai-block-13",
+      "from": "symbolic_ai-stmt-36",
+      "to": "symbolic_ai-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-37-part_of-symbolic_ai-block-13",
+      "from": "symbolic_ai-stmt-37",
+      "to": "symbolic_ai-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-38-part_of-symbolic_ai-block-13",
+      "from": "symbolic_ai-stmt-38",
+      "to": "symbolic_ai-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-39-part_of-symbolic_ai-block-13",
+      "from": "symbolic_ai-stmt-39",
+      "to": "symbolic_ai-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-40-part_of-symbolic_ai-block-13",
+      "from": "symbolic_ai-stmt-40",
+      "to": "symbolic_ai-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-41-part_of-symbolic_ai-block-14",
+      "from": "symbolic_ai-stmt-41",
+      "to": "symbolic_ai-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-42-part_of-symbolic_ai-block-14",
+      "from": "symbolic_ai-stmt-42",
+      "to": "symbolic_ai-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-43-part_of-symbolic_ai-block-14",
+      "from": "symbolic_ai-stmt-43",
+      "to": "symbolic_ai-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-44-part_of-symbolic_ai-block-14",
+      "from": "symbolic_ai-stmt-44",
+      "to": "symbolic_ai-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-45-part_of-symbolic_ai-block-15",
+      "from": "symbolic_ai-stmt-45",
+      "to": "symbolic_ai-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-46-part_of-symbolic_ai-block-15",
+      "from": "symbolic_ai-stmt-46",
+      "to": "symbolic_ai-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-47-part_of-symbolic_ai-block-17",
+      "from": "symbolic_ai-stmt-47",
+      "to": "symbolic_ai-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-48-part_of-symbolic_ai-block-18",
+      "from": "symbolic_ai-stmt-48",
+      "to": "symbolic_ai-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-49-part_of-symbolic_ai-block-19",
+      "from": "symbolic_ai-stmt-49",
+      "to": "symbolic_ai-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-50-part_of-symbolic_ai-block-20",
+      "from": "symbolic_ai-stmt-50",
+      "to": "symbolic_ai-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-51-part_of-symbolic_ai-block-21",
+      "from": "symbolic_ai-stmt-51",
+      "to": "symbolic_ai-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-52-part_of-symbolic_ai-block-22",
+      "from": "symbolic_ai-stmt-52",
+      "to": "symbolic_ai-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-53-part_of-symbolic_ai-block-23",
+      "from": "symbolic_ai-stmt-53",
+      "to": "symbolic_ai-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-54-part_of-symbolic_ai-block-24",
+      "from": "symbolic_ai-stmt-54",
+      "to": "symbolic_ai-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-55-part_of-symbolic_ai-block-25",
+      "from": "symbolic_ai-stmt-55",
+      "to": "symbolic_ai-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-56-part_of-symbolic_ai-block-25",
+      "from": "symbolic_ai-stmt-56",
+      "to": "symbolic_ai-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-57-part_of-symbolic_ai-block-28",
+      "from": "symbolic_ai-stmt-57",
+      "to": "symbolic_ai-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-58-part_of-symbolic_ai-block-30",
+      "from": "symbolic_ai-stmt-58",
+      "to": "symbolic_ai-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-59-part_of-symbolic_ai-block-30",
+      "from": "symbolic_ai-stmt-59",
+      "to": "symbolic_ai-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-60-part_of-symbolic_ai-block-32",
+      "from": "symbolic_ai-stmt-60",
+      "to": "symbolic_ai-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-61-part_of-symbolic_ai-block-34",
+      "from": "symbolic_ai-stmt-61",
+      "to": "symbolic_ai-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-62-part_of-symbolic_ai-block-34",
+      "from": "symbolic_ai-stmt-62",
+      "to": "symbolic_ai-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-63-part_of-symbolic_ai-block-35",
+      "from": "symbolic_ai-stmt-63",
+      "to": "symbolic_ai-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-64-part_of-symbolic_ai-block-37",
+      "from": "symbolic_ai-stmt-64",
+      "to": "symbolic_ai-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-65-part_of-symbolic_ai-block-38",
+      "from": "symbolic_ai-stmt-65",
+      "to": "symbolic_ai-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-66-part_of-symbolic_ai-block-40",
+      "from": "symbolic_ai-stmt-66",
+      "to": "symbolic_ai-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-67-part_of-symbolic_ai-block-41",
+      "from": "symbolic_ai-stmt-67",
+      "to": "symbolic_ai-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-68-part_of-symbolic_ai-block-42",
+      "from": "symbolic_ai-stmt-68",
+      "to": "symbolic_ai-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-69-part_of-symbolic_ai-block-42",
+      "from": "symbolic_ai-stmt-69",
+      "to": "symbolic_ai-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-70-part_of-symbolic_ai-block-43",
+      "from": "symbolic_ai-stmt-70",
+      "to": "symbolic_ai-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-71-part_of-symbolic_ai-block-43",
+      "from": "symbolic_ai-stmt-71",
+      "to": "symbolic_ai-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-72-part_of-symbolic_ai-block-43",
+      "from": "symbolic_ai-stmt-72",
+      "to": "symbolic_ai-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-73-part_of-symbolic_ai-block-43",
+      "from": "symbolic_ai-stmt-73",
+      "to": "symbolic_ai-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-74-part_of-symbolic_ai-block-45",
+      "from": "symbolic_ai-stmt-74",
+      "to": "symbolic_ai-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-75-part_of-symbolic_ai-block-47",
+      "from": "symbolic_ai-stmt-75",
+      "to": "symbolic_ai-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-76-part_of-symbolic_ai-block-47",
+      "from": "symbolic_ai-stmt-76",
+      "to": "symbolic_ai-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-77-part_of-symbolic_ai-block-47",
+      "from": "symbolic_ai-stmt-77",
+      "to": "symbolic_ai-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-78-part_of-symbolic_ai-block-47",
+      "from": "symbolic_ai-stmt-78",
+      "to": "symbolic_ai-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-79-part_of-symbolic_ai-block-47",
+      "from": "symbolic_ai-stmt-79",
+      "to": "symbolic_ai-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-80-part_of-symbolic_ai-block-47",
+      "from": "symbolic_ai-stmt-80",
+      "to": "symbolic_ai-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-81-part_of-symbolic_ai-block-47",
+      "from": "symbolic_ai-stmt-81",
+      "to": "symbolic_ai-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-82-part_of-symbolic_ai-block-47",
+      "from": "symbolic_ai-stmt-82",
+      "to": "symbolic_ai-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-83-part_of-symbolic_ai-block-48",
+      "from": "symbolic_ai-stmt-83",
+      "to": "symbolic_ai-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-84-part_of-symbolic_ai-block-48",
+      "from": "symbolic_ai-stmt-84",
+      "to": "symbolic_ai-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-85-part_of-symbolic_ai-block-48",
+      "from": "symbolic_ai-stmt-85",
+      "to": "symbolic_ai-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-86-part_of-symbolic_ai-block-51",
+      "from": "symbolic_ai-stmt-86",
+      "to": "symbolic_ai-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-87-part_of-symbolic_ai-block-52",
+      "from": "symbolic_ai-stmt-87",
+      "to": "symbolic_ai-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-88-part_of-symbolic_ai-block-53",
+      "from": "symbolic_ai-stmt-88",
+      "to": "symbolic_ai-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-89-part_of-symbolic_ai-block-55",
+      "from": "symbolic_ai-stmt-89",
+      "to": "symbolic_ai-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-90-part_of-symbolic_ai-block-57",
+      "from": "symbolic_ai-stmt-90",
+      "to": "symbolic_ai-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-91-part_of-symbolic_ai-block-58",
+      "from": "symbolic_ai-stmt-91",
+      "to": "symbolic_ai-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-92-part_of-symbolic_ai-block-59",
+      "from": "symbolic_ai-stmt-92",
+      "to": "symbolic_ai-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-93-part_of-symbolic_ai-block-60",
+      "from": "symbolic_ai-stmt-93",
+      "to": "symbolic_ai-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-94-part_of-symbolic_ai-block-62",
+      "from": "symbolic_ai-stmt-94",
+      "to": "symbolic_ai-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-95-part_of-symbolic_ai-block-62",
+      "from": "symbolic_ai-stmt-95",
+      "to": "symbolic_ai-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-96-part_of-symbolic_ai-block-62",
+      "from": "symbolic_ai-stmt-96",
+      "to": "symbolic_ai-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-97-part_of-symbolic_ai-block-64",
+      "from": "symbolic_ai-stmt-97",
+      "to": "symbolic_ai-block-64",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-98-part_of-symbolic_ai-block-65",
+      "from": "symbolic_ai-stmt-98",
+      "to": "symbolic_ai-block-65",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-99-part_of-symbolic_ai-block-66",
+      "from": "symbolic_ai-stmt-99",
+      "to": "symbolic_ai-block-66",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-100-part_of-symbolic_ai-block-67",
+      "from": "symbolic_ai-stmt-100",
+      "to": "symbolic_ai-block-67",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-101-part_of-symbolic_ai-block-68",
+      "from": "symbolic_ai-stmt-101",
+      "to": "symbolic_ai-block-68",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-102-part_of-symbolic_ai-block-69",
+      "from": "symbolic_ai-stmt-102",
+      "to": "symbolic_ai-block-69",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-103-part_of-symbolic_ai-block-70",
+      "from": "symbolic_ai-stmt-103",
+      "to": "symbolic_ai-block-70",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-104-part_of-symbolic_ai-block-71",
+      "from": "symbolic_ai-stmt-104",
+      "to": "symbolic_ai-block-71",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-105-part_of-symbolic_ai-block-73",
+      "from": "symbolic_ai-stmt-105",
+      "to": "symbolic_ai-block-73",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-106-part_of-symbolic_ai-block-73",
+      "from": "symbolic_ai-stmt-106",
+      "to": "symbolic_ai-block-73",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-107-part_of-symbolic_ai-block-75",
+      "from": "symbolic_ai-stmt-107",
+      "to": "symbolic_ai-block-75",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-108-part_of-symbolic_ai-block-75",
+      "from": "symbolic_ai-stmt-108",
+      "to": "symbolic_ai-block-75",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-109-part_of-symbolic_ai-block-77",
+      "from": "symbolic_ai-stmt-109",
+      "to": "symbolic_ai-block-77",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-110-part_of-symbolic_ai-block-77",
+      "from": "symbolic_ai-stmt-110",
+      "to": "symbolic_ai-block-77",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-111-part_of-symbolic_ai-block-79",
+      "from": "symbolic_ai-stmt-111",
+      "to": "symbolic_ai-block-79",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-112-part_of-symbolic_ai-block-79",
+      "from": "symbolic_ai-stmt-112",
+      "to": "symbolic_ai-block-79",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-113-part_of-symbolic_ai-block-83",
+      "from": "symbolic_ai-stmt-113",
+      "to": "symbolic_ai-block-83",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-114-part_of-symbolic_ai-block-86",
+      "from": "symbolic_ai-stmt-114",
+      "to": "symbolic_ai-block-86",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-115-part_of-symbolic_ai-block-87",
+      "from": "symbolic_ai-stmt-115",
+      "to": "symbolic_ai-block-87",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-symbolic_ai-stmt-116-part_of-symbolic_ai-block-87",
+      "from": "symbolic_ai-stmt-116",
+      "to": "symbolic_ai-block-87",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "symbolic_ai-stmt-1",
       "quote": "For most of its history, AI was **symbolic**: explicit rules, logical inference, hand-curated knowledge.",
+      "block_id": "symbolic_ai-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-2",
       "quote": "The neural revolution displaced it, but did not destroy it.",
+      "block_id": "symbolic_ai-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-3",
       "quote": "The 2020s have seen a renaissance: knowledge graphs, formal verification, neuro-symbolic hybrids, and LLM agents that use tools and APIs as symbolic primitives.",
+      "block_id": "symbolic_ai-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-4",
       "quote": "This chapter traces the other branch of AI and shows how it complements neural networks.",
+      "block_id": "symbolic_ai-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-5",
       "quote": "Symbolic AI begins with the logicist dream that all of mathematics could be derived from logic.",
+      "block_id": "symbolic_ai-block-4",
       "section": "Before the program: logic and its limits",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-6",
       "quote": "Frege's *Begriffsschrift* (1879) invented modern quantifier notation and tried to reduce arithmetic to logical laws; Russell and Whitehead's *Principia Mathematica* (1910-13) carried the project through, after Russell's paradox exposed its foundations (\\cite[Frege, 1879]{frege1879}; \\cite[Russell & Whitehead, 1910]{russell1910pm}; \\cite[Russell's paradox]{russell_paradox_sep}).",
+      "block_id": "symbolic_ai-block-4",
       "section": "Before the program: logic and its limits",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-7",
       "quote": "Hilbert's programme then asked for a finitary consistency proof and a decision procedure for first-order logic (\\cite[Hilbert & Ackermann, 1928]{hilbert1928entscheidung}).",
+      "block_id": "symbolic_ai-block-4",
       "section": "Before the program: logic and its limits",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-8",
       "quote": "Gödel's 1931 theorems ended the dream in its strong form: any consistent, effectively axiomatized system strong enough for arithmetic is incomplete and cannot prove its own consistency (\\cite[Gödel, 1931]{godel1931incompleteness}; \\cite[SEP]{sep_godel_incompleteness}).",
+      "block_id": "symbolic_ai-block-4",
       "section": "Before the program: logic and its limits",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-9",
       "quote": "Turing's 1936 paper supplied the missing negative answer: no mechanical procedure can decide, for every first-order formula, whether it is provable (\\cite[Turing, 1936]{turing1936}).",
+      "block_id": "symbolic_ai-block-6",
       "section": "Foundations",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-10",
       "quote": "In 1950 he replaced the question of mechanism with an operational test -- can a machine's text replies be distinguished from a person's?",
+      "block_id": "symbolic_ai-block-6",
       "section": "Foundations",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-11",
       "quote": "-- and made \"Can machines think?\" an empirical question (\\cite[Turing, 1950]{turing1950computing}).",
+      "block_id": "symbolic_ai-block-6",
       "section": "Foundations",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-12",
       "quote": "Six years later, the 1956 Dartmouth Summer Research Project named the field and set its agenda: language, neural nets, abstraction, creativity, and the conjecture that every feature of intelligence can be described precisely enough for a machine to simulate it (\\cite[McCarthy et al., 1955]{mccarthy1955dartmouth}).",
+      "block_id": "symbolic_ai-block-6",
       "section": "Foundations",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-13",
       "quote": "Before the technical material, it is worth pausing on the philosophical manifesto that grounded the entire symbolic-AI tradition in a defence of itself as a *science*.",
+      "block_id": "symbolic_ai-block-8",
       "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-14",
       "quote": "\\citeauthor{newell1976empirical} (\\citeyear{newell1976empirical}) — Allen Newell and Herbert A.",
+      "block_id": "symbolic_ai-block-8",
       "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-15",
       "quote": "Simon, in the ACM Turing Award lecture \"Computer Science as Empirical Inquiry\" (the 1975 award was given to Newell and Simon jointly, and the published paper is the joint form) — make a sustained case that computer science is not *applied mathematics* and not *engineering*, but an *empirical* science on a par with physics or biology, whose natural objects are **symbol systems** and whose characteristic method is the construction of *symbols and search*.",
+      "block_id": "symbolic_ai-block-8",
       "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-16",
       "quote": "Computer science is an empirical discipline.",
+      "block_id": "symbolic_ai-block-9",
       "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-17",
       "quote": "[...] We build computers and programs for two reasons: (a) to provide a human service (the computer as servant), and (b) to experiment with symbolic processes (the computer as simulation chamber).",
+      "block_id": "symbolic_ai-block-9",
       "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-18",
       "quote": "[...] The urge to make computers more and more intelligent is, therefore, an urge to provide a tool for the empirical study of intelligence.",
+      "block_id": "symbolic_ai-block-9",
       "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-19",
-      "quote": "The synthesis below happens naturally once you read three other chapters: Reasoning (CoT is *implicit* logic the network learned), Mechanistic Interpretability (the circuits you find inside a Transformer often look like AND/OR/NOT gates), and AI Agents (ReAct-style tool use is symbolic reasoning wrapped around a neural policy).",
+      "quote": "Three claims in this passage do the heavy lifting for the rest of the chapter.",
+      "block_id": "symbolic_ai-block-10",
       "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-20",
-      "quote": "The “neuro-symbolic” framing just makes the marriage explicit.",
+      "quote": "First, computer science is **empirical**, not a priori; the test of a system is whether it runs in the world, not whether its axioms are derivable from logic.",
+      "block_id": "symbolic_ai-block-10",
       "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-21",
-      "quote": "| | Symbolic (GOFAI) | Neural (Connectionist) |",
-      "section": "The Two Branches",
+      "quote": "This is the move that licenses the entire culture of *benchmarks* (the Turing test, ImageNet, MMLU, the Winograd Schema, ARC-AGI) the rest of this course uses to grade systems.",
+      "block_id": "symbolic_ai-block-10",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-22",
-      "quote": "| **Representation** | Symbols, rules, logic | Vectors, weights |",
-      "section": "The Two Branches",
+      "quote": "Second, the relevant kind of *experiment* is the *construction* of a computer program that exhibits the phenomenon; the program is the hypothesis, and running it is the experiment.",
+      "block_id": "symbolic_ai-block-10",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-23",
-      "quote": "| **Reasoning** | Formal inference | Pattern recognition |",
-      "section": "The Two Branches",
+      "quote": "The symbolic AI research program — STRIPS, Soar, Cyc, theorem provers, expert systems — is not *applications* of computer science to psychology; it *is* computer science as the empirical study of symbolic processes.",
+      "block_id": "symbolic_ai-block-10",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-24",
-      "quote": "| **Knowledge** | Hand-curated | Learned from data |",
-      "section": "The Two Branches",
+      "quote": "Third, the central object of study is the **symbol system**, an architecture that *designates*, *interprets*, and *acts on* tokens by rule.",
+      "block_id": "symbolic_ai-block-10",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-25",
-      "quote": "| **Transparency** | Traceable proof | Black box |",
-      "section": "The Two Branches",
+      "quote": "The rest of the paper works out the consequences: physical symbol systems are *realisable* (you can build them), *universal* (they can simulate any other symbol system), and *sufficient for general intelligent action* — the now-famous **physical symbol system hypothesis**, that \"a physical symbol system has the necessary and sufficient means for general intelligent action.\"",
+      "block_id": "symbolic_ai-block-10",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-26",
-      "quote": "| **Robustness** | Strong (provable) | Brittle (adversarial) |",
-      "section": "The Two Branches",
+      "quote": "The substantive section of the paper is a defence of that hypothesis on three grounds — behavioural, neural, and psychological — using the 1956 Logic Theory Machine (the first program to prove theorems in Principia Mathematica), the General Problem Solver (means-ends analysis over state spaces), and the chess and perception programs as data points.",
+      "block_id": "symbolic_ai-block-11",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-27",
-      "quote": "| **Sample efficiency** | High | High data needs |",
-      "section": "The Two Branches",
+      "quote": "The methodological lesson is that *each new layer of complexity* the AI field tackles — from logic to problem solving to perception to language — extends the same pattern: design a symbol system, run it, observe its behaviour, debug it against a held-out set of problems, publish the result.",
+      "block_id": "symbolic_ai-block-11",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-28",
-      "quote": "| **Scaling** | Knowledge engineering bottleneck | Compute + data |",
-      "section": "The Two Branches",
+      "quote": "This is the research methodology that produced the symbolic-AI tradition in this chapter.",
+      "block_id": "symbolic_ai-block-11",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-29",
-      "quote": "Both have strengths the other lacks.",
-      "section": "The Two Branches",
+      "quote": "Read against the modern course, two things stand out.",
+      "block_id": "symbolic_ai-block-12",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-30",
-      "quote": "**Neuro-symbolic AI** is the synthesis.",
-      "section": "The Two Branches",
+      "quote": "First, Newell and Simon are explicit that the **symbol system** and the **neural substrate** are not rivals; the physical-symbol-system hypothesis is silent about whether the substrate is silicon, vacuum tubes, or neurons, and is silent about whether the symbols are *implemented* by distributed subsymbolic representations or by explicit pointers.",
+      "block_id": "symbolic_ai-block-12",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-31",
-      "quote": "The classical symbolic AI stack rests on **first-order logic** and its extensions.",
-      "section": "Knowledge Representation: From Logic to RDF",
+      "quote": "The symbolic/connectionist split that haunts the field for half a century after the paper is not the split the paper makes; the paper makes the split *between* *systems that exhibit intelligent behaviour by manipulating symbols* and *systems that exhibit intelligent behaviour without doing so*, and it argues that the first kind is the easier one to engineer and study.",
+      "block_id": "symbolic_ai-block-12",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-32",
-      "quote": "Variables are boolean; connectives $\\land, \\lor, \\neg, \\implies$ combine them.",
-      "section": "Propositional Logic",
+      "quote": "The neural revolution of the 2010s changed the cost calculus but not the philosophical point: a Transformer *is* a physical symbol system in Newell and Simon's sense — it designates tokens, interprets them by rule, and acts on them by emitting other tokens — implemented in a sub-symbolic substrate.",
+      "block_id": "symbolic_ai-block-12",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-33",
-      "quote": "Decidable; SAT solvers are highly optimized.",
-      "section": "Propositional Logic",
+      "quote": "Second, the **empirical methodology** of the paper is the same methodology the rest of this course uses: build a system, run it on a benchmark, publish the score, debug, iterate.",
+      "block_id": "symbolic_ai-block-12",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-34",
-      "quote": "Adds $\\forall$ (forall), $\\exists$ (exists), predicates $P(x)$, and functions $f(x)$.",
-      "section": "First-Order Logic (FOL)",
+      "quote": "Every chapter that ends with a benchmark plot (Perplexity on text, BLEU on translation, accuracy on MMLU, success rate on agent tasks) is the 2020s continuation of the empirical-research program Newell and Simon proposed for computer science in 1976.",
+      "block_id": "symbolic_ai-block-12",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-35",
-      "quote": "More expressive; semi-decidable.",
-      "section": "First-Order Logic (FOL)",
+      "quote": "The disagreement is about what *kind* of symbol system best buys the score; the *agreement* on what counts as evidence for an answer is the paper's lasting contribution.",
+      "block_id": "symbolic_ai-block-12",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-36",
-      "quote": "A simple FOL knowledge base:",
-      "section": "First-Order Logic (FOL)",
+      "quote": "The clearest way to see what Newell and Simon are doing is to read the paper *against* \\citeauthor{brooks1990elephants} (\\citeyear{brooks1990elephants}), added in the philosophy chapter.",
+      "block_id": "symbolic_ai-block-13",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-37",
-      "quote": "A fragment of FOL designed to be **decidable** while still expressive.",
-      "section": "Description Logics (DLs)",
+      "quote": "\\citeauthor{brooks1990elephants}'s manifesto is a *rejection* of the \"cognition as symbol manipulation\" programme on engineering grounds: he argues that the symbol-manipulation programme fails to produce robots that work in the real world, and that *subsumption-style* layered sensorimotor loops work better.",
+      "block_id": "symbolic_ai-block-13",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-38",
-      "quote": "Foundation of the **Semantic Web**:",
-      "section": "Description Logics (DLs)",
+      "quote": "\\citeauthor{newell1976empirical} are committed to the opposite programme but, ironically, *on the same empirical ground*: they argue that the symbol-manipulation programme *does* produce systems that exhibit intelligent behaviour, and that no other programme has yet produced systems with comparable breadth.",
+      "block_id": "symbolic_ai-block-13",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-39",
-      "quote": "* **Concepts** (classes): Human, Mammal, Vehicle",
-      "section": "Description Logics (DLs)",
+      "quote": "The 2020s answer is that both are partly right: modern AI is best modelled as a *hybrid*, with a sub-symbolic substrate implementing a symbolic policy (a Transformer), surrounded by tools and verifiers that act as explicit symbolic primitives.",
+      "block_id": "symbolic_ai-block-13",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-40",
-      "quote": "* **Roles** (properties): hasParent, drives, owns",
-      "section": "Description Logics (DLs)",
+      "quote": "The hybrid is, in a sense, what Newell and Simon would have predicted if they had known what 2026 hardware looks like; the hybrid is also, in a different sense, what Brooks would have predicted if he had known what 2026 software looks like.",
+      "block_id": "symbolic_ai-block-13",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-41",
-      "quote": "* **Individuals**: Socrates, Plato",
-      "section": "Description Logics (DLs)",
+      "quote": "The first implementations followed quickly.",
+      "block_id": "symbolic_ai-block-14",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-42",
-      "quote": "* **Constructors**: $\\sqcap$ (intersection), $\\sqcup$ (union), $\\neg$ (negation), $\\exists R.C$ (exists role filler)",
-      "section": "Description Logics (DLs)",
+      "quote": "Newell, Shaw, and Simon's Logic Theory Machine (1956) proved 38 of the first 52 theorems in Chapter 2 of *Principia Mathematica*, and found a shorter proof than Russell and Whitehead's for one of them (\\cite[Newell & Simon, 1956]{newell1956logictheorist}).",
+      "block_id": "symbolic_ai-block-14",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-43",
-      "quote": "The standard **SROIQ** description logic underlies **OWL 2 DL** (the description-logic profile of the Web Ontology Language).",
-      "section": "Description Logics (DLs)",
+      "quote": "Their General Problem Solver (1957) generalized the trick into means-ends analysis: compare current and goal states, find the difference, and apply an operator that reduces it (\\cite[Newell, Shaw & Simon, 1957]{newell1957gps}).",
+      "block_id": "symbolic_ai-block-14",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-44",
-      "quote": "The Semantic Web stack (W3C standards):",
-      "section": "RDF, RDFS, OWL, SPARQL",
+      "quote": "McCarthy's LISP (1960) then gave symbolic AI its own language -- programs and data both lists, recursion as the basic control structure (\\cite[McCarthy, 1960]{mccarthy1960lisp}; \\cite[Lisp]{lisp_wiki}).",
+      "block_id": "symbolic_ai-block-14",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-45",
-      "quote": "* **RDF** (Resource Description Framework): triple representation $\\langle \\text{subject}, \\text{predicate}, \\text{object} \\rangle$.",
-      "section": "RDF, RDFS, OWL, SPARQL",
+      "quote": "The synthesis below happens naturally once you read three other chapters: Reasoning (CoT is *implicit* logic the network learned), Mechanistic Interpretability (the circuits you find inside a Transformer often look like AND/OR/NOT gates), and AI Agents (ReAct-style tool use is symbolic reasoning wrapped around a neural policy).",
+      "block_id": "symbolic_ai-block-15",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-46",
-      "quote": "* **RDFS** (RDF Schema): class hierarchies, property hierarchies.",
-      "section": "RDF, RDFS, OWL, SPARQL",
+      "quote": "The “neuro-symbolic” framing just makes the marriage explicit.",
+      "block_id": "symbolic_ai-block-15",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-47",
-      "quote": "* **OWL** (Web Ontology Language): full description logic, cardinality constraints, equivalence, disjointness.",
-      "section": "RDF, RDFS, OWL, SPARQL",
+      "quote": "| | Symbolic (GOFAI) | Neural (Connectionist) |",
+      "block_id": "symbolic_ai-block-17",
+      "section": "The Two Branches",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-48",
-      "quote": "* **SPARQL**: SQL-like query language for RDF.",
-      "section": "RDF, RDFS, OWL, SPARQL",
+      "quote": "| **Representation** | Symbols, rules, logic | Vectors, weights |",
+      "block_id": "symbolic_ai-block-18",
+      "section": "The Two Branches",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-49",
-      "quote": "Major public knowledge graphs:",
-      "section": "RDF, RDFS, OWL, SPARQL",
+      "quote": "| **Reasoning** | Formal inference | Pattern recognition |",
+      "block_id": "symbolic_ai-block-19",
+      "section": "The Two Branches",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-50",
-      "quote": "* **Wikidata**: 100M+ items, the open community-edited KG.",
-      "section": "RDF, RDFS, OWL, SPARQL",
+      "quote": "| **Knowledge** | Hand-curated | Learned from data |",
+      "block_id": "symbolic_ai-block-20",
+      "section": "The Two Branches",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-51",
-      "quote": "* **DBpedia**: extracted from Wikipedia infoboxes.",
-      "section": "RDF, RDFS, OWL, SPARQL",
+      "quote": "| **Transparency** | Traceable proof | Black box |",
+      "block_id": "symbolic_ai-block-21",
+      "section": "The Two Branches",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-52",
-      "quote": "* **Google Knowledge Graph**: powers search infoboxes.",
-      "section": "RDF, RDFS, OWL, SPARQL",
+      "quote": "| **Robustness** | Strong (provable) | Brittle (adversarial) |",
+      "block_id": "symbolic_ai-block-22",
+      "section": "The Two Branches",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-53",
-      "quote": "* **ConceptNet**: 34M commonsense assertions.",
-      "section": "RDF, RDFS, OWL, SPARQL",
+      "quote": "| **Sample efficiency** | High | High data needs |",
+      "block_id": "symbolic_ai-block-23",
+      "section": "The Two Branches",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-54",
-      "quote": "* **WordNet**: lexical KG (synonymy, hypernymy).",
-      "section": "RDF, RDFS, OWL, SPARQL",
+      "quote": "| **Scaling** | Knowledge engineering bottleneck | Compute + data |",
+      "block_id": "symbolic_ai-block-24",
+      "section": "The Two Branches",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-55",
-      "quote": "* **UMLS**: medical KG (3M+ concepts).",
-      "section": "RDF, RDFS, OWL, SPARQL",
+      "quote": "Both have strengths the other lacks.",
+      "block_id": "symbolic_ai-block-25",
+      "section": "The Two Branches",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-56",
-      "quote": "* **Amazon Product Graph, Facebook Entity Graph**: industrial-scale closed KGs.",
-      "section": "RDF, RDFS, OWL, SPARQL",
+      "quote": "**Neuro-symbolic AI** is the synthesis.",
+      "block_id": "symbolic_ai-block-25",
+      "section": "The Two Branches",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-57",
-      "quote": "A KG query is **graph pattern matching**:",
-      "section": "Reasoning Over Knowledge Graphs",
+      "quote": "The classical symbolic AI stack rests on **first-order logic** and its extensions.",
+      "block_id": "symbolic_ai-block-28",
+      "section": "Knowledge Representation: From Logic to RDF",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-58",
-      "quote": "Reasoners (Pellet, HermiT, FaCT++) implement **tableau-based** algorithms that check consistency and infer new triples.",
-      "section": "Reasoning Over Knowledge Graphs",
+      "quote": "Variables are boolean; connectives $\\land, \\lor, \\neg, \\implies$ combine them.",
+      "block_id": "symbolic_ai-block-30",
+      "section": "Propositional Logic",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-59",
-      "quote": "* **Subsumption**: is $A$ a subclass of $B$?",
-      "section": "Reasoning Over Knowledge Graphs",
+      "quote": "Decidable; SAT solvers are highly optimized.",
+      "block_id": "symbolic_ai-block-30",
+      "section": "Propositional Logic",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-60",
-      "quote": "* **Instance checking**: is $a$ an instance of $C$?",
-      "section": "Reasoning Over Knowledge Graphs",
+      "quote": "A simple FOL knowledge base:",
+      "block_id": "symbolic_ai-block-32",
+      "section": "First-Order Logic (FOL)",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-61",
-      "quote": "* **Consistency**: does the KG have a model?",
-      "section": "Reasoning Over Knowledge Graphs",
+      "quote": "A fragment of FOL designed to be **decidable** while still expressive.",
+      "block_id": "symbolic_ai-block-34",
+      "section": "Description Logics (DLs)",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-62",
-      "quote": "* **Realization**: find the most specific class for an individual.",
-      "section": "Reasoning Over Knowledge Graphs",
+      "quote": "Foundation of the **Semantic Web**:",
+      "block_id": "symbolic_ai-block-34",
+      "section": "Description Logics (DLs)",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-63",
-      "quote": "For **rule-based reasoning** beyond OWL, **Datalog** and **Prolog** are used.",
-      "section": "Reasoning Over Knowledge Graphs",
+      "quote": "The standard **SROIQ** description logic underlies **OWL 2 DL** (the description-logic profile of the Web Ontology Language).",
+      "block_id": "symbolic_ai-block-35",
+      "section": "Description Logics (DLs)",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-64",
-      "quote": "Modern graph databases (Neo4j, Amazon Neptune, Stardog, TigerGraph) add **property graphs**: nodes and edges with arbitrary attributes.",
-      "section": "Reasoning Over Knowledge Graphs",
+      "quote": "The Semantic Web stack (W3C standards):",
+      "block_id": "symbolic_ai-block-37",
+      "section": "RDF, RDFS, OWL, SPARQL",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-65",
-      "quote": "Resolution gave symbolic reasoning its industrial engine.",
-      "section": "Reasoning Over Knowledge Graphs",
+      "quote": "Major public knowledge graphs:",
+      "block_id": "symbolic_ai-block-38",
+      "section": "RDF, RDFS, OWL, SPARQL",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-66",
-      "quote": "Robinson's 1965 rule -- resolve two clauses on a complementary literal, with unification handling variables -- made first-order theorem proving a single uniform inference step (\\cite[Robinson, 1965]{robinson1965resolution}).",
+      "quote": "A KG query is **graph pattern matching**:",
+      "block_id": "symbolic_ai-block-40",
       "section": "Reasoning Over Knowledge Graphs",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-67",
-      "quote": "Kowalski's 1974 \"Predicate Logic as a Programming Language\" turned resolution into computation: a logic program is a set of Horn clauses, and answering a query is proof search (\\cite[Kowalski, 1974]{kowalski1974prolog}).",
+      "quote": "Reasoners (Pellet, HermiT, FaCT++) implement **tableau-based** algorithms that check consistency and infer new triples.",
+      "block_id": "symbolic_ai-block-41",
       "section": "Reasoning Over Knowledge Graphs",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-68",
-      "quote": "Colmerauer and Roussel's Prolog (1972-73) implemented that idea and became the language of expert systems, natural-language parsers, and later Datalog engines (\\cite[Colmerauer & Roussel, 1973]{colmerauer1973prolog}).",
+      "quote": "For **rule-based reasoning** beyond OWL, **Datalog** and **Prolog** are used.",
+      "block_id": "symbolic_ai-block-42",
       "section": "Reasoning Over Knowledge Graphs",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-69",
-      "quote": "To bridge symbolic KGs with neural methods, several **KG embedding** methods learn vector representations of entities and relations:",
-      "section": "Embedding-Based KG Reasoning",
+      "quote": "Modern graph databases (Neo4j, Amazon Neptune, Stardog, TigerGraph) add **property graphs**: nodes and edges with arbitrary attributes.",
+      "block_id": "symbolic_ai-block-42",
+      "section": "Reasoning Over Knowledge Graphs",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-70",
-      "quote": "* **TransE** \\cite{bordes2013transe}: $\\mathbf{h} + \\mathbf{r} \\approx \\mathbf{t}$ (translation in embedding space).",
-      "section": "Embedding-Based KG Reasoning",
+      "quote": "Resolution gave symbolic reasoning its industrial engine.",
+      "block_id": "symbolic_ai-block-43",
+      "section": "Reasoning Over Knowledge Graphs",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-71",
-      "quote": "* **DistMult** \\cite{yang2015distmult}: bilinear $\\langle \\mathbf{h}, \\mathbf{r}, \\mathbf{t} \\rangle$ score.",
-      "section": "Embedding-Based KG Reasoning",
+      "quote": "Robinson's 1965 rule -- resolve two clauses on a complementary literal, with unification handling variables -- made first-order theorem proving a single uniform inference step (\\cite[Robinson, 1965]{robinson1965resolution}).",
+      "block_id": "symbolic_ai-block-43",
+      "section": "Reasoning Over Knowledge Graphs",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-72",
-      "quote": "* **ComplEx**: extends to complex-valued embeddings for asymmetric relations.",
-      "section": "Embedding-Based KG Reasoning",
+      "quote": "Kowalski's 1974 \"Predicate Logic as a Programming Language\" turned resolution into computation: a logic program is a set of Horn clauses, and answering a query is proof search (\\cite[Kowalski, 1974]{kowalski1974prolog}).",
+      "block_id": "symbolic_ai-block-43",
+      "section": "Reasoning Over Knowledge Graphs",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-73",
-      "quote": "* **RotatE** \\cite{sun2019rotate}: rotation in complex space, captures composition.",
-      "section": "Embedding-Based KG Reasoning",
+      "quote": "Colmerauer and Roussel's Prolog (1972-73) implemented that idea and became the language of expert systems, natural-language parsers, and later Datalog engines (\\cite[Colmerauer & Roussel, 1973]{colmerauer1973prolog}).",
+      "block_id": "symbolic_ai-block-43",
+      "section": "Reasoning Over Knowledge Graphs",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-74",
-      "quote": "* **GraphSAGE** \\cite{hamilton2017graphsage} / **R-GCN** \\cite{schlichtkrull2018rgcn}: graph neural networks over the KG structure.",
+      "quote": "To bridge symbolic KGs with neural methods, several **KG embedding** methods learn vector representations of entities and relations:",
+      "block_id": "symbolic_ai-block-45",
       "section": "Embedding-Based KG Reasoning",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-75",
-      "quote": "These enable **link prediction**: given $(h, r, ?)$, predict $t$, completing missing triples.",
-      "section": "Embedding-Based KG Reasoning",
+      "quote": "Symbolic AI's first commercial wave was knowledge engineering.",
+      "block_id": "symbolic_ai-block-47",
+      "section": "The knowledge-engineering cycle",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-76",
-      "quote": "Used in recommendation, drug repurposing, fraud detection.",
-      "section": "Embedding-Based KG Reasoning",
+      "quote": "DENDRAL inferred molecular structures from mass spectra, MYCIN recommended antibiotics from hundreds of if-then rules, and both showed that hand-coded expertise could beat general search in a narrow domain (\\cite[Feigenbaum et al., 1969]{feigenbaum1965dendral}; \\cite[Shortliffe & Buchanan, 1976]{shortliffe1976mycin}).",
+      "block_id": "symbolic_ai-block-47",
+      "section": "The knowledge-engineering cycle",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-77",
-      "quote": "Symbolic AI's first commercial wave was knowledge engineering.",
+      "quote": "The details explain why the recipe spread.",
+      "block_id": "symbolic_ai-block-47",
       "section": "The knowledge-engineering cycle",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-78",
-      "quote": "DENDRAL inferred molecular structures from mass spectra, MYCIN recommended antibiotics from hundreds of if-then rules, and both showed that hand-coded expertise could beat general search in a narrow domain (\\cite[Feigenbaum et al., 1969]{feigenbaum1965dendral}; \\cite[Shortliffe & Buchanan, 1976]{shortliffe1976mycin}).",
+      "quote": "DENDRAL pruned the search for one compound from more than eleven million candidate structures to about twenty-two thousand, which could then be tested individually; MYCIN separated its rules from its inference engine, so the engine could be reused as the first expert-system shell (EMYCIN), and in a blind clinical test it prescribed antibiotics as well as, or better than, nine human clinicians \\cite{crevier1993ai}.",
+      "block_id": "symbolic_ai-block-47",
       "section": "The knowledge-engineering cycle",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-79",
-      "quote": "The details explain why the recipe spread.",
+      "quote": "The commercial breakthrough was XCON (originally R1), John McDermott's VAX configurer for the Digital Equipment Corporation: about three hundred rules in 1979 grew to more than three thousand by 1984, and the system configured ten machine models \\cite{crevier1993ai}.",
+      "block_id": "symbolic_ai-block-47",
       "section": "The knowledge-engineering cycle",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-80",
-      "quote": "DENDRAL pruned the search for one compound from more than eleven million candidate structures to about twenty-two thousand, which could then be tested individually; MYCIN separated its rules from its inference engine, so the engine could be reused as the first expert-system shell (EMYCIN), and in a blind clinical test it prescribed antibiotics as well as, or better than, nine human clinicians \\cite{crevier1993ai}.",
+      "quote": "Winograd's SHRDLU (1972) embedded language in a tiny blocks world, so every word had a referent (\\cite[Winograd, 1972]{winograd1972understanding}).",
+      "block_id": "symbolic_ai-block-47",
       "section": "The knowledge-engineering cycle",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-81",
-      "quote": "The commercial breakthrough was XCON (originally R1), John McDermott's VAX configurer for the Digital Equipment Corporation: about three hundred rules in 1979 grew to more than three thousand by 1984, and the system configured ten machine models \\cite{crevier1993ai}.",
+      "quote": "McCarthy and Hayes had already named the obstacle: the frame problem, deciding what stays unchanged when an action occurs (\\cite[McCarthy & Hayes, 1969]{mccarthy1969some}).",
+      "block_id": "symbolic_ai-block-47",
       "section": "The knowledge-engineering cycle",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-82",
-      "quote": "Winograd's SHRDLU (1972) embedded language in a tiny blocks world, so every word had a referent (\\cite[Winograd, 1972]{winograd1972understanding}).",
+      "quote": "Cyc, begun in 1984, was the maximalist response -- a hand-built common-sense ontology and inference engine -- but knowledge acquisition did not scale (\\cite[Cyc]{cyc_wiki}).",
+      "block_id": "symbolic_ai-block-47",
       "section": "The knowledge-engineering cycle",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-83",
-      "quote": "McCarthy and Hayes had already named the obstacle: the frame problem, deciding what stays unchanged when an action occurs (\\cite[McCarthy & Hayes, 1969]{mccarthy1969some}).",
+      "quote": "The semantic web was the attempt to make that knowledge public and composable: RDF triples, OWL ontologies, and SPARQL queries, standardized by the W3C and promoted in Berners-Lee, Hendler, and Lassila's 2001 *Scientific American* article (\\cite[Berners-Lee et al., 2001]{berners2001sw}).",
+      "block_id": "symbolic_ai-block-48",
       "section": "The knowledge-engineering cycle",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-84",
-      "quote": "Cyc, begun in 1984, was the maximalist response -- a hand-built common-sense ontology and inference engine -- but knowledge acquisition did not scale (\\cite[Cyc]{cyc_wiki}).",
+      "quote": "Google's 2012 Knowledge Graph showed the industrial version -- a proprietary graph of entities and relations behind search answers (\\cite[Singhal, 2012]{singhal2012knowledge}).",
+      "block_id": "symbolic_ai-block-48",
       "section": "The knowledge-engineering cycle",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-85",
-      "quote": "The semantic web was the attempt to make that knowledge public and composable: RDF triples, OWL ontologies, and SPARQL queries, standardized by the W3C and promoted in Berners-Lee, Hendler, and Lassila's 2001 *Scientific American* article (\\cite[Berners-Lee et al., 2001]{berners2001sw}).",
+      "quote": "The current revival is neuro-symbolic: neural networks handle perception and ambiguity, while symbolic engines supply exact inference and verification, as in DeepProbLog and AlphaGeometry (\\cite[Manhaeve et al., 2018]{manhaeve2018deepproblog}; \\cite[Trinh et al., 2024]{trinh2024alphageometry}; \\cite[Garcez & Lamb, 2020]{garcez2020neurosymbolic}).",
+      "block_id": "symbolic_ai-block-48",
       "section": "The knowledge-engineering cycle",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-86",
-      "quote": "Google's 2012 Knowledge Graph showed the industrial version -- a proprietary graph of entities and relations behind search answers (\\cite[Singhal, 2012]{singhal2012knowledge}).",
-      "section": "The knowledge-engineering cycle",
+      "quote": "Modern LLMs use **tools** as symbolic primitives:",
+      "block_id": "symbolic_ai-block-51",
+      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-87",
-      "quote": "The current revival is neuro-symbolic: neural networks handle perception and ambiguity, while symbolic engines supply exact inference and verification, as in DeepProbLog and AlphaGeometry (\\cite[Manhaeve et al., 2018]{manhaeve2018deepproblog}; \\cite[Trinh et al., 2024]{trinh2024alphageometry}; \\cite[Garcez & Lamb, 2020]{garcez2020neurosymbolic}).",
-      "section": "The knowledge-engineering cycle",
+      "quote": "Frameworks: LangChain, LlamaIndex, AutoGen, CrewAI, LangGraph, OpenAI's function-calling, Anthropic's tool use.",
+      "block_id": "symbolic_ai-block-52",
+      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-88",
-      "quote": "Modern LLMs use **tools** as symbolic primitives:",
+      "quote": "The LLM acts as a **planner and natural-language interface**; the symbolic system provides **grounded computation**.",
+      "block_id": "symbolic_ai-block-53",
       "section": "Symbolic Reasoning in 2025: LLMs + Tools",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-89",
-      "quote": "* **Web search**: query → fetch results → summarize.",
-      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
+      "quote": "Symbolic AI is critical for **provable correctness**:",
+      "block_id": "symbolic_ai-block-55",
+      "section": "Formal Verification and Theorem Proving",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-90",
-      "quote": "* **Code execution**: generate Python → run in sandbox → use output.",
-      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
+      "quote": "The Lean-based **“AI for math”** initiative (DeepMind, 2024; OpenAI, 2024) has produced LLMs that:",
+      "block_id": "symbolic_ai-block-57",
+      "section": "LLM + Theorem Proving (the 2024 frontier)",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-91",
-      "quote": "* **Calculator**: “what is 17 × 23?” → call a calculator → return 391.",
-      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
+      "quote": "Generate a candidate proof in natural language + Lean code.",
+      "block_id": "symbolic_ai-block-58",
+      "section": "LLM + Theorem Proving (the 2024 frontier)",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-92",
-      "quote": "* **Database query**: “users in Berlin” → generate SQL → execute → return rows.",
-      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
+      "quote": "Submit to Lean's kernel for verification.",
+      "block_id": "symbolic_ai-block-59",
+      "section": "LLM + Theorem Proving (the 2024 frontier)",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-93",
-      "quote": "* **API calls**: “book a flight” → call Skyscanner API.",
-      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
+      "quote": "If verification fails, refine using the error message.",
+      "block_id": "symbolic_ai-block-60",
+      "section": "LLM + Theorem Proving (the 2024 frontier)",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-94",
-      "quote": "Frameworks: LangChain, LlamaIndex, AutoGen, CrewAI, LangGraph, OpenAI's function-calling, Anthropic's tool use.",
-      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
+      "quote": "The combined AlphaProof and AlphaGeometry system (\\cite[DeepMind, 2024]{deepmind2024alphaproof}) reached silver-medal level at IMO 2024, solving four of the six problems.",
+      "block_id": "symbolic_ai-block-62",
+      "section": "LLM + Theorem Proving (the 2024 frontier)",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-95",
-      "quote": "The LLM acts as a **planner and natural-language interface**; the symbolic system provides **grounded computation**.",
-      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
+      "quote": "Subsequent work has solved IMO 2025 problems.",
+      "block_id": "symbolic_ai-block-62",
+      "section": "LLM + Theorem Proving (the 2024 frontier)",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-96",
-      "quote": "Symbolic AI is critical for **provable correctness**:",
-      "section": "Formal Verification and Theorem Proving",
+      "quote": "The combination of **neural intuition** + **symbolic verification** is the most promising path to provably correct mathematical reasoning.",
+      "block_id": "symbolic_ai-block-62",
+      "section": "LLM + Theorem Proving (the 2024 frontier)",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-97",
-      "quote": "* **Lean, Coq, Isabelle, Agda**: interactive theorem provers.",
-      "section": "Formal Verification and Theorem Proving",
+      "quote": "The synthesis takes several forms:",
+      "block_id": "symbolic_ai-block-64",
+      "section": "Neuro-Symbolic Architectures",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-98",
-      "quote": "Used in mathematics (Liquid Tensor Experiment), cryptography (zk-SNARKs), and verified software (CompCert, seL4).",
-      "section": "Formal Verification and Theorem Proving",
+      "quote": "| Approach | Description | Example |",
+      "block_id": "symbolic_ai-block-65",
+      "section": "Neuro-Symbolic Architectures",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-99",
-      "quote": "* **SAT solvers** (CaDiCaL, Kissat, CryptoMiniSat): scale to millions of variables.",
-      "section": "Formal Verification and Theorem Proving",
+      "quote": "| **Neural + symbolic modules** | NN does perception, symbolic does reasoning | AlphaGeometry (\\cite[Trinh et al., 2024]{trinh2024alphageometry}), AlphaProof |",
+      "block_id": "symbolic_ai-block-66",
+      "section": "Neuro-Symbolic Architectures",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-100",
-      "quote": "Industry-standard for hardware verification, planning, scheduling.",
-      "section": "Formal Verification and Theorem Proving",
+      "quote": "| **Neural representations, symbolic inference** | Embeddings + logical rules | Logic Tensor Networks, NLProlog |",
+      "block_id": "symbolic_ai-block-67",
+      "section": "Neuro-Symbolic Architectures",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-101",
-      "quote": "* **SMT solvers** (Z3, CVC5): extend SAT with theories (arithmetic, arrays, bit-vectors).",
-      "section": "Formal Verification and Theorem Proving",
+      "quote": "| **Symbolic priors on neural nets** | Constraints in loss function | Physics-informed NNs, constraint satisfaction |",
+      "block_id": "symbolic_ai-block-68",
+      "section": "Neuro-Symbolic Architectures",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-102",
-      "quote": "* **Model checkers** (SPIN, TLC for TLA+): verify state machines, distributed systems, protocols.",
-      "section": "Formal Verification and Theorem Proving",
+      "quote": "| **NN as heuristic for symbolic search** | Learned policy for tree search | AlphaGo, theorem provers |",
+      "block_id": "symbolic_ai-block-69",
+      "section": "Neuro-Symbolic Architectures",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-103",
-      "quote": "The Lean-based **“AI for math”** initiative (DeepMind, 2024; OpenAI, 2024) has produced LLMs that:",
-      "section": "LLM + Theorem Proving (the 2024 frontier)",
+      "quote": "| **Differentiable logic** | Soft logic, gradient through rules | DeepProbLog, NARS |",
+      "block_id": "symbolic_ai-block-70",
+      "section": "Neuro-Symbolic Architectures",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-104",
-      "quote": "Generate a candidate proof in natural language + Lean code.",
-      "section": "LLM + Theorem Proving (the 2024 frontier)",
+      "quote": "| **LLM + tool use** | Neural planner, symbolic tools | ReAct \\cite{yao2023react}, Toolformer, agents |",
+      "block_id": "symbolic_ai-block-71",
+      "section": "Neuro-Symbolic Architectures",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-105",
-      "quote": "Submit to Lean's kernel for verification.",
-      "section": "LLM + Theorem Proving (the 2024 frontier)",
+      "quote": "Solves IMO (\\cite[Trinh et al., 2024]{trinh2024alphageometry}) problems: a Transformer generates candidate constructions, a symbolic DDAR (deductive database) verifies.",
+      "block_id": "symbolic_ai-block-73",
+      "section": "AlphaGeometry (DeepMind, 2024)",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-106",
-      "quote": "If verification fails, refine using the error message.",
-      "section": "LLM + Theorem Proving (the 2024 frontier)",
+      "quote": "Solved 25 of the 30 IMO geometry problems from 2000–2022, close to the average human gold medallist.",
+      "block_id": "symbolic_ai-block-73",
+      "section": "AlphaGeometry (DeepMind, 2024)",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-107",
-      "quote": "The combined AlphaProof and AlphaGeometry system (\\cite[DeepMind, 2024]{deepmind2024alphaproof}) reached silver-medal level at IMO 2024, solving four of the six problems.",
-      "section": "LLM + Theorem Proving (the 2024 frontier)",
+      "quote": "A Transformer that learns to **call APIs** (calculator, search, translation) by self-supervised training on examples where API calls improve perplexity (\\cite[Schick et al., 2023]{schick2023toolformer}).",
+      "block_id": "symbolic_ai-block-75",
+      "section": "Toolformer",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-108",
-      "quote": "Subsequent work has solved IMO 2025 problems.",
-      "section": "LLM + Theorem Proving (the 2024 frontier)",
+      "quote": "Pure neural, but uses symbolic tools.",
+      "block_id": "symbolic_ai-block-75",
+      "section": "Toolformer",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-109",
-      "quote": "The combination of **neural intuition** + **symbolic verification** is the most promising path to provably correct mathematical reasoning.",
-      "section": "LLM + Theorem Proving (the 2024 frontier)",
+      "quote": "Embed logical rules as soft constraints on neural network outputs.",
+      "block_id": "symbolic_ai-block-77",
+      "section": "Logic Tensor Networks (Serafini & Garcez, 2016)",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-110",
-      "quote": "The synthesis takes several forms:",
-      "section": "Neuro-Symbolic Architectures",
+      "quote": "Combines first-order logic with deep learning in a single end-to-end trainable system.",
+      "block_id": "symbolic_ai-block-77",
+      "section": "Logic Tensor Networks (Serafini & Garcez, 2016)",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-111",
-      "quote": "| Approach | Description | Example |",
-      "section": "Neuro-Symbolic Architectures",
+      "quote": "Extends ProbLog (probabilistic logic programming) with neural predicates (\\cite[Manhaeve et al., 2018]{manhaeve2018deepproblog}).",
+      "block_id": "symbolic_ai-block-79",
+      "section": "DeepProbLog",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-112",
-      "quote": "| **Neural + symbolic modules** | NN does perception, symbolic does reasoning | AlphaGeometry (\\cite[Trinh et al., 2024]{trinh2024alphageometry}), AlphaProof |",
-      "section": "Neuro-Symbolic Architectures",
+      "quote": "A neural net outputs probabilities; the probabilistic logic engine reasons over them.",
+      "block_id": "symbolic_ai-block-79",
+      "section": "DeepProbLog",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-113",
-      "quote": "| **Neural representations, symbolic inference** | Embeddings + logical rules | Logic Tensor Networks, NLProlog |",
-      "section": "Neuro-Symbolic Architectures",
+      "quote": "When you need provable, deterministic, exact results: use a symbolic system, possibly wrapped by an LLM as the interface.",
+      "block_id": "symbolic_ai-block-83",
+      "section": "When Symbolic Wins",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-114",
-      "quote": "| **Symbolic priors on neural nets** | Constraints in loss function | Physics-informed NNs, constraint satisfaction |",
-      "section": "Neuro-Symbolic Architectures",
+      "quote": "By 2030, the standard production AI system will be:",
+      "block_id": "symbolic_ai-block-86",
+      "section": "The Future: Hybrid by Default",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-115",
-      "quote": "| **NN as heuristic for symbolic search** | Learned policy for tree search | AlphaGo, theorem provers |",
-      "section": "Neuro-Symbolic Architectures",
+      "quote": "The dichotomy is dissolving.",
+      "block_id": "symbolic_ai-block-87",
+      "section": "The Future: Hybrid by Default",
       "kind": "statement"
     },
     {
       "id": "symbolic_ai-stmt-116",
-      "quote": "| **Differentiable logic** | Soft logic, gradient through rules | DeepProbLog, NARS |",
-      "section": "Neuro-Symbolic Architectures",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-117",
-      "quote": "| **LLM + tool use** | Neural planner, symbolic tools | ReAct \\cite{yao2023react}, Toolformer, agents |",
-      "section": "Neuro-Symbolic Architectures",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-118",
-      "quote": "Solves IMO (\\cite[Trinh et al., 2024]{trinh2024alphageometry}) problems: a Transformer generates candidate constructions, a symbolic DDAR (deductive database) verifies.",
-      "section": "AlphaGeometry (DeepMind, 2024)",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-119",
-      "quote": "Solved 25 of the 30 IMO geometry problems from 2000–2022, close to the average human gold medallist.",
-      "section": "AlphaGeometry (DeepMind, 2024)",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-120",
-      "quote": "A Transformer that learns to **call APIs** (calculator, search, translation) by self-supervised training on examples where API calls improve perplexity (\\cite[Schick et al., 2023]{schick2023toolformer}).",
-      "section": "Toolformer",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-121",
-      "quote": "Pure neural, but uses symbolic tools.",
-      "section": "Toolformer",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-122",
-      "quote": "Embed logical rules as soft constraints on neural network outputs.",
-      "section": "Logic Tensor Networks (Serafini & Garcez, 2016)",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-123",
-      "quote": "Combines first-order logic with deep learning in a single end-to-end trainable system.",
-      "section": "Logic Tensor Networks (Serafini & Garcez, 2016)",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-124",
-      "quote": "Extends ProbLog (probabilistic logic programming) with neural predicates (\\cite[Manhaeve et al., 2018]{manhaeve2018deepproblog}).",
-      "section": "DeepProbLog",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-125",
-      "quote": "A neural net outputs probabilities; the probabilistic logic engine reasons over them.",
-      "section": "DeepProbLog",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-126",
-      "quote": "* **Exact computation** (arithmetic, code execution)",
-      "section": "When Symbolic Wins",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-127",
-      "quote": "* **Formal verification** (proofs, model checking)",
-      "section": "When Symbolic Wins",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-128",
-      "quote": "* **Structured prediction with hard constraints** (valid JSON, valid SQL, valid chemical structures)",
-      "section": "When Symbolic Wins",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-129",
-      "quote": "* **Deterministic reproducibility** (same input → same output)",
-      "section": "When Symbolic Wins",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-130",
-      "quote": "* **Long-tail factual queries** (a KG knows every entity; an LLM hallucinates)",
-      "section": "When Symbolic Wins",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-131",
-      "quote": "When you need provable, deterministic, exact results: use a symbolic system, possibly wrapped by an LLM as the interface.",
-      "section": "When Symbolic Wins",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-132",
-      "quote": "* Open-ended generation (text, images, audio, video).",
-      "section": "When Neural Wins",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-133",
-      "quote": "* Pattern recognition (vision, speech, anomalies).",
-      "section": "When Neural Wins",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-134",
-      "quote": "* Tasks where rules are unknown or hard to specify.",
-      "section": "When Neural Wins",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-135",
-      "quote": "* Handling natural-language inputs robustly.",
-      "section": "When Neural Wins",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-136",
-      "quote": "By 2030, the standard production AI system will be:",
-      "section": "The Future: Hybrid by Default",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-137",
-      "quote": "* An LLM at the top, doing natural-language understanding and planning.",
-      "section": "The Future: Hybrid by Default",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-138",
-      "quote": "* Calling symbolic tools (calculators, code interpreters, databases, KGs, APIs).",
-      "section": "The Future: Hybrid by Default",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-139",
-      "quote": "* With formal verification of critical outputs.",
-      "section": "The Future: Hybrid by Default",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-140",
-      "quote": "* Trained jointly on text, code, and structured data (SQL, JSON, RDF).",
-      "section": "The Future: Hybrid by Default",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-141",
-      "quote": "The dichotomy is dissolving.",
-      "section": "The Future: Hybrid by Default",
-      "kind": "statement"
-    },
-    {
-      "id": "symbolic_ai-stmt-142",
       "quote": "The student who masters **both** branches will be far more capable than one trained in either alone.",
+      "block_id": "symbolic_ai-block-87",
       "section": "The Future: Hybrid by Default",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "symbolic_ai-block-1",
+      "quote": "For most of its history, AI was **symbolic**: explicit rules, logical inference, hand-curated knowledge. The neural revolution displaced it, but did not destroy it. The 2020s have seen a renaissance: knowledge graphs, formal verification, neuro-symbolic hybrids, and LLM agents that use tools and APIs as symbolic primitives.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "symbolic_ai-block-2",
+      "quote": "This chapter traces the other branch of AI and shows how it complements neural networks.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "symbolic_ai-block-3",
+      "quote": "Before the program: logic and its limits",
+      "kind": "heading",
+      "section": "Before the program: logic and its limits"
+    },
+    {
+      "id": "symbolic_ai-block-4",
+      "quote": "Symbolic AI begins with the logicist dream that all of mathematics could be derived from logic. Frege's *Begriffsschrift* (1879) invented modern quantifier notation and tried to reduce arithmetic to logical laws; Russell and Whitehead's *Principia Mathematica* (1910-13) carried the project through, after Russell's paradox exposed its foundations (\\cite[Frege, 1879]{frege1879}; \\cite[Russell & Whitehead, 1910]{russell1910pm}; \\cite[Russell's paradox]{russell_paradox_sep}). Hilbert's programme then asked for a finitary consistency proof and a decision procedure for first-order logic (\\cite[Hilbert & Ackermann, 1928]{hilbert1928entscheidung}). Gödel's 1931 theorems ended the dream in its strong form: any consistent, effectively axiomatized system strong enough for arithmetic is incomplete and cannot prove its own consistency (\\cite[Gödel, 1931]{godel1931incompleteness}; \\cite[SEP]{sep_godel_incompleteness}).",
+      "kind": "paragraph",
+      "section": "Before the program: logic and its limits"
+    },
+    {
+      "id": "symbolic_ai-block-5",
+      "quote": "Foundations",
+      "kind": "heading",
+      "section": "Foundations"
+    },
+    {
+      "id": "symbolic_ai-block-6",
+      "quote": "Turing's 1936 paper supplied the missing negative answer: no mechanical procedure can decide, for every first-order formula, whether it is provable (\\cite[Turing, 1936]{turing1936}). In 1950 he replaced the question of mechanism with an operational test -- can a machine's text replies be distinguished from a person's? -- and made \"Can machines think?\" an empirical question (\\cite[Turing, 1950]{turing1950computing}). Six years later, the 1956 Dartmouth Summer Research Project named the field and set its agenda: language, neural nets, abstraction, creativity, and the conjecture that every feature of intelligence can be described precisely enough for a machine to simulate it (\\cite[McCarthy et al., 1955]{mccarthy1955dartmouth}).",
+      "kind": "paragraph",
+      "section": "Foundations"
+    },
+    {
+      "id": "symbolic_ai-block-7",
+      "quote": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
+      "kind": "heading",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry"
+    },
+    {
+      "id": "symbolic_ai-block-8",
+      "quote": "Before the technical material, it is worth pausing on the philosophical manifesto that grounded the entire symbolic-AI tradition in a defence of itself as a *science*. \\citeauthor{newell1976empirical} (\\citeyear{newell1976empirical}) — Allen Newell and Herbert A. Simon, in the ACM Turing Award lecture \"Computer Science as Empirical Inquiry\" (the 1975 award was given to Newell and Simon jointly, and the published paper is the joint form) — make a sustained case that computer science is not *applied mathematics* and not *engineering*, but an *empirical* science on a par with physics or biology, whose natural objects are **symbol systems** and whose characteristic method is the construction of *symbols and search*.",
+      "kind": "paragraph",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry"
+    },
+    {
+      "id": "symbolic_ai-block-9",
+      "quote": "Computer science is an empirical discipline. [...] We build computers and programs for two reasons: (a) to provide a human service (the computer as servant), and (b) to experiment with symbolic processes (the computer as simulation chamber). [...] The urge to make computers more and more intelligent is, therefore, an urge to provide a tool for the empirical study of intelligence.",
+      "kind": "paragraph",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry"
+    },
+    {
+      "id": "symbolic_ai-block-10",
+      "quote": "Three claims in this passage do the heavy lifting for the rest of the chapter. First, computer science is **empirical**, not a priori; the test of a system is whether it runs in the world, not whether its axioms are derivable from logic. This is the move that licenses the entire culture of *benchmarks* (the Turing test, ImageNet, MMLU, the Winograd Schema, ARC-AGI) the rest of this course uses to grade systems. Second, the relevant kind of *experiment* is the *construction* of a computer program that exhibits the phenomenon; the program is the hypothesis, and running it is the experiment. The symbolic AI research program — STRIPS, Soar, Cyc, theorem provers, expert systems — is not *applications* of computer science to psychology; it *is* computer science as the empirical study of symbolic processes. Third, the central object of study is the **symbol system**, an architecture that *designates*, *interprets*, and *acts on* tokens by rule. The rest of the paper works out the consequences: physical symbol systems are *realisable* (you can build them), *universal* (they can simulate any other symbol system), and *sufficient for general intelligent action* — the now-famous **physical symbol system hypothesis**, that \"a physical symbol system has the necessary and sufficient means for general intelligent action.\"",
+      "kind": "paragraph",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry"
+    },
+    {
+      "id": "symbolic_ai-block-11",
+      "quote": "The substantive section of the paper is a defence of that hypothesis on three grounds — behavioural, neural, and psychological — using the 1956 Logic Theory Machine (the first program to prove theorems in Principia Mathematica), the General Problem Solver (means-ends analysis over state spaces), and the chess and perception programs as data points. The methodological lesson is that *each new layer of complexity* the AI field tackles — from logic to problem solving to perception to language — extends the same pattern: design a symbol system, run it, observe its behaviour, debug it against a held-out set of problems, publish the result. This is the research methodology that produced the symbolic-AI tradition in this chapter.",
+      "kind": "paragraph",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry"
+    },
+    {
+      "id": "symbolic_ai-block-12",
+      "quote": "Read against the modern course, two things stand out. First, Newell and Simon are explicit that the **symbol system** and the **neural substrate** are not rivals; the physical-symbol-system hypothesis is silent about whether the substrate is silicon, vacuum tubes, or neurons, and is silent about whether the symbols are *implemented* by distributed subsymbolic representations or by explicit pointers. The symbolic/connectionist split that haunts the field for half a century after the paper is not the split the paper makes; the paper makes the split *between* *systems that exhibit intelligent behaviour by manipulating symbols* and *systems that exhibit intelligent behaviour without doing so*, and it argues that the first kind is the easier one to engineer and study. The neural revolution of the 2010s changed the cost calculus but not the philosophical point: a Transformer *is* a physical symbol system in Newell and Simon's sense — it designates tokens, interprets them by rule, and acts on them by emitting other tokens — implemented in a sub-symbolic substrate. Second, the **empirical methodology** of the paper is the same methodology the rest of this course uses: build a system, run it on a benchmark, publish the score, debug, iterate. Every chapter that ends with a benchmark plot (Perplexity on text, BLEU on translation, accuracy on MMLU, success rate on agent tasks) is the 2020s continuation of the empirical-research program Newell and Simon proposed for computer science in 1976. The disagreement is about what *kind* of symbol system best buys the score; the *agreement* on what counts as evidence for an answer is the paper's lasting contribution.",
+      "kind": "paragraph",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry"
+    },
+    {
+      "id": "symbolic_ai-block-13",
+      "quote": "The clearest way to see what Newell and Simon are doing is to read the paper *against* \\citeauthor{brooks1990elephants} (\\citeyear{brooks1990elephants}), added in the philosophy chapter. \\citeauthor{brooks1990elephants}'s manifesto is a *rejection* of the \"cognition as symbol manipulation\" programme on engineering grounds: he argues that the symbol-manipulation programme fails to produce robots that work in the real world, and that *subsumption-style* layered sensorimotor loops work better. \\citeauthor{newell1976empirical} are committed to the opposite programme but, ironically, *on the same empirical ground*: they argue that the symbol-manipulation programme *does* produce systems that exhibit intelligent behaviour, and that no other programme has yet produced systems with comparable breadth. The 2020s answer is that both are partly right: modern AI is best modelled as a *hybrid*, with a sub-symbolic substrate implementing a symbolic policy (a Transformer), surrounded by tools and verifiers that act as explicit symbolic primitives. The hybrid is, in a sense, what Newell and Simon would have predicted if they had known what 2026 hardware looks like; the hybrid is also, in a different sense, what Brooks would have predicted if he had known what 2026 software looks like.",
+      "kind": "paragraph",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry"
+    },
+    {
+      "id": "symbolic_ai-block-14",
+      "quote": "The first implementations followed quickly. Newell, Shaw, and Simon's Logic Theory Machine (1956) proved 38 of the first 52 theorems in Chapter 2 of *Principia Mathematica*, and found a shorter proof than Russell and Whitehead's for one of them (\\cite[Newell & Simon, 1956]{newell1956logictheorist}). Their General Problem Solver (1957) generalized the trick into means-ends analysis: compare current and goal states, find the difference, and apply an operator that reduces it (\\cite[Newell, Shaw & Simon, 1957]{newell1957gps}). McCarthy's LISP (1960) then gave symbolic AI its own language -- programs and data both lists, recursion as the basic control structure (\\cite[McCarthy, 1960]{mccarthy1960lisp}; \\cite[Lisp]{lisp_wiki}).",
+      "kind": "paragraph",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry"
+    },
+    {
+      "id": "symbolic_ai-block-15",
+      "quote": "The synthesis below happens naturally once you read three other chapters: Reasoning (CoT is *implicit* logic the network learned), Mechanistic Interpretability (the circuits you find inside a Transformer often look like AND/OR/NOT gates), and AI Agents (ReAct-style tool use is symbolic reasoning wrapped around a neural policy). The “neuro-symbolic” framing just makes the marriage explicit.",
+      "kind": "paragraph",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry"
+    },
+    {
+      "id": "symbolic_ai-block-16",
+      "quote": "The Two Branches",
+      "kind": "heading",
+      "section": "The Two Branches"
+    },
+    {
+      "id": "symbolic_ai-block-17",
+      "quote": "| | Symbolic (GOFAI) | Neural (Connectionist) |",
+      "kind": "table-row",
+      "section": "The Two Branches"
+    },
+    {
+      "id": "symbolic_ai-block-18",
+      "quote": "| **Representation** | Symbols, rules, logic | Vectors, weights |",
+      "kind": "table-row",
+      "section": "The Two Branches"
+    },
+    {
+      "id": "symbolic_ai-block-19",
+      "quote": "| **Reasoning** | Formal inference | Pattern recognition |",
+      "kind": "table-row",
+      "section": "The Two Branches"
+    },
+    {
+      "id": "symbolic_ai-block-20",
+      "quote": "| **Knowledge** | Hand-curated | Learned from data |",
+      "kind": "table-row",
+      "section": "The Two Branches"
+    },
+    {
+      "id": "symbolic_ai-block-21",
+      "quote": "| **Transparency** | Traceable proof | Black box |",
+      "kind": "table-row",
+      "section": "The Two Branches"
+    },
+    {
+      "id": "symbolic_ai-block-22",
+      "quote": "| **Robustness** | Strong (provable) | Brittle (adversarial) |",
+      "kind": "table-row",
+      "section": "The Two Branches"
+    },
+    {
+      "id": "symbolic_ai-block-23",
+      "quote": "| **Sample efficiency** | High | High data needs |",
+      "kind": "table-row",
+      "section": "The Two Branches"
+    },
+    {
+      "id": "symbolic_ai-block-24",
+      "quote": "| **Scaling** | Knowledge engineering bottleneck | Compute + data |",
+      "kind": "table-row",
+      "section": "The Two Branches"
+    },
+    {
+      "id": "symbolic_ai-block-25",
+      "quote": "Both have strengths the other lacks. **Neuro-symbolic AI** is the synthesis.",
+      "kind": "paragraph",
+      "section": "The Two Branches"
+    },
+    {
+      "id": "symbolic_ai-block-26",
+      "quote": "Knowledge representation",
+      "kind": "heading",
+      "section": "Knowledge representation"
+    },
+    {
+      "id": "symbolic_ai-block-27",
+      "quote": "Knowledge Representation: From Logic to RDF",
+      "kind": "heading",
+      "section": "Knowledge Representation: From Logic to RDF"
+    },
+    {
+      "id": "symbolic_ai-block-28",
+      "quote": "The classical symbolic AI stack rests on **first-order logic** and its extensions.",
+      "kind": "paragraph",
+      "section": "Knowledge Representation: From Logic to RDF"
+    },
+    {
+      "id": "symbolic_ai-block-29",
+      "quote": "Propositional Logic",
+      "kind": "heading",
+      "section": "Propositional Logic"
+    },
+    {
+      "id": "symbolic_ai-block-30",
+      "quote": "Variables are boolean; connectives $\\land, \\lor, \\neg, \\implies$ combine them. Decidable; SAT solvers are highly optimized.",
+      "kind": "paragraph",
+      "section": "Propositional Logic"
+    },
+    {
+      "id": "symbolic_ai-block-31",
+      "quote": "First-Order Logic (FOL)",
+      "kind": "heading",
+      "section": "First-Order Logic (FOL)"
+    },
+    {
+      "id": "symbolic_ai-block-32",
+      "quote": "A simple FOL knowledge base:",
+      "kind": "paragraph",
+      "section": "First-Order Logic (FOL)"
+    },
+    {
+      "id": "symbolic_ai-block-33",
+      "quote": "Description Logics (DLs)",
+      "kind": "heading",
+      "section": "Description Logics (DLs)"
+    },
+    {
+      "id": "symbolic_ai-block-34",
+      "quote": "A fragment of FOL designed to be **decidable** while still expressive. Foundation of the **Semantic Web**:",
+      "kind": "paragraph",
+      "section": "Description Logics (DLs)"
+    },
+    {
+      "id": "symbolic_ai-block-35",
+      "quote": "The standard **SROIQ** description logic underlies **OWL 2 DL** (the description-logic profile of the Web Ontology Language).",
+      "kind": "paragraph",
+      "section": "Description Logics (DLs)"
+    },
+    {
+      "id": "symbolic_ai-block-36",
+      "quote": "RDF, RDFS, OWL, SPARQL",
+      "kind": "heading",
+      "section": "RDF, RDFS, OWL, SPARQL"
+    },
+    {
+      "id": "symbolic_ai-block-37",
+      "quote": "The Semantic Web stack (W3C standards):",
+      "kind": "paragraph",
+      "section": "RDF, RDFS, OWL, SPARQL"
+    },
+    {
+      "id": "symbolic_ai-block-38",
+      "quote": "Major public knowledge graphs:",
+      "kind": "paragraph",
+      "section": "RDF, RDFS, OWL, SPARQL"
+    },
+    {
+      "id": "symbolic_ai-block-39",
+      "quote": "Reasoning Over Knowledge Graphs",
+      "kind": "heading",
+      "section": "Reasoning Over Knowledge Graphs"
+    },
+    {
+      "id": "symbolic_ai-block-40",
+      "quote": "A KG query is **graph pattern matching**:",
+      "kind": "paragraph",
+      "section": "Reasoning Over Knowledge Graphs"
+    },
+    {
+      "id": "symbolic_ai-block-41",
+      "quote": "Reasoners (Pellet, HermiT, FaCT++) implement **tableau-based** algorithms that check consistency and infer new triples. Tasks:",
+      "kind": "paragraph",
+      "section": "Reasoning Over Knowledge Graphs"
+    },
+    {
+      "id": "symbolic_ai-block-42",
+      "quote": "For **rule-based reasoning** beyond OWL, **Datalog** and **Prolog** are used. Modern graph databases (Neo4j, Amazon Neptune, Stardog, TigerGraph) add **property graphs**: nodes and edges with arbitrary attributes.",
+      "kind": "paragraph",
+      "section": "Reasoning Over Knowledge Graphs"
+    },
+    {
+      "id": "symbolic_ai-block-43",
+      "quote": "Resolution gave symbolic reasoning its industrial engine. Robinson's 1965 rule -- resolve two clauses on a complementary literal, with unification handling variables -- made first-order theorem proving a single uniform inference step (\\cite[Robinson, 1965]{robinson1965resolution}). Kowalski's 1974 \"Predicate Logic as a Programming Language\" turned resolution into computation: a logic program is a set of Horn clauses, and answering a query is proof search (\\cite[Kowalski, 1974]{kowalski1974prolog}). Colmerauer and Roussel's Prolog (1972-73) implemented that idea and became the language of expert systems, natural-language parsers, and later Datalog engines (\\cite[Colmerauer & Roussel, 1973]{colmerauer1973prolog}).",
+      "kind": "paragraph",
+      "section": "Reasoning Over Knowledge Graphs"
+    },
+    {
+      "id": "symbolic_ai-block-44",
+      "quote": "Embedding-Based KG Reasoning",
+      "kind": "heading",
+      "section": "Embedding-Based KG Reasoning"
+    },
+    {
+      "id": "symbolic_ai-block-45",
+      "quote": "To bridge symbolic KGs with neural methods, several **KG embedding** methods learn vector representations of entities and relations:",
+      "kind": "paragraph",
+      "section": "Embedding-Based KG Reasoning"
+    },
+    {
+      "id": "symbolic_ai-block-46",
+      "quote": "The knowledge-engineering cycle",
+      "kind": "heading",
+      "section": "The knowledge-engineering cycle"
+    },
+    {
+      "id": "symbolic_ai-block-47",
+      "quote": "Symbolic AI's first commercial wave was knowledge engineering. DENDRAL inferred molecular structures from mass spectra, MYCIN recommended antibiotics from hundreds of if-then rules, and both showed that hand-coded expertise could beat general search in a narrow domain (\\cite[Feigenbaum et al., 1969]{feigenbaum1965dendral}; \\cite[Shortliffe & Buchanan, 1976]{shortliffe1976mycin}). The details explain why the recipe spread. DENDRAL pruned the search for one compound from more than eleven million candidate structures to about twenty-two thousand, which could then be tested individually; MYCIN separated its rules from its inference engine, so the engine could be reused as the first expert-system shell (EMYCIN), and in a blind clinical test it prescribed antibiotics as well as, or better than, nine human clinicians \\cite{crevier1993ai}. The commercial breakthrough was XCON (originally R1), John McDermott's VAX configurer for the Digital Equipment Corporation: about three hundred rules in 1979 grew to more than three thousand by 1984, and the system configured ten machine models \\cite{crevier1993ai}. Winograd's SHRDLU (1972) embedded language in a tiny blocks world, so every word had a referent (\\cite[Winograd, 1972]{winograd1972understanding}). McCarthy and Hayes had already named the obstacle: the frame problem, deciding what stays unchanged when an action occurs (\\cite[McCarthy & Hayes, 1969]{mccarthy1969some}). Cyc, begun in 1984, was the maximalist response -- a hand-built common-sense ontology and inference engine -- but knowledge acquisition did not scale (\\cite[Cyc]{cyc_wiki}).",
+      "kind": "paragraph",
+      "section": "The knowledge-engineering cycle"
+    },
+    {
+      "id": "symbolic_ai-block-48",
+      "quote": "The semantic web was the attempt to make that knowledge public and composable: RDF triples, OWL ontologies, and SPARQL queries, standardized by the W3C and promoted in Berners-Lee, Hendler, and Lassila's 2001 *Scientific American* article (\\cite[Berners-Lee et al., 2001]{berners2001sw}). Google's 2012 Knowledge Graph showed the industrial version -- a proprietary graph of entities and relations behind search answers (\\cite[Singhal, 2012]{singhal2012knowledge}). The current revival is neuro-symbolic: neural networks handle perception and ambiguity, while symbolic engines supply exact inference and verification, as in DeepProbLog and AlphaGeometry (\\cite[Manhaeve et al., 2018]{manhaeve2018deepproblog}; \\cite[Trinh et al., 2024]{trinh2024alphageometry}; \\cite[Garcez & Lamb, 2020]{garcez2020neurosymbolic}).",
+      "kind": "paragraph",
+      "section": "The knowledge-engineering cycle"
+    },
+    {
+      "id": "symbolic_ai-block-49",
+      "quote": "Hybrid systems",
+      "kind": "heading",
+      "section": "Hybrid systems"
+    },
+    {
+      "id": "symbolic_ai-block-50",
+      "quote": "Symbolic Reasoning in 2025: LLMs + Tools",
+      "kind": "heading",
+      "section": "Symbolic Reasoning in 2025: LLMs + Tools"
+    },
+    {
+      "id": "symbolic_ai-block-51",
+      "quote": "Modern LLMs use **tools** as symbolic primitives:",
+      "kind": "paragraph",
+      "section": "Symbolic Reasoning in 2025: LLMs + Tools"
+    },
+    {
+      "id": "symbolic_ai-block-52",
+      "quote": "Frameworks: LangChain, LlamaIndex, AutoGen, CrewAI, LangGraph, OpenAI's function-calling, Anthropic's tool use.",
+      "kind": "paragraph",
+      "section": "Symbolic Reasoning in 2025: LLMs + Tools"
+    },
+    {
+      "id": "symbolic_ai-block-53",
+      "quote": "The LLM acts as a **planner and natural-language interface**; the symbolic system provides **grounded computation**.",
+      "kind": "paragraph",
+      "section": "Symbolic Reasoning in 2025: LLMs + Tools"
+    },
+    {
+      "id": "symbolic_ai-block-54",
+      "quote": "Formal Verification and Theorem Proving",
+      "kind": "heading",
+      "section": "Formal Verification and Theorem Proving"
+    },
+    {
+      "id": "symbolic_ai-block-55",
+      "quote": "Symbolic AI is critical for **provable correctness**:",
+      "kind": "paragraph",
+      "section": "Formal Verification and Theorem Proving"
+    },
+    {
+      "id": "symbolic_ai-block-56",
+      "quote": "LLM + Theorem Proving (the 2024 frontier)",
+      "kind": "heading",
+      "section": "LLM + Theorem Proving (the 2024 frontier)"
+    },
+    {
+      "id": "symbolic_ai-block-57",
+      "quote": "The Lean-based **“AI for math”** initiative (DeepMind, 2024; OpenAI, 2024) has produced LLMs that:",
+      "kind": "paragraph",
+      "section": "LLM + Theorem Proving (the 2024 frontier)"
+    },
+    {
+      "id": "symbolic_ai-block-58",
+      "quote": "1. Generate a candidate proof in natural language + Lean code.",
+      "kind": "list-item",
+      "section": "LLM + Theorem Proving (the 2024 frontier)"
+    },
+    {
+      "id": "symbolic_ai-block-59",
+      "quote": "2. Submit to Lean's kernel for verification.",
+      "kind": "list-item",
+      "section": "LLM + Theorem Proving (the 2024 frontier)"
+    },
+    {
+      "id": "symbolic_ai-block-60",
+      "quote": "3. If verification fails, refine using the error message.",
+      "kind": "list-item",
+      "section": "LLM + Theorem Proving (the 2024 frontier)"
+    },
+    {
+      "id": "symbolic_ai-block-61",
+      "quote": "4. Iterate.",
+      "kind": "list-item",
+      "section": "LLM + Theorem Proving (the 2024 frontier)"
+    },
+    {
+      "id": "symbolic_ai-block-62",
+      "quote": "The combined AlphaProof and AlphaGeometry system (\\cite[DeepMind, 2024]{deepmind2024alphaproof}) reached silver-medal level at IMO 2024, solving four of the six problems. Subsequent work has solved IMO 2025 problems. The combination of **neural intuition** + **symbolic verification** is the most promising path to provably correct mathematical reasoning.",
+      "kind": "paragraph",
+      "section": "LLM + Theorem Proving (the 2024 frontier)"
+    },
+    {
+      "id": "symbolic_ai-block-63",
+      "quote": "Neuro-Symbolic Architectures",
+      "kind": "heading",
+      "section": "Neuro-Symbolic Architectures"
+    },
+    {
+      "id": "symbolic_ai-block-64",
+      "quote": "The synthesis takes several forms:",
+      "kind": "paragraph",
+      "section": "Neuro-Symbolic Architectures"
+    },
+    {
+      "id": "symbolic_ai-block-65",
+      "quote": "| Approach | Description | Example |",
+      "kind": "table-row",
+      "section": "Neuro-Symbolic Architectures"
+    },
+    {
+      "id": "symbolic_ai-block-66",
+      "quote": "| **Neural + symbolic modules** | NN does perception, symbolic does reasoning | AlphaGeometry (\\cite[Trinh et al., 2024]{trinh2024alphageometry}), AlphaProof |",
+      "kind": "table-row",
+      "section": "Neuro-Symbolic Architectures"
+    },
+    {
+      "id": "symbolic_ai-block-67",
+      "quote": "| **Neural representations, symbolic inference** | Embeddings + logical rules | Logic Tensor Networks, NLProlog |",
+      "kind": "table-row",
+      "section": "Neuro-Symbolic Architectures"
+    },
+    {
+      "id": "symbolic_ai-block-68",
+      "quote": "| **Symbolic priors on neural nets** | Constraints in loss function | Physics-informed NNs, constraint satisfaction |",
+      "kind": "table-row",
+      "section": "Neuro-Symbolic Architectures"
+    },
+    {
+      "id": "symbolic_ai-block-69",
+      "quote": "| **NN as heuristic for symbolic search** | Learned policy for tree search | AlphaGo, theorem provers |",
+      "kind": "table-row",
+      "section": "Neuro-Symbolic Architectures"
+    },
+    {
+      "id": "symbolic_ai-block-70",
+      "quote": "| **Differentiable logic** | Soft logic, gradient through rules | DeepProbLog, NARS |",
+      "kind": "table-row",
+      "section": "Neuro-Symbolic Architectures"
+    },
+    {
+      "id": "symbolic_ai-block-71",
+      "quote": "| **LLM + tool use** | Neural planner, symbolic tools | ReAct \\cite{yao2023react}, Toolformer, agents |",
+      "kind": "table-row",
+      "section": "Neuro-Symbolic Architectures"
+    },
+    {
+      "id": "symbolic_ai-block-72",
+      "quote": "AlphaGeometry (DeepMind, 2024)",
+      "kind": "heading",
+      "section": "AlphaGeometry (DeepMind, 2024)"
+    },
+    {
+      "id": "symbolic_ai-block-73",
+      "quote": "Solves IMO (\\cite[Trinh et al., 2024]{trinh2024alphageometry}) problems: a Transformer generates candidate constructions, a symbolic DDAR (deductive database) verifies. Solved 25 of the 30 IMO geometry problems from 2000–2022, close to the average human gold medallist.",
+      "kind": "paragraph",
+      "section": "AlphaGeometry (DeepMind, 2024)"
+    },
+    {
+      "id": "symbolic_ai-block-74",
+      "quote": "Toolformer",
+      "kind": "heading",
+      "section": "Toolformer"
+    },
+    {
+      "id": "symbolic_ai-block-75",
+      "quote": "A Transformer that learns to **call APIs** (calculator, search, translation) by self-supervised training on examples where API calls improve perplexity (\\cite[Schick et al., 2023]{schick2023toolformer}). Pure neural, but uses symbolic tools.",
+      "kind": "paragraph",
+      "section": "Toolformer"
+    },
+    {
+      "id": "symbolic_ai-block-76",
+      "quote": "Logic Tensor Networks (Serafini & Garcez, 2016)",
+      "kind": "heading",
+      "section": "Logic Tensor Networks (Serafini & Garcez, 2016)"
+    },
+    {
+      "id": "symbolic_ai-block-77",
+      "quote": "Embed logical rules as soft constraints on neural network outputs. Combines first-order logic with deep learning in a single end-to-end trainable system.",
+      "kind": "paragraph",
+      "section": "Logic Tensor Networks (Serafini & Garcez, 2016)"
+    },
+    {
+      "id": "symbolic_ai-block-78",
+      "quote": "DeepProbLog",
+      "kind": "heading",
+      "section": "DeepProbLog"
+    },
+    {
+      "id": "symbolic_ai-block-79",
+      "quote": "Extends ProbLog (probabilistic logic programming) with neural predicates (\\cite[Manhaeve et al., 2018]{manhaeve2018deepproblog}). A neural net outputs probabilities; the probabilistic logic engine reasons over them.",
+      "kind": "paragraph",
+      "section": "DeepProbLog"
+    },
+    {
+      "id": "symbolic_ai-block-80",
+      "quote": "Trade-offs and future",
+      "kind": "heading",
+      "section": "Trade-offs and future"
+    },
+    {
+      "id": "symbolic_ai-block-81",
+      "quote": "When Symbolic Wins",
+      "kind": "heading",
+      "section": "When Symbolic Wins"
+    },
+    {
+      "id": "symbolic_ai-block-82",
+      "quote": "Pure neural is bad at:",
+      "kind": "paragraph",
+      "section": "When Symbolic Wins"
+    },
+    {
+      "id": "symbolic_ai-block-83",
+      "quote": "When you need provable, deterministic, exact results: use a symbolic system, possibly wrapped by an LLM as the interface.",
+      "kind": "paragraph",
+      "section": "When Symbolic Wins"
+    },
+    {
+      "id": "symbolic_ai-block-84",
+      "quote": "When Neural Wins",
+      "kind": "heading",
+      "section": "When Neural Wins"
+    },
+    {
+      "id": "symbolic_ai-block-85",
+      "quote": "The Future: Hybrid by Default",
+      "kind": "heading",
+      "section": "The Future: Hybrid by Default"
+    },
+    {
+      "id": "symbolic_ai-block-86",
+      "quote": "By 2030, the standard production AI system will be:",
+      "kind": "paragraph",
+      "section": "The Future: Hybrid by Default"
+    },
+    {
+      "id": "symbolic_ai-block-87",
+      "quote": "The dichotomy is dissolving. The student who masters **both** branches will be far more capable than one trained in either alone.",
+      "kind": "paragraph",
+      "section": "The Future: Hybrid by Default"
     }
   ]
 }

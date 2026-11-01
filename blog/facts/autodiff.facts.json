@@ -202,908 +202,4974 @@
       "quote": "part: 2",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-1-part_of-autodiff",
+      "from": "autodiff-block-1",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-2-part_of-autodiff",
+      "from": "autodiff-block-2",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-1-before-autodiff-block-2",
+      "from": "autodiff-block-1",
+      "to": "autodiff-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-2-related_to-autodiff-block-1",
+      "from": "autodiff-block-2",
+      "to": "autodiff-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-3-part_of-autodiff",
+      "from": "autodiff-block-3",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-2-before-autodiff-block-3",
+      "from": "autodiff-block-2",
+      "to": "autodiff-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-3-related_to-autodiff-block-1",
+      "from": "autodiff-block-3",
+      "to": "autodiff-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-4-part_of-autodiff",
+      "from": "autodiff-block-4",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-3-before-autodiff-block-4",
+      "from": "autodiff-block-3",
+      "to": "autodiff-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-4-related_to-autodiff-block-1",
+      "from": "autodiff-block-4",
+      "to": "autodiff-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-5-part_of-autodiff",
+      "from": "autodiff-block-5",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-4-before-autodiff-block-5",
+      "from": "autodiff-block-4",
+      "to": "autodiff-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-5-related_to-autodiff-block-1",
+      "from": "autodiff-block-5",
+      "to": "autodiff-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-6-part_of-autodiff",
+      "from": "autodiff-block-6",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-5-before-autodiff-block-6",
+      "from": "autodiff-block-5",
+      "to": "autodiff-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-6-related_to-autodiff-block-1",
+      "from": "autodiff-block-6",
+      "to": "autodiff-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-7-part_of-autodiff",
+      "from": "autodiff-block-7",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-6-before-autodiff-block-7",
+      "from": "autodiff-block-6",
+      "to": "autodiff-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-8-part_of-autodiff",
+      "from": "autodiff-block-8",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-7-before-autodiff-block-8",
+      "from": "autodiff-block-7",
+      "to": "autodiff-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-9-part_of-autodiff",
+      "from": "autodiff-block-9",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-8-before-autodiff-block-9",
+      "from": "autodiff-block-8",
+      "to": "autodiff-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-9-related_to-autodiff-block-8",
+      "from": "autodiff-block-9",
+      "to": "autodiff-block-8",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-10-part_of-autodiff",
+      "from": "autodiff-block-10",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-9-before-autodiff-block-10",
+      "from": "autodiff-block-9",
+      "to": "autodiff-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-11-part_of-autodiff",
+      "from": "autodiff-block-11",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-10-before-autodiff-block-11",
+      "from": "autodiff-block-10",
+      "to": "autodiff-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-11-related_to-autodiff-block-10",
+      "from": "autodiff-block-11",
+      "to": "autodiff-block-10",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-12-part_of-autodiff",
+      "from": "autodiff-block-12",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-11-before-autodiff-block-12",
+      "from": "autodiff-block-11",
+      "to": "autodiff-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-13-part_of-autodiff",
+      "from": "autodiff-block-13",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-12-before-autodiff-block-13",
+      "from": "autodiff-block-12",
+      "to": "autodiff-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-13-related_to-autodiff-block-12",
+      "from": "autodiff-block-13",
+      "to": "autodiff-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-14-part_of-autodiff",
+      "from": "autodiff-block-14",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-13-before-autodiff-block-14",
+      "from": "autodiff-block-13",
+      "to": "autodiff-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-14-related_to-autodiff-block-12",
+      "from": "autodiff-block-14",
+      "to": "autodiff-block-12",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-15-part_of-autodiff",
+      "from": "autodiff-block-15",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-14-before-autodiff-block-15",
+      "from": "autodiff-block-14",
+      "to": "autodiff-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-16-part_of-autodiff",
+      "from": "autodiff-block-16",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-15-before-autodiff-block-16",
+      "from": "autodiff-block-15",
+      "to": "autodiff-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-17-part_of-autodiff",
+      "from": "autodiff-block-17",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-16-before-autodiff-block-17",
+      "from": "autodiff-block-16",
+      "to": "autodiff-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-17-related_to-autodiff-block-16",
+      "from": "autodiff-block-17",
+      "to": "autodiff-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-18-part_of-autodiff",
+      "from": "autodiff-block-18",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-17-before-autodiff-block-18",
+      "from": "autodiff-block-17",
+      "to": "autodiff-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-19-part_of-autodiff",
+      "from": "autodiff-block-19",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-18-before-autodiff-block-19",
+      "from": "autodiff-block-18",
+      "to": "autodiff-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-19-related_to-autodiff-block-18",
+      "from": "autodiff-block-19",
+      "to": "autodiff-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-20-part_of-autodiff",
+      "from": "autodiff-block-20",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-19-before-autodiff-block-20",
+      "from": "autodiff-block-19",
+      "to": "autodiff-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-21-part_of-autodiff",
+      "from": "autodiff-block-21",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-20-before-autodiff-block-21",
+      "from": "autodiff-block-20",
+      "to": "autodiff-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-21-related_to-autodiff-block-20",
+      "from": "autodiff-block-21",
+      "to": "autodiff-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-22-part_of-autodiff",
+      "from": "autodiff-block-22",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-21-before-autodiff-block-22",
+      "from": "autodiff-block-21",
+      "to": "autodiff-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-22-related_to-autodiff-block-20",
+      "from": "autodiff-block-22",
+      "to": "autodiff-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-23-part_of-autodiff",
+      "from": "autodiff-block-23",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-22-before-autodiff-block-23",
+      "from": "autodiff-block-22",
+      "to": "autodiff-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-23-related_to-autodiff-block-20",
+      "from": "autodiff-block-23",
+      "to": "autodiff-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-24-part_of-autodiff",
+      "from": "autodiff-block-24",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-23-before-autodiff-block-24",
+      "from": "autodiff-block-23",
+      "to": "autodiff-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-24-related_to-autodiff-block-20",
+      "from": "autodiff-block-24",
+      "to": "autodiff-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-25-part_of-autodiff",
+      "from": "autodiff-block-25",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-24-before-autodiff-block-25",
+      "from": "autodiff-block-24",
+      "to": "autodiff-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-25-related_to-autodiff-block-20",
+      "from": "autodiff-block-25",
+      "to": "autodiff-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-26-part_of-autodiff",
+      "from": "autodiff-block-26",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-25-before-autodiff-block-26",
+      "from": "autodiff-block-25",
+      "to": "autodiff-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-26-related_to-autodiff-block-20",
+      "from": "autodiff-block-26",
+      "to": "autodiff-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-27-part_of-autodiff",
+      "from": "autodiff-block-27",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-26-before-autodiff-block-27",
+      "from": "autodiff-block-26",
+      "to": "autodiff-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-27-related_to-autodiff-block-20",
+      "from": "autodiff-block-27",
+      "to": "autodiff-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-28-part_of-autodiff",
+      "from": "autodiff-block-28",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-27-before-autodiff-block-28",
+      "from": "autodiff-block-27",
+      "to": "autodiff-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-28-related_to-autodiff-block-20",
+      "from": "autodiff-block-28",
+      "to": "autodiff-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-29-part_of-autodiff",
+      "from": "autodiff-block-29",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-28-before-autodiff-block-29",
+      "from": "autodiff-block-28",
+      "to": "autodiff-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-29-related_to-autodiff-block-20",
+      "from": "autodiff-block-29",
+      "to": "autodiff-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-30-part_of-autodiff",
+      "from": "autodiff-block-30",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-29-before-autodiff-block-30",
+      "from": "autodiff-block-29",
+      "to": "autodiff-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-30-related_to-autodiff-block-20",
+      "from": "autodiff-block-30",
+      "to": "autodiff-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-31-part_of-autodiff",
+      "from": "autodiff-block-31",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-30-before-autodiff-block-31",
+      "from": "autodiff-block-30",
+      "to": "autodiff-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-31-related_to-autodiff-block-20",
+      "from": "autodiff-block-31",
+      "to": "autodiff-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-32-part_of-autodiff",
+      "from": "autodiff-block-32",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-31-before-autodiff-block-32",
+      "from": "autodiff-block-31",
+      "to": "autodiff-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-33-part_of-autodiff",
+      "from": "autodiff-block-33",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-32-before-autodiff-block-33",
+      "from": "autodiff-block-32",
+      "to": "autodiff-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-33-related_to-autodiff-block-32",
+      "from": "autodiff-block-33",
+      "to": "autodiff-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-34-part_of-autodiff",
+      "from": "autodiff-block-34",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-33-before-autodiff-block-34",
+      "from": "autodiff-block-33",
+      "to": "autodiff-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-34-related_to-autodiff-block-32",
+      "from": "autodiff-block-34",
+      "to": "autodiff-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-35-part_of-autodiff",
+      "from": "autodiff-block-35",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-34-before-autodiff-block-35",
+      "from": "autodiff-block-34",
+      "to": "autodiff-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-35-related_to-autodiff-block-32",
+      "from": "autodiff-block-35",
+      "to": "autodiff-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-36-part_of-autodiff",
+      "from": "autodiff-block-36",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-35-before-autodiff-block-36",
+      "from": "autodiff-block-35",
+      "to": "autodiff-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-36-related_to-autodiff-block-32",
+      "from": "autodiff-block-36",
+      "to": "autodiff-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-37-part_of-autodiff",
+      "from": "autodiff-block-37",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-36-before-autodiff-block-37",
+      "from": "autodiff-block-36",
+      "to": "autodiff-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-37-related_to-autodiff-block-32",
+      "from": "autodiff-block-37",
+      "to": "autodiff-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-38-part_of-autodiff",
+      "from": "autodiff-block-38",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-37-before-autodiff-block-38",
+      "from": "autodiff-block-37",
+      "to": "autodiff-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-39-part_of-autodiff",
+      "from": "autodiff-block-39",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-38-before-autodiff-block-39",
+      "from": "autodiff-block-38",
+      "to": "autodiff-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-40-part_of-autodiff",
+      "from": "autodiff-block-40",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-39-before-autodiff-block-40",
+      "from": "autodiff-block-39",
+      "to": "autodiff-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-40-related_to-autodiff-block-39",
+      "from": "autodiff-block-40",
+      "to": "autodiff-block-39",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-41-part_of-autodiff",
+      "from": "autodiff-block-41",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-40-before-autodiff-block-41",
+      "from": "autodiff-block-40",
+      "to": "autodiff-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-41-related_to-autodiff-block-39",
+      "from": "autodiff-block-41",
+      "to": "autodiff-block-39",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-42-part_of-autodiff",
+      "from": "autodiff-block-42",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-41-before-autodiff-block-42",
+      "from": "autodiff-block-41",
+      "to": "autodiff-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-42-related_to-autodiff-block-39",
+      "from": "autodiff-block-42",
+      "to": "autodiff-block-39",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-43-part_of-autodiff",
+      "from": "autodiff-block-43",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-42-before-autodiff-block-43",
+      "from": "autodiff-block-42",
+      "to": "autodiff-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-44-part_of-autodiff",
+      "from": "autodiff-block-44",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-43-before-autodiff-block-44",
+      "from": "autodiff-block-43",
+      "to": "autodiff-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-44-related_to-autodiff-block-43",
+      "from": "autodiff-block-44",
+      "to": "autodiff-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-45-part_of-autodiff",
+      "from": "autodiff-block-45",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-44-before-autodiff-block-45",
+      "from": "autodiff-block-44",
+      "to": "autodiff-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-46-part_of-autodiff",
+      "from": "autodiff-block-46",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-45-before-autodiff-block-46",
+      "from": "autodiff-block-45",
+      "to": "autodiff-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-46-related_to-autodiff-block-45",
+      "from": "autodiff-block-46",
+      "to": "autodiff-block-45",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-47-part_of-autodiff",
+      "from": "autodiff-block-47",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-46-before-autodiff-block-47",
+      "from": "autodiff-block-46",
+      "to": "autodiff-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-48-part_of-autodiff",
+      "from": "autodiff-block-48",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-47-before-autodiff-block-48",
+      "from": "autodiff-block-47",
+      "to": "autodiff-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-48-related_to-autodiff-block-47",
+      "from": "autodiff-block-48",
+      "to": "autodiff-block-47",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-49-part_of-autodiff",
+      "from": "autodiff-block-49",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-48-before-autodiff-block-49",
+      "from": "autodiff-block-48",
+      "to": "autodiff-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-49-related_to-autodiff-block-47",
+      "from": "autodiff-block-49",
+      "to": "autodiff-block-47",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-50-part_of-autodiff",
+      "from": "autodiff-block-50",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-49-before-autodiff-block-50",
+      "from": "autodiff-block-49",
+      "to": "autodiff-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-51-part_of-autodiff",
+      "from": "autodiff-block-51",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-50-before-autodiff-block-51",
+      "from": "autodiff-block-50",
+      "to": "autodiff-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-51-related_to-autodiff-block-50",
+      "from": "autodiff-block-51",
+      "to": "autodiff-block-50",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-52-part_of-autodiff",
+      "from": "autodiff-block-52",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-51-before-autodiff-block-52",
+      "from": "autodiff-block-51",
+      "to": "autodiff-block-52",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-52-related_to-autodiff-block-50",
+      "from": "autodiff-block-52",
+      "to": "autodiff-block-50",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-53-part_of-autodiff",
+      "from": "autodiff-block-53",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-52-before-autodiff-block-53",
+      "from": "autodiff-block-52",
+      "to": "autodiff-block-53",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-53-related_to-autodiff-block-50",
+      "from": "autodiff-block-53",
+      "to": "autodiff-block-50",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-54-part_of-autodiff",
+      "from": "autodiff-block-54",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-53-before-autodiff-block-54",
+      "from": "autodiff-block-53",
+      "to": "autodiff-block-54",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-54-related_to-autodiff-block-50",
+      "from": "autodiff-block-54",
+      "to": "autodiff-block-50",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-55-part_of-autodiff",
+      "from": "autodiff-block-55",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-54-before-autodiff-block-55",
+      "from": "autodiff-block-54",
+      "to": "autodiff-block-55",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-55-related_to-autodiff-block-50",
+      "from": "autodiff-block-55",
+      "to": "autodiff-block-50",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-56-part_of-autodiff",
+      "from": "autodiff-block-56",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-55-before-autodiff-block-56",
+      "from": "autodiff-block-55",
+      "to": "autodiff-block-56",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-56-related_to-autodiff-block-50",
+      "from": "autodiff-block-56",
+      "to": "autodiff-block-50",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-57-part_of-autodiff",
+      "from": "autodiff-block-57",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-56-before-autodiff-block-57",
+      "from": "autodiff-block-56",
+      "to": "autodiff-block-57",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-57-related_to-autodiff-block-50",
+      "from": "autodiff-block-57",
+      "to": "autodiff-block-50",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-58-part_of-autodiff",
+      "from": "autodiff-block-58",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-57-before-autodiff-block-58",
+      "from": "autodiff-block-57",
+      "to": "autodiff-block-58",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-58-related_to-autodiff-block-50",
+      "from": "autodiff-block-58",
+      "to": "autodiff-block-50",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-59-part_of-autodiff",
+      "from": "autodiff-block-59",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-58-before-autodiff-block-59",
+      "from": "autodiff-block-58",
+      "to": "autodiff-block-59",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-60-part_of-autodiff",
+      "from": "autodiff-block-60",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-59-before-autodiff-block-60",
+      "from": "autodiff-block-59",
+      "to": "autodiff-block-60",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-60-related_to-autodiff-block-59",
+      "from": "autodiff-block-60",
+      "to": "autodiff-block-59",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-61-part_of-autodiff",
+      "from": "autodiff-block-61",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-60-before-autodiff-block-61",
+      "from": "autodiff-block-60",
+      "to": "autodiff-block-61",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-62-part_of-autodiff",
+      "from": "autodiff-block-62",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-61-before-autodiff-block-62",
+      "from": "autodiff-block-61",
+      "to": "autodiff-block-62",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-62-related_to-autodiff-block-61",
+      "from": "autodiff-block-62",
+      "to": "autodiff-block-61",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-63-part_of-autodiff",
+      "from": "autodiff-block-63",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-62-before-autodiff-block-63",
+      "from": "autodiff-block-62",
+      "to": "autodiff-block-63",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-64-part_of-autodiff",
+      "from": "autodiff-block-64",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-63-before-autodiff-block-64",
+      "from": "autodiff-block-63",
+      "to": "autodiff-block-64",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-65-part_of-autodiff",
+      "from": "autodiff-block-65",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-64-before-autodiff-block-65",
+      "from": "autodiff-block-64",
+      "to": "autodiff-block-65",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-65-related_to-autodiff-block-64",
+      "from": "autodiff-block-65",
+      "to": "autodiff-block-64",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-66-part_of-autodiff",
+      "from": "autodiff-block-66",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-65-before-autodiff-block-66",
+      "from": "autodiff-block-65",
+      "to": "autodiff-block-66",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-66-related_to-autodiff-block-64",
+      "from": "autodiff-block-66",
+      "to": "autodiff-block-64",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-67-part_of-autodiff",
+      "from": "autodiff-block-67",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-66-before-autodiff-block-67",
+      "from": "autodiff-block-66",
+      "to": "autodiff-block-67",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-68-part_of-autodiff",
+      "from": "autodiff-block-68",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-67-before-autodiff-block-68",
+      "from": "autodiff-block-67",
+      "to": "autodiff-block-68",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-68-related_to-autodiff-block-67",
+      "from": "autodiff-block-68",
+      "to": "autodiff-block-67",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-69-part_of-autodiff",
+      "from": "autodiff-block-69",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-68-before-autodiff-block-69",
+      "from": "autodiff-block-68",
+      "to": "autodiff-block-69",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-69-related_to-autodiff-block-67",
+      "from": "autodiff-block-69",
+      "to": "autodiff-block-67",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-70-part_of-autodiff",
+      "from": "autodiff-block-70",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-69-before-autodiff-block-70",
+      "from": "autodiff-block-69",
+      "to": "autodiff-block-70",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-71-part_of-autodiff",
+      "from": "autodiff-block-71",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-70-before-autodiff-block-71",
+      "from": "autodiff-block-70",
+      "to": "autodiff-block-71",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-71-related_to-autodiff-block-70",
+      "from": "autodiff-block-71",
+      "to": "autodiff-block-70",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-72-part_of-autodiff",
+      "from": "autodiff-block-72",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-71-before-autodiff-block-72",
+      "from": "autodiff-block-71",
+      "to": "autodiff-block-72",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-73-part_of-autodiff",
+      "from": "autodiff-block-73",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-72-before-autodiff-block-73",
+      "from": "autodiff-block-72",
+      "to": "autodiff-block-73",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-73-related_to-autodiff-block-72",
+      "from": "autodiff-block-73",
+      "to": "autodiff-block-72",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-74-part_of-autodiff",
+      "from": "autodiff-block-74",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-73-before-autodiff-block-74",
+      "from": "autodiff-block-73",
+      "to": "autodiff-block-74",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-74-related_to-autodiff-block-72",
+      "from": "autodiff-block-74",
+      "to": "autodiff-block-72",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-75-part_of-autodiff",
+      "from": "autodiff-block-75",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-74-before-autodiff-block-75",
+      "from": "autodiff-block-74",
+      "to": "autodiff-block-75",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-75-related_to-autodiff-block-72",
+      "from": "autodiff-block-75",
+      "to": "autodiff-block-72",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-76-part_of-autodiff",
+      "from": "autodiff-block-76",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-75-before-autodiff-block-76",
+      "from": "autodiff-block-75",
+      "to": "autodiff-block-76",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-76-related_to-autodiff-block-72",
+      "from": "autodiff-block-76",
+      "to": "autodiff-block-72",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-77-part_of-autodiff",
+      "from": "autodiff-block-77",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-76-before-autodiff-block-77",
+      "from": "autodiff-block-76",
+      "to": "autodiff-block-77",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-77-related_to-autodiff-block-72",
+      "from": "autodiff-block-77",
+      "to": "autodiff-block-72",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-78-part_of-autodiff",
+      "from": "autodiff-block-78",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-77-before-autodiff-block-78",
+      "from": "autodiff-block-77",
+      "to": "autodiff-block-78",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-78-related_to-autodiff-block-72",
+      "from": "autodiff-block-78",
+      "to": "autodiff-block-72",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-79-part_of-autodiff",
+      "from": "autodiff-block-79",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-78-before-autodiff-block-79",
+      "from": "autodiff-block-78",
+      "to": "autodiff-block-79",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-79-related_to-autodiff-block-72",
+      "from": "autodiff-block-79",
+      "to": "autodiff-block-72",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-80-part_of-autodiff",
+      "from": "autodiff-block-80",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-79-before-autodiff-block-80",
+      "from": "autodiff-block-79",
+      "to": "autodiff-block-80",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-80-related_to-autodiff-block-72",
+      "from": "autodiff-block-80",
+      "to": "autodiff-block-72",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-81-part_of-autodiff",
+      "from": "autodiff-block-81",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-80-before-autodiff-block-81",
+      "from": "autodiff-block-80",
+      "to": "autodiff-block-81",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-81-related_to-autodiff-block-72",
+      "from": "autodiff-block-81",
+      "to": "autodiff-block-72",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-82-part_of-autodiff",
+      "from": "autodiff-block-82",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-81-before-autodiff-block-82",
+      "from": "autodiff-block-81",
+      "to": "autodiff-block-82",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-83-part_of-autodiff",
+      "from": "autodiff-block-83",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-82-before-autodiff-block-83",
+      "from": "autodiff-block-82",
+      "to": "autodiff-block-83",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-83-related_to-autodiff-block-82",
+      "from": "autodiff-block-83",
+      "to": "autodiff-block-82",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-84-part_of-autodiff",
+      "from": "autodiff-block-84",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-83-before-autodiff-block-84",
+      "from": "autodiff-block-83",
+      "to": "autodiff-block-84",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-84-related_to-autodiff-block-82",
+      "from": "autodiff-block-84",
+      "to": "autodiff-block-82",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-85-part_of-autodiff",
+      "from": "autodiff-block-85",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-84-before-autodiff-block-85",
+      "from": "autodiff-block-84",
+      "to": "autodiff-block-85",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-85-related_to-autodiff-block-82",
+      "from": "autodiff-block-85",
+      "to": "autodiff-block-82",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-86-part_of-autodiff",
+      "from": "autodiff-block-86",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-85-before-autodiff-block-86",
+      "from": "autodiff-block-85",
+      "to": "autodiff-block-86",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-87-part_of-autodiff",
+      "from": "autodiff-block-87",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-86-before-autodiff-block-87",
+      "from": "autodiff-block-86",
+      "to": "autodiff-block-87",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-87-related_to-autodiff-block-86",
+      "from": "autodiff-block-87",
+      "to": "autodiff-block-86",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-88-part_of-autodiff",
+      "from": "autodiff-block-88",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-87-before-autodiff-block-88",
+      "from": "autodiff-block-87",
+      "to": "autodiff-block-88",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-88-related_to-autodiff-block-86",
+      "from": "autodiff-block-88",
+      "to": "autodiff-block-86",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-89-part_of-autodiff",
+      "from": "autodiff-block-89",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-88-before-autodiff-block-89",
+      "from": "autodiff-block-88",
+      "to": "autodiff-block-89",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-89-related_to-autodiff-block-86",
+      "from": "autodiff-block-89",
+      "to": "autodiff-block-86",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-90-part_of-autodiff",
+      "from": "autodiff-block-90",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-89-before-autodiff-block-90",
+      "from": "autodiff-block-89",
+      "to": "autodiff-block-90",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-90-related_to-autodiff-block-86",
+      "from": "autodiff-block-90",
+      "to": "autodiff-block-86",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-91-part_of-autodiff",
+      "from": "autodiff-block-91",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-90-before-autodiff-block-91",
+      "from": "autodiff-block-90",
+      "to": "autodiff-block-91",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-91-related_to-autodiff-block-86",
+      "from": "autodiff-block-91",
+      "to": "autodiff-block-86",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-92-part_of-autodiff",
+      "from": "autodiff-block-92",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-91-before-autodiff-block-92",
+      "from": "autodiff-block-91",
+      "to": "autodiff-block-92",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-92-related_to-autodiff-block-86",
+      "from": "autodiff-block-92",
+      "to": "autodiff-block-86",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-93-part_of-autodiff",
+      "from": "autodiff-block-93",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-92-before-autodiff-block-93",
+      "from": "autodiff-block-92",
+      "to": "autodiff-block-93",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-93-related_to-autodiff-block-86",
+      "from": "autodiff-block-93",
+      "to": "autodiff-block-86",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-94-part_of-autodiff",
+      "from": "autodiff-block-94",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-93-before-autodiff-block-94",
+      "from": "autodiff-block-93",
+      "to": "autodiff-block-94",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-94-related_to-autodiff-block-86",
+      "from": "autodiff-block-94",
+      "to": "autodiff-block-86",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-95-part_of-autodiff",
+      "from": "autodiff-block-95",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-94-before-autodiff-block-95",
+      "from": "autodiff-block-94",
+      "to": "autodiff-block-95",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-95-related_to-autodiff-block-86",
+      "from": "autodiff-block-95",
+      "to": "autodiff-block-86",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-96-part_of-autodiff",
+      "from": "autodiff-block-96",
+      "to": "autodiff",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-95-before-autodiff-block-96",
+      "from": "autodiff-block-95",
+      "to": "autodiff-block-96",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-block-96-related_to-autodiff-block-86",
+      "from": "autodiff-block-96",
+      "to": "autodiff-block-86",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-1-part_of-autodiff-block-1",
+      "from": "autodiff-stmt-1",
+      "to": "autodiff-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-2-part_of-autodiff-block-2",
+      "from": "autodiff-stmt-2",
+      "to": "autodiff-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-3-part_of-autodiff-block-2",
+      "from": "autodiff-stmt-3",
+      "to": "autodiff-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-4-part_of-autodiff-block-2",
+      "from": "autodiff-stmt-4",
+      "to": "autodiff-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-5-part_of-autodiff-block-3",
+      "from": "autodiff-stmt-5",
+      "to": "autodiff-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-6-part_of-autodiff-block-3",
+      "from": "autodiff-stmt-6",
+      "to": "autodiff-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-7-part_of-autodiff-block-3",
+      "from": "autodiff-stmt-7",
+      "to": "autodiff-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-8-part_of-autodiff-block-4",
+      "from": "autodiff-stmt-8",
+      "to": "autodiff-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-9-part_of-autodiff-block-4",
+      "from": "autodiff-stmt-9",
+      "to": "autodiff-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-10-part_of-autodiff-block-4",
+      "from": "autodiff-stmt-10",
+      "to": "autodiff-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-11-part_of-autodiff-block-4",
+      "from": "autodiff-stmt-11",
+      "to": "autodiff-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-12-part_of-autodiff-block-5",
+      "from": "autodiff-stmt-12",
+      "to": "autodiff-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-13-part_of-autodiff-block-5",
+      "from": "autodiff-stmt-13",
+      "to": "autodiff-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-14-part_of-autodiff-block-6",
+      "from": "autodiff-stmt-14",
+      "to": "autodiff-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-15-part_of-autodiff-block-6",
+      "from": "autodiff-stmt-15",
+      "to": "autodiff-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-16-part_of-autodiff-block-9",
+      "from": "autodiff-stmt-16",
+      "to": "autodiff-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-17-part_of-autodiff-block-11",
+      "from": "autodiff-stmt-17",
+      "to": "autodiff-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-18-part_of-autodiff-block-13",
+      "from": "autodiff-stmt-18",
+      "to": "autodiff-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-19-part_of-autodiff-block-14",
+      "from": "autodiff-stmt-19",
+      "to": "autodiff-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-20-part_of-autodiff-block-14",
+      "from": "autodiff-stmt-20",
+      "to": "autodiff-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-21-part_of-autodiff-block-14",
+      "from": "autodiff-stmt-21",
+      "to": "autodiff-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-22-part_of-autodiff-block-14",
+      "from": "autodiff-stmt-22",
+      "to": "autodiff-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-23-part_of-autodiff-block-17",
+      "from": "autodiff-stmt-23",
+      "to": "autodiff-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-24-part_of-autodiff-block-17",
+      "from": "autodiff-stmt-24",
+      "to": "autodiff-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-25-part_of-autodiff-block-17",
+      "from": "autodiff-stmt-25",
+      "to": "autodiff-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-26-part_of-autodiff-block-17",
+      "from": "autodiff-stmt-26",
+      "to": "autodiff-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-27-part_of-autodiff-block-17",
+      "from": "autodiff-stmt-27",
+      "to": "autodiff-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-28-part_of-autodiff-block-19",
+      "from": "autodiff-stmt-28",
+      "to": "autodiff-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-29-part_of-autodiff-block-19",
+      "from": "autodiff-stmt-29",
+      "to": "autodiff-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-30-part_of-autodiff-block-22",
+      "from": "autodiff-stmt-30",
+      "to": "autodiff-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-31-part_of-autodiff-block-23",
+      "from": "autodiff-stmt-31",
+      "to": "autodiff-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-32-part_of-autodiff-block-24",
+      "from": "autodiff-stmt-32",
+      "to": "autodiff-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-33-part_of-autodiff-block-25",
+      "from": "autodiff-stmt-33",
+      "to": "autodiff-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-34-part_of-autodiff-block-26",
+      "from": "autodiff-stmt-34",
+      "to": "autodiff-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-35-part_of-autodiff-block-27",
+      "from": "autodiff-stmt-35",
+      "to": "autodiff-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-36-part_of-autodiff-block-28",
+      "from": "autodiff-stmt-36",
+      "to": "autodiff-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-37-part_of-autodiff-block-29",
+      "from": "autodiff-stmt-37",
+      "to": "autodiff-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-38-part_of-autodiff-block-30",
+      "from": "autodiff-stmt-38",
+      "to": "autodiff-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-39-part_of-autodiff-block-31",
+      "from": "autodiff-stmt-39",
+      "to": "autodiff-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-40-part_of-autodiff-block-33",
+      "from": "autodiff-stmt-40",
+      "to": "autodiff-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-41-part_of-autodiff-block-33",
+      "from": "autodiff-stmt-41",
+      "to": "autodiff-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-42-part_of-autodiff-block-37",
+      "from": "autodiff-stmt-42",
+      "to": "autodiff-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-43-part_of-autodiff-block-40",
+      "from": "autodiff-stmt-43",
+      "to": "autodiff-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-44-part_of-autodiff-block-40",
+      "from": "autodiff-stmt-44",
+      "to": "autodiff-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-45-part_of-autodiff-block-41",
+      "from": "autodiff-stmt-45",
+      "to": "autodiff-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-46-part_of-autodiff-block-42",
+      "from": "autodiff-stmt-46",
+      "to": "autodiff-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-47-part_of-autodiff-block-44",
+      "from": "autodiff-stmt-47",
+      "to": "autodiff-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-48-part_of-autodiff-block-44",
+      "from": "autodiff-stmt-48",
+      "to": "autodiff-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-49-part_of-autodiff-block-46",
+      "from": "autodiff-stmt-49",
+      "to": "autodiff-block-46",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-50-part_of-autodiff-block-46",
+      "from": "autodiff-stmt-50",
+      "to": "autodiff-block-46",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-51-part_of-autodiff-block-46",
+      "from": "autodiff-stmt-51",
+      "to": "autodiff-block-46",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-52-part_of-autodiff-block-48",
+      "from": "autodiff-stmt-52",
+      "to": "autodiff-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-53-part_of-autodiff-block-48",
+      "from": "autodiff-stmt-53",
+      "to": "autodiff-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-54-part_of-autodiff-block-49",
+      "from": "autodiff-stmt-54",
+      "to": "autodiff-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-55-part_of-autodiff-block-49",
+      "from": "autodiff-stmt-55",
+      "to": "autodiff-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-56-part_of-autodiff-block-51",
+      "from": "autodiff-stmt-56",
+      "to": "autodiff-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-57-part_of-autodiff-block-52",
+      "from": "autodiff-stmt-57",
+      "to": "autodiff-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-58-part_of-autodiff-block-53",
+      "from": "autodiff-stmt-58",
+      "to": "autodiff-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-59-part_of-autodiff-block-54",
+      "from": "autodiff-stmt-59",
+      "to": "autodiff-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-60-part_of-autodiff-block-55",
+      "from": "autodiff-stmt-60",
+      "to": "autodiff-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-61-part_of-autodiff-block-56",
+      "from": "autodiff-stmt-61",
+      "to": "autodiff-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-62-part_of-autodiff-block-57",
+      "from": "autodiff-stmt-62",
+      "to": "autodiff-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-63-part_of-autodiff-block-58",
+      "from": "autodiff-stmt-63",
+      "to": "autodiff-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-64-part_of-autodiff-block-58",
+      "from": "autodiff-stmt-64",
+      "to": "autodiff-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-65-part_of-autodiff-block-60",
+      "from": "autodiff-stmt-65",
+      "to": "autodiff-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-66-part_of-autodiff-block-60",
+      "from": "autodiff-stmt-66",
+      "to": "autodiff-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-67-part_of-autodiff-block-60",
+      "from": "autodiff-stmt-67",
+      "to": "autodiff-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-68-part_of-autodiff-block-62",
+      "from": "autodiff-stmt-68",
+      "to": "autodiff-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-69-part_of-autodiff-block-65",
+      "from": "autodiff-stmt-69",
+      "to": "autodiff-block-65",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-70-part_of-autodiff-block-66",
+      "from": "autodiff-stmt-70",
+      "to": "autodiff-block-66",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-71-part_of-autodiff-block-68",
+      "from": "autodiff-stmt-71",
+      "to": "autodiff-block-68",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-72-part_of-autodiff-block-69",
+      "from": "autodiff-stmt-72",
+      "to": "autodiff-block-69",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-73-part_of-autodiff-block-69",
+      "from": "autodiff-stmt-73",
+      "to": "autodiff-block-69",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-74-part_of-autodiff-block-71",
+      "from": "autodiff-stmt-74",
+      "to": "autodiff-block-71",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-75-part_of-autodiff-block-71",
+      "from": "autodiff-stmt-75",
+      "to": "autodiff-block-71",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-76-part_of-autodiff-block-73",
+      "from": "autodiff-stmt-76",
+      "to": "autodiff-block-73",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-77-part_of-autodiff-block-74",
+      "from": "autodiff-stmt-77",
+      "to": "autodiff-block-74",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-78-part_of-autodiff-block-75",
+      "from": "autodiff-stmt-78",
+      "to": "autodiff-block-75",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-79-part_of-autodiff-block-75",
+      "from": "autodiff-stmt-79",
+      "to": "autodiff-block-75",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-80-part_of-autodiff-block-76",
+      "from": "autodiff-stmt-80",
+      "to": "autodiff-block-76",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-81-part_of-autodiff-block-77",
+      "from": "autodiff-stmt-81",
+      "to": "autodiff-block-77",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-82-part_of-autodiff-block-78",
+      "from": "autodiff-stmt-82",
+      "to": "autodiff-block-78",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-83-part_of-autodiff-block-78",
+      "from": "autodiff-stmt-83",
+      "to": "autodiff-block-78",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-84-part_of-autodiff-block-79",
+      "from": "autodiff-stmt-84",
+      "to": "autodiff-block-79",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-85-part_of-autodiff-block-81",
+      "from": "autodiff-stmt-85",
+      "to": "autodiff-block-81",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-86-part_of-autodiff-block-83",
+      "from": "autodiff-stmt-86",
+      "to": "autodiff-block-83",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-87-part_of-autodiff-block-84",
+      "from": "autodiff-stmt-87",
+      "to": "autodiff-block-84",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-88-part_of-autodiff-block-84",
+      "from": "autodiff-stmt-88",
+      "to": "autodiff-block-84",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-89-part_of-autodiff-block-85",
+      "from": "autodiff-stmt-89",
+      "to": "autodiff-block-85",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-90-part_of-autodiff-block-85",
+      "from": "autodiff-stmt-90",
+      "to": "autodiff-block-85",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-91-part_of-autodiff-block-85",
+      "from": "autodiff-stmt-91",
+      "to": "autodiff-block-85",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-92-part_of-autodiff-block-85",
+      "from": "autodiff-stmt-92",
+      "to": "autodiff-block-85",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-93-part_of-autodiff-block-85",
+      "from": "autodiff-stmt-93",
+      "to": "autodiff-block-85",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-94-part_of-autodiff-block-88",
+      "from": "autodiff-stmt-94",
+      "to": "autodiff-block-88",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-95-part_of-autodiff-block-89",
+      "from": "autodiff-stmt-95",
+      "to": "autodiff-block-89",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-96-part_of-autodiff-block-90",
+      "from": "autodiff-stmt-96",
+      "to": "autodiff-block-90",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-97-part_of-autodiff-block-90",
+      "from": "autodiff-stmt-97",
+      "to": "autodiff-block-90",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-98-part_of-autodiff-block-91",
+      "from": "autodiff-stmt-98",
+      "to": "autodiff-block-91",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-99-part_of-autodiff-block-92",
+      "from": "autodiff-stmt-99",
+      "to": "autodiff-block-92",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-100-part_of-autodiff-block-93",
+      "from": "autodiff-stmt-100",
+      "to": "autodiff-block-93",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-101-part_of-autodiff-block-94",
+      "from": "autodiff-stmt-101",
+      "to": "autodiff-block-94",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-102-part_of-autodiff-block-95",
+      "from": "autodiff-stmt-102",
+      "to": "autodiff-block-95",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-103-part_of-autodiff-block-96",
+      "from": "autodiff-stmt-103",
+      "to": "autodiff-block-96",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-autodiff-stmt-104-part_of-autodiff-block-96",
+      "from": "autodiff-stmt-104",
+      "to": "autodiff-block-96",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "autodiff-stmt-1",
       "quote": "At the heart of every modern neural network lies a deceptively simple question: *“How much did each weight contribute to the error?”* The answer is computed by a technique called **Automatic Differentiation (AD)**, specifically its *reverse mode*, which underpins the backpropagation algorithm used to train virtually every deep learning model today.",
+      "block_id": "autodiff-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-2",
       "quote": "Automatic differentiation is neither symbolic differentiation (manipulating algebraic expressions like a CAS) nor numerical differentiation (using finite differences like $\\frac{f(x+h) - f(x)}{h}$).",
+      "block_id": "autodiff-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-3",
       "quote": "Instead, it is an *exact* method that computes derivatives by systematically applying the **chain rule** to elementary operations recorded on a computational graph, often called a **tape**.",
+      "block_id": "autodiff-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-4",
       "quote": "A widely-read visual walkthrough of exactly this reading — backpropagation as reverse-mode differentiation on a computational graph — is \\citetitle{colah2015backprop} \\cite{colah2015backprop}.",
+      "block_id": "autodiff-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-5",
-      "quote": "Long before any machine, the chain rule was a notational achievement.",
+      "quote": "The first published algorithm for what we now call automatic differentiation is usually credited to \\citeauthor{wengert1964} in \\citeyear{wengert1964}.",
+      "block_id": "autodiff-block-3",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-6",
-      "quote": "Leibniz's *Nova Methodus* of 1684 introduced the differentials $dx$ and $dy$; his calculus treated $dy/dx$ as a quotient of infinitesimals and supplied the operational rules—including the chain rule—that AD still uses \\cite{leibniz1684nova}.",
+      "quote": "In his paper \\citetitle{wengert1964}, Wengert described a procedure for the automatic evaluation of total and partial derivatives of arbitrary algebraic functions by decomposing them into sequences of elementary expressions, without ever developing symbolic derivative formulas.",
+      "block_id": "autodiff-block-3",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-7",
-      "quote": "AD inherits that formalism almost unchanged: each elementary operation contributes a local derivative, and the derivative of the whole is their product.",
+      "quote": "This forward-mode technique laid the conceptual groundwork for all later AD systems.",
+      "block_id": "autodiff-block-3",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-8",
-      "quote": "The first published algorithm for what we now call automatic differentiation is usually credited to \\citeauthor{wengert1964} in \\citeyear{wengert1964}.",
+      "quote": "The critical extension to **reverse mode** was made by \\citeauthor{linnainmaa1970} in his \\citeyear{linnainmaa1970} \\cite[master's thesis]{linnainmaa1970}; the English version appeared in 1976 \\cite{linnainmaa1976}.",
+      "block_id": "autodiff-block-4",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-9",
-      "quote": "In his paper \\citetitle{wengert1964}, Wengert described a procedure for the automatic evaluation of total and partial derivatives of arbitrary algebraic functions by decomposing them into sequences of elementary expressions, without ever developing symbolic derivative formulas.",
+      "quote": "Linnainmaa's original motivation was not neural networks at all, he sought an efficient way to track how rounding errors accumulate through long chains of floating-point computations.",
+      "block_id": "autodiff-block-4",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-10",
-      "quote": "This forward-mode technique laid the conceptual groundwork for all later AD systems.",
+      "quote": "His key insight was that by recording each elementary operation and then traversing that record in reverse, one could compute the partial derivatives of the final result with respect to *every* intermediate variable in a single backward pass.",
+      "block_id": "autodiff-block-4",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-11",
-      "quote": "The critical extension to **reverse mode** was made by \\citeauthor{linnainmaa1970} in his \\citeyear{linnainmaa1970} \\cite[master's thesis]{linnainmaa1970}; the English version appeared in 1976 \\cite{linnainmaa1976}.",
+      "quote": "Where Wengert's forward mode required one pass per input variable, Linnainmaa's reverse mode required only one pass per *output*, an asymmetry that would prove decisive for training neural networks with millions of parameters and a single scalar loss.",
+      "block_id": "autodiff-block-4",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-12",
-      "quote": "Linnainmaa's original motivation was not neural networks at all, he sought an efficient way to track how rounding errors accumulate through long chains of floating-point computations.",
+      "quote": "This technique was later independently rediscovered and applied to neural network training by \\citeauthor{werbos1974} in his \\citeyear{werbos1974} \\cite[doctoral thesis]{werbos1974}, where he proposed using reverse-mode AD to compute gradients for multi-layer networks.",
+      "block_id": "autodiff-block-5",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-13",
-      "quote": "His key insight was that by recording each elementary operation and then traversing that record in reverse, one could compute the partial derivatives of the final result with respect to *every* intermediate variable in a single backward pass.",
+      "quote": "However, it was the landmark \\citeyear{rumelhart1986} paper by \\cite[Rumelhart et al.]{rumelhart1986}, that popularized the method under the name **backpropagation** and demonstrated its practical effectiveness, reigniting interest in connectionist models after the first AI winter.",
+      "block_id": "autodiff-block-5",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-14",
-      "quote": "Where Wengert's forward mode required one pass per input variable, Linnainmaa's reverse mode required only one pass per *output*, an asymmetry that would prove decisive for training neural networks with millions of parameters and a single scalar loss.",
+      "quote": "The line did not end with Rumelhart et al. Linnainmaa's Finnish thesis reached a wider audience only in 1976 \\cite{linnainmaa1976}, and in 1980 \\citeauthor{speelpenning1980} turned reverse mode into a compiler technique for functions of many variables \\cite{speelpenning1980}.",
+      "block_id": "autodiff-block-6",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-15",
-      "quote": "This technique was later independently rediscovered and applied to neural network training by \\citeauthor{werbos1974} in his \\citeyear{werbos1974} \\cite[doctoral thesis]{werbos1974}, where he proposed using reverse-mode AD to compute gradients for multi-layer networks.",
+      "quote": "Speelpenning's reverse sweep over a recorded computation is one of the direct ancestors of modern AD compilers; the same idea later reappears as the gradient tape.",
+      "block_id": "autodiff-block-6",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-16",
-      "quote": "However, it was the landmark \\citeyear{rumelhart1986} paper by \\cite[Rumelhart et al.]{rumelhart1986}, that popularized the method under the name **backpropagation** and demonstrated its practical effectiveness, reigniting interest in connectionist models after the first AI winter.",
-      "section": "",
+      "quote": "Before understanding *how* AD works, it helps to understand *why* the alternatives fail at scale:",
+      "block_id": "autodiff-block-9",
+      "section": "Why Not Symbolic or Numerical Differentiation?",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-17",
-      "quote": "The line did not end with Rumelhart et al. Linnainmaa's Finnish thesis reached a wider audience only in 1976 \\cite{linnainmaa1976}, and in 1980 \\citeauthor{speelpenning1980} turned reverse mode into a compiler technique for functions of many variables \\cite{speelpenning1980}.",
-      "section": "",
+      "quote": "AD automates this process by recording each elementary operation and its local derivative, then chaining them together.",
+      "block_id": "autodiff-block-11",
+      "section": "The Chain Rule: The Mathematical Engine",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-18",
-      "quote": "Speelpenning's reverse sweep over a recorded computation is one of the direct ancestors of modern AD compilers; the same idea later reappears as the gradient tape.",
-      "section": "",
+      "quote": "There are two “directions” in which the chain rule can be evaluated:",
+      "block_id": "autodiff-block-13",
+      "section": "Forward Mode vs. Reverse Mode",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-19",
-      "quote": "Before understanding *how* AD works, it helps to understand *why* the alternatives fail at scale:",
-      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "quote": "Reverse mode's bargain has a price: it must retain intermediate values from the forward pass, so memory grows with the length of the tape.",
+      "block_id": "autodiff-block-14",
+      "section": "Forward Mode vs. Reverse Mode",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-20",
-      "quote": "**Symbolic Differentiation** (like what Mathematica or Wolfram Alpha does) manipulates algebraic expressions directly.",
-      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "quote": "\\citeauthor{griewank1989} clarified the arithmetic cost of the reverse sweep, and the book that grew out of that work, *Evaluating Derivatives* (2000; 2nd ed.",
+      "block_id": "autodiff-block-14",
+      "section": "Forward Mode vs. Reverse Mode",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-21",
-      "quote": "For a simple function like $f(x) = x^2 \\sin(x)$, it produces an exact symbolic derivative.",
-      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "quote": "2008), developed the memory-versus-recomputation trade-off—including checkpointing—that modern frameworks use \\cite{griewank1989,griewank2008}.",
+      "block_id": "autodiff-block-14",
+      "section": "Forward Mode vs. Reverse Mode",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-22",
-      "quote": "However, for a neural network with millions of parameters and deeply nested compositions, the resulting symbolic expressions grow exponentially, a phenomenon called **expression swell**.",
-      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "quote": "Checkpointing stores a few states and recomputes the rest, which is what lets a deep network's gradient fit in memory.",
+      "block_id": "autodiff-block-14",
+      "section": "Forward Mode vs. Reverse Mode",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-23",
-      "quote": "The derivative of a 100-layer network would be an algebraic expression larger than any computer could store.",
-      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "quote": "The idea of carrying local derivative information along with a computation is older than the name.",
+      "block_id": "autodiff-block-17",
+      "section": "Before the name existed: a machine that differentiated",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-24",
-      "quote": "**Numerical Differentiation** approximates derivatives using finite differences:",
-      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "quote": "In the 1820s **Charles Babbage** designed the **Difference Engine**, a steam-era machine that tabulated polynomial functions by the **method of finite differences** \\cite[Babbage's Difference Engine]{differenceengine}.",
+      "block_id": "autodiff-block-17",
+      "section": "Before the name existed: a machine that differentiated",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-25",
-      "quote": "This requires **one forward pass per parameter** to compute each partial derivative.",
-      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "quote": "You loaded it with a function's value and its successive differences at one starting point, and then cranked it forward: each turn produced the next value purely by *adding* the stored differences, with no multiplication and no formula at all.",
+      "block_id": "autodiff-block-17",
+      "section": "Before the name existed: a machine that differentiated",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-26",
-      "quote": "For a model with $n$ parameters, that means $n + 1$ forward passes.",
-      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "quote": "The engine was **not** an automatic-differentiation machine: it evaluated a polynomial from stored finite differences, not the derivatives of an arbitrary program.",
+      "block_id": "autodiff-block-17",
+      "section": "Before the name existed: a machine that differentiated",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-27",
-      "quote": "GPT-3 has 175 billion parameters, numerical differentiation would require 175 billion forward passes per training step.",
-      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "quote": "But the underlying move — carry a local state forward and read the next value from it — is a cousin of forward-mode AD, which records exact local derivatives instead of finite differences and applies the chain rule to them.",
+      "block_id": "autodiff-block-17",
+      "section": "Before the name existed: a machine that differentiated",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-28",
-      "quote": "It is also numerically unstable: too large an $h$ introduces truncation error, too small an $h$ introduces floating-point cancellation error.",
-      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "quote": "The central data structure in reverse-mode AD is the **computational graph**, colloquially called the **tape** (by analogy with a magnetic tape that records operations sequentially).",
+      "block_id": "autodiff-block-19",
+      "section": "The Tape: Recording the Computation",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-29",
-      "quote": "**Automatic Differentiation** computes exact derivatives (up to floating-point precision) in at most a constant factor more work than the original function evaluation.",
-      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "quote": "During the forward pass, every elementary operation, addition, multiplication, exponentiation, activation functions, is recorded on this tape along with its inputs and the local partial derivatives.",
+      "block_id": "autodiff-block-19",
+      "section": "The Tape: Recording the Computation",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-30",
-      "quote": "Reverse-mode AD, specifically, computes the gradient of a scalar output with respect to *all* inputs in a single backward pass, regardless of how many parameters there are.",
-      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "quote": "| Step | Operation | Result | Local Derivatives |",
+      "block_id": "autodiff-block-22",
+      "section": "A Concrete Example",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-31",
-      "quote": "The entire machinery of AD rests on the **chain rule** of calculus.",
-      "section": "The Chain Rule: The Mathematical Engine",
+      "quote": "We use the notation $\\bar{v}_i$ (called the **adjoint**) to denote $\\frac{\\partial f}{\\partial v_i}$.",
+      "block_id": "autodiff-block-23",
+      "section": "A Concrete Example",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-32",
-      "quote": "If a function $y$ is computed through a chain of intermediate steps:",
-      "section": "The Chain Rule: The Mathematical Engine",
+      "quote": "| Step | Adjoint Computation | Value |",
+      "block_id": "autodiff-block-24",
+      "section": "A Concrete Example",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-33",
-      "quote": "Then the derivative of $y$ with respect to $x$ is:",
-      "section": "The Chain Rule: The Mathematical Engine",
+      "quote": "| $\\bar{v}_4$ | $\\frac{\\partial f}{\\partial v_4} = 1$ (seed) | $1$ |",
+      "block_id": "autodiff-block-25",
+      "section": "A Concrete Example",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-34",
-      "quote": "For a longer chain $x \\to v_1 \\to v_2 \\to \\cdots \\to v_k \\to y$:",
-      "section": "The Chain Rule: The Mathematical Engine",
+      "quote": "| $\\bar{v}_2$ | $\\bar{v}_4 \\cdot \\frac{\\partial v_4}{\\partial v_2} = 1 \\cdot v_3 = 1 \\cdot 1$ | $1$ |",
+      "block_id": "autodiff-block-26",
+      "section": "A Concrete Example",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-35",
-      "quote": "AD automates this process by recording each elementary operation and its local derivative, then chaining them together.",
-      "section": "The Chain Rule: The Mathematical Engine",
+      "quote": "| $\\bar{v}_3$ | $\\bar{v}_4 \\cdot \\frac{\\partial v_4}{\\partial v_3} = 1 \\cdot v_2 = 1 \\cdot 2.5708$ | $2.5708$ |",
+      "block_id": "autodiff-block-27",
+      "section": "A Concrete Example",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-36",
-      "quote": "There are two “directions” in which the chain rule can be evaluated:",
-      "section": "Forward Mode vs. Reverse Mode",
+      "quote": "| $\\bar{v}_0$ | $\\bar{v}_2 \\cdot \\frac{\\partial v_2}{\\partial v_0} + \\bar{v}_3 \\cdot \\frac{\\partial v_3}{\\partial v_0} = 1 \\cdot 1 + 2.5708 \\cdot 0$ | $1$ |",
+      "block_id": "autodiff-block-28",
+      "section": "A Concrete Example",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-37",
-      "quote": "**Forward Mode** propagates derivatives *alongside* the computation, from inputs to outputs.",
-      "section": "Forward Mode vs. Reverse Mode",
+      "quote": "| $\\bar{v}_1$ | $\\bar{v}_2 \\cdot \\frac{\\partial v_2}{\\partial v_1} = 1 \\cdot 1$ | $1$ |",
+      "block_id": "autodiff-block-29",
+      "section": "A Concrete Example",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-38",
-      "quote": "It computes $\\frac{\\partial v_i}{\\partial x}$ for a chosen input $x$ at each step.",
-      "section": "Forward Mode vs. Reverse Mode",
+      "quote": "Interactive: Tape-Based Reverse-Mode AD",
+      "block_id": "autodiff-block-30",
+      "section": "A Concrete Example",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-39",
-      "quote": "This is efficient when there are **few inputs and many outputs** (e.g., computing the Jacobian column by column).",
-      "section": "Forward Mode vs. Reverse Mode",
+      "quote": "▶ Forward Pass ◀ Backward Pass ↺ Reset",
+      "block_id": "autodiff-block-31",
+      "section": "A Concrete Example",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-40",
-      "quote": "**Reverse Mode** first completes the entire forward computation, then propagates derivatives *backward* from the output to all inputs.",
-      "section": "Forward Mode vs. Reverse Mode",
+      "quote": "The tape can also be visualized as a **directed acyclic graph (DAG)**, where each node is an operation and each edge carries a value and a local derivative.",
+      "block_id": "autodiff-block-33",
+      "section": "The Computational Graph: Visualizing the Tape",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-41",
-      "quote": "It computes $\\frac{\\partial y}{\\partial v_i}$ for all intermediate variables $v_i$ in one pass.",
-      "section": "Forward Mode vs. Reverse Mode",
+      "quote": "The forward pass flows left-to-right, and the backward pass flows right-to-left, accumulating gradients via the chain rule at each node.",
+      "block_id": "autodiff-block-33",
+      "section": "The Computational Graph: Visualizing the Tape",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-42",
-      "quote": "This is efficient when there are **many inputs and few outputs**, exactly the situation in neural network training, where we have millions of weights (inputs) and a single scalar loss (output).",
-      "section": "Forward Mode vs. Reverse Mode",
+      "quote": "Hover over a node to see its details.",
+      "block_id": "autodiff-block-37",
+      "section": "The Computational Graph: Visualizing the Tape",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-43",
-      "quote": "Since training always reduces to minimizing a single scalar loss $L$, reverse mode requires only **one** backward pass to get $\\frac{\\partial L}{\\partial w_i}$ for every weight $w_i$.",
-      "section": "Forward Mode vs. Reverse Mode",
+      "quote": "where $\\eta$ is the learning rate.",
+      "block_id": "autodiff-block-40",
+      "section": "Gradient Descent on a Loss Landscape",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-44",
-      "quote": "This is why reverse-mode AD (backpropagation) is the universal choice for deep learning.",
-      "section": "Forward Mode vs. Reverse Mode",
+      "quote": "This is **gradient descent**, first described for least-squares problems by \\citeauthor{cauchy1847} in \\citeyear{cauchy1847} in \\citetitle{cauchy1847} (general nonlinear descent came later).",
+      "block_id": "autodiff-block-40",
+      "section": "Gradient Descent on a Loss Landscape",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-45",
-      "quote": "Reverse mode's bargain has a price: it must retain intermediate values from the forward pass, so memory grows with the length of the tape.",
-      "section": "Forward Mode vs. Reverse Mode",
+      "quote": "Learning Rate $\\eta$: 0.10",
+      "block_id": "autodiff-block-41",
+      "section": "Gradient Descent on a Loss Landscape",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-46",
-      "quote": "\\citeauthor{griewank1989} clarified the arithmetic cost of the reverse sweep, and the book that grew out of that work, *Evaluating Derivatives* (2000; 2nd ed.",
-      "section": "Forward Mode vs. Reverse Mode",
+      "quote": "Step ▶ Run 50 Steps ↺ Reset",
+      "block_id": "autodiff-block-42",
+      "section": "Gradient Descent on a Loss Landscape",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-47",
-      "quote": "2008), developed the memory-versus-recomputation trade-off—including checkpointing—that modern frameworks use \\cite{griewank1989,griewank2008}.",
-      "section": "Forward Mode vs. Reverse Mode",
+      "quote": "Modern deep learning frameworks implement reverse-mode AD as a core feature.",
+      "block_id": "autodiff-block-44",
+      "section": "Tape-Based AD in Practice: TensorFlow and PyTorch",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-48",
-      "quote": "Checkpointing stores a few states and recomputes the rest, which is what lets a deep network's gradient fit in memory.",
-      "section": "Forward Mode vs. Reverse Mode",
+      "quote": "The two dominant frameworks, \\citealternativetitle{tensorflow2016} and \\citealternativetitle{pytorch}, take slightly different approaches to building the computational graph, but both ultimately implement the same mathematical principle.",
+      "block_id": "autodiff-block-44",
+      "section": "Tape-Based AD in Practice: TensorFlow and PyTorch",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-49",
-      "quote": "The idea of carrying local derivative information along with a computation is older than the name.",
-      "section": "Before the name existed: a machine that differentiated",
+      "quote": "\\citealternativetitle{tensorflow2016} uses an **explicit tape** via the `tf.GradientTape()` context manager.",
+      "block_id": "autodiff-block-46",
+      "section": "TensorFlow: Explicit Tape with `GradientTape`",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-50",
-      "quote": "In the 1820s **Charles Babbage** designed the **Difference Engine**, a steam-era machine that tabulated polynomial functions by the **method of finite differences** \\cite[Babbage's Difference Engine]{differenceengine}.",
-      "section": "Before the name existed: a machine that differentiated",
+      "quote": "You must explicitly tell TensorFlow to start recording operations.",
+      "block_id": "autodiff-block-46",
+      "section": "TensorFlow: Explicit Tape with `GradientTape`",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-51",
-      "quote": "You loaded it with a function's value and its successive differences at one starting point, and then cranked it forward: each turn produced the next value purely by *adding* the stored differences, with no multiplication and no formula at all.",
-      "section": "Before the name existed: a machine that differentiated",
+      "quote": "This gives you fine-grained control over what gets differentiated.",
+      "block_id": "autodiff-block-46",
+      "section": "TensorFlow: Explicit Tape with `GradientTape`",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-52",
-      "quote": "The engine was **not** an automatic-differentiation machine: it evaluated a polynomial from stored finite differences, not the derivatives of an arbitrary program.",
-      "section": "Before the name existed: a machine that differentiated",
+      "quote": "\\citealternativetitle{pytorch} uses an **implicit tape**, any tensor created with `requires_grad=True` automatically records operations performed on it.",
+      "block_id": "autodiff-block-48",
+      "section": "PyTorch: Implicit Tape with `autograd`",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-53",
-      "quote": "But the underlying move — carry a local state forward and read the next value from it — is a cousin of forward-mode AD, which records exact local derivatives instead of finite differences and applies the chain rule to them.",
-      "section": "Before the name existed: a machine that differentiated",
+      "quote": "The tape is built dynamically during the forward pass (this is called **define-by-run** or **eager mode**), which makes debugging more intuitive.",
+      "block_id": "autodiff-block-48",
+      "section": "PyTorch: Implicit Tape with `autograd`",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-54",
-      "quote": "The central data structure in reverse-mode AD is the **computational graph**, colloquially called the **tape** (by analogy with a magnetic tape that records operations sequentially).",
-      "section": "The Tape: Recording the Computation",
+      "quote": "Both approaches produce identical mathematical results.",
+      "block_id": "autodiff-block-49",
+      "section": "PyTorch: Implicit Tape with `autograd`",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-55",
-      "quote": "During the forward pass, every elementary operation, addition, multiplication, exponentiation, activation functions, is recorded on this tape along with its inputs and the local partial derivatives.",
-      "section": "The Tape: Recording the Computation",
+      "quote": "The choice between them is largely a matter of API preference and ecosystem.",
+      "block_id": "autodiff-block-49",
+      "section": "PyTorch: Implicit Tape with `autograd`",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-56",
-      "quote": "Evaluated at $x = \\frac{\\pi}{2}, \\; y = 1$:",
-      "section": "A Concrete Example",
+      "quote": "| Feature | PyTorch | TensorFlow |",
+      "block_id": "autodiff-block-51",
+      "section": "Key Differences at a Glance",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-57",
-      "quote": "**Step 1 (Forward Pass):** Break the computation into elementary operations and record each one.",
-      "section": "A Concrete Example",
+      "quote": "| **Tape creation** | Implicit (automatic for `requires_grad=True` tensors) | Explicit (`with tf.GradientTape()`) |",
+      "block_id": "autodiff-block-52",
+      "section": "Key Differences at a Glance",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-58",
-      "quote": "| Step | Operation | Result | Local Derivatives |",
-      "section": "A Concrete Example",
+      "quote": "| **Graph mode** | Define-by-run (dynamic) | Eager by default; `@tf.function` for static graphs |",
+      "block_id": "autodiff-block-53",
+      "section": "Key Differences at a Glance",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-59",
-      "quote": "| $v_0$ | input $x$ | $\\frac{\\pi}{2} \\approx 1.5708$ | 1 (constant) |",
-      "section": "A Concrete Example",
+      "quote": "| **Trigger backward** | `loss.backward()` | `tape.gradient(loss, variables)` |",
+      "block_id": "autodiff-block-54",
+      "section": "Key Differences at a Glance",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-60",
-      "quote": "| $v_1$ | input $y$ | $1$ | 1 (constant) |",
-      "section": "A Concrete Example",
+      "quote": "| **Access gradients** | `tensor.grad` attribute | Returned by `tape.gradient()` |",
+      "block_id": "autodiff-block-55",
+      "section": "Key Differences at a Glance",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-61",
-      "quote": "| $v_2 = v_0 + v_1$ | add | $2.5708$ | $\\frac{\\partial v_2}{\\partial v_0} = 1, \\quad \\frac{\\partial v_2}{\\partial v_1} = 1$ |",
-      "section": "A Concrete Example",
+      "quote": "| **Tape persistence** | Consumed after `.backward()` (use `retain_graph=True` to keep) | Consumed after `.gradient()` (use `persistent=True` to keep) |",
+      "block_id": "autodiff-block-56",
+      "section": "Key Differences at a Glance",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-62",
-      "quote": "| $v_3 = \\sin(v_0)$ | sin | $1.0$ | $\\frac{\\partial v_3}{\\partial v_0} = \\cos(v_0) = 0$ |",
-      "section": "A Concrete Example",
+      "quote": "| **Higher-order derivatives** | Nest `.backward()` calls or use `torch.autograd.grad` | Nest `GradientTape` contexts |",
+      "block_id": "autodiff-block-57",
+      "section": "Key Differences at a Glance",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-63",
-      "quote": "| $v_4 = v_2 \\cdot v_3$ | multiply | $2.5708$ | $\\frac{\\partial v_4}{\\partial v_2} = v_3 = 1, \\quad \\frac{\\partial v_4}{\\partial v_3} = v_2 = 2.5708$ |",
-      "section": "A Concrete Example",
+      "quote": "Both frameworks produce mathematically identical gradients.",
+      "block_id": "autodiff-block-58",
+      "section": "Key Differences at a Glance",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-64",
-      "quote": "**Step 2 (Backward Pass):** Starting from the output $v_4$, propagate the gradient $\\bar{v}_i = \\frac{\\partial f}{\\partial v_i}$ backward through the tape.",
-      "section": "A Concrete Example",
+      "quote": "The choice is primarily about API ergonomics and ecosystem preferences.",
+      "block_id": "autodiff-block-58",
+      "section": "Key Differences at a Glance",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-65",
-      "quote": "We use the notation $\\bar{v}_i$ (called the **adjoint**) to denote $\\frac{\\partial f}{\\partial v_i}$.",
-      "section": "A Concrete Example",
+      "quote": "\\citeauthor{jax2018}'s JAX takes a third route: rather than recording a mutable tape, it composes function transformations.",
+      "block_id": "autodiff-block-60",
+      "section": "JAX: Transformations Instead of a Tape",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-66",
-      "quote": "| Step | Adjoint Computation | Value |",
-      "section": "A Concrete Example",
+      "quote": "`grad` turns a scalar-valued function into its gradient, `jacfwd` and `jacrev` build Jacobians in forward or reverse mode, and `vmap` and `jit` compile the result for accelerators \\cite{jax2018}.",
+      "block_id": "autodiff-block-60",
+      "section": "JAX: Transformations Instead of a Tape",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-67",
-      "quote": "| $\\bar{v}_4$ | $\\frac{\\partial f}{\\partial v_4} = 1$ (seed) | $1$ |",
-      "section": "A Concrete Example",
+      "quote": "The same reverse-mode chain rule is underneath, but the API exposes *which* mode is used—a useful reminder that forward and reverse are two schedules for the same derivative, not two different calculi.",
+      "block_id": "autodiff-block-60",
+      "section": "JAX: Transformations Instead of a Tape",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-68",
-      "quote": "| $\\bar{v}_2$ | $\\bar{v}_4 \\cdot \\frac{\\partial v_4}{\\partial v_2} = 1 \\cdot v_3 = 1 \\cdot 1$ | $1$ |",
-      "section": "A Concrete Example",
+      "quote": "This minimal engine implements the exact same algorithm that PyTorch and TensorFlow use internally, just without the GPU acceleration, operator overloading for hundreds of operations, and memory optimizations.",
+      "block_id": "autodiff-block-62",
+      "section": "Building a Minimal Autograd Engine",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-69",
-      "quote": "| $\\bar{v}_3$ | $\\bar{v}_4 \\cdot \\frac{\\partial v_4}{\\partial v_3} = 1 \\cdot v_2 = 1 \\cdot 2.5708$ | $2.5708$ |",
-      "section": "A Concrete Example",
+      "quote": "One critical consequence of tape-based Automatic Differentiation in deep networks is the **vanishing gradient problem**, systematically analyzed by \\citeauthor{hochreiter1991vanishing} in \\citeyear{hochreiter1991vanishing} and formalized for recurrent networks by \\citeauthor{bengio1994learning} in \\citeyear{bengio1994learning}.",
+      "block_id": "autodiff-block-65",
+      "section": "The Vanishing and Exploding Gradient Problem",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-70",
-      "quote": "| $\\bar{v}_0$ | $\\bar{v}_2 \\cdot \\frac{\\partial v_2}{\\partial v_0} + \\bar{v}_3 \\cdot \\frac{\\partial v_3}{\\partial v_0} = 1 \\cdot 1 + 2.5708 \\cdot 0$ | $1$ |",
-      "section": "A Concrete Example",
+      "quote": "When the chain rule is applied through many layers, the gradient is a product of many local derivatives:",
+      "block_id": "autodiff-block-66",
+      "section": "The Vanishing and Exploding Gradient Problem",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-71",
-      "quote": "| $\\bar{v}_1$ | $\\bar{v}_2 \\cdot \\frac{\\partial v_2}{\\partial v_1} = 1 \\cdot 1$ | $1$ |",
-      "section": "A Concrete Example",
+      "quote": "Consider a network using the sigmoid activation $\\sigma(z) = \\frac{1}{1+e^{-z}}$.",
+      "block_id": "autodiff-block-68",
+      "section": "Vanishing Gradients",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-72",
-      "quote": "We can verify: $f(x,y) = (x+y)\\sin(x)$, so $\\frac{\\partial f}{\\partial x} = \\sin(x) + (x+y)\\cos(x) = 1 + 2.5708 \\cdot 0 = 1$ and $\\frac{\\partial f}{\\partial y} = \\sin(x) = 1$.",
-      "section": "A Concrete Example",
+      "quote": "The gradient reaching the first layer is less than one millionth of the gradient at the output.",
+      "block_id": "autodiff-block-69",
+      "section": "Vanishing Gradients",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-73",
-      "quote": "You can explore this process interactively below.",
-      "section": "A Concrete Example",
+      "quote": "The early layers effectively stop learning, they receive no useful signal about how to update their weights.",
+      "block_id": "autodiff-block-69",
+      "section": "Vanishing Gradients",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-74",
-      "quote": "Adjust $x$ and $y$ and watch the tape being built and then unwound.",
-      "section": "A Concrete Example",
+      "quote": "The opposite problem occurs when the local derivatives are consistently greater than 1.",
+      "block_id": "autodiff-block-71",
+      "section": "Exploding Gradients",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-75",
-      "quote": "The tape can also be visualized as a **directed acyclic graph (DAG)**, where each node is an operation and each edge carries a value and a local derivative.",
-      "section": "The Computational Graph: Visualizing the Tape",
+      "quote": "In recurrent neural networks processing long sequences, the gradient can grow exponentially, causing weight updates so large that the model diverges to $\\text{NaN}$.",
+      "block_id": "autodiff-block-71",
+      "section": "Exploding Gradients",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-76",
-      "quote": "The forward pass flows left-to-right, and the backward pass flows right-to-left, accumulating gradients via the chain rule at each node.",
-      "section": "The Computational Graph: Visualizing the Tape",
+      "quote": "Several architectural innovations have been developed to combat these problems:",
+      "block_id": "autodiff-block-73",
+      "section": "Solutions",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-77",
-      "quote": "Below is an interactive visualization of the computational graph for $f(x, y) = (x + y) \\cdot \\sin(x)$.",
-      "section": "The Computational Graph: Visualizing the Tape",
+      "quote": "**ReLU Activation** (\\citeauthor{relupaper}, \\citeyear{relupaper}): The Rectified Linear Unit $\\text{ReLU}(z) = \\max(0, z)$ has a derivative of exactly $1$ for positive inputs, preventing the multiplicative shrinkage that plagues sigmoid networks.",
+      "block_id": "autodiff-block-74",
+      "section": "Solutions",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-78",
-      "quote": "Hover over any node to see its forward value and backward adjoint.",
-      "section": "The Computational Graph: Visualizing the Tape",
+      "quote": "**Residual Connections** (\\citeauthor{he2015resnet}, \\citeyear{he2015resnet}): Skip connections add the input of a block directly to its output: $\\mathbf{y} = F(\\mathbf{x}) + \\mathbf{x}$.",
+      "block_id": "autodiff-block-75",
+      "section": "Solutions",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-79",
-      "quote": "In practice, automatic differentiation is used to compute the gradient $\\nabla L(\\mathbf{w})$ of a loss function $L$ with respect to all model weights $\\mathbf{w}$.",
-      "section": "Gradient Descent on a Loss Landscape",
+      "quote": "This creates a “gradient highway” that allows gradients to bypass problematic layers entirely.",
+      "block_id": "autodiff-block-75",
+      "section": "Solutions",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-80",
-      "quote": "The optimizer then updates the weights in the direction that reduces the loss:",
-      "section": "Gradient Descent on a Loss Landscape",
+      "quote": "**Layer Normalization** (\\citeauthor{ba2016layernorm}, \\citeyear{ba2016layernorm}): Normalizing activations at each layer keeps their scale stable and makes optimization less sensitive to initialization; it helps with vanishing gradients but is not a guarantee against either failure mode.",
+      "block_id": "autodiff-block-76",
+      "section": "Solutions",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-81",
-      "quote": "where $\\eta$ is the learning rate.",
-      "section": "Gradient Descent on a Loss Landscape",
+      "quote": "**Gradient Clipping**: A simple but effective technique that caps the gradient norm at a maximum value, preventing explosions while preserving direction.",
+      "block_id": "autodiff-block-77",
+      "section": "Solutions",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-82",
-      "quote": "This is **gradient descent**, first described for least-squares problems by \\citeauthor{cauchy1847} in \\citeyear{cauchy1847} in \\citetitle{cauchy1847} (general nonlinear descent came later).",
-      "section": "Gradient Descent on a Loss Landscape",
+      "quote": "You can explore the vanishing gradient problem interactively below.",
+      "block_id": "autodiff-block-78",
+      "section": "Solutions",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-83",
-      "quote": "The interactive demo below shows gradient descent on a simple 2D loss landscape $L(w_1, w_2) = w_1^2 + w_2^2$ (a paraboloid).",
-      "section": "Gradient Descent on a Loss Landscape",
+      "quote": "Adjust the number of layers and the activation function to see how the gradient magnitude decays (or explodes) as it propagates backward.",
+      "block_id": "autodiff-block-78",
+      "section": "Solutions",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-84",
-      "quote": "The gradient at any point $(w_1, w_2)$ is $\\nabla L = (2w_1, 2w_2)$, which always points directly away from the minimum at the origin, in the direction of steepest ascent.",
-      "section": "Gradient Descent on a Loss Landscape",
+      "quote": "Interactive: Vanishing & Exploding Gradients",
+      "block_id": "autodiff-block-79",
+      "section": "Solutions",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-85",
-      "quote": "Gradient descent moves against it, along $-\\nabla L$, which is what carries the weights back toward the origin.",
-      "section": "Gradient Descent on a Loss Landscape",
+      "quote": "Sigmoid (max deriv = 0.25) Tanh (max deriv = 1.0) ReLU (deriv = 1.0 for z > 0) Unstable (deriv = 1.5)",
+      "block_id": "autodiff-block-81",
+      "section": "Solutions",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-86",
-      "quote": "You can adjust the learning rate and starting position to see how the optimizer converges.",
-      "section": "Gradient Descent on a Loss Landscape",
+      "quote": "An important distinction in modern AD frameworks is whether the computational graph is built **statically** (before execution) or **dynamically** (during execution).",
+      "block_id": "autodiff-block-83",
+      "section": "Dynamic vs. Static Computational Graphs",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-87",
-      "quote": "Modern deep learning frameworks implement reverse-mode AD as a core feature.",
-      "section": "Tape-Based AD in Practice: TensorFlow and PyTorch",
+      "quote": "The Transformer architecture, released in \\citeyear{vaswani2017attention}, made variable-length sequences and masked attention central to language modeling.",
+      "block_id": "autodiff-block-84",
+      "section": "Dynamic vs. Static Computational Graphs",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-88",
-      "quote": "The two dominant frameworks, \\citealternativetitle{tensorflow2016} and \\citealternativetitle{pytorch}, take slightly different approaches to building the computational graph, but both ultimately implement the same mathematical principle.",
-      "section": "Tape-Based AD in Practice: TensorFlow and PyTorch",
+      "quote": "Its operations do not *require* a dynamic graph—padded or bucketed batches can be compiled statically—but define-by-run frameworks made such models easier to prototype and debug, which helped PyTorch become the dominant framework in research.",
+      "block_id": "autodiff-block-84",
+      "section": "Dynamic vs. Static Computational Graphs",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-89",
-      "quote": "\\citealternativetitle{tensorflow2016} uses an **explicit tape** via the `tf.GradientTape()` context manager.",
-      "section": "TensorFlow: Explicit Tape with `GradientTape`",
+      "quote": "This matrix-chain perspective also reveals why the choice of activation function matters so much for trainability.",
+      "block_id": "autodiff-block-85",
+      "section": "Dynamic vs. Static Computational Graphs",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-90",
-      "quote": "You must explicitly tell TensorFlow to start recording operations.",
-      "section": "TensorFlow: Explicit Tape with `GradientTape`",
+      "quote": "Sigmoid and tanh activations squash their inputs into a small range, producing Jacobians with singular values well below 1.",
+      "block_id": "autodiff-block-85",
+      "section": "Dynamic vs. Static Computational Graphs",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-91",
-      "quote": "This gives you fine-grained control over what gets differentiated.",
-      "section": "TensorFlow: Explicit Tape with `GradientTape`",
+      "quote": "ReLU, by contrast, has a Jacobian that is either 1 (for positive inputs) or 0 (for negative inputs).",
+      "block_id": "autodiff-block-85",
+      "section": "Dynamic vs. Static Computational Graphs",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-92",
-      "quote": "\\citealternativetitle{pytorch} uses an **implicit tape**, any tensor created with `requires_grad=True` automatically records operations performed on it.",
-      "section": "PyTorch: Implicit Tape with `autograd`",
+      "quote": "While ReLU avoids vanishing gradients for active neurons, it introduces the “dying ReLU” problem where neurons can get permanently stuck in the zero regime.",
+      "block_id": "autodiff-block-85",
+      "section": "Dynamic vs. Static Computational Graphs",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-93",
-      "quote": "The tape is built dynamically during the forward pass (this is called **define-by-run** or **eager mode**), which makes debugging more intuitive.",
-      "section": "PyTorch: Implicit Tape with `autograd`",
+      "quote": "Modern architectures like GPT use smooth activation variants such as GELU, or gated units such as SwiGLU built on the smooth Swish function: their gradients taper off gradually for large negative inputs instead of snapping abruptly to zero the way ReLU's do.",
+      "block_id": "autodiff-block-85",
+      "section": "Dynamic vs. Static Computational Graphs",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-94",
-      "quote": "Both approaches produce identical mathematical results.",
-      "section": "PyTorch: Implicit Tape with `autograd`",
+      "quote": "| **Automatic Differentiation** | Exact derivatives via systematic chain rule application |",
+      "block_id": "autodiff-block-88",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-95",
-      "quote": "The choice between them is largely a matter of API preference and ecosystem.",
-      "section": "PyTorch: Implicit Tape with `autograd`",
+      "quote": "| **The Tape** | A record of all elementary operations during the forward pass |",
+      "block_id": "autodiff-block-89",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-96",
-      "quote": "| Feature | PyTorch | TensorFlow |",
-      "section": "Key Differences at a Glance",
+      "quote": "| **Reverse Mode** | Computes gradients of one output w.r.t.",
+      "block_id": "autodiff-block-90",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-97",
-      "quote": "| **Tape creation** | Implicit (automatic for `requires_grad=True` tensors) | Explicit (`with tf.GradientTape()`) |",
-      "section": "Key Differences at a Glance",
+      "quote": "all inputs in one backward pass |",
+      "block_id": "autodiff-block-90",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-98",
-      "quote": "| **Graph mode** | Define-by-run (dynamic) | Eager by default; `@tf.function` for static graphs |",
-      "section": "Key Differences at a Glance",
+      "quote": "| **Forward Mode** | Computes derivatives of all outputs w.r.t.",
+      "block_id": "autodiff-block-91",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-99",
-      "quote": "| **Trigger backward** | `loss.backward()` | `tape.gradient(loss, variables)` |",
-      "section": "Key Differences at a Glance",
+      "quote": "| **Vanishing Gradients** | Product of small derivatives → gradient dies in deep networks |",
+      "block_id": "autodiff-block-92",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-100",
-      "quote": "| **Access gradients** | `tensor.grad` attribute | Returned by `tape.gradient()` |",
-      "section": "Key Differences at a Glance",
+      "quote": "| **Exploding Gradients** | Product of large derivatives → gradient diverges |",
+      "block_id": "autodiff-block-93",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-101",
-      "quote": "| **Tape persistence** | Consumed after `.backward()` (use `retain_graph=True` to keep) | Consumed after `.gradient()` (use `persistent=True` to keep) |",
-      "section": "Key Differences at a Glance",
+      "quote": "| **Dynamic Graphs** | Tape built during execution (PyTorch, TF2 eager) |",
+      "block_id": "autodiff-block-94",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-102",
-      "quote": "| **Higher-order derivatives** | Nest `.backward()` calls or use `torch.autograd.grad` | Nest `GradientTape` contexts |",
-      "section": "Key Differences at a Glance",
+      "quote": "| **Static Graphs** | Tape defined before execution (TF1, compiled mode) |",
+      "block_id": "autodiff-block-95",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-103",
-      "quote": "Both frameworks produce mathematically identical gradients.",
-      "section": "Key Differences at a Glance",
+      "quote": "Automatic differentiation is the invisible engine of modern AI.",
+      "block_id": "autodiff-block-96",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "autodiff-stmt-104",
-      "quote": "The choice is primarily about API ergonomics and ecosystem preferences.",
-      "section": "Key Differences at a Glance",
+      "quote": "Every time a model learns, every weight update, every gradient descent step, every backpropagation pass, it is the tape being built and unwound, the chain rule being applied mechanically and exactly, at a scale that \\citeauthor{linnainmaa1970} could never have imagined when he first described the algorithm in \\citeyear{linnainmaa1970}.",
+      "block_id": "autodiff-block-96",
+      "section": "Summary",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "autodiff-block-1",
+      "quote": "At the heart of every modern neural network lies a deceptively simple question: *“How much did each weight contribute to the error?”* The answer is computed by a technique called **Automatic Differentiation (AD)**, specifically its *reverse mode*, which underpins the backpropagation algorithm used to train virtually every deep learning model today.",
+      "kind": "paragraph",
+      "section": ""
     },
     {
-      "id": "autodiff-stmt-105",
-      "quote": "\\citeauthor{jax2018}'s JAX takes a third route: rather than recording a mutable tape, it composes function transformations.",
-      "section": "JAX: Transformations Instead of a Tape",
-      "kind": "statement"
+      "id": "autodiff-block-2",
+      "quote": "Automatic differentiation is neither symbolic differentiation (manipulating algebraic expressions like a CAS) nor numerical differentiation (using finite differences like $\\frac{f(x+h) - f(x)}{h}$). Instead, it is an *exact* method that computes derivatives by systematically applying the **chain rule** to elementary operations recorded on a computational graph, often called a **tape**. A widely-read visual walkthrough of exactly this reading — backpropagation as reverse-mode differentiation on a computational graph — is \\citetitle{colah2015backprop} \\cite{colah2015backprop}.",
+      "kind": "paragraph",
+      "section": ""
     },
     {
-      "id": "autodiff-stmt-106",
-      "quote": "`grad` turns a scalar-valued function into its gradient, `jacfwd` and `jacrev` build Jacobians in forward or reverse mode, and `vmap` and `jit` compile the result for accelerators \\cite{jax2018}.",
-      "section": "JAX: Transformations Instead of a Tape",
-      "kind": "statement"
+      "id": "autodiff-block-3",
+      "quote": "The first published algorithm for what we now call automatic differentiation is usually credited to \\citeauthor{wengert1964} in \\citeyear{wengert1964}. In his paper \\citetitle{wengert1964}, Wengert described a procedure for the automatic evaluation of total and partial derivatives of arbitrary algebraic functions by decomposing them into sequences of elementary expressions, without ever developing symbolic derivative formulas. This forward-mode technique laid the conceptual groundwork for all later AD systems.",
+      "kind": "paragraph",
+      "section": ""
     },
     {
-      "id": "autodiff-stmt-107",
-      "quote": "The same reverse-mode chain rule is underneath, but the API exposes *which* mode is used—a useful reminder that forward and reverse are two schedules for the same derivative, not two different calculi.",
-      "section": "JAX: Transformations Instead of a Tape",
-      "kind": "statement"
+      "id": "autodiff-block-4",
+      "quote": "The critical extension to **reverse mode** was made by \\citeauthor{linnainmaa1970} in his \\citeyear{linnainmaa1970} \\cite[master's thesis]{linnainmaa1970}; the English version appeared in 1976 \\cite{linnainmaa1976}. Linnainmaa's original motivation was not neural networks at all, he sought an efficient way to track how rounding errors accumulate through long chains of floating-point computations. His key insight was that by recording each elementary operation and then traversing that record in reverse, one could compute the partial derivatives of the final result with respect to *every* intermediate variable in a single backward pass. Where Wengert's forward mode required one pass per input variable, Linnainmaa's reverse mode required only one pass per *output*, an asymmetry that would prove decisive for training neural networks with millions of parameters and a single scalar loss.",
+      "kind": "paragraph",
+      "section": ""
     },
     {
-      "id": "autodiff-stmt-108",
-      "quote": "To truly understand tape-based Automatic Differentiation, it helps to build one from scratch.",
-      "section": "Building a Minimal Autograd Engine",
-      "kind": "statement"
+      "id": "autodiff-block-5",
+      "quote": "This technique was later independently rediscovered and applied to neural network training by \\citeauthor{werbos1974} in his \\citeyear{werbos1974} \\cite[doctoral thesis]{werbos1974}, where he proposed using reverse-mode AD to compute gradients for multi-layer networks. However, it was the landmark \\citeyear{rumelhart1986} paper by \\cite[Rumelhart et al.]{rumelhart1986}, that popularized the method under the name **backpropagation** and demonstrated its practical effectiveness, reigniting interest in connectionist models after the first AI winter.",
+      "kind": "paragraph",
+      "section": ""
     },
     {
-      "id": "autodiff-stmt-109",
-      "quote": "The following is a minimal but complete implementation of a reverse-mode autograd engine in pure Python.",
-      "section": "Building a Minimal Autograd Engine",
-      "kind": "statement"
+      "id": "autodiff-block-6",
+      "quote": "The line did not end with Rumelhart et al. Linnainmaa's Finnish thesis reached a wider audience only in 1976 \\cite{linnainmaa1976}, and in 1980 \\citeauthor{speelpenning1980} turned reverse mode into a compiler technique for functions of many variables \\cite{speelpenning1980}. Speelpenning's reverse sweep over a recorded computation is one of the direct ancestors of modern AD compilers; the same idea later reappears as the gradient tape.",
+      "kind": "paragraph",
+      "section": ""
     },
     {
-      "id": "autodiff-stmt-110",
-      "quote": "It supports addition, multiplication, and the sine function, enough to differentiate our example $f(x, y) = (x + y) \\cdot \\sin(x)$.",
-      "section": "Building a Minimal Autograd Engine",
-      "kind": "statement"
+      "id": "autodiff-block-7",
+      "quote": "The idea",
+      "kind": "heading",
+      "section": "The idea"
     },
     {
-      "id": "autodiff-stmt-111",
+      "id": "autodiff-block-8",
+      "quote": "Why Not Symbolic or Numerical Differentiation?",
+      "kind": "heading",
+      "section": "Why Not Symbolic or Numerical Differentiation?"
+    },
+    {
+      "id": "autodiff-block-9",
+      "quote": "Before understanding *how* AD works, it helps to understand *why* the alternatives fail at scale:",
+      "kind": "paragraph",
+      "section": "Why Not Symbolic or Numerical Differentiation?"
+    },
+    {
+      "id": "autodiff-block-10",
+      "quote": "The Chain Rule: The Mathematical Engine",
+      "kind": "heading",
+      "section": "The Chain Rule: The Mathematical Engine"
+    },
+    {
+      "id": "autodiff-block-11",
+      "quote": "AD automates this process by recording each elementary operation and its local derivative, then chaining them together.",
+      "kind": "paragraph",
+      "section": "The Chain Rule: The Mathematical Engine"
+    },
+    {
+      "id": "autodiff-block-12",
+      "quote": "Forward Mode vs. Reverse Mode",
+      "kind": "heading",
+      "section": "Forward Mode vs. Reverse Mode"
+    },
+    {
+      "id": "autodiff-block-13",
+      "quote": "There are two “directions” in which the chain rule can be evaluated:",
+      "kind": "paragraph",
+      "section": "Forward Mode vs. Reverse Mode"
+    },
+    {
+      "id": "autodiff-block-14",
+      "quote": "Reverse mode's bargain has a price: it must retain intermediate values from the forward pass, so memory grows with the length of the tape. \\citeauthor{griewank1989} clarified the arithmetic cost of the reverse sweep, and the book that grew out of that work, *Evaluating Derivatives* (2000; 2nd ed. 2008), developed the memory-versus-recomputation trade-off—including checkpointing—that modern frameworks use \\cite{griewank1989,griewank2008}. Checkpointing stores a few states and recomputes the rest, which is what lets a deep network's gradient fit in memory.",
+      "kind": "paragraph",
+      "section": "Forward Mode vs. Reverse Mode"
+    },
+    {
+      "id": "autodiff-block-15",
+      "quote": "The tape",
+      "kind": "heading",
+      "section": "The tape"
+    },
+    {
+      "id": "autodiff-block-16",
+      "quote": "Before the name existed: a machine that differentiated",
+      "kind": "heading",
+      "section": "Before the name existed: a machine that differentiated"
+    },
+    {
+      "id": "autodiff-block-17",
+      "quote": "The idea of carrying local derivative information along with a computation is older than the name. In the 1820s **Charles Babbage** designed the **Difference Engine**, a steam-era machine that tabulated polynomial functions by the **method of finite differences** \\cite[Babbage's Difference Engine]{differenceengine}. You loaded it with a function's value and its successive differences at one starting point, and then cranked it forward: each turn produced the next value purely by *adding* the stored differences, with no multiplication and no formula at all. The engine was **not** an automatic-differentiation machine: it evaluated a polynomial from stored finite differences, not the derivatives of an arbitrary program. But the underlying move — carry a local state forward and read the next value from it — is a cousin of forward-mode AD, which records exact local derivatives instead of finite differences and applies the chain rule to them.",
+      "kind": "paragraph",
+      "section": "Before the name existed: a machine that differentiated"
+    },
+    {
+      "id": "autodiff-block-18",
+      "quote": "The Tape: Recording the Computation",
+      "kind": "heading",
+      "section": "The Tape: Recording the Computation"
+    },
+    {
+      "id": "autodiff-block-19",
+      "quote": "The central data structure in reverse-mode AD is the **computational graph**, colloquially called the **tape** (by analogy with a magnetic tape that records operations sequentially). During the forward pass, every elementary operation, addition, multiplication, exponentiation, activation functions, is recorded on this tape along with its inputs and the local partial derivatives.",
+      "kind": "paragraph",
+      "section": "The Tape: Recording the Computation"
+    },
+    {
+      "id": "autodiff-block-20",
+      "quote": "A Concrete Example",
+      "kind": "heading",
+      "section": "A Concrete Example"
+    },
+    {
+      "id": "autodiff-block-21",
+      "quote": "Consider the function:",
+      "kind": "paragraph",
+      "section": "A Concrete Example"
+    },
+    {
+      "id": "autodiff-block-22",
+      "quote": "| Step | Operation | Result | Local Derivatives |",
+      "kind": "table-row",
+      "section": "A Concrete Example"
+    },
+    {
+      "id": "autodiff-block-23",
+      "quote": "We use the notation $\\bar{v}_i$ (called the **adjoint**) to denote $\\frac{\\partial f}{\\partial v_i}$.",
+      "kind": "paragraph",
+      "section": "A Concrete Example"
+    },
+    {
+      "id": "autodiff-block-24",
+      "quote": "| Step | Adjoint Computation | Value |",
+      "kind": "table-row",
+      "section": "A Concrete Example"
+    },
+    {
+      "id": "autodiff-block-25",
+      "quote": "| $\\bar{v}_4$ | $\\frac{\\partial f}{\\partial v_4} = 1$ (seed) | $1$ |",
+      "kind": "table-row",
+      "section": "A Concrete Example"
+    },
+    {
+      "id": "autodiff-block-26",
+      "quote": "| $\\bar{v}_2$ | $\\bar{v}_4 \\cdot \\frac{\\partial v_4}{\\partial v_2} = 1 \\cdot v_3 = 1 \\cdot 1$ | $1$ |",
+      "kind": "table-row",
+      "section": "A Concrete Example"
+    },
+    {
+      "id": "autodiff-block-27",
+      "quote": "| $\\bar{v}_3$ | $\\bar{v}_4 \\cdot \\frac{\\partial v_4}{\\partial v_3} = 1 \\cdot v_2 = 1 \\cdot 2.5708$ | $2.5708$ |",
+      "kind": "table-row",
+      "section": "A Concrete Example"
+    },
+    {
+      "id": "autodiff-block-28",
+      "quote": "| $\\bar{v}_0$ | $\\bar{v}_2 \\cdot \\frac{\\partial v_2}{\\partial v_0} + \\bar{v}_3 \\cdot \\frac{\\partial v_3}{\\partial v_0} = 1 \\cdot 1 + 2.5708 \\cdot 0$ | $1$ |",
+      "kind": "table-row",
+      "section": "A Concrete Example"
+    },
+    {
+      "id": "autodiff-block-29",
+      "quote": "| $\\bar{v}_1$ | $\\bar{v}_2 \\cdot \\frac{\\partial v_2}{\\partial v_1} = 1 \\cdot 1$ | $1$ |",
+      "kind": "table-row",
+      "section": "A Concrete Example"
+    },
+    {
+      "id": "autodiff-block-30",
+      "quote": "Interactive: Tape-Based Reverse-Mode AD",
+      "kind": "paragraph",
+      "section": "A Concrete Example"
+    },
+    {
+      "id": "autodiff-block-31",
+      "quote": "▶ Forward Pass ◀ Backward Pass ↺ Reset",
+      "kind": "paragraph",
+      "section": "A Concrete Example"
+    },
+    {
+      "id": "autodiff-block-32",
+      "quote": "The Computational Graph: Visualizing the Tape",
+      "kind": "heading",
+      "section": "The Computational Graph: Visualizing the Tape"
+    },
+    {
+      "id": "autodiff-block-33",
+      "quote": "The tape can also be visualized as a **directed acyclic graph (DAG)**, where each node is an operation and each edge carries a value and a local derivative. The forward pass flows left-to-right, and the backward pass flows right-to-left, accumulating gradients via the chain rule at each node.",
+      "kind": "paragraph",
+      "section": "The Computational Graph: Visualizing the Tape"
+    },
+    {
+      "id": "autodiff-block-34",
+      "quote": "Computational Graph",
+      "kind": "paragraph",
+      "section": "The Computational Graph: Visualizing the Tape"
+    },
+    {
+      "id": "autodiff-block-35",
+      "quote": "1.57",
+      "kind": "paragraph",
+      "section": "The Computational Graph: Visualizing the Tape"
+    },
+    {
+      "id": "autodiff-block-36",
+      "quote": "1.00",
+      "kind": "paragraph",
+      "section": "The Computational Graph: Visualizing the Tape"
+    },
+    {
+      "id": "autodiff-block-37",
+      "quote": "Hover over a node to see its details.",
+      "kind": "paragraph",
+      "section": "The Computational Graph: Visualizing the Tape"
+    },
+    {
+      "id": "autodiff-block-38",
+      "quote": "Applying it",
+      "kind": "heading",
+      "section": "Applying it"
+    },
+    {
+      "id": "autodiff-block-39",
+      "quote": "Gradient Descent on a Loss Landscape",
+      "kind": "heading",
+      "section": "Gradient Descent on a Loss Landscape"
+    },
+    {
+      "id": "autodiff-block-40",
+      "quote": "where $\\eta$ is the learning rate. This is **gradient descent**, first described for least-squares problems by \\citeauthor{cauchy1847} in \\citeyear{cauchy1847} in \\citetitle{cauchy1847} (general nonlinear descent came later).",
+      "kind": "paragraph",
+      "section": "Gradient Descent on a Loss Landscape"
+    },
+    {
+      "id": "autodiff-block-41",
+      "quote": "Learning Rate $\\eta$: 0.10",
+      "kind": "paragraph",
+      "section": "Gradient Descent on a Loss Landscape"
+    },
+    {
+      "id": "autodiff-block-42",
+      "quote": "Step ▶ Run 50 Steps ↺ Reset",
+      "kind": "paragraph",
+      "section": "Gradient Descent on a Loss Landscape"
+    },
+    {
+      "id": "autodiff-block-43",
+      "quote": "Tape-Based AD in Practice: TensorFlow and PyTorch",
+      "kind": "heading",
+      "section": "Tape-Based AD in Practice: TensorFlow and PyTorch"
+    },
+    {
+      "id": "autodiff-block-44",
+      "quote": "Modern deep learning frameworks implement reverse-mode AD as a core feature. The two dominant frameworks, \\citealternativetitle{tensorflow2016} and \\citealternativetitle{pytorch}, take slightly different approaches to building the computational graph, but both ultimately implement the same mathematical principle.",
+      "kind": "paragraph",
+      "section": "Tape-Based AD in Practice: TensorFlow and PyTorch"
+    },
+    {
+      "id": "autodiff-block-45",
+      "quote": "TensorFlow: Explicit Tape with `GradientTape`",
+      "kind": "heading",
+      "section": "TensorFlow: Explicit Tape with `GradientTape`"
+    },
+    {
+      "id": "autodiff-block-46",
+      "quote": "\\citealternativetitle{tensorflow2016} uses an **explicit tape** via the `tf.GradientTape()` context manager. You must explicitly tell TensorFlow to start recording operations. This gives you fine-grained control over what gets differentiated.",
+      "kind": "paragraph",
+      "section": "TensorFlow: Explicit Tape with `GradientTape`"
+    },
+    {
+      "id": "autodiff-block-47",
+      "quote": "PyTorch: Implicit Tape with `autograd`",
+      "kind": "heading",
+      "section": "PyTorch: Implicit Tape with `autograd`"
+    },
+    {
+      "id": "autodiff-block-48",
+      "quote": "\\citealternativetitle{pytorch} uses an **implicit tape**, any tensor created with `requires_grad=True` automatically records operations performed on it. The tape is built dynamically during the forward pass (this is called **define-by-run** or **eager mode**), which makes debugging more intuitive.",
+      "kind": "paragraph",
+      "section": "PyTorch: Implicit Tape with `autograd`"
+    },
+    {
+      "id": "autodiff-block-49",
+      "quote": "Both approaches produce identical mathematical results. The choice between them is largely a matter of API preference and ecosystem.",
+      "kind": "paragraph",
+      "section": "PyTorch: Implicit Tape with `autograd`"
+    },
+    {
+      "id": "autodiff-block-50",
+      "quote": "Key Differences at a Glance",
+      "kind": "heading",
+      "section": "Key Differences at a Glance"
+    },
+    {
+      "id": "autodiff-block-51",
+      "quote": "| Feature | PyTorch | TensorFlow |",
+      "kind": "table-row",
+      "section": "Key Differences at a Glance"
+    },
+    {
+      "id": "autodiff-block-52",
+      "quote": "| **Tape creation** | Implicit (automatic for `requires_grad=True` tensors) | Explicit (`with tf.GradientTape()`) |",
+      "kind": "table-row",
+      "section": "Key Differences at a Glance"
+    },
+    {
+      "id": "autodiff-block-53",
+      "quote": "| **Graph mode** | Define-by-run (dynamic) | Eager by default; `@tf.function` for static graphs |",
+      "kind": "table-row",
+      "section": "Key Differences at a Glance"
+    },
+    {
+      "id": "autodiff-block-54",
+      "quote": "| **Trigger backward** | `loss.backward()` | `tape.gradient(loss, variables)` |",
+      "kind": "table-row",
+      "section": "Key Differences at a Glance"
+    },
+    {
+      "id": "autodiff-block-55",
+      "quote": "| **Access gradients** | `tensor.grad` attribute | Returned by `tape.gradient()` |",
+      "kind": "table-row",
+      "section": "Key Differences at a Glance"
+    },
+    {
+      "id": "autodiff-block-56",
+      "quote": "| **Tape persistence** | Consumed after `.backward()` (use `retain_graph=True` to keep) | Consumed after `.gradient()` (use `persistent=True` to keep) |",
+      "kind": "table-row",
+      "section": "Key Differences at a Glance"
+    },
+    {
+      "id": "autodiff-block-57",
+      "quote": "| **Higher-order derivatives** | Nest `.backward()` calls or use `torch.autograd.grad` | Nest `GradientTape` contexts |",
+      "kind": "table-row",
+      "section": "Key Differences at a Glance"
+    },
+    {
+      "id": "autodiff-block-58",
+      "quote": "Both frameworks produce mathematically identical gradients. The choice is primarily about API ergonomics and ecosystem preferences.",
+      "kind": "paragraph",
+      "section": "Key Differences at a Glance"
+    },
+    {
+      "id": "autodiff-block-59",
+      "quote": "JAX: Transformations Instead of a Tape",
+      "kind": "heading",
+      "section": "JAX: Transformations Instead of a Tape"
+    },
+    {
+      "id": "autodiff-block-60",
+      "quote": "\\citeauthor{jax2018}'s JAX takes a third route: rather than recording a mutable tape, it composes function transformations. `grad` turns a scalar-valued function into its gradient, `jacfwd` and `jacrev` build Jacobians in forward or reverse mode, and `vmap` and `jit` compile the result for accelerators \\cite{jax2018}. The same reverse-mode chain rule is underneath, but the API exposes *which* mode is used—a useful reminder that forward and reverse are two schedules for the same derivative, not two different calculi.",
+      "kind": "paragraph",
+      "section": "JAX: Transformations Instead of a Tape"
+    },
+    {
+      "id": "autodiff-block-61",
+      "quote": "Building a Minimal Autograd Engine",
+      "kind": "heading",
+      "section": "Building a Minimal Autograd Engine"
+    },
+    {
+      "id": "autodiff-block-62",
       "quote": "This minimal engine implements the exact same algorithm that PyTorch and TensorFlow use internally, just without the GPU acceleration, operator overloading for hundreds of operations, and memory optimizations.",
-      "section": "Building a Minimal Autograd Engine",
-      "kind": "statement"
+      "kind": "paragraph",
+      "section": "Building a Minimal Autograd Engine"
     },
     {
-      "id": "autodiff-stmt-112",
+      "id": "autodiff-block-63",
+      "quote": "Problems and variations",
+      "kind": "heading",
+      "section": "Problems and variations"
+    },
+    {
+      "id": "autodiff-block-64",
+      "quote": "The Vanishing and Exploding Gradient Problem",
+      "kind": "heading",
+      "section": "The Vanishing and Exploding Gradient Problem"
+    },
+    {
+      "id": "autodiff-block-65",
       "quote": "One critical consequence of tape-based Automatic Differentiation in deep networks is the **vanishing gradient problem**, systematically analyzed by \\citeauthor{hochreiter1991vanishing} in \\citeyear{hochreiter1991vanishing} and formalized for recurrent networks by \\citeauthor{bengio1994learning} in \\citeyear{bengio1994learning}.",
-      "section": "The Vanishing and Exploding Gradient Problem",
-      "kind": "statement"
+      "kind": "paragraph",
+      "section": "The Vanishing and Exploding Gradient Problem"
     },
     {
-      "id": "autodiff-stmt-113",
+      "id": "autodiff-block-66",
       "quote": "When the chain rule is applied through many layers, the gradient is a product of many local derivatives:",
-      "section": "The Vanishing and Exploding Gradient Problem",
-      "kind": "statement"
+      "kind": "paragraph",
+      "section": "The Vanishing and Exploding Gradient Problem"
     },
     {
-      "id": "autodiff-stmt-114",
-      "quote": "This is a product of $n$ local derivatives.",
-      "section": "The Vanishing and Exploding Gradient Problem",
-      "kind": "statement"
+      "id": "autodiff-block-67",
+      "quote": "Vanishing Gradients",
+      "kind": "heading",
+      "section": "Vanishing Gradients"
     },
     {
-      "id": "autodiff-stmt-115",
-      "quote": "If each factor is small (say, less than 1), the product shrinks **exponentially** toward zero as $n$ grows, the gradient **vanishes**.",
-      "section": "The Vanishing and Exploding Gradient Problem",
-      "kind": "statement"
+      "id": "autodiff-block-68",
+      "quote": "Consider a network using the sigmoid activation $\\sigma(z) = \\frac{1}{1+e^{-z}}$. Its derivative is:",
+      "kind": "paragraph",
+      "section": "Vanishing Gradients"
     },
     {
-      "id": "autodiff-stmt-116",
-      "quote": "Conversely, if each factor is greater than 1, the product **explodes** toward infinity.",
-      "section": "The Vanishing and Exploding Gradient Problem",
-      "kind": "statement"
+      "id": "autodiff-block-69",
+      "quote": "The gradient reaching the first layer is less than one millionth of the gradient at the output. The early layers effectively stop learning, they receive no useful signal about how to update their weights.",
+      "kind": "paragraph",
+      "section": "Vanishing Gradients"
     },
     {
-      "id": "autodiff-stmt-117",
-      "quote": "Consider a network using the sigmoid activation $\\sigma(z) = \\frac{1}{1+e^{-z}}$.",
-      "section": "Vanishing Gradients",
-      "kind": "statement"
+      "id": "autodiff-block-70",
+      "quote": "Exploding Gradients",
+      "kind": "heading",
+      "section": "Exploding Gradients"
     },
     {
-      "id": "autodiff-stmt-118",
-      "quote": "The maximum value of $\\sigma'(z)$ is $0.25$, occurring at $z = 0$.",
-      "section": "Vanishing Gradients",
-      "kind": "statement"
+      "id": "autodiff-block-71",
+      "quote": "The opposite problem occurs when the local derivatives are consistently greater than 1. In recurrent neural networks processing long sequences, the gradient can grow exponentially, causing weight updates so large that the model diverges to $\\text{NaN}$.",
+      "kind": "paragraph",
+      "section": "Exploding Gradients"
     },
     {
-      "id": "autodiff-stmt-119",
-      "quote": "This means that at **every layer**, the gradient is multiplied by a factor of at most $0.25$.",
-      "section": "Vanishing Gradients",
-      "kind": "statement"
+      "id": "autodiff-block-72",
+      "quote": "Solutions",
+      "kind": "heading",
+      "section": "Solutions"
     },
     {
-      "id": "autodiff-stmt-120",
-      "quote": "The gradient reaching the first layer is less than one millionth of the gradient at the output.",
-      "section": "Vanishing Gradients",
-      "kind": "statement"
-    },
-    {
-      "id": "autodiff-stmt-121",
-      "quote": "The early layers effectively stop learning, they receive no useful signal about how to update their weights.",
-      "section": "Vanishing Gradients",
-      "kind": "statement"
-    },
-    {
-      "id": "autodiff-stmt-122",
-      "quote": "The opposite problem occurs when the local derivatives are consistently greater than 1.",
-      "section": "Exploding Gradients",
-      "kind": "statement"
-    },
-    {
-      "id": "autodiff-stmt-123",
-      "quote": "In recurrent neural networks processing long sequences, the gradient can grow exponentially, causing weight updates so large that the model diverges to $\\text{NaN}$.",
-      "section": "Exploding Gradients",
-      "kind": "statement"
-    },
-    {
-      "id": "autodiff-stmt-124",
+      "id": "autodiff-block-73",
       "quote": "Several architectural innovations have been developed to combat these problems:",
-      "section": "Solutions",
-      "kind": "statement"
+      "kind": "paragraph",
+      "section": "Solutions"
     },
     {
-      "id": "autodiff-stmt-125",
-      "quote": "**ReLU Activation** (\\citeauthor{relupaper}, \\citeyear{relupaper}): The Rectified Linear Unit $\\text{ReLU}(z) = \\max(0, z)$ has a derivative of exactly $1$ for positive inputs, preventing the multiplicative shrinkage that plagues sigmoid networks.",
-      "section": "Solutions",
-      "kind": "statement"
+      "id": "autodiff-block-74",
+      "quote": "1. **ReLU Activation** (\\citeauthor{relupaper}, \\citeyear{relupaper}): The Rectified Linear Unit $\\text{ReLU}(z) = \\max(0, z)$ has a derivative of exactly $1$ for positive inputs, preventing the multiplicative shrinkage that plagues sigmoid networks.",
+      "kind": "list-item",
+      "section": "Solutions"
     },
     {
-      "id": "autodiff-stmt-126",
-      "quote": "**Residual Connections** (\\citeauthor{he2015resnet}, \\citeyear{he2015resnet}): Skip connections add the input of a block directly to its output: $\\mathbf{y} = F(\\mathbf{x}) + \\mathbf{x}$.",
-      "section": "Solutions",
-      "kind": "statement"
+      "id": "autodiff-block-75",
+      "quote": "2. **Residual Connections** (\\citeauthor{he2015resnet}, \\citeyear{he2015resnet}): Skip connections add the input of a block directly to its output: $\\mathbf{y} = F(\\mathbf{x}) + \\mathbf{x}$. This creates a “gradient highway” that allows gradients to bypass problematic layers entirely.",
+      "kind": "list-item",
+      "section": "Solutions"
     },
     {
-      "id": "autodiff-stmt-127",
-      "quote": "This creates a “gradient highway” that allows gradients to bypass problematic layers entirely.",
-      "section": "Solutions",
-      "kind": "statement"
+      "id": "autodiff-block-76",
+      "quote": "3. **Layer Normalization** (\\citeauthor{ba2016layernorm}, \\citeyear{ba2016layernorm}): Normalizing activations at each layer keeps their scale stable and makes optimization less sensitive to initialization; it helps with vanishing gradients but is not a guarantee against either failure mode.",
+      "kind": "list-item",
+      "section": "Solutions"
     },
     {
-      "id": "autodiff-stmt-128",
-      "quote": "**Layer Normalization** (\\citeauthor{ba2016layernorm}, \\citeyear{ba2016layernorm}): Normalizing activations at each layer keeps their scale stable and makes optimization less sensitive to initialization; it helps with vanishing gradients but is not a guarantee against either failure mode.",
-      "section": "Solutions",
-      "kind": "statement"
+      "id": "autodiff-block-77",
+      "quote": "4. **Gradient Clipping**: A simple but effective technique that caps the gradient norm at a maximum value, preventing explosions while preserving direction.",
+      "kind": "list-item",
+      "section": "Solutions"
     },
     {
-      "id": "autodiff-stmt-129",
-      "quote": "**Gradient Clipping**: A simple but effective technique that caps the gradient norm at a maximum value, preventing explosions while preserving direction.",
-      "section": "Solutions",
-      "kind": "statement"
+      "id": "autodiff-block-78",
+      "quote": "You can explore the vanishing gradient problem interactively below. Adjust the number of layers and the activation function to see how the gradient magnitude decays (or explodes) as it propagates backward.",
+      "kind": "paragraph",
+      "section": "Solutions"
     },
     {
-      "id": "autodiff-stmt-130",
-      "quote": "You can explore the vanishing gradient problem interactively below.",
-      "section": "Solutions",
-      "kind": "statement"
+      "id": "autodiff-block-79",
+      "quote": "Interactive: Vanishing & Exploding Gradients",
+      "kind": "paragraph",
+      "section": "Solutions"
     },
     {
-      "id": "autodiff-stmt-131",
-      "quote": "Adjust the number of layers and the activation function to see how the gradient magnitude decays (or explodes) as it propagates backward.",
-      "section": "Solutions",
-      "kind": "statement"
+      "id": "autodiff-block-80",
+      "quote": "Activation:",
+      "kind": "paragraph",
+      "section": "Solutions"
     },
     {
-      "id": "autodiff-stmt-132",
+      "id": "autodiff-block-81",
+      "quote": "Sigmoid (max deriv = 0.25) Tanh (max deriv = 1.0) ReLU (deriv = 1.0 for z > 0) Unstable (deriv = 1.5)",
+      "kind": "paragraph",
+      "section": "Solutions"
+    },
+    {
+      "id": "autodiff-block-82",
+      "quote": "Dynamic vs. Static Computational Graphs",
+      "kind": "heading",
+      "section": "Dynamic vs. Static Computational Graphs"
+    },
+    {
+      "id": "autodiff-block-83",
       "quote": "An important distinction in modern AD frameworks is whether the computational graph is built **statically** (before execution) or **dynamically** (during execution).",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
+      "kind": "paragraph",
+      "section": "Dynamic vs. Static Computational Graphs"
     },
     {
-      "id": "autodiff-stmt-133",
-      "quote": "**Static Graphs** (TensorFlow 1.x, early Theano): The entire computation is defined symbolically before any data flows through it.",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
+      "id": "autodiff-block-84",
+      "quote": "The Transformer architecture, released in \\citeyear{vaswani2017attention}, made variable-length sequences and masked attention central to language modeling. Its operations do not *require* a dynamic graph—padded or bucketed batches can be compiled statically—but define-by-run frameworks made such models easier to prototype and debug, which helped PyTorch become the dominant framework in research.",
+      "kind": "paragraph",
+      "section": "Dynamic vs. Static Computational Graphs"
     },
     {
-      "id": "autodiff-stmt-134",
-      "quote": "This allows aggressive compiler-level optimizations but makes debugging difficult, you cannot simply insert a `print()` statement to inspect intermediate values.",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
+      "id": "autodiff-block-85",
+      "quote": "This matrix-chain perspective also reveals why the choice of activation function matters so much for trainability. Sigmoid and tanh activations squash their inputs into a small range, producing Jacobians with singular values well below 1. ReLU, by contrast, has a Jacobian that is either 1 (for positive inputs) or 0 (for negative inputs). While ReLU avoids vanishing gradients for active neurons, it introduces the “dying ReLU” problem where neurons can get permanently stuck in the zero regime. Modern architectures like GPT use smooth activation variants such as GELU, or gated units such as SwiGLU built on the smooth Swish function: their gradients taper off gradually for large negative inputs instead of snapping abruptly to zero the way ReLU's do.",
+      "kind": "paragraph",
+      "section": "Dynamic vs. Static Computational Graphs"
     },
     {
-      "id": "autodiff-stmt-135",
-      "quote": "**Dynamic Graphs** (PyTorch, TensorFlow 2.x eager mode): The graph is built on-the-fly as operations execute.",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
+      "id": "autodiff-block-86",
+      "quote": "Summary",
+      "kind": "heading",
+      "section": "Summary"
     },
     {
-      "id": "autodiff-stmt-136",
-      "quote": "Each forward pass constructs a fresh tape, which is then consumed during the backward pass.",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
+      "id": "autodiff-block-87",
+      "quote": "| Concept | Key Idea |",
+      "kind": "table-row",
+      "section": "Summary"
     },
     {
-      "id": "autodiff-stmt-137",
-      "quote": "This “define-by-run” approach is more intuitive and Pythonic, allowing standard control flow (`if`, `for`, `while`) to be used naturally within the model.",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
+      "id": "autodiff-block-88",
+      "quote": "| **Automatic Differentiation** | Exact derivatives via systematic chain rule application |",
+      "kind": "table-row",
+      "section": "Summary"
     },
     {
-      "id": "autodiff-stmt-138",
-      "quote": "The Transformer architecture, released in \\citeyear{vaswani2017attention}, made variable-length sequences and masked attention central to language modeling.",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
+      "id": "autodiff-block-89",
+      "quote": "| **The Tape** | A record of all elementary operations during the forward pass |",
+      "kind": "table-row",
+      "section": "Summary"
     },
     {
-      "id": "autodiff-stmt-139",
-      "quote": "Its operations do not *require* a dynamic graph—padded or bucketed batches can be compiled statically—but define-by-run frameworks made such models easier to prototype and debug, which helped PyTorch become the dominant framework in research.",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
+      "id": "autodiff-block-90",
+      "quote": "| **Reverse Mode** | Computes gradients of one output w.r.t. all inputs in one backward pass |",
+      "kind": "table-row",
+      "section": "Summary"
     },
     {
-      "id": "autodiff-stmt-140",
-      "quote": "Backpropagation through a deep network is really just multiplying a chain of Jacobian matrices .",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
+      "id": "autodiff-block-91",
+      "quote": "| **Forward Mode** | Computes derivatives of all outputs w.r.t. one input per pass |",
+      "kind": "table-row",
+      "section": "Summary"
     },
     {
-      "id": "autodiff-stmt-141",
-      "quote": "Each layer's local derivative is a Jacobian matrix $J^{(\\ell)}$ containing the partial derivatives of every output of layer $\\ell$ with respect to every input.",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
+      "id": "autodiff-block-92",
+      "quote": "| **Vanishing Gradients** | Product of small derivatives → gradient dies in deep networks |",
+      "kind": "table-row",
+      "section": "Summary"
     },
     {
-      "id": "autodiff-stmt-142",
-      "quote": "The chain rule for a network with $L$ layers is simply matrix multiplication:",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
+      "id": "autodiff-block-93",
+      "quote": "| **Exploding Gradients** | Product of large derivatives → gradient diverges |",
+      "kind": "table-row",
+      "section": "Summary"
     },
     {
-      "id": "autodiff-stmt-143",
-      "quote": "The vanishing gradient problem becomes immediately obvious from this perspective: if every Jacobian has singular values less than 1 (i.e., it is a contraction mapping), the product of $L$ such matrices shrinks exponentially with depth.",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
+      "id": "autodiff-block-94",
+      "quote": "| **Dynamic Graphs** | Tape built during execution (PyTorch, TF2 eager) |",
+      "kind": "table-row",
+      "section": "Summary"
     },
     {
-      "id": "autodiff-stmt-144",
-      "quote": "ResNets ease this because their Jacobian is $I + J_F$: the product of $L$ such factors contains the identity term $I$, which provides a direct path for the gradient and keeps it from being multiplied by a small factor at every layer.",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
+      "id": "autodiff-block-95",
+      "quote": "| **Static Graphs** | Tape defined before execution (TF1, compiled mode) |",
+      "kind": "table-row",
+      "section": "Summary"
     },
     {
-      "id": "autodiff-stmt-145",
-      "quote": "That mitigates vanishing, though it does not by itself guarantee that the full gradient stays large.",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
-    },
-    {
-      "id": "autodiff-stmt-146",
-      "quote": "This matrix-chain perspective also reveals why the choice of activation function matters so much for trainability.",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
-    },
-    {
-      "id": "autodiff-stmt-147",
-      "quote": "Sigmoid and tanh activations squash their inputs into a small range, producing Jacobians with singular values well below 1.",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
-    },
-    {
-      "id": "autodiff-stmt-148",
-      "quote": "ReLU, by contrast, has a Jacobian that is either 1 (for positive inputs) or 0 (for negative inputs).",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
-    },
-    {
-      "id": "autodiff-stmt-149",
-      "quote": "While ReLU avoids vanishing gradients for active neurons, it introduces the “dying ReLU” problem where neurons can get permanently stuck in the zero regime.",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
-    },
-    {
-      "id": "autodiff-stmt-150",
-      "quote": "Modern architectures like GPT use smooth activation variants such as GELU, or gated units such as SwiGLU built on the smooth Swish function: their gradients taper off gradually for large negative inputs instead of snapping abruptly to zero the way ReLU's do.",
-      "section": "Dynamic vs. Static Computational Graphs",
-      "kind": "statement"
+      "id": "autodiff-block-96",
+      "quote": "Automatic differentiation is the invisible engine of modern AI. Every time a model learns, every weight update, every gradient descent step, every backpropagation pass, it is the tape being built and unwound, the chain rule being applied mechanically and exactly, at a scale that \\citeauthor{linnainmaa1970} could never have imagined when he first described the algorithm in \\citeyear{linnainmaa1970}.",
+      "kind": "paragraph",
+      "section": "Summary"
     }
   ]
 }

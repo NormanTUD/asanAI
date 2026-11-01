@@ -837,812 +837,4058 @@
       "quote": "A 1B model on FineWeb-Edu often beats a 3B model on Common Crawl.",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-1-part_of-training-data",
+      "from": "training_data-block-1",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-2-part_of-training-data",
+      "from": "training_data-block-2",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-1-before-training_data-block-2",
+      "from": "training_data-block-1",
+      "to": "training_data-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-3-part_of-training-data",
+      "from": "training_data-block-3",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-2-before-training_data-block-3",
+      "from": "training_data-block-2",
+      "to": "training_data-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-4-part_of-training-data",
+      "from": "training_data-block-4",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-3-before-training_data-block-4",
+      "from": "training_data-block-3",
+      "to": "training_data-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-4-related_to-training_data-block-3",
+      "from": "training_data-block-4",
+      "to": "training_data-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-5-part_of-training-data",
+      "from": "training_data-block-5",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-4-before-training_data-block-5",
+      "from": "training_data-block-4",
+      "to": "training_data-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-5-related_to-training_data-block-3",
+      "from": "training_data-block-5",
+      "to": "training_data-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-6-part_of-training-data",
+      "from": "training_data-block-6",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-5-before-training_data-block-6",
+      "from": "training_data-block-5",
+      "to": "training_data-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-6-related_to-training_data-block-3",
+      "from": "training_data-block-6",
+      "to": "training_data-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-7-part_of-training-data",
+      "from": "training_data-block-7",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-6-before-training_data-block-7",
+      "from": "training_data-block-6",
+      "to": "training_data-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-7-related_to-training_data-block-3",
+      "from": "training_data-block-7",
+      "to": "training_data-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-8-part_of-training-data",
+      "from": "training_data-block-8",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-7-before-training_data-block-8",
+      "from": "training_data-block-7",
+      "to": "training_data-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-8-related_to-training_data-block-3",
+      "from": "training_data-block-8",
+      "to": "training_data-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-9-part_of-training-data",
+      "from": "training_data-block-9",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-8-before-training_data-block-9",
+      "from": "training_data-block-8",
+      "to": "training_data-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-9-related_to-training_data-block-3",
+      "from": "training_data-block-9",
+      "to": "training_data-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-10-part_of-training-data",
+      "from": "training_data-block-10",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-9-before-training_data-block-10",
+      "from": "training_data-block-9",
+      "to": "training_data-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-10-related_to-training_data-block-3",
+      "from": "training_data-block-10",
+      "to": "training_data-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-11-part_of-training-data",
+      "from": "training_data-block-11",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-10-before-training_data-block-11",
+      "from": "training_data-block-10",
+      "to": "training_data-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-11-related_to-training_data-block-3",
+      "from": "training_data-block-11",
+      "to": "training_data-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-12-part_of-training-data",
+      "from": "training_data-block-12",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-11-before-training_data-block-12",
+      "from": "training_data-block-11",
+      "to": "training_data-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-12-related_to-training_data-block-3",
+      "from": "training_data-block-12",
+      "to": "training_data-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-13-part_of-training-data",
+      "from": "training_data-block-13",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-12-before-training_data-block-13",
+      "from": "training_data-block-12",
+      "to": "training_data-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-13-related_to-training_data-block-3",
+      "from": "training_data-block-13",
+      "to": "training_data-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-14-part_of-training-data",
+      "from": "training_data-block-14",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-13-before-training_data-block-14",
+      "from": "training_data-block-13",
+      "to": "training_data-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-14-related_to-training_data-block-3",
+      "from": "training_data-block-14",
+      "to": "training_data-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-15-part_of-training-data",
+      "from": "training_data-block-15",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-14-before-training_data-block-15",
+      "from": "training_data-block-14",
+      "to": "training_data-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-16-part_of-training-data",
+      "from": "training_data-block-16",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-15-before-training_data-block-16",
+      "from": "training_data-block-15",
+      "to": "training_data-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-16-related_to-training_data-block-15",
+      "from": "training_data-block-16",
+      "to": "training_data-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-17-part_of-training-data",
+      "from": "training_data-block-17",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-16-before-training_data-block-17",
+      "from": "training_data-block-16",
+      "to": "training_data-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-17-related_to-training_data-block-15",
+      "from": "training_data-block-17",
+      "to": "training_data-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-18-part_of-training-data",
+      "from": "training_data-block-18",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-17-before-training_data-block-18",
+      "from": "training_data-block-17",
+      "to": "training_data-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-18-related_to-training_data-block-15",
+      "from": "training_data-block-18",
+      "to": "training_data-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-19-part_of-training-data",
+      "from": "training_data-block-19",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-18-before-training_data-block-19",
+      "from": "training_data-block-18",
+      "to": "training_data-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-19-related_to-training_data-block-15",
+      "from": "training_data-block-19",
+      "to": "training_data-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-20-part_of-training-data",
+      "from": "training_data-block-20",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-19-before-training_data-block-20",
+      "from": "training_data-block-19",
+      "to": "training_data-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-20-related_to-training_data-block-15",
+      "from": "training_data-block-20",
+      "to": "training_data-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-21-part_of-training-data",
+      "from": "training_data-block-21",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-20-before-training_data-block-21",
+      "from": "training_data-block-20",
+      "to": "training_data-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-21-related_to-training_data-block-15",
+      "from": "training_data-block-21",
+      "to": "training_data-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-22-part_of-training-data",
+      "from": "training_data-block-22",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-21-before-training_data-block-22",
+      "from": "training_data-block-21",
+      "to": "training_data-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-22-related_to-training_data-block-15",
+      "from": "training_data-block-22",
+      "to": "training_data-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-23-part_of-training-data",
+      "from": "training_data-block-23",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-22-before-training_data-block-23",
+      "from": "training_data-block-22",
+      "to": "training_data-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-23-related_to-training_data-block-15",
+      "from": "training_data-block-23",
+      "to": "training_data-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-24-part_of-training-data",
+      "from": "training_data-block-24",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-23-before-training_data-block-24",
+      "from": "training_data-block-23",
+      "to": "training_data-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-25-part_of-training-data",
+      "from": "training_data-block-25",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-24-before-training_data-block-25",
+      "from": "training_data-block-24",
+      "to": "training_data-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-26-part_of-training-data",
+      "from": "training_data-block-26",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-25-before-training_data-block-26",
+      "from": "training_data-block-25",
+      "to": "training_data-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-26-related_to-training_data-block-25",
+      "from": "training_data-block-26",
+      "to": "training_data-block-25",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-27-part_of-training-data",
+      "from": "training_data-block-27",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-26-before-training_data-block-27",
+      "from": "training_data-block-26",
+      "to": "training_data-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-27-related_to-training_data-block-25",
+      "from": "training_data-block-27",
+      "to": "training_data-block-25",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-28-part_of-training-data",
+      "from": "training_data-block-28",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-27-before-training_data-block-28",
+      "from": "training_data-block-27",
+      "to": "training_data-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-28-related_to-training_data-block-25",
+      "from": "training_data-block-28",
+      "to": "training_data-block-25",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-29-part_of-training-data",
+      "from": "training_data-block-29",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-28-before-training_data-block-29",
+      "from": "training_data-block-28",
+      "to": "training_data-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-30-part_of-training-data",
+      "from": "training_data-block-30",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-29-before-training_data-block-30",
+      "from": "training_data-block-29",
+      "to": "training_data-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-30-related_to-training_data-block-29",
+      "from": "training_data-block-30",
+      "to": "training_data-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-31-part_of-training-data",
+      "from": "training_data-block-31",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-30-before-training_data-block-31",
+      "from": "training_data-block-30",
+      "to": "training_data-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-32-part_of-training-data",
+      "from": "training_data-block-32",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-31-before-training_data-block-32",
+      "from": "training_data-block-31",
+      "to": "training_data-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-32-related_to-training_data-block-31",
+      "from": "training_data-block-32",
+      "to": "training_data-block-31",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-33-part_of-training-data",
+      "from": "training_data-block-33",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-32-before-training_data-block-33",
+      "from": "training_data-block-32",
+      "to": "training_data-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-34-part_of-training-data",
+      "from": "training_data-block-34",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-33-before-training_data-block-34",
+      "from": "training_data-block-33",
+      "to": "training_data-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-34-related_to-training_data-block-33",
+      "from": "training_data-block-34",
+      "to": "training_data-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-35-part_of-training-data",
+      "from": "training_data-block-35",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-34-before-training_data-block-35",
+      "from": "training_data-block-34",
+      "to": "training_data-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-36-part_of-training-data",
+      "from": "training_data-block-36",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-35-before-training_data-block-36",
+      "from": "training_data-block-35",
+      "to": "training_data-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-37-part_of-training-data",
+      "from": "training_data-block-37",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-36-before-training_data-block-37",
+      "from": "training_data-block-36",
+      "to": "training_data-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-37-related_to-training_data-block-36",
+      "from": "training_data-block-37",
+      "to": "training_data-block-36",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-38-part_of-training-data",
+      "from": "training_data-block-38",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-37-before-training_data-block-38",
+      "from": "training_data-block-37",
+      "to": "training_data-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-39-part_of-training-data",
+      "from": "training_data-block-39",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-38-before-training_data-block-39",
+      "from": "training_data-block-38",
+      "to": "training_data-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-39-related_to-training_data-block-38",
+      "from": "training_data-block-39",
+      "to": "training_data-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-40-part_of-training-data",
+      "from": "training_data-block-40",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-39-before-training_data-block-40",
+      "from": "training_data-block-39",
+      "to": "training_data-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-40-related_to-training_data-block-38",
+      "from": "training_data-block-40",
+      "to": "training_data-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-41-part_of-training-data",
+      "from": "training_data-block-41",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-40-before-training_data-block-41",
+      "from": "training_data-block-40",
+      "to": "training_data-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-42-part_of-training-data",
+      "from": "training_data-block-42",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-41-before-training_data-block-42",
+      "from": "training_data-block-41",
+      "to": "training_data-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-42-related_to-training_data-block-41",
+      "from": "training_data-block-42",
+      "to": "training_data-block-41",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-43-part_of-training-data",
+      "from": "training_data-block-43",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-42-before-training_data-block-43",
+      "from": "training_data-block-42",
+      "to": "training_data-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-44-part_of-training-data",
+      "from": "training_data-block-44",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-43-before-training_data-block-44",
+      "from": "training_data-block-43",
+      "to": "training_data-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-45-part_of-training-data",
+      "from": "training_data-block-45",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-44-before-training_data-block-45",
+      "from": "training_data-block-44",
+      "to": "training_data-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-45-related_to-training_data-block-44",
+      "from": "training_data-block-45",
+      "to": "training_data-block-44",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-46-part_of-training-data",
+      "from": "training_data-block-46",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-45-before-training_data-block-46",
+      "from": "training_data-block-45",
+      "to": "training_data-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-46-related_to-training_data-block-44",
+      "from": "training_data-block-46",
+      "to": "training_data-block-44",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-47-part_of-training-data",
+      "from": "training_data-block-47",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-46-before-training_data-block-47",
+      "from": "training_data-block-46",
+      "to": "training_data-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-48-part_of-training-data",
+      "from": "training_data-block-48",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-47-before-training_data-block-48",
+      "from": "training_data-block-47",
+      "to": "training_data-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-48-related_to-training_data-block-47",
+      "from": "training_data-block-48",
+      "to": "training_data-block-47",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-49-part_of-training-data",
+      "from": "training_data-block-49",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-48-before-training_data-block-49",
+      "from": "training_data-block-48",
+      "to": "training_data-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-50-part_of-training-data",
+      "from": "training_data-block-50",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-49-before-training_data-block-50",
+      "from": "training_data-block-49",
+      "to": "training_data-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-50-related_to-training_data-block-49",
+      "from": "training_data-block-50",
+      "to": "training_data-block-49",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-51-part_of-training-data",
+      "from": "training_data-block-51",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-50-before-training_data-block-51",
+      "from": "training_data-block-50",
+      "to": "training_data-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-52-part_of-training-data",
+      "from": "training_data-block-52",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-51-before-training_data-block-52",
+      "from": "training_data-block-51",
+      "to": "training_data-block-52",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-52-related_to-training_data-block-51",
+      "from": "training_data-block-52",
+      "to": "training_data-block-51",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-53-part_of-training-data",
+      "from": "training_data-block-53",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-52-before-training_data-block-53",
+      "from": "training_data-block-52",
+      "to": "training_data-block-53",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-54-part_of-training-data",
+      "from": "training_data-block-54",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-53-before-training_data-block-54",
+      "from": "training_data-block-53",
+      "to": "training_data-block-54",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-54-related_to-training_data-block-53",
+      "from": "training_data-block-54",
+      "to": "training_data-block-53",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-55-part_of-training-data",
+      "from": "training_data-block-55",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-54-before-training_data-block-55",
+      "from": "training_data-block-54",
+      "to": "training_data-block-55",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-56-part_of-training-data",
+      "from": "training_data-block-56",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-55-before-training_data-block-56",
+      "from": "training_data-block-55",
+      "to": "training_data-block-56",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-56-related_to-training_data-block-55",
+      "from": "training_data-block-56",
+      "to": "training_data-block-55",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-57-part_of-training-data",
+      "from": "training_data-block-57",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-56-before-training_data-block-57",
+      "from": "training_data-block-56",
+      "to": "training_data-block-57",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-58-part_of-training-data",
+      "from": "training_data-block-58",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-57-before-training_data-block-58",
+      "from": "training_data-block-57",
+      "to": "training_data-block-58",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-58-related_to-training_data-block-57",
+      "from": "training_data-block-58",
+      "to": "training_data-block-57",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-59-part_of-training-data",
+      "from": "training_data-block-59",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-58-before-training_data-block-59",
+      "from": "training_data-block-58",
+      "to": "training_data-block-59",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-59-related_to-training_data-block-57",
+      "from": "training_data-block-59",
+      "to": "training_data-block-57",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-60-part_of-training-data",
+      "from": "training_data-block-60",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-59-before-training_data-block-60",
+      "from": "training_data-block-59",
+      "to": "training_data-block-60",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-60-related_to-training_data-block-57",
+      "from": "training_data-block-60",
+      "to": "training_data-block-57",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-61-part_of-training-data",
+      "from": "training_data-block-61",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-60-before-training_data-block-61",
+      "from": "training_data-block-60",
+      "to": "training_data-block-61",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-62-part_of-training-data",
+      "from": "training_data-block-62",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-61-before-training_data-block-62",
+      "from": "training_data-block-61",
+      "to": "training_data-block-62",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-62-related_to-training_data-block-61",
+      "from": "training_data-block-62",
+      "to": "training_data-block-61",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-63-part_of-training-data",
+      "from": "training_data-block-63",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-62-before-training_data-block-63",
+      "from": "training_data-block-62",
+      "to": "training_data-block-63",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-63-related_to-training_data-block-61",
+      "from": "training_data-block-63",
+      "to": "training_data-block-61",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-64-part_of-training-data",
+      "from": "training_data-block-64",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-63-before-training_data-block-64",
+      "from": "training_data-block-63",
+      "to": "training_data-block-64",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-64-related_to-training_data-block-61",
+      "from": "training_data-block-64",
+      "to": "training_data-block-61",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-65-part_of-training-data",
+      "from": "training_data-block-65",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-64-before-training_data-block-65",
+      "from": "training_data-block-64",
+      "to": "training_data-block-65",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-66-part_of-training-data",
+      "from": "training_data-block-66",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-65-before-training_data-block-66",
+      "from": "training_data-block-65",
+      "to": "training_data-block-66",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-67-part_of-training-data",
+      "from": "training_data-block-67",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-66-before-training_data-block-67",
+      "from": "training_data-block-66",
+      "to": "training_data-block-67",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-67-related_to-training_data-block-66",
+      "from": "training_data-block-67",
+      "to": "training_data-block-66",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-68-part_of-training-data",
+      "from": "training_data-block-68",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-67-before-training_data-block-68",
+      "from": "training_data-block-67",
+      "to": "training_data-block-68",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-68-related_to-training_data-block-66",
+      "from": "training_data-block-68",
+      "to": "training_data-block-66",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-69-part_of-training-data",
+      "from": "training_data-block-69",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-68-before-training_data-block-69",
+      "from": "training_data-block-68",
+      "to": "training_data-block-69",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-69-related_to-training_data-block-66",
+      "from": "training_data-block-69",
+      "to": "training_data-block-66",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-70-part_of-training-data",
+      "from": "training_data-block-70",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-69-before-training_data-block-70",
+      "from": "training_data-block-69",
+      "to": "training_data-block-70",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-70-related_to-training_data-block-66",
+      "from": "training_data-block-70",
+      "to": "training_data-block-66",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-71-part_of-training-data",
+      "from": "training_data-block-71",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-70-before-training_data-block-71",
+      "from": "training_data-block-70",
+      "to": "training_data-block-71",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-71-related_to-training_data-block-66",
+      "from": "training_data-block-71",
+      "to": "training_data-block-66",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-72-part_of-training-data",
+      "from": "training_data-block-72",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-71-before-training_data-block-72",
+      "from": "training_data-block-71",
+      "to": "training_data-block-72",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-72-related_to-training_data-block-66",
+      "from": "training_data-block-72",
+      "to": "training_data-block-66",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-73-part_of-training-data",
+      "from": "training_data-block-73",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-72-before-training_data-block-73",
+      "from": "training_data-block-72",
+      "to": "training_data-block-73",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-73-related_to-training_data-block-66",
+      "from": "training_data-block-73",
+      "to": "training_data-block-66",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-74-part_of-training-data",
+      "from": "training_data-block-74",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-73-before-training_data-block-74",
+      "from": "training_data-block-73",
+      "to": "training_data-block-74",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-74-related_to-training_data-block-66",
+      "from": "training_data-block-74",
+      "to": "training_data-block-66",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-75-part_of-training-data",
+      "from": "training_data-block-75",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-74-before-training_data-block-75",
+      "from": "training_data-block-74",
+      "to": "training_data-block-75",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-75-related_to-training_data-block-66",
+      "from": "training_data-block-75",
+      "to": "training_data-block-66",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-76-part_of-training-data",
+      "from": "training_data-block-76",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-75-before-training_data-block-76",
+      "from": "training_data-block-75",
+      "to": "training_data-block-76",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-76-related_to-training_data-block-66",
+      "from": "training_data-block-76",
+      "to": "training_data-block-66",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-77-part_of-training-data",
+      "from": "training_data-block-77",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-76-before-training_data-block-77",
+      "from": "training_data-block-76",
+      "to": "training_data-block-77",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-77-related_to-training_data-block-66",
+      "from": "training_data-block-77",
+      "to": "training_data-block-66",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-78-part_of-training-data",
+      "from": "training_data-block-78",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-77-before-training_data-block-78",
+      "from": "training_data-block-77",
+      "to": "training_data-block-78",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-79-part_of-training-data",
+      "from": "training_data-block-79",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-78-before-training_data-block-79",
+      "from": "training_data-block-78",
+      "to": "training_data-block-79",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-79-related_to-training_data-block-78",
+      "from": "training_data-block-79",
+      "to": "training_data-block-78",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-80-part_of-training-data",
+      "from": "training_data-block-80",
+      "to": "training-data",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-79-before-training_data-block-80",
+      "from": "training_data-block-79",
+      "to": "training_data-block-80",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-block-80-related_to-training_data-block-78",
+      "from": "training_data-block-80",
+      "to": "training_data-block-78",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-1-part_of-training_data-block-1",
+      "from": "training_data-stmt-1",
+      "to": "training_data-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-2-part_of-training_data-block-1",
+      "from": "training_data-stmt-2",
+      "to": "training_data-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-3-part_of-training_data-block-1",
+      "from": "training_data-stmt-3",
+      "to": "training_data-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-4-part_of-training_data-block-4",
+      "from": "training_data-stmt-4",
+      "to": "training_data-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-5-part_of-training_data-block-4",
+      "from": "training_data-stmt-5",
+      "to": "training_data-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-6-part_of-training_data-block-5",
+      "from": "training_data-stmt-6",
+      "to": "training_data-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-7-part_of-training_data-block-6",
+      "from": "training_data-stmt-7",
+      "to": "training_data-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-8-part_of-training_data-block-7",
+      "from": "training_data-stmt-8",
+      "to": "training_data-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-9-part_of-training_data-block-8",
+      "from": "training_data-stmt-9",
+      "to": "training_data-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-10-part_of-training_data-block-9",
+      "from": "training_data-stmt-10",
+      "to": "training_data-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-11-part_of-training_data-block-10",
+      "from": "training_data-stmt-11",
+      "to": "training_data-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-12-part_of-training_data-block-11",
+      "from": "training_data-stmt-12",
+      "to": "training_data-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-13-part_of-training_data-block-12",
+      "from": "training_data-stmt-13",
+      "to": "training_data-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-14-part_of-training_data-block-13",
+      "from": "training_data-stmt-14",
+      "to": "training_data-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-15-part_of-training_data-block-14",
+      "from": "training_data-stmt-15",
+      "to": "training_data-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-16-part_of-training_data-block-14",
+      "from": "training_data-stmt-16",
+      "to": "training_data-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-17-part_of-training_data-block-16",
+      "from": "training_data-stmt-17",
+      "to": "training_data-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-18-part_of-training_data-block-16",
+      "from": "training_data-stmt-18",
+      "to": "training_data-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-19-part_of-training_data-block-18",
+      "from": "training_data-stmt-19",
+      "to": "training_data-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-20-part_of-training_data-block-19",
+      "from": "training_data-stmt-20",
+      "to": "training_data-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-21-part_of-training_data-block-20",
+      "from": "training_data-stmt-21",
+      "to": "training_data-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-22-part_of-training_data-block-21",
+      "from": "training_data-stmt-22",
+      "to": "training_data-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-23-part_of-training_data-block-22",
+      "from": "training_data-stmt-23",
+      "to": "training_data-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-24-part_of-training_data-block-23",
+      "from": "training_data-stmt-24",
+      "to": "training_data-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-25-part_of-training_data-block-26",
+      "from": "training_data-stmt-25",
+      "to": "training_data-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-26-part_of-training_data-block-26",
+      "from": "training_data-stmt-26",
+      "to": "training_data-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-27-part_of-training_data-block-28",
+      "from": "training_data-stmt-27",
+      "to": "training_data-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-28-part_of-training_data-block-28",
+      "from": "training_data-stmt-28",
+      "to": "training_data-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-29-part_of-training_data-block-30",
+      "from": "training_data-stmt-29",
+      "to": "training_data-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-30-part_of-training_data-block-32",
+      "from": "training_data-stmt-30",
+      "to": "training_data-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-31-part_of-training_data-block-32",
+      "from": "training_data-stmt-31",
+      "to": "training_data-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-32-part_of-training_data-block-34",
+      "from": "training_data-stmt-32",
+      "to": "training_data-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-33-part_of-training_data-block-34",
+      "from": "training_data-stmt-33",
+      "to": "training_data-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-34-part_of-training_data-block-37",
+      "from": "training_data-stmt-34",
+      "to": "training_data-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-35-part_of-training_data-block-37",
+      "from": "training_data-stmt-35",
+      "to": "training_data-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-36-part_of-training_data-block-39",
+      "from": "training_data-stmt-36",
+      "to": "training_data-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-37-part_of-training_data-block-40",
+      "from": "training_data-stmt-37",
+      "to": "training_data-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-38-part_of-training_data-block-42",
+      "from": "training_data-stmt-38",
+      "to": "training_data-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-39-part_of-training_data-block-42",
+      "from": "training_data-stmt-39",
+      "to": "training_data-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-40-part_of-training_data-block-45",
+      "from": "training_data-stmt-40",
+      "to": "training_data-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-41-part_of-training_data-block-46",
+      "from": "training_data-stmt-41",
+      "to": "training_data-block-46",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-42-part_of-training_data-block-48",
+      "from": "training_data-stmt-42",
+      "to": "training_data-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-43-part_of-training_data-block-48",
+      "from": "training_data-stmt-43",
+      "to": "training_data-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-44-part_of-training_data-block-48",
+      "from": "training_data-stmt-44",
+      "to": "training_data-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-45-part_of-training_data-block-48",
+      "from": "training_data-stmt-45",
+      "to": "training_data-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-46-part_of-training_data-block-50",
+      "from": "training_data-stmt-46",
+      "to": "training_data-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-47-part_of-training_data-block-50",
+      "from": "training_data-stmt-47",
+      "to": "training_data-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-48-part_of-training_data-block-52",
+      "from": "training_data-stmt-48",
+      "to": "training_data-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-49-part_of-training_data-block-52",
+      "from": "training_data-stmt-49",
+      "to": "training_data-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-50-part_of-training_data-block-52",
+      "from": "training_data-stmt-50",
+      "to": "training_data-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-51-part_of-training_data-block-52",
+      "from": "training_data-stmt-51",
+      "to": "training_data-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-52-part_of-training_data-block-54",
+      "from": "training_data-stmt-52",
+      "to": "training_data-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-53-part_of-training_data-block-54",
+      "from": "training_data-stmt-53",
+      "to": "training_data-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-54-part_of-training_data-block-54",
+      "from": "training_data-stmt-54",
+      "to": "training_data-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-55-part_of-training_data-block-56",
+      "from": "training_data-stmt-55",
+      "to": "training_data-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-56-part_of-training_data-block-56",
+      "from": "training_data-stmt-56",
+      "to": "training_data-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-57-part_of-training_data-block-56",
+      "from": "training_data-stmt-57",
+      "to": "training_data-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-58-part_of-training_data-block-56",
+      "from": "training_data-stmt-58",
+      "to": "training_data-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-59-part_of-training_data-block-58",
+      "from": "training_data-stmt-59",
+      "to": "training_data-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-60-part_of-training_data-block-58",
+      "from": "training_data-stmt-60",
+      "to": "training_data-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-61-part_of-training_data-block-59",
+      "from": "training_data-stmt-61",
+      "to": "training_data-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-62-part_of-training_data-block-60",
+      "from": "training_data-stmt-62",
+      "to": "training_data-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-63-part_of-training_data-block-60",
+      "from": "training_data-stmt-63",
+      "to": "training_data-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-64-part_of-training_data-block-60",
+      "from": "training_data-stmt-64",
+      "to": "training_data-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-65-part_of-training_data-block-62",
+      "from": "training_data-stmt-65",
+      "to": "training_data-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-66-part_of-training_data-block-64",
+      "from": "training_data-stmt-66",
+      "to": "training_data-block-64",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-67-part_of-training_data-block-67",
+      "from": "training_data-stmt-67",
+      "to": "training_data-block-67",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-68-part_of-training_data-block-68",
+      "from": "training_data-stmt-68",
+      "to": "training_data-block-68",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-69-part_of-training_data-block-69",
+      "from": "training_data-stmt-69",
+      "to": "training_data-block-69",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-70-part_of-training_data-block-70",
+      "from": "training_data-stmt-70",
+      "to": "training_data-block-70",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-71-part_of-training_data-block-71",
+      "from": "training_data-stmt-71",
+      "to": "training_data-block-71",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-72-part_of-training_data-block-72",
+      "from": "training_data-stmt-72",
+      "to": "training_data-block-72",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-73-part_of-training_data-block-73",
+      "from": "training_data-stmt-73",
+      "to": "training_data-block-73",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-74-part_of-training_data-block-74",
+      "from": "training_data-stmt-74",
+      "to": "training_data-block-74",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-75-part_of-training_data-block-75",
+      "from": "training_data-stmt-75",
+      "to": "training_data-block-75",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-76-part_of-training_data-block-75",
+      "from": "training_data-stmt-76",
+      "to": "training_data-block-75",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-77-part_of-training_data-block-76",
+      "from": "training_data-stmt-77",
+      "to": "training_data-block-76",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-78-part_of-training_data-block-77",
+      "from": "training_data-stmt-78",
+      "to": "training_data-block-77",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-79-part_of-training_data-block-77",
+      "from": "training_data-stmt-79",
+      "to": "training_data-block-77",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-80-part_of-training_data-block-79",
+      "from": "training_data-stmt-80",
+      "to": "training_data-block-79",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-81-part_of-training_data-block-79",
+      "from": "training_data-stmt-81",
+      "to": "training_data-block-79",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-82-part_of-training_data-block-80",
+      "from": "training_data-stmt-82",
+      "to": "training_data-block-80",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-83-part_of-training_data-block-80",
+      "from": "training_data-stmt-83",
+      "to": "training_data-block-80",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-training_data-stmt-84-part_of-training_data-block-80",
+      "from": "training_data-stmt-84",
+      "to": "training_data-block-80",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "training_data-stmt-1",
       "quote": "A frontier LLM is roughly **half algorithm, half data**.",
+      "block_id": "training_data-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-2",
       "quote": "The same architecture trained on 1 trillion curated tokens outperforms one trained on 10 trillion unfiltered tokens.",
+      "block_id": "training_data-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-3",
       "quote": "This chapter covers what data is used, how it is filtered, deduplicated, and decontaminated, and why every frontier lab guards its data recipes as their most valuable trade secret.",
+      "block_id": "training_data-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-4",
       "quote": "Frontier LLMs are trained on **10–15 trillion tokens**.",
+      "block_id": "training_data-block-4",
       "section": "The Scale of Modern Training Data",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-5",
       "quote": "The composition is roughly:",
+      "block_id": "training_data-block-4",
       "section": "The Scale of Modern Training Data",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-6",
       "quote": "| Source | Approx % | Tokens | Notes |",
+      "block_id": "training_data-block-5",
       "section": "The Scale of Modern Training Data",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-7",
       "quote": "| Web (Common Crawl, etc.) | 50–70% | 5–10T | Raw HTML, requires heavy filtering |",
+      "block_id": "training_data-block-6",
       "section": "The Scale of Modern Training Data",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-8",
       "quote": "| Code (GitHub, etc.) | 10–15% | 1–2T | Critical for code generation |",
+      "block_id": "training_data-block-7",
       "section": "The Scale of Modern Training Data",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-9",
       "quote": "| Books | 5–10% | 0.5–1T | Long-form, high quality |",
+      "block_id": "training_data-block-8",
       "section": "The Scale of Modern Training Data",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-10",
       "quote": "| Scientific papers | 3–5% | 200–500B | arXiv, PubMed, etc.",
+      "block_id": "training_data-block-9",
       "section": "The Scale of Modern Training Data",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-11",
       "quote": "| Wikipedia | 1–2% | 100–200B | High-quality reference text |",
+      "block_id": "training_data-block-10",
       "section": "The Scale of Modern Training Data",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-12",
       "quote": "| Math (synthetic) | 2–5% | 200–500B | Web pages, Math StackExchange |",
+      "block_id": "training_data-block-11",
       "section": "The Scale of Modern Training Data",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-13",
       "quote": "| Conversational / instruction | 2–5% | 200–500B | Curated human dialogues |",
+      "block_id": "training_data-block-12",
       "section": "The Scale of Modern Training Data",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-14",
       "quote": "| Multimodal captions | 5–10% | 500B–1T | Alt-text, image captions |",
+      "block_id": "training_data-block-13",
       "section": "The Scale of Modern Training Data",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-15",
       "quote": "The **Chinchilla scaling law** (\\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}) suggests that for a given compute budget, models are best trained when tokens $\\approx 20 \\times$ parameters.",
+      "block_id": "training_data-block-14",
       "section": "The Scale of Modern Training Data",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-16",
       "quote": "So a 70B model needs ~1.4T tokens to be “Chinchilla-optimal”; frontier models now train on $10 \\times$ that, trading sample efficiency for capability.",
+      "block_id": "training_data-block-14",
       "section": "The Scale of Modern Training Data",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-17",
-      "quote": "**Common Crawl** (commoncrawl.org) is a non-profit that has been archiving web pages since 2008.",
+      "quote": "Over its lifetime Common Crawl has crawled hundreds of billions of URLs and accumulated multiple petabytes of raw data.",
+      "block_id": "training_data-block-16",
       "section": "Common Crawl: The Foundation",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-18",
-      "quote": "Each month, it crawls ~3 billion URLs, producing ~300 TB of raw HTML.",
+      "quote": "LLMs use a small, heavily-filtered subset.",
+      "block_id": "training_data-block-16",
       "section": "Common Crawl: The Foundation",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-19",
-      "quote": "After deduplication and WARC-packaging, this yields ~30 TB of useful text per month.",
+      "quote": "**Crawl**: WARC files of HTML pages.",
+      "block_id": "training_data-block-18",
       "section": "Common Crawl: The Foundation",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-20",
-      "quote": "Over its lifetime Common Crawl has crawled hundreds of billions of URLs and accumulated multiple petabytes of raw data.",
+      "quote": "**Extract text**: tools like **trafilatura**, **jusText**, or Resiliparse strip HTML, scripts, ads.",
+      "block_id": "training_data-block-19",
       "section": "Common Crawl: The Foundation",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-21",
-      "quote": "LLMs use a small, heavily-filtered subset.",
+      "quote": "**Language identification**: fastText-based model (`lid.176.bin`) classifies each document; non-target languages are dropped.",
+      "block_id": "training_data-block-20",
       "section": "Common Crawl: The Foundation",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-22",
-      "quote": "**Crawl**: WARC files of HTML pages.",
+      "quote": "**Quality filtering**: see below.",
+      "block_id": "training_data-block-21",
       "section": "Common Crawl: The Foundation",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-23",
-      "quote": "**Extract text**: tools like **trafilatura**, **jusText**, or Resiliparse strip HTML, scripts, ads.",
+      "quote": "**Deduplication**: see below.",
+      "block_id": "training_data-block-22",
       "section": "Common Crawl: The Foundation",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-24",
-      "quote": "**Language identification**: fastText-based model (`lid.176.bin`) classifies each document; non-target languages are dropped.",
+      "quote": "**Decontamination**: see below.",
+      "block_id": "training_data-block-23",
       "section": "Common Crawl: The Foundation",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-25",
-      "quote": "**Quality filtering**: see below.",
-      "section": "Common Crawl: The Foundation",
+      "quote": "Web text is mostly junk: SEO spam, machine-translated articles, product listings with 50 keyword variations, “Lorem ipsum”, repetitive template content.",
+      "block_id": "training_data-block-26",
+      "section": "Quality Filtering",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-26",
-      "quote": "**Deduplication**: see below.",
-      "section": "Common Crawl: The Foundation",
+      "quote": "A model trained on this learns to mimic junk.",
+      "block_id": "training_data-block-26",
+      "section": "Quality Filtering",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-27",
-      "quote": "**Decontamination**: see below.",
-      "section": "Common Crawl: The Foundation",
+      "quote": "FineWeb (\\cite[Penedo et al., 2024]{penedo2024fineweb}) pushed this further: 1.3T tokens of *English-only* web data filtered with **FastText** (high-quality vs. low-quality classifier) and aggressive deduplication.",
+      "block_id": "training_data-block-28",
+      "section": "Quality Filtering",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-28",
-      "quote": "Web text is mostly junk: SEO spam, machine-translated articles, product listings with 50 keyword variations, “Lorem ipsum”, repetitive template content.",
+      "quote": "FineWeb-Edu adds an educational-quality classifier.",
+      "block_id": "training_data-block-28",
       "section": "Quality Filtering",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-29",
-      "quote": "A model trained on this learns to mimic junk.",
-      "section": "Quality Filtering",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-30",
-      "quote": "* **Length filter**: drop documents < 100 or > 100,000 characters.",
-      "section": "Quality Filtering",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-31",
-      "quote": "* **Mean word length**: drop documents with abnormally long “words” (often base64 or random tokens).",
-      "section": "Quality Filtering",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-32",
-      "quote": "* **Symbol-to-word ratio**: drop if > 0.1 (mostly punctuation / numbers).",
-      "section": "Quality Filtering",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-33",
-      "quote": "* **Bullet-point ratio**: drop if > 90% lines are bullets (often lists).",
-      "section": "Quality Filtering",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-34",
-      "quote": "* **Stop-word fraction**: English text has 20–30% stop-words.",
-      "section": "Quality Filtering",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-35",
-      "quote": "Lower indicates non-natural text.",
-      "section": "Quality Filtering",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-36",
-      "quote": "* **Perplexity filter**: compute perplexity under a small reference LM (KenLM).",
-      "section": "Quality Filtering",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-37",
-      "quote": "High perplexity → outlier text.",
-      "section": "Quality Filtering",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-38",
-      "quote": "Drop top/bottom percentiles.",
-      "section": "Quality Filtering",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-39",
-      "quote": "* **Classifier filter**: train a binary classifier on (Good = Wikipedia/Wikipedia-like, Bad = random web pages).",
-      "section": "Quality Filtering",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-40",
-      "quote": "**Gopher** rules (\\cite[Rae et al., 2021]{rae2021gopher}) and **C4** rules (\\cite[Raffel et al., 2020]{raffel2020t5}) are the most cited.",
-      "section": "Quality Filtering",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-41",
-      "quote": "FineWeb (\\cite[Penedo et al., 2024]{penedo2024fineweb}) pushed this further: 1.3T tokens of *English-only* web data filtered with **FastText** (high-quality vs. low-quality classifier) and aggressive deduplication.",
-      "section": "Quality Filtering",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-42",
-      "quote": "FineWeb-Edu adds an educational-quality classifier.",
-      "section": "Quality Filtering",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-43",
       "quote": "Duplicate or near-duplicate documents **inflate training cost and can cause memorization**.",
+      "block_id": "training_data-block-30",
       "section": "Deduplication",
       "kind": "statement"
     },
     {
-      "id": "training_data-stmt-44",
+      "id": "training_data-stmt-30",
       "quote": "Hash each document (SHA-256 over normalized text); keep only one copy of each hash.",
+      "block_id": "training_data-block-32",
       "section": "Exact Deduplication",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-31",
+      "quote": "Catches verbatim copies but not near-duplicates.",
+      "block_id": "training_data-block-32",
+      "section": "Exact Deduplication",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-32",
+      "quote": "Documents with identical MinHash signatures have high Jaccard similarity.",
+      "block_id": "training_data-block-34",
+      "section": "Fuzzy Deduplication (MinHash)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-33",
+      "quote": "Threshold of $0.8$ Jaccard catches near-duplicates.",
+      "block_id": "training_data-block-34",
+      "section": "Fuzzy Deduplication (MinHash)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-34",
+      "quote": "A document in the training set may **contain benchmark items verbatim**.",
+      "block_id": "training_data-block-37",
+      "section": "Decontamination",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-35",
+      "quote": "Models that have seen the test set are not being honestly evaluated.",
+      "block_id": "training_data-block-37",
+      "section": "Decontamination",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-36",
+      "quote": "Build a list of benchmark items (questions, options, answers, code stubs).",
+      "block_id": "training_data-block-39",
+      "section": "Standard Decontamination Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-37",
+      "quote": "**Suffix array approach**: index all benchmark items as substrings; find all training documents containing them.",
+      "block_id": "training_data-block-40",
+      "section": "Standard Decontamination Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-38",
+      "quote": "Sophisticated methods (ProxiMix, D-Clean) combine overlap detection with **perplexity filtering**: documents that the model finds “surprisingly low-perplexity” are flagged for review.",
+      "block_id": "training_data-block-42",
+      "section": "Limitations",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-39",
+      "quote": "FrontierMath and ARC-AGI (\\cite[Chollet, 2024]{chollet2024arcagi}) use private, novel questions precisely to avoid this issue.",
+      "block_id": "training_data-block-42",
+      "section": "Limitations",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-40",
+      "quote": "Beyond raw web text, frontier models train on carefully curated datasets:",
+      "block_id": "training_data-block-45",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-41",
+      "quote": "Open recipes (RedPajama, FineWeb) have been critical for the open-source LLM movement: anyone can reproduce a near-frontier training mix.",
+      "block_id": "training_data-block-46",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-42",
+      "quote": "How much web vs. code vs. math?",
+      "block_id": "training_data-block-48",
+      "section": "Data Mixing: The Frontier Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-43",
+      "quote": "This is largely **undocumented and proprietary**.",
+      "block_id": "training_data-block-48",
+      "section": "Data Mixing: The Frontier Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-44",
+      "quote": "Chinchilla's scaling laws \\cite{hoffmann2022chinchilla} fix the total token-to-parameter ratio, but they say little about the *domain mix*, which is tuned empirically per model.",
+      "block_id": "training_data-block-48",
+      "section": "Data Mixing: The Frontier Secret",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-45",
-      "quote": "Catches verbatim copies but not near-duplicates.",
-      "section": "Exact Deduplication",
+      "quote": "Technical reports and ablations show:",
+      "block_id": "training_data-block-48",
+      "section": "Data Mixing: The Frontier Secret",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-46",
-      "quote": "Compute $k$ hash functions over $n$-grams of each document; the **MinHash signature** approximates the Jaccard similarity between document pairs in $O(k)$ space.",
-      "section": "Fuzzy Deduplication (MinHash)",
+      "quote": "Code is only 10–15% of a frontier training mix, yet it is the single most effective ingredient for reasoning ability.",
+      "block_id": "training_data-block-50",
+      "section": "Why Code Is Disproportionately Powerful",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-47",
-      "quote": "Documents with identical MinHash signatures have high Jaccard similarity.",
-      "section": "Fuzzy Deduplication (MinHash)",
+      "quote": "Three data-level properties explain most of it.",
+      "block_id": "training_data-block-50",
+      "section": "Why Code Is Disproportionately Powerful",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-48",
-      "quote": "Threshold of $0.8$ Jaccard catches near-duplicates.",
-      "section": "Fuzzy Deduplication (MinHash)",
+      "quote": "Prose makes claims; code makes predictions.",
+      "block_id": "training_data-block-52",
+      "section": "Verifiable ground truth at web scale",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-49",
-      "quote": "For very large corpora, build a **suffix array** across the entire corpus and identify repeated substrings of length $\\geq k$ (typically $k = 100$ characters).",
-      "section": "Substring Deduplication (Suffix Array)",
+      "quote": "Docstrings specify contracts, tests can be *run* — execution is a free, automatic truth oracle.",
+      "block_id": "training_data-block-52",
+      "section": "Verifiable ground truth at web scale",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-50",
-      "quote": "Drop all but one occurrence.",
-      "section": "Substring Deduplication (Suffix Array)",
+      "quote": "GitHub is the largest collection of (specification, correct solution) pairs in existence, and **HumanEval** (\\cite[Chen et al., 2021]{chen2021codex}) is literally the training pattern itself: docstring → program.",
+      "block_id": "training_data-block-52",
+      "section": "Verifiable ground truth at web scale",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-51",
-      "quote": "**PaCoRA** (MosaicML) and **SemDeDup** (\\cite[Abbas et al., 2023]{abbas2023semdedup}) extend this to semantic duplicates via embedding-based clustering.",
-      "section": "Substring Deduplication (Suffix Array)",
+      "quote": "Verifiability compounds: (\\cite[Li et al., 2022]{li2022alphacode}) reached competitive-programming rank by sampling up to ~100,000 candidates per problem and keeping only those whose *execution* matched the expected test outputs.",
+      "block_id": "training_data-block-52",
+      "section": "Verifiable ground truth at web scale",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-52",
-      "quote": "A document in the training set may **contain benchmark items verbatim**.",
-      "section": "Decontamination",
+      "quote": "Code is telegraphic: little stylistic redundancy, high signal per byte.",
+      "block_id": "training_data-block-54",
+      "section": "Dense, and up-weighted by tokenization",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-53",
-      "quote": "Models that have seen the test set are not being honestly evaluated.",
-      "section": "Decontamination",
+      "quote": "BPE splits code's dense symbols into more tokens per byte than prose (often 1.5–2×), so the per-token loss effectively up-weights code relative to its byte share.",
+      "block_id": "training_data-block-54",
+      "section": "Dense, and up-weighted by tokenization",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-54",
-      "quote": "Build a list of benchmark items (questions, options, answers, code stubs).",
-      "section": "Standard Decontamination Pipeline",
+      "quote": "And valid programs live on a sharply constrained manifold — syntax narrows the legal continuations at every step — so the model learns code's structural constraints cheaply, the way it learns grammar.",
+      "block_id": "training_data-block-54",
+      "section": "Dense, and up-weighted by tokenization",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-55",
-      "quote": "**n-gram overlap**: for each training document, compute the longest common n-gram with any benchmark item.",
-      "section": "Standard Decontamination Pipeline",
+      "quote": "A program is reasoning with the working memory made visible: variables as state, loops as iteration, branches as case analysis.",
+      "block_id": "training_data-block-56",
+      "section": "Explicit step-by-step reasoning in the raw",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-56",
-      "quote": "If $> k$ (typically $k = 8$ for words, $k = 50$ for characters), drop or rewrite the document.",
-      "section": "Standard Decontamination Pipeline",
+      "quote": "Code is the densest source of (problem → algorithm → implementation) triples on the web.",
+      "block_id": "training_data-block-56",
+      "section": "Explicit step-by-step reasoning in the raw",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-57",
-      "quote": "**Suffix array approach**: index all benchmark items as substrings; find all training documents containing them.",
-      "section": "Standard Decontamination Pipeline",
+      "quote": "Pretraining on a code+text mixture improves *general* reasoning almost without negative transfer, and code data at instruction-tuning time adds task-specific reasoning (\\cite[Ma et al., 2023]{ma2023codereasoning}).",
+      "block_id": "training_data-block-56",
+      "section": "Explicit step-by-step reasoning in the raw",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-58",
-      "quote": "* **Paraphrase contamination**: rewriting a benchmark question in different words is hard to detect.",
-      "section": "Limitations",
+      "quote": "What transfers is structure, not vocabulary: across 3,331 controlled fine-tuning runs in 10 languages, breaking code's *structure* hurt far more than breaking its *meaning*; pseudocode was often as effective as code, and corrupted code stayed competitive as long as surface regularities survived (\\cite[Waheed et al., 2025]{waheed2025codeinduced}).",
+      "block_id": "training_data-block-56",
+      "section": "Explicit step-by-step reasoning in the raw",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-59",
-      "quote": "* **Translation contamination**: a French-language model could be tested on French versions of English benchmarks; cross-lingual contamination is harder.",
-      "section": "Limitations",
+      "quote": "Because code is executable, it is the bridge to the symbolic: PAL had the LLM decompose a word problem into a short program and offloaded the computation to an interpreter — a 12B model plus an interpreter beat PaLM-540B's chain-of-thought on GSM8K (\\cite[Gao et al., 2022]{gao2022pal}).",
+      "block_id": "training_data-block-58",
+      "section": "Why this becomes everything else",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-60",
-      "quote": "* **Adversarial contamination**: bad actors can post benchmark items publicly to poison future training sets.",
-      "section": "Limitations",
+      "quote": "Executable code is also a universal action space for agents (up to 20% higher success rates than pre-defined JSON actions \\cite[Wang et al., 2024]{wang2024codeact}) and the reason RL with verifiable rewards (see the Reasoning chapter ) works best on code and math: the test suite *is* the reward model.",
+      "block_id": "training_data-block-58",
+      "section": "Why this becomes everything else",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-61",
-      "quote": "Sophisticated methods (ProxiMix, D-Clean) combine overlap detection with **perplexity filtering**: documents that the model finds “surprisingly low-perplexity” are flagged for review.",
-      "section": "Limitations",
+      "quote": "The lineage: Codex fine-tuned GPT on GitHub code — 28.8% on HumanEval where GPT-3 got 0% (\\cite[Chen et al., 2021]{chen2021codex}); Code Llama's 7B Python model, trained on ~500B extra code tokens, beat Llama 2 **70B** on code benchmarks (\\cite[Rozière et al., 2023]{roziere2023codellama}); DeepSeek-Coder trained 2T project-level tokens from scratch (\\cite[Guo et al., 2024]{guo2024deepseekcoder}).",
+      "block_id": "training_data-block-59",
+      "section": "Why this becomes everything else",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-62",
-      "quote": "FrontierMath and ARC-AGI (\\cite[Chollet, 2024]{chollet2024arcagi}) use private, novel questions precisely to avoid this issue.",
-      "section": "Limitations",
+      "quote": "The other side of the same data: models are strongest where the corpus is thickest — popular languages, mainstream frameworks, English identifiers — and next-token prediction learns surface regularities first, so syntax comes easily while deep semantics (debugging, refactoring) remains the hard part.",
+      "block_id": "training_data-block-60",
+      "section": "Why this becomes everything else",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-63",
-      "quote": "Beyond raw web text, frontier models train on carefully curated datasets:",
-      "section": "Specialized Datasets",
+      "quote": "The sharpest illustration is **SWE-bench** (\\cite[Jimenez et al., 2024]{jimenez2024swebench}), 2,294 real GitHub issues: the best model of 2023 resolved 1.96%.",
+      "block_id": "training_data-block-60",
+      "section": "Why this becomes everything else",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-64",
-      "quote": "* **The Pile** (\\cite[Gao et al., 2020]{gao2020pile}): ~825 GB of diverse text from 22 sources (PubMed, ArXiv, GitHub, Wikipedia, StackExchange, etc.).",
-      "section": "Specialized Datasets",
+      "quote": "Reasoning models have since climbed far, but the gap between “passes the unit tests” and “does software engineering” is where the data's limits show.",
+      "block_id": "training_data-block-60",
+      "section": "Why this becomes everything else",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-65",
-      "quote": "Open dataset, but reported to contain some benchmark contamination.",
-      "section": "Specialized Datasets",
+      "quote": "With natural data exhaust, frontier labs increasingly generate **synthetic training data**:",
+      "block_id": "training_data-block-62",
+      "section": "Synthetic Data",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-66",
-      "quote": "The Pile also became a cautionary tale for licensing: its **Books3** component was withdrawn in 2023 amid copyright litigation, and the dataset's status is no longer as clean as its “open” label suggested.",
-      "section": "Specialized Datasets",
+      "quote": "OpenAI's **WebGPT** and DeepMind's **Sparrow** demonstrated that synthetic preference data can substitute for expensive human labelling, at the cost of ceiling effects (you can't exceed your teacher's quality).",
+      "block_id": "training_data-block-64",
+      "section": "Synthetic Data",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-67",
-      "quote": "* **Common Pile v0.1** (EleutherAI and collaborators, 2025): 8 TB of public-domain and openly licensed text from 30 sources, built explicitly as a legally cleaner successor to the Pile.",
-      "section": "Specialized Datasets",
+      "quote": "For those training their own models, the rough sequence is:",
+      "block_id": "training_data-block-67",
+      "section": "Practical Recipe (Llama 3-style)",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-68",
-      "quote": "The **Comma** models were trained solely on it, demonstrating that a competitive 7B-class model does not require scraped copyrighted books (\\cite[Selvam et al., 2025]{commonpile2025}).",
-      "section": "Specialized Datasets",
+      "quote": "**Source raw data**: Common Crawl dumps, GitHub, ArXiv, StackExchange, books from public sources.",
+      "block_id": "training_data-block-68",
+      "section": "Practical Recipe (Llama 3-style)",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-69",
-      "quote": "* **RedPajama** (\\cite[Together, 2023]{together2024redpajama}): open replication of LLaMA's training mix.",
-      "section": "Specialized Datasets",
+      "quote": "**Extract text**: HTML → plain text with WARC extraction.",
+      "block_id": "training_data-block-69",
+      "section": "Practical Recipe (Llama 3-style)",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-70",
-      "quote": "1.2T tokens, all sources documented.",
-      "section": "Specialized Datasets",
+      "quote": "**Language ID**: fastText, keep target languages.",
+      "block_id": "training_data-block-70",
+      "section": "Practical Recipe (Llama 3-style)",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-71",
-      "quote": "* **SlimPajama** (Cerebras, 2023): cleaned, deduplicated version of RedPajama.",
-      "section": "Specialized Datasets",
+      "quote": "**Quality filter**: heuristic rules + classifier (e.g., FineWeb's quality classifier).",
+      "block_id": "training_data-block-71",
+      "section": "Practical Recipe (Llama 3-style)",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-72",
-      "quote": "* **FineWeb** (HuggingFace, 2024): 1.3T high-quality English tokens.",
-      "section": "Specialized Datasets",
+      "quote": "**Deduplicate**: exact hash + MinHash + suffix-array.",
+      "block_id": "training_data-block-72",
+      "section": "Practical Recipe (Llama 3-style)",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-73",
-      "quote": "* **FineWeb-Edu** (HuggingFace, 2024): 1.3T tokens scored for educational quality.",
-      "section": "Specialized Datasets",
+      "quote": "**Decontaminate**: against benchmarks you care about.",
+      "block_id": "training_data-block-73",
+      "section": "Practical Recipe (Llama 3-style)",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-74",
-      "quote": "* **Cosmopedia** (HuggingFace, 2024): 25B tokens of synthetic textbooks generated by Mixtral.",
-      "section": "Specialized Datasets",
+      "quote": "**Mix and balance**: per-source sampling weights, target ratio (e.g., 50% web, 15% code, 10% books, 5% math).",
+      "block_id": "training_data-block-74",
+      "section": "Practical Recipe (Llama 3-style)",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-75",
-      "quote": "* **The Stack** (BigCode, 2022): 3.1 TB of source code in 30 programming languages (the much larger v2 followed in 2024).",
-      "section": "Specialized Datasets",
+      "quote": "**Tokenize**: BPE/SentencePiece over a representative sample.",
+      "block_id": "training_data-block-75",
+      "section": "Practical Recipe (Llama 3-style)",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-76",
-      "quote": "* **OBELICS** (Laurençon et al., 2023): multimodal web-text dataset.",
-      "section": "Specialized Datasets",
+      "quote": "(BPE is a **compression** algorithm from \\citeyear{gage1994bpe} \\cite{gage1994bpe} repurposed for tokenization: it fuses frequent adjacent pairs into single short-ID tokens, so the token stream is a shorter, lossless form of the raw text.)",
+      "block_id": "training_data-block-75",
+      "section": "Practical Recipe (Llama 3-style)",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-77",
-      "quote": "Open recipes (RedPajama, FineWeb) have been critical for the open-source LLM movement: anyone can reproduce a near-frontier training mix.",
-      "section": "Specialized Datasets",
+      "quote": "**Pack**: concatenate and chunk into fixed-length training sequences.",
+      "block_id": "training_data-block-76",
+      "section": "Practical Recipe (Llama 3-style)",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-78",
-      "quote": "How much web vs. code vs. math?",
-      "section": "Data Mixing: The Frontier Secret",
+      "quote": "This pipeline takes weeks of engineering and significant compute.",
+      "block_id": "training_data-block-77",
+      "section": "Practical Recipe (Llama 3-style)",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-79",
-      "quote": "This is largely **undocumented and proprietary**.",
-      "section": "Data Mixing: The Frontier Secret",
+      "quote": "The result is what you train on.",
+      "block_id": "training_data-block-77",
+      "section": "Practical Recipe (Llama 3-style)",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-80",
-      "quote": "Chinchilla's scaling laws \\cite{hoffmann2022chinchilla} fix the total token-to-parameter ratio, but they say little about the *domain mix*, which is tuned empirically per model.",
-      "section": "Data Mixing: The Frontier Secret",
+      "quote": "A famous result from the **DataComp-LM** benchmark: at fixed compute, model quality improves strongly with the **quality-adjusted token count**.",
+      "block_id": "training_data-block-79",
+      "section": "Why Data Is Half the Secret",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-81",
-      "quote": "Technical reports and ablations show:",
-      "section": "Data Mixing: The Frontier Secret",
+      "quote": "The paper reports large gains from better filtering; the slogan that doubling data quality is equivalent to doubling model size is a rough summary, not an exact law.",
+      "block_id": "training_data-block-79",
+      "section": "Why Data Is Half the Secret",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-82",
-      "quote": "* **Code data** disproportionately helps reasoning (LLaMA, Mistral, Qwen all emphasize code).",
-      "section": "Data Mixing: The Frontier Secret",
+      "quote": "The implication: data work has higher ROI than architecture work for most practitioners.",
+      "block_id": "training_data-block-80",
+      "section": "Why Data Is Half the Secret",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-83",
-      "quote": "* **Math data** is critical for arithmetic; even small amounts help.",
-      "section": "Data Mixing: The Frontier Secret",
+      "quote": "A 1B model on FineWeb-Edu often beats a 3B model on Common Crawl.",
+      "block_id": "training_data-block-80",
+      "section": "Why Data Is Half the Secret",
       "kind": "statement"
     },
     {
       "id": "training_data-stmt-84",
-      "quote": "* **Multilingual data** is under-studied, most frontier models are still 70–90% English.",
-      "section": "Data Mixing: The Frontier Secret",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-85",
-      "quote": "* **Instruction data** is best added *after* pretraining, not mixed in.",
-      "section": "Data Mixing: The Frontier Secret",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-86",
-      "quote": "* **DPO/preference data** should be 100K–1M examples, not millions.",
-      "section": "Data Mixing: The Frontier Secret",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-87",
-      "quote": "**Dolma** (AI2, 2024), **RedPajama-V2** (Together, 2024), and **DataComp-LM** (DCLM, 2024) are open efforts to systematically study data mixes.",
-      "section": "Data Mixing: The Frontier Secret",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-88",
-      "quote": "DataComp-LM showed that a 7B model trained on a carefully-filtered 2.6T tokens (DCLM-Baseline) can outperform models trained with far more compute — 6.6× less compute than Llama 3 8B.",
-      "section": "Data Mixing: The Frontier Secret",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-89",
-      "quote": "Code is only 10–15% of a frontier training mix, yet it is the single most effective ingredient for reasoning ability.",
-      "section": "Why Code Is Disproportionately Powerful",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-90",
-      "quote": "Three data-level properties explain most of it.",
-      "section": "Why Code Is Disproportionately Powerful",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-91",
-      "quote": "Prose makes claims; code makes predictions.",
-      "section": "Verifiable ground truth at web scale",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-92",
-      "quote": "Docstrings specify contracts, tests can be *run* — execution is a free, automatic truth oracle.",
-      "section": "Verifiable ground truth at web scale",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-93",
-      "quote": "GitHub is the largest collection of (specification, correct solution) pairs in existence, and **HumanEval** (\\cite[Chen et al., 2021]{chen2021codex}) is literally the training pattern itself: docstring → program.",
-      "section": "Verifiable ground truth at web scale",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-94",
-      "quote": "Verifiability compounds: (\\cite[Li et al., 2022]{li2022alphacode}) reached competitive-programming rank by sampling up to ~100,000 candidates per problem and keeping only those whose *execution* matched the expected test outputs.",
-      "section": "Verifiable ground truth at web scale",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-95",
-      "quote": "Code is telegraphic: little stylistic redundancy, high signal per byte.",
-      "section": "Dense, and up-weighted by tokenization",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-96",
-      "quote": "BPE splits code's dense symbols into more tokens per byte than prose (often 1.5–2×), so the per-token loss effectively up-weights code relative to its byte share.",
-      "section": "Dense, and up-weighted by tokenization",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-97",
-      "quote": "And valid programs live on a sharply constrained manifold — syntax narrows the legal continuations at every step — so the model learns code's structural constraints cheaply, the way it learns grammar.",
-      "section": "Dense, and up-weighted by tokenization",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-98",
-      "quote": "A program is reasoning with the working memory made visible: variables as state, loops as iteration, branches as case analysis.",
-      "section": "Explicit step-by-step reasoning in the raw",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-99",
-      "quote": "Code is the densest source of (problem → algorithm → implementation) triples on the web.",
-      "section": "Explicit step-by-step reasoning in the raw",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-100",
-      "quote": "Pretraining on a code+text mixture improves *general* reasoning almost without negative transfer, and code data at instruction-tuning time adds task-specific reasoning (\\cite[Ma et al., 2023]{ma2023codereasoning}).",
-      "section": "Explicit step-by-step reasoning in the raw",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-101",
-      "quote": "What transfers is structure, not vocabulary: across 3,331 controlled fine-tuning runs in 10 languages, breaking code's *structure* hurt far more than breaking its *meaning*; pseudocode was often as effective as code, and corrupted code stayed competitive as long as surface regularities survived (\\cite[Waheed et al., 2025]{waheed2025codeinduced}).",
-      "section": "Explicit step-by-step reasoning in the raw",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-102",
-      "quote": "Because code is executable, it is the bridge to the symbolic: PAL had the LLM decompose a word problem into a short program and offloaded the computation to an interpreter — a 12B model plus an interpreter beat PaLM-540B's chain-of-thought on GSM8K (\\cite[Gao et al., 2022]{gao2022pal}).",
-      "section": "Why this becomes everything else",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-103",
-      "quote": "Executable code is also a universal action space for agents (up to 20% higher success rates than pre-defined JSON actions \\cite[Wang et al., 2024]{wang2024codeact}) and the reason RL with verifiable rewards (see the Reasoning chapter ) works best on code and math: the test suite *is* the reward model.",
-      "section": "Why this becomes everything else",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-104",
-      "quote": "The lineage: Codex fine-tuned GPT on GitHub code — 28.8% on HumanEval where GPT-3 got 0% (\\cite[Chen et al., 2021]{chen2021codex}); Code Llama's 7B Python model, trained on ~500B extra code tokens, beat Llama 2 **70B** on code benchmarks (\\cite[Rozière et al., 2023]{roziere2023codellama}); DeepSeek-Coder trained 2T project-level tokens from scratch (\\cite[Guo et al., 2024]{guo2024deepseekcoder}).",
-      "section": "Why this becomes everything else",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-105",
-      "quote": "The other side of the same data: models are strongest where the corpus is thickest — popular languages, mainstream frameworks, English identifiers — and next-token prediction learns surface regularities first, so syntax comes easily while deep semantics (debugging, refactoring) remains the hard part.",
-      "section": "Why this becomes everything else",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-106",
-      "quote": "The sharpest illustration is **SWE-bench** (\\cite[Jimenez et al., 2024]{jimenez2024swebench}), 2,294 real GitHub issues: the best model of 2023 resolved 1.96%.",
-      "section": "Why this becomes everything else",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-107",
-      "quote": "Reasoning models have since climbed far, but the gap between “passes the unit tests” and “does software engineering” is where the data's limits show.",
-      "section": "Why this becomes everything else",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-108",
-      "quote": "With natural data exhaust, frontier labs increasingly generate **synthetic training data**:",
-      "section": "Synthetic Data",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-109",
-      "quote": "* **Self-instruct**: prompt the model to generate variations of seed instructions.",
-      "section": "Synthetic Data",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-110",
-      "quote": "* **Constitutional AI** (\\cite[Bai et al., 2022]{bai2022constitutional}): model generates responses, critiques them against rules, revises.",
-      "section": "Synthetic Data",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-111",
-      "quote": "* **Distillation**: a stronger model generates high-quality responses that a smaller model is then trained on.",
-      "section": "Synthetic Data",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-112",
-      "quote": "* **Problem synthesis**: generate problems with verifiable solutions (\\cite[Hendrycks et al., 2021]{hendrycks2021math}).",
-      "section": "Synthetic Data",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-113",
-      "quote": "* **Model collapse** (\\cite[Shumailov et al., 2023]{shumailov2023modelcollapse}): training on a model's own outputs causes drift away from the true data distribution over generations.",
-      "section": "Synthetic Data",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-114",
-      "quote": "* **Loss of diversity**: synthetic data tends to converge to common modes.",
-      "section": "Synthetic Data",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-115",
-      "quote": "* **Reward hacking**: synthetic data optimized for a verifier is gamed.",
-      "section": "Synthetic Data",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-116",
-      "quote": "OpenAI's **WebGPT** and DeepMind's **Sparrow** demonstrated that synthetic preference data can substitute for expensive human labelling, at the cost of ceiling effects (you can't exceed your teacher's quality).",
-      "section": "Synthetic Data",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-117",
-      "quote": "For those training their own models, the rough sequence is:",
-      "section": "Practical Recipe (Llama 3-style)",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-118",
-      "quote": "**Source raw data**: Common Crawl dumps, GitHub, ArXiv, StackExchange, books from public sources.",
-      "section": "Practical Recipe (Llama 3-style)",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-119",
-      "quote": "**Extract text**: HTML → plain text with WARC extraction.",
-      "section": "Practical Recipe (Llama 3-style)",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-120",
-      "quote": "**Language ID**: fastText, keep target languages.",
-      "section": "Practical Recipe (Llama 3-style)",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-121",
-      "quote": "**Quality filter**: heuristic rules + classifier (e.g., FineWeb's quality classifier).",
-      "section": "Practical Recipe (Llama 3-style)",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-122",
-      "quote": "**Deduplicate**: exact hash + MinHash + suffix-array.",
-      "section": "Practical Recipe (Llama 3-style)",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-123",
-      "quote": "**Decontaminate**: against benchmarks you care about.",
-      "section": "Practical Recipe (Llama 3-style)",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-124",
-      "quote": "**Mix and balance**: per-source sampling weights, target ratio (e.g., 50% web, 15% code, 10% books, 5% math).",
-      "section": "Practical Recipe (Llama 3-style)",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-125",
-      "quote": "**Tokenize**: BPE/SentencePiece over a representative sample.",
-      "section": "Practical Recipe (Llama 3-style)",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-126",
-      "quote": "(BPE is a **compression** algorithm from \\citeyear{gage1994bpe} \\cite{gage1994bpe} repurposed for tokenization: it fuses frequent adjacent pairs into single short-ID tokens, so the token stream is a shorter, lossless form of the raw text.)",
-      "section": "Practical Recipe (Llama 3-style)",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-127",
-      "quote": "**Pack**: concatenate and chunk into fixed-length training sequences.",
-      "section": "Practical Recipe (Llama 3-style)",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-128",
-      "quote": "This pipeline takes weeks of engineering and significant compute.",
-      "section": "Practical Recipe (Llama 3-style)",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-129",
-      "quote": "The result is what you train on.",
-      "section": "Practical Recipe (Llama 3-style)",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-130",
-      "quote": "A famous result from the **DataComp-LM** benchmark: at fixed compute, model quality improves strongly with the **quality-adjusted token count**.",
-      "section": "Why Data Is Half the Secret",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-131",
-      "quote": "The paper reports large gains from better filtering; the slogan that doubling data quality is equivalent to doubling model size is a rough summary, not an exact law.",
-      "section": "Why Data Is Half the Secret",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-132",
-      "quote": "The implication: data work has higher ROI than architecture work for most practitioners.",
-      "section": "Why Data Is Half the Secret",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-133",
-      "quote": "A 1B model on FineWeb-Edu often beats a 3B model on Common Crawl.",
-      "section": "Why Data Is Half the Secret",
-      "kind": "statement"
-    },
-    {
-      "id": "training_data-stmt-134",
       "quote": "Frontier labs spend **half their training-team headcount on data**, not on algorithms.",
+      "block_id": "training_data-block-80",
       "section": "Why Data Is Half the Secret",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "training_data-block-1",
+      "quote": "A frontier LLM is roughly **half algorithm, half data**. The same architecture trained on 1 trillion curated tokens outperforms one trained on 10 trillion unfiltered tokens. This chapter covers what data is used, how it is filtered, deduplicated, and decontaminated, and why every frontier lab guards its data recipes as their most valuable trade secret.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "training_data-block-2",
+      "quote": "Collecting the data",
+      "kind": "heading",
+      "section": "Collecting the data"
+    },
+    {
+      "id": "training_data-block-3",
+      "quote": "The Scale of Modern Training Data",
+      "kind": "heading",
+      "section": "The Scale of Modern Training Data"
+    },
+    {
+      "id": "training_data-block-4",
+      "quote": "Frontier LLMs are trained on **10–15 trillion tokens**. The composition is roughly:",
+      "kind": "paragraph",
+      "section": "The Scale of Modern Training Data"
+    },
+    {
+      "id": "training_data-block-5",
+      "quote": "| Source | Approx % | Tokens | Notes |",
+      "kind": "table-row",
+      "section": "The Scale of Modern Training Data"
+    },
+    {
+      "id": "training_data-block-6",
+      "quote": "| Web (Common Crawl, etc.) | 50–70% | 5–10T | Raw HTML, requires heavy filtering |",
+      "kind": "table-row",
+      "section": "The Scale of Modern Training Data"
+    },
+    {
+      "id": "training_data-block-7",
+      "quote": "| Code (GitHub, etc.) | 10–15% | 1–2T | Critical for code generation |",
+      "kind": "table-row",
+      "section": "The Scale of Modern Training Data"
+    },
+    {
+      "id": "training_data-block-8",
+      "quote": "| Books | 5–10% | 0.5–1T | Long-form, high quality |",
+      "kind": "table-row",
+      "section": "The Scale of Modern Training Data"
+    },
+    {
+      "id": "training_data-block-9",
+      "quote": "| Scientific papers | 3–5% | 200–500B | arXiv, PubMed, etc. |",
+      "kind": "table-row",
+      "section": "The Scale of Modern Training Data"
+    },
+    {
+      "id": "training_data-block-10",
+      "quote": "| Wikipedia | 1–2% | 100–200B | High-quality reference text |",
+      "kind": "table-row",
+      "section": "The Scale of Modern Training Data"
+    },
+    {
+      "id": "training_data-block-11",
+      "quote": "| Math (synthetic) | 2–5% | 200–500B | Web pages, Math StackExchange |",
+      "kind": "table-row",
+      "section": "The Scale of Modern Training Data"
+    },
+    {
+      "id": "training_data-block-12",
+      "quote": "| Conversational / instruction | 2–5% | 200–500B | Curated human dialogues |",
+      "kind": "table-row",
+      "section": "The Scale of Modern Training Data"
+    },
+    {
+      "id": "training_data-block-13",
+      "quote": "| Multimodal captions | 5–10% | 500B–1T | Alt-text, image captions |",
+      "kind": "table-row",
+      "section": "The Scale of Modern Training Data"
+    },
+    {
+      "id": "training_data-block-14",
+      "quote": "The **Chinchilla scaling law** (\\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}) suggests that for a given compute budget, models are best trained when tokens $\\approx 20 \\times$ parameters. So a 70B model needs ~1.4T tokens to be “Chinchilla-optimal”; frontier models now train on $10 \\times$ that, trading sample efficiency for capability.",
+      "kind": "paragraph",
+      "section": "The Scale of Modern Training Data"
+    },
+    {
+      "id": "training_data-block-15",
+      "quote": "Common Crawl: The Foundation",
+      "kind": "heading",
+      "section": "Common Crawl: The Foundation"
+    },
+    {
+      "id": "training_data-block-16",
+      "quote": "Over its lifetime Common Crawl has crawled hundreds of billions of URLs and accumulated multiple petabytes of raw data. LLMs use a small, heavily-filtered subset.",
+      "kind": "paragraph",
+      "section": "Common Crawl: The Foundation"
+    },
+    {
+      "id": "training_data-block-17",
+      "quote": "The pipeline:",
+      "kind": "paragraph",
+      "section": "Common Crawl: The Foundation"
+    },
+    {
+      "id": "training_data-block-18",
+      "quote": "1. **Crawl**: WARC files of HTML pages.",
+      "kind": "list-item",
+      "section": "Common Crawl: The Foundation"
+    },
+    {
+      "id": "training_data-block-19",
+      "quote": "2. **Extract text**: tools like **trafilatura**, **jusText**, or Resiliparse strip HTML, scripts, ads.",
+      "kind": "list-item",
+      "section": "Common Crawl: The Foundation"
+    },
+    {
+      "id": "training_data-block-20",
+      "quote": "3. **Language identification**: fastText-based model (`lid.176.bin`) classifies each document; non-target languages are dropped.",
+      "kind": "list-item",
+      "section": "Common Crawl: The Foundation"
+    },
+    {
+      "id": "training_data-block-21",
+      "quote": "4. **Quality filtering**: see below.",
+      "kind": "list-item",
+      "section": "Common Crawl: The Foundation"
+    },
+    {
+      "id": "training_data-block-22",
+      "quote": "5. **Deduplication**: see below.",
+      "kind": "list-item",
+      "section": "Common Crawl: The Foundation"
+    },
+    {
+      "id": "training_data-block-23",
+      "quote": "6. **Decontamination**: see below.",
+      "kind": "list-item",
+      "section": "Common Crawl: The Foundation"
+    },
+    {
+      "id": "training_data-block-24",
+      "quote": "Cleaning the data",
+      "kind": "heading",
+      "section": "Cleaning the data"
+    },
+    {
+      "id": "training_data-block-25",
+      "quote": "Quality Filtering",
+      "kind": "heading",
+      "section": "Quality Filtering"
+    },
+    {
+      "id": "training_data-block-26",
+      "quote": "Web text is mostly junk: SEO spam, machine-translated articles, product listings with 50 keyword variations, “Lorem ipsum”, repetitive template content. A model trained on this learns to mimic junk.",
+      "kind": "paragraph",
+      "section": "Quality Filtering"
+    },
+    {
+      "id": "training_data-block-27",
+      "quote": "Standard filters:",
+      "kind": "paragraph",
+      "section": "Quality Filtering"
+    },
+    {
+      "id": "training_data-block-28",
+      "quote": "FineWeb (\\cite[Penedo et al., 2024]{penedo2024fineweb}) pushed this further: 1.3T tokens of *English-only* web data filtered with **FastText** (high-quality vs. low-quality classifier) and aggressive deduplication. FineWeb-Edu adds an educational-quality classifier.",
+      "kind": "paragraph",
+      "section": "Quality Filtering"
+    },
+    {
+      "id": "training_data-block-29",
+      "quote": "Deduplication",
+      "kind": "heading",
+      "section": "Deduplication"
+    },
+    {
+      "id": "training_data-block-30",
+      "quote": "Duplicate or near-duplicate documents **inflate training cost and can cause memorization**. Dedup is essential.",
+      "kind": "paragraph",
+      "section": "Deduplication"
+    },
+    {
+      "id": "training_data-block-31",
+      "quote": "Exact Deduplication",
+      "kind": "heading",
+      "section": "Exact Deduplication"
+    },
+    {
+      "id": "training_data-block-32",
+      "quote": "Hash each document (SHA-256 over normalized text); keep only one copy of each hash. Catches verbatim copies but not near-duplicates.",
+      "kind": "paragraph",
+      "section": "Exact Deduplication"
+    },
+    {
+      "id": "training_data-block-33",
+      "quote": "Fuzzy Deduplication (MinHash)",
+      "kind": "heading",
+      "section": "Fuzzy Deduplication (MinHash)"
+    },
+    {
+      "id": "training_data-block-34",
+      "quote": "Documents with identical MinHash signatures have high Jaccard similarity. Threshold of $0.8$ Jaccard catches near-duplicates.",
+      "kind": "paragraph",
+      "section": "Fuzzy Deduplication (MinHash)"
+    },
+    {
+      "id": "training_data-block-35",
+      "quote": "Substring Deduplication (Suffix Array)",
+      "kind": "heading",
+      "section": "Substring Deduplication (Suffix Array)"
+    },
+    {
+      "id": "training_data-block-36",
+      "quote": "Decontamination",
+      "kind": "heading",
+      "section": "Decontamination"
+    },
+    {
+      "id": "training_data-block-37",
+      "quote": "A document in the training set may **contain benchmark items verbatim**. Models that have seen the test set are not being honestly evaluated.",
+      "kind": "paragraph",
+      "section": "Decontamination"
+    },
+    {
+      "id": "training_data-block-38",
+      "quote": "Standard Decontamination Pipeline",
+      "kind": "heading",
+      "section": "Standard Decontamination Pipeline"
+    },
+    {
+      "id": "training_data-block-39",
+      "quote": "1. Build a list of benchmark items (questions, options, answers, code stubs).",
+      "kind": "list-item",
+      "section": "Standard Decontamination Pipeline"
+    },
+    {
+      "id": "training_data-block-40",
+      "quote": "3. **Suffix array approach**: index all benchmark items as substrings; find all training documents containing them.",
+      "kind": "list-item",
+      "section": "Standard Decontamination Pipeline"
+    },
+    {
+      "id": "training_data-block-41",
+      "quote": "Limitations",
+      "kind": "heading",
+      "section": "Limitations"
+    },
+    {
+      "id": "training_data-block-42",
+      "quote": "Sophisticated methods (ProxiMix, D-Clean) combine overlap detection with **perplexity filtering**: documents that the model finds “surprisingly low-perplexity” are flagged for review. FrontierMath and ARC-AGI (\\cite[Chollet, 2024]{chollet2024arcagi}) use private, novel questions precisely to avoid this issue.",
+      "kind": "paragraph",
+      "section": "Limitations"
+    },
+    {
+      "id": "training_data-block-43",
+      "quote": "Shaping the mix",
+      "kind": "heading",
+      "section": "Shaping the mix"
+    },
+    {
+      "id": "training_data-block-44",
+      "quote": "Specialized Datasets",
+      "kind": "heading",
+      "section": "Specialized Datasets"
+    },
+    {
+      "id": "training_data-block-45",
+      "quote": "Beyond raw web text, frontier models train on carefully curated datasets:",
+      "kind": "paragraph",
+      "section": "Specialized Datasets"
+    },
+    {
+      "id": "training_data-block-46",
+      "quote": "Open recipes (RedPajama, FineWeb) have been critical for the open-source LLM movement: anyone can reproduce a near-frontier training mix.",
+      "kind": "paragraph",
+      "section": "Specialized Datasets"
+    },
+    {
+      "id": "training_data-block-47",
+      "quote": "Data Mixing: The Frontier Secret",
+      "kind": "heading",
+      "section": "Data Mixing: The Frontier Secret"
+    },
+    {
+      "id": "training_data-block-48",
+      "quote": "How much web vs. code vs. math? This is largely **undocumented and proprietary**. Chinchilla's scaling laws \\cite{hoffmann2022chinchilla} fix the total token-to-parameter ratio, but they say little about the *domain mix*, which is tuned empirically per model. Technical reports and ablations show:",
+      "kind": "paragraph",
+      "section": "Data Mixing: The Frontier Secret"
+    },
+    {
+      "id": "training_data-block-49",
+      "quote": "Why Code Is Disproportionately Powerful",
+      "kind": "heading",
+      "section": "Why Code Is Disproportionately Powerful"
+    },
+    {
+      "id": "training_data-block-50",
+      "quote": "Code is only 10–15% of a frontier training mix, yet it is the single most effective ingredient for reasoning ability. Three data-level properties explain most of it.",
+      "kind": "paragraph",
+      "section": "Why Code Is Disproportionately Powerful"
+    },
+    {
+      "id": "training_data-block-51",
+      "quote": "Verifiable ground truth at web scale",
+      "kind": "heading",
+      "section": "Verifiable ground truth at web scale"
+    },
+    {
+      "id": "training_data-block-52",
+      "quote": "Prose makes claims; code makes predictions. Docstrings specify contracts, tests can be *run* — execution is a free, automatic truth oracle. GitHub is the largest collection of (specification, correct solution) pairs in existence, and **HumanEval** (\\cite[Chen et al., 2021]{chen2021codex}) is literally the training pattern itself: docstring → program. Verifiability compounds: (\\cite[Li et al., 2022]{li2022alphacode}) reached competitive-programming rank by sampling up to ~100,000 candidates per problem and keeping only those whose *execution* matched the expected test outputs.",
+      "kind": "paragraph",
+      "section": "Verifiable ground truth at web scale"
+    },
+    {
+      "id": "training_data-block-53",
+      "quote": "Dense, and up-weighted by tokenization",
+      "kind": "heading",
+      "section": "Dense, and up-weighted by tokenization"
+    },
+    {
+      "id": "training_data-block-54",
+      "quote": "Code is telegraphic: little stylistic redundancy, high signal per byte. BPE splits code's dense symbols into more tokens per byte than prose (often 1.5–2×), so the per-token loss effectively up-weights code relative to its byte share. And valid programs live on a sharply constrained manifold — syntax narrows the legal continuations at every step — so the model learns code's structural constraints cheaply, the way it learns grammar.",
+      "kind": "paragraph",
+      "section": "Dense, and up-weighted by tokenization"
+    },
+    {
+      "id": "training_data-block-55",
+      "quote": "Explicit step-by-step reasoning in the raw",
+      "kind": "heading",
+      "section": "Explicit step-by-step reasoning in the raw"
+    },
+    {
+      "id": "training_data-block-56",
+      "quote": "A program is reasoning with the working memory made visible: variables as state, loops as iteration, branches as case analysis. Code is the densest source of (problem → algorithm → implementation) triples on the web. Pretraining on a code+text mixture improves *general* reasoning almost without negative transfer, and code data at instruction-tuning time adds task-specific reasoning (\\cite[Ma et al., 2023]{ma2023codereasoning}). What transfers is structure, not vocabulary: across 3,331 controlled fine-tuning runs in 10 languages, breaking code's *structure* hurt far more than breaking its *meaning*; pseudocode was often as effective as code, and corrupted code stayed competitive as long as surface regularities survived (\\cite[Waheed et al., 2025]{waheed2025codeinduced}).",
+      "kind": "paragraph",
+      "section": "Explicit step-by-step reasoning in the raw"
+    },
+    {
+      "id": "training_data-block-57",
+      "quote": "Why this becomes everything else",
+      "kind": "heading",
+      "section": "Why this becomes everything else"
+    },
+    {
+      "id": "training_data-block-58",
+      "quote": "Because code is executable, it is the bridge to the symbolic: PAL had the LLM decompose a word problem into a short program and offloaded the computation to an interpreter — a 12B model plus an interpreter beat PaLM-540B's chain-of-thought on GSM8K (\\cite[Gao et al., 2022]{gao2022pal}). Executable code is also a universal action space for agents (up to 20% higher success rates than pre-defined JSON actions \\cite[Wang et al., 2024]{wang2024codeact}) and the reason RL with verifiable rewards (see the Reasoning chapter ) works best on code and math: the test suite *is* the reward model.",
+      "kind": "paragraph",
+      "section": "Why this becomes everything else"
+    },
+    {
+      "id": "training_data-block-59",
+      "quote": "The lineage: Codex fine-tuned GPT on GitHub code — 28.8% on HumanEval where GPT-3 got 0% (\\cite[Chen et al., 2021]{chen2021codex}); Code Llama's 7B Python model, trained on ~500B extra code tokens, beat Llama 2 **70B** on code benchmarks (\\cite[Rozière et al., 2023]{roziere2023codellama}); DeepSeek-Coder trained 2T project-level tokens from scratch (\\cite[Guo et al., 2024]{guo2024deepseekcoder}).",
+      "kind": "paragraph",
+      "section": "Why this becomes everything else"
+    },
+    {
+      "id": "training_data-block-60",
+      "quote": "The other side of the same data: models are strongest where the corpus is thickest — popular languages, mainstream frameworks, English identifiers — and next-token prediction learns surface regularities first, so syntax comes easily while deep semantics (debugging, refactoring) remains the hard part. The sharpest illustration is **SWE-bench** (\\cite[Jimenez et al., 2024]{jimenez2024swebench}), 2,294 real GitHub issues: the best model of 2023 resolved 1.96%. Reasoning models have since climbed far, but the gap between “passes the unit tests” and “does software engineering” is where the data's limits show.",
+      "kind": "paragraph",
+      "section": "Why this becomes everything else"
+    },
+    {
+      "id": "training_data-block-61",
+      "quote": "Synthetic Data",
+      "kind": "heading",
+      "section": "Synthetic Data"
+    },
+    {
+      "id": "training_data-block-62",
+      "quote": "With natural data exhaust, frontier labs increasingly generate **synthetic training data**:",
+      "kind": "paragraph",
+      "section": "Synthetic Data"
+    },
+    {
+      "id": "training_data-block-63",
+      "quote": "Risks:",
+      "kind": "paragraph",
+      "section": "Synthetic Data"
+    },
+    {
+      "id": "training_data-block-64",
+      "quote": "OpenAI's **WebGPT** and DeepMind's **Sparrow** demonstrated that synthetic preference data can substitute for expensive human labelling, at the cost of ceiling effects (you can't exceed your teacher's quality).",
+      "kind": "paragraph",
+      "section": "Synthetic Data"
+    },
+    {
+      "id": "training_data-block-65",
+      "quote": "Recipes and lessons",
+      "kind": "heading",
+      "section": "Recipes and lessons"
+    },
+    {
+      "id": "training_data-block-66",
+      "quote": "Practical Recipe (Llama 3-style)",
+      "kind": "heading",
+      "section": "Practical Recipe (Llama 3-style)"
+    },
+    {
+      "id": "training_data-block-67",
+      "quote": "For those training their own models, the rough sequence is:",
+      "kind": "paragraph",
+      "section": "Practical Recipe (Llama 3-style)"
+    },
+    {
+      "id": "training_data-block-68",
+      "quote": "1. **Source raw data**: Common Crawl dumps, GitHub, ArXiv, StackExchange, books from public sources.",
+      "kind": "list-item",
+      "section": "Practical Recipe (Llama 3-style)"
+    },
+    {
+      "id": "training_data-block-69",
+      "quote": "2. **Extract text**: HTML → plain text with WARC extraction.",
+      "kind": "list-item",
+      "section": "Practical Recipe (Llama 3-style)"
+    },
+    {
+      "id": "training_data-block-70",
+      "quote": "3. **Language ID**: fastText, keep target languages.",
+      "kind": "list-item",
+      "section": "Practical Recipe (Llama 3-style)"
+    },
+    {
+      "id": "training_data-block-71",
+      "quote": "4. **Quality filter**: heuristic rules + classifier (e.g., FineWeb's quality classifier).",
+      "kind": "list-item",
+      "section": "Practical Recipe (Llama 3-style)"
+    },
+    {
+      "id": "training_data-block-72",
+      "quote": "5. **Deduplicate**: exact hash + MinHash + suffix-array.",
+      "kind": "list-item",
+      "section": "Practical Recipe (Llama 3-style)"
+    },
+    {
+      "id": "training_data-block-73",
+      "quote": "6. **Decontaminate**: against benchmarks you care about.",
+      "kind": "list-item",
+      "section": "Practical Recipe (Llama 3-style)"
+    },
+    {
+      "id": "training_data-block-74",
+      "quote": "7. **Mix and balance**: per-source sampling weights, target ratio (e.g., 50% web, 15% code, 10% books, 5% math).",
+      "kind": "list-item",
+      "section": "Practical Recipe (Llama 3-style)"
+    },
+    {
+      "id": "training_data-block-75",
+      "quote": "8. **Tokenize**: BPE/SentencePiece over a representative sample. (BPE is a **compression** algorithm from \\citeyear{gage1994bpe} \\cite{gage1994bpe} repurposed for tokenization: it fuses frequent adjacent pairs into single short-ID tokens, so the token stream is a shorter, lossless form of the raw text.)",
+      "kind": "list-item",
+      "section": "Practical Recipe (Llama 3-style)"
+    },
+    {
+      "id": "training_data-block-76",
+      "quote": "9. **Pack**: concatenate and chunk into fixed-length training sequences.",
+      "kind": "list-item",
+      "section": "Practical Recipe (Llama 3-style)"
+    },
+    {
+      "id": "training_data-block-77",
+      "quote": "This pipeline takes weeks of engineering and significant compute. The result is what you train on.",
+      "kind": "paragraph",
+      "section": "Practical Recipe (Llama 3-style)"
+    },
+    {
+      "id": "training_data-block-78",
+      "quote": "Why Data Is Half the Secret",
+      "kind": "heading",
+      "section": "Why Data Is Half the Secret"
+    },
+    {
+      "id": "training_data-block-79",
+      "quote": "A famous result from the **DataComp-LM** benchmark: at fixed compute, model quality improves strongly with the **quality-adjusted token count**. The paper reports large gains from better filtering; the slogan that doubling data quality is equivalent to doubling model size is a rough summary, not an exact law.",
+      "kind": "paragraph",
+      "section": "Why Data Is Half the Secret"
+    },
+    {
+      "id": "training_data-block-80",
+      "quote": "The implication: data work has higher ROI than architecture work for most practitioners. A 1B model on FineWeb-Edu often beats a 3B model on Common Crawl. Frontier labs spend **half their training-team headcount on data**, not on algorithms.",
+      "kind": "paragraph",
+      "section": "Why Data Is Half the Secret"
     }
   ]
 }

@@ -586,1256 +586,4304 @@
       "quote": "part: 3",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-1-part_of-topology",
+      "from": "topology-block-1",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-2-part_of-topology",
+      "from": "topology-block-2",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-1-before-topology-block-2",
+      "from": "topology-block-1",
+      "to": "topology-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-3-part_of-topology",
+      "from": "topology-block-3",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-2-before-topology-block-3",
+      "from": "topology-block-2",
+      "to": "topology-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-3-related_to-topology-block-2",
+      "from": "topology-block-3",
+      "to": "topology-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-4-part_of-topology",
+      "from": "topology-block-4",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-3-before-topology-block-4",
+      "from": "topology-block-3",
+      "to": "topology-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-4-related_to-topology-block-2",
+      "from": "topology-block-4",
+      "to": "topology-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-5-part_of-topology",
+      "from": "topology-block-5",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-4-before-topology-block-5",
+      "from": "topology-block-4",
+      "to": "topology-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-5-related_to-topology-block-2",
+      "from": "topology-block-5",
+      "to": "topology-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-6-part_of-topology",
+      "from": "topology-block-6",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-5-before-topology-block-6",
+      "from": "topology-block-5",
+      "to": "topology-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-6-related_to-topology-block-2",
+      "from": "topology-block-6",
+      "to": "topology-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-7-part_of-topology",
+      "from": "topology-block-7",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-6-before-topology-block-7",
+      "from": "topology-block-6",
+      "to": "topology-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-7-related_to-topology-block-2",
+      "from": "topology-block-7",
+      "to": "topology-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-8-part_of-topology",
+      "from": "topology-block-8",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-7-before-topology-block-8",
+      "from": "topology-block-7",
+      "to": "topology-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-8-related_to-topology-block-2",
+      "from": "topology-block-8",
+      "to": "topology-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-9-part_of-topology",
+      "from": "topology-block-9",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-8-before-topology-block-9",
+      "from": "topology-block-8",
+      "to": "topology-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-9-related_to-topology-block-2",
+      "from": "topology-block-9",
+      "to": "topology-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-10-part_of-topology",
+      "from": "topology-block-10",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-9-before-topology-block-10",
+      "from": "topology-block-9",
+      "to": "topology-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-10-related_to-topology-block-2",
+      "from": "topology-block-10",
+      "to": "topology-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-11-part_of-topology",
+      "from": "topology-block-11",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-10-before-topology-block-11",
+      "from": "topology-block-10",
+      "to": "topology-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-11-related_to-topology-block-2",
+      "from": "topology-block-11",
+      "to": "topology-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-12-part_of-topology",
+      "from": "topology-block-12",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-11-before-topology-block-12",
+      "from": "topology-block-11",
+      "to": "topology-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-12-related_to-topology-block-2",
+      "from": "topology-block-12",
+      "to": "topology-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-13-part_of-topology",
+      "from": "topology-block-13",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-12-before-topology-block-13",
+      "from": "topology-block-12",
+      "to": "topology-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-13-related_to-topology-block-2",
+      "from": "topology-block-13",
+      "to": "topology-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-14-part_of-topology",
+      "from": "topology-block-14",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-13-before-topology-block-14",
+      "from": "topology-block-13",
+      "to": "topology-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-14-related_to-topology-block-2",
+      "from": "topology-block-14",
+      "to": "topology-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-15-part_of-topology",
+      "from": "topology-block-15",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-14-before-topology-block-15",
+      "from": "topology-block-14",
+      "to": "topology-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-15-related_to-topology-block-2",
+      "from": "topology-block-15",
+      "to": "topology-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-16-part_of-topology",
+      "from": "topology-block-16",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-15-before-topology-block-16",
+      "from": "topology-block-15",
+      "to": "topology-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-17-part_of-topology",
+      "from": "topology-block-17",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-16-before-topology-block-17",
+      "from": "topology-block-16",
+      "to": "topology-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-17-related_to-topology-block-16",
+      "from": "topology-block-17",
+      "to": "topology-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-18-part_of-topology",
+      "from": "topology-block-18",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-17-before-topology-block-18",
+      "from": "topology-block-17",
+      "to": "topology-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-18-related_to-topology-block-16",
+      "from": "topology-block-18",
+      "to": "topology-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-19-part_of-topology",
+      "from": "topology-block-19",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-18-before-topology-block-19",
+      "from": "topology-block-18",
+      "to": "topology-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-19-related_to-topology-block-16",
+      "from": "topology-block-19",
+      "to": "topology-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-20-part_of-topology",
+      "from": "topology-block-20",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-19-before-topology-block-20",
+      "from": "topology-block-19",
+      "to": "topology-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-20-related_to-topology-block-16",
+      "from": "topology-block-20",
+      "to": "topology-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-21-part_of-topology",
+      "from": "topology-block-21",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-20-before-topology-block-21",
+      "from": "topology-block-20",
+      "to": "topology-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-21-related_to-topology-block-16",
+      "from": "topology-block-21",
+      "to": "topology-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-22-part_of-topology",
+      "from": "topology-block-22",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-21-before-topology-block-22",
+      "from": "topology-block-21",
+      "to": "topology-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-22-related_to-topology-block-16",
+      "from": "topology-block-22",
+      "to": "topology-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-23-part_of-topology",
+      "from": "topology-block-23",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-22-before-topology-block-23",
+      "from": "topology-block-22",
+      "to": "topology-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-23-related_to-topology-block-16",
+      "from": "topology-block-23",
+      "to": "topology-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-24-part_of-topology",
+      "from": "topology-block-24",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-23-before-topology-block-24",
+      "from": "topology-block-23",
+      "to": "topology-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-24-related_to-topology-block-16",
+      "from": "topology-block-24",
+      "to": "topology-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-25-part_of-topology",
+      "from": "topology-block-25",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-24-before-topology-block-25",
+      "from": "topology-block-24",
+      "to": "topology-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-25-related_to-topology-block-16",
+      "from": "topology-block-25",
+      "to": "topology-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-26-part_of-topology",
+      "from": "topology-block-26",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-25-before-topology-block-26",
+      "from": "topology-block-25",
+      "to": "topology-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-26-related_to-topology-block-16",
+      "from": "topology-block-26",
+      "to": "topology-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-27-part_of-topology",
+      "from": "topology-block-27",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-26-before-topology-block-27",
+      "from": "topology-block-26",
+      "to": "topology-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-27-related_to-topology-block-16",
+      "from": "topology-block-27",
+      "to": "topology-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-28-part_of-topology",
+      "from": "topology-block-28",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-27-before-topology-block-28",
+      "from": "topology-block-27",
+      "to": "topology-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-29-part_of-topology",
+      "from": "topology-block-29",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-28-before-topology-block-29",
+      "from": "topology-block-28",
+      "to": "topology-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-30-part_of-topology",
+      "from": "topology-block-30",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-29-before-topology-block-30",
+      "from": "topology-block-29",
+      "to": "topology-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-30-related_to-topology-block-29",
+      "from": "topology-block-30",
+      "to": "topology-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-31-part_of-topology",
+      "from": "topology-block-31",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-30-before-topology-block-31",
+      "from": "topology-block-30",
+      "to": "topology-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-31-related_to-topology-block-29",
+      "from": "topology-block-31",
+      "to": "topology-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-32-part_of-topology",
+      "from": "topology-block-32",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-31-before-topology-block-32",
+      "from": "topology-block-31",
+      "to": "topology-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-32-related_to-topology-block-29",
+      "from": "topology-block-32",
+      "to": "topology-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-33-part_of-topology",
+      "from": "topology-block-33",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-32-before-topology-block-33",
+      "from": "topology-block-32",
+      "to": "topology-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-33-related_to-topology-block-29",
+      "from": "topology-block-33",
+      "to": "topology-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-34-part_of-topology",
+      "from": "topology-block-34",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-33-before-topology-block-34",
+      "from": "topology-block-33",
+      "to": "topology-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-34-related_to-topology-block-29",
+      "from": "topology-block-34",
+      "to": "topology-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-35-part_of-topology",
+      "from": "topology-block-35",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-34-before-topology-block-35",
+      "from": "topology-block-34",
+      "to": "topology-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-35-related_to-topology-block-29",
+      "from": "topology-block-35",
+      "to": "topology-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-36-part_of-topology",
+      "from": "topology-block-36",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-35-before-topology-block-36",
+      "from": "topology-block-35",
+      "to": "topology-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-36-related_to-topology-block-29",
+      "from": "topology-block-36",
+      "to": "topology-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-37-part_of-topology",
+      "from": "topology-block-37",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-36-before-topology-block-37",
+      "from": "topology-block-36",
+      "to": "topology-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-38-part_of-topology",
+      "from": "topology-block-38",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-37-before-topology-block-38",
+      "from": "topology-block-37",
+      "to": "topology-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-38-related_to-topology-block-37",
+      "from": "topology-block-38",
+      "to": "topology-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-39-part_of-topology",
+      "from": "topology-block-39",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-38-before-topology-block-39",
+      "from": "topology-block-38",
+      "to": "topology-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-39-related_to-topology-block-37",
+      "from": "topology-block-39",
+      "to": "topology-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-40-part_of-topology",
+      "from": "topology-block-40",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-39-before-topology-block-40",
+      "from": "topology-block-39",
+      "to": "topology-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-40-related_to-topology-block-37",
+      "from": "topology-block-40",
+      "to": "topology-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-41-part_of-topology",
+      "from": "topology-block-41",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-40-before-topology-block-41",
+      "from": "topology-block-40",
+      "to": "topology-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-41-related_to-topology-block-37",
+      "from": "topology-block-41",
+      "to": "topology-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-42-part_of-topology",
+      "from": "topology-block-42",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-41-before-topology-block-42",
+      "from": "topology-block-41",
+      "to": "topology-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-42-related_to-topology-block-37",
+      "from": "topology-block-42",
+      "to": "topology-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-43-part_of-topology",
+      "from": "topology-block-43",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-42-before-topology-block-43",
+      "from": "topology-block-42",
+      "to": "topology-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-43-related_to-topology-block-37",
+      "from": "topology-block-43",
+      "to": "topology-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-44-part_of-topology",
+      "from": "topology-block-44",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-43-before-topology-block-44",
+      "from": "topology-block-43",
+      "to": "topology-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-44-related_to-topology-block-37",
+      "from": "topology-block-44",
+      "to": "topology-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-45-part_of-topology",
+      "from": "topology-block-45",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-44-before-topology-block-45",
+      "from": "topology-block-44",
+      "to": "topology-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-45-related_to-topology-block-37",
+      "from": "topology-block-45",
+      "to": "topology-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-46-part_of-topology",
+      "from": "topology-block-46",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-45-before-topology-block-46",
+      "from": "topology-block-45",
+      "to": "topology-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-46-related_to-topology-block-37",
+      "from": "topology-block-46",
+      "to": "topology-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-47-part_of-topology",
+      "from": "topology-block-47",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-46-before-topology-block-47",
+      "from": "topology-block-46",
+      "to": "topology-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-47-related_to-topology-block-37",
+      "from": "topology-block-47",
+      "to": "topology-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-48-part_of-topology",
+      "from": "topology-block-48",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-47-before-topology-block-48",
+      "from": "topology-block-47",
+      "to": "topology-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-48-related_to-topology-block-37",
+      "from": "topology-block-48",
+      "to": "topology-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-49-part_of-topology",
+      "from": "topology-block-49",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-48-before-topology-block-49",
+      "from": "topology-block-48",
+      "to": "topology-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-49-related_to-topology-block-37",
+      "from": "topology-block-49",
+      "to": "topology-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-50-part_of-topology",
+      "from": "topology-block-50",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-49-before-topology-block-50",
+      "from": "topology-block-49",
+      "to": "topology-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-50-related_to-topology-block-37",
+      "from": "topology-block-50",
+      "to": "topology-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-51-part_of-topology",
+      "from": "topology-block-51",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-50-before-topology-block-51",
+      "from": "topology-block-50",
+      "to": "topology-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-51-related_to-topology-block-37",
+      "from": "topology-block-51",
+      "to": "topology-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-52-part_of-topology",
+      "from": "topology-block-52",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-51-before-topology-block-52",
+      "from": "topology-block-51",
+      "to": "topology-block-52",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-53-part_of-topology",
+      "from": "topology-block-53",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-52-before-topology-block-53",
+      "from": "topology-block-52",
+      "to": "topology-block-53",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-53-related_to-topology-block-52",
+      "from": "topology-block-53",
+      "to": "topology-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-54-part_of-topology",
+      "from": "topology-block-54",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-53-before-topology-block-54",
+      "from": "topology-block-53",
+      "to": "topology-block-54",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-54-related_to-topology-block-52",
+      "from": "topology-block-54",
+      "to": "topology-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-55-part_of-topology",
+      "from": "topology-block-55",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-54-before-topology-block-55",
+      "from": "topology-block-54",
+      "to": "topology-block-55",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-55-related_to-topology-block-52",
+      "from": "topology-block-55",
+      "to": "topology-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-56-part_of-topology",
+      "from": "topology-block-56",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-55-before-topology-block-56",
+      "from": "topology-block-55",
+      "to": "topology-block-56",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-56-related_to-topology-block-52",
+      "from": "topology-block-56",
+      "to": "topology-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-57-part_of-topology",
+      "from": "topology-block-57",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-56-before-topology-block-57",
+      "from": "topology-block-56",
+      "to": "topology-block-57",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-57-related_to-topology-block-52",
+      "from": "topology-block-57",
+      "to": "topology-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-58-part_of-topology",
+      "from": "topology-block-58",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-57-before-topology-block-58",
+      "from": "topology-block-57",
+      "to": "topology-block-58",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-58-related_to-topology-block-52",
+      "from": "topology-block-58",
+      "to": "topology-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-59-part_of-topology",
+      "from": "topology-block-59",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-58-before-topology-block-59",
+      "from": "topology-block-58",
+      "to": "topology-block-59",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-59-related_to-topology-block-52",
+      "from": "topology-block-59",
+      "to": "topology-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-60-part_of-topology",
+      "from": "topology-block-60",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-59-before-topology-block-60",
+      "from": "topology-block-59",
+      "to": "topology-block-60",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-60-related_to-topology-block-52",
+      "from": "topology-block-60",
+      "to": "topology-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-61-part_of-topology",
+      "from": "topology-block-61",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-60-before-topology-block-61",
+      "from": "topology-block-60",
+      "to": "topology-block-61",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-61-related_to-topology-block-52",
+      "from": "topology-block-61",
+      "to": "topology-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-62-part_of-topology",
+      "from": "topology-block-62",
+      "to": "topology",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-61-before-topology-block-62",
+      "from": "topology-block-61",
+      "to": "topology-block-62",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-block-62-related_to-topology-block-52",
+      "from": "topology-block-62",
+      "to": "topology-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-1-part_of-topology-block-3",
+      "from": "topology-stmt-1",
+      "to": "topology-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-2-part_of-topology-block-3",
+      "from": "topology-stmt-2",
+      "to": "topology-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-3-part_of-topology-block-3",
+      "from": "topology-stmt-3",
+      "to": "topology-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-4-part_of-topology-block-4",
+      "from": "topology-stmt-4",
+      "to": "topology-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-5-part_of-topology-block-5",
+      "from": "topology-stmt-5",
+      "to": "topology-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-6-part_of-topology-block-5",
+      "from": "topology-stmt-6",
+      "to": "topology-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-7-part_of-topology-block-5",
+      "from": "topology-stmt-7",
+      "to": "topology-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-8-part_of-topology-block-5",
+      "from": "topology-stmt-8",
+      "to": "topology-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-9-part_of-topology-block-5",
+      "from": "topology-stmt-9",
+      "to": "topology-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-10-part_of-topology-block-6",
+      "from": "topology-stmt-10",
+      "to": "topology-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-11-part_of-topology-block-6",
+      "from": "topology-stmt-11",
+      "to": "topology-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-12-part_of-topology-block-6",
+      "from": "topology-stmt-12",
+      "to": "topology-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-13-part_of-topology-block-6",
+      "from": "topology-stmt-13",
+      "to": "topology-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-14-part_of-topology-block-6",
+      "from": "topology-stmt-14",
+      "to": "topology-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-15-part_of-topology-block-7",
+      "from": "topology-stmt-15",
+      "to": "topology-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-16-part_of-topology-block-7",
+      "from": "topology-stmt-16",
+      "to": "topology-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-17-part_of-topology-block-7",
+      "from": "topology-stmt-17",
+      "to": "topology-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-18-part_of-topology-block-7",
+      "from": "topology-stmt-18",
+      "to": "topology-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-19-part_of-topology-block-8",
+      "from": "topology-stmt-19",
+      "to": "topology-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-20-part_of-topology-block-8",
+      "from": "topology-stmt-20",
+      "to": "topology-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-21-part_of-topology-block-8",
+      "from": "topology-stmt-21",
+      "to": "topology-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-22-part_of-topology-block-9",
+      "from": "topology-stmt-22",
+      "to": "topology-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-23-part_of-topology-block-10",
+      "from": "topology-stmt-23",
+      "to": "topology-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-24-part_of-topology-block-10",
+      "from": "topology-stmt-24",
+      "to": "topology-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-25-part_of-topology-block-10",
+      "from": "topology-stmt-25",
+      "to": "topology-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-26-part_of-topology-block-11",
+      "from": "topology-stmt-26",
+      "to": "topology-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-27-part_of-topology-block-12",
+      "from": "topology-stmt-27",
+      "to": "topology-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-28-part_of-topology-block-13",
+      "from": "topology-stmt-28",
+      "to": "topology-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-29-part_of-topology-block-14",
+      "from": "topology-stmt-29",
+      "to": "topology-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-30-part_of-topology-block-14",
+      "from": "topology-stmt-30",
+      "to": "topology-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-31-part_of-topology-block-14",
+      "from": "topology-stmt-31",
+      "to": "topology-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-32-part_of-topology-block-15",
+      "from": "topology-stmt-32",
+      "to": "topology-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-33-part_of-topology-block-15",
+      "from": "topology-stmt-33",
+      "to": "topology-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-34-part_of-topology-block-15",
+      "from": "topology-stmt-34",
+      "to": "topology-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-35-part_of-topology-block-15",
+      "from": "topology-stmt-35",
+      "to": "topology-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-36-part_of-topology-block-17",
+      "from": "topology-stmt-36",
+      "to": "topology-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-37-part_of-topology-block-17",
+      "from": "topology-stmt-37",
+      "to": "topology-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-38-part_of-topology-block-17",
+      "from": "topology-stmt-38",
+      "to": "topology-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-39-part_of-topology-block-18",
+      "from": "topology-stmt-39",
+      "to": "topology-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-40-part_of-topology-block-19",
+      "from": "topology-stmt-40",
+      "to": "topology-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-41-part_of-topology-block-19",
+      "from": "topology-stmt-41",
+      "to": "topology-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-42-part_of-topology-block-20",
+      "from": "topology-stmt-42",
+      "to": "topology-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-43-part_of-topology-block-20",
+      "from": "topology-stmt-43",
+      "to": "topology-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-44-part_of-topology-block-20",
+      "from": "topology-stmt-44",
+      "to": "topology-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-45-part_of-topology-block-21",
+      "from": "topology-stmt-45",
+      "to": "topology-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-46-part_of-topology-block-21",
+      "from": "topology-stmt-46",
+      "to": "topology-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-47-part_of-topology-block-21",
+      "from": "topology-stmt-47",
+      "to": "topology-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-48-part_of-topology-block-22",
+      "from": "topology-stmt-48",
+      "to": "topology-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-49-part_of-topology-block-22",
+      "from": "topology-stmt-49",
+      "to": "topology-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-50-part_of-topology-block-22",
+      "from": "topology-stmt-50",
+      "to": "topology-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-51-part_of-topology-block-23",
+      "from": "topology-stmt-51",
+      "to": "topology-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-52-part_of-topology-block-23",
+      "from": "topology-stmt-52",
+      "to": "topology-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-53-part_of-topology-block-23",
+      "from": "topology-stmt-53",
+      "to": "topology-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-54-part_of-topology-block-23",
+      "from": "topology-stmt-54",
+      "to": "topology-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-55-part_of-topology-block-25",
+      "from": "topology-stmt-55",
+      "to": "topology-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-56-part_of-topology-block-26",
+      "from": "topology-stmt-56",
+      "to": "topology-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-57-part_of-topology-block-27",
+      "from": "topology-stmt-57",
+      "to": "topology-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-58-part_of-topology-block-30",
+      "from": "topology-stmt-58",
+      "to": "topology-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-59-part_of-topology-block-31",
+      "from": "topology-stmt-59",
+      "to": "topology-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-60-part_of-topology-block-31",
+      "from": "topology-stmt-60",
+      "to": "topology-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-61-part_of-topology-block-32",
+      "from": "topology-stmt-61",
+      "to": "topology-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-62-part_of-topology-block-32",
+      "from": "topology-stmt-62",
+      "to": "topology-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-63-part_of-topology-block-33",
+      "from": "topology-stmt-63",
+      "to": "topology-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-64-part_of-topology-block-33",
+      "from": "topology-stmt-64",
+      "to": "topology-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-65-part_of-topology-block-33",
+      "from": "topology-stmt-65",
+      "to": "topology-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-66-part_of-topology-block-35",
+      "from": "topology-stmt-66",
+      "to": "topology-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-67-part_of-topology-block-38",
+      "from": "topology-stmt-67",
+      "to": "topology-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-68-part_of-topology-block-38",
+      "from": "topology-stmt-68",
+      "to": "topology-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-69-part_of-topology-block-39",
+      "from": "topology-stmt-69",
+      "to": "topology-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-70-part_of-topology-block-39",
+      "from": "topology-stmt-70",
+      "to": "topology-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-71-part_of-topology-block-40",
+      "from": "topology-stmt-71",
+      "to": "topology-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-72-part_of-topology-block-40",
+      "from": "topology-stmt-72",
+      "to": "topology-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-73-part_of-topology-block-40",
+      "from": "topology-stmt-73",
+      "to": "topology-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-74-part_of-topology-block-40",
+      "from": "topology-stmt-74",
+      "to": "topology-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-75-part_of-topology-block-40",
+      "from": "topology-stmt-75",
+      "to": "topology-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-76-part_of-topology-block-41",
+      "from": "topology-stmt-76",
+      "to": "topology-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-77-part_of-topology-block-42",
+      "from": "topology-stmt-77",
+      "to": "topology-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-78-part_of-topology-block-42",
+      "from": "topology-stmt-78",
+      "to": "topology-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-79-part_of-topology-block-42",
+      "from": "topology-stmt-79",
+      "to": "topology-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-80-part_of-topology-block-46",
+      "from": "topology-stmt-80",
+      "to": "topology-block-46",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-81-part_of-topology-block-47",
+      "from": "topology-stmt-81",
+      "to": "topology-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-82-part_of-topology-block-47",
+      "from": "topology-stmt-82",
+      "to": "topology-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-83-part_of-topology-block-47",
+      "from": "topology-stmt-83",
+      "to": "topology-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-84-part_of-topology-block-47",
+      "from": "topology-stmt-84",
+      "to": "topology-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-85-part_of-topology-block-48",
+      "from": "topology-stmt-85",
+      "to": "topology-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-86-part_of-topology-block-48",
+      "from": "topology-stmt-86",
+      "to": "topology-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-87-part_of-topology-block-48",
+      "from": "topology-stmt-87",
+      "to": "topology-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-88-part_of-topology-block-49",
+      "from": "topology-stmt-88",
+      "to": "topology-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-89-part_of-topology-block-50",
+      "from": "topology-stmt-89",
+      "to": "topology-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-90-part_of-topology-block-50",
+      "from": "topology-stmt-90",
+      "to": "topology-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-91-part_of-topology-block-50",
+      "from": "topology-stmt-91",
+      "to": "topology-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-92-part_of-topology-block-50",
+      "from": "topology-stmt-92",
+      "to": "topology-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-93-part_of-topology-block-51",
+      "from": "topology-stmt-93",
+      "to": "topology-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-94-part_of-topology-block-51",
+      "from": "topology-stmt-94",
+      "to": "topology-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-95-part_of-topology-block-51",
+      "from": "topology-stmt-95",
+      "to": "topology-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-96-part_of-topology-block-51",
+      "from": "topology-stmt-96",
+      "to": "topology-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-97-part_of-topology-block-53",
+      "from": "topology-stmt-97",
+      "to": "topology-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-98-part_of-topology-block-54",
+      "from": "topology-stmt-98",
+      "to": "topology-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-99-part_of-topology-block-54",
+      "from": "topology-stmt-99",
+      "to": "topology-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-100-part_of-topology-block-54",
+      "from": "topology-stmt-100",
+      "to": "topology-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-101-part_of-topology-block-54",
+      "from": "topology-stmt-101",
+      "to": "topology-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-102-part_of-topology-block-55",
+      "from": "topology-stmt-102",
+      "to": "topology-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-103-part_of-topology-block-55",
+      "from": "topology-stmt-103",
+      "to": "topology-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-104-part_of-topology-block-55",
+      "from": "topology-stmt-104",
+      "to": "topology-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-105-part_of-topology-block-55",
+      "from": "topology-stmt-105",
+      "to": "topology-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-106-part_of-topology-block-56",
+      "from": "topology-stmt-106",
+      "to": "topology-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-107-part_of-topology-block-56",
+      "from": "topology-stmt-107",
+      "to": "topology-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-108-part_of-topology-block-56",
+      "from": "topology-stmt-108",
+      "to": "topology-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-109-part_of-topology-block-56",
+      "from": "topology-stmt-109",
+      "to": "topology-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-110-part_of-topology-block-57",
+      "from": "topology-stmt-110",
+      "to": "topology-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-111-part_of-topology-block-57",
+      "from": "topology-stmt-111",
+      "to": "topology-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-112-part_of-topology-block-57",
+      "from": "topology-stmt-112",
+      "to": "topology-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-113-part_of-topology-block-58",
+      "from": "topology-stmt-113",
+      "to": "topology-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-114-part_of-topology-block-58",
+      "from": "topology-stmt-114",
+      "to": "topology-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-115-part_of-topology-block-59",
+      "from": "topology-stmt-115",
+      "to": "topology-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-116-part_of-topology-block-59",
+      "from": "topology-stmt-116",
+      "to": "topology-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-117-part_of-topology-block-60",
+      "from": "topology-stmt-117",
+      "to": "topology-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-118-part_of-topology-block-60",
+      "from": "topology-stmt-118",
+      "to": "topology-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-119-part_of-topology-block-60",
+      "from": "topology-stmt-119",
+      "to": "topology-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-120-part_of-topology-block-60",
+      "from": "topology-stmt-120",
+      "to": "topology-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-121-part_of-topology-block-60",
+      "from": "topology-stmt-121",
+      "to": "topology-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-122-part_of-topology-block-61",
+      "from": "topology-stmt-122",
+      "to": "topology-block-61",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-123-part_of-topology-block-62",
+      "from": "topology-stmt-123",
+      "to": "topology-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-124-part_of-topology-block-62",
+      "from": "topology-stmt-124",
+      "to": "topology-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-125-part_of-topology-block-62",
+      "from": "topology-stmt-125",
+      "to": "topology-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-topology-stmt-126-part_of-topology-block-62",
+      "from": "topology-stmt-126",
+      "to": "topology-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "topology-stmt-1",
-      "quote": "In the [Origami chapter](origami) we met feed-forward networks as **paper folders**: a ReLU layer",
+      "quote": "In the [Origami chapter](origami) we met feed-forward networks as **paper folders**: a ReLU layer is a hammer-blow that creases the data into a spare, higher dimension, and depth is a cascade of such creases \\cite{keup2022origami}.",
+      "block_id": "topology-block-3",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-2",
-      "quote": "is a hammer-blow that creases the data into a spare, higher dimension, and depth is a",
+      "quote": "That story is about *what a layer can do when the activation is allowed to crush*.",
+      "block_id": "topology-block-3",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-3",
-      "quote": "cascade of such creases \\cite{keup2022origami}.",
+      "quote": "There is a second, cleaner story, and it starts the activation is smooth and monotone — a tanh or a sigmoid rather than a ReLU — what can a layer do to the data, and what is it forbidden from doing?",
+      "block_id": "topology-block-3",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-4",
-      "quote": "That story is about *what a layer can do",
+      "quote": "The answer is beautifully restrictive, and it is the whole reason the word *topology* appears in a story about neural networks.",
+      "block_id": "topology-block-4",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-5",
-      "quote": "when the activation is allowed to crush*.",
+      "quote": "Topology began with a puzzle about a city.",
+      "block_id": "topology-block-5",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-6",
-      "quote": "There is a second, cleaner story, and it starts",
+      "quote": "In 1736 Euler proved that the seven bridges of Königsberg cannot be crossed once each, and he did it by throwing away distance and angle and keeping only which land mass connects to which (\\cite[Euler, 1736]{eulerbridges}).",
+      "block_id": "topology-block-5",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-7",
-      "quote": "from a question \\citeauthor{colah2014manifolds} asked in \\citeyear{colah2014manifolds}: if",
+      "quote": "The paper's title calls the subject *geometria situs*, the geometry of position.",
+      "block_id": "topology-block-5",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-8",
-      "quote": "the activation is smooth and monotone — a tanh or a sigmoid rather than a ReLU — what can",
+      "quote": "That is exactly the move a smooth layer makes: it may stretch the plane, but it cannot change which region surrounds which.",
+      "block_id": "topology-block-5",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-9",
-      "quote": "a layer do to the data, and what is it forbidden from doing?",
+      "quote": "[Geometry III](geometry_iii) tells the full history; here the point is narrower — the invariant that survives a homeomorphism is precisely what a linear readout cannot repair.",
+      "block_id": "topology-block-5",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-10",
-      "quote": "The answer is beautifully restrictive, and it is the whole reason the word *topology*",
+      "quote": "Start with the simplest setting.",
+      "block_id": "topology-block-6",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-11",
-      "quote": "appears in a story about neural networks.",
+      "quote": "A network with only a handful of neurons per layer is data move.",
+      "block_id": "topology-block-6",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-12",
-      "quote": "Topology began with a puzzle about a city.",
+      "quote": "Each layer emits a **representation** — the data re-expressed in the coordinates of that layer's neurons.",
+      "block_id": "topology-block-6",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-13",
-      "quote": "In 1736 Euler proved that the seven bridges of Königsberg cannot be crossed once each, and he did it by throwing away distance and angle and keeping only which land mass connects to which (\\cite[Euler, 1736]{eulerbridges}).",
+      "quote": "The very last layer is just a **linear readout**: it draws a single flat hyperplane (a line in 2-D) and calls one side \"class 0\" and the other \"class 1\".",
+      "block_id": "topology-block-6",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-14",
-      "quote": "The paper's title calls the subject *geometria situs*, the geometry of position.",
+      "quote": "So the entire job of every hidden layer is to *reshape the data until that final flat cut succeeds*.",
+      "block_id": "topology-block-6",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-15",
-      "quote": "That is exactly the move a smooth layer makes: it may stretch the plane, but it cannot change which region surrounds which.",
+      "quote": "And here is the surprise.",
+      "block_id": "topology-block-7",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-16",
-      "quote": "[Geometry III](geometry_iii) tells the full history; here the point is narrower — the invariant that survives a homeomorphism is precisely what a linear readout cannot repair.",
+      "quote": "With a **smooth, strictly monotone** activation, each layer is a cut, tear, or fold** it.",
+      "block_id": "topology-block-7",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-17",
-      "quote": "Start with the simplest setting.",
+      "quote": "It preserves every topological property — a loop stays a loop, a region that surrounds another still surrounds it, connected things stay connected (\\cite[Morris, Topology Without Tears, Ch.",
+      "block_id": "topology-block-7",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-18",
-      "quote": "A network with only a handful of neurons per layer is",
+      "quote": "89]{morris2007topology}).",
+      "block_id": "topology-block-7",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-19",
-      "quote": "Feed every point of a fine grid through the net and you can *watch* the",
+      "quote": "Poincaré gave the question its modern form in *Analysis Situs* (1895): two spaces are the same when a homeomorphism carries one to the other, and the fundamental group records the loops no such map can remove (\\cite[Poincaré, 1895]{poincareanalysissitus}).",
+      "block_id": "topology-block-8",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-20",
-      "quote": "Each layer emits a **representation** — the data re-expressed in the coordinates",
+      "quote": "Brouwer supplied the fact the width argument quietly leans on: a continuous injective map from an open subset of $\\mathbb{R}^n$ into $\\mathbb{R}^n$ is open, so it cannot lower dimension or squash a neighbourhood to a point (\\cite[Brouwer, 1911]{brouwer1911invariance}).",
+      "block_id": "topology-block-8",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-21",
-      "quote": "The very last layer is just a **linear readout**: it draws a single",
+      "quote": "A singular weight matrix is exactly that forbidden collapse.",
+      "block_id": "topology-block-8",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-22",
-      "quote": "flat hyperplane (a line in 2-D) and calls one side \"class 0\" and the other \"class 1\".",
+      "quote": "A feed-forward layer computes $\\mathbf{h} = \\underbrace{\\Phi}_{\\text{pointwise activation}}(\\underbrace{W\\,\\mathbf{x}}_{\\text{linear map}} + \\underbrace{\\mathbf{b}}_{\\text{shift}})$: a linear \"three homeomorphisms glued together\":",
+      "block_id": "topology-block-9",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-23",
-      "quote": "the entire job of every hidden layer is to *reshape the data until that final flat cut",
+      "quote": "homeomorphism (\\cite[Morris, Topology Without Tears, Ch.",
+      "block_id": "topology-block-10",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-24",
-      "quote": "And here is the surprise.",
+      "quote": "95]{morris2007topology}).",
+      "block_id": "topology-block-10",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-25",
-      "quote": "With a **smooth, strictly monotone** activation, each layer is a",
+      "quote": "(A non-singular matrix is exactly a change of basis — a reversible stretch-and-rotate of the whole space.)",
+      "block_id": "topology-block-10",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-26",
-      "quote": "**homeomorphism** — as \\cite[Morris shows in Topology Without Tears (Ch.",
+      "quote": "**$\\mathbf{u} \\mapsto \\mathbf{u} + \\mathbf{b}$.** A translation.",
+      "block_id": "topology-block-11",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-27",
-      "quote": "75)]{morris2007topology} — it can stretch and squish space, rotate and shear it, but it can **never",
+      "quote": "**$\\mathbf{z} \\mapsto \\Phi(\\mathbf{z})$ applied coordinate-wise.** tanh, sigmoid and",
+      "block_id": "topology-block-12",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-28",
-      "quote": "It preserves every topological property — a loop stays a loop, a",
+      "quote": "softplus are continuous *and* have continuous inverses, so each is a homeomorphism of the line **onto its image** (tanh lands in $(-1,1)$, sigmoid in $(0,1)$, softplus in",
+      "block_id": "topology-block-13",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-29",
-      "quote": "region that surrounds another still surrounds it, connected things stay connected (\\cite[Morris, Topology Without Tears, Ch.",
+      "quote": "A composition of homeomorphisms is a homeomorphism — as \\cite[Morris shows in Topology Without Tears (Ch.",
+      "block_id": "topology-block-14",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-30",
-      "quote": "89]{morris2007topology}).",
+      "quote": "76)]{morris2007topology} — so the layer is one.",
+      "block_id": "topology-block-14",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-31",
-      "quote": "Poincaré gave the question its modern form in *Analysis Situs* (1895): two spaces are the same when a homeomorphism carries one to the other, and the fundamental group records the loops no such map can remove (\\cite[Poincaré, 1895]{poincareanalysissitus}).",
+      "quote": "**And so is any stack of them.** $\\blacksquare$",
+      "block_id": "topology-block-14",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-32",
-      "quote": "Brouwer supplied the fact the width argument quietly leans on: a continuous injective map from an open subset of $\\mathbb{R}^n$ into $\\mathbb{R}^n$ is open, so it cannot lower dimension or squash a neighbourhood to a point (\\cite[Brouwer, 1911]{brouwer1911invariance}).",
+      "quote": "Two cautions carry all the weight of what follows.",
+      "block_id": "topology-block-15",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-33",
-      "quote": "A singular weight matrix is exactly that forbidden collapse.",
+      "quote": "First, the **width must be full**: if onto a lower-dimensional set* and information is destroyed — that is the one moment a \"smooth\" layer can actually crush data.",
+      "block_id": "topology-block-15",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-34",
-      "quote": "A feed-forward layer computes $\\mathbf{h} = \\underbrace{\\Phi}_{\\text{pointwise activation}}(\\underbrace{W\\,\\mathbf{x}}_{\\text{linear map}} + \\underbrace{\\mathbf{b}}_{\\text{shift}})$: a linear",
+      "quote": "Second, the activation must genuinely be invertible.",
+      "block_id": "topology-block-15",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-35",
-      "quote": "map, a shift, then a pointwise activation.",
+      "quote": "difference is the whole distance between this chapter and the last one — a ReLU layer is free to *fold*, a tanh layer is not.",
+      "block_id": "topology-block-15",
       "section": "Stretch, Squish — but Never Cut",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-36",
-      "quote": "Olah's claim is that — with $N$ inputs and",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "Now the consequence that makes this more than a curiosity.",
+      "block_id": "topology-block-17",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-37",
-      "quote": "$N$ outputs — this is a **homeomorphism onto its image** whenever $W$ is non-singular and the activation is strictly monotone.",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "Take the **\"2-D egg\"**: one it.",
+      "block_id": "topology-block-17",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-38",
-      "quote": "\"three homeomorphisms glued together\":",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "This is the same shape the origami chapter opened with, and the same honest first question: *can a single flat line separate the two?* No — try dragging one and you'll see it plateaus, no matter how you aim it.",
+      "block_id": "topology-block-17",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-39",
-      "quote": "**$\\mathbf{x} \\mapsto W\\,\\mathbf{x}$.** If $\\det W \\neq 0$ then $W$ is invertible, with",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "But the homeomorphism argument goes much deeper than \"a line won't do it\".",
+      "block_id": "topology-block-18",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-40",
-      "quote": "A linear map and its inverse are both continuous, so this is a",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "> **Claim.** Let the inner class be a disk $\\underbrace{A}_{\\text{inner disk}} = \\{x : \\|x\\| < \\tfrac13\\}$ and the outer > class a ring $\\underbrace{B}_{\\text{outer ring}} = \\{x : \\tfrac23 < \\|x\\| < 1\\}$.",
+      "block_id": "topology-block-19",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-41",
-      "quote": "homeomorphism (\\cite[Morris, Topology Without Tears, Ch.",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "No network of width $\\le 2$ with smooth > a single layer does it.",
+      "block_id": "topology-block-19",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-42",
-      "quote": "95]{morris2007topology}).",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "The intuition is the homeomorphism again.",
+      "block_id": "topology-block-20",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-43",
-      "quote": "(A non-singular matrix is exactly a change of basis — a reversible",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "Every width-2 layer either preserves the shape (the disk is still *surrounded* by the ring, and no straight line separates a region from onto a line — at which moment points of the disk and the ring are squashed on top of each other and can no longer be told apart.",
+      "block_id": "topology-block-20",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-44",
-      "quote": "stretch-and-rotate of the whole space.)",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "There is no width-2 move that escapes the enclosure.",
+      "block_id": "topology-block-20",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-45",
-      "quote": "**$\\mathbf{u} \\mapsto \\mathbf{u} + \\mathbf{b}$.** A translation.",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "Give the network a third hidden unit and the enclosure breaks: the layer lifts the disk plane now separates them cleanly.",
+      "block_id": "topology-block-21",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-46",
-      "quote": "**$\\mathbf{z} \\mapsto \\Phi(\\mathbf{z})$ applied coordinate-wise.** tanh, sigmoid and",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "Width — not depth — is the resource that unlocks the problem.",
+      "block_id": "topology-block-21",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-47",
-      "quote": "softplus are continuous *and* have continuous inverses, so each is a homeomorphism of",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "This is a genuine **topological lower bound** on the width of a network, and it is the first time a topological property of the *data* has produced a hard statement about the",
+      "block_id": "topology-block-21",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-48",
-      "quote": "the line **onto its image** (tanh lands in $(-1,1)$, sigmoid in $(0,1)$, softplus in",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "In the demo below, train a 2-layer tanh net on the egg with **two** hidden units and watch it flounder at a ceiling well short of 100%.",
+      "block_id": "topology-block-22",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-49",
-      "quote": "Applied to each coordinate independently, it is a homeomorphism of",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "Then switch to **three** and watch the same network suddenly succeed.",
+      "block_id": "topology-block-22",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-50",
-      "quote": "$\\mathbb{R}^N$ onto an open box — enough for the argument below.",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "Nothing about the depth, the optimizer, or the data changed — only the width, and only because a third dimension let the disk escape the ring.",
+      "block_id": "topology-block-22",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-51",
-      "quote": "A composition of homeomorphisms is a homeomorphism — as \\cite[Morris shows in Topology Without Tears (Ch.",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "Topological lower bound: the egg needs a third unit A 2-layer tanh network trained live on the 2-D egg.",
+      "block_id": "topology-block-23",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-52",
-      "quote": "76)]{morris2007topology} — so the layer is one.",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "The coloured background is the network's own decision grid, painted fine over the plane.",
+      "block_id": "topology-block-23",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-53",
-      "quote": "stack of them.** $\\blacksquare$",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "Set the width to 2 and train — it plateaus.",
+      "block_id": "topology-block-23",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-54",
-      "quote": "Two cautions carry all the weight of what follows.",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "Set it to 3 and train — the disk pops out of the ring.",
+      "block_id": "topology-block-23",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-55",
-      "quote": "First, the **width must be full**: if",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "2 units (doomed) 3 units (escapes)",
+      "block_id": "topology-block-25",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-56",
-      "quote": "$W$ is singular (more inputs than outputs, or dependent columns) the map *folds the space",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "▶ Train ↺ Reset data & weights",
+      "block_id": "topology-block-26",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-57",
-      "quote": "onto a lower-dimensional set* and information is destroyed — that is the one moment a",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "Inner disk (class 0) Outer ring (class 1)",
+      "block_id": "topology-block-27",
+      "section": "A Straight Line Has a Topology Problem",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-58",
-      "quote": "\"smooth\" layer can actually crush data.",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "Strip the picture down to a single number and the mechanism becomes impossible to miss.",
+      "block_id": "topology-block-30",
+      "section": "The One-Dimensional Egg",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-59",
-      "quote": "Second, the activation must genuinely be invertible.",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "A single neuron's activation is **monotone**; its decision boundary is a single threshold, so it can carve out *one interval* — never the middle-with-ends-outside pattern the task demands.",
+      "block_id": "topology-block-31",
+      "section": "The One-Dimensional Egg",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-60",
-      "quote": "**ReLU is not**: $\\max(0, x)$ flattens its entire negative half onto $0$.",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "One hidden unit is topologically doomed, for exactly the same reason the width-2 egg was.",
+      "block_id": "topology-block-31",
+      "section": "The One-Dimensional Egg",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-61",
-      "quote": "difference is the whole distance between this chapter and the last one — a ReLU layer is",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "dimension while the two ends stay *down* — a curve in 2-D that a flat line now separates easily.",
+      "block_id": "topology-block-32",
+      "section": "The One-Dimensional Egg",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-62",
-      "quote": "free to *fold*, a tanh layer is not.",
-      "section": "Stretch, Squish — but Never Cut",
+      "quote": "Watch the representation below: with one unit the data stays a flat, inseparable line; with two, it bends into an arch.",
+      "block_id": "topology-block-32",
+      "section": "The One-Dimensional Egg",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-63",
-      "quote": "Now the consequence that makes this more than a curiosity.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "The 1-D egg: one unit can't, two units bend the line Left: the data on a line and the network's decision on it.",
+      "block_id": "topology-block-33",
+      "section": "The One-Dimensional Egg",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-64",
-      "quote": "Take the **\"2-D egg\"**: one",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "Right: the **hidden-layer representation** of the same data — the curve the network has sculpted.",
+      "block_id": "topology-block-33",
+      "section": "The One-Dimensional Egg",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-65",
-      "quote": "class is a solid **disk** in the middle, the other is a **ring** that completely surrounds",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "Set the width to 2 and train: the middle is lifted off the line into a second dimension, and the classes separate.",
+      "block_id": "topology-block-33",
+      "section": "The One-Dimensional Egg",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-66",
-      "quote": "This is the same shape the origami chapter opened with, and the same honest first",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "1 unit (doomed) 2 units (bends the line)",
+      "block_id": "topology-block-35",
+      "section": "The One-Dimensional Egg",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-67",
-      "quote": "question: *can a single flat line separate the two?* No — try dragging one and you'll see",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "The egg is a fixed puzzle; real data isn't.",
+      "block_id": "topology-block-38",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-68",
-      "quote": "it plateaus, no matter how you aim it.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "So let's do what \\citeauthor{karpathy2015convnetjs} invites you to do \\cite{karpathy2015convnetjs}: **make your own data** and watch a small network untangle it, live.",
+      "block_id": "topology-block-38",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-69",
-      "quote": "But the homeomorphism argument goes much deeper than \"a line won't do it\".",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "Click to drop a **red** point, Shift -click a **green** one, and Ctrl -click (or right-click) to remove the nearest point.",
+      "block_id": "topology-block-39",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-70",
-      "quote": "**2-wide** smooth, strictly monotone network — *any number of layers* — **cannot solve the egg at all**.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "A two-layer net trains in the background every few hundredths of a second, and its decision is painted across the plane in real time.",
+      "block_id": "topology-block-39",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-71",
-      "quote": "> **Claim.** Let the inner class be a disk $\\underbrace{A}_{\\text{inner disk}} = \\{x : \\|x\\| < \\tfrac13\\}$ and the outer",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "The payoff is the **second canvas**.",
+      "block_id": "topology-block-40",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-72",
-      "quote": "> class a ring $\\underbrace{B}_{\\text{outer ring}} = \\{x : \\tfrac23 < \\|x\\| < 1\\}$.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "It shows the data *after* the first layer — every point expressed in the coordinates of two hidden neurons at a time (cycle through the pairs).",
+      "block_id": "topology-block-40",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-73",
-      "quote": "No network of width $\\le 2$ with smooth",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "At the start the two colours are hopelessly intermixed.",
+      "block_id": "topology-block-40",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-74",
-      "quote": "> activations, **at any depth**, can separate $A$ from $B$.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "As training runs you watch them **drift apart** until a flat line between them exists.",
+      "block_id": "topology-block-40",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-75",
-      "quote": "Add a **third** hidden unit and",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "That drifting-apart *is* the network learning; the hidden layer is slowly, continuously pulling the two manifolds apart in the direction the third dimension allows.",
+      "block_id": "topology-block-40",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-76",
-      "quote": "> a single layer does it.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "Build your own 2-D data — watch it become linearly separable",
+      "block_id": "topology-block-41",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-77",
-      "quote": "The intuition is the homeomorphism again.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "Click = red point · Shift + click = green point · Ctrl / right-click = remove nearest.",
+      "block_id": "topology-block-42",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-78",
-      "quote": "Every width-2 layer either preserves the shape",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "The net trains continuously.",
+      "block_id": "topology-block-42",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-79",
-      "quote": "(the disk is still *surrounded* by the ring, and no straight line separates a region from",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "The right panel is the live hidden representation (cycling neuron pairs).",
+      "block_id": "topology-block-42",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-80",
-      "quote": "the ring that encloses it) or, if some layer's $W$ is singular, it *collapses* the data",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "⇄ Cycle neurons ⏸ Pause ↺ Reset",
+      "block_id": "topology-block-46",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-81",
-      "quote": "onto a line — at which moment points of the disk and the ring are squashed on top of each",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "Noether's 1925 observation turned Betti numbers into homology groups, and that shift is what makes the shape of data computable (\\cite[McLarty, 2006]{mclarty2006noether}).",
+      "block_id": "topology-block-47",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-82",
-      "quote": "other and can no longer be told apart.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "Once holes are group elements, they can be tracked across a growing radius: Edelsbrunner, Letscher and Zomorodian's persistence algorithm records when each hole is born and when it dies (\\cite[Edelsbrunner et al., 2002]{edelsbrunner2002persistent}), and Zomorodian and Carlsson gave the efficient algebraic formulation (\\cite[Zomorodian & Carlsson, 2005]{zomorodian2005}).",
+      "block_id": "topology-block-47",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-83",
-      "quote": "There is no width-2 move that escapes the enclosure.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "The output is a barcode — a summary of which loops are robust structure and which are noise.",
+      "block_id": "topology-block-47",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-84",
-      "quote": "**The only way out is sideways into a new dimension.**",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "[Geometry III](geometry_iii) develops the algebra; here it is the bridge from \"the data is knotted\" to a measurable claim.",
+      "block_id": "topology-block-47",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-85",
-      "quote": "Give the network a third hidden unit and the enclosure breaks: the layer lifts the disk",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "The egg is a *surrounding*; a nastier tangle is a *link* — two rings threaded through each other like a chain, which you cannot pull apart without cutting.",
+      "block_id": "topology-block-48",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-86",
-      "quote": "*up* along that third axis into a little tent while the ring lies flat, and one horizontal",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "Colah's point is that a network classifying such data is, in the language of knot theory, performing an **ambient isotopy**: a *continuous family of homeomorphisms* that deforms one configuration into the separated one, the data moving smoothly and never tearing.",
+      "block_id": "topology-block-48",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-87",
-      "quote": "plane now separates them cleanly.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "The continuous layer-by-layer visualization is not just a pretty animation — it is the isotopy itself, made visible.",
+      "block_id": "topology-block-48",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-88",
-      "quote": "Width — not depth — is the resource that unlocks the",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "And the dimension count returns with a vengeance: a single link of 1-D curves lives in 3-D price is, again, **extra dimensions** — the same currency the fold-and-cut story paid with.",
+      "block_id": "topology-block-49",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-89",
-      "quote": "This is a genuine **topological lower bound** on the width of a network, and it is",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "There is a trap worth naming, because it is the trap an optimizer actually falls into.",
+      "block_id": "topology-block-50",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-90",
-      "quote": "the first time a topological property of the *data* has produced a hard statement about the",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "Faced with an entangled pair of manifolds, the *genuinely* correct move is to pull them cleanly apart into a new dimension.",
+      "block_id": "topology-block-50",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-91",
-      "quote": "*architecture* that is needed to solve it.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "The *lazy* move is to leave the tangle in place and just **stretch the thin bits until they are near-singular** — pulling the boundary into an ever-thinner sliver that threads the gaps.",
+      "block_id": "topology-block-50",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-92",
-      "quote": "Morse theory gives the smooth counterpart of the fold.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "This can reach high training accuracy, so it presents itself as a tempting local minimum, with very high derivatives and sharp near-discontinuities exactly where the stretching happens.",
+      "block_id": "topology-block-50",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-93",
-      "quote": "For a smooth scalar function on a manifold, the topology of its sublevel sets changes only when the gradient vanishes, at a critical point (\\cite[Morse, 1929]{morse1929foundations}).",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "The tell is in the decision grid: instead of two clean regions, you get a boundary that snakes and thins to a hair.",
+      "block_id": "topology-block-51",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-94",
-      "quote": "A layer with invertible $W$ and an activation whose derivative is positive everywhere (tanh, sigmoid, softplus) has an invertible Jacobian everywhere, so it contributes no such critical point: it can move the data, but it cannot change its topology.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "The standard countermeasure is a **contractive penalty** — regularize the derivative of each layer so the network is charged for precisely this kind of near-singular stretching.",
+      "block_id": "topology-block-51",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-95",
-      "quote": "ReLU is different — its kink at zero is a whole critical locus, and that is where a fold can be born.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "It pushes training back toward the honest isotopy.",
+      "block_id": "topology-block-51",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-96",
-      "quote": "In the demo below, train a 2-layer tanh net on the egg with **two** hidden units and watch",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "(In the egg demo, a width-2 net that \"almost\" works by snaking a boundary is doing exactly this.)",
+      "block_id": "topology-block-51",
+      "section": "Now You Untangle It",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-97",
-      "quote": "it flounder at a ceiling well short of 100%.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "Step back and the two chapters fit together into one picture of *what a hidden layer is for*.",
+      "block_id": "topology-block-53",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-98",
-      "quote": "Then switch to **three** and watch the same",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "A layer is a change of coordinates.",
+      "block_id": "topology-block-54",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-99",
-      "quote": "network suddenly succeed.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "The final readout is a flat cut.",
+      "block_id": "topology-block-54",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-100",
-      "quote": "Nothing about the depth, the optimizer, or the data changed — only",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "The data starts out topologically knotted around itself, and the network's job is to carry it, layer by layer, to a place where one flat cut suffices.",
+      "block_id": "topology-block-54",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-101",
-      "quote": "the width, and only because a third dimension let the disk escape the ring.",
-      "section": "A Straight Line Has a Topology Problem",
+      "quote": "Two mechanisms do the carrying:",
+      "block_id": "topology-block-54",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-102",
-      "quote": "Strip the picture down to a single number and the mechanism becomes impossible to miss.",
-      "section": "The One-Dimensional Egg",
+      "quote": "can only **stretch and squish**.",
+      "block_id": "topology-block-55",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-103",
-      "quote": "Put one class on the middle of a line — $A = [-\\tfrac13, \\tfrac13]$ — and the other on the",
-      "section": "The One-Dimensional Egg",
+      "quote": "They cannot free a surrounded class on their own; they need a **spare dimension** (width) to do it.",
+      "block_id": "topology-block-55",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-104",
-      "quote": "two ends — $B = [-1, -\\tfrac23] \\cup [\\tfrac23, 1]$.",
-      "section": "The One-Dimensional Egg",
+      "quote": "Depth helps, but *width is what breaks the enclosure* \\cite{colah2014manifolds}.",
+      "block_id": "topology-block-55",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-105",
-      "quote": "A single neuron's activation is **monotone**; its decision boundary is a",
-      "section": "The One-Dimensional Egg",
+      "quote": "manufacture separability by creasing the data into unoccupied dimensions, layer after layer \\cite{keup2022origami}.",
+      "block_id": "topology-block-55",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-106",
-      "quote": "single threshold, so it can carve out *one interval* — never the middle-with-ends-outside",
-      "section": "The One-Dimensional Egg",
+      "quote": "So \"folding\" and \"topology\" are not two ideas; they are the *same* idea read from two directions.",
+      "block_id": "topology-block-56",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-107",
-      "quote": "pattern the task demands.",
-      "section": "The One-Dimensional Egg",
+      "quote": "A network must move data through space to make a flat cut work.",
+      "block_id": "topology-block-56",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-108",
-      "quote": "One hidden unit is topologically doomed, for exactly the same",
-      "section": "The One-Dimensional Egg",
+      "quote": "If the moves are homeomorphisms, topology dictates exactly how many extra dimensions the journey requires.",
+      "block_id": "topology-block-56",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-109",
-      "quote": "reason the width-2 egg was.",
-      "section": "The One-Dimensional Egg",
+      "quote": "If the moves are allowed to fold, the network spends those same dimensions as creases.",
+      "block_id": "topology-block-56",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-110",
-      "quote": "But **two** hidden units learn a lovely trick: one fires for \"$x > -\\tfrac12$\", the other",
-      "section": "The One-Dimensional Egg",
+      "quote": "The manifold hypothesis is an empirical claim, not a definition: natural data — images, sounds, word vectors — concentrates near a low-dimensional manifold inside its high-dimensional ambient space.",
+      "block_id": "topology-block-57",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-111",
-      "quote": "Stacked, they lift the middle of the line *up* into a second",
-      "section": "The One-Dimensional Egg",
+      "quote": "Fefferman, Mitter and Narayanan give statistical tests for estimating a manifold's dimension and reach from finite samples (\\cite[Fefferman et al., 2016]{fefferman2016testing}).",
+      "block_id": "topology-block-57",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-112",
-      "quote": "dimension while the two ends stay *down* — a curve in 2-D that a flat line now separates",
-      "section": "The One-Dimensional Egg",
+      "quote": "That matters here because the width argument is only as good as the premise: if the data were truly high-dimensional, there would be no low-dimensional tangle to separate.",
+      "block_id": "topology-block-57",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-113",
-      "quote": "Watch the representation below: with one unit the data stays a flat, inseparable",
-      "section": "The One-Dimensional Egg",
+      "quote": "This is the **manifold hypothesis** made mechanical \\cite{fefferman2016testing}: natural data sits on low-dimensional manifolds, and classification is the business of **separating tangled manifolds**.",
+      "block_id": "topology-block-58",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-114",
-      "quote": "line; with two, it bends into an arch.",
-      "section": "The One-Dimensional Egg",
+      "quote": "The theorem you can take away is a clean one —",
+      "block_id": "topology-block-58",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-115",
-      "quote": "The egg is a fixed puzzle; real data isn't.",
-      "section": "Now You Untangle It",
+      "quote": "> For smooth, strictly monotone layers, a network's reach is bounded by its **width**: > depth can move the data, but it cannot change its topology.",
+      "block_id": "topology-block-59",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-116",
-      "quote": "So let's do what \\citeauthor{karpathy2015convnetjs}",
-      "section": "Now You Untangle It",
+      "quote": "To un-knot the data, the > network must be allowed to think in *more dimensions than the data itself has*.",
+      "block_id": "topology-block-59",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-117",
-      "quote": "invites you to do \\cite{karpathy2015convnetjs}: **make your own data** and watch a small",
-      "section": "Now You Untangle It",
+      "quote": "The topology program has produced results about networks, not only metaphors.",
+      "block_id": "topology-block-60",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-118",
-      "quote": "network untangle it, live.",
-      "section": "Now You Untangle It",
+      "quote": "Olah's original argument is the smooth-layer case: with full width and a strictly monotone activation, every layer is a homeomorphism onto its image, so a width-two stack can never separate a disk from a surrounding ring (\\cite[Olah, 2014]{colah2014manifolds}).",
+      "block_id": "topology-block-60",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-119",
-      "quote": "Click to drop a **red** point, Shift -click a **green** one, and",
-      "section": "Now You Untangle It",
+      "quote": "The barrier is not about depth: adding layers cannot buy a dimension.",
+      "block_id": "topology-block-60",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-120",
-      "quote": "Ctrl -click (or right-click) to remove the nearest point.",
-      "section": "Now You Untangle It",
+      "quote": "What buys it is width, or a non-injective activation such as ReLU, whose folds are the subject of the [Origami chapter](origami) (\\cite[Keup & Helias, 2022]{keup2022origami}).",
+      "block_id": "topology-block-60",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-121",
-      "quote": "in the background every few hundredths of a second, and its decision is painted across the",
-      "section": "Now You Untangle It",
+      "quote": "Neural persistence carries the same tools into trained networks (\\cite[Rieck et al., 2019]{riek2019neural}).",
+      "block_id": "topology-block-60",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-122",
-      "quote": "The payoff is the **second canvas**.",
-      "section": "Now You Untangle It",
+      "quote": "That is the geometry of thought: not a set of numbers to memorize, but a shape to be untangled, one reversible stretch (or one well-placed fold) at a time.",
+      "block_id": "topology-block-61",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-123",
-      "quote": "It shows the data *after* the first layer — every point",
-      "section": "Now You Untangle It",
+      "quote": "non-homeomorphic escape hatch, with the poker-hand experiment as the causal proof.",
+      "block_id": "topology-block-62",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-124",
-      "quote": "expressed in the coordinates of two hidden neurons at a time (cycle through the pairs).",
-      "section": "Now You Untangle It",
+      "quote": "chapter gives a *topological* reason for.",
+      "block_id": "topology-block-62",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-125",
-      "quote": "the start the two colours are hopelessly intermixed.",
-      "section": "Now You Untangle It",
+      "quote": "dimensional void\" geometry, applied to language.",
+      "block_id": "topology-block-62",
+      "section": "The Geometry of Thought",
       "kind": "statement"
     },
     {
       "id": "topology-stmt-126",
-      "quote": "As training runs you watch them **drift",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-127",
-      "quote": "apart** until a flat line between them exists.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-128",
-      "quote": "That drifting-apart *is* the network",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-129",
-      "quote": "learning; the hidden layer is slowly, continuously pulling the two manifolds apart in the",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-130",
-      "quote": "direction the third dimension allows.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-131",
-      "quote": "Noether's 1925 observation turned Betti numbers into homology groups, and that shift is what makes the shape of data computable (\\cite[McLarty, 2006]{mclarty2006noether}).",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-132",
-      "quote": "Once holes are group elements, they can be tracked across a growing radius: Edelsbrunner, Letscher and Zomorodian's persistence algorithm records when each hole is born and when it dies (\\cite[Edelsbrunner et al., 2002]{edelsbrunner2002persistent}), and Zomorodian and Carlsson gave the efficient algebraic formulation (\\cite[Zomorodian & Carlsson, 2005]{zomorodian2005}).",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-133",
-      "quote": "The output is a barcode — a summary of which loops are robust structure and which are noise.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-134",
-      "quote": "[Geometry III](geometry_iii) develops the algebra; here it is the bridge from \"the data is knotted\" to a measurable claim.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-135",
-      "quote": "The egg is a *surrounding*; a nastier tangle is a *link* — two rings threaded through each",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-136",
-      "quote": "other like a chain, which you cannot pull apart without cutting.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-137",
-      "quote": "network classifying such data is, in the language of knot theory, performing an **ambient",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-138",
-      "quote": "isotopy**: a *continuous family of homeomorphisms* that deforms one configuration into the",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-139",
-      "quote": "separated one, the data moving smoothly and never tearing.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-140",
-      "quote": "The continuous layer-by-layer",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-141",
-      "quote": "visualization is not just a pretty animation — it is the isotopy itself, made visible.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-142",
-      "quote": "And the dimension count returns with a vengeance: a single link of 1-D curves lives in 3-D",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-143",
-      "quote": "but can only be *pulled apart* in 4-D.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-144",
-      "quote": "In general, an $n$-dimensional manifold may need up to",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-145",
-      "quote": "$2n + 2$ dimensions to untangle.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-146",
-      "quote": "Topology keeps handing the network a price tag, and the",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-147",
-      "quote": "price is, again, **extra dimensions** — the same currency the fold-and-cut story paid with.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-148",
-      "quote": "There is a trap worth naming, because it is the trap an optimizer actually falls into.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-149",
-      "quote": "Faced with an entangled pair of manifolds, the *genuinely* correct move is to pull them",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-150",
-      "quote": "cleanly apart into a new dimension.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-151",
-      "quote": "The *lazy* move is to leave the tangle in place and",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-152",
-      "quote": "just **stretch the thin bits until they are near-singular** — pulling the boundary into an",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-153",
-      "quote": "ever-thinner sliver that threads the gaps.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-154",
-      "quote": "This can reach high training accuracy, so it",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-155",
-      "quote": "presents itself as a tempting local minimum, with very high derivatives and sharp",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-156",
-      "quote": "near-discontinuities exactly where the stretching happens.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-157",
-      "quote": "The tell is in the decision grid: instead of two clean regions, you get a boundary that",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-158",
-      "quote": "snakes and thins to a hair.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-159",
-      "quote": "The standard countermeasure is a **contractive penalty** —",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-160",
-      "quote": "regularize the derivative of each layer so the network is charged for precisely this kind of",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-161",
-      "quote": "near-singular stretching.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-162",
-      "quote": "It pushes training back toward the honest isotopy.",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-163",
-      "quote": "demo, a width-2 net that \"almost\" works by snaking a boundary is doing exactly this.)",
-      "section": "Now You Untangle It",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-164",
-      "quote": "Step back and the two chapters fit together into one picture of *what a hidden layer is for*.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-165",
-      "quote": "A layer is a change of coordinates.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-166",
-      "quote": "The final readout is a flat cut.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-167",
-      "quote": "topologically knotted around itself, and the network's job is to carry it, layer by layer,",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-168",
-      "quote": "to a place where one flat cut suffices.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-169",
-      "quote": "Two mechanisms do the carrying:",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-170",
-      "quote": "* **Smooth (tanh / sigmoid) layers** are *homeomorphisms* — they preserve topology, so they",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-171",
-      "quote": "can only **stretch and squish**.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-172",
-      "quote": "They cannot free a surrounded class on their own; they",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-173",
-      "quote": "need a **spare dimension** (width) to do it.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-174",
-      "quote": "Depth helps, but *width is what breaks the",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-175",
-      "quote": "enclosure* \\cite{colah2014manifolds}.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-176",
-      "quote": "* **ReLU layers** are *not* homeomorphisms — they **fold**.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-177",
-      "quote": "That single freedom lets them",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-178",
-      "quote": "manufacture separability by creasing the data into unoccupied dimensions, layer after",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-179",
-      "quote": "layer \\cite{keup2022origami}.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-180",
-      "quote": "So \"folding\" and \"topology\" are not two ideas; they are the *same* idea read from two",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-181",
-      "quote": "A network must move data through space to make a flat cut work.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-182",
-      "quote": "are homeomorphisms, topology dictates exactly how many extra dimensions the journey requires.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-183",
-      "quote": "If the moves are allowed to fold, the network spends those same dimensions as creases.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-184",
-      "quote": "The manifold hypothesis is an empirical claim, not a definition: natural data — images, sounds, word vectors — concentrates near a low-dimensional manifold inside its high-dimensional ambient space.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-185",
-      "quote": "Fefferman, Mitter and Narayanan give statistical tests for estimating a manifold's dimension and reach from finite samples (\\cite[Fefferman et al., 2016]{fefferman2016testing}).",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-186",
-      "quote": "That matters here because the width argument is only as good as the premise: if the data were truly high-dimensional, there would be no low-dimensional tangle to separate.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-187",
-      "quote": "This is the **manifold hypothesis** made mechanical \\cite{fefferman2016testing}: natural data sits",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-188",
-      "quote": "on low-dimensional manifolds, and classification is the business of **separating tangled",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-189",
-      "quote": "The theorem you can take away is a clean one —",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-190",
-      "quote": "> For smooth, strictly monotone layers, a network's reach is bounded by its **width**:",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-191",
-      "quote": "> depth can move the data, but it cannot change its topology.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-192",
-      "quote": "> network must be allowed to think in *more dimensions than the data itself has*.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-193",
-      "quote": "The topology program has produced results about networks, not only metaphors.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-194",
-      "quote": "Olah's original argument is the smooth-layer case: with full width and a strictly monotone activation, every layer is a homeomorphism onto its image, so a width-two stack can never separate a disk from a surrounding ring (\\cite[Olah, 2014]{colah2014manifolds}).",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-195",
-      "quote": "The barrier is not about depth: adding layers cannot buy a dimension.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-196",
-      "quote": "What buys it is width, or a non-injective activation such as ReLU, whose folds are the subject of the [Origami chapter](origami) (\\cite[Keup & Helias, 2022]{keup2022origami}).",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-197",
-      "quote": "Neural persistence carries the same tools into trained networks (\\cite[Rieck et al., 2019]{riek2019neural}).",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-198",
-      "quote": "That is the geometry of thought: not a set of numbers to memorize, but a shape to be",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-199",
-      "quote": "untangled, one reversible stretch (or one well-placed fold) at a time.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-200",
-      "quote": "* **Origami in N Dimensions** — the ReLU side of the same coin: folding as the",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-201",
-      "quote": "non-homeomorphic escape hatch, with the poker-hand experiment as the causal proof.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-202",
-      "quote": "* **Deep Learning** — the composition view and the Universal Approximation Theorem this",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-203",
-      "quote": "chapter gives a *topological* reason for.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-204",
-      "quote": "* **Basic Math III** — the manifold hypothesis and why intrinsic dimension is low.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-205",
-      "quote": "* **The foam of meaning** — the same \"data lives on a low-dimensional structure in a high-",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-206",
-      "quote": "dimensional void\" geometry, applied to language.",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-207",
-      "quote": "* **Mechanistic Interpretability** — the \"easy way out\" (thin, high-derivative boundaries)",
-      "section": "The Geometry of Thought",
-      "kind": "statement"
-    },
-    {
-      "id": "topology-stmt-208",
       "quote": "is the same pathology interpretability research keeps hunting in trained nets.",
+      "block_id": "topology-block-62",
       "section": "The Geometry of Thought",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "topology-block-1",
+      "quote": "The constraint: what a layer cannot do",
+      "kind": "heading",
+      "section": "The constraint: what a layer cannot do"
+    },
+    {
+      "id": "topology-block-2",
+      "quote": "Stretch, Squish — but Never Cut",
+      "kind": "heading",
+      "section": "Stretch, Squish — but Never Cut"
+    },
+    {
+      "id": "topology-block-3",
+      "quote": "In the [Origami chapter](origami) we met feed-forward networks as **paper folders**: a ReLU layer is a hammer-blow that creases the data into a spare, higher dimension, and depth is a cascade of such creases \\cite{keup2022origami}. That story is about *what a layer can do when the activation is allowed to crush*. There is a second, cleaner story, and it starts the activation is smooth and monotone — a tanh or a sigmoid rather than a ReLU — what can a layer do to the data, and what is it forbidden from doing?",
+      "kind": "paragraph",
+      "section": "Stretch, Squish — but Never Cut"
+    },
+    {
+      "id": "topology-block-4",
+      "quote": "The answer is beautifully restrictive, and it is the whole reason the word *topology* appears in a story about neural networks.",
+      "kind": "paragraph",
+      "section": "Stretch, Squish — but Never Cut"
+    },
+    {
+      "id": "topology-block-5",
+      "quote": "Topology began with a puzzle about a city. In 1736 Euler proved that the seven bridges of Königsberg cannot be crossed once each, and he did it by throwing away distance and angle and keeping only which land mass connects to which (\\cite[Euler, 1736]{eulerbridges}). The paper's title calls the subject *geometria situs*, the geometry of position. That is exactly the move a smooth layer makes: it may stretch the plane, but it cannot change which region surrounds which. [Geometry III](geometry_iii) tells the full history; here the point is narrower — the invariant that survives a homeomorphism is precisely what a linear readout cannot repair.",
+      "kind": "paragraph",
+      "section": "Stretch, Squish — but Never Cut"
+    },
+    {
+      "id": "topology-block-6",
+      "quote": "Start with the simplest setting. A network with only a handful of neurons per layer is data move. Each layer emits a **representation** — the data re-expressed in the coordinates of that layer's neurons. The very last layer is just a **linear readout**: it draws a single flat hyperplane (a line in 2-D) and calls one side \"class 0\" and the other \"class 1\". So the entire job of every hidden layer is to *reshape the data until that final flat cut succeeds*.",
+      "kind": "paragraph",
+      "section": "Stretch, Squish — but Never Cut"
+    },
+    {
+      "id": "topology-block-7",
+      "quote": "And here is the surprise. With a **smooth, strictly monotone** activation, each layer is a cut, tear, or fold** it. It preserves every topological property — a loop stays a loop, a region that surrounds another still surrounds it, connected things stay connected (\\cite[Morris, Topology Without Tears, Ch. 4, p. 89]{morris2007topology}).",
+      "kind": "paragraph",
+      "section": "Stretch, Squish — but Never Cut"
+    },
+    {
+      "id": "topology-block-8",
+      "quote": "Poincaré gave the question its modern form in *Analysis Situs* (1895): two spaces are the same when a homeomorphism carries one to the other, and the fundamental group records the loops no such map can remove (\\cite[Poincaré, 1895]{poincareanalysissitus}). Brouwer supplied the fact the width argument quietly leans on: a continuous injective map from an open subset of $\\mathbb{R}^n$ into $\\mathbb{R}^n$ is open, so it cannot lower dimension or squash a neighbourhood to a point (\\cite[Brouwer, 1911]{brouwer1911invariance}). A singular weight matrix is exactly that forbidden collapse.",
+      "kind": "paragraph",
+      "section": "Stretch, Squish — but Never Cut"
+    },
+    {
+      "id": "topology-block-9",
+      "quote": "A feed-forward layer computes $\\mathbf{h} = \\underbrace{\\Phi}_{\\text{pointwise activation}}(\\underbrace{W\\,\\mathbf{x}}_{\\text{linear map}} + \\underbrace{\\mathbf{b}}_{\\text{shift}})$: a linear \"three homeomorphisms glued together\":",
+      "kind": "paragraph",
+      "section": "Stretch, Squish — but Never Cut"
+    },
+    {
+      "id": "topology-block-10",
+      "quote": "homeomorphism (\\cite[Morris, Topology Without Tears, Ch. 5, p. 95]{morris2007topology}). (A non-singular matrix is exactly a change of basis — a reversible stretch-and-rotate of the whole space.)",
+      "kind": "paragraph",
+      "section": "Stretch, Squish — but Never Cut"
+    },
+    {
+      "id": "topology-block-11",
+      "quote": "2. **$\\mathbf{u} \\mapsto \\mathbf{u} + \\mathbf{b}$.** A translation. Its inverse subtracts",
+      "kind": "list-item",
+      "section": "Stretch, Squish — but Never Cut"
+    },
+    {
+      "id": "topology-block-12",
+      "quote": "3. **$\\mathbf{z} \\mapsto \\Phi(\\mathbf{z})$ applied coordinate-wise.** tanh, sigmoid and",
+      "kind": "list-item",
+      "section": "Stretch, Squish — but Never Cut"
+    },
+    {
+      "id": "topology-block-13",
+      "quote": "softplus are continuous *and* have continuous inverses, so each is a homeomorphism of the line **onto its image** (tanh lands in $(-1,1)$, sigmoid in $(0,1)$, softplus in",
+      "kind": "paragraph",
+      "section": "Stretch, Squish — but Never Cut"
+    },
+    {
+      "id": "topology-block-14",
+      "quote": "A composition of homeomorphisms is a homeomorphism — as \\cite[Morris shows in Topology Without Tears (Ch. 4, p. 76)]{morris2007topology} — so the layer is one. **And so is any stack of them.** $\\blacksquare$",
+      "kind": "paragraph",
+      "section": "Stretch, Squish — but Never Cut"
+    },
+    {
+      "id": "topology-block-15",
+      "quote": "Two cautions carry all the weight of what follows. First, the **width must be full**: if onto a lower-dimensional set* and information is destroyed — that is the one moment a \"smooth\" layer can actually crush data. Second, the activation must genuinely be invertible. difference is the whole distance between this chapter and the last one — a ReLU layer is free to *fold*, a tanh layer is not.",
+      "kind": "paragraph",
+      "section": "Stretch, Squish — but Never Cut"
+    },
+    {
+      "id": "topology-block-16",
+      "quote": "A Straight Line Has a Topology Problem",
+      "kind": "heading",
+      "section": "A Straight Line Has a Topology Problem"
+    },
+    {
+      "id": "topology-block-17",
+      "quote": "Now the consequence that makes this more than a curiosity. Take the **\"2-D egg\"**: one it. This is the same shape the origami chapter opened with, and the same honest first question: *can a single flat line separate the two?* No — try dragging one and you'll see it plateaus, no matter how you aim it.",
+      "kind": "paragraph",
+      "section": "A Straight Line Has a Topology Problem"
+    },
+    {
+      "id": "topology-block-18",
+      "quote": "But the homeomorphism argument goes much deeper than \"a line won't do it\". It says a",
+      "kind": "paragraph",
+      "section": "A Straight Line Has a Topology Problem"
+    },
+    {
+      "id": "topology-block-19",
+      "quote": "> **Claim.** Let the inner class be a disk $\\underbrace{A}_{\\text{inner disk}} = \\{x : \\|x\\| < \\tfrac13\\}$ and the outer > class a ring $\\underbrace{B}_{\\text{outer ring}} = \\{x : \\tfrac23 < \\|x\\| < 1\\}$. No network of width $\\le 2$ with smooth > a single layer does it.",
+      "kind": "paragraph",
+      "section": "A Straight Line Has a Topology Problem"
+    },
+    {
+      "id": "topology-block-20",
+      "quote": "The intuition is the homeomorphism again. Every width-2 layer either preserves the shape (the disk is still *surrounded* by the ring, and no straight line separates a region from onto a line — at which moment points of the disk and the ring are squashed on top of each other and can no longer be told apart. There is no width-2 move that escapes the enclosure.",
+      "kind": "paragraph",
+      "section": "A Straight Line Has a Topology Problem"
+    },
+    {
+      "id": "topology-block-21",
+      "quote": "Give the network a third hidden unit and the enclosure breaks: the layer lifts the disk plane now separates them cleanly. Width — not depth — is the resource that unlocks the problem. This is a genuine **topological lower bound** on the width of a network, and it is the first time a topological property of the *data* has produced a hard statement about the",
+      "kind": "paragraph",
+      "section": "A Straight Line Has a Topology Problem"
+    },
+    {
+      "id": "topology-block-22",
+      "quote": "In the demo below, train a 2-layer tanh net on the egg with **two** hidden units and watch it flounder at a ceiling well short of 100%. Then switch to **three** and watch the same network suddenly succeed. Nothing about the depth, the optimizer, or the data changed — only the width, and only because a third dimension let the disk escape the ring.",
+      "kind": "paragraph",
+      "section": "A Straight Line Has a Topology Problem"
+    },
+    {
+      "id": "topology-block-23",
+      "quote": "Topological lower bound: the egg needs a third unit A 2-layer tanh network trained live on the 2-D egg. The coloured background is the network's own decision grid, painted fine over the plane. Set the width to 2 and train — it plateaus. Set it to 3 and train — the disk pops out of the ring.",
+      "kind": "paragraph",
+      "section": "A Straight Line Has a Topology Problem"
+    },
+    {
+      "id": "topology-block-24",
+      "quote": "Hidden units (width)",
+      "kind": "paragraph",
+      "section": "A Straight Line Has a Topology Problem"
+    },
+    {
+      "id": "topology-block-25",
+      "quote": "2 units (doomed) 3 units (escapes)",
+      "kind": "paragraph",
+      "section": "A Straight Line Has a Topology Problem"
+    },
+    {
+      "id": "topology-block-26",
+      "quote": "▶ Train ↺ Reset data & weights",
+      "kind": "paragraph",
+      "section": "A Straight Line Has a Topology Problem"
+    },
+    {
+      "id": "topology-block-27",
+      "quote": "Inner disk (class 0) Outer ring (class 1)",
+      "kind": "paragraph",
+      "section": "A Straight Line Has a Topology Problem"
+    },
+    {
+      "id": "topology-block-28",
+      "quote": "The demonstration: untangling by hand",
+      "kind": "heading",
+      "section": "The demonstration: untangling by hand"
+    },
+    {
+      "id": "topology-block-29",
+      "quote": "The One-Dimensional Egg",
+      "kind": "heading",
+      "section": "The One-Dimensional Egg"
+    },
+    {
+      "id": "topology-block-30",
+      "quote": "Strip the picture down to a single number and the mechanism becomes impossible to miss.",
+      "kind": "paragraph",
+      "section": "The One-Dimensional Egg"
+    },
+    {
+      "id": "topology-block-31",
+      "quote": "A single neuron's activation is **monotone**; its decision boundary is a single threshold, so it can carve out *one interval* — never the middle-with-ends-outside pattern the task demands. One hidden unit is topologically doomed, for exactly the same reason the width-2 egg was.",
+      "kind": "paragraph",
+      "section": "The One-Dimensional Egg"
+    },
+    {
+      "id": "topology-block-32",
+      "quote": "dimension while the two ends stay *down* — a curve in 2-D that a flat line now separates easily. Watch the representation below: with one unit the data stays a flat, inseparable line; with two, it bends into an arch.",
+      "kind": "paragraph",
+      "section": "The One-Dimensional Egg"
+    },
+    {
+      "id": "topology-block-33",
+      "quote": "The 1-D egg: one unit can't, two units bend the line Left: the data on a line and the network's decision on it. Right: the **hidden-layer representation** of the same data — the curve the network has sculpted. Set the width to 2 and train: the middle is lifted off the line into a second dimension, and the classes separate.",
+      "kind": "paragraph",
+      "section": "The One-Dimensional Egg"
+    },
+    {
+      "id": "topology-block-34",
+      "quote": "Hidden units",
+      "kind": "paragraph",
+      "section": "The One-Dimensional Egg"
+    },
+    {
+      "id": "topology-block-35",
+      "quote": "1 unit (doomed) 2 units (bends the line)",
+      "kind": "paragraph",
+      "section": "The One-Dimensional Egg"
+    },
+    {
+      "id": "topology-block-36",
+      "quote": "▶ Train ↺ Reset",
+      "kind": "paragraph",
+      "section": "The One-Dimensional Egg"
+    },
+    {
+      "id": "topology-block-37",
+      "quote": "Now You Untangle It",
+      "kind": "heading",
+      "section": "Now You Untangle It"
+    },
+    {
+      "id": "topology-block-38",
+      "quote": "The egg is a fixed puzzle; real data isn't. So let's do what \\citeauthor{karpathy2015convnetjs} invites you to do \\cite{karpathy2015convnetjs}: **make your own data** and watch a small network untangle it, live.",
+      "kind": "paragraph",
+      "section": "Now You Untangle It"
+    },
+    {
+      "id": "topology-block-39",
+      "quote": "Click to drop a **red** point, Shift -click a **green** one, and Ctrl -click (or right-click) to remove the nearest point. A two-layer net trains in the background every few hundredths of a second, and its decision is painted across the plane in real time.",
+      "kind": "paragraph",
+      "section": "Now You Untangle It"
+    },
+    {
+      "id": "topology-block-40",
+      "quote": "The payoff is the **second canvas**. It shows the data *after* the first layer — every point expressed in the coordinates of two hidden neurons at a time (cycle through the pairs). At the start the two colours are hopelessly intermixed. As training runs you watch them **drift apart** until a flat line between them exists. That drifting-apart *is* the network learning; the hidden layer is slowly, continuously pulling the two manifolds apart in the direction the third dimension allows.",
+      "kind": "paragraph",
+      "section": "Now You Untangle It"
+    },
+    {
+      "id": "topology-block-41",
+      "quote": "Build your own 2-D data — watch it become linearly separable",
+      "kind": "paragraph",
+      "section": "Now You Untangle It"
+    },
+    {
+      "id": "topology-block-42",
+      "quote": "Click = red point · Shift + click = green point · Ctrl / right-click = remove nearest. The net trains continuously. The right panel is the live hidden representation (cycling neuron pairs).",
+      "kind": "paragraph",
+      "section": "Now You Untangle It"
+    },
+    {
+      "id": "topology-block-43",
+      "quote": "2 4 6",
+      "kind": "paragraph",
+      "section": "Now You Untangle It"
+    },
+    {
+      "id": "topology-block-44",
+      "quote": "Activation",
+      "kind": "paragraph",
+      "section": "Now You Untangle It"
+    },
+    {
+      "id": "topology-block-45",
+      "quote": "tanh relu",
+      "kind": "paragraph",
+      "section": "Now You Untangle It"
+    },
+    {
+      "id": "topology-block-46",
+      "quote": "⇄ Cycle neurons ⏸ Pause ↺ Reset",
+      "kind": "paragraph",
+      "section": "Now You Untangle It"
+    },
+    {
+      "id": "topology-block-47",
+      "quote": "Noether's 1925 observation turned Betti numbers into homology groups, and that shift is what makes the shape of data computable (\\cite[McLarty, 2006]{mclarty2006noether}). Once holes are group elements, they can be tracked across a growing radius: Edelsbrunner, Letscher and Zomorodian's persistence algorithm records when each hole is born and when it dies (\\cite[Edelsbrunner et al., 2002]{edelsbrunner2002persistent}), and Zomorodian and Carlsson gave the efficient algebraic formulation (\\cite[Zomorodian & Carlsson, 2005]{zomorodian2005}). The output is a barcode — a summary of which loops are robust structure and which are noise. [Geometry III](geometry_iii) develops the algebra; here it is the bridge from \"the data is knotted\" to a measurable claim.",
+      "kind": "paragraph",
+      "section": "Now You Untangle It"
+    },
+    {
+      "id": "topology-block-48",
+      "quote": "The egg is a *surrounding*; a nastier tangle is a *link* — two rings threaded through each other like a chain, which you cannot pull apart without cutting. Colah's point is that a network classifying such data is, in the language of knot theory, performing an **ambient isotopy**: a *continuous family of homeomorphisms* that deforms one configuration into the separated one, the data moving smoothly and never tearing. The continuous layer-by-layer visualization is not just a pretty animation — it is the isotopy itself, made visible.",
+      "kind": "paragraph",
+      "section": "Now You Untangle It"
+    },
+    {
+      "id": "topology-block-49",
+      "quote": "And the dimension count returns with a vengeance: a single link of 1-D curves lives in 3-D price is, again, **extra dimensions** — the same currency the fold-and-cut story paid with.",
+      "kind": "paragraph",
+      "section": "Now You Untangle It"
+    },
+    {
+      "id": "topology-block-50",
+      "quote": "There is a trap worth naming, because it is the trap an optimizer actually falls into. Faced with an entangled pair of manifolds, the *genuinely* correct move is to pull them cleanly apart into a new dimension. The *lazy* move is to leave the tangle in place and just **stretch the thin bits until they are near-singular** — pulling the boundary into an ever-thinner sliver that threads the gaps. This can reach high training accuracy, so it presents itself as a tempting local minimum, with very high derivatives and sharp near-discontinuities exactly where the stretching happens.",
+      "kind": "paragraph",
+      "section": "Now You Untangle It"
+    },
+    {
+      "id": "topology-block-51",
+      "quote": "The tell is in the decision grid: instead of two clean regions, you get a boundary that snakes and thins to a hair. The standard countermeasure is a **contractive penalty** — regularize the derivative of each layer so the network is charged for precisely this kind of near-singular stretching. It pushes training back toward the honest isotopy. (In the egg demo, a width-2 net that \"almost\" works by snaking a boundary is doing exactly this.)",
+      "kind": "paragraph",
+      "section": "Now You Untangle It"
+    },
+    {
+      "id": "topology-block-52",
+      "quote": "The Geometry of Thought",
+      "kind": "heading",
+      "section": "The Geometry of Thought"
+    },
+    {
+      "id": "topology-block-53",
+      "quote": "Step back and the two chapters fit together into one picture of *what a hidden layer is for*.",
+      "kind": "paragraph",
+      "section": "The Geometry of Thought"
+    },
+    {
+      "id": "topology-block-54",
+      "quote": "A layer is a change of coordinates. The final readout is a flat cut. The data starts out topologically knotted around itself, and the network's job is to carry it, layer by layer, to a place where one flat cut suffices. Two mechanisms do the carrying:",
+      "kind": "paragraph",
+      "section": "The Geometry of Thought"
+    },
+    {
+      "id": "topology-block-55",
+      "quote": "can only **stretch and squish**. They cannot free a surrounded class on their own; they need a **spare dimension** (width) to do it. Depth helps, but *width is what breaks the enclosure* \\cite{colah2014manifolds}. manufacture separability by creasing the data into unoccupied dimensions, layer after layer \\cite{keup2022origami}.",
+      "kind": "paragraph",
+      "section": "The Geometry of Thought"
+    },
+    {
+      "id": "topology-block-56",
+      "quote": "So \"folding\" and \"topology\" are not two ideas; they are the *same* idea read from two directions. A network must move data through space to make a flat cut work. If the moves are homeomorphisms, topology dictates exactly how many extra dimensions the journey requires. If the moves are allowed to fold, the network spends those same dimensions as creases.",
+      "kind": "paragraph",
+      "section": "The Geometry of Thought"
+    },
+    {
+      "id": "topology-block-57",
+      "quote": "The manifold hypothesis is an empirical claim, not a definition: natural data — images, sounds, word vectors — concentrates near a low-dimensional manifold inside its high-dimensional ambient space. It is testable. Fefferman, Mitter and Narayanan give statistical tests for estimating a manifold's dimension and reach from finite samples (\\cite[Fefferman et al., 2016]{fefferman2016testing}). That matters here because the width argument is only as good as the premise: if the data were truly high-dimensional, there would be no low-dimensional tangle to separate.",
+      "kind": "paragraph",
+      "section": "The Geometry of Thought"
+    },
+    {
+      "id": "topology-block-58",
+      "quote": "This is the **manifold hypothesis** made mechanical \\cite{fefferman2016testing}: natural data sits on low-dimensional manifolds, and classification is the business of **separating tangled manifolds**. The theorem you can take away is a clean one —",
+      "kind": "paragraph",
+      "section": "The Geometry of Thought"
+    },
+    {
+      "id": "topology-block-59",
+      "quote": "> For smooth, strictly monotone layers, a network's reach is bounded by its **width**: > depth can move the data, but it cannot change its topology. To un-knot the data, the > network must be allowed to think in *more dimensions than the data itself has*.",
+      "kind": "paragraph",
+      "section": "The Geometry of Thought"
+    },
+    {
+      "id": "topology-block-60",
+      "quote": "The topology program has produced results about networks, not only metaphors. Olah's original argument is the smooth-layer case: with full width and a strictly monotone activation, every layer is a homeomorphism onto its image, so a width-two stack can never separate a disk from a surrounding ring (\\cite[Olah, 2014]{colah2014manifolds}). The barrier is not about depth: adding layers cannot buy a dimension. What buys it is width, or a non-injective activation such as ReLU, whose folds are the subject of the [Origami chapter](origami) (\\cite[Keup & Helias, 2022]{keup2022origami}). Neural persistence carries the same tools into trained networks (\\cite[Rieck et al., 2019]{riek2019neural}).",
+      "kind": "paragraph",
+      "section": "The Geometry of Thought"
+    },
+    {
+      "id": "topology-block-61",
+      "quote": "That is the geometry of thought: not a set of numbers to memorize, but a shape to be untangled, one reversible stretch (or one well-placed fold) at a time.",
+      "kind": "paragraph",
+      "section": "The Geometry of Thought"
+    },
+    {
+      "id": "topology-block-62",
+      "quote": "non-homeomorphic escape hatch, with the poker-hand experiment as the causal proof. chapter gives a *topological* reason for. dimensional void\" geometry, applied to language. is the same pathology interpretability research keeps hunting in trained nets.",
+      "kind": "paragraph",
+      "section": "The Geometry of Thought"
     }
   ]
 }

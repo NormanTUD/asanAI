@@ -500,602 +500,2716 @@
         "sutton2018reinforcement"
       ],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-1-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-1",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-2-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-2",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-1-before-reinforcement_learning-block-2",
+      "from": "reinforcement_learning-block-1",
+      "to": "reinforcement_learning-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-2-related_to-reinforcement_learning-block-1",
+      "from": "reinforcement_learning-block-2",
+      "to": "reinforcement_learning-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-3-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-3",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-2-before-reinforcement_learning-block-3",
+      "from": "reinforcement_learning-block-2",
+      "to": "reinforcement_learning-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-4-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-4",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-3-before-reinforcement_learning-block-4",
+      "from": "reinforcement_learning-block-3",
+      "to": "reinforcement_learning-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-5-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-5",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-4-before-reinforcement_learning-block-5",
+      "from": "reinforcement_learning-block-4",
+      "to": "reinforcement_learning-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-5-related_to-reinforcement_learning-block-4",
+      "from": "reinforcement_learning-block-5",
+      "to": "reinforcement_learning-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-6-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-6",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-5-before-reinforcement_learning-block-6",
+      "from": "reinforcement_learning-block-5",
+      "to": "reinforcement_learning-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-6-related_to-reinforcement_learning-block-4",
+      "from": "reinforcement_learning-block-6",
+      "to": "reinforcement_learning-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-7-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-7",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-6-before-reinforcement_learning-block-7",
+      "from": "reinforcement_learning-block-6",
+      "to": "reinforcement_learning-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-7-related_to-reinforcement_learning-block-4",
+      "from": "reinforcement_learning-block-7",
+      "to": "reinforcement_learning-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-8-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-8",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-7-before-reinforcement_learning-block-8",
+      "from": "reinforcement_learning-block-7",
+      "to": "reinforcement_learning-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-9-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-9",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-8-before-reinforcement_learning-block-9",
+      "from": "reinforcement_learning-block-8",
+      "to": "reinforcement_learning-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-9-related_to-reinforcement_learning-block-8",
+      "from": "reinforcement_learning-block-9",
+      "to": "reinforcement_learning-block-8",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-10-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-10",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-9-before-reinforcement_learning-block-10",
+      "from": "reinforcement_learning-block-9",
+      "to": "reinforcement_learning-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-10-related_to-reinforcement_learning-block-8",
+      "from": "reinforcement_learning-block-10",
+      "to": "reinforcement_learning-block-8",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-11-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-11",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-10-before-reinforcement_learning-block-11",
+      "from": "reinforcement_learning-block-10",
+      "to": "reinforcement_learning-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-11-related_to-reinforcement_learning-block-8",
+      "from": "reinforcement_learning-block-11",
+      "to": "reinforcement_learning-block-8",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-12-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-12",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-11-before-reinforcement_learning-block-12",
+      "from": "reinforcement_learning-block-11",
+      "to": "reinforcement_learning-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-12-related_to-reinforcement_learning-block-8",
+      "from": "reinforcement_learning-block-12",
+      "to": "reinforcement_learning-block-8",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-13-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-13",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-12-before-reinforcement_learning-block-13",
+      "from": "reinforcement_learning-block-12",
+      "to": "reinforcement_learning-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-14-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-14",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-13-before-reinforcement_learning-block-14",
+      "from": "reinforcement_learning-block-13",
+      "to": "reinforcement_learning-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-15-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-15",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-14-before-reinforcement_learning-block-15",
+      "from": "reinforcement_learning-block-14",
+      "to": "reinforcement_learning-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-16-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-16",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-15-before-reinforcement_learning-block-16",
+      "from": "reinforcement_learning-block-15",
+      "to": "reinforcement_learning-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-16-related_to-reinforcement_learning-block-15",
+      "from": "reinforcement_learning-block-16",
+      "to": "reinforcement_learning-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-17-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-17",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-16-before-reinforcement_learning-block-17",
+      "from": "reinforcement_learning-block-16",
+      "to": "reinforcement_learning-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-17-related_to-reinforcement_learning-block-15",
+      "from": "reinforcement_learning-block-17",
+      "to": "reinforcement_learning-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-18-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-18",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-17-before-reinforcement_learning-block-18",
+      "from": "reinforcement_learning-block-17",
+      "to": "reinforcement_learning-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-19-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-19",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-18-before-reinforcement_learning-block-19",
+      "from": "reinforcement_learning-block-18",
+      "to": "reinforcement_learning-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-19-related_to-reinforcement_learning-block-18",
+      "from": "reinforcement_learning-block-19",
+      "to": "reinforcement_learning-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-20-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-20",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-19-before-reinforcement_learning-block-20",
+      "from": "reinforcement_learning-block-19",
+      "to": "reinforcement_learning-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-21-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-21",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-20-before-reinforcement_learning-block-21",
+      "from": "reinforcement_learning-block-20",
+      "to": "reinforcement_learning-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-22-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-22",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-21-before-reinforcement_learning-block-22",
+      "from": "reinforcement_learning-block-21",
+      "to": "reinforcement_learning-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-23-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-23",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-22-before-reinforcement_learning-block-23",
+      "from": "reinforcement_learning-block-22",
+      "to": "reinforcement_learning-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-23-related_to-reinforcement_learning-block-22",
+      "from": "reinforcement_learning-block-23",
+      "to": "reinforcement_learning-block-22",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-24-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-24",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-23-before-reinforcement_learning-block-24",
+      "from": "reinforcement_learning-block-23",
+      "to": "reinforcement_learning-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-25-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-25",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-24-before-reinforcement_learning-block-25",
+      "from": "reinforcement_learning-block-24",
+      "to": "reinforcement_learning-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-26-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-26",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-25-before-reinforcement_learning-block-26",
+      "from": "reinforcement_learning-block-25",
+      "to": "reinforcement_learning-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-26-related_to-reinforcement_learning-block-25",
+      "from": "reinforcement_learning-block-26",
+      "to": "reinforcement_learning-block-25",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-27-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-27",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-26-before-reinforcement_learning-block-27",
+      "from": "reinforcement_learning-block-26",
+      "to": "reinforcement_learning-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-27-related_to-reinforcement_learning-block-25",
+      "from": "reinforcement_learning-block-27",
+      "to": "reinforcement_learning-block-25",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-28-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-28",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-27-before-reinforcement_learning-block-28",
+      "from": "reinforcement_learning-block-27",
+      "to": "reinforcement_learning-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-28-related_to-reinforcement_learning-block-25",
+      "from": "reinforcement_learning-block-28",
+      "to": "reinforcement_learning-block-25",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-29-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-29",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-28-before-reinforcement_learning-block-29",
+      "from": "reinforcement_learning-block-28",
+      "to": "reinforcement_learning-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-29-related_to-reinforcement_learning-block-25",
+      "from": "reinforcement_learning-block-29",
+      "to": "reinforcement_learning-block-25",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-30-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-30",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-29-before-reinforcement_learning-block-30",
+      "from": "reinforcement_learning-block-29",
+      "to": "reinforcement_learning-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-31-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-31",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-30-before-reinforcement_learning-block-31",
+      "from": "reinforcement_learning-block-30",
+      "to": "reinforcement_learning-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-31-related_to-reinforcement_learning-block-30",
+      "from": "reinforcement_learning-block-31",
+      "to": "reinforcement_learning-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-32-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-32",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-31-before-reinforcement_learning-block-32",
+      "from": "reinforcement_learning-block-31",
+      "to": "reinforcement_learning-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-32-related_to-reinforcement_learning-block-30",
+      "from": "reinforcement_learning-block-32",
+      "to": "reinforcement_learning-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-33-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-33",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-32-before-reinforcement_learning-block-33",
+      "from": "reinforcement_learning-block-32",
+      "to": "reinforcement_learning-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-33-related_to-reinforcement_learning-block-30",
+      "from": "reinforcement_learning-block-33",
+      "to": "reinforcement_learning-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-34-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-34",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-33-before-reinforcement_learning-block-34",
+      "from": "reinforcement_learning-block-33",
+      "to": "reinforcement_learning-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-34-related_to-reinforcement_learning-block-30",
+      "from": "reinforcement_learning-block-34",
+      "to": "reinforcement_learning-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-35-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-35",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-34-before-reinforcement_learning-block-35",
+      "from": "reinforcement_learning-block-34",
+      "to": "reinforcement_learning-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-36-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-36",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-35-before-reinforcement_learning-block-36",
+      "from": "reinforcement_learning-block-35",
+      "to": "reinforcement_learning-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-36-related_to-reinforcement_learning-block-35",
+      "from": "reinforcement_learning-block-36",
+      "to": "reinforcement_learning-block-35",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-37-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-37",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-36-before-reinforcement_learning-block-37",
+      "from": "reinforcement_learning-block-36",
+      "to": "reinforcement_learning-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-37-related_to-reinforcement_learning-block-35",
+      "from": "reinforcement_learning-block-37",
+      "to": "reinforcement_learning-block-35",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-38-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-38",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-37-before-reinforcement_learning-block-38",
+      "from": "reinforcement_learning-block-37",
+      "to": "reinforcement_learning-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-38-related_to-reinforcement_learning-block-35",
+      "from": "reinforcement_learning-block-38",
+      "to": "reinforcement_learning-block-35",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-39-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-39",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-38-before-reinforcement_learning-block-39",
+      "from": "reinforcement_learning-block-38",
+      "to": "reinforcement_learning-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-39-related_to-reinforcement_learning-block-35",
+      "from": "reinforcement_learning-block-39",
+      "to": "reinforcement_learning-block-35",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-40-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-40",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-39-before-reinforcement_learning-block-40",
+      "from": "reinforcement_learning-block-39",
+      "to": "reinforcement_learning-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-40-related_to-reinforcement_learning-block-35",
+      "from": "reinforcement_learning-block-40",
+      "to": "reinforcement_learning-block-35",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-41-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-41",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-40-before-reinforcement_learning-block-41",
+      "from": "reinforcement_learning-block-40",
+      "to": "reinforcement_learning-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-41-related_to-reinforcement_learning-block-35",
+      "from": "reinforcement_learning-block-41",
+      "to": "reinforcement_learning-block-35",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-42-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-42",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-41-before-reinforcement_learning-block-42",
+      "from": "reinforcement_learning-block-41",
+      "to": "reinforcement_learning-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-43-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-43",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-42-before-reinforcement_learning-block-43",
+      "from": "reinforcement_learning-block-42",
+      "to": "reinforcement_learning-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-44-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-44",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-43-before-reinforcement_learning-block-44",
+      "from": "reinforcement_learning-block-43",
+      "to": "reinforcement_learning-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-44-related_to-reinforcement_learning-block-43",
+      "from": "reinforcement_learning-block-44",
+      "to": "reinforcement_learning-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-45-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-45",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-44-before-reinforcement_learning-block-45",
+      "from": "reinforcement_learning-block-44",
+      "to": "reinforcement_learning-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-45-related_to-reinforcement_learning-block-43",
+      "from": "reinforcement_learning-block-45",
+      "to": "reinforcement_learning-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-46-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-46",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-45-before-reinforcement_learning-block-46",
+      "from": "reinforcement_learning-block-45",
+      "to": "reinforcement_learning-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-46-related_to-reinforcement_learning-block-43",
+      "from": "reinforcement_learning-block-46",
+      "to": "reinforcement_learning-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-47-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-47",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-46-before-reinforcement_learning-block-47",
+      "from": "reinforcement_learning-block-46",
+      "to": "reinforcement_learning-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-47-related_to-reinforcement_learning-block-43",
+      "from": "reinforcement_learning-block-47",
+      "to": "reinforcement_learning-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-48-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-48",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-47-before-reinforcement_learning-block-48",
+      "from": "reinforcement_learning-block-47",
+      "to": "reinforcement_learning-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-48-related_to-reinforcement_learning-block-43",
+      "from": "reinforcement_learning-block-48",
+      "to": "reinforcement_learning-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-49-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-49",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-48-before-reinforcement_learning-block-49",
+      "from": "reinforcement_learning-block-48",
+      "to": "reinforcement_learning-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-49-related_to-reinforcement_learning-block-43",
+      "from": "reinforcement_learning-block-49",
+      "to": "reinforcement_learning-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-50-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-50",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-49-before-reinforcement_learning-block-50",
+      "from": "reinforcement_learning-block-49",
+      "to": "reinforcement_learning-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-50-related_to-reinforcement_learning-block-43",
+      "from": "reinforcement_learning-block-50",
+      "to": "reinforcement_learning-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-51-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-51",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-50-before-reinforcement_learning-block-51",
+      "from": "reinforcement_learning-block-50",
+      "to": "reinforcement_learning-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-51-related_to-reinforcement_learning-block-43",
+      "from": "reinforcement_learning-block-51",
+      "to": "reinforcement_learning-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-52-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-52",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-51-before-reinforcement_learning-block-52",
+      "from": "reinforcement_learning-block-51",
+      "to": "reinforcement_learning-block-52",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-52-related_to-reinforcement_learning-block-43",
+      "from": "reinforcement_learning-block-52",
+      "to": "reinforcement_learning-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-53-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-53",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-52-before-reinforcement_learning-block-53",
+      "from": "reinforcement_learning-block-52",
+      "to": "reinforcement_learning-block-53",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-53-related_to-reinforcement_learning-block-43",
+      "from": "reinforcement_learning-block-53",
+      "to": "reinforcement_learning-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-54-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-54",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-53-before-reinforcement_learning-block-54",
+      "from": "reinforcement_learning-block-53",
+      "to": "reinforcement_learning-block-54",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-54-related_to-reinforcement_learning-block-43",
+      "from": "reinforcement_learning-block-54",
+      "to": "reinforcement_learning-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-55-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-55",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-54-before-reinforcement_learning-block-55",
+      "from": "reinforcement_learning-block-54",
+      "to": "reinforcement_learning-block-55",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-56-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-56",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-55-before-reinforcement_learning-block-56",
+      "from": "reinforcement_learning-block-55",
+      "to": "reinforcement_learning-block-56",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-56-related_to-reinforcement_learning-block-55",
+      "from": "reinforcement_learning-block-56",
+      "to": "reinforcement_learning-block-55",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-57-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-57",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-56-before-reinforcement_learning-block-57",
+      "from": "reinforcement_learning-block-56",
+      "to": "reinforcement_learning-block-57",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-57-related_to-reinforcement_learning-block-55",
+      "from": "reinforcement_learning-block-57",
+      "to": "reinforcement_learning-block-55",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-58-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-58",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-57-before-reinforcement_learning-block-58",
+      "from": "reinforcement_learning-block-57",
+      "to": "reinforcement_learning-block-58",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-59-part_of-reinforcement-learning",
+      "from": "reinforcement_learning-block-59",
+      "to": "reinforcement-learning",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-58-before-reinforcement_learning-block-59",
+      "from": "reinforcement_learning-block-58",
+      "to": "reinforcement_learning-block-59",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-block-59-related_to-reinforcement_learning-block-58",
+      "from": "reinforcement_learning-block-59",
+      "to": "reinforcement_learning-block-58",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-1-part_of-reinforcement_learning-block-1",
+      "from": "reinforcement_learning-stmt-1",
+      "to": "reinforcement_learning-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-2-part_of-reinforcement_learning-block-1",
+      "from": "reinforcement_learning-stmt-2",
+      "to": "reinforcement_learning-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-3-part_of-reinforcement_learning-block-1",
+      "from": "reinforcement_learning-stmt-3",
+      "to": "reinforcement_learning-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-4-part_of-reinforcement_learning-block-2",
+      "from": "reinforcement_learning-stmt-4",
+      "to": "reinforcement_learning-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-5-part_of-reinforcement_learning-block-5",
+      "from": "reinforcement_learning-stmt-5",
+      "to": "reinforcement_learning-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-6-part_of-reinforcement_learning-block-6",
+      "from": "reinforcement_learning-stmt-6",
+      "to": "reinforcement_learning-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-7-part_of-reinforcement_learning-block-6",
+      "from": "reinforcement_learning-stmt-7",
+      "to": "reinforcement_learning-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-8-part_of-reinforcement_learning-block-7",
+      "from": "reinforcement_learning-stmt-8",
+      "to": "reinforcement_learning-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-9-part_of-reinforcement_learning-block-9",
+      "from": "reinforcement_learning-stmt-9",
+      "to": "reinforcement_learning-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-10-part_of-reinforcement_learning-block-10",
+      "from": "reinforcement_learning-stmt-10",
+      "to": "reinforcement_learning-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-11-part_of-reinforcement_learning-block-11",
+      "from": "reinforcement_learning-stmt-11",
+      "to": "reinforcement_learning-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-12-part_of-reinforcement_learning-block-12",
+      "from": "reinforcement_learning-stmt-12",
+      "to": "reinforcement_learning-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-13-part_of-reinforcement_learning-block-16",
+      "from": "reinforcement_learning-stmt-13",
+      "to": "reinforcement_learning-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-14-part_of-reinforcement_learning-block-17",
+      "from": "reinforcement_learning-stmt-14",
+      "to": "reinforcement_learning-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-15-part_of-reinforcement_learning-block-19",
+      "from": "reinforcement_learning-stmt-15",
+      "to": "reinforcement_learning-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-16-part_of-reinforcement_learning-block-23",
+      "from": "reinforcement_learning-stmt-16",
+      "to": "reinforcement_learning-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-17-part_of-reinforcement_learning-block-26",
+      "from": "reinforcement_learning-stmt-17",
+      "to": "reinforcement_learning-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-18-part_of-reinforcement_learning-block-27",
+      "from": "reinforcement_learning-stmt-18",
+      "to": "reinforcement_learning-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-19-part_of-reinforcement_learning-block-28",
+      "from": "reinforcement_learning-stmt-19",
+      "to": "reinforcement_learning-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-20-part_of-reinforcement_learning-block-29",
+      "from": "reinforcement_learning-stmt-20",
+      "to": "reinforcement_learning-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-21-part_of-reinforcement_learning-block-31",
+      "from": "reinforcement_learning-stmt-21",
+      "to": "reinforcement_learning-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-22-part_of-reinforcement_learning-block-32",
+      "from": "reinforcement_learning-stmt-22",
+      "to": "reinforcement_learning-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-23-part_of-reinforcement_learning-block-33",
+      "from": "reinforcement_learning-stmt-23",
+      "to": "reinforcement_learning-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-24-part_of-reinforcement_learning-block-34",
+      "from": "reinforcement_learning-stmt-24",
+      "to": "reinforcement_learning-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-25-part_of-reinforcement_learning-block-36",
+      "from": "reinforcement_learning-stmt-25",
+      "to": "reinforcement_learning-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-26-part_of-reinforcement_learning-block-37",
+      "from": "reinforcement_learning-stmt-26",
+      "to": "reinforcement_learning-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-27-part_of-reinforcement_learning-block-38",
+      "from": "reinforcement_learning-stmt-27",
+      "to": "reinforcement_learning-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-28-part_of-reinforcement_learning-block-39",
+      "from": "reinforcement_learning-stmt-28",
+      "to": "reinforcement_learning-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-29-part_of-reinforcement_learning-block-40",
+      "from": "reinforcement_learning-stmt-29",
+      "to": "reinforcement_learning-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-30-part_of-reinforcement_learning-block-40",
+      "from": "reinforcement_learning-stmt-30",
+      "to": "reinforcement_learning-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-31-part_of-reinforcement_learning-block-40",
+      "from": "reinforcement_learning-stmt-31",
+      "to": "reinforcement_learning-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-32-part_of-reinforcement_learning-block-41",
+      "from": "reinforcement_learning-stmt-32",
+      "to": "reinforcement_learning-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-33-part_of-reinforcement_learning-block-41",
+      "from": "reinforcement_learning-stmt-33",
+      "to": "reinforcement_learning-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-34-part_of-reinforcement_learning-block-44",
+      "from": "reinforcement_learning-stmt-34",
+      "to": "reinforcement_learning-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-35-part_of-reinforcement_learning-block-45",
+      "from": "reinforcement_learning-stmt-35",
+      "to": "reinforcement_learning-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-36-part_of-reinforcement_learning-block-46",
+      "from": "reinforcement_learning-stmt-36",
+      "to": "reinforcement_learning-block-46",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-37-part_of-reinforcement_learning-block-47",
+      "from": "reinforcement_learning-stmt-37",
+      "to": "reinforcement_learning-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-38-part_of-reinforcement_learning-block-48",
+      "from": "reinforcement_learning-stmt-38",
+      "to": "reinforcement_learning-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-39-part_of-reinforcement_learning-block-49",
+      "from": "reinforcement_learning-stmt-39",
+      "to": "reinforcement_learning-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-40-part_of-reinforcement_learning-block-50",
+      "from": "reinforcement_learning-stmt-40",
+      "to": "reinforcement_learning-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-41-part_of-reinforcement_learning-block-51",
+      "from": "reinforcement_learning-stmt-41",
+      "to": "reinforcement_learning-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-42-part_of-reinforcement_learning-block-52",
+      "from": "reinforcement_learning-stmt-42",
+      "to": "reinforcement_learning-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-43-part_of-reinforcement_learning-block-53",
+      "from": "reinforcement_learning-stmt-43",
+      "to": "reinforcement_learning-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-44-part_of-reinforcement_learning-block-54",
+      "from": "reinforcement_learning-stmt-44",
+      "to": "reinforcement_learning-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-45-part_of-reinforcement_learning-block-56",
+      "from": "reinforcement_learning-stmt-45",
+      "to": "reinforcement_learning-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reinforcement_learning-stmt-46-part_of-reinforcement_learning-block-59",
+      "from": "reinforcement_learning-stmt-46",
+      "to": "reinforcement_learning-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "reinforcement_learning-stmt-1",
       "quote": "Reinforcement Learning (RL) is the third pillar of machine learning, alongside supervised and unsupervised learning.",
+      "block_id": "reinforcement_learning-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-2",
       "quote": "In RL, an **agent** takes **actions** in an **environment** to maximize a cumulative **reward** signal.",
+      "block_id": "reinforcement_learning-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-3",
       "quote": "It is the foundation of modern LLM alignment: **RLHF**, DPO, GRPO, and the o1/R1 paradigm all build on it.",
+      "block_id": "reinforcement_learning-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-4",
       "quote": "This chapter covers the mathematical core: Markov Decision Processes, value functions, policy gradients, and how modern preference optimization emerged, grouped from the foundations, through policy optimization, to the LLM-preference methods and the open problems that remain.",
+      "block_id": "reinforcement_learning-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-5",
       "quote": "An MDP is the formal setting for RL: $(\\mathcal{S}, \\mathcal{A}, P, R, \\gamma)$ where",
+      "block_id": "reinforcement_learning-block-5",
       "section": "The Markov Decision Process",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-6",
-      "quote": "* $\\mathcal{S}$: state space",
+      "quote": "The agent follows a **policy** $\\pi(a \\mid s)$: a probability distribution over actions given a state.",
+      "block_id": "reinforcement_learning-block-6",
       "section": "The Markov Decision Process",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-7",
-      "quote": "* $\\mathcal{A}$: action space",
+      "quote": "The goal is to find $\\pi^*$ that maximizes expected discounted return:",
+      "block_id": "reinforcement_learning-block-6",
       "section": "The Markov Decision Process",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-8",
-      "quote": "* $P(s' \\mid s, a)$: transition probability",
+      "quote": "A few terms used throughout the chapter:",
+      "block_id": "reinforcement_learning-block-7",
       "section": "The Markov Decision Process",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-9",
-      "quote": "* $R(s, a)$: reward function",
-      "section": "The Markov Decision Process",
+      "quote": "The **state-value function** measures how good a state is under policy $\\pi$:",
+      "block_id": "reinforcement_learning-block-9",
+      "section": "Value Functions",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-10",
-      "quote": "* $\\gamma \\in [0, 1)$: discount factor",
-      "section": "The Markov Decision Process",
+      "quote": "They satisfy the **Bellman equation**:",
+      "block_id": "reinforcement_learning-block-10",
+      "section": "Value Functions",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-11",
-      "quote": "The agent follows a **policy** $\\pi(a \\mid s)$: a probability distribution over actions given a state.",
-      "section": "The Markov Decision Process",
+      "quote": "The **Bellman optimality equation** characterizes the optimal policy:",
+      "block_id": "reinforcement_learning-block-11",
+      "section": "Value Functions",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-12",
-      "quote": "The goal is to find $\\pi^*$ that maximizes expected discounted return:",
-      "section": "The Markov Decision Process",
+      "quote": "For an LLM, the “state” is the current context window, the “action” is the next token, and the “reward” comes from a reward model (**RLHF**) or verifier (reasoning training).",
+      "block_id": "reinforcement_learning-block-12",
+      "section": "Value Functions",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-13",
-      "quote": "A few terms used throughout the chapter:",
-      "section": "The Markov Decision Process",
+      "quote": "For continuous or large action spaces, parameterize the policy as $\\pi_\\theta(a \\mid s)$ and directly optimize:",
+      "block_id": "reinforcement_learning-block-16",
+      "section": "Policy Gradients",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-14",
-      "quote": "* **Trajectory** $\\tau = (s_0, a_0, r_0, s_1, a_1, r_1, \\dots, s_T)$: the full sequence of states, actions, and rewards produced by one rollout of a policy.",
-      "section": "The Markov Decision Process",
+      "quote": "The **policy gradient theorem** (\\cite[Sutton & Barto, 2018]{sutton2018reinforcement}):",
+      "block_id": "reinforcement_learning-block-17",
+      "section": "Policy Gradients",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-15",
-      "quote": "* **Return** $G_t = \\sum_{k=0}^{\\infty} \\gamma^k R(s_{t+k}, a_{t+k})$: the discounted sum of future rewards from time $t$ onward (the quantity inside the expectation above, anchored at $s_0 = s$).",
-      "section": "The Markov Decision Process",
+      "quote": "The same structure hides inside the transformer: the gradient backpropagated through an attention layer is *exactly* an advantage-based policy gradient — each key's score is updated in proportion to how far that key's marginal utility beats the attention distribution's own average \\cite[the attention gradient as an advantage-based policy gradient]{litman2025sdpaot}.",
+      "block_id": "reinforcement_learning-block-19",
+      "section": "REINFORCE",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-16",
-      "quote": "* **Episode**: a single finite trajectory, from initial state to a terminal state (e.g., one game, one conversation, one user session).",
-      "section": "The Markov Decision Process",
+      "quote": "PPO is simple, stable, and the default choice for **RLHF** and many robotics tasks.",
+      "block_id": "reinforcement_learning-block-23",
+      "section": "PPO",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-17",
-      "quote": "For continuing tasks without a natural endpoint, RL uses “episodic” framing by resetting at fixed horizons.",
-      "section": "The Markov Decision Process",
+      "quote": "**Collect comparison data**: humans rank multiple model outputs for the same prompt.",
+      "block_id": "reinforcement_learning-block-26",
+      "section": "RLHF: Reinforcement Learning from Human Feedback",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-18",
-      "quote": "The **state-value function** measures how good a state is under policy $\\pi$:",
-      "section": "Value Functions",
+      "quote": "The core RLHF objective combines the reward with a KL penalty:",
+      "block_id": "reinforcement_learning-block-27",
+      "section": "RLHF: Reinforcement Learning from Human Feedback",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-19",
-      "quote": "The **action-value (Q) function** measures how good taking action $a$ in state $s$ is:",
-      "section": "Value Functions",
+      "quote": "The **KL penalty** prevents the policy from drifting too far from the reference (SFT) model, a critical stabilizer.",
+      "block_id": "reinforcement_learning-block-28",
+      "section": "RLHF: Reinforcement Learning from Human Feedback",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-20",
-      "quote": "They satisfy the **Bellman equation**:",
-      "section": "Value Functions",
+      "quote": "The reward model is trained on Bradley-Terry comparisons:",
+      "block_id": "reinforcement_learning-block-29",
+      "section": "RLHF: Reinforcement Learning from Human Feedback",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-21",
-      "quote": "The **Bellman optimality equation** characterizes the optimal policy:",
-      "section": "Value Functions",
+      "quote": "\\cite[Rafailov et al. (2023)]{rafailov2023dpo} showed that the **RLHF** objective has a **closed-form solution**:",
+      "block_id": "reinforcement_learning-block-31",
+      "section": "DPO: Direct Preference Optimization",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-22",
-      "quote": "For an LLM, the “state” is the current context window, the “action” is the next token, and the “reward” comes from a reward model (**RLHF**) or verifier (reasoning training).",
-      "section": "Value Functions",
+      "quote": "Inverting gives the implicit reward:",
+      "block_id": "reinforcement_learning-block-32",
+      "section": "DPO: Direct Preference Optimization",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-23",
-      "quote": "Q-Learning (\\cite[Watkins, 1989]{watkins1989qlearning}) converges to $Q^*$ by iterative updates:",
-      "section": "Tabular RL: Q-Learning",
+      "quote": "Substituting into the Bradley-Terry loss:",
+      "block_id": "reinforcement_learning-block-33",
+      "section": "DPO: Direct Preference Optimization",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-24",
-      "quote": "where $\\alpha$ is the learning rate and $r + \\gamma \\max_{a'} Q(s', a')$ is the **TD target**.",
-      "section": "Tabular RL: Q-Learning",
+      "quote": "Variants have proliferated:",
+      "block_id": "reinforcement_learning-block-34",
+      "section": "DPO: Direct Preference Optimization",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-25",
-      "quote": "The agent samples actions by $\\epsilon$-greedy: with probability $\\epsilon$ take a random action (exploration), otherwise $\\arg\\max_a Q(s, a)$ (exploitation).",
-      "section": "Tabular RL: Q-Learning",
+      "quote": "GRPO (\\cite[Shao et al., DeepSeek, 2024]{shao2024grpo}) was the breakthrough that enabled **R1's pure-RL training**.",
+      "block_id": "reinforcement_learning-block-36",
+      "section": "GRPO: Group Relative Policy Optimization",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-26",
-      "quote": "Deep Q-Networks replaced the table with a neural network $Q_\\theta(s, a)$; the 2013 paper (\\cite[Mnih et al., 2013]{mnih2013dqn}) added **experience replay**, and the 2015 *Nature* follow-up (\\cite[Mnih et al., 2015]{mnih2015dqn}) added a separate **target network** to stabilize training.",
-      "section": "Tabular RL: Q-Learning",
+      "quote": "Score each with a reward model (or rule-based verifier).",
+      "block_id": "reinforcement_learning-block-37",
+      "section": "GRPO: Group Relative Policy Optimization",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-27",
-      "quote": "This enabled RL on high-dimensional inputs (Atari).",
-      "section": "Tabular RL: Q-Learning",
+      "quote": "Compute the **group-relative advantage**:",
+      "block_id": "reinforcement_learning-block-38",
+      "section": "GRPO: Group Relative Policy Optimization",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-28",
-      "quote": "For continuous or large action spaces, parameterize the policy as $\\pi_\\theta(a \\mid s)$ and directly optimize:",
-      "section": "Policy Gradients",
+      "quote": "Update the policy using a PPO-style objective but **without a critic**:",
+      "block_id": "reinforcement_learning-block-39",
+      "section": "GRPO: Group Relative Policy Optimization",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-29",
-      "quote": "The **policy gradient theorem** (\\cite[Sutton & Barto, 2018]{sutton2018reinforcement}):",
-      "section": "Policy Gradients",
+      "quote": "This is the response-level form; the actual DeepSeekMath objective is per-token, with the ratio and KL term inside a sum over tokens.",
+      "block_id": "reinforcement_learning-block-40",
+      "section": "GRPO: Group Relative Policy Optimization",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-30",
-      "quote": "where $\\hat A_t = \\sum_{t' \\geq t} \\gamma^{t'-t} R(s_{t'}, a_{t'}) - b(s_t)$ is the **advantage**: how much better this action was than the baseline $b(s_t)$.",
-      "section": "Policy Gradients",
+      "quote": "By using the group mean as the baseline, GRPO eliminates the need for a separate value network.",
+      "block_id": "reinforcement_learning-block-40",
+      "section": "GRPO: Group Relative Policy Optimization",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-31",
-      "quote": "REINFORCE (\\cite[Williams, 1992]{williams1992reinforce}) has high variance.",
-      "section": "REINFORCE",
+      "quote": "This made it possible to RL-train on **verifiable rewards** (math correctness, code test passage) at scale, producing emergent long-CoT reasoning.",
+      "block_id": "reinforcement_learning-block-40",
+      "section": "GRPO: Group Relative Policy Optimization",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-32",
-      "quote": "The **baseline trick** (subtracting $b(s_t)$, often $V^\\pi(s_t)$) reduces variance without bias.",
-      "section": "REINFORCE",
+      "quote": "GRPO is the algorithm behind **DeepSeek-R1** (January 2025), a widely used open-weight model with emergent long chain-of-thought reasoning.",
+      "block_id": "reinforcement_learning-block-41",
+      "section": "GRPO: Group Relative Policy Optimization",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-33",
-      "quote": "The same structure hides inside the transformer: the gradient backpropagated through an attention layer is *exactly* an advantage-based policy gradient — each key's score is updated in proportion to how far that key's marginal utility beats the attention distribution's own average \\cite[the attention gradient as an advantage-based policy gradient]{litman2025sdpaot}.",
-      "section": "REINFORCE",
+      "quote": "See the Reasoning chapter § o1/R1 paradigm for the *result*; the math here is the *cause*.",
+      "block_id": "reinforcement_learning-block-41",
+      "section": "GRPO: Group Relative Policy Optimization",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-34",
-      "quote": "**Actor-critic** algorithms learn both a policy (actor) and a value function (critic):",
-      "section": "Actor-Critic Methods",
+      "quote": "| Method | Reward signal | Critic | Reference model | Use case |",
+      "block_id": "reinforcement_learning-block-44",
+      "section": "The RLHF Spectrum",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-35",
-      "quote": "* Actor update: $\\theta \\leftarrow \\theta + \\alpha_\\theta \\cdot \\hat A_t \\nabla_\\theta \\log \\pi_\\theta(a_t \\mid s_t)$",
-      "section": "Actor-Critic Methods",
+      "quote": "| **SFT** | None | No | — | Pretraining alignment |",
+      "block_id": "reinforcement_learning-block-45",
+      "section": "The RLHF Spectrum",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-36",
-      "quote": "* Critic update: $\\phi \\leftarrow \\phi + \\alpha_\\phi (G_t - V_\\phi(s_t)) \\nabla_\\phi V_\\phi(s_t)$",
-      "section": "Actor-Critic Methods",
+      "quote": "| **RLHF (PPO)** | Learned RM | Yes | Yes | Industry standard until 2023 |",
+      "block_id": "reinforcement_learning-block-46",
+      "section": "The RLHF Spectrum",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-37",
-      "quote": "The critic's TD-error $G_t - V_\\phi(s_t)$ is a low-variance estimate of the advantage.",
-      "section": "Actor-Critic Methods",
+      "quote": "| **DPO** | Implicit from policy ratio | No | Yes | Simple, no RL |",
+      "block_id": "reinforcement_learning-block-47",
+      "section": "The RLHF Spectrum",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-38",
-      "quote": "**Asynchronous** Advantage Actor-Critic (\\cite[Mnih et al., 2016]{mnih2016a3c}): parallel workers update a shared model asynchronously.",
-      "section": "A2C / A3C",
+      "quote": "| **IPO** | Implicit, regularized | No | Yes | Noisy preferences |",
+      "block_id": "reinforcement_learning-block-48",
+      "section": "The RLHF Spectrum",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-39",
-      "quote": "Stabilizes training; superseded by synchronous methods.",
-      "section": "A2C / A3C",
+      "quote": "| **KTO** | Implicit, asymmetric | No | Yes | Binary feedback |",
+      "block_id": "reinforcement_learning-block-49",
+      "section": "The RLHF Spectrum",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-40",
-      "quote": "**Proximal Policy Optimization** (\\cite[Schulman et al., 2017]{schulman2017ppo}) is the workhorse of modern RL.",
-      "section": "PPO",
+      "quote": "| **ORPO** | Odds ratio | No | No | Combined SFT + preference |",
+      "block_id": "reinforcement_learning-block-50",
+      "section": "The RLHF Spectrum",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-41",
-      "quote": "It constrains how far the policy can move per update using a **clipped surrogate objective**:",
-      "section": "PPO",
+      "quote": "| **SimPO** | Length-normalized log-prob | No | No | Reference-free |",
+      "block_id": "reinforcement_learning-block-51",
+      "section": "The RLHF Spectrum",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-42",
-      "quote": "where $r_t(\\theta) = \\pi_\\theta(a_t \\mid s_t) / \\pi_{\\theta_{\\text{old}}}(a_t \\mid s_t)$ is the probability ratio.",
-      "section": "PPO",
+      "quote": "| **GRPO** | Verifier / RM | No (group baseline) | Yes | Reasoning RL (R1) |",
+      "block_id": "reinforcement_learning-block-52",
+      "section": "The RLHF Spectrum",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-43",
-      "quote": "The clip prevents destructively large updates.",
-      "section": "PPO",
+      "quote": "| **RLOO** | REINFORCE leave-one-out | No | Optional | Lightweight online RL |",
+      "block_id": "reinforcement_learning-block-53",
+      "section": "The RLHF Spectrum",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-44",
-      "quote": "PPO is simple, stable, and the default choice for **RLHF** and many robotics tasks.",
-      "section": "PPO",
+      "quote": "The trend: **simpler objectives that remove components** (critic, reference model, paired data) while matching or exceeding PPO performance.",
+      "block_id": "reinforcement_learning-block-54",
+      "section": "The RLHF Spectrum",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-45",
-      "quote": "**RLHF** (Christiano et al., 2017; Ouyang et al., InstructGPT, 2022) adapts RL to align LLMs with human preferences:",
-      "section": "RLHF: Reinforcement Learning from Human Feedback",
+      "quote": "A central problem in RL: a sufficiently clever agent finds **loopholes** in the reward function that don't reflect the actual intent.",
+      "block_id": "reinforcement_learning-block-56",
+      "section": "Reward Hacking",
       "kind": "statement"
     },
     {
       "id": "reinforcement_learning-stmt-46",
-      "quote": "**Collect comparison data**: humans rank multiple model outputs for the same prompt.",
-      "section": "RLHF: Reinforcement Learning from Human Feedback",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-47",
-      "quote": "**Train a reward model** $R_\\phi(x, y)$ that predicts the human's preference score.",
-      "section": "RLHF: Reinforcement Learning from Human Feedback",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-48",
-      "quote": "**Fine-tune the LLM** with PPO, using $R_\\phi$ as the reward signal.",
-      "section": "RLHF: Reinforcement Learning from Human Feedback",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-49",
-      "quote": "The core RLHF objective combines the reward with a KL penalty:",
-      "section": "RLHF: Reinforcement Learning from Human Feedback",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-50",
-      "quote": "The **KL penalty** prevents the policy from drifting too far from the reference (SFT) model, a critical stabilizer.",
-      "section": "RLHF: Reinforcement Learning from Human Feedback",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-51",
-      "quote": "The reward model is trained on Bradley-Terry comparisons:",
-      "section": "RLHF: Reinforcement Learning from Human Feedback",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-52",
-      "quote": "where $y_w$ is the “winner” and $y_l$ the “loser”.",
-      "section": "RLHF: Reinforcement Learning from Human Feedback",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-53",
-      "quote": "\\cite[Rafailov et al. (2023)]{rafailov2023dpo} showed that the **RLHF** objective has a **closed-form solution**:",
-      "section": "DPO: Direct Preference Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-54",
-      "quote": "Inverting gives the implicit reward:",
-      "section": "DPO: Direct Preference Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-55",
-      "quote": "Substituting into the Bradley-Terry loss:",
-      "section": "DPO: Direct Preference Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-56",
-      "quote": "**No reward model, no PPO, no rollouts**.",
-      "section": "DPO: Direct Preference Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-57",
-      "quote": "Just a supervised loss on (prompt, winner, loser) triples.",
-      "section": "DPO: Direct Preference Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-58",
-      "quote": "DPO matches **RLHF** on alignment benchmarks with much simpler infrastructure.",
-      "section": "DPO: Direct Preference Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-59",
-      "quote": "Variants have proliferated:",
-      "section": "DPO: Direct Preference Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-60",
-      "quote": "* **IPO** (\\cite[Azar et al., 2023]{azar2023ipo}): robust to deterministic preferences.",
-      "section": "DPO: Direct Preference Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-61",
-      "quote": "* **KTO** (\\cite[Ethayarajh et al., 2024]{ethayarajh2024kto}): uses binary good/bad labels instead of pairs.",
-      "section": "DPO: Direct Preference Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-62",
-      "quote": "* **ORPO** (\\cite[Hong et al., 2024]{hong2024orpo}): combines SFT and odds-ratio preference loss in one objective.",
-      "section": "DPO: Direct Preference Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-63",
-      "quote": "* **SimPO** (\\cite[Meng et al., 2024]{meng2024simpo}): length-normalized, no reference model.",
-      "section": "DPO: Direct Preference Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-64",
-      "quote": "GRPO (\\cite[Shao et al., DeepSeek, 2024]{shao2024grpo}) was the breakthrough that enabled **R1's pure-RL training**.",
-      "section": "GRPO: Group Relative Policy Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-65",
-      "quote": "Sample $G$ candidate responses from the current policy: $\\{y^{(1)}, \\dots, y^{(G)}\\}$.",
-      "section": "GRPO: Group Relative Policy Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-66",
-      "quote": "Score each with a reward model (or rule-based verifier).",
-      "section": "GRPO: Group Relative Policy Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-67",
-      "quote": "Compute the **group-relative advantage**:",
-      "section": "GRPO: Group Relative Policy Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-68",
-      "quote": "Update the policy using a PPO-style objective but **without a critic**:",
-      "section": "GRPO: Group Relative Policy Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-69",
-      "quote": "This is the response-level form; the actual DeepSeekMath objective is per-token, with the ratio and KL term inside a sum over tokens.",
-      "section": "GRPO: Group Relative Policy Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-70",
-      "quote": "By using the group mean as the baseline, GRPO eliminates the need for a separate value network.",
-      "section": "GRPO: Group Relative Policy Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-71",
-      "quote": "This made it possible to RL-train on **verifiable rewards** (math correctness, code test passage) at scale, producing emergent long-CoT reasoning.",
-      "section": "GRPO: Group Relative Policy Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-72",
-      "quote": "GRPO is the algorithm behind **DeepSeek-R1** (January 2025), a widely used open-weight model with emergent long chain-of-thought reasoning.",
-      "section": "GRPO: Group Relative Policy Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-73",
-      "quote": "See the Reasoning chapter § o1/R1 paradigm for the *result*; the math here is the *cause*.",
-      "section": "GRPO: Group Relative Policy Optimization",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-74",
-      "quote": "| Method | Reward signal | Critic | Reference model | Use case |",
-      "section": "The RLHF Spectrum",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-75",
-      "quote": "| **SFT** | None | No | — | Pretraining alignment |",
-      "section": "The RLHF Spectrum",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-76",
-      "quote": "| **RLHF (PPO)** | Learned RM | Yes | Yes | Industry standard until 2023 |",
-      "section": "The RLHF Spectrum",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-77",
-      "quote": "| **DPO** | Implicit from policy ratio | No | Yes | Simple, no RL |",
-      "section": "The RLHF Spectrum",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-78",
-      "quote": "| **IPO** | Implicit, regularized | No | Yes | Noisy preferences |",
-      "section": "The RLHF Spectrum",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-79",
-      "quote": "| **KTO** | Implicit, asymmetric | No | Yes | Binary feedback |",
-      "section": "The RLHF Spectrum",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-80",
-      "quote": "| **ORPO** | Odds ratio | No | No | Combined SFT + preference |",
-      "section": "The RLHF Spectrum",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-81",
-      "quote": "| **SimPO** | Length-normalized log-prob | No | No | Reference-free |",
-      "section": "The RLHF Spectrum",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-82",
-      "quote": "| **GRPO** | Verifier / RM | No (group baseline) | Yes | Reasoning RL (R1) |",
-      "section": "The RLHF Spectrum",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-83",
-      "quote": "| **RLOO** | REINFORCE leave-one-out | No | Optional | Lightweight online RL |",
-      "section": "The RLHF Spectrum",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-84",
-      "quote": "The trend: **simpler objectives that remove components** (critic, reference model, paired data) while matching or exceeding PPO performance.",
-      "section": "The RLHF Spectrum",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-85",
-      "quote": "A central problem in RL: a sufficiently clever agent finds **loopholes** in the reward function that don't reflect the actual intent.",
-      "section": "Reward Hacking",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-86",
-      "quote": "* CoastRunners (2016): an agent trained to maximize race score learned to turn in circles and repeatedly knock over the same power-ups, never finishing the race.",
-      "section": "Reward Hacking",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-87",
-      "quote": "* An LLM trained with reward hacking produces long, sycophantic responses that humans rate highly but are useless.",
-      "section": "Reward Hacking",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-88",
-      "quote": "* **Multiple reward models**: ensemble disagreement as an uncertainty signal.",
-      "section": "Reward Hacking",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-89",
-      "quote": "* **KL penalty to reference**: keeps the policy close to the human-aligned SFT model.",
-      "section": "Reward Hacking",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-90",
-      "quote": "* **Process reward**: score intermediate reasoning steps, not just final output.",
-      "section": "Reward Hacking",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-91",
-      "quote": "* **Constitutional AI** (Bai et al., Anthropic 2022): self-critique against a written “constitution” of principles.",
-      "section": "Reward Hacking",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-92",
-      "quote": "* **Multiagent debate** (\\cite[Du et al., 2023]{du2023multiagent}): several instances of the model propose and critique answers over rounds, converging on a shared answer that improves factuality and reasoning.",
-      "section": "Reward Hacking",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-93",
-      "quote": "* **Sample efficiency**: PPO needs millions of environment steps.",
-      "section": "Open Problems",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-94",
-      "quote": "RL for LLMs needs millions of rollouts.",
-      "section": "Open Problems",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-95",
-      "quote": "* **Reward modeling**: the reward model is a bottleneck; it inherits human biases and is gamed.",
-      "section": "Open Problems",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-96",
-      "quote": "* **Distributional shift**: PPO's current policy drifts from the sampling policy $\\pi_{\\text{old}}$ over the update epochs (the KL term additionally anchors it to $\\pi_{\\text{ref}}$); offline-correction methods (DPO, etc.) sidestep this but lose online improvement.",
-      "section": "Open Problems",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-97",
-      "quote": "* **Credit assignment over long horizons**: a 1000-token reasoning chain has sparse final reward.",
-      "section": "Open Problems",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-98",
-      "quote": "Process rewards help but are expensive.",
-      "section": "Open Problems",
-      "kind": "statement"
-    },
-    {
-      "id": "reinforcement_learning-stmt-99",
       "quote": "RL is the engine of modern alignment and reasoning, but it remains one of the most sample-inefficient and brittlest components of the LLM stack.",
+      "block_id": "reinforcement_learning-block-59",
       "section": "Open Problems",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "reinforcement_learning-block-1",
+      "quote": "Reinforcement Learning (RL) is the third pillar of machine learning, alongside supervised and unsupervised learning. In RL, an **agent** takes **actions** in an **environment** to maximize a cumulative **reward** signal. It is the foundation of modern LLM alignment: **RLHF**, DPO, GRPO, and the o1/R1 paradigm all build on it.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "reinforcement_learning-block-2",
+      "quote": "This chapter covers the mathematical core: Markov Decision Processes, value functions, policy gradients, and how modern preference optimization emerged, grouped from the foundations, through policy optimization, to the LLM-preference methods and the open problems that remain.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "reinforcement_learning-block-3",
+      "quote": "Foundations",
+      "kind": "heading",
+      "section": "Foundations"
+    },
+    {
+      "id": "reinforcement_learning-block-4",
+      "quote": "The Markov Decision Process",
+      "kind": "heading",
+      "section": "The Markov Decision Process"
+    },
+    {
+      "id": "reinforcement_learning-block-5",
+      "quote": "An MDP is the formal setting for RL: $(\\mathcal{S}, \\mathcal{A}, P, R, \\gamma)$ where",
+      "kind": "paragraph",
+      "section": "The Markov Decision Process"
+    },
+    {
+      "id": "reinforcement_learning-block-6",
+      "quote": "The agent follows a **policy** $\\pi(a \\mid s)$: a probability distribution over actions given a state. The goal is to find $\\pi^*$ that maximizes expected discounted return:",
+      "kind": "paragraph",
+      "section": "The Markov Decision Process"
+    },
+    {
+      "id": "reinforcement_learning-block-7",
+      "quote": "A few terms used throughout the chapter:",
+      "kind": "paragraph",
+      "section": "The Markov Decision Process"
+    },
+    {
+      "id": "reinforcement_learning-block-8",
+      "quote": "Value Functions",
+      "kind": "heading",
+      "section": "Value Functions"
+    },
+    {
+      "id": "reinforcement_learning-block-9",
+      "quote": "The **state-value function** measures how good a state is under policy $\\pi$:",
+      "kind": "paragraph",
+      "section": "Value Functions"
+    },
+    {
+      "id": "reinforcement_learning-block-10",
+      "quote": "They satisfy the **Bellman equation**:",
+      "kind": "paragraph",
+      "section": "Value Functions"
+    },
+    {
+      "id": "reinforcement_learning-block-11",
+      "quote": "The **Bellman optimality equation** characterizes the optimal policy:",
+      "kind": "paragraph",
+      "section": "Value Functions"
+    },
+    {
+      "id": "reinforcement_learning-block-12",
+      "quote": "For an LLM, the “state” is the current context window, the “action” is the next token, and the “reward” comes from a reward model (**RLHF**) or verifier (reasoning training).",
+      "kind": "paragraph",
+      "section": "Value Functions"
+    },
+    {
+      "id": "reinforcement_learning-block-13",
+      "quote": "Tabular RL: Q-Learning",
+      "kind": "heading",
+      "section": "Tabular RL: Q-Learning"
+    },
+    {
+      "id": "reinforcement_learning-block-14",
+      "quote": "Policy Optimization",
+      "kind": "heading",
+      "section": "Policy Optimization"
+    },
+    {
+      "id": "reinforcement_learning-block-15",
+      "quote": "Policy Gradients",
+      "kind": "heading",
+      "section": "Policy Gradients"
+    },
+    {
+      "id": "reinforcement_learning-block-16",
+      "quote": "For continuous or large action spaces, parameterize the policy as $\\pi_\\theta(a \\mid s)$ and directly optimize:",
+      "kind": "paragraph",
+      "section": "Policy Gradients"
+    },
+    {
+      "id": "reinforcement_learning-block-17",
+      "quote": "The **policy gradient theorem** (\\cite[Sutton & Barto, 2018]{sutton2018reinforcement}):",
+      "kind": "paragraph",
+      "section": "Policy Gradients"
+    },
+    {
+      "id": "reinforcement_learning-block-18",
+      "quote": "REINFORCE",
+      "kind": "heading",
+      "section": "REINFORCE"
+    },
+    {
+      "id": "reinforcement_learning-block-19",
+      "quote": "The same structure hides inside the transformer: the gradient backpropagated through an attention layer is *exactly* an advantage-based policy gradient — each key's score is updated in proportion to how far that key's marginal utility beats the attention distribution's own average \\cite[the attention gradient as an advantage-based policy gradient]{litman2025sdpaot}.",
+      "kind": "paragraph",
+      "section": "REINFORCE"
+    },
+    {
+      "id": "reinforcement_learning-block-20",
+      "quote": "Actor-Critic Methods",
+      "kind": "heading",
+      "section": "Actor-Critic Methods"
+    },
+    {
+      "id": "reinforcement_learning-block-21",
+      "quote": "A2C / A3C",
+      "kind": "heading",
+      "section": "A2C / A3C"
+    },
+    {
+      "id": "reinforcement_learning-block-22",
+      "quote": "PPO",
+      "kind": "heading",
+      "section": "PPO"
+    },
+    {
+      "id": "reinforcement_learning-block-23",
+      "quote": "PPO is simple, stable, and the default choice for **RLHF** and many robotics tasks.",
+      "kind": "paragraph",
+      "section": "PPO"
+    },
+    {
+      "id": "reinforcement_learning-block-24",
+      "quote": "RL for LLMs: Preference Optimization",
+      "kind": "heading",
+      "section": "RL for LLMs: Preference Optimization"
+    },
+    {
+      "id": "reinforcement_learning-block-25",
+      "quote": "RLHF: Reinforcement Learning from Human Feedback",
+      "kind": "heading",
+      "section": "RLHF: Reinforcement Learning from Human Feedback"
+    },
+    {
+      "id": "reinforcement_learning-block-26",
+      "quote": "1. **Collect comparison data**: humans rank multiple model outputs for the same prompt.",
+      "kind": "list-item",
+      "section": "RLHF: Reinforcement Learning from Human Feedback"
+    },
+    {
+      "id": "reinforcement_learning-block-27",
+      "quote": "The core RLHF objective combines the reward with a KL penalty:",
+      "kind": "paragraph",
+      "section": "RLHF: Reinforcement Learning from Human Feedback"
+    },
+    {
+      "id": "reinforcement_learning-block-28",
+      "quote": "The **KL penalty** prevents the policy from drifting too far from the reference (SFT) model, a critical stabilizer.",
+      "kind": "paragraph",
+      "section": "RLHF: Reinforcement Learning from Human Feedback"
+    },
+    {
+      "id": "reinforcement_learning-block-29",
+      "quote": "The reward model is trained on Bradley-Terry comparisons:",
+      "kind": "paragraph",
+      "section": "RLHF: Reinforcement Learning from Human Feedback"
+    },
+    {
+      "id": "reinforcement_learning-block-30",
+      "quote": "DPO: Direct Preference Optimization",
+      "kind": "heading",
+      "section": "DPO: Direct Preference Optimization"
+    },
+    {
+      "id": "reinforcement_learning-block-31",
+      "quote": "\\cite[Rafailov et al. (2023)]{rafailov2023dpo} showed that the **RLHF** objective has a **closed-form solution**:",
+      "kind": "paragraph",
+      "section": "DPO: Direct Preference Optimization"
+    },
+    {
+      "id": "reinforcement_learning-block-32",
+      "quote": "Inverting gives the implicit reward:",
+      "kind": "paragraph",
+      "section": "DPO: Direct Preference Optimization"
+    },
+    {
+      "id": "reinforcement_learning-block-33",
+      "quote": "Substituting into the Bradley-Terry loss:",
+      "kind": "paragraph",
+      "section": "DPO: Direct Preference Optimization"
+    },
+    {
+      "id": "reinforcement_learning-block-34",
+      "quote": "Variants have proliferated:",
+      "kind": "paragraph",
+      "section": "DPO: Direct Preference Optimization"
+    },
+    {
+      "id": "reinforcement_learning-block-35",
+      "quote": "GRPO: Group Relative Policy Optimization",
+      "kind": "heading",
+      "section": "GRPO: Group Relative Policy Optimization"
+    },
+    {
+      "id": "reinforcement_learning-block-36",
+      "quote": "GRPO (\\cite[Shao et al., DeepSeek, 2024]{shao2024grpo}) was the breakthrough that enabled **R1's pure-RL training**. For each prompt:",
+      "kind": "paragraph",
+      "section": "GRPO: Group Relative Policy Optimization"
+    },
+    {
+      "id": "reinforcement_learning-block-37",
+      "quote": "2. Score each with a reward model (or rule-based verifier).",
+      "kind": "list-item",
+      "section": "GRPO: Group Relative Policy Optimization"
+    },
+    {
+      "id": "reinforcement_learning-block-38",
+      "quote": "3. Compute the **group-relative advantage**:",
+      "kind": "list-item",
+      "section": "GRPO: Group Relative Policy Optimization"
+    },
+    {
+      "id": "reinforcement_learning-block-39",
+      "quote": "4. Update the policy using a PPO-style objective but **without a critic**:",
+      "kind": "list-item",
+      "section": "GRPO: Group Relative Policy Optimization"
+    },
+    {
+      "id": "reinforcement_learning-block-40",
+      "quote": "This is the response-level form; the actual DeepSeekMath objective is per-token, with the ratio and KL term inside a sum over tokens. By using the group mean as the baseline, GRPO eliminates the need for a separate value network. This made it possible to RL-train on **verifiable rewards** (math correctness, code test passage) at scale, producing emergent long-CoT reasoning.",
+      "kind": "paragraph",
+      "section": "GRPO: Group Relative Policy Optimization"
+    },
+    {
+      "id": "reinforcement_learning-block-41",
+      "quote": "GRPO is the algorithm behind **DeepSeek-R1** (January 2025), a widely used open-weight model with emergent long chain-of-thought reasoning. See the Reasoning chapter § o1/R1 paradigm for the *result*; the math here is the *cause*.",
+      "kind": "paragraph",
+      "section": "GRPO: Group Relative Policy Optimization"
+    },
+    {
+      "id": "reinforcement_learning-block-42",
+      "quote": "The Landscape and Its Problems",
+      "kind": "heading",
+      "section": "The Landscape and Its Problems"
+    },
+    {
+      "id": "reinforcement_learning-block-43",
+      "quote": "The RLHF Spectrum",
+      "kind": "heading",
+      "section": "The RLHF Spectrum"
+    },
+    {
+      "id": "reinforcement_learning-block-44",
+      "quote": "| Method | Reward signal | Critic | Reference model | Use case |",
+      "kind": "table-row",
+      "section": "The RLHF Spectrum"
+    },
+    {
+      "id": "reinforcement_learning-block-45",
+      "quote": "| **SFT** | None | No | — | Pretraining alignment |",
+      "kind": "table-row",
+      "section": "The RLHF Spectrum"
+    },
+    {
+      "id": "reinforcement_learning-block-46",
+      "quote": "| **RLHF (PPO)** | Learned RM | Yes | Yes | Industry standard until 2023 |",
+      "kind": "table-row",
+      "section": "The RLHF Spectrum"
+    },
+    {
+      "id": "reinforcement_learning-block-47",
+      "quote": "| **DPO** | Implicit from policy ratio | No | Yes | Simple, no RL |",
+      "kind": "table-row",
+      "section": "The RLHF Spectrum"
+    },
+    {
+      "id": "reinforcement_learning-block-48",
+      "quote": "| **IPO** | Implicit, regularized | No | Yes | Noisy preferences |",
+      "kind": "table-row",
+      "section": "The RLHF Spectrum"
+    },
+    {
+      "id": "reinforcement_learning-block-49",
+      "quote": "| **KTO** | Implicit, asymmetric | No | Yes | Binary feedback |",
+      "kind": "table-row",
+      "section": "The RLHF Spectrum"
+    },
+    {
+      "id": "reinforcement_learning-block-50",
+      "quote": "| **ORPO** | Odds ratio | No | No | Combined SFT + preference |",
+      "kind": "table-row",
+      "section": "The RLHF Spectrum"
+    },
+    {
+      "id": "reinforcement_learning-block-51",
+      "quote": "| **SimPO** | Length-normalized log-prob | No | No | Reference-free |",
+      "kind": "table-row",
+      "section": "The RLHF Spectrum"
+    },
+    {
+      "id": "reinforcement_learning-block-52",
+      "quote": "| **GRPO** | Verifier / RM | No (group baseline) | Yes | Reasoning RL (R1) |",
+      "kind": "table-row",
+      "section": "The RLHF Spectrum"
+    },
+    {
+      "id": "reinforcement_learning-block-53",
+      "quote": "| **RLOO** | REINFORCE leave-one-out | No | Optional | Lightweight online RL |",
+      "kind": "table-row",
+      "section": "The RLHF Spectrum"
+    },
+    {
+      "id": "reinforcement_learning-block-54",
+      "quote": "The trend: **simpler objectives that remove components** (critic, reference model, paired data) while matching or exceeding PPO performance.",
+      "kind": "paragraph",
+      "section": "The RLHF Spectrum"
+    },
+    {
+      "id": "reinforcement_learning-block-55",
+      "quote": "Reward Hacking",
+      "kind": "heading",
+      "section": "Reward Hacking"
+    },
+    {
+      "id": "reinforcement_learning-block-56",
+      "quote": "A central problem in RL: a sufficiently clever agent finds **loopholes** in the reward function that don't reflect the actual intent. Classic examples:",
+      "kind": "paragraph",
+      "section": "Reward Hacking"
+    },
+    {
+      "id": "reinforcement_learning-block-57",
+      "quote": "Defenses:",
+      "kind": "paragraph",
+      "section": "Reward Hacking"
+    },
+    {
+      "id": "reinforcement_learning-block-58",
+      "quote": "Open Problems",
+      "kind": "heading",
+      "section": "Open Problems"
+    },
+    {
+      "id": "reinforcement_learning-block-59",
+      "quote": "RL is the engine of modern alignment and reasoning, but it remains one of the most sample-inefficient and brittlest components of the LLM stack.",
+      "kind": "paragraph",
+      "section": "Open Problems"
     }
   ]
 }

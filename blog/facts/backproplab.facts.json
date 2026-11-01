@@ -181,6 +181,926 @@
       "quote": "The Chain Rule Is All You Need",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-1-part_of-backproplab",
+      "from": "backproplab-block-1",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-2-part_of-backproplab",
+      "from": "backproplab-block-2",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-1-before-backproplab-block-2",
+      "from": "backproplab-block-1",
+      "to": "backproplab-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-2-related_to-backproplab-block-1",
+      "from": "backproplab-block-2",
+      "to": "backproplab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-3-part_of-backproplab",
+      "from": "backproplab-block-3",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-2-before-backproplab-block-3",
+      "from": "backproplab-block-2",
+      "to": "backproplab-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-3-related_to-backproplab-block-1",
+      "from": "backproplab-block-3",
+      "to": "backproplab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-4-part_of-backproplab",
+      "from": "backproplab-block-4",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-3-before-backproplab-block-4",
+      "from": "backproplab-block-3",
+      "to": "backproplab-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-4-related_to-backproplab-block-1",
+      "from": "backproplab-block-4",
+      "to": "backproplab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-5-part_of-backproplab",
+      "from": "backproplab-block-5",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-4-before-backproplab-block-5",
+      "from": "backproplab-block-4",
+      "to": "backproplab-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-6-part_of-backproplab",
+      "from": "backproplab-block-6",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-5-before-backproplab-block-6",
+      "from": "backproplab-block-5",
+      "to": "backproplab-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-6-related_to-backproplab-block-5",
+      "from": "backproplab-block-6",
+      "to": "backproplab-block-5",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-7-part_of-backproplab",
+      "from": "backproplab-block-7",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-6-before-backproplab-block-7",
+      "from": "backproplab-block-6",
+      "to": "backproplab-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-8-part_of-backproplab",
+      "from": "backproplab-block-8",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-7-before-backproplab-block-8",
+      "from": "backproplab-block-7",
+      "to": "backproplab-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-8-related_to-backproplab-block-7",
+      "from": "backproplab-block-8",
+      "to": "backproplab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-9-part_of-backproplab",
+      "from": "backproplab-block-9",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-8-before-backproplab-block-9",
+      "from": "backproplab-block-8",
+      "to": "backproplab-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-9-related_to-backproplab-block-7",
+      "from": "backproplab-block-9",
+      "to": "backproplab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-10-part_of-backproplab",
+      "from": "backproplab-block-10",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-9-before-backproplab-block-10",
+      "from": "backproplab-block-9",
+      "to": "backproplab-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-10-related_to-backproplab-block-7",
+      "from": "backproplab-block-10",
+      "to": "backproplab-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-11-part_of-backproplab",
+      "from": "backproplab-block-11",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-10-before-backproplab-block-11",
+      "from": "backproplab-block-10",
+      "to": "backproplab-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-12-part_of-backproplab",
+      "from": "backproplab-block-12",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-11-before-backproplab-block-12",
+      "from": "backproplab-block-11",
+      "to": "backproplab-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-12-related_to-backproplab-block-11",
+      "from": "backproplab-block-12",
+      "to": "backproplab-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-13-part_of-backproplab",
+      "from": "backproplab-block-13",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-12-before-backproplab-block-13",
+      "from": "backproplab-block-12",
+      "to": "backproplab-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-13-related_to-backproplab-block-11",
+      "from": "backproplab-block-13",
+      "to": "backproplab-block-11",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-14-part_of-backproplab",
+      "from": "backproplab-block-14",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-13-before-backproplab-block-14",
+      "from": "backproplab-block-13",
+      "to": "backproplab-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-15-part_of-backproplab",
+      "from": "backproplab-block-15",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-14-before-backproplab-block-15",
+      "from": "backproplab-block-14",
+      "to": "backproplab-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-15-related_to-backproplab-block-14",
+      "from": "backproplab-block-15",
+      "to": "backproplab-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-16-part_of-backproplab",
+      "from": "backproplab-block-16",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-15-before-backproplab-block-16",
+      "from": "backproplab-block-15",
+      "to": "backproplab-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-16-related_to-backproplab-block-14",
+      "from": "backproplab-block-16",
+      "to": "backproplab-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-17-part_of-backproplab",
+      "from": "backproplab-block-17",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-16-before-backproplab-block-17",
+      "from": "backproplab-block-16",
+      "to": "backproplab-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-17-related_to-backproplab-block-14",
+      "from": "backproplab-block-17",
+      "to": "backproplab-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-18-part_of-backproplab",
+      "from": "backproplab-block-18",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-17-before-backproplab-block-18",
+      "from": "backproplab-block-17",
+      "to": "backproplab-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-19-part_of-backproplab",
+      "from": "backproplab-block-19",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-18-before-backproplab-block-19",
+      "from": "backproplab-block-18",
+      "to": "backproplab-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-19-related_to-backproplab-block-18",
+      "from": "backproplab-block-19",
+      "to": "backproplab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-20-part_of-backproplab",
+      "from": "backproplab-block-20",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-19-before-backproplab-block-20",
+      "from": "backproplab-block-19",
+      "to": "backproplab-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-20-related_to-backproplab-block-18",
+      "from": "backproplab-block-20",
+      "to": "backproplab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-21-part_of-backproplab",
+      "from": "backproplab-block-21",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-20-before-backproplab-block-21",
+      "from": "backproplab-block-20",
+      "to": "backproplab-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-21-related_to-backproplab-block-18",
+      "from": "backproplab-block-21",
+      "to": "backproplab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-22-part_of-backproplab",
+      "from": "backproplab-block-22",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-21-before-backproplab-block-22",
+      "from": "backproplab-block-21",
+      "to": "backproplab-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-22-related_to-backproplab-block-18",
+      "from": "backproplab-block-22",
+      "to": "backproplab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-23-part_of-backproplab",
+      "from": "backproplab-block-23",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-22-before-backproplab-block-23",
+      "from": "backproplab-block-22",
+      "to": "backproplab-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-23-related_to-backproplab-block-18",
+      "from": "backproplab-block-23",
+      "to": "backproplab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-24-part_of-backproplab",
+      "from": "backproplab-block-24",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-23-before-backproplab-block-24",
+      "from": "backproplab-block-23",
+      "to": "backproplab-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-24-related_to-backproplab-block-18",
+      "from": "backproplab-block-24",
+      "to": "backproplab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-25-part_of-backproplab",
+      "from": "backproplab-block-25",
+      "to": "backproplab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-24-before-backproplab-block-25",
+      "from": "backproplab-block-24",
+      "to": "backproplab-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-block-25-related_to-backproplab-block-18",
+      "from": "backproplab-block-25",
+      "to": "backproplab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-1-part_of-backproplab-block-1",
+      "from": "backproplab-stmt-1",
+      "to": "backproplab-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-2-part_of-backproplab-block-2",
+      "from": "backproplab-stmt-2",
+      "to": "backproplab-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-3-part_of-backproplab-block-3",
+      "from": "backproplab-stmt-3",
+      "to": "backproplab-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-4-part_of-backproplab-block-4",
+      "from": "backproplab-stmt-4",
+      "to": "backproplab-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-5-part_of-backproplab-block-4",
+      "from": "backproplab-stmt-5",
+      "to": "backproplab-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-6-part_of-backproplab-block-6",
+      "from": "backproplab-stmt-6",
+      "to": "backproplab-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-7-part_of-backproplab-block-6",
+      "from": "backproplab-stmt-7",
+      "to": "backproplab-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-8-part_of-backproplab-block-8",
+      "from": "backproplab-stmt-8",
+      "to": "backproplab-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-9-part_of-backproplab-block-9",
+      "from": "backproplab-stmt-9",
+      "to": "backproplab-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-10-part_of-backproplab-block-9",
+      "from": "backproplab-stmt-10",
+      "to": "backproplab-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-11-part_of-backproplab-block-10",
+      "from": "backproplab-stmt-11",
+      "to": "backproplab-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-12-part_of-backproplab-block-12",
+      "from": "backproplab-stmt-12",
+      "to": "backproplab-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-13-part_of-backproplab-block-13",
+      "from": "backproplab-stmt-13",
+      "to": "backproplab-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-14-part_of-backproplab-block-13",
+      "from": "backproplab-stmt-14",
+      "to": "backproplab-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-15-part_of-backproplab-block-15",
+      "from": "backproplab-stmt-15",
+      "to": "backproplab-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-16-part_of-backproplab-block-16",
+      "from": "backproplab-stmt-16",
+      "to": "backproplab-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-17-part_of-backproplab-block-17",
+      "from": "backproplab-stmt-17",
+      "to": "backproplab-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-18-part_of-backproplab-block-20",
+      "from": "backproplab-stmt-18",
+      "to": "backproplab-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-19-part_of-backproplab-block-21",
+      "from": "backproplab-stmt-19",
+      "to": "backproplab-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-20-part_of-backproplab-block-22",
+      "from": "backproplab-stmt-20",
+      "to": "backproplab-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-21-part_of-backproplab-block-23",
+      "from": "backproplab-stmt-21",
+      "to": "backproplab-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-22-part_of-backproplab-block-23",
+      "from": "backproplab-stmt-22",
+      "to": "backproplab-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-23-part_of-backproplab-block-24",
+      "from": "backproplab-stmt-23",
+      "to": "backproplab-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-backproplab-stmt-24-part_of-backproplab-block-25",
+      "from": "backproplab-stmt-24",
+      "to": "backproplab-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "deep_audit": true,
@@ -188,158 +1108,322 @@
     {
       "id": "backproplab-stmt-1",
       "quote": "Backpropagation, introduced to the field of AI in \\citeyear{rumelhart1986}, is how a neural network **learns from its own mistakes**.",
+      "block_id": "backproplab-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-2",
       "quote": "**Forward Pass** — inputs flow *left → right* through the layers, producing a prediction.",
+      "block_id": "backproplab-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-3",
       "quote": "**Backward Pass** — the error flows *right → left*, telling each weight exactly how much to change.",
+      "block_id": "backproplab-block-3",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-4",
       "quote": "In the demo further down you can *watch* both flows as glowing pulses along the wires — each neuron's numbers update the instant a pulse lands on it.",
+      "block_id": "backproplab-block-4",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-5",
       "quote": "Click any neuron or weight to unfold its equations; every quantity wears an **underbrace** naming what it is in plain words, and a **show definition** toggle unfolds a symbol into its own formula.",
+      "block_id": "backproplab-block-4",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-6",
       "quote": "Instead of a toy 2‑2‑2 net, the demo below runs a **4-layer network** with shape **3 → 4 → 4 → 2**.",
+      "block_id": "backproplab-block-6",
       "section": "The Network You'll Play With",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-7",
       "quote": "That's small enough to hand‑trace, deep enough to show how error signals *cascade* backward layer by layer — the exact behaviour that makes \"deep\" learning deep.",
+      "block_id": "backproplab-block-6",
       "section": "The Network You'll Play With",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-8",
-      "quote": "Every arrow between layers is a **weight** $w$; every neuron also owns a **bias** $b$.",
-      "section": "The Network You'll Play With",
+      "quote": "Each neuron does two things:",
+      "block_id": "backproplab-block-8",
+      "section": "One Neuron, In Slow Motion",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-9",
-      "quote": "Each neuron does two things:",
+      "quote": "The **sigmoid** squashes any real number into $(0, 1)$.",
+      "block_id": "backproplab-block-9",
       "section": "One Neuron, In Slow Motion",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-10",
-      "quote": "The **sigmoid** squashes any real number into $(0, 1)$.",
+      "quote": "Its derivative — which we'll need for backprop — is delightfully cheap once you already know $\\sigma(z)$:",
+      "block_id": "backproplab-block-9",
       "section": "One Neuron, In Slow Motion",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-11",
-      "quote": "Its derivative — which we'll need for backprop — is delightfully cheap once you already know $\\sigma(z)$:",
+      "quote": "Hover the plot below to see the tangent slope at any point:",
+      "block_id": "backproplab-block-10",
       "section": "One Neuron, In Slow Motion",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-12",
-      "quote": "Hover the plot below to see the tangent slope at any point:",
-      "section": "One Neuron, In Slow Motion",
+      "quote": "We measure error with the **half sum-of-squares**:",
+      "block_id": "backproplab-block-12",
+      "section": "The Loss — \"How Wrong Are We?\"",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-13",
-      "quote": "To learn, we need $\\partial E / \\partial w$ for every weight $w$ in the network.",
-      "section": "The Chain Rule Is All You Need",
+      "quote": "The $\\tfrac{1}{2}$ is a convenience — it cancels when we differentiate.",
+      "block_id": "backproplab-block-13",
+      "section": "The Loss — \"How Wrong Are We?\"",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-14",
-      "quote": "Instead of computing each one from scratch, backprop reuses work by pushing an **error signal** $\\delta$ backward, layer by layer.",
-      "section": "The Chain Rule Is All You Need",
+      "quote": "(The standard **MSE** used elsewhere in the course is the same squared-error shape, averaged with $1/N$ instead of $\\tfrac12$.)",
+      "block_id": "backproplab-block-13",
+      "section": "The Loss — \"How Wrong Are We?\"",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-15",
-      "quote": "**At the output layer** (sigmoid + half-SSE):",
+      "quote": "Once you have $\\delta$ at a neuron, the gradient for any weight *feeding into* it is trivial:",
+      "block_id": "backproplab-block-15",
       "section": "The Chain Rule Is All You Need",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-16",
-      "quote": "**At any hidden layer** (chain rule):",
+      "quote": "And the update is a small step downhill:",
+      "block_id": "backproplab-block-16",
       "section": "The Chain Rule Is All You Need",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-17",
-      "quote": "Once you have $\\delta$ at a neuron, the gradient for any weight *feeding into* it is trivial:",
+      "quote": "where $\\eta$ is the **learning rate**.",
+      "block_id": "backproplab-block-17",
       "section": "The Chain Rule Is All You Need",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-18",
-      "quote": "And the update is a small step downhill:",
-      "section": "The Chain Rule Is All You Need",
+      "quote": "**Press ▶ Forward** — watch cyan pulses travel left→right; each neuron's activation *updates the moment a pulse lands on it*.",
+      "block_id": "backproplab-block-20",
+      "section": "Now Watch It Happen",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-19",
-      "quote": "where $\\eta$ is the **learning rate**.",
-      "section": "The Chain Rule Is All You Need",
+      "quote": "**Press ◀ Backward** — watch red pulses travel right→left; each neuron's error signal $\\delta$ updates on arrival.",
+      "block_id": "backproplab-block-21",
+      "section": "Now Watch It Happen",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-20",
-      "quote": "**Press ▶ Forward** — watch cyan pulses travel left→right; each neuron's activation *updates the moment a pulse lands on it*.",
+      "quote": "**Hover any neuron** — a *cone of influence* lights up every weight it touches, colored by that weight's contribution.",
+      "block_id": "backproplab-block-22",
       "section": "Now Watch It Happen",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-21",
-      "quote": "**Press ◀ Backward** — watch red pulses travel right→left; each neuron's error signal $\\delta$ updates on arrival.",
+      "quote": "**Click any neuron or weight** — the panel below expands its full equations.",
+      "block_id": "backproplab-block-23",
       "section": "Now Watch It Happen",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-22",
-      "quote": "**Hover any neuron** — a *cone of influence* lights up every weight it touches, colored by that weight's contribution.",
+      "quote": "Every quantity wears an **underbrace** naming what it is, with a wider underbrace grouping related terms.",
+      "block_id": "backproplab-block-23",
       "section": "Now Watch It Happen",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-23",
-      "quote": "**Click any neuron or weight** — the panel below expands its full equations.",
+      "quote": "**Hit \"show definition\"** on a line — it unfolds that symbol into its own formula (e.g. the activation into the raw sigmoid).",
+      "block_id": "backproplab-block-24",
       "section": "Now Watch It Happen",
       "kind": "statement"
     },
     {
       "id": "backproplab-stmt-24",
-      "quote": "Every quantity wears an **underbrace** naming what it is, with a wider underbrace grouping related terms.",
-      "section": "Now Watch It Happen",
-      "kind": "statement"
-    },
-    {
-      "id": "backproplab-stmt-25",
-      "quote": "**Hit \"show definition\"** on a line — it unfolds that symbol into its own formula (e.g. the activation into the raw sigmoid).",
-      "section": "Now Watch It Happen",
-      "kind": "statement"
-    },
-    {
-      "id": "backproplab-stmt-26",
       "quote": "**Press ✓ Full step**, then **↻ Train 100** — watch the values change on arrival and the loss bar shrink as the network adapts.",
+      "block_id": "backproplab-block-25",
       "section": "Now Watch It Happen",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "backproplab-block-1",
+      "quote": "Backpropagation, introduced to the field of AI in \\citeyear{rumelhart1986}, is how a neural network **learns from its own mistakes**. It has two heartbeats:",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "backproplab-block-2",
+      "quote": "1. **Forward Pass** — inputs flow *left → right* through the layers, producing a prediction.",
+      "kind": "list-item",
+      "section": ""
+    },
+    {
+      "id": "backproplab-block-3",
+      "quote": "2. **Backward Pass** — the error flows *right → left*, telling each weight exactly how much to change.",
+      "kind": "list-item",
+      "section": ""
+    },
+    {
+      "id": "backproplab-block-4",
+      "quote": "In the demo further down you can *watch* both flows as glowing pulses along the wires — each neuron's numbers update the instant a pulse lands on it. Click any neuron or weight to unfold its equations; every quantity wears an **underbrace** naming what it is in plain words, and a **show definition** toggle unfolds a symbol into its own formula.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "backproplab-block-5",
+      "quote": "The Network You'll Play With",
+      "kind": "heading",
+      "section": "The Network You'll Play With"
+    },
+    {
+      "id": "backproplab-block-6",
+      "quote": "Instead of a toy 2‑2‑2 net, the demo below runs a **4-layer network** with shape **3 → 4 → 4 → 2**. That's small enough to hand‑trace, deep enough to show how error signals *cascade* backward layer by layer — the exact behaviour that makes \"deep\" learning deep.",
+      "kind": "paragraph",
+      "section": "The Network You'll Play With"
+    },
+    {
+      "id": "backproplab-block-7",
+      "quote": "One Neuron, In Slow Motion",
+      "kind": "heading",
+      "section": "One Neuron, In Slow Motion"
+    },
+    {
+      "id": "backproplab-block-8",
+      "quote": "Each neuron does two things:",
+      "kind": "paragraph",
+      "section": "One Neuron, In Slow Motion"
+    },
+    {
+      "id": "backproplab-block-9",
+      "quote": "The **sigmoid** squashes any real number into $(0, 1)$. Its derivative — which we'll need for backprop — is delightfully cheap once you already know $\\sigma(z)$:",
+      "kind": "paragraph",
+      "section": "One Neuron, In Slow Motion"
+    },
+    {
+      "id": "backproplab-block-10",
+      "quote": "Hover the plot below to see the tangent slope at any point:",
+      "kind": "paragraph",
+      "section": "One Neuron, In Slow Motion"
+    },
+    {
+      "id": "backproplab-block-11",
+      "quote": "The Loss — \"How Wrong Are We?\"",
+      "kind": "heading",
+      "section": "The Loss — \"How Wrong Are We?\""
+    },
+    {
+      "id": "backproplab-block-12",
+      "quote": "We measure error with the **half sum-of-squares**:",
+      "kind": "paragraph",
+      "section": "The Loss — \"How Wrong Are We?\""
+    },
+    {
+      "id": "backproplab-block-13",
+      "quote": "The $\\tfrac{1}{2}$ is a convenience — it cancels when we differentiate. (The standard **MSE** used elsewhere in the course is the same squared-error shape, averaged with $1/N$ instead of $\\tfrac12$.)",
+      "kind": "paragraph",
+      "section": "The Loss — \"How Wrong Are We?\""
+    },
+    {
+      "id": "backproplab-block-14",
+      "quote": "The Chain Rule Is All You Need",
+      "kind": "heading",
+      "section": "The Chain Rule Is All You Need"
+    },
+    {
+      "id": "backproplab-block-15",
+      "quote": "That's the whole trick. Once you have $\\delta$ at a neuron, the gradient for any weight *feeding into* it is trivial:",
+      "kind": "paragraph",
+      "section": "The Chain Rule Is All You Need"
+    },
+    {
+      "id": "backproplab-block-16",
+      "quote": "And the update is a small step downhill:",
+      "kind": "paragraph",
+      "section": "The Chain Rule Is All You Need"
+    },
+    {
+      "id": "backproplab-block-17",
+      "quote": "where $\\eta$ is the **learning rate**.",
+      "kind": "paragraph",
+      "section": "The Chain Rule Is All You Need"
+    },
+    {
+      "id": "backproplab-block-18",
+      "quote": "Now Watch It Happen",
+      "kind": "heading",
+      "section": "Now Watch It Happen"
+    },
+    {
+      "id": "backproplab-block-19",
+      "quote": "Below is a live network. Try this in order:",
+      "kind": "paragraph",
+      "section": "Now Watch It Happen"
+    },
+    {
+      "id": "backproplab-block-20",
+      "quote": "1. **Press ▶ Forward** — watch cyan pulses travel left→right; each neuron's activation *updates the moment a pulse lands on it*.",
+      "kind": "list-item",
+      "section": "Now Watch It Happen"
+    },
+    {
+      "id": "backproplab-block-21",
+      "quote": "2. **Press ◀ Backward** — watch red pulses travel right→left; each neuron's error signal $\\delta$ updates on arrival.",
+      "kind": "list-item",
+      "section": "Now Watch It Happen"
+    },
+    {
+      "id": "backproplab-block-22",
+      "quote": "3. **Hover any neuron** — a *cone of influence* lights up every weight it touches, colored by that weight's contribution.",
+      "kind": "list-item",
+      "section": "Now Watch It Happen"
+    },
+    {
+      "id": "backproplab-block-23",
+      "quote": "4. **Click any neuron or weight** — the panel below expands its full equations. Every quantity wears an **underbrace** naming what it is, with a wider underbrace grouping related terms.",
+      "kind": "list-item",
+      "section": "Now Watch It Happen"
+    },
+    {
+      "id": "backproplab-block-24",
+      "quote": "5. **Hit \"show definition\"** on a line — it unfolds that symbol into its own formula (e.g. the activation into the raw sigmoid).",
+      "kind": "list-item",
+      "section": "Now Watch It Happen"
+    },
+    {
+      "id": "backproplab-block-25",
+      "quote": "6. **Press ✓ Full step**, then **↻ Train 100** — watch the values change on arrival and the loss bar shrink as the network adapts.",
+      "kind": "list-item",
+      "section": "Now Watch It Happen"
     }
   ]
 }

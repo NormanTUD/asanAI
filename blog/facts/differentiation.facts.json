@@ -471,596 +471,3842 @@
       "quote": "part: 2",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-1-part_of-differentiation",
+      "from": "differentiation-block-1",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-2-part_of-differentiation",
+      "from": "differentiation-block-2",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-1-before-differentiation-block-2",
+      "from": "differentiation-block-1",
+      "to": "differentiation-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-2-related_to-differentiation-block-1",
+      "from": "differentiation-block-2",
+      "to": "differentiation-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-3-part_of-differentiation",
+      "from": "differentiation-block-3",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-2-before-differentiation-block-3",
+      "from": "differentiation-block-2",
+      "to": "differentiation-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-3-related_to-differentiation-block-1",
+      "from": "differentiation-block-3",
+      "to": "differentiation-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-4-part_of-differentiation",
+      "from": "differentiation-block-4",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-3-before-differentiation-block-4",
+      "from": "differentiation-block-3",
+      "to": "differentiation-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-4-related_to-differentiation-block-1",
+      "from": "differentiation-block-4",
+      "to": "differentiation-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-5-part_of-differentiation",
+      "from": "differentiation-block-5",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-4-before-differentiation-block-5",
+      "from": "differentiation-block-4",
+      "to": "differentiation-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-5-related_to-differentiation-block-1",
+      "from": "differentiation-block-5",
+      "to": "differentiation-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-6-part_of-differentiation",
+      "from": "differentiation-block-6",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-5-before-differentiation-block-6",
+      "from": "differentiation-block-5",
+      "to": "differentiation-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-6-related_to-differentiation-block-1",
+      "from": "differentiation-block-6",
+      "to": "differentiation-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-7-part_of-differentiation",
+      "from": "differentiation-block-7",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-6-before-differentiation-block-7",
+      "from": "differentiation-block-6",
+      "to": "differentiation-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-7-related_to-differentiation-block-1",
+      "from": "differentiation-block-7",
+      "to": "differentiation-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-8-part_of-differentiation",
+      "from": "differentiation-block-8",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-7-before-differentiation-block-8",
+      "from": "differentiation-block-7",
+      "to": "differentiation-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-8-related_to-differentiation-block-1",
+      "from": "differentiation-block-8",
+      "to": "differentiation-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-9-part_of-differentiation",
+      "from": "differentiation-block-9",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-8-before-differentiation-block-9",
+      "from": "differentiation-block-8",
+      "to": "differentiation-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-9-related_to-differentiation-block-1",
+      "from": "differentiation-block-9",
+      "to": "differentiation-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-10-part_of-differentiation",
+      "from": "differentiation-block-10",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-9-before-differentiation-block-10",
+      "from": "differentiation-block-9",
+      "to": "differentiation-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-11-part_of-differentiation",
+      "from": "differentiation-block-11",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-10-before-differentiation-block-11",
+      "from": "differentiation-block-10",
+      "to": "differentiation-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-11-related_to-differentiation-block-10",
+      "from": "differentiation-block-11",
+      "to": "differentiation-block-10",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-12-part_of-differentiation",
+      "from": "differentiation-block-12",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-11-before-differentiation-block-12",
+      "from": "differentiation-block-11",
+      "to": "differentiation-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-13-part_of-differentiation",
+      "from": "differentiation-block-13",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-12-before-differentiation-block-13",
+      "from": "differentiation-block-12",
+      "to": "differentiation-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-14-part_of-differentiation",
+      "from": "differentiation-block-14",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-13-before-differentiation-block-14",
+      "from": "differentiation-block-13",
+      "to": "differentiation-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-14-related_to-differentiation-block-13",
+      "from": "differentiation-block-14",
+      "to": "differentiation-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-15-part_of-differentiation",
+      "from": "differentiation-block-15",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-14-before-differentiation-block-15",
+      "from": "differentiation-block-14",
+      "to": "differentiation-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-15-related_to-differentiation-block-13",
+      "from": "differentiation-block-15",
+      "to": "differentiation-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-16-part_of-differentiation",
+      "from": "differentiation-block-16",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-15-before-differentiation-block-16",
+      "from": "differentiation-block-15",
+      "to": "differentiation-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-16-related_to-differentiation-block-13",
+      "from": "differentiation-block-16",
+      "to": "differentiation-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-17-part_of-differentiation",
+      "from": "differentiation-block-17",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-16-before-differentiation-block-17",
+      "from": "differentiation-block-16",
+      "to": "differentiation-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-17-related_to-differentiation-block-13",
+      "from": "differentiation-block-17",
+      "to": "differentiation-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-18-part_of-differentiation",
+      "from": "differentiation-block-18",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-17-before-differentiation-block-18",
+      "from": "differentiation-block-17",
+      "to": "differentiation-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-19-part_of-differentiation",
+      "from": "differentiation-block-19",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-18-before-differentiation-block-19",
+      "from": "differentiation-block-18",
+      "to": "differentiation-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-19-related_to-differentiation-block-18",
+      "from": "differentiation-block-19",
+      "to": "differentiation-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-20-part_of-differentiation",
+      "from": "differentiation-block-20",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-19-before-differentiation-block-20",
+      "from": "differentiation-block-19",
+      "to": "differentiation-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-21-part_of-differentiation",
+      "from": "differentiation-block-21",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-20-before-differentiation-block-21",
+      "from": "differentiation-block-20",
+      "to": "differentiation-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-21-related_to-differentiation-block-20",
+      "from": "differentiation-block-21",
+      "to": "differentiation-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-22-part_of-differentiation",
+      "from": "differentiation-block-22",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-21-before-differentiation-block-22",
+      "from": "differentiation-block-21",
+      "to": "differentiation-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-23-part_of-differentiation",
+      "from": "differentiation-block-23",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-22-before-differentiation-block-23",
+      "from": "differentiation-block-22",
+      "to": "differentiation-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-23-related_to-differentiation-block-22",
+      "from": "differentiation-block-23",
+      "to": "differentiation-block-22",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-24-part_of-differentiation",
+      "from": "differentiation-block-24",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-23-before-differentiation-block-24",
+      "from": "differentiation-block-23",
+      "to": "differentiation-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-24-related_to-differentiation-block-22",
+      "from": "differentiation-block-24",
+      "to": "differentiation-block-22",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-25-part_of-differentiation",
+      "from": "differentiation-block-25",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-24-before-differentiation-block-25",
+      "from": "differentiation-block-24",
+      "to": "differentiation-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-25-related_to-differentiation-block-22",
+      "from": "differentiation-block-25",
+      "to": "differentiation-block-22",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-26-part_of-differentiation",
+      "from": "differentiation-block-26",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-25-before-differentiation-block-26",
+      "from": "differentiation-block-25",
+      "to": "differentiation-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-26-related_to-differentiation-block-22",
+      "from": "differentiation-block-26",
+      "to": "differentiation-block-22",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-27-part_of-differentiation",
+      "from": "differentiation-block-27",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-26-before-differentiation-block-27",
+      "from": "differentiation-block-26",
+      "to": "differentiation-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-28-part_of-differentiation",
+      "from": "differentiation-block-28",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-27-before-differentiation-block-28",
+      "from": "differentiation-block-27",
+      "to": "differentiation-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-28-related_to-differentiation-block-27",
+      "from": "differentiation-block-28",
+      "to": "differentiation-block-27",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-29-part_of-differentiation",
+      "from": "differentiation-block-29",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-28-before-differentiation-block-29",
+      "from": "differentiation-block-28",
+      "to": "differentiation-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-30-part_of-differentiation",
+      "from": "differentiation-block-30",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-29-before-differentiation-block-30",
+      "from": "differentiation-block-29",
+      "to": "differentiation-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-30-related_to-differentiation-block-29",
+      "from": "differentiation-block-30",
+      "to": "differentiation-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-31-part_of-differentiation",
+      "from": "differentiation-block-31",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-30-before-differentiation-block-31",
+      "from": "differentiation-block-30",
+      "to": "differentiation-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-32-part_of-differentiation",
+      "from": "differentiation-block-32",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-31-before-differentiation-block-32",
+      "from": "differentiation-block-31",
+      "to": "differentiation-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-32-related_to-differentiation-block-31",
+      "from": "differentiation-block-32",
+      "to": "differentiation-block-31",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-33-part_of-differentiation",
+      "from": "differentiation-block-33",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-32-before-differentiation-block-33",
+      "from": "differentiation-block-32",
+      "to": "differentiation-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-34-part_of-differentiation",
+      "from": "differentiation-block-34",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-33-before-differentiation-block-34",
+      "from": "differentiation-block-33",
+      "to": "differentiation-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-35-part_of-differentiation",
+      "from": "differentiation-block-35",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-34-before-differentiation-block-35",
+      "from": "differentiation-block-34",
+      "to": "differentiation-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-35-related_to-differentiation-block-34",
+      "from": "differentiation-block-35",
+      "to": "differentiation-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-36-part_of-differentiation",
+      "from": "differentiation-block-36",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-35-before-differentiation-block-36",
+      "from": "differentiation-block-35",
+      "to": "differentiation-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-36-related_to-differentiation-block-34",
+      "from": "differentiation-block-36",
+      "to": "differentiation-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-37-part_of-differentiation",
+      "from": "differentiation-block-37",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-36-before-differentiation-block-37",
+      "from": "differentiation-block-36",
+      "to": "differentiation-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-37-related_to-differentiation-block-34",
+      "from": "differentiation-block-37",
+      "to": "differentiation-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-38-part_of-differentiation",
+      "from": "differentiation-block-38",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-37-before-differentiation-block-38",
+      "from": "differentiation-block-37",
+      "to": "differentiation-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-39-part_of-differentiation",
+      "from": "differentiation-block-39",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-38-before-differentiation-block-39",
+      "from": "differentiation-block-38",
+      "to": "differentiation-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-39-related_to-differentiation-block-38",
+      "from": "differentiation-block-39",
+      "to": "differentiation-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-40-part_of-differentiation",
+      "from": "differentiation-block-40",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-39-before-differentiation-block-40",
+      "from": "differentiation-block-39",
+      "to": "differentiation-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-40-related_to-differentiation-block-38",
+      "from": "differentiation-block-40",
+      "to": "differentiation-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-41-part_of-differentiation",
+      "from": "differentiation-block-41",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-40-before-differentiation-block-41",
+      "from": "differentiation-block-40",
+      "to": "differentiation-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-41-related_to-differentiation-block-38",
+      "from": "differentiation-block-41",
+      "to": "differentiation-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-42-part_of-differentiation",
+      "from": "differentiation-block-42",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-41-before-differentiation-block-42",
+      "from": "differentiation-block-41",
+      "to": "differentiation-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-42-related_to-differentiation-block-38",
+      "from": "differentiation-block-42",
+      "to": "differentiation-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-43-part_of-differentiation",
+      "from": "differentiation-block-43",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-42-before-differentiation-block-43",
+      "from": "differentiation-block-42",
+      "to": "differentiation-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-43-related_to-differentiation-block-38",
+      "from": "differentiation-block-43",
+      "to": "differentiation-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-44-part_of-differentiation",
+      "from": "differentiation-block-44",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-43-before-differentiation-block-44",
+      "from": "differentiation-block-43",
+      "to": "differentiation-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-45-part_of-differentiation",
+      "from": "differentiation-block-45",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-44-before-differentiation-block-45",
+      "from": "differentiation-block-44",
+      "to": "differentiation-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-45-related_to-differentiation-block-44",
+      "from": "differentiation-block-45",
+      "to": "differentiation-block-44",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-46-part_of-differentiation",
+      "from": "differentiation-block-46",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-45-before-differentiation-block-46",
+      "from": "differentiation-block-45",
+      "to": "differentiation-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-46-related_to-differentiation-block-44",
+      "from": "differentiation-block-46",
+      "to": "differentiation-block-44",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-47-part_of-differentiation",
+      "from": "differentiation-block-47",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-46-before-differentiation-block-47",
+      "from": "differentiation-block-46",
+      "to": "differentiation-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-47-related_to-differentiation-block-44",
+      "from": "differentiation-block-47",
+      "to": "differentiation-block-44",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-48-part_of-differentiation",
+      "from": "differentiation-block-48",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-47-before-differentiation-block-48",
+      "from": "differentiation-block-47",
+      "to": "differentiation-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-49-part_of-differentiation",
+      "from": "differentiation-block-49",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-48-before-differentiation-block-49",
+      "from": "differentiation-block-48",
+      "to": "differentiation-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-49-related_to-differentiation-block-48",
+      "from": "differentiation-block-49",
+      "to": "differentiation-block-48",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-50-part_of-differentiation",
+      "from": "differentiation-block-50",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-49-before-differentiation-block-50",
+      "from": "differentiation-block-49",
+      "to": "differentiation-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-50-related_to-differentiation-block-48",
+      "from": "differentiation-block-50",
+      "to": "differentiation-block-48",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-51-part_of-differentiation",
+      "from": "differentiation-block-51",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-50-before-differentiation-block-51",
+      "from": "differentiation-block-50",
+      "to": "differentiation-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-51-related_to-differentiation-block-48",
+      "from": "differentiation-block-51",
+      "to": "differentiation-block-48",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-52-part_of-differentiation",
+      "from": "differentiation-block-52",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-51-before-differentiation-block-52",
+      "from": "differentiation-block-51",
+      "to": "differentiation-block-52",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-52-related_to-differentiation-block-48",
+      "from": "differentiation-block-52",
+      "to": "differentiation-block-48",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-53-part_of-differentiation",
+      "from": "differentiation-block-53",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-52-before-differentiation-block-53",
+      "from": "differentiation-block-52",
+      "to": "differentiation-block-53",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-54-part_of-differentiation",
+      "from": "differentiation-block-54",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-53-before-differentiation-block-54",
+      "from": "differentiation-block-53",
+      "to": "differentiation-block-54",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-54-related_to-differentiation-block-53",
+      "from": "differentiation-block-54",
+      "to": "differentiation-block-53",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-55-part_of-differentiation",
+      "from": "differentiation-block-55",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-54-before-differentiation-block-55",
+      "from": "differentiation-block-54",
+      "to": "differentiation-block-55",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-55-related_to-differentiation-block-53",
+      "from": "differentiation-block-55",
+      "to": "differentiation-block-53",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-56-part_of-differentiation",
+      "from": "differentiation-block-56",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-55-before-differentiation-block-56",
+      "from": "differentiation-block-55",
+      "to": "differentiation-block-56",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-56-related_to-differentiation-block-53",
+      "from": "differentiation-block-56",
+      "to": "differentiation-block-53",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-57-part_of-differentiation",
+      "from": "differentiation-block-57",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-56-before-differentiation-block-57",
+      "from": "differentiation-block-56",
+      "to": "differentiation-block-57",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-57-related_to-differentiation-block-53",
+      "from": "differentiation-block-57",
+      "to": "differentiation-block-53",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-58-part_of-differentiation",
+      "from": "differentiation-block-58",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-57-before-differentiation-block-58",
+      "from": "differentiation-block-57",
+      "to": "differentiation-block-58",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-58-related_to-differentiation-block-53",
+      "from": "differentiation-block-58",
+      "to": "differentiation-block-53",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-59-part_of-differentiation",
+      "from": "differentiation-block-59",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-58-before-differentiation-block-59",
+      "from": "differentiation-block-58",
+      "to": "differentiation-block-59",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-59-related_to-differentiation-block-53",
+      "from": "differentiation-block-59",
+      "to": "differentiation-block-53",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-60-part_of-differentiation",
+      "from": "differentiation-block-60",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-59-before-differentiation-block-60",
+      "from": "differentiation-block-59",
+      "to": "differentiation-block-60",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-61-part_of-differentiation",
+      "from": "differentiation-block-61",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-60-before-differentiation-block-61",
+      "from": "differentiation-block-60",
+      "to": "differentiation-block-61",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-61-related_to-differentiation-block-60",
+      "from": "differentiation-block-61",
+      "to": "differentiation-block-60",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-62-part_of-differentiation",
+      "from": "differentiation-block-62",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-61-before-differentiation-block-62",
+      "from": "differentiation-block-61",
+      "to": "differentiation-block-62",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-62-related_to-differentiation-block-60",
+      "from": "differentiation-block-62",
+      "to": "differentiation-block-60",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-63-part_of-differentiation",
+      "from": "differentiation-block-63",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-62-before-differentiation-block-63",
+      "from": "differentiation-block-62",
+      "to": "differentiation-block-63",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-63-related_to-differentiation-block-60",
+      "from": "differentiation-block-63",
+      "to": "differentiation-block-60",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-64-part_of-differentiation",
+      "from": "differentiation-block-64",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-63-before-differentiation-block-64",
+      "from": "differentiation-block-63",
+      "to": "differentiation-block-64",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-64-related_to-differentiation-block-60",
+      "from": "differentiation-block-64",
+      "to": "differentiation-block-60",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-65-part_of-differentiation",
+      "from": "differentiation-block-65",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-64-before-differentiation-block-65",
+      "from": "differentiation-block-64",
+      "to": "differentiation-block-65",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-65-related_to-differentiation-block-60",
+      "from": "differentiation-block-65",
+      "to": "differentiation-block-60",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-66-part_of-differentiation",
+      "from": "differentiation-block-66",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-65-before-differentiation-block-66",
+      "from": "differentiation-block-65",
+      "to": "differentiation-block-66",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-66-related_to-differentiation-block-60",
+      "from": "differentiation-block-66",
+      "to": "differentiation-block-60",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-67-part_of-differentiation",
+      "from": "differentiation-block-67",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-66-before-differentiation-block-67",
+      "from": "differentiation-block-66",
+      "to": "differentiation-block-67",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-68-part_of-differentiation",
+      "from": "differentiation-block-68",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-67-before-differentiation-block-68",
+      "from": "differentiation-block-67",
+      "to": "differentiation-block-68",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-68-related_to-differentiation-block-67",
+      "from": "differentiation-block-68",
+      "to": "differentiation-block-67",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-69-part_of-differentiation",
+      "from": "differentiation-block-69",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-68-before-differentiation-block-69",
+      "from": "differentiation-block-68",
+      "to": "differentiation-block-69",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-69-related_to-differentiation-block-67",
+      "from": "differentiation-block-69",
+      "to": "differentiation-block-67",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-70-part_of-differentiation",
+      "from": "differentiation-block-70",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-69-before-differentiation-block-70",
+      "from": "differentiation-block-69",
+      "to": "differentiation-block-70",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-70-related_to-differentiation-block-67",
+      "from": "differentiation-block-70",
+      "to": "differentiation-block-67",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-71-part_of-differentiation",
+      "from": "differentiation-block-71",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-70-before-differentiation-block-71",
+      "from": "differentiation-block-70",
+      "to": "differentiation-block-71",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-71-related_to-differentiation-block-67",
+      "from": "differentiation-block-71",
+      "to": "differentiation-block-67",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-72-part_of-differentiation",
+      "from": "differentiation-block-72",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-71-before-differentiation-block-72",
+      "from": "differentiation-block-71",
+      "to": "differentiation-block-72",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-72-related_to-differentiation-block-67",
+      "from": "differentiation-block-72",
+      "to": "differentiation-block-67",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-73-part_of-differentiation",
+      "from": "differentiation-block-73",
+      "to": "differentiation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-72-before-differentiation-block-73",
+      "from": "differentiation-block-72",
+      "to": "differentiation-block-73",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-block-73-related_to-differentiation-block-67",
+      "from": "differentiation-block-73",
+      "to": "differentiation-block-67",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-1-part_of-differentiation-block-1",
+      "from": "differentiation-stmt-1",
+      "to": "differentiation-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-2-part_of-differentiation-block-1",
+      "from": "differentiation-stmt-2",
+      "to": "differentiation-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-3-part_of-differentiation-block-2",
+      "from": "differentiation-stmt-3",
+      "to": "differentiation-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-4-part_of-differentiation-block-2",
+      "from": "differentiation-stmt-4",
+      "to": "differentiation-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-5-part_of-differentiation-block-3",
+      "from": "differentiation-stmt-5",
+      "to": "differentiation-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-6-part_of-differentiation-block-4",
+      "from": "differentiation-stmt-6",
+      "to": "differentiation-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-7-part_of-differentiation-block-4",
+      "from": "differentiation-stmt-7",
+      "to": "differentiation-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-8-part_of-differentiation-block-5",
+      "from": "differentiation-stmt-8",
+      "to": "differentiation-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-9-part_of-differentiation-block-5",
+      "from": "differentiation-stmt-9",
+      "to": "differentiation-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-10-part_of-differentiation-block-5",
+      "from": "differentiation-stmt-10",
+      "to": "differentiation-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-11-part_of-differentiation-block-5",
+      "from": "differentiation-stmt-11",
+      "to": "differentiation-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-12-part_of-differentiation-block-6",
+      "from": "differentiation-stmt-12",
+      "to": "differentiation-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-13-part_of-differentiation-block-6",
+      "from": "differentiation-stmt-13",
+      "to": "differentiation-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-14-part_of-differentiation-block-6",
+      "from": "differentiation-stmt-14",
+      "to": "differentiation-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-15-part_of-differentiation-block-6",
+      "from": "differentiation-stmt-15",
+      "to": "differentiation-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-16-part_of-differentiation-block-7",
+      "from": "differentiation-stmt-16",
+      "to": "differentiation-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-17-part_of-differentiation-block-7",
+      "from": "differentiation-stmt-17",
+      "to": "differentiation-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-18-part_of-differentiation-block-8",
+      "from": "differentiation-stmt-18",
+      "to": "differentiation-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-19-part_of-differentiation-block-8",
+      "from": "differentiation-stmt-19",
+      "to": "differentiation-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-20-part_of-differentiation-block-8",
+      "from": "differentiation-stmt-20",
+      "to": "differentiation-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-21-part_of-differentiation-block-9",
+      "from": "differentiation-stmt-21",
+      "to": "differentiation-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-22-part_of-differentiation-block-9",
+      "from": "differentiation-stmt-22",
+      "to": "differentiation-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-23-part_of-differentiation-block-11",
+      "from": "differentiation-stmt-23",
+      "to": "differentiation-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-24-part_of-differentiation-block-11",
+      "from": "differentiation-stmt-24",
+      "to": "differentiation-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-25-part_of-differentiation-block-14",
+      "from": "differentiation-stmt-25",
+      "to": "differentiation-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-26-part_of-differentiation-block-14",
+      "from": "differentiation-stmt-26",
+      "to": "differentiation-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-27-part_of-differentiation-block-17",
+      "from": "differentiation-stmt-27",
+      "to": "differentiation-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-28-part_of-differentiation-block-19",
+      "from": "differentiation-stmt-28",
+      "to": "differentiation-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-29-part_of-differentiation-block-19",
+      "from": "differentiation-stmt-29",
+      "to": "differentiation-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-30-part_of-differentiation-block-19",
+      "from": "differentiation-stmt-30",
+      "to": "differentiation-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-31-part_of-differentiation-block-21",
+      "from": "differentiation-stmt-31",
+      "to": "differentiation-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-32-part_of-differentiation-block-21",
+      "from": "differentiation-stmt-32",
+      "to": "differentiation-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-33-part_of-differentiation-block-23",
+      "from": "differentiation-stmt-33",
+      "to": "differentiation-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-34-part_of-differentiation-block-24",
+      "from": "differentiation-stmt-34",
+      "to": "differentiation-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-35-part_of-differentiation-block-25",
+      "from": "differentiation-stmt-35",
+      "to": "differentiation-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-36-part_of-differentiation-block-26",
+      "from": "differentiation-stmt-36",
+      "to": "differentiation-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-37-part_of-differentiation-block-28",
+      "from": "differentiation-stmt-37",
+      "to": "differentiation-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-38-part_of-differentiation-block-28",
+      "from": "differentiation-stmt-38",
+      "to": "differentiation-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-39-part_of-differentiation-block-30",
+      "from": "differentiation-stmt-39",
+      "to": "differentiation-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-40-part_of-differentiation-block-32",
+      "from": "differentiation-stmt-40",
+      "to": "differentiation-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-41-part_of-differentiation-block-35",
+      "from": "differentiation-stmt-41",
+      "to": "differentiation-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-42-part_of-differentiation-block-35",
+      "from": "differentiation-stmt-42",
+      "to": "differentiation-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-43-part_of-differentiation-block-36",
+      "from": "differentiation-stmt-43",
+      "to": "differentiation-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-44-part_of-differentiation-block-36",
+      "from": "differentiation-stmt-44",
+      "to": "differentiation-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-45-part_of-differentiation-block-37",
+      "from": "differentiation-stmt-45",
+      "to": "differentiation-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-46-part_of-differentiation-block-37",
+      "from": "differentiation-stmt-46",
+      "to": "differentiation-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-47-part_of-differentiation-block-39",
+      "from": "differentiation-stmt-47",
+      "to": "differentiation-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-48-part_of-differentiation-block-40",
+      "from": "differentiation-stmt-48",
+      "to": "differentiation-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-49-part_of-differentiation-block-41",
+      "from": "differentiation-stmt-49",
+      "to": "differentiation-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-50-part_of-differentiation-block-42",
+      "from": "differentiation-stmt-50",
+      "to": "differentiation-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-51-part_of-differentiation-block-43",
+      "from": "differentiation-stmt-51",
+      "to": "differentiation-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-52-part_of-differentiation-block-45",
+      "from": "differentiation-stmt-52",
+      "to": "differentiation-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-53-part_of-differentiation-block-45",
+      "from": "differentiation-stmt-53",
+      "to": "differentiation-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-54-part_of-differentiation-block-49",
+      "from": "differentiation-stmt-54",
+      "to": "differentiation-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-55-part_of-differentiation-block-50",
+      "from": "differentiation-stmt-55",
+      "to": "differentiation-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-56-part_of-differentiation-block-51",
+      "from": "differentiation-stmt-56",
+      "to": "differentiation-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-57-part_of-differentiation-block-54",
+      "from": "differentiation-stmt-57",
+      "to": "differentiation-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-58-part_of-differentiation-block-55",
+      "from": "differentiation-stmt-58",
+      "to": "differentiation-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-59-part_of-differentiation-block-55",
+      "from": "differentiation-stmt-59",
+      "to": "differentiation-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-60-part_of-differentiation-block-55",
+      "from": "differentiation-stmt-60",
+      "to": "differentiation-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-61-part_of-differentiation-block-56",
+      "from": "differentiation-stmt-61",
+      "to": "differentiation-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-62-part_of-differentiation-block-56",
+      "from": "differentiation-stmt-62",
+      "to": "differentiation-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-63-part_of-differentiation-block-57",
+      "from": "differentiation-stmt-63",
+      "to": "differentiation-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-64-part_of-differentiation-block-57",
+      "from": "differentiation-stmt-64",
+      "to": "differentiation-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-65-part_of-differentiation-block-58",
+      "from": "differentiation-stmt-65",
+      "to": "differentiation-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-66-part_of-differentiation-block-58",
+      "from": "differentiation-stmt-66",
+      "to": "differentiation-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-67-part_of-differentiation-block-59",
+      "from": "differentiation-stmt-67",
+      "to": "differentiation-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-68-part_of-differentiation-block-61",
+      "from": "differentiation-stmt-68",
+      "to": "differentiation-block-61",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-69-part_of-differentiation-block-61",
+      "from": "differentiation-stmt-69",
+      "to": "differentiation-block-61",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-70-part_of-differentiation-block-61",
+      "from": "differentiation-stmt-70",
+      "to": "differentiation-block-61",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-71-part_of-differentiation-block-62",
+      "from": "differentiation-stmt-71",
+      "to": "differentiation-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-72-part_of-differentiation-block-63",
+      "from": "differentiation-stmt-72",
+      "to": "differentiation-block-63",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-73-part_of-differentiation-block-63",
+      "from": "differentiation-stmt-73",
+      "to": "differentiation-block-63",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-74-part_of-differentiation-block-64",
+      "from": "differentiation-stmt-74",
+      "to": "differentiation-block-64",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-75-part_of-differentiation-block-65",
+      "from": "differentiation-stmt-75",
+      "to": "differentiation-block-65",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-76-part_of-differentiation-block-68",
+      "from": "differentiation-stmt-76",
+      "to": "differentiation-block-68",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-77-part_of-differentiation-block-69",
+      "from": "differentiation-stmt-77",
+      "to": "differentiation-block-69",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-78-part_of-differentiation-block-70",
+      "from": "differentiation-stmt-78",
+      "to": "differentiation-block-70",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-79-part_of-differentiation-block-71",
+      "from": "differentiation-stmt-79",
+      "to": "differentiation-block-71",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-80-part_of-differentiation-block-72",
+      "from": "differentiation-stmt-80",
+      "to": "differentiation-block-72",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-81-part_of-differentiation-block-73",
+      "from": "differentiation-stmt-81",
+      "to": "differentiation-block-73",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-differentiation-stmt-82-part_of-differentiation-block-73",
+      "from": "differentiation-stmt-82",
+      "to": "differentiation-block-73",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "differentiation-stmt-1",
       "quote": "The concept of a **derivative** is one of the most important ideas in all of mathematics.",
+      "block_id": "differentiation-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-2",
       "quote": "It answers a deceptively simple question: *How fast is something changing at this exact moment?*",
+      "block_id": "differentiation-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-3",
       "quote": "If you drive a car and your speedometer reads 60 km/h, that number is a derivative, it tells you the instantaneous rate of change of your position with respect to time.",
+      "block_id": "differentiation-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-4",
       "quote": "But how do we define “instantaneous” mathematically, when an instant has zero duration?",
+      "block_id": "differentiation-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-5",
       "quote": "This question puzzled mathematicians for centuries, and its resolution gave birth to an entire branch of mathematics: **Calculus**.",
+      "block_id": "differentiation-block-3",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-6",
       "quote": "The development of calculus is one of the most famous (and contentious) stories in the history of science.",
+      "block_id": "differentiation-block-4",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-7",
       "quote": "Two towering figures independently developed the core ideas in the late 17th century.",
+      "block_id": "differentiation-block-4",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-8",
       "quote": "\\citealternativetitle{newton_portrait}.",
+      "block_id": "differentiation-block-5",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-9",
       "quote": "Newton developed his “method of fluxions” around 1665–1666, motivated by problems in physics: he needed a way to describe the motion of planets and falling objects.",
+      "block_id": "differentiation-block-5",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-10",
       "quote": "He thought of quantities as “flowing” and their rates of change as “fluxions.” Newton's approach was deeply rooted in the physical world: velocity is the fluxion of position, and acceleration is the fluxion of velocity.",
+      "block_id": "differentiation-block-5",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-11",
       "quote": "However, Newton was notoriously secretive and did not publish his methods until decades later.",
+      "block_id": "differentiation-block-5",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-12",
       "quote": "\\citealternativetitle{leibniz_portrait}.",
+      "block_id": "differentiation-block-6",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-13",
       "quote": "Leibniz, working independently in the 1670s and 1680s, developed his own version of calculus with a focus on notation and formal manipulation.",
+      "block_id": "differentiation-block-6",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-14",
       "quote": "His notation, the $\\frac{dy}{dx}$ that we still use today, was published in \\citeyear{leibniz1684nova} in his paper \\citetitle{leibniz1684nova}.",
+      "block_id": "differentiation-block-6",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-15",
       "quote": "Leibniz's genius lay in creating a symbolic language so powerful and intuitive that it made calculus accessible and practical.",
+      "block_id": "differentiation-block-6",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-16",
-      "quote": "The derivative is built on the concept of a **limit**, which we introduced earlier.",
-      "section": "The Limit Definition of the Derivative",
+      "quote": "As \\citeauthor{historyofmathematicalnotation} notes (Vol.",
+      "block_id": "differentiation-block-7",
+      "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-17",
-      "quote": "The key idea is to start with something we *can* compute, the average rate of change over an interval, and then shrink that interval to zero.",
-      "section": "The Limit Definition of the Derivative",
+      "quote": "197ff), Leibniz's differential notation proved far more influential than Newton's dot notation for the long-term development of analysis.",
+      "block_id": "differentiation-block-7",
+      "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-18",
-      "quote": "Given a function $f(x)$, the **average rate of change** between two points $x$ and $x + h$ is:",
-      "section": "The Average Rate of Change (The Secant Line)",
+      "quote": "The bitter priority dispute between Newton and Leibniz, fueled by nationalistic pride between England and continental Europe, overshadowed the fact that both men made monumental contributions.",
+      "block_id": "differentiation-block-8",
+      "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-19",
-      "quote": "Geometrically, this is the slope of the **secant line** connecting the two points $(x, f(x))$ and $(x+h, f(x+h))$ on the graph of $f$.",
-      "section": "The Average Rate of Change (The Secant Line)",
+      "quote": "Today, historians recognize that both arrived at the fundamental ideas independently.",
+      "block_id": "differentiation-block-8",
+      "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-20",
-      "quote": "The **derivative** is what happens when we let $h$ approach zero.",
-      "section": "The Instantaneous Rate of Change (The Tangent Line)",
+      "quote": "We use Leibniz's notation ($\\frac{dy}{dx}$, $\\int$) almost universally, while Newton's physical intuition shaped the application of calculus to science.",
+      "block_id": "differentiation-block-8",
+      "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-21",
-      "quote": "The secant line becomes a **tangent line**, touching the curve at that point:",
-      "section": "The Instantaneous Rate of Change (The Tangent Line)",
+      "quote": "Before both of them, \\citeauthor{oeuvresdeformat} had already explored the idea of finding tangent lines to curves using algebraic methods in the 1630s (see \\citetitle{oeuvresdeformat}), and the concept of infinitesimals was discussed by mathematicians like Bonaventura Cavalieri and John Wallis (\\citetitle{wallis1655}, \\citeyear{wallis1655}).",
+      "block_id": "differentiation-block-9",
+      "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-22",
-      "quote": "**In plain words:** the derivative is the rate of change at *one exact point* — like a speedometer reading at a single instant, not the average over a whole trip.",
-      "section": "The Instantaneous Rate of Change (The Tangent Line)",
+      "quote": "But it was Newton and Leibniz who unified these scattered ideas into a coherent, general framework.",
+      "block_id": "differentiation-block-9",
+      "section": "",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-23",
-      "quote": "The formula just says: measure the average change over a tiny stretch, then shrink that stretch all the way down to zero.",
-      "section": "The Instantaneous Rate of Change (The Tangent Line)",
+      "quote": "The derivative is built on the concept of a **limit**, which we introduced earlier.",
+      "block_id": "differentiation-block-11",
+      "section": "The Limit Definition of the Derivative",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-24",
-      "quote": "This is the **limit definition of the derivative**, sometimes called the definition “from first principles.” The notation $f'(x)$ (read “f prime of x”) was introduced by \\citeauthor{lagrange1797theorie} in \\citetitle{lagrange1797theorie} (\\citeyear{lagrange1797theorie}).",
-      "section": "The Instantaneous Rate of Change (The Tangent Line)",
+      "quote": "The key idea is to start with something we *can* compute, the average rate of change over an interval, and then shrink that interval to zero.",
+      "block_id": "differentiation-block-11",
+      "section": "The Limit Definition of the Derivative",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-25",
-      "quote": "Leibniz wrote the same concept as $\\frac{df}{dx}$.",
+      "quote": "You can explore this visually below.",
+      "block_id": "differentiation-block-14",
       "section": "The Instantaneous Rate of Change (The Tangent Line)",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-26",
-      "quote": "\\citealternativetitle{lagrange_portrait}, who introduced the now-universal prime notation $f'(x)$ for derivatives.",
+      "quote": "Drag the slider to move the second point closer to the first and watch the secant line become the tangent line:",
+      "block_id": "differentiation-block-14",
       "section": "The Instantaneous Rate of Change (The Tangent Line)",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-27",
-      "quote": "Let's apply the limit definition to $f(x) = x^2$ step by step:",
-      "section": "A Concrete Example: Deriving $f(x) = x^2$ from First Principles",
+      "quote": "Expand $(x+h)^2 = x^2 + 2xh + h^2$:",
+      "block_id": "differentiation-block-17",
+      "section": "The Instantaneous Rate of Change (The Tangent Line)",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-28",
-      "quote": "Expand $(x+h)^2 = x^2 + 2xh + h^2$:",
-      "section": "A Concrete Example: Deriving $f(x) = x^2$ from First Principles",
+      "quote": "Computing derivatives from the limit definition every time would be tedious.",
+      "block_id": "differentiation-block-19",
+      "section": "Derivative Rules",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-29",
-      "quote": "So the derivative of $x^2$ is $2x$.",
-      "section": "A Concrete Example: Deriving $f(x) = x^2$ from First Principles",
+      "quote": "Fortunately, mathematicians have derived a set of **rules** that let us differentiate most functions quickly.",
+      "block_id": "differentiation-block-19",
+      "section": "Derivative Rules",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-30",
-      "quote": "At $x = 3$, the slope of the tangent line is $2 \\cdot 3 = 6$.",
-      "section": "A Concrete Example: Deriving $f(x) = x^2$ from First Principles",
+      "quote": "These rules were developed by Newton, Leibniz, and their successors (notably \\citeauthor{euler1755} in \\citetitle{euler1755}, \\citeyear{euler1755}, who systematized much of the notation and theory).",
+      "block_id": "differentiation-block-19",
+      "section": "Derivative Rules",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-31",
-      "quote": "This means that at $x = 3$, the function is increasing at a rate of 6 units of $y$ per unit of $x$.",
-      "section": "A Concrete Example: Deriving $f(x) = x^2$ from First Principles",
+      "quote": "The derivative of a constant is zero.",
+      "block_id": "differentiation-block-21",
+      "section": "The Constant Rule",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-32",
-      "quote": "Computing derivatives from the limit definition every time would be tedious.",
-      "section": "Derivative Rules",
+      "quote": "A constant doesn't change, so its rate of change is zero:",
+      "block_id": "differentiation-block-21",
+      "section": "The Constant Rule",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-33",
-      "quote": "Fortunately, mathematicians have derived a set of **rules** that let us differentiate most functions quickly.",
-      "section": "Derivative Rules",
+      "quote": "This is the workhorse of differentiation.",
+      "block_id": "differentiation-block-23",
+      "section": "The Power Rule",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-34",
-      "quote": "These rules were developed by Newton, Leibniz, and their successors (notably \\citeauthor{euler1755} in \\citetitle{euler1755}, \\citeyear{euler1755}, who systematized much of the notation and theory).",
-      "section": "Derivative Rules",
+      "quote": "- $\\frac{d}{dx}[x^3] = 3x^2$",
+      "block_id": "differentiation-block-24",
+      "section": "The Power Rule",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-35",
-      "quote": "The derivative of a constant is zero.",
-      "section": "The Constant Rule",
+      "quote": "- $\\frac{d}{dx}[x^{-1}] = -x^{-2} = -\\frac{1}{x^2}$",
+      "block_id": "differentiation-block-25",
+      "section": "The Power Rule",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-36",
-      "quote": "A constant doesn't change, so its rate of change is zero:",
-      "section": "The Constant Rule",
+      "quote": "- $\\frac{d}{dx}[\\sqrt{x}] = \\frac{d}{dx}[x^{1/2}] = \\frac{1}{2}x^{-1/2} = \\frac{1}{2\\sqrt{x}}$",
+      "block_id": "differentiation-block-26",
+      "section": "The Power Rule",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-37",
-      "quote": "This is the workhorse of differentiation.",
-      "section": "The Power Rule",
+      "quote": "You can “pull out” constants.",
+      "block_id": "differentiation-block-28",
+      "section": "The Constant Multiple Rule",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-38",
-      "quote": "- $\\frac{d}{dx}[x^3] = 3x^2$",
-      "section": "The Power Rule",
+      "quote": "For example: $\\frac{d}{dx}[5x^3] = 5 \\cdot 3x^2 = 15x^2$.",
+      "block_id": "differentiation-block-28",
+      "section": "The Constant Multiple Rule",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-39",
-      "quote": "- $\\frac{d}{dx}[x^{-1}] = -x^{-2} = -\\frac{1}{x^2}$",
-      "section": "The Power Rule",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-40",
-      "quote": "- $\\frac{d}{dx}[\\sqrt{x}] = \\frac{d}{dx}[x^{1/2}] = \\frac{1}{2}x^{-1/2} = \\frac{1}{2\\sqrt{x}}$",
-      "section": "The Power Rule",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-41",
-      "quote": "You can “pull out” constants.",
-      "section": "The Constant Multiple Rule",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-42",
-      "quote": "For example: $\\frac{d}{dx}[5x^3] = 5 \\cdot 3x^2 = 15x^2$.",
-      "section": "The Constant Multiple Rule",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-43",
       "quote": "The derivative of a sum is the sum of the derivatives.",
+      "block_id": "differentiation-block-30",
       "section": "The Sum Rule",
       "kind": "statement"
     },
     {
-      "id": "differentiation-stmt-44",
+      "id": "differentiation-stmt-40",
       "quote": "When two functions are multiplied, the derivative is not simply the product of the derivatives.",
+      "block_id": "differentiation-block-32",
       "section": "The Product Rule",
       "kind": "statement"
     },
     {
-      "id": "differentiation-stmt-45",
+      "id": "differentiation-stmt-41",
       "quote": "The **Chain Rule** is arguably the most important rule for AI and deep learning.",
+      "block_id": "differentiation-block-35",
+      "section": "The Chain Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-42",
+      "quote": "It tells us how to differentiate **composed functions**, functions inside functions:",
+      "block_id": "differentiation-block-35",
+      "section": "The Chain Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-43",
+      "quote": "This is the mathematical foundation of **backpropagation** in neural networks.",
+      "block_id": "differentiation-block-36",
+      "section": "The Chain Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-44",
+      "quote": "When a neural network chains together many layers of functions, the chain rule lets us compute how the final error depends on each individual weight, no matter how deep the network is.",
+      "block_id": "differentiation-block-36",
+      "section": "The Chain Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-45",
+      "quote": "You can explore the derivative rules interactively below.",
+      "block_id": "differentiation-block-37",
       "section": "The Chain Rule",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-46",
-      "quote": "It tells us how to differentiate **composed functions**, functions inside functions:",
+      "quote": "Choose a function and see its derivative computed and plotted in real time:",
+      "block_id": "differentiation-block-37",
       "section": "The Chain Rule",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-47",
-      "quote": "Or in Leibniz notation, if $y = f(u)$ and $u = g(x)$:",
-      "section": "The Chain Rule",
+      "quote": "Some derivatives appear so frequently in AI and science that they are worth memorizing:",
+      "block_id": "differentiation-block-39",
+      "section": "Special Derivatives Worth Knowing",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-48",
-      "quote": "This is the mathematical foundation of **backpropagation** in neural networks.",
-      "section": "The Chain Rule",
+      "quote": "| $\\ln(x)$ | $\\frac{1}{x}$ | Natural logarithm |",
+      "block_id": "differentiation-block-40",
+      "section": "Special Derivatives Worth Knowing",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-49",
-      "quote": "When a neural network chains together many layers of functions, the chain rule lets us compute how the final error depends on each individual weight, no matter how deep the network is.",
-      "section": "The Chain Rule",
+      "quote": "| $\\sin(x)$ | $\\cos(x)$ | |",
+      "block_id": "differentiation-block-41",
+      "section": "Special Derivatives Worth Knowing",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-50",
-      "quote": "You can explore the derivative rules interactively below.",
-      "section": "The Chain Rule",
+      "quote": "| $\\cos(x)$ | $-\\sin(x)$ | |",
+      "block_id": "differentiation-block-42",
+      "section": "Special Derivatives Worth Knowing",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-51",
-      "quote": "Choose a function and see its derivative computed and plotted in real time:",
-      "section": "The Chain Rule",
+      "quote": "| $\\sigma(x) = \\frac{1}{1+e^{-x}}$ | $\\sigma(x)(1-\\sigma(x))$ | The sigmoid, crucial activation function for neural networks |",
+      "block_id": "differentiation-block-43",
+      "section": "Special Derivatives Worth Knowing",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-52",
-      "quote": "Some derivatives appear so frequently in AI and science that they are worth memorizing:",
-      "section": "Special Derivatives Worth Knowing",
+      "quote": "You can explore the tangent line interactively below.",
+      "block_id": "differentiation-block-45",
+      "section": "The Geometric Meaning: Tangent Lines",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-53",
-      "quote": "| Function $f(x)$ | Derivative $f'(x)$ | Notes |",
-      "section": "Special Derivatives Worth Knowing",
+      "quote": "Move the point along the curve and see how the tangent line changes:",
+      "block_id": "differentiation-block-45",
+      "section": "The Geometric Meaning: Tangent Lines",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-54",
-      "quote": "| $x^n$ | $nx^{n-1}$ | Power Rule |",
-      "section": "Special Derivatives Worth Knowing",
+      "quote": "Think of it as peeling an onion: differentiate the outer layer, leaving the inner part untouched, then multiply by the derivative of the inner part.",
+      "block_id": "differentiation-block-49",
+      "section": "The Chain Rule Visualized",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-55",
-      "quote": "| $e^x$ | $e^x$ | The only function equal to its own derivative, up to a constant multiple!",
-      "section": "Special Derivatives Worth Knowing",
+      "quote": "This is exactly what **backpropagation** computes, the chain rule applied layer by layer from the output back to the input.",
+      "block_id": "differentiation-block-50",
+      "section": "The Chain Rule Visualized",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-56",
-      "quote": "| $\\ln(x)$ | $\\frac{1}{x}$ | Natural logarithm |",
-      "section": "Special Derivatives Worth Knowing",
+      "quote": "Chain Rule: Composing Functions",
+      "block_id": "differentiation-block-51",
+      "section": "The Chain Rule Visualized",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-57",
-      "quote": "| $\\sin(x)$ | $\\cos(x)$ | |",
-      "section": "Special Derivatives Worth Knowing",
+      "quote": "Derivatives are not just an abstract mathematical concept, they are the **engine** that drives all of modern machine learning.",
+      "block_id": "differentiation-block-54",
+      "section": "Why Derivatives Matter for AI",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-58",
-      "quote": "| $\\cos(x)$ | $-\\sin(x)$ | |",
-      "section": "Special Derivatives Worth Knowing",
+      "quote": "**Gradient Descent**: To train a neural network, we need to minimize a **loss function** that measures how wrong the model's predictions are.",
+      "block_id": "differentiation-block-55",
+      "section": "Why Derivatives Matter for AI",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-59",
-      "quote": "| $\\sigma(x) = \\frac{1}{1+e^{-x}}$ | $\\sigma(x)(1-\\sigma(x))$ | The sigmoid, crucial activation function for neural networks |",
-      "section": "Special Derivatives Worth Knowing",
+      "quote": "The derivative (or **gradient**, in multiple dimensions) tells us which direction to adjust the weights to reduce the loss.",
+      "block_id": "differentiation-block-55",
+      "section": "Why Derivatives Matter for AI",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-60",
-      "quote": "The fact that $e^x$ is its own derivative is not a coincidence, but it is essentially the *definition* of $e$: the number $e$ is the unique base for which the exponential function has this self-replicating property.",
-      "section": "Special Derivatives Worth Knowing",
+      "quote": "This is the algorithm called **Gradient Descent**, first described for least-squares problems by \\citeauthor{cauchy1847} in \\citeyear{cauchy1847} (his note solves simultaneous equations by minimising a sum of squares; general nonlinear descent came later).",
+      "block_id": "differentiation-block-55",
+      "section": "Why Derivatives Matter for AI",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-61",
-      "quote": "The derivative $f'(a)$ gives the **slope of the tangent line** to the graph of $f$ at the point $x = a$.",
-      "section": "The Geometric Meaning: Tangent Lines",
+      "quote": "**Backpropagation**: As we saw, the **chain rule** allows us to compute the gradient of the loss with respect to every single weight in a deep network, no matter how many layers it has.",
+      "block_id": "differentiation-block-56",
+      "section": "Why Derivatives Matter for AI",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-62",
-      "quote": "The equation of this tangent line is:",
-      "section": "The Geometric Meaning: Tangent Lines",
+      "quote": "This algorithm, popularized by \\citeauthor{rumelhart1986} in \\citeyear{rumelhart1986}, is what makes deep learning possible.",
+      "block_id": "differentiation-block-56",
+      "section": "Why Derivatives Matter for AI",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-63",
-      "quote": "This is the best **linear approximation** of $f$ near $x = a$.",
-      "section": "The Geometric Meaning: Tangent Lines",
+      "quote": "**Optimization Landscape**: The derivative tells us about the “shape” of the loss function, where it slopes up, where it slopes down, and where it is flat (critical points).",
+      "block_id": "differentiation-block-57",
+      "section": "Why Derivatives Matter for AI",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-64",
-      "quote": "In fact, this idea generalizes: the Taylor series is built by adding higher-order derivatives to get better and better polynomial approximations.",
-      "section": "The Geometric Meaning: Tangent Lines",
+      "quote": "Understanding this landscape is key to training models effectively.",
+      "block_id": "differentiation-block-57",
+      "section": "Why Derivatives Matter for AI",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-65",
-      "quote": "You can explore the tangent line interactively below.",
-      "section": "The Geometric Meaning: Tangent Lines",
+      "quote": "**The Sigmoid Derivative**: As the table above shows, the sigmoid function $\\sigma(z) = \\frac{1}{1+e^{-z}}$ has the elegant derivative $\\sigma'(z) = \\sigma(z)(1-\\sigma(z))$.",
+      "block_id": "differentiation-block-58",
+      "section": "Why Derivatives Matter for AI",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-66",
-      "quote": "Move the point along the curve and see how the tangent line changes:",
-      "section": "The Geometric Meaning: Tangent Lines",
+      "quote": "This means once you compute the forward pass, the backward pass is nearly free, you already have all the values you need.",
+      "block_id": "differentiation-block-58",
+      "section": "Why Derivatives Matter for AI",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-67",
-      "quote": "The chain rule is so important for AI that it deserves its own interactive demonstration.",
-      "section": "The Chain Rule Visualized",
+      "quote": "In summary, without derivatives, there would be no way to train neural networks, and modern AI as we know it would not exist.",
+      "block_id": "differentiation-block-59",
+      "section": "Why Derivatives Matter for AI",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-68",
-      "quote": "When we compose two functions $f(g(x))$, the chain rule tells us:",
-      "section": "The Chain Rule Visualized",
+      "quote": "In AI, we almost never deal with functions of a single variable.",
+      "block_id": "differentiation-block-61",
+      "section": "Partial Derivatives: Functions of Multiple Variables",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-69",
-      "quote": "Think of it as peeling an onion: differentiate the outer layer, leaving the inner part untouched, then multiply by the derivative of the inner part.",
-      "section": "The Chain Rule Visualized",
+      "quote": "A neural network's loss depends on millions of weights simultaneously.",
+      "block_id": "differentiation-block-61",
+      "section": "Partial Derivatives: Functions of Multiple Variables",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-70",
-      "quote": "In a neural network with layers $L_1, L_2, \\dots, L_n$, the chain rule extends naturally:",
-      "section": "The Chain Rule Visualized",
+      "quote": "A **partial derivative** measures how the function changes when we vary *one* variable while holding all others constant.",
+      "block_id": "differentiation-block-61",
+      "section": "Partial Derivatives: Functions of Multiple Variables",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-71",
-      "quote": "This is exactly what **backpropagation** computes, the chain rule applied layer by layer from the output back to the input.",
-      "section": "The Chain Rule Visualized",
+      "quote": "The collection of all partial derivatives forms the **gradient vector**:",
+      "block_id": "differentiation-block-62",
+      "section": "Partial Derivatives: Functions of Multiple Variables",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-72",
-      "quote": "Derivatives are not just an abstract mathematical concept, they are the **engine** that drives all of modern machine learning.",
-      "section": "Why Derivatives Matter for AI",
+      "quote": "The gradient points in the direction of **steepest ascent**.",
+      "block_id": "differentiation-block-63",
+      "section": "Partial Derivatives: Functions of Multiple Variables",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-73",
-      "quote": "**Gradient Descent**: To train a neural network, we need to minimize a **loss function** that measures how wrong the model's predictions are.",
-      "section": "Why Derivatives Matter for AI",
+      "quote": "To minimize a function (like a loss function), we move in the *opposite* direction of the gradient, this is **gradient descent**.",
+      "block_id": "differentiation-block-63",
+      "section": "Partial Derivatives: Functions of Multiple Variables",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-74",
-      "quote": "The derivative (or **gradient**, in multiple dimensions) tells us which direction to adjust the weights to reduce the loss.",
-      "section": "Why Derivatives Matter for AI",
+      "quote": "The symbol $\\partial$ for partial derivatives was introduced by the Marquis de Condorcet in \\citeyear{condorcet1770}; the modern $\\partial/\\mathrm{d}x$ notation was created by \\citeauthor{legendre1786} in \\citetitle{legendre1786} (\\citeyear{legendre1786}) — a suggestion he later abandoned — and was only popularized after Jacobi reintroduced it in 1841 (according to \\citeauthor{historyofmathematicalnotation}, Vol.",
+      "block_id": "differentiation-block-64",
+      "section": "Partial Derivatives: Functions of Multiple Variables",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-75",
-      "quote": "This is the algorithm called **Gradient Descent**, first described for least-squares problems by \\citeauthor{cauchy1847} in \\citeyear{cauchy1847} (his note solves simultaneous equations by minimising a sum of squares; general nonlinear descent came later).",
-      "section": "Why Derivatives Matter for AI",
+      "quote": "Gradient Descent on a Surface",
+      "block_id": "differentiation-block-65",
+      "section": "Partial Derivatives: Functions of Multiple Variables",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-76",
-      "quote": "**Backpropagation**: As we saw, the **chain rule** allows us to compute the gradient of the loss with respect to every single weight in a deep network, no matter how many layers it has.",
-      "section": "Why Derivatives Matter for AI",
+      "quote": "| Concept | Notation | Meaning |",
+      "block_id": "differentiation-block-68",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-77",
-      "quote": "This algorithm, popularized by \\citeauthor{rumelhart1986} in \\citeyear{rumelhart1986}, is what makes deep learning possible.",
-      "section": "Why Derivatives Matter for AI",
+      "quote": "| Limit definition | $\\lim_{h \\to 0} \\frac{f(x+h)-f(x)}{h}$ | Formal definition |",
+      "block_id": "differentiation-block-69",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-78",
-      "quote": "**Optimization Landscape**: The derivative tells us about the “shape” of the loss function, where it slopes up, where it slopes down, and where it is flat (critical points).",
-      "section": "Why Derivatives Matter for AI",
+      "quote": "| Chain rule | $\\frac{dy}{dx} = \\frac{dy}{du} \\cdot \\frac{du}{dx}$ | Derivatives of composed functions |",
+      "block_id": "differentiation-block-70",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-79",
-      "quote": "Understanding this landscape is key to training models effectively.",
-      "section": "Why Derivatives Matter for AI",
+      "quote": "| Partial derivative | $\\frac{\\partial f}{\\partial x}$ | Rate of change in one variable |",
+      "block_id": "differentiation-block-71",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-80",
-      "quote": "**The Sigmoid Derivative**: As the table above shows, the sigmoid function $\\sigma(z) = \\frac{1}{1+e^{-z}}$ has the elegant derivative $\\sigma'(z) = \\sigma(z)(1-\\sigma(z))$.",
-      "section": "Why Derivatives Matter for AI",
+      "quote": "| Gradient | $\\nabla f$ | Vector of all partial derivatives |",
+      "block_id": "differentiation-block-72",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-81",
-      "quote": "This means once you compute the forward pass, the backward pass is nearly free, you already have all the values you need.",
-      "section": "Why Derivatives Matter for AI",
+      "quote": "The derivative is the bridge between static mathematics and dynamic change.",
+      "block_id": "differentiation-block-73",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "differentiation-stmt-82",
-      "quote": "In summary, without derivatives, there would be no way to train neural networks, and modern AI as we know it would not exist.",
-      "section": "Why Derivatives Matter for AI",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-83",
-      "quote": "In AI, we almost never deal with functions of a single variable.",
-      "section": "Partial Derivatives: Functions of Multiple Variables",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-84",
-      "quote": "A neural network's loss depends on millions of weights simultaneously.",
-      "section": "Partial Derivatives: Functions of Multiple Variables",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-85",
-      "quote": "A **partial derivative** measures how the function changes when we vary *one* variable while holding all others constant.",
-      "section": "Partial Derivatives: Functions of Multiple Variables",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-86",
-      "quote": "For a function $f(x, y)$, the partial derivatives are:",
-      "section": "Partial Derivatives: Functions of Multiple Variables",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-87",
-      "quote": "The collection of all partial derivatives forms the **gradient vector**:",
-      "section": "Partial Derivatives: Functions of Multiple Variables",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-88",
-      "quote": "The gradient points in the direction of **steepest ascent**.",
-      "section": "Partial Derivatives: Functions of Multiple Variables",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-89",
-      "quote": "To minimize a function (like a loss function), we move in the *opposite* direction of the gradient, this is **gradient descent**.",
-      "section": "Partial Derivatives: Functions of Multiple Variables",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-90",
-      "quote": "The symbol $\\partial$ for partial derivatives was introduced by the Marquis de Condorcet in \\citeyear{condorcet1770}; the modern $\\partial/\\mathrm{d}x$ notation was created by \\citeauthor{legendre1786} in \\citetitle{legendre1786} (\\citeyear{legendre1786}) — a suggestion he later abandoned — and was only popularized after Jacobi reintroduced it in 1841 (according to \\citeauthor{historyofmathematicalnotation}, Vol.",
-      "section": "Partial Derivatives: Functions of Multiple Variables",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-91",
-      "quote": "| Concept | Notation | Meaning |",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-92",
-      "quote": "| Derivative | $f'(x)$ or $\\frac{df}{dx}$ | Instantaneous rate of change |",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-93",
-      "quote": "| Limit definition | $\\lim_{h \\to 0} \\frac{f(x+h)-f(x)}{h}$ | Formal definition |",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-94",
-      "quote": "| Chain rule | $\\frac{dy}{dx} = \\frac{dy}{du} \\cdot \\frac{du}{dx}$ | Derivatives of composed functions |",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-95",
-      "quote": "| Partial derivative | $\\frac{\\partial f}{\\partial x}$ | Rate of change in one variable |",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-96",
-      "quote": "| Gradient | $\\nabla f$ | Vector of all partial derivatives |",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-97",
-      "quote": "The derivative is the bridge between static mathematics and dynamic change.",
-      "section": "Summary",
-      "kind": "statement"
-    },
-    {
-      "id": "differentiation-stmt-98",
       "quote": "It is the tool that lets us ask “what happens next?” and, in the context of AI, “how should we adjust?” Without it, machines could not learn.",
+      "block_id": "differentiation-block-73",
       "section": "Summary",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "differentiation-block-1",
+      "quote": "The concept of a **derivative** is one of the most important ideas in all of mathematics. It answers a deceptively simple question: *How fast is something changing at this exact moment?*",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "differentiation-block-2",
+      "quote": "If you drive a car and your speedometer reads 60 km/h, that number is a derivative, it tells you the instantaneous rate of change of your position with respect to time. But how do we define “instantaneous” mathematically, when an instant has zero duration?",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "differentiation-block-3",
+      "quote": "This question puzzled mathematicians for centuries, and its resolution gave birth to an entire branch of mathematics: **Calculus**.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "differentiation-block-4",
+      "quote": "The development of calculus is one of the most famous (and contentious) stories in the history of science. Two towering figures independently developed the core ideas in the late 17th century.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "differentiation-block-5",
+      "quote": "\\citealternativetitle{newton_portrait}. Newton developed his “method of fluxions” around 1665–1666, motivated by problems in physics: he needed a way to describe the motion of planets and falling objects. He thought of quantities as “flowing” and their rates of change as “fluxions.” Newton's approach was deeply rooted in the physical world: velocity is the fluxion of position, and acceleration is the fluxion of velocity. However, Newton was notoriously secretive and did not publish his methods until decades later.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "differentiation-block-6",
+      "quote": "\\citealternativetitle{leibniz_portrait}. Leibniz, working independently in the 1670s and 1680s, developed his own version of calculus with a focus on notation and formal manipulation. His notation, the $\\frac{dy}{dx}$ that we still use today, was published in \\citeyear{leibniz1684nova} in his paper \\citetitle{leibniz1684nova}. Leibniz's genius lay in creating a symbolic language so powerful and intuitive that it made calculus accessible and practical.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "differentiation-block-7",
+      "quote": "As \\citeauthor{historyofmathematicalnotation} notes (Vol. 2, p. 197ff), Leibniz's differential notation proved far more influential than Newton's dot notation for the long-term development of analysis.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "differentiation-block-8",
+      "quote": "The bitter priority dispute between Newton and Leibniz, fueled by nationalistic pride between England and continental Europe, overshadowed the fact that both men made monumental contributions. Today, historians recognize that both arrived at the fundamental ideas independently. We use Leibniz's notation ($\\frac{dy}{dx}$, $\\int$) almost universally, while Newton's physical intuition shaped the application of calculus to science.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "differentiation-block-9",
+      "quote": "Before both of them, \\citeauthor{oeuvresdeformat} had already explored the idea of finding tangent lines to curves using algebraic methods in the 1630s (see \\citetitle{oeuvresdeformat}), and the concept of infinitesimals was discussed by mathematicians like Bonaventura Cavalieri and John Wallis (\\citetitle{wallis1655}, \\citeyear{wallis1655}). But it was Newton and Leibniz who unified these scattered ideas into a coherent, general framework.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "differentiation-block-10",
+      "quote": "The Limit Definition of the Derivative",
+      "kind": "heading",
+      "section": "The Limit Definition of the Derivative"
+    },
+    {
+      "id": "differentiation-block-11",
+      "quote": "The derivative is built on the concept of a **limit**, which we introduced earlier. The key idea is to start with something we *can* compute, the average rate of change over an interval, and then shrink that interval to zero.",
+      "kind": "paragraph",
+      "section": "The Limit Definition of the Derivative"
+    },
+    {
+      "id": "differentiation-block-12",
+      "quote": "The Average Rate of Change (The Secant Line)",
+      "kind": "heading",
+      "section": "The Average Rate of Change (The Secant Line)"
+    },
+    {
+      "id": "differentiation-block-13",
+      "quote": "The Instantaneous Rate of Change (The Tangent Line)",
+      "kind": "heading",
+      "section": "The Instantaneous Rate of Change (The Tangent Line)"
+    },
+    {
+      "id": "differentiation-block-14",
+      "quote": "You can explore this visually below. Drag the slider to move the second point closer to the first and watch the secant line become the tangent line:",
+      "kind": "paragraph",
+      "section": "The Instantaneous Rate of Change (The Tangent Line)"
+    },
+    {
+      "id": "differentiation-block-15",
+      "quote": "From Secant to Tangent",
+      "kind": "paragraph",
+      "section": "The Instantaneous Rate of Change (The Tangent Line)"
+    },
+    {
+      "id": "differentiation-block-16",
+      "quote": "2.00",
+      "kind": "paragraph",
+      "section": "The Instantaneous Rate of Change (The Tangent Line)"
+    },
+    {
+      "id": "differentiation-block-17",
+      "quote": "Expand $(x+h)^2 = x^2 + 2xh + h^2$:",
+      "kind": "paragraph",
+      "section": "The Instantaneous Rate of Change (The Tangent Line)"
+    },
+    {
+      "id": "differentiation-block-18",
+      "quote": "Derivative Rules",
+      "kind": "heading",
+      "section": "Derivative Rules"
+    },
+    {
+      "id": "differentiation-block-19",
+      "quote": "Computing derivatives from the limit definition every time would be tedious. Fortunately, mathematicians have derived a set of **rules** that let us differentiate most functions quickly. These rules were developed by Newton, Leibniz, and their successors (notably \\citeauthor{euler1755} in \\citetitle{euler1755}, \\citeyear{euler1755}, who systematized much of the notation and theory).",
+      "kind": "paragraph",
+      "section": "Derivative Rules"
+    },
+    {
+      "id": "differentiation-block-20",
+      "quote": "The Constant Rule",
+      "kind": "heading",
+      "section": "The Constant Rule"
+    },
+    {
+      "id": "differentiation-block-21",
+      "quote": "The derivative of a constant is zero. A constant doesn't change, so its rate of change is zero:",
+      "kind": "paragraph",
+      "section": "The Constant Rule"
+    },
+    {
+      "id": "differentiation-block-22",
+      "quote": "The Power Rule",
+      "kind": "heading",
+      "section": "The Power Rule"
+    },
+    {
+      "id": "differentiation-block-23",
+      "quote": "This is the workhorse of differentiation. For example:",
+      "kind": "paragraph",
+      "section": "The Power Rule"
+    },
+    {
+      "id": "differentiation-block-24",
+      "quote": "- $\\frac{d}{dx}[x^3] = 3x^2$",
+      "kind": "list-item",
+      "section": "The Power Rule"
+    },
+    {
+      "id": "differentiation-block-25",
+      "quote": "- $\\frac{d}{dx}[x^{-1}] = -x^{-2} = -\\frac{1}{x^2}$",
+      "kind": "list-item",
+      "section": "The Power Rule"
+    },
+    {
+      "id": "differentiation-block-26",
+      "quote": "- $\\frac{d}{dx}[\\sqrt{x}] = \\frac{d}{dx}[x^{1/2}] = \\frac{1}{2}x^{-1/2} = \\frac{1}{2\\sqrt{x}}$",
+      "kind": "list-item",
+      "section": "The Power Rule"
+    },
+    {
+      "id": "differentiation-block-27",
+      "quote": "The Constant Multiple Rule",
+      "kind": "heading",
+      "section": "The Constant Multiple Rule"
+    },
+    {
+      "id": "differentiation-block-28",
+      "quote": "You can “pull out” constants. For example: $\\frac{d}{dx}[5x^3] = 5 \\cdot 3x^2 = 15x^2$.",
+      "kind": "paragraph",
+      "section": "The Constant Multiple Rule"
+    },
+    {
+      "id": "differentiation-block-29",
+      "quote": "The Sum Rule",
+      "kind": "heading",
+      "section": "The Sum Rule"
+    },
+    {
+      "id": "differentiation-block-30",
+      "quote": "The derivative of a sum is the sum of the derivatives.",
+      "kind": "paragraph",
+      "section": "The Sum Rule"
+    },
+    {
+      "id": "differentiation-block-31",
+      "quote": "The Product Rule",
+      "kind": "heading",
+      "section": "The Product Rule"
+    },
+    {
+      "id": "differentiation-block-32",
+      "quote": "When two functions are multiplied, the derivative is not simply the product of the derivatives. Instead:",
+      "kind": "paragraph",
+      "section": "The Product Rule"
+    },
+    {
+      "id": "differentiation-block-33",
+      "quote": "The Quotient Rule",
+      "kind": "heading",
+      "section": "The Quotient Rule"
+    },
+    {
+      "id": "differentiation-block-34",
+      "quote": "The Chain Rule",
+      "kind": "heading",
+      "section": "The Chain Rule"
+    },
+    {
+      "id": "differentiation-block-35",
+      "quote": "The **Chain Rule** is arguably the most important rule for AI and deep learning. It tells us how to differentiate **composed functions**, functions inside functions:",
+      "kind": "paragraph",
+      "section": "The Chain Rule"
+    },
+    {
+      "id": "differentiation-block-36",
+      "quote": "This is the mathematical foundation of **backpropagation** in neural networks. When a neural network chains together many layers of functions, the chain rule lets us compute how the final error depends on each individual weight, no matter how deep the network is.",
+      "kind": "paragraph",
+      "section": "The Chain Rule"
+    },
+    {
+      "id": "differentiation-block-37",
+      "quote": "You can explore the derivative rules interactively below. Choose a function and see its derivative computed and plotted in real time:",
+      "kind": "paragraph",
+      "section": "The Chain Rule"
+    },
+    {
+      "id": "differentiation-block-38",
+      "quote": "Special Derivatives Worth Knowing",
+      "kind": "heading",
+      "section": "Special Derivatives Worth Knowing"
+    },
+    {
+      "id": "differentiation-block-39",
+      "quote": "Some derivatives appear so frequently in AI and science that they are worth memorizing:",
+      "kind": "paragraph",
+      "section": "Special Derivatives Worth Knowing"
+    },
+    {
+      "id": "differentiation-block-40",
+      "quote": "| $\\ln(x)$ | $\\frac{1}{x}$ | Natural logarithm |",
+      "kind": "table-row",
+      "section": "Special Derivatives Worth Knowing"
+    },
+    {
+      "id": "differentiation-block-41",
+      "quote": "| $\\sin(x)$ | $\\cos(x)$ | |",
+      "kind": "table-row",
+      "section": "Special Derivatives Worth Knowing"
+    },
+    {
+      "id": "differentiation-block-42",
+      "quote": "| $\\cos(x)$ | $-\\sin(x)$ | |",
+      "kind": "table-row",
+      "section": "Special Derivatives Worth Knowing"
+    },
+    {
+      "id": "differentiation-block-43",
+      "quote": "| $\\sigma(x) = \\frac{1}{1+e^{-x}}$ | $\\sigma(x)(1-\\sigma(x))$ | The sigmoid, crucial activation function for neural networks |",
+      "kind": "table-row",
+      "section": "Special Derivatives Worth Knowing"
+    },
+    {
+      "id": "differentiation-block-44",
+      "quote": "The Geometric Meaning: Tangent Lines",
+      "kind": "heading",
+      "section": "The Geometric Meaning: Tangent Lines"
+    },
+    {
+      "id": "differentiation-block-45",
+      "quote": "You can explore the tangent line interactively below. Move the point along the curve and see how the tangent line changes:",
+      "kind": "paragraph",
+      "section": "The Geometric Meaning: Tangent Lines"
+    },
+    {
+      "id": "differentiation-block-46",
+      "quote": "Tangent Line Explorer",
+      "kind": "paragraph",
+      "section": "The Geometric Meaning: Tangent Lines"
+    },
+    {
+      "id": "differentiation-block-47",
+      "quote": "1.50",
+      "kind": "paragraph",
+      "section": "The Geometric Meaning: Tangent Lines"
+    },
+    {
+      "id": "differentiation-block-48",
+      "quote": "The Chain Rule Visualized",
+      "kind": "heading",
+      "section": "The Chain Rule Visualized"
+    },
+    {
+      "id": "differentiation-block-49",
+      "quote": "Think of it as peeling an onion: differentiate the outer layer, leaving the inner part untouched, then multiply by the derivative of the inner part.",
+      "kind": "paragraph",
+      "section": "The Chain Rule Visualized"
+    },
+    {
+      "id": "differentiation-block-50",
+      "quote": "This is exactly what **backpropagation** computes, the chain rule applied layer by layer from the output back to the input.",
+      "kind": "paragraph",
+      "section": "The Chain Rule Visualized"
+    },
+    {
+      "id": "differentiation-block-51",
+      "quote": "Chain Rule: Composing Functions",
+      "kind": "paragraph",
+      "section": "The Chain Rule Visualized"
+    },
+    {
+      "id": "differentiation-block-52",
+      "quote": "2.0",
+      "kind": "paragraph",
+      "section": "The Chain Rule Visualized"
+    },
+    {
+      "id": "differentiation-block-53",
+      "quote": "Why Derivatives Matter for AI",
+      "kind": "heading",
+      "section": "Why Derivatives Matter for AI"
+    },
+    {
+      "id": "differentiation-block-54",
+      "quote": "Derivatives are not just an abstract mathematical concept, they are the **engine** that drives all of modern machine learning. Here is why:",
+      "kind": "paragraph",
+      "section": "Why Derivatives Matter for AI"
+    },
+    {
+      "id": "differentiation-block-55",
+      "quote": "1. **Gradient Descent**: To train a neural network, we need to minimize a **loss function** that measures how wrong the model's predictions are. The derivative (or **gradient**, in multiple dimensions) tells us which direction to adjust the weights to reduce the loss. This is the algorithm called **Gradient Descent**, first described for least-squares problems by \\citeauthor{cauchy1847} in \\citeyear{cauchy1847} (his note solves simultaneous equations by minimising a sum of squares; general nonlinear descent came later).",
+      "kind": "list-item",
+      "section": "Why Derivatives Matter for AI"
+    },
+    {
+      "id": "differentiation-block-56",
+      "quote": "2. **Backpropagation**: As we saw, the **chain rule** allows us to compute the gradient of the loss with respect to every single weight in a deep network, no matter how many layers it has. This algorithm, popularized by \\citeauthor{rumelhart1986} in \\citeyear{rumelhart1986}, is what makes deep learning possible.",
+      "kind": "list-item",
+      "section": "Why Derivatives Matter for AI"
+    },
+    {
+      "id": "differentiation-block-57",
+      "quote": "3. **Optimization Landscape**: The derivative tells us about the “shape” of the loss function, where it slopes up, where it slopes down, and where it is flat (critical points). Understanding this landscape is key to training models effectively.",
+      "kind": "list-item",
+      "section": "Why Derivatives Matter for AI"
+    },
+    {
+      "id": "differentiation-block-58",
+      "quote": "4. **The Sigmoid Derivative**: As the table above shows, the sigmoid function $\\sigma(z) = \\frac{1}{1+e^{-z}}$ has the elegant derivative $\\sigma'(z) = \\sigma(z)(1-\\sigma(z))$. This means once you compute the forward pass, the backward pass is nearly free, you already have all the values you need.",
+      "kind": "list-item",
+      "section": "Why Derivatives Matter for AI"
+    },
+    {
+      "id": "differentiation-block-59",
+      "quote": "In summary, without derivatives, there would be no way to train neural networks, and modern AI as we know it would not exist.",
+      "kind": "paragraph",
+      "section": "Why Derivatives Matter for AI"
+    },
+    {
+      "id": "differentiation-block-60",
+      "quote": "Partial Derivatives: Functions of Multiple Variables",
+      "kind": "heading",
+      "section": "Partial Derivatives: Functions of Multiple Variables"
+    },
+    {
+      "id": "differentiation-block-61",
+      "quote": "In AI, we almost never deal with functions of a single variable. A neural network's loss depends on millions of weights simultaneously. A **partial derivative** measures how the function changes when we vary *one* variable while holding all others constant.",
+      "kind": "paragraph",
+      "section": "Partial Derivatives: Functions of Multiple Variables"
+    },
+    {
+      "id": "differentiation-block-62",
+      "quote": "The collection of all partial derivatives forms the **gradient vector**:",
+      "kind": "paragraph",
+      "section": "Partial Derivatives: Functions of Multiple Variables"
+    },
+    {
+      "id": "differentiation-block-63",
+      "quote": "The gradient points in the direction of **steepest ascent**. To minimize a function (like a loss function), we move in the *opposite* direction of the gradient, this is **gradient descent**.",
+      "kind": "paragraph",
+      "section": "Partial Derivatives: Functions of Multiple Variables"
+    },
+    {
+      "id": "differentiation-block-64",
+      "quote": "The symbol $\\partial$ for partial derivatives was introduced by the Marquis de Condorcet in \\citeyear{condorcet1770}; the modern $\\partial/\\mathrm{d}x$ notation was created by \\citeauthor{legendre1786} in \\citetitle{legendre1786} (\\citeyear{legendre1786}) — a suggestion he later abandoned — and was only popularized after Jacobi reintroduced it in 1841 (according to \\citeauthor{historyofmathematicalnotation}, Vol. 2, p. 225).",
+      "kind": "paragraph",
+      "section": "Partial Derivatives: Functions of Multiple Variables"
+    },
+    {
+      "id": "differentiation-block-65",
+      "quote": "Gradient Descent on a Surface",
+      "kind": "paragraph",
+      "section": "Partial Derivatives: Functions of Multiple Variables"
+    },
+    {
+      "id": "differentiation-block-66",
+      "quote": "1.5",
+      "kind": "paragraph",
+      "section": "Partial Derivatives: Functions of Multiple Variables"
+    },
+    {
+      "id": "differentiation-block-67",
+      "quote": "Summary",
+      "kind": "heading",
+      "section": "Summary"
+    },
+    {
+      "id": "differentiation-block-68",
+      "quote": "| Concept | Notation | Meaning |",
+      "kind": "table-row",
+      "section": "Summary"
+    },
+    {
+      "id": "differentiation-block-69",
+      "quote": "| Limit definition | $\\lim_{h \\to 0} \\frac{f(x+h)-f(x)}{h}$ | Formal definition |",
+      "kind": "table-row",
+      "section": "Summary"
+    },
+    {
+      "id": "differentiation-block-70",
+      "quote": "| Chain rule | $\\frac{dy}{dx} = \\frac{dy}{du} \\cdot \\frac{du}{dx}$ | Derivatives of composed functions |",
+      "kind": "table-row",
+      "section": "Summary"
+    },
+    {
+      "id": "differentiation-block-71",
+      "quote": "| Partial derivative | $\\frac{\\partial f}{\\partial x}$ | Rate of change in one variable |",
+      "kind": "table-row",
+      "section": "Summary"
+    },
+    {
+      "id": "differentiation-block-72",
+      "quote": "| Gradient | $\\nabla f$ | Vector of all partial derivatives |",
+      "kind": "table-row",
+      "section": "Summary"
+    },
+    {
+      "id": "differentiation-block-73",
+      "quote": "The derivative is the bridge between static mathematics and dynamic change. It is the tool that lets us ask “what happens next?” and, in the context of AI, “how should we adjust?” Without it, machines could not learn.",
+      "kind": "paragraph",
+      "section": "Summary"
     }
   ]
 }

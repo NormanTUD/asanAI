@@ -486,260 +486,928 @@
       "quote": "part: 5",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-1-part_of-reliability",
+      "from": "reliability-block-1",
+      "to": "reliability",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-2-part_of-reliability",
+      "from": "reliability-block-2",
+      "to": "reliability",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-1-before-reliability-block-2",
+      "from": "reliability-block-1",
+      "to": "reliability-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-3-part_of-reliability",
+      "from": "reliability-block-3",
+      "to": "reliability",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-2-before-reliability-block-3",
+      "from": "reliability-block-2",
+      "to": "reliability-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-4-part_of-reliability",
+      "from": "reliability-block-4",
+      "to": "reliability",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-3-before-reliability-block-4",
+      "from": "reliability-block-3",
+      "to": "reliability-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-5-part_of-reliability",
+      "from": "reliability-block-5",
+      "to": "reliability",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-4-before-reliability-block-5",
+      "from": "reliability-block-4",
+      "to": "reliability-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-5-related_to-reliability-block-4",
+      "from": "reliability-block-5",
+      "to": "reliability-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-6-part_of-reliability",
+      "from": "reliability-block-6",
+      "to": "reliability",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-5-before-reliability-block-6",
+      "from": "reliability-block-5",
+      "to": "reliability-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-7-part_of-reliability",
+      "from": "reliability-block-7",
+      "to": "reliability",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-6-before-reliability-block-7",
+      "from": "reliability-block-6",
+      "to": "reliability-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-8-part_of-reliability",
+      "from": "reliability-block-8",
+      "to": "reliability",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-7-before-reliability-block-8",
+      "from": "reliability-block-7",
+      "to": "reliability-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-9-part_of-reliability",
+      "from": "reliability-block-9",
+      "to": "reliability",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-8-before-reliability-block-9",
+      "from": "reliability-block-8",
+      "to": "reliability-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-9-related_to-reliability-block-8",
+      "from": "reliability-block-9",
+      "to": "reliability-block-8",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-10-part_of-reliability",
+      "from": "reliability-block-10",
+      "to": "reliability",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-9-before-reliability-block-10",
+      "from": "reliability-block-9",
+      "to": "reliability-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-10-related_to-reliability-block-8",
+      "from": "reliability-block-10",
+      "to": "reliability-block-8",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-11-part_of-reliability",
+      "from": "reliability-block-11",
+      "to": "reliability",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-10-before-reliability-block-11",
+      "from": "reliability-block-10",
+      "to": "reliability-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-11-related_to-reliability-block-8",
+      "from": "reliability-block-11",
+      "to": "reliability-block-8",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-12-part_of-reliability",
+      "from": "reliability-block-12",
+      "to": "reliability",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-11-before-reliability-block-12",
+      "from": "reliability-block-11",
+      "to": "reliability-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-12-related_to-reliability-block-8",
+      "from": "reliability-block-12",
+      "to": "reliability-block-8",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-13-part_of-reliability",
+      "from": "reliability-block-13",
+      "to": "reliability",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-12-before-reliability-block-13",
+      "from": "reliability-block-12",
+      "to": "reliability-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-14-part_of-reliability",
+      "from": "reliability-block-14",
+      "to": "reliability",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-13-before-reliability-block-14",
+      "from": "reliability-block-13",
+      "to": "reliability-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-14-related_to-reliability-block-13",
+      "from": "reliability-block-14",
+      "to": "reliability-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-15-part_of-reliability",
+      "from": "reliability-block-15",
+      "to": "reliability",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-14-before-reliability-block-15",
+      "from": "reliability-block-14",
+      "to": "reliability-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-16-part_of-reliability",
+      "from": "reliability-block-16",
+      "to": "reliability",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-15-before-reliability-block-16",
+      "from": "reliability-block-15",
+      "to": "reliability-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-block-16-related_to-reliability-block-15",
+      "from": "reliability-block-16",
+      "to": "reliability-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-1-part_of-reliability-block-1",
+      "from": "reliability-stmt-1",
+      "to": "reliability-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-2-part_of-reliability-block-1",
+      "from": "reliability-stmt-2",
+      "to": "reliability-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-3-part_of-reliability-block-1",
+      "from": "reliability-stmt-3",
+      "to": "reliability-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-4-part_of-reliability-block-5",
+      "from": "reliability-stmt-4",
+      "to": "reliability-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-5-part_of-reliability-block-9",
+      "from": "reliability-stmt-5",
+      "to": "reliability-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-6-part_of-reliability-block-9",
+      "from": "reliability-stmt-6",
+      "to": "reliability-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-7-part_of-reliability-block-9",
+      "from": "reliability-stmt-7",
+      "to": "reliability-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-8-part_of-reliability-block-9",
+      "from": "reliability-stmt-8",
+      "to": "reliability-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-9-part_of-reliability-block-9",
+      "from": "reliability-stmt-9",
+      "to": "reliability-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-10-part_of-reliability-block-10",
+      "from": "reliability-stmt-10",
+      "to": "reliability-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-11-part_of-reliability-block-10",
+      "from": "reliability-stmt-11",
+      "to": "reliability-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-12-part_of-reliability-block-10",
+      "from": "reliability-stmt-12",
+      "to": "reliability-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-13-part_of-reliability-block-10",
+      "from": "reliability-stmt-13",
+      "to": "reliability-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-14-part_of-reliability-block-11",
+      "from": "reliability-stmt-14",
+      "to": "reliability-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-15-part_of-reliability-block-11",
+      "from": "reliability-stmt-15",
+      "to": "reliability-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-16-part_of-reliability-block-11",
+      "from": "reliability-stmt-16",
+      "to": "reliability-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-17-part_of-reliability-block-12",
+      "from": "reliability-stmt-17",
+      "to": "reliability-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-18-part_of-reliability-block-12",
+      "from": "reliability-stmt-18",
+      "to": "reliability-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-19-part_of-reliability-block-12",
+      "from": "reliability-stmt-19",
+      "to": "reliability-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-20-part_of-reliability-block-12",
+      "from": "reliability-stmt-20",
+      "to": "reliability-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-21-part_of-reliability-block-14",
+      "from": "reliability-stmt-21",
+      "to": "reliability-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-22-part_of-reliability-block-14",
+      "from": "reliability-stmt-22",
+      "to": "reliability-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-23-part_of-reliability-block-14",
+      "from": "reliability-stmt-23",
+      "to": "reliability-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-24-part_of-reliability-block-14",
+      "from": "reliability-stmt-24",
+      "to": "reliability-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-25-part_of-reliability-block-16",
+      "from": "reliability-stmt-25",
+      "to": "reliability-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-reliability-stmt-26-part_of-reliability-block-16",
+      "from": "reliability-stmt-26",
+      "to": "reliability-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "reliability-stmt-1",
       "quote": "A model that is right 95% of the time but **confident when it is wrong** is not a model you can deploy in a hospital, a courtroom, or a cockpit.",
+      "block_id": "reliability-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-2",
       "quote": "**Reliability** is the discipline of matching *confidence* to *correctness* — and of knowing when to **decline**.",
+      "block_id": "reliability-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-3",
       "quote": "It pairs with the Hallucinations chapter: there we ask *why models lie*; here we ask *how to make their confidence mean something*.",
+      "block_id": "reliability-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-4",
-      "quote": "A **calibrated** model says $P(\\text{cat}) = 0.9$ only when roughly 90% of its 0.9-cat cases are actually cats.",
-      "section": "Calibration",
+      "quote": "\\cite[Kendall & Gal (2017)]{kendall2017uncertainties} separate the one uncertainty everyone means into two:",
+      "block_id": "reliability-block-5",
+      "section": "Two kinds of uncertainty",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-5",
-      "quote": "Modern networks are not — they are systematically **over-confident**, especially out of distribution.",
-      "section": "Calibration",
+      "quote": "Everything above is empirical.",
+      "block_id": "reliability-block-9",
+      "section": "Conformal prediction: finite-sample guarantees",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-6",
-      "quote": "The cheap fix is **temperature scaling**: learn a single scalar $T$ and divide the logits by it, stretching the sharp softmax back onto the diagonal.",
-      "section": "Calibration",
+      "quote": "**Conformal prediction** is different: wrap any black-box model in a calibration procedure that outputs a **set** of answers with a marginal coverage guarantee of at least $1-\\varepsilon$, averaged over exchangeable calibration and test draws.",
+      "block_id": "reliability-block-9",
+      "section": "Conformal prediction: finite-sample guarantees",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-7",
-      "quote": "It costs nothing at inference.",
-      "section": "Calibration",
+      "quote": "It is **distribution-free** in the sense that it assumes only exchangeability — not a particular data distribution or model class.",
+      "block_id": "reliability-block-9",
+      "section": "Conformal prediction: finite-sample guarantees",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-8",
-      "quote": "(\\cite[Guo et al., 2017]{guo2017calibration})",
-      "section": "Calibration",
+      "quote": "It is the rigorous, assumption-light way to hand a user an honest \"I'm not sure,\" and it applies to LLMs, vision, and structured outputs alike.",
+      "block_id": "reliability-block-9",
+      "section": "Conformal prediction: finite-sample guarantees",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-9",
-      "quote": "LLMs expose a related signal.",
-      "section": "Calibration",
+      "quote": "(\\cite[Angelopoulos & Bates, 2021]{angelopoulos2021conformal})",
+      "block_id": "reliability-block-9",
+      "section": "Conformal prediction: finite-sample guarantees",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-10",
-      "quote": "Asked for the probability that a proposed answer is true ($P(\\text{True})$), larger models are reasonably calibrated on multiple-choice and true/false items, and the signal improves with scale (\\cite[Kadavath et al., 2022]{kadavath2022selfknowledge}).",
-      "section": "Calibration",
+      "quote": "Post-hoc calibration is older than deep learning.",
+      "block_id": "reliability-block-10",
+      "section": "Conformal prediction: finite-sample guarantees",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-11",
-      "quote": "Their direct \"do I know this?\" estimate ($P(\\text{IK})$) generalises less reliably to new tasks, so it is a usable but not a free reliability lever.",
-      "section": "Calibration",
+      "quote": "Platt introduced a sigmoid fit that maps an SVM's margin to a probability, learned on held-out data (\\cite[Platt, 1999]{platt1999probabilistic}).",
+      "block_id": "reliability-block-10",
+      "section": "Conformal prediction: finite-sample guarantees",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-12",
-      "quote": "\\cite[Kendall & Gal (2017)]{kendall2017uncertainties} separate the one uncertainty everyone means into two:",
-      "section": "Two kinds of uncertainty",
+      "quote": "Guo et al. later compared this and other post-hoc methods on modern networks and found temperature scaling — a single scalar dividing the logits — the best simple trade-off between calibration and accuracy (\\cite[Guo et al., 2017]{guo2017calibration}).",
+      "block_id": "reliability-block-10",
+      "section": "Conformal prediction: finite-sample guarantees",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-13",
-      "quote": "* **Aleatoric** — irreducible noise *in the data* (a blurry photo).",
-      "section": "Two kinds of uncertainty",
+      "quote": "Neither method changes the ranking of predictions; they only make the scores mean what they say.",
+      "block_id": "reliability-block-10",
+      "section": "Conformal prediction: finite-sample guarantees",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-14",
-      "quote": "* **Epistemic** — the *model's* ignorance (a species it has never seen).",
-      "section": "Two kinds of uncertainty",
+      "quote": "Selective classification turns abstention into a measurable contract.",
+      "block_id": "reliability-block-11",
+      "section": "Conformal prediction: finite-sample guarantees",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-15",
-      "quote": "The distinction drives safe autonomy: a car should brake for epistemic uncertainty (\"I don't know what that is\"), not merely aleatoric (\"the rain makes this noisy\").",
-      "section": "Two kinds of uncertainty",
+      "quote": "Geifman and El-Yaniv give a procedure that, given a trained network and a target risk, rejects test instances until the remaining predictions meet that risk with high probability (\\cite[Geifman & El-Yaniv, 2017]{geifman2017selective}).",
+      "block_id": "reliability-block-11",
+      "section": "Conformal prediction: finite-sample guarantees",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-16",
-      "quote": "**Deep ensembles** — train several networks, average them — approximate Bayesian uncertainty at the cost of training $M$ models: they agree in-distribution and **disagree on out-of-distribution input**, which is exactly the disagreement you want as an alarm.",
-      "section": "Two kinds of uncertainty",
+      "quote": "The output is a risk–coverage curve: you choose how much of the input distribution the system is allowed to answer.",
+      "block_id": "reliability-block-11",
+      "section": "Conformal prediction: finite-sample guarantees",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-17",
-      "quote": "(\\cite[Lakshminarayanan et al., 2017]{lakshminarayanan2017ensembles})",
-      "section": "Two kinds of uncertainty",
+      "quote": "Conformal prediction was developed by Vovk and colleagues as a way to put finite-sample guarantees on sequential predictions (\\cite[Vovk et al., 2005]{vovk2005algorithmic}).",
+      "block_id": "reliability-block-12",
+      "section": "Conformal prediction: finite-sample guarantees",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-18",
-      "quote": "**Selective prediction** predicts only when confident and **abstains** the rest, trading *coverage* for lower *risk*.",
-      "section": "When to stop: abstention & OOD",
+      "quote": "Split conformal prediction later made it practical: hold out a calibration set, compute a nonconformity score for each example, and use the empirical quantile of those scores to build the test set (\\cite[Angelopoulos & Bates, 2021]{angelopoulos2021conformal}).",
+      "block_id": "reliability-block-12",
+      "section": "Conformal prediction: finite-sample guarantees",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-19",
-      "quote": "**Out-of-distribution (OOD) detection** is its cousin: flag inputs far from anything seen in training (ensemble disagreement, low similarity to the training manifold) and route them to a human or a fallback.",
-      "section": "When to stop: abstention & OOD",
+      "quote": "The guarantee is marginal and distribution-free only under exchangeability.",
+      "block_id": "reliability-block-12",
+      "section": "Conformal prediction: finite-sample guarantees",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-20",
-      "quote": "The goal is not to be right everywhere; it is to **know the boundary of where you are allowed to answer**.",
-      "section": "When to stop: abstention & OOD",
+      "quote": "For language generation the score is the hard part; Quach et al. construct conformal sets of sequences and show how the coverage–efficiency trade-off behaves in practice (\\cite[Quach et al., 2023]{quach2023conformal}).",
+      "block_id": "reliability-block-12",
+      "section": "Conformal prediction: finite-sample guarantees",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-21",
-      "quote": "Everything above is empirical.",
-      "section": "Conformal prediction: finite-sample guarantees",
+      "quote": "Red-teaming is evaluation with an adversary.",
+      "block_id": "reliability-block-14",
+      "section": "Red-teaming and safety evaluation",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-22",
-      "quote": "**Conformal prediction** is different: wrap any black-box model in a calibration procedure that outputs a **set** of answers with a marginal coverage guarantee of at least $1-\\varepsilon$, averaged over exchangeable calibration and test draws.",
-      "section": "Conformal prediction: finite-sample guarantees",
+      "quote": "Perez et al. showed that one language model can generate test cases that make another model produce harmful replies, scaling the search far beyond hand-written probes (\\cite[Perez et al., 2022]{perez2022redteaming}).",
+      "block_id": "reliability-block-14",
+      "section": "Red-teaming and safety evaluation",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-23",
-      "quote": "It is **distribution-free** in the sense that it assumes only exchangeability — not a particular data distribution or model class.",
-      "section": "Conformal prediction: finite-sample guarantees",
+      "quote": "Wei et al. taxonomise why safety training fails — competing objectives and mismatched generalisation — and Mazeika et al. standardise the attacks and defences so results are comparable across models (\\cite[Wei et al., 2024]{wei2024jailbroken}; \\cite[Mazeika et al., 2024]{mazeika2024harmbench}).",
+      "block_id": "reliability-block-14",
+      "section": "Red-teaming and safety evaluation",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-24",
-      "quote": "It is the rigorous, assumption-light way to hand a user an honest \"I'm not sure,\" and it applies to LLMs, vision, and structured outputs alike.",
-      "section": "Conformal prediction: finite-sample guarantees",
+      "quote": "Safety evaluation is broader than jailbreaks: Weidinger et al. argue for measuring capability, human interaction and systemic risk together, because a model that passes a toxicity filter can still cause harm in deployment (\\cite[Weidinger et al., 2023]{weidinger2023sociotechnical}).",
+      "block_id": "reliability-block-14",
+      "section": "Red-teaming and safety evaluation",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-25",
-      "quote": "(\\cite[Angelopoulos & Bates, 2021]{angelopoulos2021conformal})",
-      "section": "Conformal prediction: finite-sample guarantees",
+      "quote": "Combine the tools: **calibrated confidence** + an explicit **\"I don't know\"** (abstain or defer) + **retrieval to verify** (see RAG ).",
+      "block_id": "reliability-block-16",
+      "section": "For LLMs in practice",
       "kind": "statement"
     },
     {
       "id": "reliability-stmt-26",
-      "quote": "Post-hoc calibration is older than deep learning.",
-      "section": "Conformal prediction: finite-sample guarantees",
-      "kind": "statement"
-    },
-    {
-      "id": "reliability-stmt-27",
-      "quote": "Platt introduced a sigmoid fit that maps an SVM's margin to a probability, learned on held-out data (\\cite[Platt, 1999]{platt1999probabilistic}).",
-      "section": "Conformal prediction: finite-sample guarantees",
-      "kind": "statement"
-    },
-    {
-      "id": "reliability-stmt-28",
-      "quote": "Guo et al. later compared this and other post-hoc methods on modern networks and found temperature scaling — a single scalar dividing the logits — the best simple trade-off between calibration and accuracy (\\cite[Guo et al., 2017]{guo2017calibration}).",
-      "section": "Conformal prediction: finite-sample guarantees",
-      "kind": "statement"
-    },
-    {
-      "id": "reliability-stmt-29",
-      "quote": "Neither method changes the ranking of predictions; they only make the scores mean what they say.",
-      "section": "Conformal prediction: finite-sample guarantees",
-      "kind": "statement"
-    },
-    {
-      "id": "reliability-stmt-30",
-      "quote": "Selective classification turns abstention into a measurable contract.",
-      "section": "Conformal prediction: finite-sample guarantees",
-      "kind": "statement"
-    },
-    {
-      "id": "reliability-stmt-31",
-      "quote": "Geifman and El-Yaniv give a procedure that, given a trained network and a target risk, rejects test instances until the remaining predictions meet that risk with high probability (\\cite[Geifman & El-Yaniv, 2017]{geifman2017selective}).",
-      "section": "Conformal prediction: finite-sample guarantees",
-      "kind": "statement"
-    },
-    {
-      "id": "reliability-stmt-32",
-      "quote": "The output is a risk–coverage curve: you choose how much of the input distribution the system is allowed to answer.",
-      "section": "Conformal prediction: finite-sample guarantees",
-      "kind": "statement"
-    },
-    {
-      "id": "reliability-stmt-33",
-      "quote": "Conformal prediction was developed by Vovk and colleagues as a way to put finite-sample guarantees on sequential predictions (\\cite[Vovk et al., 2005]{vovk2005algorithmic}).",
-      "section": "Conformal prediction: finite-sample guarantees",
-      "kind": "statement"
-    },
-    {
-      "id": "reliability-stmt-34",
-      "quote": "Split conformal prediction later made it practical: hold out a calibration set, compute a nonconformity score for each example, and use the empirical quantile of those scores to build the test set (\\cite[Angelopoulos & Bates, 2021]{angelopoulos2021conformal}).",
-      "section": "Conformal prediction: finite-sample guarantees",
-      "kind": "statement"
-    },
-    {
-      "id": "reliability-stmt-35",
-      "quote": "The guarantee is marginal and distribution-free only under exchangeability.",
-      "section": "Conformal prediction: finite-sample guarantees",
-      "kind": "statement"
-    },
-    {
-      "id": "reliability-stmt-36",
-      "quote": "For language generation the score is the hard part; Quach et al. construct conformal sets of sequences and show how the coverage–efficiency trade-off behaves in practice (\\cite[Quach et al., 2023]{quach2023conformal}).",
-      "section": "Conformal prediction: finite-sample guarantees",
-      "kind": "statement"
-    },
-    {
-      "id": "reliability-stmt-37",
-      "quote": "Red-teaming is evaluation with an adversary.",
-      "section": "Red-teaming and safety evaluation",
-      "kind": "statement"
-    },
-    {
-      "id": "reliability-stmt-38",
-      "quote": "Perez et al. showed that one language model can generate test cases that make another model produce harmful replies, scaling the search far beyond hand-written probes (\\cite[Perez et al., 2022]{perez2022redteaming}).",
-      "section": "Red-teaming and safety evaluation",
-      "kind": "statement"
-    },
-    {
-      "id": "reliability-stmt-39",
-      "quote": "Wei et al. taxonomise why safety training fails — competing objectives and mismatched generalisation — and Mazeika et al. standardise the attacks and defences so results are comparable across models (\\cite[Wei et al., 2024]{wei2024jailbroken}; \\cite[Mazeika et al., 2024]{mazeika2024harmbench}).",
-      "section": "Red-teaming and safety evaluation",
-      "kind": "statement"
-    },
-    {
-      "id": "reliability-stmt-40",
-      "quote": "Safety evaluation is broader than jailbreaks: Weidinger et al. argue for measuring capability, human interaction and systemic risk together, because a model that passes a toxicity filter can still cause harm in deployment (\\cite[Weidinger et al., 2023]{weidinger2023sociotechnical}).",
-      "section": "Red-teaming and safety evaluation",
-      "kind": "statement"
-    },
-    {
-      "id": "reliability-stmt-41",
-      "quote": "Combine the tools: **calibrated confidence** + an explicit **\"I don't know\"** (abstain or defer) + **retrieval to verify** (see RAG ).",
-      "section": "For LLMs in practice",
-      "kind": "statement"
-    },
-    {
-      "id": "reliability-stmt-42",
       "quote": "The target is a system whose confidence you can *trust* under stakes — one that is right when confident, and quiet when it is not.",
+      "block_id": "reliability-block-16",
       "section": "For LLMs in practice",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "reliability-block-1",
+      "quote": "A model that is right 95% of the time but **confident when it is wrong** is not a model you can deploy in a hospital, a courtroom, or a cockpit. **Reliability** is the discipline of matching *confidence* to *correctness* — and of knowing when to **decline**. It pairs with the Hallucinations chapter: there we ask *why models lie*; here we ask *how to make their confidence mean something*.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "reliability-block-2",
+      "quote": "Confidence and uncertainty",
+      "kind": "heading",
+      "section": "Confidence and uncertainty"
+    },
+    {
+      "id": "reliability-block-3",
+      "quote": "Calibration",
+      "kind": "heading",
+      "section": "Calibration"
+    },
+    {
+      "id": "reliability-block-4",
+      "quote": "Two kinds of uncertainty",
+      "kind": "heading",
+      "section": "Two kinds of uncertainty"
+    },
+    {
+      "id": "reliability-block-5",
+      "quote": "\\cite[Kendall & Gal (2017)]{kendall2017uncertainties} separate the one uncertainty everyone means into two:",
+      "kind": "paragraph",
+      "section": "Two kinds of uncertainty"
+    },
+    {
+      "id": "reliability-block-6",
+      "quote": "Knowing when to decline",
+      "kind": "heading",
+      "section": "Knowing when to decline"
+    },
+    {
+      "id": "reliability-block-7",
+      "quote": "When to stop: abstention & OOD",
+      "kind": "heading",
+      "section": "When to stop: abstention & OOD"
+    },
+    {
+      "id": "reliability-block-8",
+      "quote": "Conformal prediction: finite-sample guarantees",
+      "kind": "heading",
+      "section": "Conformal prediction: finite-sample guarantees"
+    },
+    {
+      "id": "reliability-block-9",
+      "quote": "Everything above is empirical. **Conformal prediction** is different: wrap any black-box model in a calibration procedure that outputs a **set** of answers with a marginal coverage guarantee of at least $1-\\varepsilon$, averaged over exchangeable calibration and test draws. It is **distribution-free** in the sense that it assumes only exchangeability — not a particular data distribution or model class. It is the rigorous, assumption-light way to hand a user an honest \"I'm not sure,\" and it applies to LLMs, vision, and structured outputs alike. (\\cite[Angelopoulos & Bates, 2021]{angelopoulos2021conformal})",
+      "kind": "paragraph",
+      "section": "Conformal prediction: finite-sample guarantees"
+    },
+    {
+      "id": "reliability-block-10",
+      "quote": "Post-hoc calibration is older than deep learning. Platt introduced a sigmoid fit that maps an SVM's margin to a probability, learned on held-out data (\\cite[Platt, 1999]{platt1999probabilistic}). Guo et al. later compared this and other post-hoc methods on modern networks and found temperature scaling — a single scalar dividing the logits — the best simple trade-off between calibration and accuracy (\\cite[Guo et al., 2017]{guo2017calibration}). Neither method changes the ranking of predictions; they only make the scores mean what they say.",
+      "kind": "paragraph",
+      "section": "Conformal prediction: finite-sample guarantees"
+    },
+    {
+      "id": "reliability-block-11",
+      "quote": "Selective classification turns abstention into a measurable contract. Geifman and El-Yaniv give a procedure that, given a trained network and a target risk, rejects test instances until the remaining predictions meet that risk with high probability (\\cite[Geifman & El-Yaniv, 2017]{geifman2017selective}). The output is a risk–coverage curve: you choose how much of the input distribution the system is allowed to answer.",
+      "kind": "paragraph",
+      "section": "Conformal prediction: finite-sample guarantees"
+    },
+    {
+      "id": "reliability-block-12",
+      "quote": "Conformal prediction was developed by Vovk and colleagues as a way to put finite-sample guarantees on sequential predictions (\\cite[Vovk et al., 2005]{vovk2005algorithmic}). Split conformal prediction later made it practical: hold out a calibration set, compute a nonconformity score for each example, and use the empirical quantile of those scores to build the test set (\\cite[Angelopoulos & Bates, 2021]{angelopoulos2021conformal}). The guarantee is marginal and distribution-free only under exchangeability. For language generation the score is the hard part; Quach et al. construct conformal sets of sequences and show how the coverage–efficiency trade-off behaves in practice (\\cite[Quach et al., 2023]{quach2023conformal}).",
+      "kind": "paragraph",
+      "section": "Conformal prediction: finite-sample guarantees"
+    },
+    {
+      "id": "reliability-block-13",
+      "quote": "Red-teaming and safety evaluation",
+      "kind": "heading",
+      "section": "Red-teaming and safety evaluation"
+    },
+    {
+      "id": "reliability-block-14",
+      "quote": "Red-teaming is evaluation with an adversary. Perez et al. showed that one language model can generate test cases that make another model produce harmful replies, scaling the search far beyond hand-written probes (\\cite[Perez et al., 2022]{perez2022redteaming}). Wei et al. taxonomise why safety training fails — competing objectives and mismatched generalisation — and Mazeika et al. standardise the attacks and defences so results are comparable across models (\\cite[Wei et al., 2024]{wei2024jailbroken}; \\cite[Mazeika et al., 2024]{mazeika2024harmbench}). Safety evaluation is broader than jailbreaks: Weidinger et al. argue for measuring capability, human interaction and systemic risk together, because a model that passes a toxicity filter can still cause harm in deployment (\\cite[Weidinger et al., 2023]{weidinger2023sociotechnical}).",
+      "kind": "paragraph",
+      "section": "Red-teaming and safety evaluation"
+    },
+    {
+      "id": "reliability-block-15",
+      "quote": "For LLMs in practice",
+      "kind": "heading",
+      "section": "For LLMs in practice"
+    },
+    {
+      "id": "reliability-block-16",
+      "quote": "Combine the tools: **calibrated confidence** + an explicit **\"I don't know\"** (abstain or defer) + **retrieval to verify** (see RAG ). The target is a system whose confidence you can *trust* under stakes — one that is right when confident, and quiet when it is not.",
+      "kind": "paragraph",
+      "section": "For LLMs in practice"
     }
   ]
 }

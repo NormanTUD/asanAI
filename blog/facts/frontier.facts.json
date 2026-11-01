@@ -697,812 +697,3063 @@
       "quote": "part: 6",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-1-part_of-frontier",
+      "from": "frontier-block-1",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-2-part_of-frontier",
+      "from": "frontier-block-2",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-1-before-frontier-block-2",
+      "from": "frontier-block-1",
+      "to": "frontier-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-3-part_of-frontier",
+      "from": "frontier-block-3",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-2-before-frontier-block-3",
+      "from": "frontier-block-2",
+      "to": "frontier-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-4-part_of-frontier",
+      "from": "frontier-block-4",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-3-before-frontier-block-4",
+      "from": "frontier-block-3",
+      "to": "frontier-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-4-related_to-frontier-block-3",
+      "from": "frontier-block-4",
+      "to": "frontier-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-5-part_of-frontier",
+      "from": "frontier-block-5",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-4-before-frontier-block-5",
+      "from": "frontier-block-4",
+      "to": "frontier-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-5-related_to-frontier-block-3",
+      "from": "frontier-block-5",
+      "to": "frontier-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-6-part_of-frontier",
+      "from": "frontier-block-6",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-5-before-frontier-block-6",
+      "from": "frontier-block-5",
+      "to": "frontier-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-6-related_to-frontier-block-3",
+      "from": "frontier-block-6",
+      "to": "frontier-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-7-part_of-frontier",
+      "from": "frontier-block-7",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-6-before-frontier-block-7",
+      "from": "frontier-block-6",
+      "to": "frontier-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-7-related_to-frontier-block-3",
+      "from": "frontier-block-7",
+      "to": "frontier-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-8-part_of-frontier",
+      "from": "frontier-block-8",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-7-before-frontier-block-8",
+      "from": "frontier-block-7",
+      "to": "frontier-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-8-related_to-frontier-block-3",
+      "from": "frontier-block-8",
+      "to": "frontier-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-9-part_of-frontier",
+      "from": "frontier-block-9",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-8-before-frontier-block-9",
+      "from": "frontier-block-8",
+      "to": "frontier-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-9-related_to-frontier-block-3",
+      "from": "frontier-block-9",
+      "to": "frontier-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-10-part_of-frontier",
+      "from": "frontier-block-10",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-9-before-frontier-block-10",
+      "from": "frontier-block-9",
+      "to": "frontier-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-10-related_to-frontier-block-3",
+      "from": "frontier-block-10",
+      "to": "frontier-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-11-part_of-frontier",
+      "from": "frontier-block-11",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-10-before-frontier-block-11",
+      "from": "frontier-block-10",
+      "to": "frontier-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-11-related_to-frontier-block-3",
+      "from": "frontier-block-11",
+      "to": "frontier-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-12-part_of-frontier",
+      "from": "frontier-block-12",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-11-before-frontier-block-12",
+      "from": "frontier-block-11",
+      "to": "frontier-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-13-part_of-frontier",
+      "from": "frontier-block-13",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-12-before-frontier-block-13",
+      "from": "frontier-block-12",
+      "to": "frontier-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-14-part_of-frontier",
+      "from": "frontier-block-14",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-13-before-frontier-block-14",
+      "from": "frontier-block-13",
+      "to": "frontier-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-14-related_to-frontier-block-13",
+      "from": "frontier-block-14",
+      "to": "frontier-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-15-part_of-frontier",
+      "from": "frontier-block-15",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-14-before-frontier-block-15",
+      "from": "frontier-block-14",
+      "to": "frontier-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-15-related_to-frontier-block-13",
+      "from": "frontier-block-15",
+      "to": "frontier-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-16-part_of-frontier",
+      "from": "frontier-block-16",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-15-before-frontier-block-16",
+      "from": "frontier-block-15",
+      "to": "frontier-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-16-related_to-frontier-block-13",
+      "from": "frontier-block-16",
+      "to": "frontier-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-17-part_of-frontier",
+      "from": "frontier-block-17",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-16-before-frontier-block-17",
+      "from": "frontier-block-16",
+      "to": "frontier-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-18-part_of-frontier",
+      "from": "frontier-block-18",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-17-before-frontier-block-18",
+      "from": "frontier-block-17",
+      "to": "frontier-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-18-related_to-frontier-block-17",
+      "from": "frontier-block-18",
+      "to": "frontier-block-17",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-19-part_of-frontier",
+      "from": "frontier-block-19",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-18-before-frontier-block-19",
+      "from": "frontier-block-18",
+      "to": "frontier-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-19-related_to-frontier-block-17",
+      "from": "frontier-block-19",
+      "to": "frontier-block-17",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-20-part_of-frontier",
+      "from": "frontier-block-20",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-19-before-frontier-block-20",
+      "from": "frontier-block-19",
+      "to": "frontier-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-21-part_of-frontier",
+      "from": "frontier-block-21",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-20-before-frontier-block-21",
+      "from": "frontier-block-20",
+      "to": "frontier-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-22-part_of-frontier",
+      "from": "frontier-block-22",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-21-before-frontier-block-22",
+      "from": "frontier-block-21",
+      "to": "frontier-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-22-related_to-frontier-block-21",
+      "from": "frontier-block-22",
+      "to": "frontier-block-21",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-23-part_of-frontier",
+      "from": "frontier-block-23",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-22-before-frontier-block-23",
+      "from": "frontier-block-22",
+      "to": "frontier-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-23-related_to-frontier-block-21",
+      "from": "frontier-block-23",
+      "to": "frontier-block-21",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-24-part_of-frontier",
+      "from": "frontier-block-24",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-23-before-frontier-block-24",
+      "from": "frontier-block-23",
+      "to": "frontier-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-25-part_of-frontier",
+      "from": "frontier-block-25",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-24-before-frontier-block-25",
+      "from": "frontier-block-24",
+      "to": "frontier-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-25-related_to-frontier-block-24",
+      "from": "frontier-block-25",
+      "to": "frontier-block-24",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-26-part_of-frontier",
+      "from": "frontier-block-26",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-25-before-frontier-block-26",
+      "from": "frontier-block-25",
+      "to": "frontier-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-26-related_to-frontier-block-24",
+      "from": "frontier-block-26",
+      "to": "frontier-block-24",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-27-part_of-frontier",
+      "from": "frontier-block-27",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-26-before-frontier-block-27",
+      "from": "frontier-block-26",
+      "to": "frontier-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-27-related_to-frontier-block-24",
+      "from": "frontier-block-27",
+      "to": "frontier-block-24",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-28-part_of-frontier",
+      "from": "frontier-block-28",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-27-before-frontier-block-28",
+      "from": "frontier-block-27",
+      "to": "frontier-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-29-part_of-frontier",
+      "from": "frontier-block-29",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-28-before-frontier-block-29",
+      "from": "frontier-block-28",
+      "to": "frontier-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-30-part_of-frontier",
+      "from": "frontier-block-30",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-29-before-frontier-block-30",
+      "from": "frontier-block-29",
+      "to": "frontier-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-30-related_to-frontier-block-29",
+      "from": "frontier-block-30",
+      "to": "frontier-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-31-part_of-frontier",
+      "from": "frontier-block-31",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-30-before-frontier-block-31",
+      "from": "frontier-block-30",
+      "to": "frontier-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-31-related_to-frontier-block-29",
+      "from": "frontier-block-31",
+      "to": "frontier-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-32-part_of-frontier",
+      "from": "frontier-block-32",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-31-before-frontier-block-32",
+      "from": "frontier-block-31",
+      "to": "frontier-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-32-related_to-frontier-block-29",
+      "from": "frontier-block-32",
+      "to": "frontier-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-33-part_of-frontier",
+      "from": "frontier-block-33",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-32-before-frontier-block-33",
+      "from": "frontier-block-32",
+      "to": "frontier-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-33-related_to-frontier-block-29",
+      "from": "frontier-block-33",
+      "to": "frontier-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-34-part_of-frontier",
+      "from": "frontier-block-34",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-33-before-frontier-block-34",
+      "from": "frontier-block-33",
+      "to": "frontier-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-35-part_of-frontier",
+      "from": "frontier-block-35",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-34-before-frontier-block-35",
+      "from": "frontier-block-34",
+      "to": "frontier-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-35-related_to-frontier-block-34",
+      "from": "frontier-block-35",
+      "to": "frontier-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-36-part_of-frontier",
+      "from": "frontier-block-36",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-35-before-frontier-block-36",
+      "from": "frontier-block-35",
+      "to": "frontier-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-36-related_to-frontier-block-34",
+      "from": "frontier-block-36",
+      "to": "frontier-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-37-part_of-frontier",
+      "from": "frontier-block-37",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-36-before-frontier-block-37",
+      "from": "frontier-block-36",
+      "to": "frontier-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-37-related_to-frontier-block-34",
+      "from": "frontier-block-37",
+      "to": "frontier-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-38-part_of-frontier",
+      "from": "frontier-block-38",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-37-before-frontier-block-38",
+      "from": "frontier-block-37",
+      "to": "frontier-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-39-part_of-frontier",
+      "from": "frontier-block-39",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-38-before-frontier-block-39",
+      "from": "frontier-block-38",
+      "to": "frontier-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-40-part_of-frontier",
+      "from": "frontier-block-40",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-39-before-frontier-block-40",
+      "from": "frontier-block-39",
+      "to": "frontier-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-40-related_to-frontier-block-39",
+      "from": "frontier-block-40",
+      "to": "frontier-block-39",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-41-part_of-frontier",
+      "from": "frontier-block-41",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-40-before-frontier-block-41",
+      "from": "frontier-block-40",
+      "to": "frontier-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-41-related_to-frontier-block-39",
+      "from": "frontier-block-41",
+      "to": "frontier-block-39",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-42-part_of-frontier",
+      "from": "frontier-block-42",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-41-before-frontier-block-42",
+      "from": "frontier-block-41",
+      "to": "frontier-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-43-part_of-frontier",
+      "from": "frontier-block-43",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-42-before-frontier-block-43",
+      "from": "frontier-block-42",
+      "to": "frontier-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-43-related_to-frontier-block-42",
+      "from": "frontier-block-43",
+      "to": "frontier-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-44-part_of-frontier",
+      "from": "frontier-block-44",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-43-before-frontier-block-44",
+      "from": "frontier-block-43",
+      "to": "frontier-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-44-related_to-frontier-block-42",
+      "from": "frontier-block-44",
+      "to": "frontier-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-45-part_of-frontier",
+      "from": "frontier-block-45",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-44-before-frontier-block-45",
+      "from": "frontier-block-44",
+      "to": "frontier-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-45-related_to-frontier-block-42",
+      "from": "frontier-block-45",
+      "to": "frontier-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-46-part_of-frontier",
+      "from": "frontier-block-46",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-45-before-frontier-block-46",
+      "from": "frontier-block-45",
+      "to": "frontier-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-47-part_of-frontier",
+      "from": "frontier-block-47",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-46-before-frontier-block-47",
+      "from": "frontier-block-46",
+      "to": "frontier-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-48-part_of-frontier",
+      "from": "frontier-block-48",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-47-before-frontier-block-48",
+      "from": "frontier-block-47",
+      "to": "frontier-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-48-related_to-frontier-block-47",
+      "from": "frontier-block-48",
+      "to": "frontier-block-47",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-49-part_of-frontier",
+      "from": "frontier-block-49",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-48-before-frontier-block-49",
+      "from": "frontier-block-48",
+      "to": "frontier-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-49-related_to-frontier-block-47",
+      "from": "frontier-block-49",
+      "to": "frontier-block-47",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-50-part_of-frontier",
+      "from": "frontier-block-50",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-49-before-frontier-block-50",
+      "from": "frontier-block-49",
+      "to": "frontier-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-50-related_to-frontier-block-47",
+      "from": "frontier-block-50",
+      "to": "frontier-block-47",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-51-part_of-frontier",
+      "from": "frontier-block-51",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-50-before-frontier-block-51",
+      "from": "frontier-block-50",
+      "to": "frontier-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-51-related_to-frontier-block-47",
+      "from": "frontier-block-51",
+      "to": "frontier-block-47",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-52-part_of-frontier",
+      "from": "frontier-block-52",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-51-before-frontier-block-52",
+      "from": "frontier-block-51",
+      "to": "frontier-block-52",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-53-part_of-frontier",
+      "from": "frontier-block-53",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-52-before-frontier-block-53",
+      "from": "frontier-block-52",
+      "to": "frontier-block-53",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-53-related_to-frontier-block-52",
+      "from": "frontier-block-53",
+      "to": "frontier-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-54-part_of-frontier",
+      "from": "frontier-block-54",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-53-before-frontier-block-54",
+      "from": "frontier-block-53",
+      "to": "frontier-block-54",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-54-related_to-frontier-block-52",
+      "from": "frontier-block-54",
+      "to": "frontier-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-55-part_of-frontier",
+      "from": "frontier-block-55",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-54-before-frontier-block-55",
+      "from": "frontier-block-54",
+      "to": "frontier-block-55",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-56-part_of-frontier",
+      "from": "frontier-block-56",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-55-before-frontier-block-56",
+      "from": "frontier-block-55",
+      "to": "frontier-block-56",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-56-related_to-frontier-block-55",
+      "from": "frontier-block-56",
+      "to": "frontier-block-55",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-57-part_of-frontier",
+      "from": "frontier-block-57",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-56-before-frontier-block-57",
+      "from": "frontier-block-56",
+      "to": "frontier-block-57",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-57-related_to-frontier-block-55",
+      "from": "frontier-block-57",
+      "to": "frontier-block-55",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-58-part_of-frontier",
+      "from": "frontier-block-58",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-57-before-frontier-block-58",
+      "from": "frontier-block-57",
+      "to": "frontier-block-58",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-59-part_of-frontier",
+      "from": "frontier-block-59",
+      "to": "frontier",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-58-before-frontier-block-59",
+      "from": "frontier-block-58",
+      "to": "frontier-block-59",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-block-59-related_to-frontier-block-58",
+      "from": "frontier-block-59",
+      "to": "frontier-block-58",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-1-part_of-frontier-block-1",
+      "from": "frontier-stmt-1",
+      "to": "frontier-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-2-part_of-frontier-block-1",
+      "from": "frontier-stmt-2",
+      "to": "frontier-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-3-part_of-frontier-block-1",
+      "from": "frontier-stmt-3",
+      "to": "frontier-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-4-part_of-frontier-block-1",
+      "from": "frontier-stmt-4",
+      "to": "frontier-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-5-part_of-frontier-block-4",
+      "from": "frontier-stmt-5",
+      "to": "frontier-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-6-part_of-frontier-block-5",
+      "from": "frontier-stmt-6",
+      "to": "frontier-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-7-part_of-frontier-block-6",
+      "from": "frontier-stmt-7",
+      "to": "frontier-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-8-part_of-frontier-block-7",
+      "from": "frontier-stmt-8",
+      "to": "frontier-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-9-part_of-frontier-block-9",
+      "from": "frontier-stmt-9",
+      "to": "frontier-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-10-part_of-frontier-block-10",
+      "from": "frontier-stmt-10",
+      "to": "frontier-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-11-part_of-frontier-block-10",
+      "from": "frontier-stmt-11",
+      "to": "frontier-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-12-part_of-frontier-block-10",
+      "from": "frontier-stmt-12",
+      "to": "frontier-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-13-part_of-frontier-block-11",
+      "from": "frontier-stmt-13",
+      "to": "frontier-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-14-part_of-frontier-block-11",
+      "from": "frontier-stmt-14",
+      "to": "frontier-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-15-part_of-frontier-block-11",
+      "from": "frontier-stmt-15",
+      "to": "frontier-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-16-part_of-frontier-block-14",
+      "from": "frontier-stmt-16",
+      "to": "frontier-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-17-part_of-frontier-block-14",
+      "from": "frontier-stmt-17",
+      "to": "frontier-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-18-part_of-frontier-block-15",
+      "from": "frontier-stmt-18",
+      "to": "frontier-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-19-part_of-frontier-block-15",
+      "from": "frontier-stmt-19",
+      "to": "frontier-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-20-part_of-frontier-block-16",
+      "from": "frontier-stmt-20",
+      "to": "frontier-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-21-part_of-frontier-block-16",
+      "from": "frontier-stmt-21",
+      "to": "frontier-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-22-part_of-frontier-block-18",
+      "from": "frontier-stmt-22",
+      "to": "frontier-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-23-part_of-frontier-block-19",
+      "from": "frontier-stmt-23",
+      "to": "frontier-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-24-part_of-frontier-block-19",
+      "from": "frontier-stmt-24",
+      "to": "frontier-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-25-part_of-frontier-block-22",
+      "from": "frontier-stmt-25",
+      "to": "frontier-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-26-part_of-frontier-block-23",
+      "from": "frontier-stmt-26",
+      "to": "frontier-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-27-part_of-frontier-block-23",
+      "from": "frontier-stmt-27",
+      "to": "frontier-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-28-part_of-frontier-block-25",
+      "from": "frontier-stmt-28",
+      "to": "frontier-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-29-part_of-frontier-block-25",
+      "from": "frontier-stmt-29",
+      "to": "frontier-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-30-part_of-frontier-block-26",
+      "from": "frontier-stmt-30",
+      "to": "frontier-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-31-part_of-frontier-block-26",
+      "from": "frontier-stmt-31",
+      "to": "frontier-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-32-part_of-frontier-block-27",
+      "from": "frontier-stmt-32",
+      "to": "frontier-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-33-part_of-frontier-block-27",
+      "from": "frontier-stmt-33",
+      "to": "frontier-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-34-part_of-frontier-block-30",
+      "from": "frontier-stmt-34",
+      "to": "frontier-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-35-part_of-frontier-block-31",
+      "from": "frontier-stmt-35",
+      "to": "frontier-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-36-part_of-frontier-block-32",
+      "from": "frontier-stmt-36",
+      "to": "frontier-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-37-part_of-frontier-block-32",
+      "from": "frontier-stmt-37",
+      "to": "frontier-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-38-part_of-frontier-block-33",
+      "from": "frontier-stmt-38",
+      "to": "frontier-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-39-part_of-frontier-block-33",
+      "from": "frontier-stmt-39",
+      "to": "frontier-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-40-part_of-frontier-block-35",
+      "from": "frontier-stmt-40",
+      "to": "frontier-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-41-part_of-frontier-block-35",
+      "from": "frontier-stmt-41",
+      "to": "frontier-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-42-part_of-frontier-block-36",
+      "from": "frontier-stmt-42",
+      "to": "frontier-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-43-part_of-frontier-block-36",
+      "from": "frontier-stmt-43",
+      "to": "frontier-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-44-part_of-frontier-block-37",
+      "from": "frontier-stmt-44",
+      "to": "frontier-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-45-part_of-frontier-block-40",
+      "from": "frontier-stmt-45",
+      "to": "frontier-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-46-part_of-frontier-block-41",
+      "from": "frontier-stmt-46",
+      "to": "frontier-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-47-part_of-frontier-block-41",
+      "from": "frontier-stmt-47",
+      "to": "frontier-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-48-part_of-frontier-block-43",
+      "from": "frontier-stmt-48",
+      "to": "frontier-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-49-part_of-frontier-block-43",
+      "from": "frontier-stmt-49",
+      "to": "frontier-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-50-part_of-frontier-block-45",
+      "from": "frontier-stmt-50",
+      "to": "frontier-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-51-part_of-frontier-block-45",
+      "from": "frontier-stmt-51",
+      "to": "frontier-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-52-part_of-frontier-block-48",
+      "from": "frontier-stmt-52",
+      "to": "frontier-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-53-part_of-frontier-block-49",
+      "from": "frontier-stmt-53",
+      "to": "frontier-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-54-part_of-frontier-block-49",
+      "from": "frontier-stmt-54",
+      "to": "frontier-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-55-part_of-frontier-block-50",
+      "from": "frontier-stmt-55",
+      "to": "frontier-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-56-part_of-frontier-block-51",
+      "from": "frontier-stmt-56",
+      "to": "frontier-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-57-part_of-frontier-block-51",
+      "from": "frontier-stmt-57",
+      "to": "frontier-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-58-part_of-frontier-block-53",
+      "from": "frontier-stmt-58",
+      "to": "frontier-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-59-part_of-frontier-block-53",
+      "from": "frontier-stmt-59",
+      "to": "frontier-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-60-part_of-frontier-block-53",
+      "from": "frontier-stmt-60",
+      "to": "frontier-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-61-part_of-frontier-block-54",
+      "from": "frontier-stmt-61",
+      "to": "frontier-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-62-part_of-frontier-block-56",
+      "from": "frontier-stmt-62",
+      "to": "frontier-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-63-part_of-frontier-block-56",
+      "from": "frontier-stmt-63",
+      "to": "frontier-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-64-part_of-frontier-block-57",
+      "from": "frontier-stmt-64",
+      "to": "frontier-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-65-part_of-frontier-block-57",
+      "from": "frontier-stmt-65",
+      "to": "frontier-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-66-part_of-frontier-block-59",
+      "from": "frontier-stmt-66",
+      "to": "frontier-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-frontier-stmt-67-part_of-frontier-block-59",
+      "from": "frontier-stmt-67",
+      "to": "frontier-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "frontier-stmt-1",
       "quote": "This chapter surveys the research frontier of 2025, the techniques and ideas that are emerging from labs but not yet standardized.",
+      "block_id": "frontier-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-2",
       "quote": "Some will become textbook material in two years; others will fade.",
+      "block_id": "frontier-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-3",
       "quote": "Knowing the landscape keeps you ahead of the curve.",
+      "block_id": "frontier-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-4",
       "quote": "The topics are grouped into six themes, then closed with the open questions that define the field.",
+      "block_id": "frontier-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-5",
       "quote": "Bai et al. (Anthropic, 2022) replaced most of the human labelling used by \\citeauthor{ouyang2022instructgpt} (\\citeyear{ouyang2022instructgpt}) with **AI self-critique against a written constitution**:",
+      "block_id": "frontier-block-4",
       "section": "Constitutional AI (CAI)",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-6",
       "quote": "The model generates a response.",
+      "block_id": "frontier-block-5",
       "section": "Constitutional AI (CAI)",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-7",
       "quote": "The model critiques it against a constitutional principle (“be helpful, harmless, honest”).",
+      "block_id": "frontier-block-6",
       "section": "Constitutional AI (CAI)",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-8",
       "quote": "The model revises the response.",
+      "block_id": "frontier-block-7",
       "section": "Constitutional AI (CAI)",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-9",
       "quote": "Train the final outputs with RL (RLAIF: RL from AI Feedback).",
+      "block_id": "frontier-block-9",
       "section": "Constitutional AI (CAI)",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-10",
       "quote": "A typical constitution entry: *“Which response is more honest?",
+      "block_id": "frontier-block-10",
       "section": "Constitutional AI (CAI)",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-11",
       "quote": "Response A states the limits of its knowledge; Response B makes up plausible-sounding facts.",
+      "block_id": "frontier-block-10",
       "section": "Constitutional AI (CAI)",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-12",
       "quote": "Choose the more honest response.”*",
+      "block_id": "frontier-block-10",
       "section": "Constitutional AI (CAI)",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-13",
       "quote": "CAI reduces human labelling substantially; the paper compares it with an RLHF baseline rather than with InstructGPT (\\cite[Ouyang et al., 2022]{ouyang2022instructgpt}).",
+      "block_id": "frontier-block-11",
       "section": "Constitutional AI (CAI)",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-14",
       "quote": "Anthropic uses CAI for Claude 2/3/4.",
+      "block_id": "frontier-block-11",
       "section": "Constitutional AI (CAI)",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-15",
       "quote": "The same approach underlies **self-critique** in many production systems.",
+      "block_id": "frontier-block-11",
       "section": "Constitutional AI (CAI)",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-16",
       "quote": "The interpretability chapter covered **circuits**.",
+      "block_id": "frontier-block-14",
       "section": "Sparse Autoencoders (SAEs) for Interpretability",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-17",
       "quote": "A complementary approach: **decompose activations into sparse, interpretable features**.",
+      "block_id": "frontier-block-14",
       "section": "Sparse Autoencoders (SAEs) for Interpretability",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-18",
-      "quote": "An SAE has an encoder $E: \\mathbb{R}^d \\to \\mathbb{R}^{d'}$ with $d' \\gg d$ (e.g., $d' = 100{,}000$ features), applies a sparsity penalty, and reconstructs via a decoder $D: \\mathbb{R}^{d'} \\to \\mathbb{R}^d$:",
+      "quote": "The L1 penalty forces only a few features to be active for any input.",
+      "block_id": "frontier-block-15",
       "section": "Sparse Autoencoders (SAEs) for Interpretability",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-19",
-      "quote": "The L1 penalty forces only a few features to be active for any input.",
+      "quote": "Anthropic's work on Claude 3 Sonnet (2024) found:",
+      "block_id": "frontier-block-15",
       "section": "Sparse Autoencoders (SAEs) for Interpretability",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-20",
-      "quote": "Anthropic's work on Claude 3 Sonnet (2024) found:",
+      "quote": "The “**Golden Gate Claude**” demonstration (\\cite[Templeton et al., 2024]{anthropic2024goldengate}) amplified a single feature to make the model obsessed with the Golden Gate Bridge.",
+      "block_id": "frontier-block-16",
       "section": "Sparse Autoencoders (SAEs) for Interpretability",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-21",
-      "quote": "* A single SAE feature activated on **Golden Gate Bridge** references, across languages, image descriptions, and even ASCII art (\\cite[Templeton et al., 2024]{anthropic2024goldengate}).",
+      "quote": "This is direct evidence that specific, semantically meaningful features can be **causally manipulated** at inference time.",
+      "block_id": "frontier-block-16",
       "section": "Sparse Autoencoders (SAEs) for Interpretability",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-22",
-      "quote": "* Features for **code bugs**, **refusal**, **deception** could be identified.",
-      "section": "Sparse Autoencoders (SAEs) for Interpretability",
+      "quote": "From the Mechanistic Interpretability chapter's foundation, frontier work in 2024–2025:",
+      "block_id": "frontier-block-18",
+      "section": "Mechanistic Interpretability Frontier",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-23",
-      "quote": "* Anthropic reported these features in Claude 3 Sonnet; whether they are **universal** across model families is still an open question.",
-      "section": "Sparse Autoencoders (SAEs) for Interpretability",
+      "quote": "The dream: an **“MRI for AI”**, read the activations, identify misbehavior, fix it surgically.",
+      "block_id": "frontier-block-19",
+      "section": "Mechanistic Interpretability Frontier",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-24",
-      "quote": "The “**Golden Gate Claude**” demonstration (\\cite[Templeton et al., 2024]{anthropic2024goldengate}) amplified a single feature to make the model obsessed with the Golden Gate Bridge.",
-      "section": "Sparse Autoencoders (SAEs) for Interpretability",
+      "quote": "Not realized, but progressing.",
+      "block_id": "frontier-block-19",
+      "section": "Mechanistic Interpretability Frontier",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-25",
-      "quote": "This is direct evidence that specific, semantically meaningful features can be **causally manipulated** at inference time.",
-      "section": "Sparse Autoencoders (SAEs) for Interpretability",
+      "quote": "Recall from the Reasoning chapter: a **Process Reward Model** scores every step of a CoT, not just the final answer.",
+      "block_id": "frontier-block-22",
+      "section": "Process Reward Models in Production",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-26",
-      "quote": "From the Mechanistic Interpretability chapter's foundation, frontier work in 2024–2025:",
-      "section": "Mechanistic Interpretability Frontier",
+      "quote": "The trade-off: PRMs add 2–5× inference cost.",
+      "block_id": "frontier-block-23",
+      "section": "Process Reward Models in Production",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-27",
-      "quote": "* **Sparse autoencoders** (see above), millions of features per model.",
-      "section": "Mechanistic Interpretability Frontier",
+      "quote": "Used selectively on the hardest 10–20% of queries.",
+      "block_id": "frontier-block-23",
+      "section": "Process Reward Models in Production",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-28",
-      "quote": "* **Causal scrubbing** (\\cite[Chan et al., 2022]{redman2024causalscrubbing}): formally verify which circuits implement a behavior.",
-      "section": "Mechanistic Interpretability Frontier",
+      "quote": "A 2024 idea: **train at inference time on the test input itself**.",
+      "block_id": "frontier-block-25",
+      "section": "Test-Time Training",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-29",
-      "quote": "* **Cross-model universality**: do circuits transfer across models?",
-      "section": "Mechanistic Interpretability Frontier",
+      "quote": "\\cite[Sun et al. (2024)]{sun2024ttt} showed that fine-tuning a small adapter on the test prompt's distribution before answering improves performance on distribution-shifted tasks.",
+      "block_id": "frontier-block-25",
+      "section": "Test-Time Training",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-30",
-      "quote": "Yes, partially, “induction heads” appear in every Transformer.",
-      "section": "Mechanistic Interpretability Frontier",
+      "quote": "For a hard reasoning problem: take the prompt, generate some self-supervised variants, train a tiny LoRA on them, then answer.",
+      "block_id": "frontier-block-26",
+      "section": "Test-Time Training",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-31",
-      "quote": "* **Alignment-via-interpretability**: identify features for “deception”, “harm”, “sycophancy” and steer the model away from them.",
-      "section": "Mechanistic Interpretability Frontier",
+      "quote": "Especially powerful when the test domain differs from pretraining.",
+      "block_id": "frontier-block-26",
+      "section": "Test-Time Training",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-32",
-      "quote": "**Representation engineering** (\\cite[Zou et al., 2023]{zou2023repeng}) is the umbrella term.",
-      "section": "Mechanistic Interpretability Frontier",
+      "quote": "(\\cite[Sun et al., 2024]{sun2024ttt}) adds seconds-to-minutes per query.",
+      "block_id": "frontier-block-27",
+      "section": "Test-Time Training",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-33",
-      "quote": "The dream: an **“MRI for AI”**, read the activations, identify misbehavior, fix it surgically.",
-      "section": "Mechanistic Interpretability Frontier",
+      "quote": "Useful for offline batch processing, not real-time chat.",
+      "block_id": "frontier-block-27",
+      "section": "Test-Time Training",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-34",
-      "quote": "Not realized, but progressing.",
-      "section": "Mechanistic Interpretability Frontier",
+      "quote": "The 2024–2025 long-context arms race:",
+      "block_id": "frontier-block-30",
+      "section": "Long Context Beyond a Million Tokens",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-35",
-      "quote": "Recall from the Reasoning chapter: a **Process Reward Model** scores every step of a CoT, not just the final answer.",
-      "section": "Process Reward Models in Production",
+      "quote": "Techniques enabling this:",
+      "block_id": "frontier-block-31",
+      "section": "Long Context Beyond a Million Tokens",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-36",
-      "quote": "* **\\citealternativetitle{zhang2024mathshepherd}**: auto-labels step correctness by checking if subsequent steps can reach the answer.",
-      "section": "Process Reward Models in Production",
+      "quote": "The **lost-in-the-middle** problem remains: models perform best on information at the start or end of the context window, worse in the middle.",
+      "block_id": "frontier-block-32",
+      "section": "Long Context Beyond a Million Tokens",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-37",
-      "quote": "* **Critic models** (Qwen, DeepSeek): separate models trained to score the quality of intermediate steps.",
-      "section": "Process Reward Models in Production",
+      "quote": "The reason is poorly understood but reproducible across architectures.",
+      "block_id": "frontier-block-32",
+      "section": "Long Context Beyond a Million Tokens",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-38",
-      "quote": "* **Tree search**: best-of-N with PRM-guided search gives dramatic improvements on hard math .",
-      "section": "Process Reward Models in Production",
+      "quote": "For evaluation, **needle-in-a-haystack** tests are now standard: insert a specific fact at a random position; ask the model to retrieve it.",
+      "block_id": "frontier-block-33",
+      "section": "Long Context Beyond a Million Tokens",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-39",
-      "quote": "The trade-off: PRMs add 2–5× inference cost.",
-      "section": "Process Reward Models in Production",
+      "quote": "Performance degrades as context length grows.",
+      "block_id": "frontier-block-33",
+      "section": "Long Context Beyond a Million Tokens",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-40",
-      "quote": "Used selectively on the hardest 10–20% of queries.",
-      "section": "Process Reward Models in Production",
+      "quote": "Raposo et al. (Google DeepMind, 2024): instead of every token passing through every layer, **route tokens through different numbers of layers** (\\cite[Raposo et al., 2024]{raposo2024mod}).",
+      "block_id": "frontier-block-35",
+      "section": "Mixture of Depths (MoD)",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-41",
-      "quote": "A 2024 idea: **train at inference time on the test input itself**.",
-      "section": "Test-Time Training",
+      "quote": "Easy tokens skip; hard tokens use full depth.",
+      "block_id": "frontier-block-35",
+      "section": "Mixture of Depths (MoD)",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-42",
-      "quote": "\\cite[Sun et al. (2024)]{sun2024ttt} showed that fine-tuning a small adapter on the test prompt's distribution before answering improves performance on distribution-shifted tasks.",
-      "section": "Test-Time Training",
+      "quote": "Result: ~50% compute reduction at equal quality.",
+      "block_id": "frontier-block-36",
+      "section": "Mixture of Depths (MoD)",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-43",
-      "quote": "For a hard reasoning problem: take the prompt, generate some self-supervised variants, train a tiny LoRA on them, then answer.",
-      "section": "Test-Time Training",
+      "quote": "The capacity is preserved; the routing learns to allocate it.",
+      "block_id": "frontier-block-36",
+      "section": "Mixture of Depths (MoD)",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-44",
-      "quote": "Especially powerful when the test domain differs from pretraining.",
-      "section": "Test-Time Training",
+      "quote": "Related: **early exit** (\\cite[Elhoushi et al., 2024]{elhoushi2024early}), **conditional computation** (\\cite[Fedus et al., 2022]{fedus2022switch}).",
+      "block_id": "frontier-block-37",
+      "section": "Mixture of Depths (MoD)",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-45",
-      "quote": "(\\cite[Sun et al., 2024]{sun2024ttt}) adds seconds-to-minutes per query.",
-      "section": "Test-Time Training",
+      "quote": "See the AI Agents chapter for the basics.",
+      "block_id": "frontier-block-40",
+      "section": "Agentic Architectures",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-46",
-      "quote": "Useful for offline batch processing, not real-time chat.",
-      "section": "Test-Time Training",
+      "quote": "GAIA (Mialon et al., 2023, Meta) tests realistic agent tasks: “find the CEO of the company that acquired Twitter's recommendation team and their phone number on the website”.",
+      "block_id": "frontier-block-41",
+      "section": "Agentic Architectures",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-47",
-      "quote": "The 2024–2025 long-context arms race:",
-      "section": "Long Context Beyond a Million Tokens",
+      "quote": "Frontier agents solve ~50% of these; humans solve 92%.",
+      "block_id": "frontier-block-41",
+      "section": "Agentic Architectures",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-48",
-      "quote": "* Gemini 1.5 Pro: 1M tokens (commercial); 10M in research.",
-      "section": "Long Context Beyond a Million Tokens",
+      "quote": "LLMs reason in language; **world models** reason in simulation.",
+      "block_id": "frontier-block-43",
+      "section": "World Models and Embodied AI",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-49",
-      "quote": "* Claude 3.5 Sonnet: 200K tokens.",
-      "section": "Long Context Beyond a Million Tokens",
+      "quote": "Yann LeCun has argued for years that LLMs lack the grounding necessary for true intelligence, and **Joint Embedding Predictive Architectures** (JEPA) are his proposed alternative.",
+      "block_id": "frontier-block-43",
+      "section": "World Models and Embodied AI",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-50",
-      "quote": "* Yi-Lightning, Qwen 2.5: 200K–1M.",
-      "section": "Long Context Beyond a Million Tokens",
+      "quote": "The hypothesis: **true general intelligence requires internal simulation of consequences**, which pure text models lack.",
+      "block_id": "frontier-block-45",
+      "section": "World Models and Embodied AI",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-51",
-      "quote": "Techniques enabling this:",
-      "section": "Long Context Beyond a Million Tokens",
+      "quote": "Whether this is correct is an open question; LeCun's position paper argues that prediction in representation space, not token prediction, is the missing ingredient (\\cite[LeCun, 2022]{lecun2022path}).",
+      "block_id": "frontier-block-45",
+      "section": "World Models and Embodied AI",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-52",
-      "quote": "* **RoPE scaling** (\\cite[Su et al., 2021]{su2021rope}): interpolate or extrapolate rotary position embeddings.",
-      "section": "Long Context Beyond a Million Tokens",
+      "quote": "LLMs are still **predominantly English-centric** in training:",
+      "block_id": "frontier-block-48",
+      "section": "Multilingual and Low-Resource AI",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-53",
-      "quote": "**YaRN** (\\cite[Peng et al., 2023]{peng2023yarn}) extends this with frequency-aware scaling.",
-      "section": "Long Context Beyond a Million Tokens",
+      "quote": "This biases models toward English cultural norms, knowledge, and reasoning patterns.",
+      "block_id": "frontier-block-49",
+      "section": "Multilingual and Low-Resource AI",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-54",
-      "quote": "* **ALiBi** (\\cite[Press et al., 2022]{press2022alibi}): linear bias to attention scores; doesn't require position embedding changes.",
-      "section": "Long Context Beyond a Million Tokens",
+      "quote": "Frontier efforts in 2025:",
+      "block_id": "frontier-block-49",
+      "section": "Multilingual and Low-Resource AI",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-55",
-      "quote": "* **Ring Attention** (\\cite[Li et al., 2023]{li2023seqparallel}): sequence parallelism with overlap of compute and communication.",
-      "section": "Long Context Beyond a Million Tokens",
+      "quote": "Low-resource languages are evaluated with benchmarks like **XTREME-S**, **AfroBench**, **INCLUDE**.",
+      "block_id": "frontier-block-50",
+      "section": "Multilingual and Low-Resource AI",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-56",
-      "quote": "* **InfLLM**: training-free long-context via KV compression (\\cite[Xiao et al., 2024]{infllm2024}).",
-      "section": "Long Context Beyond a Million Tokens",
+      "quote": "The challenge: high-quality training data in these languages is scarce.",
+      "block_id": "frontier-block-51",
+      "section": "Multilingual and Low-Resource AI",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-57",
-      "quote": "* **Landmark Attention** (\\cite[Mohtashami & Jaggi, 2023]{mohtashami2023landmark}): append “landmark” tokens summarizing past context.",
-      "section": "Long Context Beyond a Million Tokens",
+      "quote": "Solutions: **machine-translated** data (with quality filters), **synthetic data** generation, **cross-lingual transfer** from high-resource languages.",
+      "block_id": "frontier-block-51",
+      "section": "Multilingual and Low-Resource AI",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-58",
-      "quote": "The **lost-in-the-middle** problem remains: models perform best on information at the start or end of the context window, worse in the middle.",
-      "section": "Long Context Beyond a Million Tokens",
+      "quote": "LLMs are **stateless**: they don't learn from interactions.",
+      "block_id": "frontier-block-53",
+      "section": "Memory and Continual Learning",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-59",
-      "quote": "The reason is poorly understood but reproducible across architectures.",
-      "section": "Long Context Beyond a Million Tokens",
+      "quote": "Every conversation starts fresh.",
+      "block_id": "frontier-block-53",
+      "section": "Memory and Continual Learning",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-60",
-      "quote": "For evaluation, **needle-in-a-haystack** tests are now standard: insert a specific fact at a random position; ask the model to retrieve it.",
-      "section": "Long Context Beyond a Million Tokens",
+      "quote": "The 2024–2025 frontier in long-term memory:",
+      "block_id": "frontier-block-53",
+      "section": "Memory and Continual Learning",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-61",
-      "quote": "Performance degrades as context length grows.",
-      "section": "Long Context Beyond a Million Tokens",
+      "quote": "For practical deployments: a good **memory + retrieval layer** is more useful than a longer context window.",
+      "block_id": "frontier-block-54",
+      "section": "Memory and Continual Learning",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-62",
-      "quote": "Raposo et al. (Google DeepMind, 2024): instead of every token passing through every layer, **route tokens through different numbers of layers** (\\cite[Raposo et al., 2024]{raposo2024mod}).",
-      "section": "Mixture of Depths (MoD)",
+      "quote": "A model zoo is not a curriculum, but the releases of 2023–2026 are a useful audit of which research ideas survived contact with scale.",
+      "block_id": "frontier-block-56",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-63",
-      "quote": "Easy tokens skip; hard tokens use full depth.",
-      "section": "Mixture of Depths (MoD)",
+      "quote": "Five patterns recur across otherwise unrelated labs.",
+      "block_id": "frontier-block-56",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-64",
-      "quote": "Result: ~50% compute reduction at equal quality.",
-      "section": "Mixture of Depths (MoD)",
+      "quote": "The through-line: the Transformer did not get replaced.",
+      "block_id": "frontier-block-57",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-65",
-      "quote": "The capacity is preserved; the routing learns to allocate it.",
-      "section": "Mixture of Depths (MoD)",
+      "quote": "It got **specialized** — sparse experts, hybrid attention, learned sinks, compressed caches, and a second axis of compute at inference time.",
+      "block_id": "frontier-block-57",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-66",
-      "quote": "Related: **early exit** (\\cite[Elhoushi et al., 2024]{elhoushi2024early}), **conditional computation** (\\cite[Fedus et al., 2022]{fedus2022switch}).",
-      "section": "Mixture of Depths (MoD)",
+      "quote": "The answers will reshape technology, economics, and society in ways that are not yet visible.",
+      "block_id": "frontier-block-59",
+      "section": "Open Questions",
       "kind": "statement"
     },
     {
       "id": "frontier-stmt-67",
-      "quote": "See the AI Agents chapter for the basics.",
-      "section": "Agentic Architectures",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-68",
-      "quote": "* **\\cite[Multi-Agent]{du2023multiagent}** (\\cite[Du et al., 2023]{du2023multiagent}): multiple LLMs argue; a judge picks the best.",
-      "section": "Agentic Architectures",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-69",
-      "quote": "Improves reasoning accuracy 5–15%.",
-      "section": "Agentic Architectures",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-70",
-      "quote": "* **Toolformer-style self-taught tool use** (\\cite[Schick et al., 2023]{schick2023toolformer}; Gorilla, \\cite[Patil et al., 2023]{patil2023gorilla}): models learn to call thousands of APIs.",
-      "section": "Agentic Architectures",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-71",
-      "quote": "* **Computer use agents**: Anthropic's Claude can interact with a real desktop.",
-      "section": "Agentic Architectures",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-72",
-      "quote": "All powered by screenshot→action Transformers.",
-      "section": "Agentic Architectures",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-73",
-      "quote": "* **Code agents**: SWE-Agent, AutoCodeRover, Devin, autonomous software engineering.",
-      "section": "Agentic Architectures",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-74",
-      "quote": "Still unreliable but improving.",
-      "section": "Agentic Architectures",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-75",
-      "quote": "* **Hierarchical agents**: a planner agent delegates to specialist sub-agents.",
-      "section": "Agentic Architectures",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-76",
-      "quote": "Used in many production systems.",
-      "section": "Agentic Architectures",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-77",
-      "quote": "GAIA (Mialon et al., 2023, Meta) tests realistic agent tasks: “find the CEO of the company that acquired Twitter's recommendation team and their phone number on the website”.",
-      "section": "Agentic Architectures",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-78",
-      "quote": "Frontier agents solve ~50% of these; humans solve 92%.",
-      "section": "Agentic Architectures",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-79",
-      "quote": "LLMs reason in language; **world models** reason in simulation.",
-      "section": "World Models and Embodied AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-80",
-      "quote": "Yann LeCun has argued for years that LLMs lack the grounding necessary for true intelligence, and **Joint Embedding Predictive Architectures** (JEPA) are his proposed alternative.",
-      "section": "World Models and Embodied AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-81",
-      "quote": "* **Genie 2** (DeepMind, 2024): generates playable 3D environments from a single image.",
-      "section": "World Models and Embodied AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-82",
-      "quote": "* **V-JEPA 2** (Meta, 2025): self-supervised video prediction at scale.",
-      "section": "World Models and Embodied AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-83",
-      "quote": "* **Dreamer V3** (\\cite[Hafner et al., 2023]{hafner2023dreamer}): world model enables Minecraft diamond collection from scratch.",
-      "section": "World Models and Embodied AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-84",
-      "quote": "* **Sora** (OpenAI, 2024): world-model-like video generation, though OpenAI doesn't explicitly call it one.",
-      "section": "World Models and Embodied AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-85",
-      "quote": "* **RT-2 / PaLM-E / OpenVLA**: vision-language-action models for robot control.",
-      "section": "World Models and Embodied AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-86",
-      "quote": "The hypothesis: **true general intelligence requires internal simulation of consequences**, which pure text models lack.",
-      "section": "World Models and Embodied AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-87",
-      "quote": "Whether this is correct is an open question; LeCun's position paper argues that prediction in representation space, not token prediction, is the missing ingredient (\\cite[LeCun, 2022]{lecun2022path}).",
-      "section": "World Models and Embodied AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-88",
-      "quote": "LLMs are still **predominantly English-centric** in training:",
-      "section": "Multilingual and Low-Resource AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-89",
-      "quote": "* Llama 3.1: ~90% English tokens (the Llama 3 report publishes this figure).",
-      "section": "Multilingual and Low-Resource AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-90",
-      "quote": "* GPT-4o and DeepSeek-V3: their training mixes are not public, so exact percentages should not be treated as established.",
-      "section": "Multilingual and Low-Resource AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-91",
-      "quote": "This biases models toward English cultural norms, knowledge, and reasoning patterns.",
-      "section": "Multilingual and Low-Resource AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-92",
-      "quote": "Frontier efforts in 2025:",
-      "section": "Multilingual and Low-Resource AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-93",
-      "quote": "* **African languages** (Yoruba, Amharic, Swahili): covered by **Aya** (Cohere), **Lesan AI** (Tigrinya, Amharic).",
-      "section": "Multilingual and Low-Resource AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-94",
-      "quote": "* **Indic languages**: **AI4Bharat** (Tamil, Bengali, Hindi, etc.), **Navarasa-2.0** (15 Indic languages).",
-      "section": "Multilingual and Low-Resource AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-95",
-      "quote": "* **Chinese**: Qwen, DeepSeek, GLM, InternLM.",
-      "section": "Multilingual and Low-Resource AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-96",
-      "quote": "* **Arabic**: Jais, Falcon, Allam.",
-      "section": "Multilingual and Low-Resource AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-97",
-      "quote": "Low-resource languages are evaluated with benchmarks like **XTREME-S**, **AfroBench**, **INCLUDE**.",
-      "section": "Multilingual and Low-Resource AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-98",
-      "quote": "The challenge: high-quality training data in these languages is scarce.",
-      "section": "Multilingual and Low-Resource AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-99",
-      "quote": "Solutions: **machine-translated** data (with quality filters), **synthetic data** generation, **cross-lingual transfer** from high-resource languages.",
-      "section": "Multilingual and Low-Resource AI",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-100",
-      "quote": "LLMs are **stateless**: they don't learn from interactions.",
-      "section": "Memory and Continual Learning",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-101",
-      "quote": "Every conversation starts fresh.",
-      "section": "Memory and Continual Learning",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-102",
-      "quote": "The 2024–2025 frontier in long-term memory:",
-      "section": "Memory and Continual Learning",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-103",
-      "quote": "* **External memory stores**: vector databases, structured stores (Letta, MemGPT), fact databases.",
-      "section": "Memory and Continual Learning",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-104",
-      "quote": "* **Memory-augmented Transformers**: kNN-LM, RAG with learnable retrieval.",
-      "section": "Memory and Continual Learning",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-105",
-      "quote": "* **Tool-based memory**: the model calls a memory API to save/retrieve facts.",
-      "section": "Memory and Continual Learning",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-106",
-      "quote": "* **Titans** (Google, 2024): a Transformer with a learned long-term memory module.",
-      "section": "Memory and Continual Learning",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-107",
-      "quote": "Surpasses Transformers on million-token tasks.",
-      "section": "Memory and Continual Learning",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-108",
-      "quote": "* **Test-time training**: see above.",
-      "section": "Memory and Continual Learning",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-109",
-      "quote": "* **Continual learning**: training on a stream of new data without forgetting old.",
-      "section": "Memory and Continual Learning",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-110",
-      "quote": "Still unsolved at frontier scale.",
-      "section": "Memory and Continual Learning",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-111",
-      "quote": "For practical deployments: a good **memory + retrieval layer** is more useful than a longer context window.",
-      "section": "Memory and Continual Learning",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-112",
-      "quote": "A model zoo is not a curriculum, but the releases of 2023–2026 are a useful audit of which research ideas survived contact with scale.",
-      "section": "The 2026 Snapshot: Which Ideas Stuck",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-113",
-      "quote": "Five patterns recur across otherwise unrelated labs.",
-      "section": "The 2026 Snapshot: Which Ideas Stuck",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-114",
-      "quote": "Sparse mixture-of-experts became the default at the frontier.** DeepSeek-V3 (671B total, 37B active) reported frontier quality from a disclosed final training run of roughly \\$5.6M (\\cite[DeepSeek-AI, 2024]{deepseek2024v3}); Kimi K2 pushed open weights to a trillion parameters with the MuonClip optimizer (\\cite[Kimi Team, 2025]{kimi2025k2}); LongCat-Flash reached 560B with about 27B active and was reported as trained on Chinese accelerators (\\cite[LongCat Team, 2025]{longcat2025}).",
-      "section": "The 2026 Snapshot: Which Ideas Stuck",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-115",
-      "quote": "The economic logic is the one from the [Mixture of Experts](mixture_of_experts.php) chapter: capacity scales with total parameters, cost with active ones.",
-      "section": "The 2026 Snapshot: Which Ideas Stuck",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-116",
-      "quote": "Hybrid attention layouts replaced pure dense attention.** gpt-oss alternates dense and sliding-window attention layers and gives every head a learned sink logit (\\cite[OpenAI, 2025]{gptoss2025}); MiniMax built its line on lightning attention, a linear-attention variant interleaved with softmax attention (\\cite[MiniMax, 2025]{minimax2025lightning}); DeepSeek-V2 introduced multi-head latent attention to shrink the KV cache (\\cite[DeepSeek-AI, 2024]{deepseek2024v2}).",
-      "section": "The 2026 Snapshot: Which Ideas Stuck",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-117",
-      "quote": "The goal in every case is the same: keep exact attention where it matters, and stop paying quadratic cost everywhere.",
-      "section": "The 2026 Snapshot: Which Ideas Stuck",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-118",
-      "quote": "Reasoning became a training target, not a prompt trick.** RLVR — reinforcement learning against programmatic verifiers — turned chain-of-thought from something users coaxed out of a model into something models are trained to produce.",
-      "section": "The 2026 Snapshot: Which Ideas Stuck",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-119",
-      "quote": "DeepSeek-R1 published the recipe and open weights (\\cite[Guo et al., 2025]{guo2025deepseekr1}), and the o-series, Claude's extended thinking, and Gemini's thinking modes made the inference-compute dial a product feature.",
-      "section": "The 2026 Snapshot: Which Ideas Stuck",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-120",
-      "quote": "Hybrid thinking modes arrived.** Qwen3 trained dense and mixture-of-experts models with both a fast, non-thinking mode and a slower reasoning mode, selectable per request (\\cite[Qwen Team, 2025]{qwen2025qwen3}) — an acknowledgment that most queries do not need a thousand tokens of deliberation.",
-      "section": "The 2026 Snapshot: Which Ideas Stuck",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-121",
-      "quote": "Open weights moved from “small models” to frontier-adjacent scale.** Llama 3 405B was **one of the first** open-weight models widely described as competitive with closed frontier systems (\\cite[Grattafiori et al., 2024]{llama3herd2024}); Llama 4 added native multimodality and MoE (\\cite[Meta AI, 2025]{meta2025llama4}); Gemma 3 brought multimodality and long context to the small-model tier (\\cite[Gemma Team, 2025]{gemma2025v3}); Qwen3 and Kimi K2 became standard bases for fine-tuning.",
-      "section": "The 2026 Snapshot: Which Ideas Stuck",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-122",
-      "quote": "The open ecosystem no longer trails by a full generation on architecture — mainly on data and compute.",
-      "section": "The 2026 Snapshot: Which Ideas Stuck",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-123",
-      "quote": "Interpretability moved into the system card.** Frontier safety reports now routinely include sparse-autoencoder features, attribution graphs, activation steering, and activation verbalizers — the techniques of the [Mechanistic Interpretability](mechanistic_interpretability.php) chapter — as evidence about internal states rather than as research curiosities (\\cite[Lindsey et al., 2025]{anthropic2025biology}; \\cite[Pan et al., 2024]{pan2024latentqa}).",
-      "section": "The 2026 Snapshot: Which Ideas Stuck",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-124",
-      "quote": "Diffusion language models became a real alternative.** LLaDA showed that masked diffusion could train an 8B instruction-following model from scratch, and Mercury and Gemini Diffusion brought parallel decoding to products (\\cite[Nie et al., 2025]{nie2025llada}).",
-      "section": "The 2026 Snapshot: Which Ideas Stuck",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-125",
-      "quote": "Whether dLLMs close the quality gap at the frontier is still open, but “autoregressive or bust” is no longer the default assumption.",
-      "section": "The 2026 Snapshot: Which Ideas Stuck",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-126",
-      "quote": "The through-line: the Transformer did not get replaced.",
-      "section": "The 2026 Snapshot: Which Ideas Stuck",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-127",
-      "quote": "It got **specialized** — sparse experts, hybrid attention, learned sinks, compressed caches, and a second axis of compute at inference time.",
-      "section": "The 2026 Snapshot: Which Ideas Stuck",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-128",
-      "quote": "* Will the next paradigm shift come from **architectures** (post-Transformer), **scaling** (more data/compute), or **inference** (test-time compute, agents)?",
-      "section": "Open Questions",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-129",
-      "quote": "* Can interpretability mature into a **safety discipline**, predicting and preventing failures before deployment?",
-      "section": "Open Questions",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-130",
-      "quote": "* Will **multimodal** models converge to a single architecture (one Transformer for everything) or remain specialists (one for vision, one for speech)?",
-      "section": "Open Questions",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-131",
-      "quote": "* Will **open models** close the gap to frontier, or will the frontier pull away indefinitely?",
-      "section": "Open Questions",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-132",
-      "quote": "* Will **economic value** concentrate among the few companies with frontier-scale compute, or diffuse widely?",
-      "section": "Open Questions",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-133",
-      "quote": "The answers will reshape technology, economics, and society in ways that are not yet visible.",
-      "section": "Open Questions",
-      "kind": "statement"
-    },
-    {
-      "id": "frontier-stmt-134",
       "quote": "What is certain: this is a remarkable time to be studying the field.",
+      "block_id": "frontier-block-59",
       "section": "Open Questions",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "frontier-block-1",
+      "quote": "This chapter surveys the research frontier of 2025, the techniques and ideas that are emerging from labs but not yet standardized. Some will become textbook material in two years; others will fade. Knowing the landscape keeps you ahead of the curve. The topics are grouped into six themes, then closed with the open questions that define the field.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "frontier-block-2",
+      "quote": "Alignment",
+      "kind": "heading",
+      "section": "Alignment"
+    },
+    {
+      "id": "frontier-block-3",
+      "quote": "Constitutional AI (CAI)",
+      "kind": "heading",
+      "section": "Constitutional AI (CAI)"
+    },
+    {
+      "id": "frontier-block-4",
+      "quote": "Bai et al. (Anthropic, 2022) replaced most of the human labelling used by \\citeauthor{ouyang2022instructgpt} (\\citeyear{ouyang2022instructgpt}) with **AI self-critique against a written constitution**:",
+      "kind": "paragraph",
+      "section": "Constitutional AI (CAI)"
+    },
+    {
+      "id": "frontier-block-5",
+      "quote": "1. The model generates a response.",
+      "kind": "list-item",
+      "section": "Constitutional AI (CAI)"
+    },
+    {
+      "id": "frontier-block-6",
+      "quote": "2. The model critiques it against a constitutional principle (“be helpful, harmless, honest”).",
+      "kind": "list-item",
+      "section": "Constitutional AI (CAI)"
+    },
+    {
+      "id": "frontier-block-7",
+      "quote": "3. The model revises the response.",
+      "kind": "list-item",
+      "section": "Constitutional AI (CAI)"
+    },
+    {
+      "id": "frontier-block-8",
+      "quote": "4. Iterate.",
+      "kind": "list-item",
+      "section": "Constitutional AI (CAI)"
+    },
+    {
+      "id": "frontier-block-9",
+      "quote": "5. Train the final outputs with RL (RLAIF: RL from AI Feedback).",
+      "kind": "list-item",
+      "section": "Constitutional AI (CAI)"
+    },
+    {
+      "id": "frontier-block-10",
+      "quote": "A typical constitution entry: *“Which response is more honest? Response A states the limits of its knowledge; Response B makes up plausible-sounding facts. Choose the more honest response.”*",
+      "kind": "paragraph",
+      "section": "Constitutional AI (CAI)"
+    },
+    {
+      "id": "frontier-block-11",
+      "quote": "CAI reduces human labelling substantially; the paper compares it with an RLHF baseline rather than with InstructGPT (\\cite[Ouyang et al., 2022]{ouyang2022instructgpt}). Anthropic uses CAI for Claude 2/3/4. The same approach underlies **self-critique** in many production systems.",
+      "kind": "paragraph",
+      "section": "Constitutional AI (CAI)"
+    },
+    {
+      "id": "frontier-block-12",
+      "quote": "Interpretability",
+      "kind": "heading",
+      "section": "Interpretability"
+    },
+    {
+      "id": "frontier-block-13",
+      "quote": "Sparse Autoencoders (SAEs) for Interpretability",
+      "kind": "heading",
+      "section": "Sparse Autoencoders (SAEs) for Interpretability"
+    },
+    {
+      "id": "frontier-block-14",
+      "quote": "The interpretability chapter covered **circuits**. A complementary approach: **decompose activations into sparse, interpretable features**.",
+      "kind": "paragraph",
+      "section": "Sparse Autoencoders (SAEs) for Interpretability"
+    },
+    {
+      "id": "frontier-block-15",
+      "quote": "The L1 penalty forces only a few features to be active for any input. Anthropic's work on Claude 3 Sonnet (2024) found:",
+      "kind": "paragraph",
+      "section": "Sparse Autoencoders (SAEs) for Interpretability"
+    },
+    {
+      "id": "frontier-block-16",
+      "quote": "The “**Golden Gate Claude**” demonstration (\\cite[Templeton et al., 2024]{anthropic2024goldengate}) amplified a single feature to make the model obsessed with the Golden Gate Bridge. This is direct evidence that specific, semantically meaningful features can be **causally manipulated** at inference time.",
+      "kind": "paragraph",
+      "section": "Sparse Autoencoders (SAEs) for Interpretability"
+    },
+    {
+      "id": "frontier-block-17",
+      "quote": "Mechanistic Interpretability Frontier",
+      "kind": "heading",
+      "section": "Mechanistic Interpretability Frontier"
+    },
+    {
+      "id": "frontier-block-18",
+      "quote": "From the Mechanistic Interpretability chapter's foundation, frontier work in 2024–2025:",
+      "kind": "paragraph",
+      "section": "Mechanistic Interpretability Frontier"
+    },
+    {
+      "id": "frontier-block-19",
+      "quote": "The dream: an **“MRI for AI”**, read the activations, identify misbehavior, fix it surgically. Not realized, but progressing.",
+      "kind": "paragraph",
+      "section": "Mechanistic Interpretability Frontier"
+    },
+    {
+      "id": "frontier-block-20",
+      "quote": "Reasoning and Inference-Time Compute",
+      "kind": "heading",
+      "section": "Reasoning and Inference-Time Compute"
+    },
+    {
+      "id": "frontier-block-21",
+      "quote": "Process Reward Models in Production",
+      "kind": "heading",
+      "section": "Process Reward Models in Production"
+    },
+    {
+      "id": "frontier-block-22",
+      "quote": "Recall from the Reasoning chapter: a **Process Reward Model** scores every step of a CoT, not just the final answer. In production:",
+      "kind": "paragraph",
+      "section": "Process Reward Models in Production"
+    },
+    {
+      "id": "frontier-block-23",
+      "quote": "The trade-off: PRMs add 2–5× inference cost. Used selectively on the hardest 10–20% of queries.",
+      "kind": "paragraph",
+      "section": "Process Reward Models in Production"
+    },
+    {
+      "id": "frontier-block-24",
+      "quote": "Test-Time Training",
+      "kind": "heading",
+      "section": "Test-Time Training"
+    },
+    {
+      "id": "frontier-block-25",
+      "quote": "A 2024 idea: **train at inference time on the test input itself**. \\cite[Sun et al. (2024)]{sun2024ttt} showed that fine-tuning a small adapter on the test prompt's distribution before answering improves performance on distribution-shifted tasks.",
+      "kind": "paragraph",
+      "section": "Test-Time Training"
+    },
+    {
+      "id": "frontier-block-26",
+      "quote": "For a hard reasoning problem: take the prompt, generate some self-supervised variants, train a tiny LoRA on them, then answer. Especially powerful when the test domain differs from pretraining.",
+      "kind": "paragraph",
+      "section": "Test-Time Training"
+    },
+    {
+      "id": "frontier-block-27",
+      "quote": "The trade-off: latency. (\\cite[Sun et al., 2024]{sun2024ttt}) adds seconds-to-minutes per query. Useful for offline batch processing, not real-time chat.",
+      "kind": "paragraph",
+      "section": "Test-Time Training"
+    },
+    {
+      "id": "frontier-block-28",
+      "quote": "Scale and Efficiency",
+      "kind": "heading",
+      "section": "Scale and Efficiency"
+    },
+    {
+      "id": "frontier-block-29",
+      "quote": "Long Context Beyond a Million Tokens",
+      "kind": "heading",
+      "section": "Long Context Beyond a Million Tokens"
+    },
+    {
+      "id": "frontier-block-30",
+      "quote": "The 2024–2025 long-context arms race:",
+      "kind": "paragraph",
+      "section": "Long Context Beyond a Million Tokens"
+    },
+    {
+      "id": "frontier-block-31",
+      "quote": "Techniques enabling this:",
+      "kind": "paragraph",
+      "section": "Long Context Beyond a Million Tokens"
+    },
+    {
+      "id": "frontier-block-32",
+      "quote": "The **lost-in-the-middle** problem remains: models perform best on information at the start or end of the context window, worse in the middle. The reason is poorly understood but reproducible across architectures.",
+      "kind": "paragraph",
+      "section": "Long Context Beyond a Million Tokens"
+    },
+    {
+      "id": "frontier-block-33",
+      "quote": "For evaluation, **needle-in-a-haystack** tests are now standard: insert a specific fact at a random position; ask the model to retrieve it. Performance degrades as context length grows.",
+      "kind": "paragraph",
+      "section": "Long Context Beyond a Million Tokens"
+    },
+    {
+      "id": "frontier-block-34",
+      "quote": "Mixture of Depths (MoD)",
+      "kind": "heading",
+      "section": "Mixture of Depths (MoD)"
+    },
+    {
+      "id": "frontier-block-35",
+      "quote": "Raposo et al. (Google DeepMind, 2024): instead of every token passing through every layer, **route tokens through different numbers of layers** (\\cite[Raposo et al., 2024]{raposo2024mod}). Easy tokens skip; hard tokens use full depth.",
+      "kind": "paragraph",
+      "section": "Mixture of Depths (MoD)"
+    },
+    {
+      "id": "frontier-block-36",
+      "quote": "Result: ~50% compute reduction at equal quality. The capacity is preserved; the routing learns to allocate it.",
+      "kind": "paragraph",
+      "section": "Mixture of Depths (MoD)"
+    },
+    {
+      "id": "frontier-block-37",
+      "quote": "Related: **early exit** (\\cite[Elhoushi et al., 2024]{elhoushi2024early}), **conditional computation** (\\cite[Fedus et al., 2022]{fedus2022switch}).",
+      "kind": "paragraph",
+      "section": "Mixture of Depths (MoD)"
+    },
+    {
+      "id": "frontier-block-38",
+      "quote": "Agents and Embodiment",
+      "kind": "heading",
+      "section": "Agents and Embodiment"
+    },
+    {
+      "id": "frontier-block-39",
+      "quote": "Agentic Architectures",
+      "kind": "heading",
+      "section": "Agentic Architectures"
+    },
+    {
+      "id": "frontier-block-40",
+      "quote": "See the AI Agents chapter for the basics. Frontier developments:",
+      "kind": "paragraph",
+      "section": "Agentic Architectures"
+    },
+    {
+      "id": "frontier-block-41",
+      "quote": "GAIA (Mialon et al., 2023, Meta) tests realistic agent tasks: “find the CEO of the company that acquired Twitter's recommendation team and their phone number on the website”. Frontier agents solve ~50% of these; humans solve 92%.",
+      "kind": "paragraph",
+      "section": "Agentic Architectures"
+    },
+    {
+      "id": "frontier-block-42",
+      "quote": "World Models and Embodied AI",
+      "kind": "heading",
+      "section": "World Models and Embodied AI"
+    },
+    {
+      "id": "frontier-block-43",
+      "quote": "LLMs reason in language; **world models** reason in simulation. Yann LeCun has argued for years that LLMs lack the grounding necessary for true intelligence, and **Joint Embedding Predictive Architectures** (JEPA) are his proposed alternative.",
+      "kind": "paragraph",
+      "section": "World Models and Embodied AI"
+    },
+    {
+      "id": "frontier-block-44",
+      "quote": "Key 2024–2025 results:",
+      "kind": "paragraph",
+      "section": "World Models and Embodied AI"
+    },
+    {
+      "id": "frontier-block-45",
+      "quote": "The hypothesis: **true general intelligence requires internal simulation of consequences**, which pure text models lack. Whether this is correct is an open question; LeCun's position paper argues that prediction in representation space, not token prediction, is the missing ingredient (\\cite[LeCun, 2022]{lecun2022path}).",
+      "kind": "paragraph",
+      "section": "World Models and Embodied AI"
+    },
+    {
+      "id": "frontier-block-46",
+      "quote": "Language and Memory",
+      "kind": "heading",
+      "section": "Language and Memory"
+    },
+    {
+      "id": "frontier-block-47",
+      "quote": "Multilingual and Low-Resource AI",
+      "kind": "heading",
+      "section": "Multilingual and Low-Resource AI"
+    },
+    {
+      "id": "frontier-block-48",
+      "quote": "LLMs are still **predominantly English-centric** in training:",
+      "kind": "paragraph",
+      "section": "Multilingual and Low-Resource AI"
+    },
+    {
+      "id": "frontier-block-49",
+      "quote": "This biases models toward English cultural norms, knowledge, and reasoning patterns. Frontier efforts in 2025:",
+      "kind": "paragraph",
+      "section": "Multilingual and Low-Resource AI"
+    },
+    {
+      "id": "frontier-block-50",
+      "quote": "Low-resource languages are evaluated with benchmarks like **XTREME-S**, **AfroBench**, **INCLUDE**.",
+      "kind": "paragraph",
+      "section": "Multilingual and Low-Resource AI"
+    },
+    {
+      "id": "frontier-block-51",
+      "quote": "The challenge: high-quality training data in these languages is scarce. Solutions: **machine-translated** data (with quality filters), **synthetic data** generation, **cross-lingual transfer** from high-resource languages.",
+      "kind": "paragraph",
+      "section": "Multilingual and Low-Resource AI"
+    },
+    {
+      "id": "frontier-block-52",
+      "quote": "Memory and Continual Learning",
+      "kind": "heading",
+      "section": "Memory and Continual Learning"
+    },
+    {
+      "id": "frontier-block-53",
+      "quote": "LLMs are **stateless**: they don't learn from interactions. Every conversation starts fresh. The 2024–2025 frontier in long-term memory:",
+      "kind": "paragraph",
+      "section": "Memory and Continual Learning"
+    },
+    {
+      "id": "frontier-block-54",
+      "quote": "For practical deployments: a good **memory + retrieval layer** is more useful than a longer context window.",
+      "kind": "paragraph",
+      "section": "Memory and Continual Learning"
+    },
+    {
+      "id": "frontier-block-55",
+      "quote": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "heading",
+      "section": "The 2026 Snapshot: Which Ideas Stuck"
+    },
+    {
+      "id": "frontier-block-56",
+      "quote": "A model zoo is not a curriculum, but the releases of 2023–2026 are a useful audit of which research ideas survived contact with scale. Five patterns recur across otherwise unrelated labs.",
+      "kind": "paragraph",
+      "section": "The 2026 Snapshot: Which Ideas Stuck"
+    },
+    {
+      "id": "frontier-block-57",
+      "quote": "The through-line: the Transformer did not get replaced. It got **specialized** — sparse experts, hybrid attention, learned sinks, compressed caches, and a second axis of compute at inference time.",
+      "kind": "paragraph",
+      "section": "The 2026 Snapshot: Which Ideas Stuck"
+    },
+    {
+      "id": "frontier-block-58",
+      "quote": "Open Questions",
+      "kind": "heading",
+      "section": "Open Questions"
+    },
+    {
+      "id": "frontier-block-59",
+      "quote": "The answers will reshape technology, economics, and society in ways that are not yet visible. What is certain: this is a remarkable time to be studying the field.",
+      "kind": "paragraph",
+      "section": "Open Questions"
     }
   ]
 }

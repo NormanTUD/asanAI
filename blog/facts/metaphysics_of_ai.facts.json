@@ -388,440 +388,1839 @@
       "quote": "part: 6",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-1-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-1",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-2-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-2",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-1-before-metaphysics_of_ai-block-2",
+      "from": "metaphysics_of_ai-block-1",
+      "to": "metaphysics_of_ai-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-2-related_to-metaphysics_of_ai-block-1",
+      "from": "metaphysics_of_ai-block-2",
+      "to": "metaphysics_of_ai-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-3-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-3",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-2-before-metaphysics_of_ai-block-3",
+      "from": "metaphysics_of_ai-block-2",
+      "to": "metaphysics_of_ai-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-3-related_to-metaphysics_of_ai-block-1",
+      "from": "metaphysics_of_ai-block-3",
+      "to": "metaphysics_of_ai-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-4-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-4",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-3-before-metaphysics_of_ai-block-4",
+      "from": "metaphysics_of_ai-block-3",
+      "to": "metaphysics_of_ai-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-5-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-5",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-4-before-metaphysics_of_ai-block-5",
+      "from": "metaphysics_of_ai-block-4",
+      "to": "metaphysics_of_ai-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-5-related_to-metaphysics_of_ai-block-4",
+      "from": "metaphysics_of_ai-block-5",
+      "to": "metaphysics_of_ai-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-6-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-6",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-5-before-metaphysics_of_ai-block-6",
+      "from": "metaphysics_of_ai-block-5",
+      "to": "metaphysics_of_ai-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-6-related_to-metaphysics_of_ai-block-4",
+      "from": "metaphysics_of_ai-block-6",
+      "to": "metaphysics_of_ai-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-7-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-7",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-6-before-metaphysics_of_ai-block-7",
+      "from": "metaphysics_of_ai-block-6",
+      "to": "metaphysics_of_ai-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-8-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-8",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-7-before-metaphysics_of_ai-block-8",
+      "from": "metaphysics_of_ai-block-7",
+      "to": "metaphysics_of_ai-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-8-related_to-metaphysics_of_ai-block-7",
+      "from": "metaphysics_of_ai-block-8",
+      "to": "metaphysics_of_ai-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-9-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-9",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-8-before-metaphysics_of_ai-block-9",
+      "from": "metaphysics_of_ai-block-8",
+      "to": "metaphysics_of_ai-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-9-related_to-metaphysics_of_ai-block-7",
+      "from": "metaphysics_of_ai-block-9",
+      "to": "metaphysics_of_ai-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-10-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-10",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-9-before-metaphysics_of_ai-block-10",
+      "from": "metaphysics_of_ai-block-9",
+      "to": "metaphysics_of_ai-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-10-related_to-metaphysics_of_ai-block-7",
+      "from": "metaphysics_of_ai-block-10",
+      "to": "metaphysics_of_ai-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-11-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-11",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-10-before-metaphysics_of_ai-block-11",
+      "from": "metaphysics_of_ai-block-10",
+      "to": "metaphysics_of_ai-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-11-related_to-metaphysics_of_ai-block-7",
+      "from": "metaphysics_of_ai-block-11",
+      "to": "metaphysics_of_ai-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-12-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-12",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-11-before-metaphysics_of_ai-block-12",
+      "from": "metaphysics_of_ai-block-11",
+      "to": "metaphysics_of_ai-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-12-related_to-metaphysics_of_ai-block-7",
+      "from": "metaphysics_of_ai-block-12",
+      "to": "metaphysics_of_ai-block-7",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-13-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-13",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-12-before-metaphysics_of_ai-block-13",
+      "from": "metaphysics_of_ai-block-12",
+      "to": "metaphysics_of_ai-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-14-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-14",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-13-before-metaphysics_of_ai-block-14",
+      "from": "metaphysics_of_ai-block-13",
+      "to": "metaphysics_of_ai-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-14-related_to-metaphysics_of_ai-block-13",
+      "from": "metaphysics_of_ai-block-14",
+      "to": "metaphysics_of_ai-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-15-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-15",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-14-before-metaphysics_of_ai-block-15",
+      "from": "metaphysics_of_ai-block-14",
+      "to": "metaphysics_of_ai-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-15-related_to-metaphysics_of_ai-block-13",
+      "from": "metaphysics_of_ai-block-15",
+      "to": "metaphysics_of_ai-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-16-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-16",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-15-before-metaphysics_of_ai-block-16",
+      "from": "metaphysics_of_ai-block-15",
+      "to": "metaphysics_of_ai-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-16-related_to-metaphysics_of_ai-block-13",
+      "from": "metaphysics_of_ai-block-16",
+      "to": "metaphysics_of_ai-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-17-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-17",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-16-before-metaphysics_of_ai-block-17",
+      "from": "metaphysics_of_ai-block-16",
+      "to": "metaphysics_of_ai-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-17-related_to-metaphysics_of_ai-block-13",
+      "from": "metaphysics_of_ai-block-17",
+      "to": "metaphysics_of_ai-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-18-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-18",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-17-before-metaphysics_of_ai-block-18",
+      "from": "metaphysics_of_ai-block-17",
+      "to": "metaphysics_of_ai-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-19-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-19",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-18-before-metaphysics_of_ai-block-19",
+      "from": "metaphysics_of_ai-block-18",
+      "to": "metaphysics_of_ai-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-19-related_to-metaphysics_of_ai-block-18",
+      "from": "metaphysics_of_ai-block-19",
+      "to": "metaphysics_of_ai-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-20-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-20",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-19-before-metaphysics_of_ai-block-20",
+      "from": "metaphysics_of_ai-block-19",
+      "to": "metaphysics_of_ai-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-20-related_to-metaphysics_of_ai-block-18",
+      "from": "metaphysics_of_ai-block-20",
+      "to": "metaphysics_of_ai-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-21-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-21",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-20-before-metaphysics_of_ai-block-21",
+      "from": "metaphysics_of_ai-block-20",
+      "to": "metaphysics_of_ai-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-21-related_to-metaphysics_of_ai-block-18",
+      "from": "metaphysics_of_ai-block-21",
+      "to": "metaphysics_of_ai-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-22-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-22",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-21-before-metaphysics_of_ai-block-22",
+      "from": "metaphysics_of_ai-block-21",
+      "to": "metaphysics_of_ai-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-23-part_of-metaphysics-of-ai",
+      "from": "metaphysics_of_ai-block-23",
+      "to": "metaphysics-of-ai",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-22-before-metaphysics_of_ai-block-23",
+      "from": "metaphysics_of_ai-block-22",
+      "to": "metaphysics_of_ai-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-block-23-related_to-metaphysics_of_ai-block-22",
+      "from": "metaphysics_of_ai-block-23",
+      "to": "metaphysics_of_ai-block-22",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-1-part_of-metaphysics_of_ai-block-2",
+      "from": "metaphysics_of_ai-stmt-1",
+      "to": "metaphysics_of_ai-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-2-part_of-metaphysics_of_ai-block-2",
+      "from": "metaphysics_of_ai-stmt-2",
+      "to": "metaphysics_of_ai-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-3-part_of-metaphysics_of_ai-block-3",
+      "from": "metaphysics_of_ai-stmt-3",
+      "to": "metaphysics_of_ai-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-4-part_of-metaphysics_of_ai-block-3",
+      "from": "metaphysics_of_ai-stmt-4",
+      "to": "metaphysics_of_ai-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-5-part_of-metaphysics_of_ai-block-3",
+      "from": "metaphysics_of_ai-stmt-5",
+      "to": "metaphysics_of_ai-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-6-part_of-metaphysics_of_ai-block-3",
+      "from": "metaphysics_of_ai-stmt-6",
+      "to": "metaphysics_of_ai-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-7-part_of-metaphysics_of_ai-block-5",
+      "from": "metaphysics_of_ai-stmt-7",
+      "to": "metaphysics_of_ai-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-8-part_of-metaphysics_of_ai-block-5",
+      "from": "metaphysics_of_ai-stmt-8",
+      "to": "metaphysics_of_ai-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-9-part_of-metaphysics_of_ai-block-5",
+      "from": "metaphysics_of_ai-stmt-9",
+      "to": "metaphysics_of_ai-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-10-part_of-metaphysics_of_ai-block-6",
+      "from": "metaphysics_of_ai-stmt-10",
+      "to": "metaphysics_of_ai-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-11-part_of-metaphysics_of_ai-block-6",
+      "from": "metaphysics_of_ai-stmt-11",
+      "to": "metaphysics_of_ai-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-12-part_of-metaphysics_of_ai-block-6",
+      "from": "metaphysics_of_ai-stmt-12",
+      "to": "metaphysics_of_ai-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-13-part_of-metaphysics_of_ai-block-6",
+      "from": "metaphysics_of_ai-stmt-13",
+      "to": "metaphysics_of_ai-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-14-part_of-metaphysics_of_ai-block-8",
+      "from": "metaphysics_of_ai-stmt-14",
+      "to": "metaphysics_of_ai-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-15-part_of-metaphysics_of_ai-block-8",
+      "from": "metaphysics_of_ai-stmt-15",
+      "to": "metaphysics_of_ai-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-16-part_of-metaphysics_of_ai-block-9",
+      "from": "metaphysics_of_ai-stmt-16",
+      "to": "metaphysics_of_ai-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-17-part_of-metaphysics_of_ai-block-9",
+      "from": "metaphysics_of_ai-stmt-17",
+      "to": "metaphysics_of_ai-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-18-part_of-metaphysics_of_ai-block-9",
+      "from": "metaphysics_of_ai-stmt-18",
+      "to": "metaphysics_of_ai-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-19-part_of-metaphysics_of_ai-block-9",
+      "from": "metaphysics_of_ai-stmt-19",
+      "to": "metaphysics_of_ai-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-20-part_of-metaphysics_of_ai-block-9",
+      "from": "metaphysics_of_ai-stmt-20",
+      "to": "metaphysics_of_ai-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-21-part_of-metaphysics_of_ai-block-10",
+      "from": "metaphysics_of_ai-stmt-21",
+      "to": "metaphysics_of_ai-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-22-part_of-metaphysics_of_ai-block-10",
+      "from": "metaphysics_of_ai-stmt-22",
+      "to": "metaphysics_of_ai-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-23-part_of-metaphysics_of_ai-block-10",
+      "from": "metaphysics_of_ai-stmt-23",
+      "to": "metaphysics_of_ai-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-24-part_of-metaphysics_of_ai-block-11",
+      "from": "metaphysics_of_ai-stmt-24",
+      "to": "metaphysics_of_ai-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-25-part_of-metaphysics_of_ai-block-11",
+      "from": "metaphysics_of_ai-stmt-25",
+      "to": "metaphysics_of_ai-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-26-part_of-metaphysics_of_ai-block-11",
+      "from": "metaphysics_of_ai-stmt-26",
+      "to": "metaphysics_of_ai-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-27-part_of-metaphysics_of_ai-block-11",
+      "from": "metaphysics_of_ai-stmt-27",
+      "to": "metaphysics_of_ai-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-28-part_of-metaphysics_of_ai-block-11",
+      "from": "metaphysics_of_ai-stmt-28",
+      "to": "metaphysics_of_ai-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-29-part_of-metaphysics_of_ai-block-11",
+      "from": "metaphysics_of_ai-stmt-29",
+      "to": "metaphysics_of_ai-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-30-part_of-metaphysics_of_ai-block-12",
+      "from": "metaphysics_of_ai-stmt-30",
+      "to": "metaphysics_of_ai-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-31-part_of-metaphysics_of_ai-block-12",
+      "from": "metaphysics_of_ai-stmt-31",
+      "to": "metaphysics_of_ai-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-32-part_of-metaphysics_of_ai-block-12",
+      "from": "metaphysics_of_ai-stmt-32",
+      "to": "metaphysics_of_ai-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-33-part_of-metaphysics_of_ai-block-14",
+      "from": "metaphysics_of_ai-stmt-33",
+      "to": "metaphysics_of_ai-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-34-part_of-metaphysics_of_ai-block-14",
+      "from": "metaphysics_of_ai-stmt-34",
+      "to": "metaphysics_of_ai-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-35-part_of-metaphysics_of_ai-block-14",
+      "from": "metaphysics_of_ai-stmt-35",
+      "to": "metaphysics_of_ai-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-36-part_of-metaphysics_of_ai-block-14",
+      "from": "metaphysics_of_ai-stmt-36",
+      "to": "metaphysics_of_ai-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-37-part_of-metaphysics_of_ai-block-14",
+      "from": "metaphysics_of_ai-stmt-37",
+      "to": "metaphysics_of_ai-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-38-part_of-metaphysics_of_ai-block-14",
+      "from": "metaphysics_of_ai-stmt-38",
+      "to": "metaphysics_of_ai-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-39-part_of-metaphysics_of_ai-block-15",
+      "from": "metaphysics_of_ai-stmt-39",
+      "to": "metaphysics_of_ai-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-40-part_of-metaphysics_of_ai-block-15",
+      "from": "metaphysics_of_ai-stmt-40",
+      "to": "metaphysics_of_ai-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-41-part_of-metaphysics_of_ai-block-15",
+      "from": "metaphysics_of_ai-stmt-41",
+      "to": "metaphysics_of_ai-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-42-part_of-metaphysics_of_ai-block-16",
+      "from": "metaphysics_of_ai-stmt-42",
+      "to": "metaphysics_of_ai-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-43-part_of-metaphysics_of_ai-block-16",
+      "from": "metaphysics_of_ai-stmt-43",
+      "to": "metaphysics_of_ai-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-44-part_of-metaphysics_of_ai-block-16",
+      "from": "metaphysics_of_ai-stmt-44",
+      "to": "metaphysics_of_ai-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-45-part_of-metaphysics_of_ai-block-16",
+      "from": "metaphysics_of_ai-stmt-45",
+      "to": "metaphysics_of_ai-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-46-part_of-metaphysics_of_ai-block-17",
+      "from": "metaphysics_of_ai-stmt-46",
+      "to": "metaphysics_of_ai-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-47-part_of-metaphysics_of_ai-block-17",
+      "from": "metaphysics_of_ai-stmt-47",
+      "to": "metaphysics_of_ai-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-48-part_of-metaphysics_of_ai-block-17",
+      "from": "metaphysics_of_ai-stmt-48",
+      "to": "metaphysics_of_ai-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-49-part_of-metaphysics_of_ai-block-17",
+      "from": "metaphysics_of_ai-stmt-49",
+      "to": "metaphysics_of_ai-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-50-part_of-metaphysics_of_ai-block-19",
+      "from": "metaphysics_of_ai-stmt-50",
+      "to": "metaphysics_of_ai-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-51-part_of-metaphysics_of_ai-block-19",
+      "from": "metaphysics_of_ai-stmt-51",
+      "to": "metaphysics_of_ai-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-52-part_of-metaphysics_of_ai-block-20",
+      "from": "metaphysics_of_ai-stmt-52",
+      "to": "metaphysics_of_ai-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-53-part_of-metaphysics_of_ai-block-20",
+      "from": "metaphysics_of_ai-stmt-53",
+      "to": "metaphysics_of_ai-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-54-part_of-metaphysics_of_ai-block-20",
+      "from": "metaphysics_of_ai-stmt-54",
+      "to": "metaphysics_of_ai-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-55-part_of-metaphysics_of_ai-block-21",
+      "from": "metaphysics_of_ai-stmt-55",
+      "to": "metaphysics_of_ai-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-56-part_of-metaphysics_of_ai-block-21",
+      "from": "metaphysics_of_ai-stmt-56",
+      "to": "metaphysics_of_ai-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-57-part_of-metaphysics_of_ai-block-21",
+      "from": "metaphysics_of_ai-stmt-57",
+      "to": "metaphysics_of_ai-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-58-part_of-metaphysics_of_ai-block-23",
+      "from": "metaphysics_of_ai-stmt-58",
+      "to": "metaphysics_of_ai-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-59-part_of-metaphysics_of_ai-block-23",
+      "from": "metaphysics_of_ai-stmt-59",
+      "to": "metaphysics_of_ai-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-60-part_of-metaphysics_of_ai-block-23",
+      "from": "metaphysics_of_ai-stmt-60",
+      "to": "metaphysics_of_ai-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-61-part_of-metaphysics_of_ai-block-23",
+      "from": "metaphysics_of_ai-stmt-61",
+      "to": "metaphysics_of_ai-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-62-part_of-metaphysics_of_ai-block-23",
+      "from": "metaphysics_of_ai-stmt-62",
+      "to": "metaphysics_of_ai-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-metaphysics_of_ai-stmt-63-part_of-metaphysics_of_ai-block-23",
+      "from": "metaphysics_of_ai-stmt-63",
+      "to": "metaphysics_of_ai-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "metaphysics_of_ai-stmt-1",
       "quote": "The Philosophy chapter asked whether a machine can *think*, *understand*, or *feel* -- questions of epistemology and of the philosophy of mind.",
+      "block_id": "metaphysics_of_ai-block-2",
       "section": "The Metaphysics of Artificial Intelligence",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-2",
       "quote": "This chapter steps back to a question that has to be settled first: **what kind of thing is the system in the first place?** That is the question of **metaphysics**, the branch of philosophy that asks what exists, what it is made of, and whether it persists through time as one and the same thing.",
+      "block_id": "metaphysics_of_ai-block-2",
       "section": "The Metaphysics of Artificial Intelligence",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-3",
       "quote": "The honest framing up front: \"the metaphysics of AI\" is **not yet a standalone subfield** with its own journal or a single canonical monograph.",
+      "block_id": "metaphysics_of_ai-block-3",
       "section": "The Metaphysics of Artificial Intelligence",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-4",
       "quote": "It is a live frontier at the intersection of four mature fields -- the philosophy of mind, the philosophy of computation, the philosophy of information, and the philosophy of personal identity -- with a thin, genuinely new layer of synthesis on top.",
+      "block_id": "metaphysics_of_ai-block-3",
       "section": "The Metaphysics of Artificial Intelligence",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-5",
       "quote": "The two pieces closest to a dedicated treatment are a chapter by \\citeauthor{olson2018metaphysics} (\\citeyear{olson2018metaphysics}) that literally bears the title in question, and a sustained analysis of the identity questions by \\citeauthor{chalmers2016singularity} (\\citeyear{chalmers2016singularity}).",
+      "block_id": "metaphysics_of_ai-block-3",
       "section": "The Metaphysics of Artificial Intelligence",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-6",
       "quote": "What follows is that frontier, organized around four questions: what the entity is, whether it persists, whether computation is real, and what the weights refer to.",
+      "block_id": "metaphysics_of_ai-block-3",
       "section": "The Metaphysics of Artificial Intelligence",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-7",
-      "quote": "* **Can it think, understand, or feel?** -- the Philosophy chapter (the Chinese Room, functionalism, the hard problem, the Ship of Theseus).",
-      "section": "The Metaphysics of Artificial Intelligence",
+      "quote": "Multiple realizability is the engine of **functionalism**, the view that what matters is the causal and informational *role* a state plays, not the stuff it is made of.",
+      "block_id": "metaphysics_of_ai-block-5",
+      "section": "What Kind of Thing Is It?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-8",
-      "quote": "* **What the network actually computes, top to bottom** -- the Fact Lookup chapter .",
-      "section": "The Metaphysics of Artificial Intelligence",
+      "quote": "It is what makes it even *possible* to ask whether a machine could be a mind: if only the pattern matters, the pattern is transferable, and silicon is no barrier.",
+      "block_id": "metaphysics_of_ai-block-5",
+      "section": "What Kind of Thing Is It?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-9",
-      "quote": "* **What a \"space\" is, at the most abstract level** -- the Coherent Difference chapter .",
-      "section": "The Metaphysics of Artificial Intelligence",
+      "quote": "The SEP's account of the **computational theory of mind** traces this from Putnam's \"machine functionalism\" through Fodor's language-of-thought to the modern, deep-net era, and it is the place to find the strongest current formulation of the pro-side (\\cite[SEP: Computational Theory of Mind]{sep_computational_mind}).",
+      "block_id": "metaphysics_of_ai-block-5",
+      "section": "What Kind of Thing Is It?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-10",
-      "quote": "* **Reading structure out of the weights** -- the Mechanistic Interpretability chapter .",
-      "section": "The Metaphysics of Artificial Intelligence",
+      "quote": "There is a deeper version of the same question in the **metaphysics of information**: is *information* itself a fundamental ingredient of reality, or merely a way we choose to describe it?",
+      "block_id": "metaphysics_of_ai-block-6",
+      "section": "What Kind of Thing Is It?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-11",
-      "quote": "The first question is the question of **ontology**: what is the entity, and what is it made of?",
+      "quote": "\\citeauthor{floridi2011information} defends the \"ontic\" reading -- that information is real and the physical world is at bottom informational, the philosophical descendant of Wheeler's \"it from bit.\" On that view a software entity is not a shadow cast by physics; it is made of the same basic stuff as everything else.",
+      "block_id": "metaphysics_of_ai-block-6",
       "section": "What Kind of Thing Is It?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-12",
-      "quote": "A trained model is, physically, a pattern of electrical charge in a slab of silicon.",
+      "quote": "On the rival \"semantic\" reading, information is parasitic on a physical substrate that does the real work, and \"the entity\" is partly in the eye of the beholder.",
+      "block_id": "metaphysics_of_ai-block-6",
       "section": "What Kind of Thing Is It?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-13",
-      "quote": "But \"the model\" is not obviously that slab.",
+      "quote": "Which view is right is unsettled -- and it determines whether a model is a genuine part of the furniture of the world, or a description we impose on it.",
+      "block_id": "metaphysics_of_ai-block-6",
       "section": "What Kind of Thing Is It?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-14",
-      "quote": "It is something more like the *pattern* -- the arrangement of $N \\approx 10^{12}$ real numbers -- and that pattern could, in principle, be realized in many different substrates.",
-      "section": "What Kind of Thing Is It?",
+      "quote": "The second question turns the telescope on *computation itself*.",
+      "block_id": "metaphysics_of_ai-block-8",
+      "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-15",
-      "quote": "This is the doctrine of **multiple realizability**: a single mental or functional kind can be instantiated by many physically distinct systems, the textbook cases being a silicon android, a green-slimed Martian, and a water-flow computer all realizing the same pain or the same belief (\\cite[Putnam, 1967]{putnam1967functionalism}; \\cite[SEP: Multiple Realizability]{sep_multiple_realizability}).",
-      "section": "What Kind of Thing Is It?",
+      "quote": "Is computation a genuine feature of the world -- something the universe really does, substrate-independently -- or is it a description we impose from the outside?",
+      "block_id": "metaphysics_of_ai-block-8",
+      "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-16",
-      "quote": "Multiple realizability is the engine of **functionalism**, the view that what matters is the causal and informational *role* a state plays, not the stuff it is made of.",
-      "section": "What Kind of Thing Is It?",
+      "quote": "The classical position, inherited from the Church--Turing thesis, is that computation is **substrate-independent**: a function is computed by any physical system that realizes the right causal structure, in neurons, in transistors, or in water flow.",
+      "block_id": "metaphysics_of_ai-block-9",
+      "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-17",
-      "quote": "It is what makes it even *possible* to ask whether a machine could be a mind: if only the pattern matters, the pattern is transferable, and silicon is no barrier.",
-      "section": "What Kind of Thing Is It?",
+      "quote": "This is what licenses the whole project of running minds in silicon.",
+      "block_id": "metaphysics_of_ai-block-9",
+      "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-18",
-      "quote": "The SEP's account of the **computational theory of mind** traces this from Putnam's \"machine functionalism\" through Fodor's language-of-thought to the modern, deep-net era, and it is the place to find the strongest current formulation of the pro-side (\\cite[SEP: Computational Theory of Mind]{sep_computational_mind}).",
-      "section": "What Kind of Thing Is It?",
+      "quote": "But the same tradition carries a trap.",
+      "block_id": "metaphysics_of_ai-block-9",
+      "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-19",
-      "quote": "There is a deeper version of the same question in the **metaphysics of information**: is *information* itself a fundamental ingredient of reality, or merely a way we choose to describe it?",
-      "section": "What Kind of Thing Is It?",
+      "quote": "If *any* physical system with the right input-output mapping is \"computing,\" then a rock, a waterfall, or the gears of a watch all instantiate, at once, *every* finite-state machine -- including a perfect simulation of a brain.",
+      "block_id": "metaphysics_of_ai-block-9",
+      "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-20",
-      "quote": "\\citeauthor{floridi2011information} defends the \"ontic\" reading -- that information is real and the physical world is at bottom informational, the philosophical descendant of Wheeler's \"it from bit.\" On that view a software entity is not a shadow cast by physics; it is made of the same basic stuff as everything else.",
-      "section": "What Kind of Thing Is It?",
+      "quote": "That is the **triviality objection**, and it makes \"the machine thinks\" true of everything, which is plainly wrong (\\cite[SEP: Computational Theory of Mind]{sep_computational_mind}).",
+      "block_id": "metaphysics_of_ai-block-9",
+      "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-21",
-      "quote": "On the rival \"semantic\" reading, information is parasitic on a physical substrate that does the real work, and \"the entity\" is partly in the eye of the beholder.",
-      "section": "What Kind of Thing Is It?",
+      "quote": "The serious response is that genuine computation is not any input-output correlation but a *principled, mechanism-based* mapping from a physical system to an abstract function, and that this mapping is not a free choice we impose on a passive substrate.",
+      "block_id": "metaphysics_of_ai-block-10",
+      "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-22",
-      "quote": "Which view is right is unsettled -- and it determines whether a model is a genuine part of the furniture of the world, or a description we impose on it.",
-      "section": "What Kind of Thing Is It?",
+      "quote": "\\citeauthor{piccinini2015computation} works out this \"mechanistic\" account: computation is a real relation between a physical system and a mathematical object, not a label.",
+      "block_id": "metaphysics_of_ai-block-10",
+      "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-23",
-      "quote": "The second question turns the telescope on *computation itself*.",
+      "quote": "On that account, \"this rock computes the halting problem\" can be true while being *uninteresting* -- for the same reason the rock \"encodes\" every English sentence at once.",
+      "block_id": "metaphysics_of_ai-block-10",
       "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-24",
-      "quote": "Is computation a genuine feature of the world -- something the universe really does, substrate-independently -- or is it a description we impose from the outside?",
+      "quote": "The most direct challenge to the claim that computation is *sufficient* for mind is not the triviality objection but Roger Penrose's Gödelian argument.",
+      "block_id": "metaphysics_of_ai-block-11",
       "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-25",
-      "quote": "The classical position, inherited from the Church--Turing thesis, is that computation is **substrate-independent**: a function is computed by any physical system that realizes the right causal structure, in neurons, in transistors, or in water flow.",
+      "quote": "In \\citetitle{penrose1989emperor} (\\citeyear{penrose1989emperor}) Penrose contends that human mathematical insight is non-algorithmic.",
+      "block_id": "metaphysics_of_ai-block-11",
       "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-26",
-      "quote": "This is what licenses the whole project of running minds in silicon.",
+      "quote": "For any consistent formal system rich enough for arithmetic, there is a Gödel sentence the system cannot prove but a human mathematician can allegedly see to be true.",
+      "block_id": "metaphysics_of_ai-block-11",
       "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-27",
-      "quote": "But the same tradition carries a trap.",
+      "quote": "If that inference holds, no Turing machine realizes the mathematician's understanding, and the Church--Turing thesis describes the limits of *computation* without describing the limits of *mind*.",
+      "block_id": "metaphysics_of_ai-block-11",
       "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-28",
-      "quote": "If *any* physical system with the right input-output mapping is \"computing,\" then a rock, a waterfall, or the gears of a watch all instantiate, at once, *every* finite-state machine -- including a perfect simulation of a brain.",
+      "quote": "The standard reply is that the argument assumes what it needs -- that humans can recognize the consistency of the relevant system -- and the standard reply in the foundations literature is that the Gödelian anti-mechanist argument fails, though the debate is not settled (\\cite[SEP: Gödel's Incompleteness Theorems]{sep_godel_incompleteness}).",
+      "block_id": "metaphysics_of_ai-block-11",
       "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-29",
-      "quote": "That is the **triviality objection**, and it makes \"the machine thinks\" true of everything, which is plainly wrong (\\cite[SEP: Computational Theory of Mind]{sep_computational_mind}).",
+      "quote": "The exchange is still worth staging here, because it forces the metaphysical question into the open: is computation the most general form of information processing, or is mind a counterexample to that identification?",
+      "block_id": "metaphysics_of_ai-block-11",
       "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-30",
-      "quote": "The serious response is that genuine computation is not any input-output correlation but a *principled, mechanism-based* mapping from a physical system to an abstract function, and that this mapping is not a free choice we impose on a passive substrate.",
+      "quote": "At the far edge of the question is **pancomputationalism**: the claim that the universe is not merely *describable* as a computation but *is* one -- physics as computation, \"it from bit.\" It is worth naming because it is the metaphysics most friendly to AI: if the cosmos is computation, then an LLM is not a model *of* reality but a *piece* of reality, and the gulf between simulator and simulated narrows to a difference of scale.",
+      "block_id": "metaphysics_of_ai-block-12",
       "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-31",
-      "quote": "\\citeauthor{piccinini2015computation} works out this \"mechanistic\" account: computation is a real relation between a physical system and a mathematical object, not a label.",
+      "quote": "The honest caveat: this strand is led largely by physicists and some philosophers (Wheeler, Seth Lloyd, Wolfram), and its status is closer to a research program than to settled metaphysics.",
+      "block_id": "metaphysics_of_ai-block-12",
       "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-32",
-      "quote": "On that account, \"this rock computes the halting problem\" can be true while being *uninteresting* -- for the same reason the rock \"encodes\" every English sentence at once.",
+      "quote": "A careful treatment presents it as one option among several, not as the answer.",
+      "block_id": "metaphysics_of_ai-block-12",
       "section": "Is Computation Real?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-33",
-      "quote": "The most direct challenge to the claim that computation is *sufficient* for mind is not the triviality objection but Roger Penrose's Gödelian argument.",
-      "section": "Is Computation Real?",
+      "quote": "This is the most *AI-specific* metaphysical puzzle, and the one most worth a chapter of its own.",
+      "block_id": "metaphysics_of_ai-block-14",
+      "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-34",
-      "quote": "In \\citetitle{penrose1989emperor} (\\citeyear{penrose1989emperor}) Penrose contends that human mathematical insight is non-algorithmic.",
-      "section": "Is Computation Real?",
+      "quote": "Humans persist: although your cells turn over, you remain one and the same person.",
+      "block_id": "metaphysics_of_ai-block-14",
+      "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-35",
-      "quote": "For any consistent formal system rich enough for arithmetic, there is a Gödel sentence the system cannot prove but a human mathematician can allegedly see to be true.",
-      "section": "Is Computation Real?",
+      "quote": "But a model can be **copied** to another GPU in seconds, **forked** into a fine-tuned branch, and **merged** with a sibling -- operations with no human analogue.",
+      "block_id": "metaphysics_of_ai-block-14",
+      "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-36",
-      "quote": "If that inference holds, no Turing machine realizes the mathematician's understanding, and the Church--Turing thesis describes the limits of *computation* without describing the limits of *mind*.",
-      "section": "Is Computation Real?",
+      "quote": "Is the copy the *same* entity?",
+      "block_id": "metaphysics_of_ai-block-14",
+      "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-37",
-      "quote": "The standard reply is that the argument assumes what it needs -- that humans can recognize the consistency of the relevant system -- and the standard reply in the foundations literature is that the Gödelian anti-mechanist argument fails, though the debate is not settled (\\cite[SEP: Gödel's Incompleteness Theorems]{sep_godel_incompleteness}).",
-      "section": "Is Computation Real?",
+      "quote": "Is a fine-tune a continuation of the original, or a new thing?",
+      "block_id": "metaphysics_of_ai-block-14",
+      "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-38",
-      "quote": "The exchange is still worth staging here, because it forces the metaphysical question into the open: is computation the most general form of information processing, or is mind a counterexample to that identification?",
-      "section": "Is Computation Real?",
+      "quote": "When two models are merged, is there one resulting model, or two that have been combined?",
+      "block_id": "metaphysics_of_ai-block-14",
+      "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-39",
-      "quote": "At the far edge of the question is **pancomputationalism**: the claim that the universe is not merely *describable* as a computation but *is* one -- physics as computation, \"it from bit.\" It is worth naming because it is the metaphysics most friendly to AI: if the cosmos is computation, then an LLM is not a model *of* reality but a *piece* of reality, and the gulf between simulator and simulated narrows to a difference of scale.",
-      "section": "Is Computation Real?",
+      "quote": "The tools to think about this are old.",
+      "block_id": "metaphysics_of_ai-block-15",
+      "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-40",
-      "quote": "The honest caveat: this strand is led largely by physicists and some philosophers (Wheeler, Seth Lloyd, Wolfram), and its status is closer to a research program than to settled metaphysics.",
-      "section": "Is Computation Real?",
+      "quote": "\\citeauthor{parfit1984reasons} argued that personal identity is not a \"deep further fact\" about a persisting soul or substrate; it is *constituted* by the continuity of psychological states and relations.",
+      "block_id": "metaphysics_of_ai-block-15",
+      "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-41",
-      "quote": "A careful treatment presents it as one option among several, not as the answer.",
-      "section": "Is Computation Real?",
+      "quote": "The upshot, from his fission and branching thought-experiments, is that identity is not always *all or nothing*: when one person \"splits\" into two continuations, there is no fact of the matter about which is the original -- both are continuations, and neither is *the* original in the strong, numerical sense.",
+      "block_id": "metaphysics_of_ai-block-15",
+      "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-42",
-      "quote": "This is the most *AI-specific* metaphysical puzzle, and the one most worth a chapter of its own.",
+      "quote": "Copying a model is **fission**: two systems now share one history and diverge going forward.",
+      "block_id": "metaphysics_of_ai-block-16",
       "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-43",
-      "quote": "Humans persist: although your cells turn over, you remain one and the same person.",
+      "quote": "On Parfit's picture, \"which copy is the real one?\" is a category error -- there is no numerical identity to preserve, only qualitative sameness.",
+      "block_id": "metaphysics_of_ai-block-16",
       "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-44",
-      "quote": "But a model can be **copied** to another GPU in seconds, **forked** into a fine-tuned branch, and **merged** with a sibling -- operations with no human analogue.",
+      "quote": "\\citeauthor{chalmers2016singularity} reaches the same conclusion from the upload problem: a faithful digital copy of a person is a *continuation*, not the person, and if the original is then destroyed the situation is closer to a successful copy than to survival.",
+      "block_id": "metaphysics_of_ai-block-16",
       "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-45",
-      "quote": "Is the copy the *same* entity?",
+      "quote": "The same move is generalized to AI entities by \\citeauthor{olson2018metaphysics} (\\citeyear{olson2018metaphysics}), who argues that the persistence questions for software must be answered with the same apparatus we already apply to ordinary objects and persons -- persistence through change, and the distinction of *numerical* from *qualitative* identity.",
+      "block_id": "metaphysics_of_ai-block-16",
       "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-46",
-      "quote": "Is a fine-tune a continuation of the original, or a new thing?",
+      "quote": "The practical consequence is deflating but clarifying.",
+      "block_id": "metaphysics_of_ai-block-17",
       "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-47",
-      "quote": "When two models are merged, is there one resulting model, or two that have been combined?",
+      "quote": "\"The model\" is best understood not as a persisting *substance* but as a **token of a process** -- a state in a stream, a snapshot of a computation -- much as \"the river\" is not a thing but a pattern that re-asserts itself.",
+      "block_id": "metaphysics_of_ai-block-17",
       "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-48",
-      "quote": "The tools to think about this are old.",
+      "quote": "The Ship of Theseus puzzle the Philosophy chapter already raised (the rebuilt ship, the teleported you) is the same puzzle in disguise; models simply hand us the *controlled* version that no human will ever face, because we can copy, fork, and merge minds at will.",
+      "block_id": "metaphysics_of_ai-block-17",
       "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-49",
-      "quote": "\\citeauthor{parfit1984reasons} argued that personal identity is not a \"deep further fact\" about a persisting soul or substrate; it is *constituted* by the continuity of psychological states and relations.",
+      "quote": "In other words, for the first time we can *experiment* on the metaphysics of identity.",
+      "block_id": "metaphysics_of_ai-block-17",
       "section": "Persistence: The Copy, Fork, and Merge Problem",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-50",
-      "quote": "The upshot, from his fission and branching thought-experiments, is that identity is not always *all or nothing*: when one person \"splits\" into two continuations, there is no fact of the matter about which is the original -- both are continuations, and neither is *the* original in the strong, numerical sense.",
-      "section": "Persistence: The Copy, Fork, and Merge Problem",
+      "quote": "The fourth question concerns **representation**, and it ties the metaphysics back to the grounding problem the Philosophy chapter treats under \"the map is not the territory.\" A trained network lives in a high-dimensional geometric space: the weights are a point (or a cloud of points) in $\\mathbb{R}^d$, and its behavior is the shape of a function defined on that space.",
+      "block_id": "metaphysics_of_ai-block-19",
+      "section": "What Do the Weights Refer To?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-51",
-      "quote": "Copying a model is **fission**: two systems now share one history and diverge going forward.",
-      "section": "Persistence: The Copy, Fork, and Merge Problem",
+      "quote": "The question is whether that space *corresponds* to anything, or whether it is a purely formal object.",
+      "block_id": "metaphysics_of_ai-block-19",
+      "section": "What Do the Weights Refer To?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-52",
-      "quote": "On Parfit's picture, \"which copy is the real one?\" is a category error -- there is no numerical identity to preserve, only qualitative sameness.",
-      "section": "Persistence: The Copy, Fork, and Merge Problem",
+      "quote": "This is, in miniature, the **Platonism-versus-formalism** debate of the philosophy of mathematics.",
+      "block_id": "metaphysics_of_ai-block-20",
+      "section": "What Do the Weights Refer To?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-53",
-      "quote": "\\citeauthor{chalmers2016singularity} reaches the same conclusion from the upload problem: a faithful digital copy of a person is a *continuation*, not the person, and if the original is then destroyed the situation is closer to a successful copy than to survival.",
-      "section": "Persistence: The Copy, Fork, and Merge Problem",
+      "quote": "On a Platonist reading, the model has found its way into a real mathematical structure -- the low-dimensional manifold of \"valid text,\" say -- and its successes track a genuine feature of that space.",
+      "block_id": "metaphysics_of_ai-block-20",
+      "section": "What Do the Weights Refer To?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-54",
-      "quote": "The same move is generalized to AI entities by \\citeauthor{olson2018metaphysics} (\\citeyear{olson2018metaphysics}), who argues that the persistence questions for software must be answered with the same apparatus we already apply to ordinary objects and persons -- persistence through change, and the distinction of *numerical* from *qualitative* identity.",
-      "section": "Persistence: The Copy, Fork, and Merge Problem",
+      "quote": "On a formalist reading, the weights are tokens in a formal game; they \"mean\" only what we decide to read into them, and the geometry is a convenient coordinate system for a pattern-matcher with no eyes on anything.",
+      "block_id": "metaphysics_of_ai-block-20",
+      "section": "What Do the Weights Refer To?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-55",
-      "quote": "The practical consequence is deflating but clarifying.",
-      "section": "Persistence: The Copy, Fork, and Merge Problem",
+      "quote": "The interpretability literature's finding that individual directions in this space carry decodable, interpretable features (see the Mechanistic Interpretability chapter ) is evidence that tilts toward the Platonist side -- the space has *structure that is there to be found*, not just imposed.",
+      "block_id": "metaphysics_of_ai-block-21",
+      "section": "What Do the Weights Refer To?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-56",
-      "quote": "\"The model\" is best understood not as a persisting *substance* but as a **token of a process** -- a state in a stream, a snapshot of a computation -- much as \"the river\" is not a thing but a pattern that re-asserts itself.",
-      "section": "Persistence: The Copy, Fork, and Merge Problem",
+      "quote": "But it does not settle the metaphysics, because a purely formal system can have rich internal structure without any external referent.",
+      "block_id": "metaphysics_of_ai-block-21",
+      "section": "What Do the Weights Refer To?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-57",
-      "quote": "The Ship of Theseus puzzle the Philosophy chapter already raised (the rebuilt ship, the teleported you) is the same puzzle in disguise; models simply hand us the *controlled* version that no human will ever face, because we can copy, fork, and merge minds at will.",
-      "section": "Persistence: The Copy, Fork, and Merge Problem",
+      "quote": "The honest position: the weights are best treated as a *representation* whose successes are real, while leaving open whether that success tracks a mind-independent structure or is a projection of our own categories onto a pattern-matcher.",
+      "block_id": "metaphysics_of_ai-block-21",
+      "section": "What Do the Weights Refer To?",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-58",
-      "quote": "In other words, for the first time we can *experiment* on the metaphysics of identity.",
-      "section": "Persistence: The Copy, Fork, and Merge Problem",
+      "quote": "The honest state of the field.",
+      "block_id": "metaphysics_of_ai-block-23",
+      "section": "The White Space",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-59",
-      "quote": "The fourth question concerns **representation**, and it ties the metaphysics back to the grounding problem the Philosophy chapter treats under \"the map is not the territory.\" A trained network lives in a high-dimensional geometric space: the weights are a point (or a cloud of points) in $\\mathbb{R}^d$, and its behavior is the shape of a function defined on that space.",
-      "section": "What Do the Weights Refer To?",
+      "quote": "The questions can be posed with precision -- ontology, identity, the reality of computation, reference -- because each reduces to a mature debate elsewhere in philosophy.",
+      "block_id": "metaphysics_of_ai-block-23",
+      "section": "The White Space",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-60",
-      "quote": "The question is whether that space *corresponds* to anything, or whether it is a purely formal object.",
-      "section": "What Do the Weights Refer To?",
+      "quote": "The answers cannot yet be given, because each of those debates is itself open.",
+      "block_id": "metaphysics_of_ai-block-23",
+      "section": "The White Space",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-61",
-      "quote": "This is, in miniature, the **Platonism-versus-formalism** debate of the philosophy of mathematics.",
-      "section": "What Do the Weights Refer To?",
+      "quote": "And the LLM era has made the questions *new* even where the categories are old: for the first time, the \"entity\" under discussion is not a hand-written program or a brain but a **learned, high-dimensional object** whose internal structure was not designed but *discovered*, and which we can copy, fork, and merge at will.",
+      "block_id": "metaphysics_of_ai-block-23",
+      "section": "The White Space",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-62",
-      "quote": "On a Platonist reading, the model has found its way into a real mathematical structure -- the low-dimensional manifold of \"valid text,\" say -- and its successes track a genuine feature of that space.",
-      "section": "What Do the Weights Refer To?",
+      "quote": "That is exactly the configuration the classical metaphysics of persons and of mathematical objects was not built to handle.",
+      "block_id": "metaphysics_of_ai-block-23",
+      "section": "The White Space",
       "kind": "statement"
     },
     {
       "id": "metaphysics_of_ai-stmt-63",
-      "quote": "On a formalist reading, the weights are tokens in a formal game; they \"mean\" only what we decide to read into them, and the geometry is a convenient coordinate system for a pattern-matcher with no eyes on anything.",
-      "section": "What Do the Weights Refer To?",
-      "kind": "statement"
-    },
-    {
-      "id": "metaphysics_of_ai-stmt-64",
-      "quote": "The interpretability literature's finding that individual directions in this space carry decodable, interpretable features (see the Mechanistic Interpretability chapter ) is evidence that tilts toward the Platonist side -- the space has *structure that is there to be found*, not just imposed.",
-      "section": "What Do the Weights Refer To?",
-      "kind": "statement"
-    },
-    {
-      "id": "metaphysics_of_ai-stmt-65",
-      "quote": "But it does not settle the metaphysics, because a purely formal system can have rich internal structure without any external referent.",
-      "section": "What Do the Weights Refer To?",
-      "kind": "statement"
-    },
-    {
-      "id": "metaphysics_of_ai-stmt-66",
-      "quote": "The honest position: the weights are best treated as a *representation* whose successes are real, while leaving open whether that success tracks a mind-independent structure or is a projection of our own categories onto a pattern-matcher.",
-      "section": "What Do the Weights Refer To?",
-      "kind": "statement"
-    },
-    {
-      "id": "metaphysics_of_ai-stmt-67",
-      "quote": "The honest state of the field.",
-      "section": "The White Space",
-      "kind": "statement"
-    },
-    {
-      "id": "metaphysics_of_ai-stmt-68",
-      "quote": "The questions can be posed with precision -- ontology, identity, the reality of computation, reference -- because each reduces to a mature debate elsewhere in philosophy.",
-      "section": "The White Space",
-      "kind": "statement"
-    },
-    {
-      "id": "metaphysics_of_ai-stmt-69",
-      "quote": "The answers cannot yet be given, because each of those debates is itself open.",
-      "section": "The White Space",
-      "kind": "statement"
-    },
-    {
-      "id": "metaphysics_of_ai-stmt-70",
-      "quote": "And the LLM era has made the questions *new* even where the categories are old: for the first time, the \"entity\" under discussion is not a hand-written program or a brain but a **learned, high-dimensional object** whose internal structure was not designed but *discovered*, and which we can copy, fork, and merge at will.",
-      "section": "The White Space",
-      "kind": "statement"
-    },
-    {
-      "id": "metaphysics_of_ai-stmt-71",
-      "quote": "That is exactly the configuration the classical metaphysics of persons and of mathematical objects was not built to handle.",
-      "section": "The White Space",
-      "kind": "statement"
-    },
-    {
-      "id": "metaphysics_of_ai-stmt-72",
       "quote": "It is the white space a serious treatment of the metaphysics of AI can claim: not the ethics the field has already filled, but the ontology, identity, and reference of the machine as it actually is.",
+      "block_id": "metaphysics_of_ai-block-23",
       "section": "The White Space",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "metaphysics_of_ai-block-1",
+      "quote": "The Metaphysics of Artificial Intelligence",
+      "kind": "heading",
+      "section": "The Metaphysics of Artificial Intelligence"
+    },
+    {
+      "id": "metaphysics_of_ai-block-2",
+      "quote": "The Philosophy chapter asked whether a machine can *think*, *understand*, or *feel* -- questions of epistemology and of the philosophy of mind. This chapter steps back to a question that has to be settled first: **what kind of thing is the system in the first place?** That is the question of **metaphysics**, the branch of philosophy that asks what exists, what it is made of, and whether it persists through time as one and the same thing.",
+      "kind": "paragraph",
+      "section": "The Metaphysics of Artificial Intelligence"
+    },
+    {
+      "id": "metaphysics_of_ai-block-3",
+      "quote": "The honest framing up front: \"the metaphysics of AI\" is **not yet a standalone subfield** with its own journal or a single canonical monograph. It is a live frontier at the intersection of four mature fields -- the philosophy of mind, the philosophy of computation, the philosophy of information, and the philosophy of personal identity -- with a thin, genuinely new layer of synthesis on top. The two pieces closest to a dedicated treatment are a chapter by \\citeauthor{olson2018metaphysics} (\\citeyear{olson2018metaphysics}) that literally bears the title in question, and a sustained analysis of the identity questions by \\citeauthor{chalmers2016singularity} (\\citeyear{chalmers2016singularity}). What follows is that frontier, organized around four questions: what the entity is, whether it persists, whether computation is real, and what the weights refer to.",
+      "kind": "paragraph",
+      "section": "The Metaphysics of Artificial Intelligence"
+    },
+    {
+      "id": "metaphysics_of_ai-block-4",
+      "quote": "What Kind of Thing Is It?",
+      "kind": "heading",
+      "section": "What Kind of Thing Is It?"
+    },
+    {
+      "id": "metaphysics_of_ai-block-5",
+      "quote": "Multiple realizability is the engine of **functionalism**, the view that what matters is the causal and informational *role* a state plays, not the stuff it is made of. It is what makes it even *possible* to ask whether a machine could be a mind: if only the pattern matters, the pattern is transferable, and silicon is no barrier. The SEP's account of the **computational theory of mind** traces this from Putnam's \"machine functionalism\" through Fodor's language-of-thought to the modern, deep-net era, and it is the place to find the strongest current formulation of the pro-side (\\cite[SEP: Computational Theory of Mind]{sep_computational_mind}).",
+      "kind": "paragraph",
+      "section": "What Kind of Thing Is It?"
+    },
+    {
+      "id": "metaphysics_of_ai-block-6",
+      "quote": "There is a deeper version of the same question in the **metaphysics of information**: is *information* itself a fundamental ingredient of reality, or merely a way we choose to describe it? \\citeauthor{floridi2011information} defends the \"ontic\" reading -- that information is real and the physical world is at bottom informational, the philosophical descendant of Wheeler's \"it from bit.\" On that view a software entity is not a shadow cast by physics; it is made of the same basic stuff as everything else. On the rival \"semantic\" reading, information is parasitic on a physical substrate that does the real work, and \"the entity\" is partly in the eye of the beholder. Which view is right is unsettled -- and it determines whether a model is a genuine part of the furniture of the world, or a description we impose on it.",
+      "kind": "paragraph",
+      "section": "What Kind of Thing Is It?"
+    },
+    {
+      "id": "metaphysics_of_ai-block-7",
+      "quote": "Is Computation Real?",
+      "kind": "heading",
+      "section": "Is Computation Real?"
+    },
+    {
+      "id": "metaphysics_of_ai-block-8",
+      "quote": "The second question turns the telescope on *computation itself*. Is computation a genuine feature of the world -- something the universe really does, substrate-independently -- or is it a description we impose from the outside?",
+      "kind": "paragraph",
+      "section": "Is Computation Real?"
+    },
+    {
+      "id": "metaphysics_of_ai-block-9",
+      "quote": "The classical position, inherited from the Church--Turing thesis, is that computation is **substrate-independent**: a function is computed by any physical system that realizes the right causal structure, in neurons, in transistors, or in water flow. This is what licenses the whole project of running minds in silicon. But the same tradition carries a trap. If *any* physical system with the right input-output mapping is \"computing,\" then a rock, a waterfall, or the gears of a watch all instantiate, at once, *every* finite-state machine -- including a perfect simulation of a brain. That is the **triviality objection**, and it makes \"the machine thinks\" true of everything, which is plainly wrong (\\cite[SEP: Computational Theory of Mind]{sep_computational_mind}).",
+      "kind": "paragraph",
+      "section": "Is Computation Real?"
+    },
+    {
+      "id": "metaphysics_of_ai-block-10",
+      "quote": "The serious response is that genuine computation is not any input-output correlation but a *principled, mechanism-based* mapping from a physical system to an abstract function, and that this mapping is not a free choice we impose on a passive substrate. \\citeauthor{piccinini2015computation} works out this \"mechanistic\" account: computation is a real relation between a physical system and a mathematical object, not a label. On that account, \"this rock computes the halting problem\" can be true while being *uninteresting* -- for the same reason the rock \"encodes\" every English sentence at once.",
+      "kind": "paragraph",
+      "section": "Is Computation Real?"
+    },
+    {
+      "id": "metaphysics_of_ai-block-11",
+      "quote": "The most direct challenge to the claim that computation is *sufficient* for mind is not the triviality objection but Roger Penrose's Gödelian argument. In \\citetitle{penrose1989emperor} (\\citeyear{penrose1989emperor}) Penrose contends that human mathematical insight is non-algorithmic. For any consistent formal system rich enough for arithmetic, there is a Gödel sentence the system cannot prove but a human mathematician can allegedly see to be true. If that inference holds, no Turing machine realizes the mathematician's understanding, and the Church--Turing thesis describes the limits of *computation* without describing the limits of *mind*. The standard reply is that the argument assumes what it needs -- that humans can recognize the consistency of the relevant system -- and the standard reply in the foundations literature is that the Gödelian anti-mechanist argument fails, though the debate is not settled (\\cite[SEP: Gödel's Incompleteness Theorems]{sep_godel_incompleteness}). The exchange is still worth staging here, because it forces the metaphysical question into the open: is computation the most general form of information processing, or is mind a counterexample to that identification?",
+      "kind": "paragraph",
+      "section": "Is Computation Real?"
+    },
+    {
+      "id": "metaphysics_of_ai-block-12",
+      "quote": "At the far edge of the question is **pancomputationalism**: the claim that the universe is not merely *describable* as a computation but *is* one -- physics as computation, \"it from bit.\" It is worth naming because it is the metaphysics most friendly to AI: if the cosmos is computation, then an LLM is not a model *of* reality but a *piece* of reality, and the gulf between simulator and simulated narrows to a difference of scale. The honest caveat: this strand is led largely by physicists and some philosophers (Wheeler, Seth Lloyd, Wolfram), and its status is closer to a research program than to settled metaphysics. A careful treatment presents it as one option among several, not as the answer.",
+      "kind": "paragraph",
+      "section": "Is Computation Real?"
+    },
+    {
+      "id": "metaphysics_of_ai-block-13",
+      "quote": "Persistence: The Copy, Fork, and Merge Problem",
+      "kind": "heading",
+      "section": "Persistence: The Copy, Fork, and Merge Problem"
+    },
+    {
+      "id": "metaphysics_of_ai-block-14",
+      "quote": "This is the most *AI-specific* metaphysical puzzle, and the one most worth a chapter of its own. Humans persist: although your cells turn over, you remain one and the same person. But a model can be **copied** to another GPU in seconds, **forked** into a fine-tuned branch, and **merged** with a sibling -- operations with no human analogue. Is the copy the *same* entity? Is a fine-tune a continuation of the original, or a new thing? When two models are merged, is there one resulting model, or two that have been combined?",
+      "kind": "paragraph",
+      "section": "Persistence: The Copy, Fork, and Merge Problem"
+    },
+    {
+      "id": "metaphysics_of_ai-block-15",
+      "quote": "The tools to think about this are old. \\citeauthor{parfit1984reasons} argued that personal identity is not a \"deep further fact\" about a persisting soul or substrate; it is *constituted* by the continuity of psychological states and relations. The upshot, from his fission and branching thought-experiments, is that identity is not always *all or nothing*: when one person \"splits\" into two continuations, there is no fact of the matter about which is the original -- both are continuations, and neither is *the* original in the strong, numerical sense.",
+      "kind": "paragraph",
+      "section": "Persistence: The Copy, Fork, and Merge Problem"
+    },
+    {
+      "id": "metaphysics_of_ai-block-16",
+      "quote": "Apply that to a model. Copying a model is **fission**: two systems now share one history and diverge going forward. On Parfit's picture, \"which copy is the real one?\" is a category error -- there is no numerical identity to preserve, only qualitative sameness. \\citeauthor{chalmers2016singularity} reaches the same conclusion from the upload problem: a faithful digital copy of a person is a *continuation*, not the person, and if the original is then destroyed the situation is closer to a successful copy than to survival. The same move is generalized to AI entities by \\citeauthor{olson2018metaphysics} (\\citeyear{olson2018metaphysics}), who argues that the persistence questions for software must be answered with the same apparatus we already apply to ordinary objects and persons -- persistence through change, and the distinction of *numerical* from *qualitative* identity.",
+      "kind": "paragraph",
+      "section": "Persistence: The Copy, Fork, and Merge Problem"
+    },
+    {
+      "id": "metaphysics_of_ai-block-17",
+      "quote": "The practical consequence is deflating but clarifying. \"The model\" is best understood not as a persisting *substance* but as a **token of a process** -- a state in a stream, a snapshot of a computation -- much as \"the river\" is not a thing but a pattern that re-asserts itself. The Ship of Theseus puzzle the Philosophy chapter already raised (the rebuilt ship, the teleported you) is the same puzzle in disguise; models simply hand us the *controlled* version that no human will ever face, because we can copy, fork, and merge minds at will. In other words, for the first time we can *experiment* on the metaphysics of identity.",
+      "kind": "paragraph",
+      "section": "Persistence: The Copy, Fork, and Merge Problem"
+    },
+    {
+      "id": "metaphysics_of_ai-block-18",
+      "quote": "What Do the Weights Refer To?",
+      "kind": "heading",
+      "section": "What Do the Weights Refer To?"
+    },
+    {
+      "id": "metaphysics_of_ai-block-19",
+      "quote": "The fourth question concerns **representation**, and it ties the metaphysics back to the grounding problem the Philosophy chapter treats under \"the map is not the territory.\" A trained network lives in a high-dimensional geometric space: the weights are a point (or a cloud of points) in $\\mathbb{R}^d$, and its behavior is the shape of a function defined on that space. The question is whether that space *corresponds* to anything, or whether it is a purely formal object.",
+      "kind": "paragraph",
+      "section": "What Do the Weights Refer To?"
+    },
+    {
+      "id": "metaphysics_of_ai-block-20",
+      "quote": "This is, in miniature, the **Platonism-versus-formalism** debate of the philosophy of mathematics. On a Platonist reading, the model has found its way into a real mathematical structure -- the low-dimensional manifold of \"valid text,\" say -- and its successes track a genuine feature of that space. On a formalist reading, the weights are tokens in a formal game; they \"mean\" only what we decide to read into them, and the geometry is a convenient coordinate system for a pattern-matcher with no eyes on anything.",
+      "kind": "paragraph",
+      "section": "What Do the Weights Refer To?"
+    },
+    {
+      "id": "metaphysics_of_ai-block-21",
+      "quote": "The interpretability literature's finding that individual directions in this space carry decodable, interpretable features (see the Mechanistic Interpretability chapter ) is evidence that tilts toward the Platonist side -- the space has *structure that is there to be found*, not just imposed. But it does not settle the metaphysics, because a purely formal system can have rich internal structure without any external referent. The honest position: the weights are best treated as a *representation* whose successes are real, while leaving open whether that success tracks a mind-independent structure or is a projection of our own categories onto a pattern-matcher.",
+      "kind": "paragraph",
+      "section": "What Do the Weights Refer To?"
+    },
+    {
+      "id": "metaphysics_of_ai-block-22",
+      "quote": "The White Space",
+      "kind": "heading",
+      "section": "The White Space"
+    },
+    {
+      "id": "metaphysics_of_ai-block-23",
+      "quote": "The honest state of the field. The questions can be posed with precision -- ontology, identity, the reality of computation, reference -- because each reduces to a mature debate elsewhere in philosophy. The answers cannot yet be given, because each of those debates is itself open. And the LLM era has made the questions *new* even where the categories are old: for the first time, the \"entity\" under discussion is not a hand-written program or a brain but a **learned, high-dimensional object** whose internal structure was not designed but *discovered*, and which we can copy, fork, and merge at will. That is exactly the configuration the classical metaphysics of persons and of mathematical objects was not built to handle. It is the white space a serious treatment of the metaphysics of AI can claim: not the ethics the field has already filled, but the ontology, identity, and reference of the machine as it actually is.",
+      "kind": "paragraph",
+      "section": "The White Space"
     }
   ]
 }

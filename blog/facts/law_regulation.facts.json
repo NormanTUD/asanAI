@@ -596,854 +596,2911 @@
       "quote": "Algorithm Recommendation Provisions** (2022)",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-1-part_of-law-regulation",
+      "from": "law_regulation-block-1",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-2-part_of-law-regulation",
+      "from": "law_regulation-block-2",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-1-before-law_regulation-block-2",
+      "from": "law_regulation-block-1",
+      "to": "law_regulation-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-2-related_to-law_regulation-block-1",
+      "from": "law_regulation-block-2",
+      "to": "law_regulation-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-3-part_of-law-regulation",
+      "from": "law_regulation-block-3",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-2-before-law_regulation-block-3",
+      "from": "law_regulation-block-2",
+      "to": "law_regulation-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-4-part_of-law-regulation",
+      "from": "law_regulation-block-4",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-3-before-law_regulation-block-4",
+      "from": "law_regulation-block-3",
+      "to": "law_regulation-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-4-related_to-law_regulation-block-3",
+      "from": "law_regulation-block-4",
+      "to": "law_regulation-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-5-part_of-law-regulation",
+      "from": "law_regulation-block-5",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-4-before-law_regulation-block-5",
+      "from": "law_regulation-block-4",
+      "to": "law_regulation-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-6-part_of-law-regulation",
+      "from": "law_regulation-block-6",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-5-before-law_regulation-block-6",
+      "from": "law_regulation-block-5",
+      "to": "law_regulation-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-7-part_of-law-regulation",
+      "from": "law_regulation-block-7",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-6-before-law_regulation-block-7",
+      "from": "law_regulation-block-6",
+      "to": "law_regulation-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-7-related_to-law_regulation-block-6",
+      "from": "law_regulation-block-7",
+      "to": "law_regulation-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-8-part_of-law-regulation",
+      "from": "law_regulation-block-8",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-7-before-law_regulation-block-8",
+      "from": "law_regulation-block-7",
+      "to": "law_regulation-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-8-related_to-law_regulation-block-6",
+      "from": "law_regulation-block-8",
+      "to": "law_regulation-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-9-part_of-law-regulation",
+      "from": "law_regulation-block-9",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-8-before-law_regulation-block-9",
+      "from": "law_regulation-block-8",
+      "to": "law_regulation-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-10-part_of-law-regulation",
+      "from": "law_regulation-block-10",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-9-before-law_regulation-block-10",
+      "from": "law_regulation-block-9",
+      "to": "law_regulation-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-11-part_of-law-regulation",
+      "from": "law_regulation-block-11",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-10-before-law_regulation-block-11",
+      "from": "law_regulation-block-10",
+      "to": "law_regulation-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-11-related_to-law_regulation-block-10",
+      "from": "law_regulation-block-11",
+      "to": "law_regulation-block-10",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-12-part_of-law-regulation",
+      "from": "law_regulation-block-12",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-11-before-law_regulation-block-12",
+      "from": "law_regulation-block-11",
+      "to": "law_regulation-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-12-related_to-law_regulation-block-10",
+      "from": "law_regulation-block-12",
+      "to": "law_regulation-block-10",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-13-part_of-law-regulation",
+      "from": "law_regulation-block-13",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-12-before-law_regulation-block-13",
+      "from": "law_regulation-block-12",
+      "to": "law_regulation-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-14-part_of-law-regulation",
+      "from": "law_regulation-block-14",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-13-before-law_regulation-block-14",
+      "from": "law_regulation-block-13",
+      "to": "law_regulation-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-14-related_to-law_regulation-block-13",
+      "from": "law_regulation-block-14",
+      "to": "law_regulation-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-15-part_of-law-regulation",
+      "from": "law_regulation-block-15",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-14-before-law_regulation-block-15",
+      "from": "law_regulation-block-14",
+      "to": "law_regulation-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-15-related_to-law_regulation-block-13",
+      "from": "law_regulation-block-15",
+      "to": "law_regulation-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-16-part_of-law-regulation",
+      "from": "law_regulation-block-16",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-15-before-law_regulation-block-16",
+      "from": "law_regulation-block-15",
+      "to": "law_regulation-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-17-part_of-law-regulation",
+      "from": "law_regulation-block-17",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-16-before-law_regulation-block-17",
+      "from": "law_regulation-block-16",
+      "to": "law_regulation-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-17-related_to-law_regulation-block-16",
+      "from": "law_regulation-block-17",
+      "to": "law_regulation-block-16",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-18-part_of-law-regulation",
+      "from": "law_regulation-block-18",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-17-before-law_regulation-block-18",
+      "from": "law_regulation-block-17",
+      "to": "law_regulation-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-19-part_of-law-regulation",
+      "from": "law_regulation-block-19",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-18-before-law_regulation-block-19",
+      "from": "law_regulation-block-18",
+      "to": "law_regulation-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-19-related_to-law_regulation-block-18",
+      "from": "law_regulation-block-19",
+      "to": "law_regulation-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-20-part_of-law-regulation",
+      "from": "law_regulation-block-20",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-19-before-law_regulation-block-20",
+      "from": "law_regulation-block-19",
+      "to": "law_regulation-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-21-part_of-law-regulation",
+      "from": "law_regulation-block-21",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-20-before-law_regulation-block-21",
+      "from": "law_regulation-block-20",
+      "to": "law_regulation-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-21-related_to-law_regulation-block-20",
+      "from": "law_regulation-block-21",
+      "to": "law_regulation-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-22-part_of-law-regulation",
+      "from": "law_regulation-block-22",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-21-before-law_regulation-block-22",
+      "from": "law_regulation-block-21",
+      "to": "law_regulation-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-23-part_of-law-regulation",
+      "from": "law_regulation-block-23",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-22-before-law_regulation-block-23",
+      "from": "law_regulation-block-22",
+      "to": "law_regulation-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-24-part_of-law-regulation",
+      "from": "law_regulation-block-24",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-23-before-law_regulation-block-24",
+      "from": "law_regulation-block-23",
+      "to": "law_regulation-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-25-part_of-law-regulation",
+      "from": "law_regulation-block-25",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-24-before-law_regulation-block-25",
+      "from": "law_regulation-block-24",
+      "to": "law_regulation-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-25-related_to-law_regulation-block-24",
+      "from": "law_regulation-block-25",
+      "to": "law_regulation-block-24",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-26-part_of-law-regulation",
+      "from": "law_regulation-block-26",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-25-before-law_regulation-block-26",
+      "from": "law_regulation-block-25",
+      "to": "law_regulation-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-26-related_to-law_regulation-block-24",
+      "from": "law_regulation-block-26",
+      "to": "law_regulation-block-24",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-27-part_of-law-regulation",
+      "from": "law_regulation-block-27",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-26-before-law_regulation-block-27",
+      "from": "law_regulation-block-26",
+      "to": "law_regulation-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-28-part_of-law-regulation",
+      "from": "law_regulation-block-28",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-27-before-law_regulation-block-28",
+      "from": "law_regulation-block-27",
+      "to": "law_regulation-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-28-related_to-law_regulation-block-27",
+      "from": "law_regulation-block-28",
+      "to": "law_regulation-block-27",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-29-part_of-law-regulation",
+      "from": "law_regulation-block-29",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-28-before-law_regulation-block-29",
+      "from": "law_regulation-block-28",
+      "to": "law_regulation-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-29-related_to-law_regulation-block-27",
+      "from": "law_regulation-block-29",
+      "to": "law_regulation-block-27",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-30-part_of-law-regulation",
+      "from": "law_regulation-block-30",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-29-before-law_regulation-block-30",
+      "from": "law_regulation-block-29",
+      "to": "law_regulation-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-31-part_of-law-regulation",
+      "from": "law_regulation-block-31",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-30-before-law_regulation-block-31",
+      "from": "law_regulation-block-30",
+      "to": "law_regulation-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-31-related_to-law_regulation-block-30",
+      "from": "law_regulation-block-31",
+      "to": "law_regulation-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-32-part_of-law-regulation",
+      "from": "law_regulation-block-32",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-31-before-law_regulation-block-32",
+      "from": "law_regulation-block-31",
+      "to": "law_regulation-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-33-part_of-law-regulation",
+      "from": "law_regulation-block-33",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-32-before-law_regulation-block-33",
+      "from": "law_regulation-block-32",
+      "to": "law_regulation-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-33-related_to-law_regulation-block-32",
+      "from": "law_regulation-block-33",
+      "to": "law_regulation-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-34-part_of-law-regulation",
+      "from": "law_regulation-block-34",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-33-before-law_regulation-block-34",
+      "from": "law_regulation-block-33",
+      "to": "law_regulation-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-34-related_to-law_regulation-block-32",
+      "from": "law_regulation-block-34",
+      "to": "law_regulation-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-35-part_of-law-regulation",
+      "from": "law_regulation-block-35",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-34-before-law_regulation-block-35",
+      "from": "law_regulation-block-34",
+      "to": "law_regulation-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-35-related_to-law_regulation-block-32",
+      "from": "law_regulation-block-35",
+      "to": "law_regulation-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-36-part_of-law-regulation",
+      "from": "law_regulation-block-36",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-35-before-law_regulation-block-36",
+      "from": "law_regulation-block-35",
+      "to": "law_regulation-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-36-related_to-law_regulation-block-32",
+      "from": "law_regulation-block-36",
+      "to": "law_regulation-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-37-part_of-law-regulation",
+      "from": "law_regulation-block-37",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-36-before-law_regulation-block-37",
+      "from": "law_regulation-block-36",
+      "to": "law_regulation-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-37-related_to-law_regulation-block-32",
+      "from": "law_regulation-block-37",
+      "to": "law_regulation-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-38-part_of-law-regulation",
+      "from": "law_regulation-block-38",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-37-before-law_regulation-block-38",
+      "from": "law_regulation-block-37",
+      "to": "law_regulation-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-38-related_to-law_regulation-block-32",
+      "from": "law_regulation-block-38",
+      "to": "law_regulation-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-39-part_of-law-regulation",
+      "from": "law_regulation-block-39",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-38-before-law_regulation-block-39",
+      "from": "law_regulation-block-38",
+      "to": "law_regulation-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-39-related_to-law_regulation-block-32",
+      "from": "law_regulation-block-39",
+      "to": "law_regulation-block-32",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-40-part_of-law-regulation",
+      "from": "law_regulation-block-40",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-39-before-law_regulation-block-40",
+      "from": "law_regulation-block-39",
+      "to": "law_regulation-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-41-part_of-law-regulation",
+      "from": "law_regulation-block-41",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-40-before-law_regulation-block-41",
+      "from": "law_regulation-block-40",
+      "to": "law_regulation-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-41-related_to-law_regulation-block-40",
+      "from": "law_regulation-block-41",
+      "to": "law_regulation-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-42-part_of-law-regulation",
+      "from": "law_regulation-block-42",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-41-before-law_regulation-block-42",
+      "from": "law_regulation-block-41",
+      "to": "law_regulation-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-42-related_to-law_regulation-block-40",
+      "from": "law_regulation-block-42",
+      "to": "law_regulation-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-43-part_of-law-regulation",
+      "from": "law_regulation-block-43",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-42-before-law_regulation-block-43",
+      "from": "law_regulation-block-42",
+      "to": "law_regulation-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-43-related_to-law_regulation-block-40",
+      "from": "law_regulation-block-43",
+      "to": "law_regulation-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-44-part_of-law-regulation",
+      "from": "law_regulation-block-44",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-43-before-law_regulation-block-44",
+      "from": "law_regulation-block-43",
+      "to": "law_regulation-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-44-related_to-law_regulation-block-40",
+      "from": "law_regulation-block-44",
+      "to": "law_regulation-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-45-part_of-law-regulation",
+      "from": "law_regulation-block-45",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-44-before-law_regulation-block-45",
+      "from": "law_regulation-block-44",
+      "to": "law_regulation-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-45-related_to-law_regulation-block-40",
+      "from": "law_regulation-block-45",
+      "to": "law_regulation-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-46-part_of-law-regulation",
+      "from": "law_regulation-block-46",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-45-before-law_regulation-block-46",
+      "from": "law_regulation-block-45",
+      "to": "law_regulation-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-46-related_to-law_regulation-block-40",
+      "from": "law_regulation-block-46",
+      "to": "law_regulation-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-47-part_of-law-regulation",
+      "from": "law_regulation-block-47",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-46-before-law_regulation-block-47",
+      "from": "law_regulation-block-46",
+      "to": "law_regulation-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-47-related_to-law_regulation-block-40",
+      "from": "law_regulation-block-47",
+      "to": "law_regulation-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-48-part_of-law-regulation",
+      "from": "law_regulation-block-48",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-47-before-law_regulation-block-48",
+      "from": "law_regulation-block-47",
+      "to": "law_regulation-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-48-related_to-law_regulation-block-40",
+      "from": "law_regulation-block-48",
+      "to": "law_regulation-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-49-part_of-law-regulation",
+      "from": "law_regulation-block-49",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-48-before-law_regulation-block-49",
+      "from": "law_regulation-block-48",
+      "to": "law_regulation-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-49-related_to-law_regulation-block-40",
+      "from": "law_regulation-block-49",
+      "to": "law_regulation-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-50-part_of-law-regulation",
+      "from": "law_regulation-block-50",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-49-before-law_regulation-block-50",
+      "from": "law_regulation-block-49",
+      "to": "law_regulation-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-51-part_of-law-regulation",
+      "from": "law_regulation-block-51",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-50-before-law_regulation-block-51",
+      "from": "law_regulation-block-50",
+      "to": "law_regulation-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-52-part_of-law-regulation",
+      "from": "law_regulation-block-52",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-51-before-law_regulation-block-52",
+      "from": "law_regulation-block-51",
+      "to": "law_regulation-block-52",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-53-part_of-law-regulation",
+      "from": "law_regulation-block-53",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-52-before-law_regulation-block-53",
+      "from": "law_regulation-block-52",
+      "to": "law_regulation-block-53",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-54-part_of-law-regulation",
+      "from": "law_regulation-block-54",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-53-before-law_regulation-block-54",
+      "from": "law_regulation-block-53",
+      "to": "law_regulation-block-54",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-55-part_of-law-regulation",
+      "from": "law_regulation-block-55",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-54-before-law_regulation-block-55",
+      "from": "law_regulation-block-54",
+      "to": "law_regulation-block-55",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-56-part_of-law-regulation",
+      "from": "law_regulation-block-56",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-55-before-law_regulation-block-56",
+      "from": "law_regulation-block-55",
+      "to": "law_regulation-block-56",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-57-part_of-law-regulation",
+      "from": "law_regulation-block-57",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-56-before-law_regulation-block-57",
+      "from": "law_regulation-block-56",
+      "to": "law_regulation-block-57",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-58-part_of-law-regulation",
+      "from": "law_regulation-block-58",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-57-before-law_regulation-block-58",
+      "from": "law_regulation-block-57",
+      "to": "law_regulation-block-58",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-58-related_to-law_regulation-block-57",
+      "from": "law_regulation-block-58",
+      "to": "law_regulation-block-57",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-59-part_of-law-regulation",
+      "from": "law_regulation-block-59",
+      "to": "law-regulation",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-58-before-law_regulation-block-59",
+      "from": "law_regulation-block-58",
+      "to": "law_regulation-block-59",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-block-59-related_to-law_regulation-block-57",
+      "from": "law_regulation-block-59",
+      "to": "law_regulation-block-57",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-1-part_of-law_regulation-block-1",
+      "from": "law_regulation-stmt-1",
+      "to": "law_regulation-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-2-part_of-law_regulation-block-1",
+      "from": "law_regulation-stmt-2",
+      "to": "law_regulation-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-3-part_of-law_regulation-block-1",
+      "from": "law_regulation-stmt-3",
+      "to": "law_regulation-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-4-part_of-law_regulation-block-2",
+      "from": "law_regulation-stmt-4",
+      "to": "law_regulation-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-5-part_of-law_regulation-block-2",
+      "from": "law_regulation-stmt-5",
+      "to": "law_regulation-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-6-part_of-law_regulation-block-2",
+      "from": "law_regulation-stmt-6",
+      "to": "law_regulation-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-7-part_of-law_regulation-block-4",
+      "from": "law_regulation-stmt-7",
+      "to": "law_regulation-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-8-part_of-law_regulation-block-4",
+      "from": "law_regulation-stmt-8",
+      "to": "law_regulation-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-9-part_of-law_regulation-block-8",
+      "from": "law_regulation-stmt-9",
+      "to": "law_regulation-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-10-part_of-law_regulation-block-8",
+      "from": "law_regulation-stmt-10",
+      "to": "law_regulation-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-11-part_of-law_regulation-block-11",
+      "from": "law_regulation-stmt-11",
+      "to": "law_regulation-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-12-part_of-law_regulation-block-11",
+      "from": "law_regulation-stmt-12",
+      "to": "law_regulation-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-13-part_of-law_regulation-block-12",
+      "from": "law_regulation-stmt-13",
+      "to": "law_regulation-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-14-part_of-law_regulation-block-12",
+      "from": "law_regulation-stmt-14",
+      "to": "law_regulation-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-15-part_of-law_regulation-block-12",
+      "from": "law_regulation-stmt-15",
+      "to": "law_regulation-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-16-part_of-law_regulation-block-14",
+      "from": "law_regulation-stmt-16",
+      "to": "law_regulation-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-17-part_of-law_regulation-block-15",
+      "from": "law_regulation-stmt-17",
+      "to": "law_regulation-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-18-part_of-law_regulation-block-17",
+      "from": "law_regulation-stmt-18",
+      "to": "law_regulation-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-19-part_of-law_regulation-block-17",
+      "from": "law_regulation-stmt-19",
+      "to": "law_regulation-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-20-part_of-law_regulation-block-19",
+      "from": "law_regulation-stmt-20",
+      "to": "law_regulation-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-21-part_of-law_regulation-block-21",
+      "from": "law_regulation-stmt-21",
+      "to": "law_regulation-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-22-part_of-law_regulation-block-25",
+      "from": "law_regulation-stmt-22",
+      "to": "law_regulation-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-23-part_of-law_regulation-block-26",
+      "from": "law_regulation-stmt-23",
+      "to": "law_regulation-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-24-part_of-law_regulation-block-26",
+      "from": "law_regulation-stmt-24",
+      "to": "law_regulation-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-25-part_of-law_regulation-block-28",
+      "from": "law_regulation-stmt-25",
+      "to": "law_regulation-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-26-part_of-law_regulation-block-29",
+      "from": "law_regulation-stmt-26",
+      "to": "law_regulation-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-27-part_of-law_regulation-block-29",
+      "from": "law_regulation-stmt-27",
+      "to": "law_regulation-block-29",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-28-part_of-law_regulation-block-31",
+      "from": "law_regulation-stmt-28",
+      "to": "law_regulation-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-29-part_of-law_regulation-block-31",
+      "from": "law_regulation-stmt-29",
+      "to": "law_regulation-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-30-part_of-law_regulation-block-31",
+      "from": "law_regulation-stmt-30",
+      "to": "law_regulation-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-31-part_of-law_regulation-block-33",
+      "from": "law_regulation-stmt-31",
+      "to": "law_regulation-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-32-part_of-law_regulation-block-34",
+      "from": "law_regulation-stmt-32",
+      "to": "law_regulation-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-33-part_of-law_regulation-block-35",
+      "from": "law_regulation-stmt-33",
+      "to": "law_regulation-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-34-part_of-law_regulation-block-35",
+      "from": "law_regulation-stmt-34",
+      "to": "law_regulation-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-35-part_of-law_regulation-block-35",
+      "from": "law_regulation-stmt-35",
+      "to": "law_regulation-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-36-part_of-law_regulation-block-35",
+      "from": "law_regulation-stmt-36",
+      "to": "law_regulation-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-37-part_of-law_regulation-block-36",
+      "from": "law_regulation-stmt-37",
+      "to": "law_regulation-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-38-part_of-law_regulation-block-36",
+      "from": "law_regulation-stmt-38",
+      "to": "law_regulation-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-39-part_of-law_regulation-block-36",
+      "from": "law_regulation-stmt-39",
+      "to": "law_regulation-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-40-part_of-law_regulation-block-37",
+      "from": "law_regulation-stmt-40",
+      "to": "law_regulation-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-41-part_of-law_regulation-block-37",
+      "from": "law_regulation-stmt-41",
+      "to": "law_regulation-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-42-part_of-law_regulation-block-37",
+      "from": "law_regulation-stmt-42",
+      "to": "law_regulation-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-43-part_of-law_regulation-block-38",
+      "from": "law_regulation-stmt-43",
+      "to": "law_regulation-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-44-part_of-law_regulation-block-38",
+      "from": "law_regulation-stmt-44",
+      "to": "law_regulation-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-45-part_of-law_regulation-block-38",
+      "from": "law_regulation-stmt-45",
+      "to": "law_regulation-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-46-part_of-law_regulation-block-38",
+      "from": "law_regulation-stmt-46",
+      "to": "law_regulation-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-47-part_of-law_regulation-block-39",
+      "from": "law_regulation-stmt-47",
+      "to": "law_regulation-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-48-part_of-law_regulation-block-39",
+      "from": "law_regulation-stmt-48",
+      "to": "law_regulation-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-49-part_of-law_regulation-block-39",
+      "from": "law_regulation-stmt-49",
+      "to": "law_regulation-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-50-part_of-law_regulation-block-39",
+      "from": "law_regulation-stmt-50",
+      "to": "law_regulation-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-51-part_of-law_regulation-block-41",
+      "from": "law_regulation-stmt-51",
+      "to": "law_regulation-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-52-part_of-law_regulation-block-42",
+      "from": "law_regulation-stmt-52",
+      "to": "law_regulation-block-42",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-53-part_of-law_regulation-block-43",
+      "from": "law_regulation-stmt-53",
+      "to": "law_regulation-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-54-part_of-law_regulation-block-43",
+      "from": "law_regulation-stmt-54",
+      "to": "law_regulation-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-55-part_of-law_regulation-block-44",
+      "from": "law_regulation-stmt-55",
+      "to": "law_regulation-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-56-part_of-law_regulation-block-45",
+      "from": "law_regulation-stmt-56",
+      "to": "law_regulation-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-57-part_of-law_regulation-block-46",
+      "from": "law_regulation-stmt-57",
+      "to": "law_regulation-block-46",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-58-part_of-law_regulation-block-47",
+      "from": "law_regulation-stmt-58",
+      "to": "law_regulation-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-59-part_of-law_regulation-block-48",
+      "from": "law_regulation-stmt-59",
+      "to": "law_regulation-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-60-part_of-law_regulation-block-49",
+      "from": "law_regulation-stmt-60",
+      "to": "law_regulation-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-law_regulation-stmt-61-part_of-law_regulation-block-59",
+      "from": "law_regulation-stmt-61",
+      "to": "law_regulation-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "law_regulation-stmt-1",
       "quote": "The legal status of AI is now in flux worldwide.",
+      "block_id": "law_regulation-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-2",
       "quote": "The EU AI Act (in force August 2024, with obligations phased through 2028), Chinese algorithmic regulation, US executive orders and the new patchwork of state laws, copyright lawsuits against model trainers, and sectoral rules for healthcare, finance, and defense.",
+      "block_id": "law_regulation-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-3",
       "quote": "A working AI practitioner must understand this landscape.",
+      "block_id": "law_regulation-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-4",
       "quote": "\\marginfig{justitia_statue.jpg}{Justitia — blindfolded, scales in one hand, sword in the other.",
+      "block_id": "law_regulation-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-5",
       "quote": "The legal layer growing up around AI is an attempt to keep these scales reading true when the party being weighed is, in part, a machine.",
+      "block_id": "law_regulation-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-6",
       "quote": "[Photo: statue in the Schwetzinger Schlossgarten, CC BY-SA 4.0, Rigorius](https://commons.wikimedia.org/wiki/File:Schwetzingen_Garten_Hauptachse_Statue-Justitia_20240402_152904.jpg)}",
+      "block_id": "law_regulation-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-7",
       "quote": "The world's first comprehensive AI regulation.",
+      "block_id": "law_regulation-block-4",
       "section": "The EU AI Act (2024)",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-8",
       "quote": "A **risk-based pyramid**:",
+      "block_id": "law_regulation-block-4",
       "section": "The EU AI Act (2024)",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-9",
-      "quote": "* **Social scoring** by governments (cf. China's social credit)",
-      "section": "Unacceptable Risk (Banned)",
+      "quote": "High-risk systems require: **risk assessment, data quality, documentation, human oversight, accuracy/robustness, transparency, registration in EU database**.",
+      "block_id": "law_regulation-block-8",
+      "section": "High Risk",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-10",
-      "quote": "* **Subliminal manipulation** causing harm",
-      "section": "Unacceptable Risk (Banned)",
+      "quote": "Penalties: up to **€15M or 3% of global turnover**.",
+      "block_id": "law_regulation-block-8",
+      "section": "High Risk",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-11",
-      "quote": "* **Exploiting vulnerabilities** of children, disabled persons",
-      "section": "Unacceptable Risk (Banned)",
+      "quote": "A new category added in late negotiations.",
+      "block_id": "law_regulation-block-11",
+      "section": "General Purpose AI (GPAI)",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-12",
-      "quote": "* **Real-time remote biometric identification** in public spaces (with narrow exceptions for serious crime)",
-      "section": "Unacceptable Risk (Banned)",
+      "quote": "Covers foundation models.",
+      "block_id": "law_regulation-block-11",
+      "section": "General Purpose AI (GPAI)",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-13",
-      "quote": "* **Emotion recognition** in workplaces and schools",
-      "section": "Unacceptable Risk (Banned)",
+      "quote": "The operative timeline, as tracked in 2026, runs in five steps.",
+      "block_id": "law_regulation-block-12",
+      "section": "General Purpose AI (GPAI)",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-14",
-      "quote": "* **Critical infrastructure** (transport, water, energy)",
-      "section": "High Risk",
+      "quote": "Prohibitions and AI literacy apply from 2 February 2025, except the new bans on non-consensual intimate imagery and child sexual abuse material, which start on 2 December 2026.",
+      "block_id": "law_regulation-block-12",
+      "section": "General Purpose AI (GPAI)",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-15",
-      "quote": "* **Education** (admissions, scoring, evaluation)",
-      "section": "High Risk",
+      "quote": "GPAI duties, governance, and most penalties apply from 2 August 2025; the remainder, including transparency, from 2 August 2026; Annex III high-risk duties from 2 December 2027; and Annex I product-safety high-risk systems from 2 August 2028.",
+      "block_id": "law_regulation-block-12",
+      "section": "General Purpose AI (GPAI)",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-16",
-      "quote": "* **Employment** (recruitment, promotion, performance monitoring)",
-      "section": "High Risk",
+      "quote": "The EU's General Data Protection Regulation (2018) applies to any processing of EU residents' personal data, regardless of where the processor is located.",
+      "block_id": "law_regulation-block-14",
+      "section": "GDPR and Data Protection",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-17",
-      "quote": "* **Essential services** (credit scoring, insurance, emergency services)",
-      "section": "High Risk",
+      "quote": "Key intersections with LLMs:",
+      "block_id": "law_regulation-block-15",
+      "section": "GDPR and Data Protection",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-18",
-      "quote": "* **Law enforcement** (predictive policing, evidence evaluation)",
-      "section": "High Risk",
+      "quote": "Italy's data protection authority briefly **banned ChatGPT** in March 2023 over lack of legal basis for training data, lack of age verification, and absence of a data-subject rights mechanism.",
+      "block_id": "law_regulation-block-17",
+      "section": "Italian Garante vs OpenAI (2023)",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-19",
-      "quote": "* **Migration and border control**",
-      "section": "High Risk",
+      "quote": "OpenAI restored service after adding age gates, opt-out forms, and a transparency notice.",
+      "block_id": "law_regulation-block-17",
+      "section": "Italian Garante vs OpenAI (2023)",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-20",
-      "quote": "* **Justice and democratic processes**",
-      "section": "High Risk",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-21",
-      "quote": "High-risk systems require: **risk assessment, data quality, documentation, human oversight, accuracy/robustness, transparency, registration in EU database**.",
-      "section": "High Risk",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-22",
-      "quote": "Penalties: up to **€15M or 3% of global turnover**.",
-      "section": "High Risk",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-23",
-      "quote": "* **Chatbots / conversational AI**: must disclose that users are talking to an AI.",
-      "section": "Limited Risk (Transparency Obligations)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-24",
-      "quote": "* **Deepfakes**: must be labeled as artificially generated.",
-      "section": "Limited Risk (Transparency Obligations)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-25",
-      "quote": "* **Synthetic media**: AI-generated content must be machine-readable as such (watermarking).",
-      "section": "Limited Risk (Transparency Obligations)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-26",
-      "quote": "* **Emotion recognition systems** (outside the banned contexts): must inform users.",
-      "section": "Limited Risk (Transparency Obligations)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-27",
-      "quote": "A new category added in late negotiations.",
-      "section": "General Purpose AI (GPAI)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-28",
-      "quote": "Covers foundation models.",
-      "section": "General Purpose AI (GPAI)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-29",
-      "quote": "* **Transparency**: technical documentation, training data summaries.",
-      "section": "General Purpose AI (GPAI)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-30",
-      "quote": "* **Copyright compliance**: policy to comply with EU copyright law, opt-out mechanism for rights-holders (text-and-data-mining rights).",
-      "section": "General Purpose AI (GPAI)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-31",
-      "quote": "* **Systemic risk**: GPAI models trained with >10^25 FLOPs (essentially GPT-4-class and above) face additional obligations, risk evaluation, incident reporting, model evaluation, adversarial testing.",
-      "section": "General Purpose AI (GPAI)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-32",
-      "quote": "The operative timeline, as tracked in 2026, runs in five steps.",
-      "section": "General Purpose AI (GPAI)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-33",
-      "quote": "Prohibitions and AI literacy apply from 2 February 2025, except the new bans on non-consensual intimate imagery and child sexual abuse material, which start on 2 December 2026.",
-      "section": "General Purpose AI (GPAI)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-34",
-      "quote": "GPAI duties, governance, and most penalties apply from 2 August 2025; the remainder, including transparency, from 2 August 2026; Annex III high-risk duties from 2 December 2027; and Annex I product-safety high-risk systems from 2 August 2028.",
-      "section": "General Purpose AI (GPAI)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-35",
-      "quote": "The EU's General Data Protection Regulation (2018) applies to any processing of EU residents' personal data, regardless of where the processor is located.",
-      "section": "GDPR and Data Protection",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-36",
-      "quote": "Key intersections with LLMs:",
-      "section": "GDPR and Data Protection",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-37",
-      "quote": "* **Lawful basis**: most LLM training relies on **legitimate interest** or **consent**.",
-      "section": "GDPR and Data Protection",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-38",
-      "quote": "Separately, the copyright DSM Directive's Article 4(3) TDM opt-out lets rights-holders reserve their works against mining; the AI Act requires GPAI providers to respect it.",
-      "section": "GDPR and Data Protection",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-39",
-      "quote": "* **Right to be forgotten**: training a model on personal data is processing.",
-      "section": "GDPR and Data Protection",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-40",
-      "quote": "Can the data subject compel deletion?",
-      "section": "GDPR and Data Protection",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-41",
-      "quote": "Unclear in practice, models don't store verbatim data, but memorization is real.",
-      "section": "GDPR and Data Protection",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-42",
-      "quote": "* **Automated decision-making (Article 22)**: individuals have the right not to be subject to decisions based solely on automated processing that significantly affect them.",
-      "section": "GDPR and Data Protection",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-43",
-      "quote": "LLM-based hiring, credit, etc.",
-      "section": "GDPR and Data Protection",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-44",
-      "quote": "must include human-in-the-loop.",
-      "section": "GDPR and Data Protection",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-45",
-      "quote": "* **Data Protection Impact Assessments (DPIA)**: required for high-risk processing.",
-      "section": "GDPR and Data Protection",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-46",
-      "quote": "* **Cross-border transfers**: US/EU data flows are now governed by the **EU-US Data Privacy Framework** (2023); adequacy decision in place but subject to legal challenge.",
-      "section": "GDPR and Data Protection",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-47",
-      "quote": "Italy's data protection authority briefly **banned ChatGPT** in March 2023 over lack of legal basis for training data, lack of age verification, and absence of a data-subject rights mechanism.",
-      "section": "Italian Garante vs OpenAI (2023)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-48",
-      "quote": "OpenAI restored service after adding age gates, opt-out forms, and a transparency notice.",
-      "section": "Italian Garante vs OpenAI (2023)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-49",
       "quote": "Spain's data-protection authority ordered Worldcoin to suspend iris scanning in March 2024 for up to three months over consent and data-protection concerns—a precedent for treating biometric AI as high-risk processing.",
+      "block_id": "law_regulation-block-19",
       "section": "Spanish AEPD vs Worldcoin (2024)",
       "kind": "statement"
     },
     {
-      "id": "law_regulation-stmt-50",
+      "id": "law_regulation-stmt-21",
       "quote": "The defining legal question of 2023–2025: **is training an LLM on copyrighted text an infringement?**",
+      "block_id": "law_regulation-block-21",
       "section": "Copyright and Training Data",
       "kind": "statement"
     },
     {
+      "id": "law_regulation-stmt-22",
+      "quote": "By 2025, most major AI companies have signed **licensing deals** with major publishers:",
+      "block_id": "law_regulation-block-25",
+      "section": "The Practical Reality",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-23",
+      "quote": "The “free web scrape” era is ending.",
+      "block_id": "law_regulation-block-26",
+      "section": "The Practical Reality",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-24",
+      "quote": "The future is **structured licensing**, with revenue-share and per-query royalties.",
+      "block_id": "law_regulation-block-26",
+      "section": "The Practical Reality",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-25",
+      "quote": "There is **no federal AI law** in the US (as of mid-2025).",
+      "block_id": "law_regulation-block-28",
+      "section": "US Law: A Patchwork",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-26",
+      "quote": "The FTC has brought actions against AI companies for deceptive practices (Workado AI Content Detector, RiteLyfe Blood Sugar).",
+      "block_id": "law_regulation-block-29",
+      "section": "US Law: A Patchwork",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-27",
+      "quote": "The trend: **enforcement-led regulation** when legislation lags.",
+      "block_id": "law_regulation-block-29",
+      "section": "US Law: A Patchwork",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-28",
+      "quote": "The “Safe and Secure Innovation for Frontier Artificial Intelligence Models Act” would have required safety testing for models trained with >10^26 FLOPs.",
+      "block_id": "law_regulation-block-31",
+      "section": "California SB 1047 Veto (Sept 2024)",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-29",
+      "quote": "Governor Newsom vetoed it, citing concerns it would burden open-source development.",
+      "block_id": "law_regulation-block-31",
+      "section": "California SB 1047 Veto (Sept 2024)",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-30",
+      "quote": "The debate over frontier-model regulation continues.",
+      "block_id": "law_regulation-block-31",
+      "section": "California SB 1047 Veto (Sept 2024)",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-31",
+      "quote": "Distinct philosophy: **state-led, fast-moving, sectoral**.",
+      "block_id": "law_regulation-block-33",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-32",
+      "quote": "Generative AI services with public-opinion or social-mobilisation capacity need a **security assessment** and must file their algorithm with the Cyberspace Administration of China (CAC); this filing is the de facto gatekeeper.",
+      "block_id": "law_regulation-block-34",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-33",
+      "quote": "The GDPR is enforced by national authorities coordinated through the European Data Protection Board.",
+      "block_id": "law_regulation-block-35",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-34",
+      "quote": "For AI, a key interpretive question is whether training can rest on **legitimate interest**.",
+      "block_id": "law_regulation-block-35",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-35",
+      "quote": "In December 2024 the EDPB's Opinion 28/2024 set out the three-step test—a lawful, clearly articulated, real interest; necessity and data minimisation; and a balancing test that weighs reasonable expectations—and warned that models trained on personal data cannot be assumed anonymous (\\cite[EDPB, 2024]{edpb2024ai}).",
+      "block_id": "law_regulation-block-35",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-36",
+      "quote": "Enforcement remains national: Ireland's DPC, France's CNIL, and Italy's Garante have each shaped practice.",
+      "block_id": "law_regulation-block-35",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-37",
+      "quote": "The PLD's key innovations are substantive.",
+      "block_id": "law_regulation-block-36",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-38",
+      "quote": "It treats software—including AI systems—as a product, covers defects that appear after deployment, and gives courts a disclosure power over a manufacturer's technical evidence (\\cite[EU, 2024]{pld2024}).",
+      "block_id": "law_regulation-block-36",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-39",
+      "quote": "Member states must transpose it by 9 December 2026; the separate AI Liability Directive was withdrawn in 2025, leaving the PLD as the main horizontal EU liability instrument.",
+      "block_id": "law_regulation-block-36",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-40",
+      "quote": "China's regime is layered rather than a single AI act.",
+      "block_id": "law_regulation-block-37",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-41",
+      "quote": "The 2023 Interim Measures govern generative services; the 2025 **Measures for the Labelling of AI-Generated Synthetic Content**, effective 1 September 2025, require both explicit labels visible to users and implicit labels embedded in metadata for text, images, audio, and video (\\cite[CAC, 2025]{china2025labelling}).",
+      "block_id": "law_regulation-block-37",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-42",
+      "quote": "The labelling rules sit on top of the existing algorithm-filing and security-assessment regime, so compliance is a stack of registrations rather than a one-off approval.",
+      "block_id": "law_regulation-block-37",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-43",
+      "quote": "State legislatures have become the real US laboratories.",
+      "block_id": "law_regulation-block-38",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-44",
+      "quote": "Colorado's AI Act (SB 24-205, effective 30 June 2026) imposes reasonable-care, impact-assessment, and consumer-notice duties on developers and deployers of high-risk systems (\\cite[Colorado AI Act, 2024]{colorado2024ai}).",
+      "block_id": "law_regulation-block-38",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-45",
+      "quote": "California's SB 53 (2025) requires frontier developers to publish safety frameworks and report critical incidents, while AB 2013 (2024) mandates training-data disclosure from 2026 (\\cite[California, 2025]{sb53cal2025}).",
+      "block_id": "law_regulation-block-38",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-46",
+      "quote": "Texas and Illinois have added their own rules, and New York City's Local Law 144 already requires bias audits of hiring tools.",
+      "block_id": "law_regulation-block-38",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-47",
+      "quote": "International coordination remains mostly soft law, with one binding exception.",
+      "block_id": "law_regulation-block-39",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-48",
+      "quote": "The OECD AI Principles (2019, revised 2024) are the common reference point for the G7 Hiroshima process and for the AI Act's definition of trustworthy AI (\\cite[OECD, 2019]{oecd2019ai}).",
+      "block_id": "law_regulation-block-39",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-49",
+      "quote": "UNESCO's 2021 Recommendation, adopted by 193 states, is the broadest normative text (\\cite[UNESCO, 2021]{unesco2021ai}).",
+      "block_id": "law_regulation-block-39",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
+      "id": "law_regulation-stmt-50",
+      "quote": "The Council of Europe's Framework Convention on AI, opened for signature in Vilnius in September 2024, is the first binding treaty in the field, though its obligations are framework-style and depend on ratification (\\cite[Council of Europe, 2024]{coe2024ai}).",
+      "block_id": "law_regulation-block-39",
+      "section": "Chinese AI Regulation",
+      "kind": "statement"
+    },
+    {
       "id": "law_regulation-stmt-51",
-      "quote": "Google** (2015): scanning books to enable search is **fair use**; the Supreme Court declined to review in 2016.",
-      "section": "The US Position",
+      "quote": "The revised EU **Product Liability Directive** (2024/2853) brings software and AI systems into product liability.",
+      "block_id": "law_regulation-block-41",
+      "section": "Liability: Who Pays When AI Fails?",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-52",
-      "quote": "Influential but predates LLMs.",
-      "section": "The US Position",
+      "quote": "Other liability questions:",
+      "block_id": "law_regulation-block-42",
+      "section": "Liability: Who Pays When AI Fails?",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-53",
-      "quote": "OpenAI** (filed Dec 2023): NYT alleges OpenAI's models reproduce near-verbatim copyrighted journalism, arguing training is not fair use.",
-      "section": "The US Position",
+      "quote": "The legal framework is **fragmented and evolving**.",
+      "block_id": "law_regulation-block-43",
+      "section": "Liability: Who Pays When AI Fails?",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-54",
-      "quote": "Stability AI** (filed Jan 2023): alleges Stable Diffusion was trained on millions of copyrighted photographs without license; model occasionally reproduces Getty watermarks.",
-      "section": "The US Position",
+      "quote": "Practitioners building AI products in 2025 should:",
+      "block_id": "law_regulation-block-43",
+      "section": "Liability: Who Pays When AI Fails?",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-55",
-      "quote": "Meta** (2023): authors alleged Meta trained Llama on pirated books.",
-      "section": "The US Position",
+      "quote": "**Maintain a model card and system card** documenting intended use, training data, limitations, and evaluation results.",
+      "block_id": "law_regulation-block-44",
+      "section": "Liability: Who Pays When AI Fails?",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-56",
-      "quote": "In June 2025 the court granted Meta summary judgment on fair use, holding training on the books transformative while cautioning that the ruling did not bless every use.",
-      "section": "The US Position",
+      "quote": "**Build logging and observability** to reconstruct any incident.",
+      "block_id": "law_regulation-block-45",
+      "section": "Liability: Who Pays When AI Fails?",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-57",
-      "quote": "Anthropic** (2024): settled in 2025 for ~$1.5B after the court found training on pirated books downloaded from LibGen was **not fair use**, while training on lawfully purchased and scanned books was.",
-      "section": "The US Position",
+      "quote": "**Implement human-in-the-loop** for high-stakes decisions.",
+      "block_id": "law_regulation-block-46",
+      "section": "Liability: Who Pays When AI Fails?",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-58",
-      "quote": "* **TDM opt-out**: rights-holders can opt out of text-and-data-mining.",
-      "section": "The EU Position",
+      "quote": "**Document training data sources** to respond to disclosure requests.",
+      "block_id": "law_regulation-block-47",
+      "section": "Liability: Who Pays When AI Fails?",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-59",
-      "quote": "The AI Act makes this opt-out explicit for GPAI.",
-      "section": "The EU Position",
+      "quote": "**Maintain content moderation** for user-facing deployments.",
+      "block_id": "law_regulation-block-48",
+      "section": "Liability: Who Pays When AI Fails?",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-60",
-      "quote": "* **TDM opt-out in practice**: the DSM Directive permits commercial text-and-data-mining unless rights-holders reserve their rights; the AI Act turns that reservation into a compliance duty for GPAI providers, and national courts are still testing what counts as a valid opt-out (\\cite[EU, 2019]{eu2019dsm}; \\cite[EU, 2024]{euaiact2024}).",
-      "section": "The EU Position",
+      "quote": "**Consult legal counsel** before launching in regulated sectors or jurisdictions.",
+      "block_id": "law_regulation-block-49",
+      "section": "Liability: Who Pays When AI Fails?",
       "kind": "statement"
     },
     {
       "id": "law_regulation-stmt-61",
-      "quote": "By 2025, most major AI companies have signed **licensing deals** with major publishers:",
-      "section": "The Practical Reality",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-62",
-      "quote": "* **OpenAI** with News Corp, Axel Springer, Financial Times, Vox Media, The Atlantic.",
-      "section": "The Practical Reality",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-63",
-      "quote": "* **Anthropic, Google, Microsoft** with various publishers.",
-      "section": "The Practical Reality",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-64",
-      "quote": "* **Apple** with Condé Nast, NBC News, IAC.",
-      "section": "The Practical Reality",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-65",
-      "quote": "The “free web scrape” era is ending.",
-      "section": "The Practical Reality",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-66",
-      "quote": "The future is **structured licensing**, with revenue-share and per-query royalties.",
-      "section": "The Practical Reality",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-67",
-      "quote": "There is **no federal AI law** in the US (as of mid-2025).",
-      "section": "US Law: A Patchwork",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-68",
-      "quote": "* **Executive Orders**: Biden's 2023 EO on Safe AI (revoked by Trump in Jan 2025); Trump's subsequent orders prioritize AI dominance.",
-      "section": "US Law: A Patchwork",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-69",
-      "quote": "* **NIST AI Risk Management Framework**: voluntary guidance.",
-      "section": "US Law: A Patchwork",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-70",
-      "quote": "* **State laws**: California (SB 1047 vetoed, AB 2013 training-data transparency), Colorado AI Act, New York, Illinois BIPA.",
-      "section": "US Law: A Patchwork",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-71",
-      "quote": "* **Sectoral regulators**: FDA (medical AI), SEC (finance), FTC (consumer protection), EEOC (employment), NHTSA (autonomous vehicles), DOT/FAA (aviation).",
-      "section": "US Law: A Patchwork",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-72",
-      "quote": "The FTC has brought actions against AI companies for deceptive practices (Workado AI Content Detector, RiteLyfe Blood Sugar).",
-      "section": "US Law: A Patchwork",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-73",
-      "quote": "The trend: **enforcement-led regulation** when legislation lags.",
-      "section": "US Law: A Patchwork",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-74",
-      "quote": "The “Safe and Secure Innovation for Frontier Artificial Intelligence Models Act” would have required safety testing for models trained with >10^26 FLOPs.",
-      "section": "California SB 1047 Veto (Sept 2024)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-75",
-      "quote": "Governor Newsom vetoed it, citing concerns it would burden open-source development.",
-      "section": "California SB 1047 Veto (Sept 2024)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-76",
-      "quote": "The debate over frontier-model regulation continues.",
-      "section": "California SB 1047 Veto (Sept 2024)",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-77",
-      "quote": "Distinct philosophy: **state-led, fast-moving, sectoral**.",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-78",
-      "quote": "* **Algorithm Recommendation Provisions** (2022): recommendation algorithms must allow opt-out, not spread misinformation.",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-79",
-      "quote": "* **Deep Synthesis Provisions** (2023): deepfakes must be labeled.",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-80",
-      "quote": "* **Interim Measures for Generative AI Services** (issued July 2023, effective August 2023): training data must be lawful, output must reflect socialist core values, providers are responsible for content, and they must suspend generation when illegal output appears.",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-81",
-      "quote": "Generative AI services with public-opinion or social-mobilisation capacity need a **security assessment** and must file their algorithm with the Cyberspace Administration of China (CAC); this filing is the de facto gatekeeper.",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-82",
-      "quote": "The GDPR is enforced by national authorities coordinated through the European Data Protection Board.",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-83",
-      "quote": "For AI, a key interpretive question is whether training can rest on **legitimate interest**.",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-84",
-      "quote": "In December 2024 the EDPB's Opinion 28/2024 set out the three-step test—a lawful, clearly articulated, real interest; necessity and data minimisation; and a balancing test that weighs reasonable expectations—and warned that models trained on personal data cannot be assumed anonymous (\\cite[EDPB, 2024]{edpb2024ai}).",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-85",
-      "quote": "Enforcement remains national: Ireland's DPC, France's CNIL, and Italy's Garante have each shaped practice.",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-86",
-      "quote": "The PLD's key innovations are substantive.",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-87",
-      "quote": "It treats software—including AI systems—as a product, covers defects that appear after deployment, and gives courts a disclosure power over a manufacturer's technical evidence (\\cite[EU, 2024]{pld2024}).",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-88",
-      "quote": "Member states must transpose it by 9 December 2026; the separate AI Liability Directive was withdrawn in 2025, leaving the PLD as the main horizontal EU liability instrument.",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-89",
-      "quote": "China's regime is layered rather than a single AI act.",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-90",
-      "quote": "The 2023 Interim Measures govern generative services; the 2025 **Measures for the Labelling of AI-Generated Synthetic Content**, effective 1 September 2025, require both explicit labels visible to users and implicit labels embedded in metadata for text, images, audio, and video (\\cite[CAC, 2025]{china2025labelling}).",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-91",
-      "quote": "The labelling rules sit on top of the existing algorithm-filing and security-assessment regime, so compliance is a stack of registrations rather than a one-off approval.",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-92",
-      "quote": "State legislatures have become the real US laboratories.",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-93",
-      "quote": "Colorado's AI Act (SB 24-205, effective 30 June 2026) imposes reasonable-care, impact-assessment, and consumer-notice duties on developers and deployers of high-risk systems (\\cite[Colorado AI Act, 2024]{colorado2024ai}).",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-94",
-      "quote": "California's SB 53 (2025) requires frontier developers to publish safety frameworks and report critical incidents, while AB 2013 (2024) mandates training-data disclosure from 2026 (\\cite[California, 2025]{sb53cal2025}).",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-95",
-      "quote": "Texas and Illinois have added their own rules, and New York City's Local Law 144 already requires bias audits of hiring tools.",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-96",
-      "quote": "International coordination remains mostly soft law, with one binding exception.",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-97",
-      "quote": "The OECD AI Principles (2019, revised 2024) are the common reference point for the G7 Hiroshima process and for the AI Act's definition of trustworthy AI (\\cite[OECD, 2019]{oecd2019ai}).",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-98",
-      "quote": "UNESCO's 2021 Recommendation, adopted by 193 states, is the broadest normative text (\\cite[UNESCO, 2021]{unesco2021ai}).",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-99",
-      "quote": "The Council of Europe's Framework Convention on AI, opened for signature in Vilnius in September 2024, is the first binding treaty in the field, though its obligations are framework-style and depend on ratification (\\cite[Council of Europe, 2024]{coe2024ai}).",
-      "section": "Chinese AI Regulation",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-100",
-      "quote": "The revised EU **Product Liability Directive** (2024/2853) brings software and AI systems into product liability.",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-101",
-      "quote": "* **Disclosure obligation**: courts can order manufacturers to disclose technical evidence and relevant data when a defect is alleged.",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-102",
-      "quote": "* **Rebuttable presumptions**: non-compliance with a disclosure order can establish defectiveness, and once a defect is shown, causation can be presumed when the damage fits the defect.",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-103",
-      "quote": "Other liability questions:",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-104",
-      "quote": "* **Medical AI**: FDA-approved systems carry product liability; “clinical decision support” tools face less regulation.",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-105",
-      "quote": "* **Autonomous vehicles**: most jurisdictions hold the manufacturer liable when the car is at fault (level 4+).",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-106",
-      "quote": "* **Defamation by LLM**: *Walters v.",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-107",
-      "quote": "OpenAI* (2023) tested whether a chatbot's false statements are defamatory; New York Times v.",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-108",
-      "quote": "OpenAI is a copyright and DMCA case, not a defamation one.",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-109",
-      "quote": "* **Workplace AI**: EEOC guidance treats AI hiring tools as subject to civil rights law.",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-110",
-      "quote": "The legal framework is **fragmented and evolving**.",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-111",
-      "quote": "Practitioners building AI products in 2025 should:",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-112",
-      "quote": "**Maintain a model card and system card** documenting intended use, training data, limitations, and evaluation results.",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-113",
-      "quote": "**Build logging and observability** to reconstruct any incident.",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-114",
-      "quote": "**Implement human-in-the-loop** for high-stakes decisions.",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-115",
-      "quote": "**Document training data sources** to respond to disclosure requests.",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-116",
-      "quote": "**Maintain content moderation** for user-facing deployments.",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-117",
-      "quote": "**Consult legal counsel** before launching in regulated sectors or jurisdictions.",
-      "section": "Liability: Who Pays When AI Fails?",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-118",
-      "quote": "* **FDA** (US) regulates AI/ML-enabled medical devices.",
-      "section": "Healthcare",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-119",
-      "quote": "Predetermined Change Control Plans (PCCP) allow iterative model updates.",
-      "section": "Healthcare",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-120",
-      "quote": "* **EU MDR** (Medical Device Regulation) covers AI-based medical software.",
-      "section": "Healthcare",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-121",
-      "quote": "* **HIPAA** (US): training LLMs on protected health information requires Business Associate Agreements; deployment of LLMs in clinical settings requires careful compliance.",
-      "section": "Healthcare",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-122",
-      "quote": "* **SR 11-7** (Fed, US): model risk management guidance applies to AI.",
-      "section": "Finance",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-123",
-      "quote": "* **EU AI Act**: credit scoring is high-risk.",
-      "section": "Finance",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-124",
-      "quote": "* **SEC** (US): AI used in investment advice must be disclosed; robo-advisors face fiduciary obligations.",
-      "section": "Finance",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-125",
-      "quote": "* **NYC Local Law 144** (2023): requires annual bias audits for AI hiring tools.",
-      "section": "Employment",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-126",
-      "quote": "* **Illinois AI Video Interview Act**: consent required for AI-analyzed video interviews.",
-      "section": "Employment",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-127",
-      "quote": "* **EEOC**: AI hiring tools must comply with Title VII (anti-discrimination).",
-      "section": "Employment",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-128",
-      "quote": "* **EU AI Act**: AI in education is high-risk.",
-      "section": "Education",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-129",
-      "quote": "* Many US school districts have banned or restricted ChatGPT; state-level policies emerging.",
-      "section": "Education",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-130",
-      "quote": "* **ITAR** (US): AI trained on classified data may be export-controlled.",
-      "section": "Defense",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-131",
-      "quote": "* **DoD AI Ethical Principles** (2020): responsible, equitable, traceable, reliable, governable.",
-      "section": "Defense",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-132",
-      "quote": "* **COPPA** (US): under-13 data requires parental consent.",
-      "section": "Children",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-133",
-      "quote": "* **EU AI Act**: emotion recognition in schools banned.",
-      "section": "Children",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-134",
-      "quote": "* **Age-appropriate design code** (UK): special protections for minors.",
-      "section": "Children",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-135",
-      "quote": "* **G7 Hiroshima AI Process** (2023): voluntary code of conduct for advanced AI.",
-      "section": "International Coordination",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-136",
-      "quote": "* **OECD AI Principles** (2019, updated 2024): human-centered values, transparency, robustness, accountability.",
-      "section": "International Coordination",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-137",
-      "quote": "* **UNESCO Recommendation on AI Ethics** (2021): global framework, 193 countries adopted.",
-      "section": "International Coordination",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-138",
-      "quote": "* **UN AI Advisory Body** (2024): report calling for international governance.",
-      "section": "International Coordination",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-139",
-      "quote": "* **AI Safety Summit** (UK, November 2023): the Bletchley Declaration on frontier AI safety, followed by the Seoul Summit in May 2024.",
-      "section": "International Coordination",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-140",
-      "quote": "* **AI Action Summit** (Paris, Feb 2025): successor.",
-      "section": "International Coordination",
-      "kind": "statement"
-    },
-    {
-      "id": "law_regulation-stmt-141",
       "quote": "None have direct regulatory force; all signal international consensus on principles.",
+      "block_id": "law_regulation-block-59",
       "section": "International Coordination",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "law_regulation-block-1",
+      "quote": "The legal status of AI is now in flux worldwide. The EU AI Act (in force August 2024, with obligations phased through 2028), Chinese algorithmic regulation, US executive orders and the new patchwork of state laws, copyright lawsuits against model trainers, and sectoral rules for healthcare, finance, and defense. A working AI practitioner must understand this landscape.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "law_regulation-block-2",
+      "quote": "\\marginfig{justitia_statue.jpg}{Justitia — blindfolded, scales in one hand, sword in the other. The legal layer growing up around AI is an attempt to keep these scales reading true when the party being weighed is, in part, a machine. [Photo: statue in the Schwetzinger Schlossgarten, CC BY-SA 4.0, Rigorius](https://commons.wikimedia.org/wiki/File:Schwetzingen_Garten_Hauptachse_Statue-Justitia_20240402_152904.jpg)}",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "law_regulation-block-3",
+      "quote": "The EU AI Act (2024)",
+      "kind": "heading",
+      "section": "The EU AI Act (2024)"
+    },
+    {
+      "id": "law_regulation-block-4",
+      "quote": "The world's first comprehensive AI regulation. A **risk-based pyramid**:",
+      "kind": "paragraph",
+      "section": "The EU AI Act (2024)"
+    },
+    {
+      "id": "law_regulation-block-5",
+      "quote": "Unacceptable Risk (Banned)",
+      "kind": "heading",
+      "section": "Unacceptable Risk (Banned)"
+    },
+    {
+      "id": "law_regulation-block-6",
+      "quote": "High Risk",
+      "kind": "heading",
+      "section": "High Risk"
+    },
+    {
+      "id": "law_regulation-block-7",
+      "quote": "Includes AI used in:",
+      "kind": "paragraph",
+      "section": "High Risk"
+    },
+    {
+      "id": "law_regulation-block-8",
+      "quote": "High-risk systems require: **risk assessment, data quality, documentation, human oversight, accuracy/robustness, transparency, registration in EU database**. Penalties: up to **€15M or 3% of global turnover**.",
+      "kind": "paragraph",
+      "section": "High Risk"
+    },
+    {
+      "id": "law_regulation-block-9",
+      "quote": "Limited Risk (Transparency Obligations)",
+      "kind": "heading",
+      "section": "Limited Risk (Transparency Obligations)"
+    },
+    {
+      "id": "law_regulation-block-10",
+      "quote": "General Purpose AI (GPAI)",
+      "kind": "heading",
+      "section": "General Purpose AI (GPAI)"
+    },
+    {
+      "id": "law_regulation-block-11",
+      "quote": "A new category added in late negotiations. Covers foundation models. Obligations:",
+      "kind": "paragraph",
+      "section": "General Purpose AI (GPAI)"
+    },
+    {
+      "id": "law_regulation-block-12",
+      "quote": "The operative timeline, as tracked in 2026, runs in five steps. Prohibitions and AI literacy apply from 2 February 2025, except the new bans on non-consensual intimate imagery and child sexual abuse material, which start on 2 December 2026. GPAI duties, governance, and most penalties apply from 2 August 2025; the remainder, including transparency, from 2 August 2026; Annex III high-risk duties from 2 December 2027; and Annex I product-safety high-risk systems from 2 August 2028.",
+      "kind": "paragraph",
+      "section": "General Purpose AI (GPAI)"
+    },
+    {
+      "id": "law_regulation-block-13",
+      "quote": "GDPR and Data Protection",
+      "kind": "heading",
+      "section": "GDPR and Data Protection"
+    },
+    {
+      "id": "law_regulation-block-14",
+      "quote": "The EU's General Data Protection Regulation (2018) applies to any processing of EU residents' personal data, regardless of where the processor is located.",
+      "kind": "paragraph",
+      "section": "GDPR and Data Protection"
+    },
+    {
+      "id": "law_regulation-block-15",
+      "quote": "Key intersections with LLMs:",
+      "kind": "paragraph",
+      "section": "GDPR and Data Protection"
+    },
+    {
+      "id": "law_regulation-block-16",
+      "quote": "Italian Garante vs OpenAI (2023)",
+      "kind": "heading",
+      "section": "Italian Garante vs OpenAI (2023)"
+    },
+    {
+      "id": "law_regulation-block-17",
+      "quote": "Italy's data protection authority briefly **banned ChatGPT** in March 2023 over lack of legal basis for training data, lack of age verification, and absence of a data-subject rights mechanism. OpenAI restored service after adding age gates, opt-out forms, and a transparency notice.",
+      "kind": "paragraph",
+      "section": "Italian Garante vs OpenAI (2023)"
+    },
+    {
+      "id": "law_regulation-block-18",
+      "quote": "Spanish AEPD vs Worldcoin (2024)",
+      "kind": "heading",
+      "section": "Spanish AEPD vs Worldcoin (2024)"
+    },
+    {
+      "id": "law_regulation-block-19",
+      "quote": "Spain's data-protection authority ordered Worldcoin to suspend iris scanning in March 2024 for up to three months over consent and data-protection concerns—a precedent for treating biometric AI as high-risk processing.",
+      "kind": "paragraph",
+      "section": "Spanish AEPD vs Worldcoin (2024)"
+    },
+    {
+      "id": "law_regulation-block-20",
+      "quote": "Copyright and Training Data",
+      "kind": "heading",
+      "section": "Copyright and Training Data"
+    },
+    {
+      "id": "law_regulation-block-21",
+      "quote": "The defining legal question of 2023–2025: **is training an LLM on copyrighted text an infringement?**",
+      "kind": "paragraph",
+      "section": "Copyright and Training Data"
+    },
+    {
+      "id": "law_regulation-block-22",
+      "quote": "The US Position",
+      "kind": "heading",
+      "section": "The US Position"
+    },
+    {
+      "id": "law_regulation-block-23",
+      "quote": "The EU Position",
+      "kind": "heading",
+      "section": "The EU Position"
+    },
+    {
+      "id": "law_regulation-block-24",
+      "quote": "The Practical Reality",
+      "kind": "heading",
+      "section": "The Practical Reality"
+    },
+    {
+      "id": "law_regulation-block-25",
+      "quote": "By 2025, most major AI companies have signed **licensing deals** with major publishers:",
+      "kind": "paragraph",
+      "section": "The Practical Reality"
+    },
+    {
+      "id": "law_regulation-block-26",
+      "quote": "The “free web scrape” era is ending. The future is **structured licensing**, with revenue-share and per-query royalties.",
+      "kind": "paragraph",
+      "section": "The Practical Reality"
+    },
+    {
+      "id": "law_regulation-block-27",
+      "quote": "US Law: A Patchwork",
+      "kind": "heading",
+      "section": "US Law: A Patchwork"
+    },
+    {
+      "id": "law_regulation-block-28",
+      "quote": "There is **no federal AI law** in the US (as of mid-2025). Instead:",
+      "kind": "paragraph",
+      "section": "US Law: A Patchwork"
+    },
+    {
+      "id": "law_regulation-block-29",
+      "quote": "The FTC has brought actions against AI companies for deceptive practices (Workado AI Content Detector, RiteLyfe Blood Sugar). The trend: **enforcement-led regulation** when legislation lags.",
+      "kind": "paragraph",
+      "section": "US Law: A Patchwork"
+    },
+    {
+      "id": "law_regulation-block-30",
+      "quote": "California SB 1047 Veto (Sept 2024)",
+      "kind": "heading",
+      "section": "California SB 1047 Veto (Sept 2024)"
+    },
+    {
+      "id": "law_regulation-block-31",
+      "quote": "The “Safe and Secure Innovation for Frontier Artificial Intelligence Models Act” would have required safety testing for models trained with >10^26 FLOPs. Governor Newsom vetoed it, citing concerns it would burden open-source development. The debate over frontier-model regulation continues.",
+      "kind": "paragraph",
+      "section": "California SB 1047 Veto (Sept 2024)"
+    },
+    {
+      "id": "law_regulation-block-32",
+      "quote": "Chinese AI Regulation",
+      "kind": "heading",
+      "section": "Chinese AI Regulation"
+    },
+    {
+      "id": "law_regulation-block-33",
+      "quote": "Distinct philosophy: **state-led, fast-moving, sectoral**.",
+      "kind": "paragraph",
+      "section": "Chinese AI Regulation"
+    },
+    {
+      "id": "law_regulation-block-34",
+      "quote": "Generative AI services with public-opinion or social-mobilisation capacity need a **security assessment** and must file their algorithm with the Cyberspace Administration of China (CAC); this filing is the de facto gatekeeper.",
+      "kind": "paragraph",
+      "section": "Chinese AI Regulation"
+    },
+    {
+      "id": "law_regulation-block-35",
+      "quote": "The GDPR is enforced by national authorities coordinated through the European Data Protection Board. For AI, a key interpretive question is whether training can rest on **legitimate interest**. In December 2024 the EDPB's Opinion 28/2024 set out the three-step test—a lawful, clearly articulated, real interest; necessity and data minimisation; and a balancing test that weighs reasonable expectations—and warned that models trained on personal data cannot be assumed anonymous (\\cite[EDPB, 2024]{edpb2024ai}). Enforcement remains national: Ireland's DPC, France's CNIL, and Italy's Garante have each shaped practice.",
+      "kind": "paragraph",
+      "section": "Chinese AI Regulation"
+    },
+    {
+      "id": "law_regulation-block-36",
+      "quote": "The PLD's key innovations are substantive. It treats software—including AI systems—as a product, covers defects that appear after deployment, and gives courts a disclosure power over a manufacturer's technical evidence (\\cite[EU, 2024]{pld2024}). Member states must transpose it by 9 December 2026; the separate AI Liability Directive was withdrawn in 2025, leaving the PLD as the main horizontal EU liability instrument.",
+      "kind": "paragraph",
+      "section": "Chinese AI Regulation"
+    },
+    {
+      "id": "law_regulation-block-37",
+      "quote": "China's regime is layered rather than a single AI act. The 2023 Interim Measures govern generative services; the 2025 **Measures for the Labelling of AI-Generated Synthetic Content**, effective 1 September 2025, require both explicit labels visible to users and implicit labels embedded in metadata for text, images, audio, and video (\\cite[CAC, 2025]{china2025labelling}). The labelling rules sit on top of the existing algorithm-filing and security-assessment regime, so compliance is a stack of registrations rather than a one-off approval.",
+      "kind": "paragraph",
+      "section": "Chinese AI Regulation"
+    },
+    {
+      "id": "law_regulation-block-38",
+      "quote": "State legislatures have become the real US laboratories. Colorado's AI Act (SB 24-205, effective 30 June 2026) imposes reasonable-care, impact-assessment, and consumer-notice duties on developers and deployers of high-risk systems (\\cite[Colorado AI Act, 2024]{colorado2024ai}). California's SB 53 (2025) requires frontier developers to publish safety frameworks and report critical incidents, while AB 2013 (2024) mandates training-data disclosure from 2026 (\\cite[California, 2025]{sb53cal2025}). Texas and Illinois have added their own rules, and New York City's Local Law 144 already requires bias audits of hiring tools.",
+      "kind": "paragraph",
+      "section": "Chinese AI Regulation"
+    },
+    {
+      "id": "law_regulation-block-39",
+      "quote": "International coordination remains mostly soft law, with one binding exception. The OECD AI Principles (2019, revised 2024) are the common reference point for the G7 Hiroshima process and for the AI Act's definition of trustworthy AI (\\cite[OECD, 2019]{oecd2019ai}). UNESCO's 2021 Recommendation, adopted by 193 states, is the broadest normative text (\\cite[UNESCO, 2021]{unesco2021ai}). The Council of Europe's Framework Convention on AI, opened for signature in Vilnius in September 2024, is the first binding treaty in the field, though its obligations are framework-style and depend on ratification (\\cite[Council of Europe, 2024]{coe2024ai}).",
+      "kind": "paragraph",
+      "section": "Chinese AI Regulation"
+    },
+    {
+      "id": "law_regulation-block-40",
+      "quote": "Liability: Who Pays When AI Fails?",
+      "kind": "heading",
+      "section": "Liability: Who Pays When AI Fails?"
+    },
+    {
+      "id": "law_regulation-block-41",
+      "quote": "The revised EU **Product Liability Directive** (2024/2853) brings software and AI systems into product liability. It establishes:",
+      "kind": "paragraph",
+      "section": "Liability: Who Pays When AI Fails?"
+    },
+    {
+      "id": "law_regulation-block-42",
+      "quote": "Other liability questions:",
+      "kind": "paragraph",
+      "section": "Liability: Who Pays When AI Fails?"
+    },
+    {
+      "id": "law_regulation-block-43",
+      "quote": "The legal framework is **fragmented and evolving**. Practitioners building AI products in 2025 should:",
+      "kind": "paragraph",
+      "section": "Liability: Who Pays When AI Fails?"
+    },
+    {
+      "id": "law_regulation-block-44",
+      "quote": "1. **Maintain a model card and system card** documenting intended use, training data, limitations, and evaluation results.",
+      "kind": "list-item",
+      "section": "Liability: Who Pays When AI Fails?"
+    },
+    {
+      "id": "law_regulation-block-45",
+      "quote": "2. **Build logging and observability** to reconstruct any incident.",
+      "kind": "list-item",
+      "section": "Liability: Who Pays When AI Fails?"
+    },
+    {
+      "id": "law_regulation-block-46",
+      "quote": "3. **Implement human-in-the-loop** for high-stakes decisions.",
+      "kind": "list-item",
+      "section": "Liability: Who Pays When AI Fails?"
+    },
+    {
+      "id": "law_regulation-block-47",
+      "quote": "4. **Document training data sources** to respond to disclosure requests.",
+      "kind": "list-item",
+      "section": "Liability: Who Pays When AI Fails?"
+    },
+    {
+      "id": "law_regulation-block-48",
+      "quote": "5. **Maintain content moderation** for user-facing deployments.",
+      "kind": "list-item",
+      "section": "Liability: Who Pays When AI Fails?"
+    },
+    {
+      "id": "law_regulation-block-49",
+      "quote": "6. **Consult legal counsel** before launching in regulated sectors or jurisdictions.",
+      "kind": "list-item",
+      "section": "Liability: Who Pays When AI Fails?"
+    },
+    {
+      "id": "law_regulation-block-50",
+      "quote": "Sectoral Rules",
+      "kind": "heading",
+      "section": "Sectoral Rules"
+    },
+    {
+      "id": "law_regulation-block-51",
+      "quote": "Healthcare",
+      "kind": "heading",
+      "section": "Healthcare"
+    },
+    {
+      "id": "law_regulation-block-52",
+      "quote": "Finance",
+      "kind": "heading",
+      "section": "Finance"
+    },
+    {
+      "id": "law_regulation-block-53",
+      "quote": "Employment",
+      "kind": "heading",
+      "section": "Employment"
+    },
+    {
+      "id": "law_regulation-block-54",
+      "quote": "Education",
+      "kind": "heading",
+      "section": "Education"
+    },
+    {
+      "id": "law_regulation-block-55",
+      "quote": "Defense",
+      "kind": "heading",
+      "section": "Defense"
+    },
+    {
+      "id": "law_regulation-block-56",
+      "quote": "Children",
+      "kind": "heading",
+      "section": "Children"
+    },
+    {
+      "id": "law_regulation-block-57",
+      "quote": "International Coordination",
+      "kind": "heading",
+      "section": "International Coordination"
+    },
+    {
+      "id": "law_regulation-block-58",
+      "quote": "Efforts to harmonize:",
+      "kind": "paragraph",
+      "section": "International Coordination"
+    },
+    {
+      "id": "law_regulation-block-59",
+      "quote": "None have direct regulatory force; all signal international consensus on principles.",
+      "kind": "paragraph",
+      "section": "International Coordination"
     }
   ]
 }

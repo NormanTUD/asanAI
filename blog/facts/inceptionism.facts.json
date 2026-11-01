@@ -288,218 +288,1774 @@
       "quote": "part: 3",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-1-part_of-inceptionism",
+      "from": "inceptionism-block-1",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-2-part_of-inceptionism",
+      "from": "inceptionism-block-2",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-1-before-inceptionism-block-2",
+      "from": "inceptionism-block-1",
+      "to": "inceptionism-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-3-part_of-inceptionism",
+      "from": "inceptionism-block-3",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-2-before-inceptionism-block-3",
+      "from": "inceptionism-block-2",
+      "to": "inceptionism-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-3-related_to-inceptionism-block-2",
+      "from": "inceptionism-block-3",
+      "to": "inceptionism-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-4-part_of-inceptionism",
+      "from": "inceptionism-block-4",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-3-before-inceptionism-block-4",
+      "from": "inceptionism-block-3",
+      "to": "inceptionism-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-4-related_to-inceptionism-block-2",
+      "from": "inceptionism-block-4",
+      "to": "inceptionism-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-5-part_of-inceptionism",
+      "from": "inceptionism-block-5",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-4-before-inceptionism-block-5",
+      "from": "inceptionism-block-4",
+      "to": "inceptionism-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-5-related_to-inceptionism-block-2",
+      "from": "inceptionism-block-5",
+      "to": "inceptionism-block-2",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-6-part_of-inceptionism",
+      "from": "inceptionism-block-6",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-5-before-inceptionism-block-6",
+      "from": "inceptionism-block-5",
+      "to": "inceptionism-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-7-part_of-inceptionism",
+      "from": "inceptionism-block-7",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-6-before-inceptionism-block-7",
+      "from": "inceptionism-block-6",
+      "to": "inceptionism-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-7-related_to-inceptionism-block-6",
+      "from": "inceptionism-block-7",
+      "to": "inceptionism-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-8-part_of-inceptionism",
+      "from": "inceptionism-block-8",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-7-before-inceptionism-block-8",
+      "from": "inceptionism-block-7",
+      "to": "inceptionism-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-8-related_to-inceptionism-block-6",
+      "from": "inceptionism-block-8",
+      "to": "inceptionism-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-9-part_of-inceptionism",
+      "from": "inceptionism-block-9",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-8-before-inceptionism-block-9",
+      "from": "inceptionism-block-8",
+      "to": "inceptionism-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-9-related_to-inceptionism-block-6",
+      "from": "inceptionism-block-9",
+      "to": "inceptionism-block-6",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-10-part_of-inceptionism",
+      "from": "inceptionism-block-10",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-9-before-inceptionism-block-10",
+      "from": "inceptionism-block-9",
+      "to": "inceptionism-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-11-part_of-inceptionism",
+      "from": "inceptionism-block-11",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-10-before-inceptionism-block-11",
+      "from": "inceptionism-block-10",
+      "to": "inceptionism-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-11-related_to-inceptionism-block-10",
+      "from": "inceptionism-block-11",
+      "to": "inceptionism-block-10",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-12-part_of-inceptionism",
+      "from": "inceptionism-block-12",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-11-before-inceptionism-block-12",
+      "from": "inceptionism-block-11",
+      "to": "inceptionism-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-12-related_to-inceptionism-block-10",
+      "from": "inceptionism-block-12",
+      "to": "inceptionism-block-10",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-13-part_of-inceptionism",
+      "from": "inceptionism-block-13",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-12-before-inceptionism-block-13",
+      "from": "inceptionism-block-12",
+      "to": "inceptionism-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-14-part_of-inceptionism",
+      "from": "inceptionism-block-14",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-13-before-inceptionism-block-14",
+      "from": "inceptionism-block-13",
+      "to": "inceptionism-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-15-part_of-inceptionism",
+      "from": "inceptionism-block-15",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-14-before-inceptionism-block-15",
+      "from": "inceptionism-block-14",
+      "to": "inceptionism-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-15-related_to-inceptionism-block-14",
+      "from": "inceptionism-block-15",
+      "to": "inceptionism-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-16-part_of-inceptionism",
+      "from": "inceptionism-block-16",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-15-before-inceptionism-block-16",
+      "from": "inceptionism-block-15",
+      "to": "inceptionism-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-16-related_to-inceptionism-block-14",
+      "from": "inceptionism-block-16",
+      "to": "inceptionism-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-17-part_of-inceptionism",
+      "from": "inceptionism-block-17",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-16-before-inceptionism-block-17",
+      "from": "inceptionism-block-16",
+      "to": "inceptionism-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-17-related_to-inceptionism-block-14",
+      "from": "inceptionism-block-17",
+      "to": "inceptionism-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-18-part_of-inceptionism",
+      "from": "inceptionism-block-18",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-17-before-inceptionism-block-18",
+      "from": "inceptionism-block-17",
+      "to": "inceptionism-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-18-related_to-inceptionism-block-14",
+      "from": "inceptionism-block-18",
+      "to": "inceptionism-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-19-part_of-inceptionism",
+      "from": "inceptionism-block-19",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-18-before-inceptionism-block-19",
+      "from": "inceptionism-block-18",
+      "to": "inceptionism-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-19-related_to-inceptionism-block-14",
+      "from": "inceptionism-block-19",
+      "to": "inceptionism-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-20-part_of-inceptionism",
+      "from": "inceptionism-block-20",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-19-before-inceptionism-block-20",
+      "from": "inceptionism-block-19",
+      "to": "inceptionism-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-20-related_to-inceptionism-block-14",
+      "from": "inceptionism-block-20",
+      "to": "inceptionism-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-21-part_of-inceptionism",
+      "from": "inceptionism-block-21",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-20-before-inceptionism-block-21",
+      "from": "inceptionism-block-20",
+      "to": "inceptionism-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-21-related_to-inceptionism-block-14",
+      "from": "inceptionism-block-21",
+      "to": "inceptionism-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-22-part_of-inceptionism",
+      "from": "inceptionism-block-22",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-21-before-inceptionism-block-22",
+      "from": "inceptionism-block-21",
+      "to": "inceptionism-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-22-related_to-inceptionism-block-14",
+      "from": "inceptionism-block-22",
+      "to": "inceptionism-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-23-part_of-inceptionism",
+      "from": "inceptionism-block-23",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-22-before-inceptionism-block-23",
+      "from": "inceptionism-block-22",
+      "to": "inceptionism-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-24-part_of-inceptionism",
+      "from": "inceptionism-block-24",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-23-before-inceptionism-block-24",
+      "from": "inceptionism-block-23",
+      "to": "inceptionism-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-24-related_to-inceptionism-block-23",
+      "from": "inceptionism-block-24",
+      "to": "inceptionism-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-25-part_of-inceptionism",
+      "from": "inceptionism-block-25",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-24-before-inceptionism-block-25",
+      "from": "inceptionism-block-24",
+      "to": "inceptionism-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-25-related_to-inceptionism-block-23",
+      "from": "inceptionism-block-25",
+      "to": "inceptionism-block-23",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-26-part_of-inceptionism",
+      "from": "inceptionism-block-26",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-25-before-inceptionism-block-26",
+      "from": "inceptionism-block-25",
+      "to": "inceptionism-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-27-part_of-inceptionism",
+      "from": "inceptionism-block-27",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-26-before-inceptionism-block-27",
+      "from": "inceptionism-block-26",
+      "to": "inceptionism-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-27-related_to-inceptionism-block-26",
+      "from": "inceptionism-block-27",
+      "to": "inceptionism-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-28-part_of-inceptionism",
+      "from": "inceptionism-block-28",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-27-before-inceptionism-block-28",
+      "from": "inceptionism-block-27",
+      "to": "inceptionism-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-28-related_to-inceptionism-block-26",
+      "from": "inceptionism-block-28",
+      "to": "inceptionism-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-29-part_of-inceptionism",
+      "from": "inceptionism-block-29",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-28-before-inceptionism-block-29",
+      "from": "inceptionism-block-28",
+      "to": "inceptionism-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-30-part_of-inceptionism",
+      "from": "inceptionism-block-30",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-29-before-inceptionism-block-30",
+      "from": "inceptionism-block-29",
+      "to": "inceptionism-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-30-related_to-inceptionism-block-29",
+      "from": "inceptionism-block-30",
+      "to": "inceptionism-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-31-part_of-inceptionism",
+      "from": "inceptionism-block-31",
+      "to": "inceptionism",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-30-before-inceptionism-block-31",
+      "from": "inceptionism-block-30",
+      "to": "inceptionism-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-block-31-related_to-inceptionism-block-29",
+      "from": "inceptionism-block-31",
+      "to": "inceptionism-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-1-part_of-inceptionism-block-3",
+      "from": "inceptionism-stmt-1",
+      "to": "inceptionism-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-2-part_of-inceptionism-block-3",
+      "from": "inceptionism-stmt-2",
+      "to": "inceptionism-block-3",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-3-part_of-inceptionism-block-4",
+      "from": "inceptionism-stmt-3",
+      "to": "inceptionism-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-4-part_of-inceptionism-block-4",
+      "from": "inceptionism-stmt-4",
+      "to": "inceptionism-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-5-part_of-inceptionism-block-5",
+      "from": "inceptionism-stmt-5",
+      "to": "inceptionism-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-6-part_of-inceptionism-block-5",
+      "from": "inceptionism-stmt-6",
+      "to": "inceptionism-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-7-part_of-inceptionism-block-7",
+      "from": "inceptionism-stmt-7",
+      "to": "inceptionism-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-8-part_of-inceptionism-block-7",
+      "from": "inceptionism-stmt-8",
+      "to": "inceptionism-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-9-part_of-inceptionism-block-7",
+      "from": "inceptionism-stmt-9",
+      "to": "inceptionism-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-10-part_of-inceptionism-block-8",
+      "from": "inceptionism-stmt-10",
+      "to": "inceptionism-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-11-part_of-inceptionism-block-9",
+      "from": "inceptionism-stmt-11",
+      "to": "inceptionism-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-12-part_of-inceptionism-block-9",
+      "from": "inceptionism-stmt-12",
+      "to": "inceptionism-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-13-part_of-inceptionism-block-11",
+      "from": "inceptionism-stmt-13",
+      "to": "inceptionism-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-14-part_of-inceptionism-block-11",
+      "from": "inceptionism-stmt-14",
+      "to": "inceptionism-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-15-part_of-inceptionism-block-12",
+      "from": "inceptionism-stmt-15",
+      "to": "inceptionism-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-16-part_of-inceptionism-block-12",
+      "from": "inceptionism-stmt-16",
+      "to": "inceptionism-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-17-part_of-inceptionism-block-12",
+      "from": "inceptionism-stmt-17",
+      "to": "inceptionism-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-18-part_of-inceptionism-block-15",
+      "from": "inceptionism-stmt-18",
+      "to": "inceptionism-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-19-part_of-inceptionism-block-15",
+      "from": "inceptionism-stmt-19",
+      "to": "inceptionism-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-20-part_of-inceptionism-block-15",
+      "from": "inceptionism-stmt-20",
+      "to": "inceptionism-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-21-part_of-inceptionism-block-16",
+      "from": "inceptionism-stmt-21",
+      "to": "inceptionism-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-22-part_of-inceptionism-block-16",
+      "from": "inceptionism-stmt-22",
+      "to": "inceptionism-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-23-part_of-inceptionism-block-17",
+      "from": "inceptionism-stmt-23",
+      "to": "inceptionism-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-24-part_of-inceptionism-block-17",
+      "from": "inceptionism-stmt-24",
+      "to": "inceptionism-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-25-part_of-inceptionism-block-17",
+      "from": "inceptionism-stmt-25",
+      "to": "inceptionism-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-26-part_of-inceptionism-block-18",
+      "from": "inceptionism-stmt-26",
+      "to": "inceptionism-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-27-part_of-inceptionism-block-18",
+      "from": "inceptionism-stmt-27",
+      "to": "inceptionism-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-28-part_of-inceptionism-block-19",
+      "from": "inceptionism-stmt-28",
+      "to": "inceptionism-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-29-part_of-inceptionism-block-20",
+      "from": "inceptionism-stmt-29",
+      "to": "inceptionism-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-30-part_of-inceptionism-block-21",
+      "from": "inceptionism-stmt-30",
+      "to": "inceptionism-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-31-part_of-inceptionism-block-22",
+      "from": "inceptionism-stmt-31",
+      "to": "inceptionism-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-32-part_of-inceptionism-block-24",
+      "from": "inceptionism-stmt-32",
+      "to": "inceptionism-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-33-part_of-inceptionism-block-24",
+      "from": "inceptionism-stmt-33",
+      "to": "inceptionism-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-34-part_of-inceptionism-block-24",
+      "from": "inceptionism-stmt-34",
+      "to": "inceptionism-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-35-part_of-inceptionism-block-25",
+      "from": "inceptionism-stmt-35",
+      "to": "inceptionism-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-36-part_of-inceptionism-block-27",
+      "from": "inceptionism-stmt-36",
+      "to": "inceptionism-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-37-part_of-inceptionism-block-27",
+      "from": "inceptionism-stmt-37",
+      "to": "inceptionism-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-38-part_of-inceptionism-block-27",
+      "from": "inceptionism-stmt-38",
+      "to": "inceptionism-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-39-part_of-inceptionism-block-28",
+      "from": "inceptionism-stmt-39",
+      "to": "inceptionism-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-40-part_of-inceptionism-block-30",
+      "from": "inceptionism-stmt-40",
+      "to": "inceptionism-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-41-part_of-inceptionism-block-30",
+      "from": "inceptionism-stmt-41",
+      "to": "inceptionism-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-42-part_of-inceptionism-block-30",
+      "from": "inceptionism-stmt-42",
+      "to": "inceptionism-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-43-part_of-inceptionism-block-30",
+      "from": "inceptionism-stmt-43",
+      "to": "inceptionism-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-inceptionism-stmt-44-part_of-inceptionism-block-31",
+      "from": "inceptionism-stmt-44",
+      "to": "inceptionism-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "inceptionism-stmt-1",
       "quote": "Everything so far trained a network by adjusting **weights** so that an input maps to a correct output.",
+      "block_id": "inceptionism-block-3",
       "section": "The Network Turned Upside Down",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-2",
       "quote": "The original Inceptionism essay by \\citeauthor{mordvintsev2015inceptionism} (\\citeyear{mordvintsev2015inceptionism}) asks what happens if you **freeze the weights and adjust the input instead**: run gradient *ascent* on one class score, and the pixel values themselves start to echo whatever the network has stored about that class \\cite{mordvintsev2015inceptionism}.",
+      "block_id": "inceptionism-block-3",
       "section": "The Network Turned Upside Down",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-3",
       "quote": "Start from pure noise, maximize the “banana” output, and the noise organizes into a banana — first a blurry, surreal one, then, zoomed in with feedback, an endless cascade of banana-things.",
+      "block_id": "inceptionism-block-4",
       "section": "The Network Turned Upside Down",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-4",
       "quote": "The authors describe the mechanism in plainly human terms \\cite{mordvintsev2015inceptionism}:",
+      "block_id": "inceptionism-block-4",
       "section": "The Network Turned Upside Down",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-5",
       "quote": "> This creates a feedback loop: if a cloud looks a little bit like a bird, the network will make it look more like a bird.",
+      "block_id": "inceptionism-block-5",
       "section": "The Network Turned Upside Down",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-6",
       "quote": "This in turn will make the network recognize the bird even more strongly on the next pass and so forth, until a highly detailed bird appears, seemingly out of nowhere.",
+      "block_id": "inceptionism-block-5",
       "section": "The Network Turned Upside Down",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-7",
       "quote": "A classifier trained on ImageNet computes a score for each of 1,000 classes (the Places205 network used for some of the essay's images has 205).",
+      "block_id": "inceptionism-block-7",
       "section": "Gradient Ascent on a Class",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-8",
       "quote": "In forward mode the image is fixed and the network reads it; in dream mode the roles flip — a single random seed gradient-ascented on the “banana” channel.",
+      "block_id": "inceptionism-block-7",
       "section": "Gradient Ascent on a Class",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-9",
       "quote": "The same image can be optimized for *any* class or any region of it, and the network's layer depth decides the visual style: low layers produce edges, curves and simple strokes; high layers assemble **whole objects** from what they represent \\cite{mordvintsev2015inceptionism}.",
+      "block_id": "inceptionism-block-7",
       "section": "Gradient Ascent on a Class",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-10",
-      "quote": "Instead of prescribing a class, feed the network a photo and ask it to *enhance whatever it detected* — “whatever you see there, I want more of it”.",
-      "section": "Let the Network Choose: Layer by Layer",
+      "quote": "Right: the same pixels after maximizing the “banana” class — the noise *learns* to be a banana.",
+      "block_id": "inceptionism-block-8",
+      "section": "Gradient Ascent on a Class",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-11",
-      "quote": "The chosen layer then sets the whole visual vocabulary: \\citeauthor{mordvintsev2015inceptionism} note that the first layers are sensitive to basic features, edges and their orientations, so they over-interpret the input as strokes and simple ornament-like patterns, while high layers assemble these into complete objects \\cite{mordvintsev2015inceptionism}.",
-      "section": "Let the Network Choose: Layer by Layer",
+      "quote": "Row after row of class visualizations — surreally colorful, because the network draws each class with its whole learned world.",
+      "block_id": "inceptionism-block-9",
+      "section": "Gradient Ascent on a Class",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-12",
-      "quote": "The funniest artifact of the process is that the dreams obey the network's *natural environment*.",
-      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "quote": "\\cite[Figures: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism}",
+      "block_id": "inceptionism-block-9",
+      "section": "Gradient Ascent on a Class",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-13",
-      "quote": "Asked to dream a dumbbell, the network repeatedly produced pictures of a **weightlifter holding one up** — not because the weights encode a dumbbell standing alone, but because, in the training world, dumbbells practically never appear without a person \\cite{mordvintsev2015inceptionism}.",
-      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "quote": "Instead of prescribing a class, feed the network a photo and ask it to *enhance whatever it detected* — “whatever you see there, I want more of it”.",
+      "block_id": "inceptionism-block-11",
+      "section": "Let the Network Choose: Layer by Layer",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-14",
-      "quote": "The dream exposes the training distribution's hidden scenery.",
-      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "quote": "The chosen layer then sets the whole visual vocabulary: \\citeauthor{mordvintsev2015inceptionism} note that the first layers are sensitive to basic features, edges and their orientations, so they over-interpret the input as strokes and simple ornament-like patterns, while high layers assemble these into complete objects \\cite{mordvintsev2015inceptionism}.",
+      "block_id": "inceptionism-block-11",
+      "section": "Let the Network Choose: Layer by Layer",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-15",
-      "quote": "\\marginfig{inceptionism_dumbbells.png}{The network's dumbbell dream: a dumbbell *and* a weightlifter holding it — \"Maybe it's never been shown a dumbbell without an arm holding it.\" \\cite{mordvintsev2015inceptionism}.",
-      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "quote": "Left: photo of grazing addax antelopes (original photo by Zachi Evenor).",
+      "block_id": "inceptionism-block-12",
+      "section": "Let the Network Choose: Layer by Layer",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-16",
-      "quote": "(\\cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism})}",
-      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "quote": "Right: the same pixels over-interpreted by a *low* layer — strokes and ornaments, not animals — processed by Günther Noack.",
+      "block_id": "inceptionism-block-12",
+      "section": "Let the Network Choose: Layer by Layer",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-17",
-      "quote": "The same effect recurs everywhere: clouds swirled into **birds**, rocks and trees rebuilt as **towers and pagodas** or buildings, and birds and insects appearing in images of leaves.",
-      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "quote": "\\cite[Composite from the original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism}",
+      "block_id": "inceptionism-block-12",
+      "section": "Let the Network Choose: Layer by Layer",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-18",
-      "quote": "Each is a feedback loop — *recognize, amplify, repeat* — until the network's own expectation takes over.",
+      "quote": "The funniest artifact of the process is that the dreams obey the network's *natural environment*.",
+      "block_id": "inceptionism-block-15",
       "section": "Dream Logic: The Weightlifter's Dumbbells",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-19",
-      "quote": "This is **engineered pareidolia**, the machine counterpart of the face in the [Jupiter photograph](hallucinations.php) or in everyday household objects: our visual system and a convolutional net both **project trained patterns onto ambiguous input**.",
+      "quote": "Asked to dream a dumbbell, the network repeatedly produced pictures of a **weightlifter holding one up** — not because the weights encode a dumbbell standing alone, but because, in the training world, dumbbells practically never appear without a person \\cite{mordvintsev2015inceptionism}.",
+      "block_id": "inceptionism-block-15",
       "section": "Dream Logic: The Weightlifter's Dumbbells",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-20",
-      "quote": "The over-interpretation is deliberate and childlike — the essay's own words \\cite{mordvintsev2015inceptionism}:",
+      "quote": "The dream exposes the training distribution's hidden scenery.",
+      "block_id": "inceptionism-block-15",
       "section": "Dream Logic: The Weightlifter's Dumbbells",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-21",
-      "quote": "> …even a relatively simple neural network can be used to over-interpret an image, just like as children we enjoyed watching clouds and interpreting the random shapes.",
+      "quote": "\\marginfig{inceptionism_dumbbells.png}{The network's dumbbell dream: a dumbbell *and* a weightlifter holding it — \"Maybe it's never been shown a dumbbell without an arm holding it.\" \\cite{mordvintsev2015inceptionism}.",
+      "block_id": "inceptionism-block-16",
       "section": "Dream Logic: The Weightlifter's Dumbbells",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-22",
-      "quote": "But because the data is stored at such a high abstraction, the results are an interesting remix of these learned features — neither faithful reproductions nor noise, but the network's own hybrids.",
+      "quote": "(\\cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism})}",
+      "block_id": "inceptionism-block-16",
       "section": "Dream Logic: The Weightlifter's Dumbbells",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-23",
-      "quote": "An especially revealing variant: instead of starting from noise, start from a real photo.",
-      "section": "The Dream Map",
+      "quote": "The same effect recurs everywhere: clouds swirled into **birds**, rocks and trees rebuilt as **towers and pagodas** or buildings, and birds and insects appearing in images of leaves.",
+      "block_id": "inceptionism-block-17",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-24",
-      "quote": "Editing it by gradient ascent shows *where* the network already had opinions.",
-      "section": "The Dream Map",
+      "quote": "Each is a feedback loop — *recognize, amplify, repeat* — until the network's own expectation takes over.",
+      "block_id": "inceptionism-block-17",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-25",
-      "quote": "The essay's accompanying image — the one whose file is named `image-dream-map` — is captioned simply: \"The original image influences what kind of objects form in the processed image.\"",
-      "section": "The Dream Map",
+      "quote": "This is **engineered pareidolia**, the machine counterpart of the face in the [Jupiter photograph](hallucinations.php) or in everyday household objects: our visual system and a convolutional net both **project trained patterns onto ambiguous input**.",
+      "block_id": "inceptionism-block-17",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-26",
-      "quote": "Zoom the dream into a pattern and run the loop again — the process never settles.",
-      "section": "Fractal Dreams",
+      "quote": "“If a cloud looks a little bit like a bird, the network will make it look more like a bird” — repeat the loop and a detailed *bird* emerges from the sky.",
+      "block_id": "inceptionism-block-18",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-27",
-      "quote": "Each new pattern is parsed by the network and amplified into new objects, which themselves re-enter the loop: towers sprout from rocks, birds spiral from clouds, and every iteration of the zoom yields *more intricate* structure.",
-      "section": "Fractal Dreams",
+      "quote": "(\\cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism})",
+      "block_id": "inceptionism-block-18",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-28",
-      "quote": "In the post's own, now-famous formulation \\cite{mordvintsev2015inceptionism}:",
-      "section": "Fractal Dreams",
+      "quote": "Trained mostly on animals, the network reads the world as animals — but the concepts are so abstract that its dreams are *remixes*: Admiral Dog, Pig-Snail, Camel-Bird, Dog-Fish.",
+      "block_id": "inceptionism-block-19",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-29",
-      "quote": "> If we apply the algorithm iteratively on its own outputs and apply some zooming after each iteration, we get an endless stream of new impressions, exploring the set of things the network knows about.",
-      "section": "Fractal Dreams",
+      "quote": "The over-interpretation is deliberate and childlike — the essay's own words \\cite{mordvintsev2015inceptionism}:",
+      "block_id": "inceptionism-block-20",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-30",
-      "quote": "The essay ends on a refreshing note.",
-      "section": "A Tool, Not a Mirror",
+      "quote": "> …even a relatively simple neural network can be used to over-interpret an image, just like as children we enjoyed watching clouds and interpreting the random shapes.",
+      "block_id": "inceptionism-block-21",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-31",
-      "quote": "The authors are careful not to present these images as a faithful picture of what the network “knows”: visualization can reveal that a network has learned the wrong thing, and can help correct those training mishaps.",
-      "section": "A Tool, Not a Mirror",
+      "quote": "But because the data is stored at such a high abstraction, the results are an interesting remix of these learned features — neither faithful reproductions nor noise, but the network's own hybrids.",
+      "block_id": "inceptionism-block-22",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-32",
-      "quote": "The weightlifter is exactly the kind of leakage of training-distribution priors they have in mind.",
-      "section": "A Tool, Not a Mirror",
+      "quote": "An especially revealing variant: instead of starting from noise, start from a real photo.",
+      "block_id": "inceptionism-block-24",
+      "section": "The Dream Map",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-33",
-      "quote": "And they unashamedly welcome the artistic use: neural networks as an instrument, alongside the [perceptual style transfer](computer_vision.php) toolchain, for painters and photographers \\cite{mordvintsev2015inceptionism}.",
-      "section": "A Tool, Not a Mirror",
+      "quote": "Editing it by gradient ascent shows *where* the network already had opinions.",
+      "block_id": "inceptionism-block-24",
+      "section": "The Dream Map",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-34",
-      "quote": "> It also makes us wonder whether neural networks could become a tool for artists—a new way to remix visual concepts—or perhaps even shed a little light on the roots of the creative process in general.",
-      "section": "A Tool, Not a Mirror",
+      "quote": "The essay's accompanying image — the one whose file is named `image-dream-map` — is captioned simply: \"The original image influences what kind of objects form in the processed image.\"",
+      "block_id": "inceptionism-block-24",
+      "section": "The Dream Map",
       "kind": "statement"
     },
     {
       "id": "inceptionism-stmt-35",
-      "quote": "*All images on this page come from the original blog post and are licensed by **Google Inc.** under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/), except for the MIT Places-database images, which are not used here.*",
+      "quote": "Above, a network's own interpretation of a photo, annotated with the labels it perceives: “tower-like” and “animal-like” regions are precisely where the dream edit later mutates them.",
+      "block_id": "inceptionism-block-25",
+      "section": "The Dream Map",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-36",
+      "quote": "Zoom the dream into a pattern and run the loop again — the process never settles.",
+      "block_id": "inceptionism-block-27",
+      "section": "Fractal Dreams",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-37",
+      "quote": "Each new pattern is parsed by the network and amplified into new objects, which themselves re-enter the loop: towers sprout from rocks, birds spiral from clouds, and every iteration of the zoom yields *more intricate* structure.",
+      "block_id": "inceptionism-block-27",
+      "section": "Fractal Dreams",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-38",
+      "quote": "In the post's own, now-famous formulation \\cite{mordvintsev2015inceptionism}:",
+      "block_id": "inceptionism-block-27",
+      "section": "Fractal Dreams",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-39",
+      "quote": "> If we apply the algorithm iteratively on its own outputs and apply some zooming after each iteration, we get an endless stream of new impressions, exploring the set of things the network knows about.",
+      "block_id": "inceptionism-block-28",
+      "section": "Fractal Dreams",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-40",
+      "quote": "The essay ends on a refreshing note.",
+      "block_id": "inceptionism-block-30",
       "section": "A Tool, Not a Mirror",
       "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-41",
+      "quote": "The authors are careful not to present these images as a faithful picture of what the network “knows”: visualization can reveal that a network has learned the wrong thing, and can help correct those training mishaps.",
+      "block_id": "inceptionism-block-30",
+      "section": "A Tool, Not a Mirror",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-42",
+      "quote": "The weightlifter is exactly the kind of leakage of training-distribution priors they have in mind.",
+      "block_id": "inceptionism-block-30",
+      "section": "A Tool, Not a Mirror",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-43",
+      "quote": "And they unashamedly welcome the artistic use: neural networks as an instrument, alongside the [perceptual style transfer](computer_vision.php) toolchain, for painters and photographers \\cite{mordvintsev2015inceptionism}.",
+      "block_id": "inceptionism-block-30",
+      "section": "A Tool, Not a Mirror",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-44",
+      "quote": "> It also makes us wonder whether neural networks could become a tool for artists—a new way to remix visual concepts—or perhaps even shed a little light on the roots of the creative process in general.",
+      "block_id": "inceptionism-block-31",
+      "section": "A Tool, Not a Mirror",
+      "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "inceptionism-block-1",
+      "quote": "Turning the network around",
+      "kind": "heading",
+      "section": "Turning the network around"
+    },
+    {
+      "id": "inceptionism-block-2",
+      "quote": "The Network Turned Upside Down",
+      "kind": "heading",
+      "section": "The Network Turned Upside Down"
+    },
+    {
+      "id": "inceptionism-block-3",
+      "quote": "Everything so far trained a network by adjusting **weights** so that an input maps to a correct output. The original Inceptionism essay by \\citeauthor{mordvintsev2015inceptionism} (\\citeyear{mordvintsev2015inceptionism}) asks what happens if you **freeze the weights and adjust the input instead**: run gradient *ascent* on one class score, and the pixel values themselves start to echo whatever the network has stored about that class \\cite{mordvintsev2015inceptionism}.",
+      "kind": "paragraph",
+      "section": "The Network Turned Upside Down"
+    },
+    {
+      "id": "inceptionism-block-4",
+      "quote": "Start from pure noise, maximize the “banana” output, and the noise organizes into a banana — first a blurry, surreal one, then, zoomed in with feedback, an endless cascade of banana-things. The authors describe the mechanism in plainly human terms \\cite{mordvintsev2015inceptionism}:",
+      "kind": "paragraph",
+      "section": "The Network Turned Upside Down"
+    },
+    {
+      "id": "inceptionism-block-5",
+      "quote": "> This creates a feedback loop: if a cloud looks a little bit like a bird, the network will make it look more like a bird. This in turn will make the network recognize the bird even more strongly on the next pass and so forth, until a highly detailed bird appears, seemingly out of nowhere.",
+      "kind": "paragraph",
+      "section": "The Network Turned Upside Down"
+    },
+    {
+      "id": "inceptionism-block-6",
+      "quote": "Gradient Ascent on a Class",
+      "kind": "heading",
+      "section": "Gradient Ascent on a Class"
+    },
+    {
+      "id": "inceptionism-block-7",
+      "quote": "A classifier trained on ImageNet computes a score for each of 1,000 classes (the Places205 network used for some of the essay's images has 205). In forward mode the image is fixed and the network reads it; in dream mode the roles flip — a single random seed gradient-ascented on the “banana” channel. The same image can be optimized for *any* class or any region of it, and the network's layer depth decides the visual style: low layers produce edges, curves and simple strokes; high layers assemble **whole objects** from what they represent \\cite{mordvintsev2015inceptionism}.",
+      "kind": "paragraph",
+      "section": "Gradient Ascent on a Class"
+    },
+    {
+      "id": "inceptionism-block-8",
+      "quote": "Left: random noise. Right: the same pixels after maximizing the “banana” class — the noise *learns* to be a banana.",
+      "kind": "paragraph",
+      "section": "Gradient Ascent on a Class"
+    },
+    {
+      "id": "inceptionism-block-9",
+      "quote": "Row after row of class visualizations — surreally colorful, because the network draws each class with its whole learned world. \\cite[Figures: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism}",
+      "kind": "paragraph",
+      "section": "Gradient Ascent on a Class"
+    },
+    {
+      "id": "inceptionism-block-10",
+      "quote": "Let the Network Choose: Layer by Layer",
+      "kind": "heading",
+      "section": "Let the Network Choose: Layer by Layer"
+    },
+    {
+      "id": "inceptionism-block-11",
+      "quote": "Instead of prescribing a class, feed the network a photo and ask it to *enhance whatever it detected* — “whatever you see there, I want more of it”. The chosen layer then sets the whole visual vocabulary: \\citeauthor{mordvintsev2015inceptionism} note that the first layers are sensitive to basic features, edges and their orientations, so they over-interpret the input as strokes and simple ornament-like patterns, while high layers assemble these into complete objects \\cite{mordvintsev2015inceptionism}.",
+      "kind": "paragraph",
+      "section": "Let the Network Choose: Layer by Layer"
+    },
+    {
+      "id": "inceptionism-block-12",
+      "quote": "Left: photo of grazing addax antelopes (original photo by Zachi Evenor). Right: the same pixels over-interpreted by a *low* layer — strokes and ornaments, not animals — processed by Günther Noack. \\cite[Composite from the original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism}",
+      "kind": "paragraph",
+      "section": "Let the Network Choose: Layer by Layer"
+    },
+    {
+      "id": "inceptionism-block-13",
+      "quote": "What the dreams reveal",
+      "kind": "heading",
+      "section": "What the dreams reveal"
+    },
+    {
+      "id": "inceptionism-block-14",
+      "quote": "Dream Logic: The Weightlifter's Dumbbells",
+      "kind": "heading",
+      "section": "Dream Logic: The Weightlifter's Dumbbells"
+    },
+    {
+      "id": "inceptionism-block-15",
+      "quote": "The funniest artifact of the process is that the dreams obey the network's *natural environment*. Asked to dream a dumbbell, the network repeatedly produced pictures of a **weightlifter holding one up** — not because the weights encode a dumbbell standing alone, but because, in the training world, dumbbells practically never appear without a person \\cite{mordvintsev2015inceptionism}. The dream exposes the training distribution's hidden scenery.",
+      "kind": "paragraph",
+      "section": "Dream Logic: The Weightlifter's Dumbbells"
+    },
+    {
+      "id": "inceptionism-block-16",
+      "quote": "\\marginfig{inceptionism_dumbbells.png}{The network's dumbbell dream: a dumbbell *and* a weightlifter holding it — \"Maybe it's never been shown a dumbbell without an arm holding it.\" \\cite{mordvintsev2015inceptionism}. (\\cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism})}",
+      "kind": "paragraph",
+      "section": "Dream Logic: The Weightlifter's Dumbbells"
+    },
+    {
+      "id": "inceptionism-block-17",
+      "quote": "The same effect recurs everywhere: clouds swirled into **birds**, rocks and trees rebuilt as **towers and pagodas** or buildings, and birds and insects appearing in images of leaves. Each is a feedback loop — *recognize, amplify, repeat* — until the network's own expectation takes over. This is **engineered pareidolia**, the machine counterpart of the face in the [Jupiter photograph](hallucinations.php) or in everyday household objects: our visual system and a convolutional net both **project trained patterns onto ambiguous input**.",
+      "kind": "paragraph",
+      "section": "Dream Logic: The Weightlifter's Dumbbells"
+    },
+    {
+      "id": "inceptionism-block-18",
+      "quote": "“If a cloud looks a little bit like a bird, the network will make it look more like a bird” — repeat the loop and a detailed *bird* emerges from the sky. (\\cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism})",
+      "kind": "paragraph",
+      "section": "Dream Logic: The Weightlifter's Dumbbells"
+    },
+    {
+      "id": "inceptionism-block-19",
+      "quote": "Trained mostly on animals, the network reads the world as animals — but the concepts are so abstract that its dreams are *remixes*: Admiral Dog, Pig-Snail, Camel-Bird, Dog-Fish. (\\cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism})",
+      "kind": "paragraph",
+      "section": "Dream Logic: The Weightlifter's Dumbbells"
+    },
+    {
+      "id": "inceptionism-block-20",
+      "quote": "The over-interpretation is deliberate and childlike — the essay's own words \\cite{mordvintsev2015inceptionism}:",
+      "kind": "paragraph",
+      "section": "Dream Logic: The Weightlifter's Dumbbells"
+    },
+    {
+      "id": "inceptionism-block-21",
+      "quote": "> …even a relatively simple neural network can be used to over-interpret an image, just like as children we enjoyed watching clouds and interpreting the random shapes.",
+      "kind": "paragraph",
+      "section": "Dream Logic: The Weightlifter's Dumbbells"
+    },
+    {
+      "id": "inceptionism-block-22",
+      "quote": "But because the data is stored at such a high abstraction, the results are an interesting remix of these learned features — neither faithful reproductions nor noise, but the network's own hybrids.",
+      "kind": "paragraph",
+      "section": "Dream Logic: The Weightlifter's Dumbbells"
+    },
+    {
+      "id": "inceptionism-block-23",
+      "quote": "The Dream Map",
+      "kind": "heading",
+      "section": "The Dream Map"
+    },
+    {
+      "id": "inceptionism-block-24",
+      "quote": "An especially revealing variant: instead of starting from noise, start from a real photo. Editing it by gradient ascent shows *where* the network already had opinions. The essay's accompanying image — the one whose file is named `image-dream-map` — is captioned simply: \"The original image influences what kind of objects form in the processed image.\"",
+      "kind": "paragraph",
+      "section": "The Dream Map"
+    },
+    {
+      "id": "inceptionism-block-25",
+      "quote": "Above, a network's own interpretation of a photo, annotated with the labels it perceives: “tower-like” and “animal-like” regions are precisely where the dream edit later mutates them. (\\cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism})",
+      "kind": "paragraph",
+      "section": "The Dream Map"
+    },
+    {
+      "id": "inceptionism-block-26",
+      "quote": "Fractal Dreams",
+      "kind": "heading",
+      "section": "Fractal Dreams"
+    },
+    {
+      "id": "inceptionism-block-27",
+      "quote": "Zoom the dream into a pattern and run the loop again — the process never settles. Each new pattern is parsed by the network and amplified into new objects, which themselves re-enter the loop: towers sprout from rocks, birds spiral from clouds, and every iteration of the zoom yields *more intricate* structure. In the post's own, now-famous formulation \\cite{mordvintsev2015inceptionism}:",
+      "kind": "paragraph",
+      "section": "Fractal Dreams"
+    },
+    {
+      "id": "inceptionism-block-28",
+      "quote": "> If we apply the algorithm iteratively on its own outputs and apply some zooming after each iteration, we get an endless stream of new impressions, exploring the set of things the network knows about.",
+      "kind": "paragraph",
+      "section": "Fractal Dreams"
+    },
+    {
+      "id": "inceptionism-block-29",
+      "quote": "A Tool, Not a Mirror",
+      "kind": "heading",
+      "section": "A Tool, Not a Mirror"
+    },
+    {
+      "id": "inceptionism-block-30",
+      "quote": "The essay ends on a refreshing note. The authors are careful not to present these images as a faithful picture of what the network “knows”: visualization can reveal that a network has learned the wrong thing, and can help correct those training mishaps. The weightlifter is exactly the kind of leakage of training-distribution priors they have in mind. And they unashamedly welcome the artistic use: neural networks as an instrument, alongside the [perceptual style transfer](computer_vision.php) toolchain, for painters and photographers \\cite{mordvintsev2015inceptionism}.",
+      "kind": "paragraph",
+      "section": "A Tool, Not a Mirror"
+    },
+    {
+      "id": "inceptionism-block-31",
+      "quote": "> It also makes us wonder whether neural networks could become a tool for artists—a new way to remix visual concepts—or perhaps even shed a little light on the roots of the creative process in general.",
+      "kind": "paragraph",
+      "section": "A Tool, Not a Mirror"
     }
   ]
 }

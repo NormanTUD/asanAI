@@ -759,722 +759,3543 @@
       "quote": "$2–10K",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-1-part_of-running-locally",
+      "from": "running_locally-block-1",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-2-part_of-running-locally",
+      "from": "running_locally-block-2",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-1-before-running_locally-block-2",
+      "from": "running_locally-block-1",
+      "to": "running_locally-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-2-related_to-running_locally-block-1",
+      "from": "running_locally-block-2",
+      "to": "running_locally-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-3-part_of-running-locally",
+      "from": "running_locally-block-3",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-2-before-running_locally-block-3",
+      "from": "running_locally-block-2",
+      "to": "running_locally-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-4-part_of-running-locally",
+      "from": "running_locally-block-4",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-3-before-running_locally-block-4",
+      "from": "running_locally-block-3",
+      "to": "running_locally-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-5-part_of-running-locally",
+      "from": "running_locally-block-5",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-4-before-running_locally-block-5",
+      "from": "running_locally-block-4",
+      "to": "running_locally-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-5-related_to-running_locally-block-4",
+      "from": "running_locally-block-5",
+      "to": "running_locally-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-6-part_of-running-locally",
+      "from": "running_locally-block-6",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-5-before-running_locally-block-6",
+      "from": "running_locally-block-5",
+      "to": "running_locally-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-6-related_to-running_locally-block-4",
+      "from": "running_locally-block-6",
+      "to": "running_locally-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-7-part_of-running-locally",
+      "from": "running_locally-block-7",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-6-before-running_locally-block-7",
+      "from": "running_locally-block-6",
+      "to": "running_locally-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-7-related_to-running_locally-block-4",
+      "from": "running_locally-block-7",
+      "to": "running_locally-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-8-part_of-running-locally",
+      "from": "running_locally-block-8",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-7-before-running_locally-block-8",
+      "from": "running_locally-block-7",
+      "to": "running_locally-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-8-related_to-running_locally-block-4",
+      "from": "running_locally-block-8",
+      "to": "running_locally-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-9-part_of-running-locally",
+      "from": "running_locally-block-9",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-8-before-running_locally-block-9",
+      "from": "running_locally-block-8",
+      "to": "running_locally-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-9-related_to-running_locally-block-4",
+      "from": "running_locally-block-9",
+      "to": "running_locally-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-10-part_of-running-locally",
+      "from": "running_locally-block-10",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-9-before-running_locally-block-10",
+      "from": "running_locally-block-9",
+      "to": "running_locally-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-10-related_to-running_locally-block-4",
+      "from": "running_locally-block-10",
+      "to": "running_locally-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-11-part_of-running-locally",
+      "from": "running_locally-block-11",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-10-before-running_locally-block-11",
+      "from": "running_locally-block-10",
+      "to": "running_locally-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-11-related_to-running_locally-block-4",
+      "from": "running_locally-block-11",
+      "to": "running_locally-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-12-part_of-running-locally",
+      "from": "running_locally-block-12",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-11-before-running_locally-block-12",
+      "from": "running_locally-block-11",
+      "to": "running_locally-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-12-related_to-running_locally-block-4",
+      "from": "running_locally-block-12",
+      "to": "running_locally-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-13-part_of-running-locally",
+      "from": "running_locally-block-13",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-12-before-running_locally-block-13",
+      "from": "running_locally-block-12",
+      "to": "running_locally-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-13-related_to-running_locally-block-4",
+      "from": "running_locally-block-13",
+      "to": "running_locally-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-14-part_of-running-locally",
+      "from": "running_locally-block-14",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-13-before-running_locally-block-14",
+      "from": "running_locally-block-13",
+      "to": "running_locally-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-15-part_of-running-locally",
+      "from": "running_locally-block-15",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-14-before-running_locally-block-15",
+      "from": "running_locally-block-14",
+      "to": "running_locally-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-15-related_to-running_locally-block-14",
+      "from": "running_locally-block-15",
+      "to": "running_locally-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-16-part_of-running-locally",
+      "from": "running_locally-block-16",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-15-before-running_locally-block-16",
+      "from": "running_locally-block-15",
+      "to": "running_locally-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-16-related_to-running_locally-block-14",
+      "from": "running_locally-block-16",
+      "to": "running_locally-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-17-part_of-running-locally",
+      "from": "running_locally-block-17",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-16-before-running_locally-block-17",
+      "from": "running_locally-block-16",
+      "to": "running_locally-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-17-related_to-running_locally-block-14",
+      "from": "running_locally-block-17",
+      "to": "running_locally-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-18-part_of-running-locally",
+      "from": "running_locally-block-18",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-17-before-running_locally-block-18",
+      "from": "running_locally-block-17",
+      "to": "running_locally-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-18-related_to-running_locally-block-14",
+      "from": "running_locally-block-18",
+      "to": "running_locally-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-19-part_of-running-locally",
+      "from": "running_locally-block-19",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-18-before-running_locally-block-19",
+      "from": "running_locally-block-18",
+      "to": "running_locally-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-19-related_to-running_locally-block-14",
+      "from": "running_locally-block-19",
+      "to": "running_locally-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-20-part_of-running-locally",
+      "from": "running_locally-block-20",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-19-before-running_locally-block-20",
+      "from": "running_locally-block-19",
+      "to": "running_locally-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-20-related_to-running_locally-block-14",
+      "from": "running_locally-block-20",
+      "to": "running_locally-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-21-part_of-running-locally",
+      "from": "running_locally-block-21",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-20-before-running_locally-block-21",
+      "from": "running_locally-block-20",
+      "to": "running_locally-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-21-related_to-running_locally-block-14",
+      "from": "running_locally-block-21",
+      "to": "running_locally-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-22-part_of-running-locally",
+      "from": "running_locally-block-22",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-21-before-running_locally-block-22",
+      "from": "running_locally-block-21",
+      "to": "running_locally-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-22-related_to-running_locally-block-14",
+      "from": "running_locally-block-22",
+      "to": "running_locally-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-23-part_of-running-locally",
+      "from": "running_locally-block-23",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-22-before-running_locally-block-23",
+      "from": "running_locally-block-22",
+      "to": "running_locally-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-23-related_to-running_locally-block-14",
+      "from": "running_locally-block-23",
+      "to": "running_locally-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-24-part_of-running-locally",
+      "from": "running_locally-block-24",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-23-before-running_locally-block-24",
+      "from": "running_locally-block-23",
+      "to": "running_locally-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-24-related_to-running_locally-block-14",
+      "from": "running_locally-block-24",
+      "to": "running_locally-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-25-part_of-running-locally",
+      "from": "running_locally-block-25",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-24-before-running_locally-block-25",
+      "from": "running_locally-block-24",
+      "to": "running_locally-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-25-related_to-running_locally-block-14",
+      "from": "running_locally-block-25",
+      "to": "running_locally-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-26-part_of-running-locally",
+      "from": "running_locally-block-26",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-25-before-running_locally-block-26",
+      "from": "running_locally-block-25",
+      "to": "running_locally-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-26-related_to-running_locally-block-14",
+      "from": "running_locally-block-26",
+      "to": "running_locally-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-27-part_of-running-locally",
+      "from": "running_locally-block-27",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-26-before-running_locally-block-27",
+      "from": "running_locally-block-26",
+      "to": "running_locally-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-27-related_to-running_locally-block-14",
+      "from": "running_locally-block-27",
+      "to": "running_locally-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-28-part_of-running-locally",
+      "from": "running_locally-block-28",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-27-before-running_locally-block-28",
+      "from": "running_locally-block-27",
+      "to": "running_locally-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-29-part_of-running-locally",
+      "from": "running_locally-block-29",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-28-before-running_locally-block-29",
+      "from": "running_locally-block-28",
+      "to": "running_locally-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-30-part_of-running-locally",
+      "from": "running_locally-block-30",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-29-before-running_locally-block-30",
+      "from": "running_locally-block-29",
+      "to": "running_locally-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-30-related_to-running_locally-block-29",
+      "from": "running_locally-block-30",
+      "to": "running_locally-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-31-part_of-running-locally",
+      "from": "running_locally-block-31",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-30-before-running_locally-block-31",
+      "from": "running_locally-block-30",
+      "to": "running_locally-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-31-related_to-running_locally-block-29",
+      "from": "running_locally-block-31",
+      "to": "running_locally-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-32-part_of-running-locally",
+      "from": "running_locally-block-32",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-31-before-running_locally-block-32",
+      "from": "running_locally-block-31",
+      "to": "running_locally-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-32-related_to-running_locally-block-29",
+      "from": "running_locally-block-32",
+      "to": "running_locally-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-33-part_of-running-locally",
+      "from": "running_locally-block-33",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-32-before-running_locally-block-33",
+      "from": "running_locally-block-32",
+      "to": "running_locally-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-33-related_to-running_locally-block-29",
+      "from": "running_locally-block-33",
+      "to": "running_locally-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-34-part_of-running-locally",
+      "from": "running_locally-block-34",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-33-before-running_locally-block-34",
+      "from": "running_locally-block-33",
+      "to": "running_locally-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-35-part_of-running-locally",
+      "from": "running_locally-block-35",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-34-before-running_locally-block-35",
+      "from": "running_locally-block-34",
+      "to": "running_locally-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-35-related_to-running_locally-block-34",
+      "from": "running_locally-block-35",
+      "to": "running_locally-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-36-part_of-running-locally",
+      "from": "running_locally-block-36",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-35-before-running_locally-block-36",
+      "from": "running_locally-block-35",
+      "to": "running_locally-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-36-related_to-running_locally-block-34",
+      "from": "running_locally-block-36",
+      "to": "running_locally-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-37-part_of-running-locally",
+      "from": "running_locally-block-37",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-36-before-running_locally-block-37",
+      "from": "running_locally-block-36",
+      "to": "running_locally-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-38-part_of-running-locally",
+      "from": "running_locally-block-38",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-37-before-running_locally-block-38",
+      "from": "running_locally-block-37",
+      "to": "running_locally-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-38-related_to-running_locally-block-37",
+      "from": "running_locally-block-38",
+      "to": "running_locally-block-37",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-39-part_of-running-locally",
+      "from": "running_locally-block-39",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-38-before-running_locally-block-39",
+      "from": "running_locally-block-38",
+      "to": "running_locally-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-40-part_of-running-locally",
+      "from": "running_locally-block-40",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-39-before-running_locally-block-40",
+      "from": "running_locally-block-39",
+      "to": "running_locally-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-40-related_to-running_locally-block-39",
+      "from": "running_locally-block-40",
+      "to": "running_locally-block-39",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-41-part_of-running-locally",
+      "from": "running_locally-block-41",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-40-before-running_locally-block-41",
+      "from": "running_locally-block-40",
+      "to": "running_locally-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-42-part_of-running-locally",
+      "from": "running_locally-block-42",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-41-before-running_locally-block-42",
+      "from": "running_locally-block-41",
+      "to": "running_locally-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-43-part_of-running-locally",
+      "from": "running_locally-block-43",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-42-before-running_locally-block-43",
+      "from": "running_locally-block-42",
+      "to": "running_locally-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-43-related_to-running_locally-block-42",
+      "from": "running_locally-block-43",
+      "to": "running_locally-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-44-part_of-running-locally",
+      "from": "running_locally-block-44",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-43-before-running_locally-block-44",
+      "from": "running_locally-block-43",
+      "to": "running_locally-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-44-related_to-running_locally-block-42",
+      "from": "running_locally-block-44",
+      "to": "running_locally-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-45-part_of-running-locally",
+      "from": "running_locally-block-45",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-44-before-running_locally-block-45",
+      "from": "running_locally-block-44",
+      "to": "running_locally-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-45-related_to-running_locally-block-42",
+      "from": "running_locally-block-45",
+      "to": "running_locally-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-46-part_of-running-locally",
+      "from": "running_locally-block-46",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-45-before-running_locally-block-46",
+      "from": "running_locally-block-45",
+      "to": "running_locally-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-46-related_to-running_locally-block-42",
+      "from": "running_locally-block-46",
+      "to": "running_locally-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-47-part_of-running-locally",
+      "from": "running_locally-block-47",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-46-before-running_locally-block-47",
+      "from": "running_locally-block-46",
+      "to": "running_locally-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-47-related_to-running_locally-block-42",
+      "from": "running_locally-block-47",
+      "to": "running_locally-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-48-part_of-running-locally",
+      "from": "running_locally-block-48",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-47-before-running_locally-block-48",
+      "from": "running_locally-block-47",
+      "to": "running_locally-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-48-related_to-running_locally-block-42",
+      "from": "running_locally-block-48",
+      "to": "running_locally-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-49-part_of-running-locally",
+      "from": "running_locally-block-49",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-48-before-running_locally-block-49",
+      "from": "running_locally-block-48",
+      "to": "running_locally-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-49-related_to-running_locally-block-42",
+      "from": "running_locally-block-49",
+      "to": "running_locally-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-50-part_of-running-locally",
+      "from": "running_locally-block-50",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-49-before-running_locally-block-50",
+      "from": "running_locally-block-49",
+      "to": "running_locally-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-50-related_to-running_locally-block-42",
+      "from": "running_locally-block-50",
+      "to": "running_locally-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-51-part_of-running-locally",
+      "from": "running_locally-block-51",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-50-before-running_locally-block-51",
+      "from": "running_locally-block-50",
+      "to": "running_locally-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-52-part_of-running-locally",
+      "from": "running_locally-block-52",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-51-before-running_locally-block-52",
+      "from": "running_locally-block-51",
+      "to": "running_locally-block-52",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-53-part_of-running-locally",
+      "from": "running_locally-block-53",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-52-before-running_locally-block-53",
+      "from": "running_locally-block-52",
+      "to": "running_locally-block-53",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-53-related_to-running_locally-block-52",
+      "from": "running_locally-block-53",
+      "to": "running_locally-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-54-part_of-running-locally",
+      "from": "running_locally-block-54",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-53-before-running_locally-block-54",
+      "from": "running_locally-block-53",
+      "to": "running_locally-block-54",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-54-related_to-running_locally-block-52",
+      "from": "running_locally-block-54",
+      "to": "running_locally-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-55-part_of-running-locally",
+      "from": "running_locally-block-55",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-54-before-running_locally-block-55",
+      "from": "running_locally-block-54",
+      "to": "running_locally-block-55",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-55-related_to-running_locally-block-52",
+      "from": "running_locally-block-55",
+      "to": "running_locally-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-56-part_of-running-locally",
+      "from": "running_locally-block-56",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-55-before-running_locally-block-56",
+      "from": "running_locally-block-55",
+      "to": "running_locally-block-56",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-56-related_to-running_locally-block-52",
+      "from": "running_locally-block-56",
+      "to": "running_locally-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-57-part_of-running-locally",
+      "from": "running_locally-block-57",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-56-before-running_locally-block-57",
+      "from": "running_locally-block-56",
+      "to": "running_locally-block-57",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-58-part_of-running-locally",
+      "from": "running_locally-block-58",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-57-before-running_locally-block-58",
+      "from": "running_locally-block-57",
+      "to": "running_locally-block-58",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-58-related_to-running_locally-block-57",
+      "from": "running_locally-block-58",
+      "to": "running_locally-block-57",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-59-part_of-running-locally",
+      "from": "running_locally-block-59",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-58-before-running_locally-block-59",
+      "from": "running_locally-block-58",
+      "to": "running_locally-block-59",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-59-related_to-running_locally-block-57",
+      "from": "running_locally-block-59",
+      "to": "running_locally-block-57",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-60-part_of-running-locally",
+      "from": "running_locally-block-60",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-59-before-running_locally-block-60",
+      "from": "running_locally-block-59",
+      "to": "running_locally-block-60",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-61-part_of-running-locally",
+      "from": "running_locally-block-61",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-60-before-running_locally-block-61",
+      "from": "running_locally-block-60",
+      "to": "running_locally-block-61",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-61-related_to-running_locally-block-60",
+      "from": "running_locally-block-61",
+      "to": "running_locally-block-60",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-62-part_of-running-locally",
+      "from": "running_locally-block-62",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-61-before-running_locally-block-62",
+      "from": "running_locally-block-61",
+      "to": "running_locally-block-62",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-62-related_to-running_locally-block-60",
+      "from": "running_locally-block-62",
+      "to": "running_locally-block-60",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-63-part_of-running-locally",
+      "from": "running_locally-block-63",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-62-before-running_locally-block-63",
+      "from": "running_locally-block-62",
+      "to": "running_locally-block-63",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-63-related_to-running_locally-block-60",
+      "from": "running_locally-block-63",
+      "to": "running_locally-block-60",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-64-part_of-running-locally",
+      "from": "running_locally-block-64",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-63-before-running_locally-block-64",
+      "from": "running_locally-block-63",
+      "to": "running_locally-block-64",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-64-related_to-running_locally-block-60",
+      "from": "running_locally-block-64",
+      "to": "running_locally-block-60",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-65-part_of-running-locally",
+      "from": "running_locally-block-65",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-64-before-running_locally-block-65",
+      "from": "running_locally-block-64",
+      "to": "running_locally-block-65",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-65-related_to-running_locally-block-60",
+      "from": "running_locally-block-65",
+      "to": "running_locally-block-60",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-66-part_of-running-locally",
+      "from": "running_locally-block-66",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-65-before-running_locally-block-66",
+      "from": "running_locally-block-65",
+      "to": "running_locally-block-66",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-66-related_to-running_locally-block-60",
+      "from": "running_locally-block-66",
+      "to": "running_locally-block-60",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-67-part_of-running-locally",
+      "from": "running_locally-block-67",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-66-before-running_locally-block-67",
+      "from": "running_locally-block-66",
+      "to": "running_locally-block-67",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-67-related_to-running_locally-block-60",
+      "from": "running_locally-block-67",
+      "to": "running_locally-block-60",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-68-part_of-running-locally",
+      "from": "running_locally-block-68",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-67-before-running_locally-block-68",
+      "from": "running_locally-block-67",
+      "to": "running_locally-block-68",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-68-related_to-running_locally-block-60",
+      "from": "running_locally-block-68",
+      "to": "running_locally-block-60",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-69-part_of-running-locally",
+      "from": "running_locally-block-69",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-68-before-running_locally-block-69",
+      "from": "running_locally-block-68",
+      "to": "running_locally-block-69",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-69-related_to-running_locally-block-60",
+      "from": "running_locally-block-69",
+      "to": "running_locally-block-60",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-70-part_of-running-locally",
+      "from": "running_locally-block-70",
+      "to": "running-locally",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-69-before-running_locally-block-70",
+      "from": "running_locally-block-69",
+      "to": "running_locally-block-70",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-block-70-related_to-running_locally-block-60",
+      "from": "running_locally-block-70",
+      "to": "running_locally-block-60",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-1-part_of-running_locally-block-1",
+      "from": "running_locally-stmt-1",
+      "to": "running_locally-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-2-part_of-running_locally-block-1",
+      "from": "running_locally-stmt-2",
+      "to": "running_locally-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-3-part_of-running_locally-block-1",
+      "from": "running_locally-stmt-3",
+      "to": "running_locally-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-4-part_of-running_locally-block-1",
+      "from": "running_locally-stmt-4",
+      "to": "running_locally-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-5-part_of-running_locally-block-2",
+      "from": "running_locally-stmt-5",
+      "to": "running_locally-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-6-part_of-running_locally-block-6",
+      "from": "running_locally-stmt-6",
+      "to": "running_locally-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-7-part_of-running_locally-block-7",
+      "from": "running_locally-stmt-7",
+      "to": "running_locally-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-8-part_of-running_locally-block-8",
+      "from": "running_locally-stmt-8",
+      "to": "running_locally-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-9-part_of-running_locally-block-9",
+      "from": "running_locally-stmt-9",
+      "to": "running_locally-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-10-part_of-running_locally-block-10",
+      "from": "running_locally-stmt-10",
+      "to": "running_locally-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-11-part_of-running_locally-block-11",
+      "from": "running_locally-stmt-11",
+      "to": "running_locally-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-12-part_of-running_locally-block-12",
+      "from": "running_locally-stmt-12",
+      "to": "running_locally-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-13-part_of-running_locally-block-13",
+      "from": "running_locally-stmt-13",
+      "to": "running_locally-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-14-part_of-running_locally-block-13",
+      "from": "running_locally-stmt-14",
+      "to": "running_locally-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-15-part_of-running_locally-block-15",
+      "from": "running_locally-stmt-15",
+      "to": "running_locally-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-16-part_of-running_locally-block-16",
+      "from": "running_locally-stmt-16",
+      "to": "running_locally-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-17-part_of-running_locally-block-17",
+      "from": "running_locally-stmt-17",
+      "to": "running_locally-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-18-part_of-running_locally-block-18",
+      "from": "running_locally-stmt-18",
+      "to": "running_locally-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-19-part_of-running_locally-block-19",
+      "from": "running_locally-stmt-19",
+      "to": "running_locally-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-20-part_of-running_locally-block-20",
+      "from": "running_locally-stmt-20",
+      "to": "running_locally-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-21-part_of-running_locally-block-21",
+      "from": "running_locally-stmt-21",
+      "to": "running_locally-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-22-part_of-running_locally-block-22",
+      "from": "running_locally-stmt-22",
+      "to": "running_locally-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-23-part_of-running_locally-block-23",
+      "from": "running_locally-stmt-23",
+      "to": "running_locally-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-24-part_of-running_locally-block-24",
+      "from": "running_locally-stmt-24",
+      "to": "running_locally-block-24",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-25-part_of-running_locally-block-25",
+      "from": "running_locally-stmt-25",
+      "to": "running_locally-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-26-part_of-running_locally-block-26",
+      "from": "running_locally-stmt-26",
+      "to": "running_locally-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-27-part_of-running_locally-block-26",
+      "from": "running_locally-stmt-27",
+      "to": "running_locally-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-28-part_of-running_locally-block-27",
+      "from": "running_locally-stmt-28",
+      "to": "running_locally-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-29-part_of-running_locally-block-27",
+      "from": "running_locally-stmt-29",
+      "to": "running_locally-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-30-part_of-running_locally-block-27",
+      "from": "running_locally-stmt-30",
+      "to": "running_locally-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-31-part_of-running_locally-block-31",
+      "from": "running_locally-stmt-31",
+      "to": "running_locally-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-32-part_of-running_locally-block-32",
+      "from": "running_locally-stmt-32",
+      "to": "running_locally-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-33-part_of-running_locally-block-32",
+      "from": "running_locally-stmt-33",
+      "to": "running_locally-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-34-part_of-running_locally-block-33",
+      "from": "running_locally-stmt-34",
+      "to": "running_locally-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-35-part_of-running_locally-block-33",
+      "from": "running_locally-stmt-35",
+      "to": "running_locally-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-36-part_of-running_locally-block-33",
+      "from": "running_locally-stmt-36",
+      "to": "running_locally-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-37-part_of-running_locally-block-35",
+      "from": "running_locally-stmt-37",
+      "to": "running_locally-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-38-part_of-running_locally-block-35",
+      "from": "running_locally-stmt-38",
+      "to": "running_locally-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-39-part_of-running_locally-block-36",
+      "from": "running_locally-stmt-39",
+      "to": "running_locally-block-36",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-40-part_of-running_locally-block-38",
+      "from": "running_locally-stmt-40",
+      "to": "running_locally-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-41-part_of-running_locally-block-38",
+      "from": "running_locally-stmt-41",
+      "to": "running_locally-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-42-part_of-running_locally-block-40",
+      "from": "running_locally-stmt-42",
+      "to": "running_locally-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-43-part_of-running_locally-block-43",
+      "from": "running_locally-stmt-43",
+      "to": "running_locally-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-44-part_of-running_locally-block-44",
+      "from": "running_locally-stmt-44",
+      "to": "running_locally-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-45-part_of-running_locally-block-45",
+      "from": "running_locally-stmt-45",
+      "to": "running_locally-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-46-part_of-running_locally-block-46",
+      "from": "running_locally-stmt-46",
+      "to": "running_locally-block-46",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-47-part_of-running_locally-block-47",
+      "from": "running_locally-stmt-47",
+      "to": "running_locally-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-48-part_of-running_locally-block-48",
+      "from": "running_locally-stmt-48",
+      "to": "running_locally-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-49-part_of-running_locally-block-49",
+      "from": "running_locally-stmt-49",
+      "to": "running_locally-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-50-part_of-running_locally-block-50",
+      "from": "running_locally-stmt-50",
+      "to": "running_locally-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-51-part_of-running_locally-block-53",
+      "from": "running_locally-stmt-51",
+      "to": "running_locally-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-52-part_of-running_locally-block-54",
+      "from": "running_locally-stmt-52",
+      "to": "running_locally-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-53-part_of-running_locally-block-55",
+      "from": "running_locally-stmt-53",
+      "to": "running_locally-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-54-part_of-running_locally-block-56",
+      "from": "running_locally-stmt-54",
+      "to": "running_locally-block-56",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-55-part_of-running_locally-block-58",
+      "from": "running_locally-stmt-55",
+      "to": "running_locally-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-56-part_of-running_locally-block-59",
+      "from": "running_locally-stmt-56",
+      "to": "running_locally-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-57-part_of-running_locally-block-59",
+      "from": "running_locally-stmt-57",
+      "to": "running_locally-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-58-part_of-running_locally-block-61",
+      "from": "running_locally-stmt-58",
+      "to": "running_locally-block-61",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-59-part_of-running_locally-block-62",
+      "from": "running_locally-stmt-59",
+      "to": "running_locally-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-60-part_of-running_locally-block-63",
+      "from": "running_locally-stmt-60",
+      "to": "running_locally-block-63",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-61-part_of-running_locally-block-64",
+      "from": "running_locally-stmt-61",
+      "to": "running_locally-block-64",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-62-part_of-running_locally-block-65",
+      "from": "running_locally-stmt-62",
+      "to": "running_locally-block-65",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-63-part_of-running_locally-block-66",
+      "from": "running_locally-stmt-63",
+      "to": "running_locally-block-66",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-64-part_of-running_locally-block-67",
+      "from": "running_locally-stmt-64",
+      "to": "running_locally-block-67",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-65-part_of-running_locally-block-68",
+      "from": "running_locally-stmt-65",
+      "to": "running_locally-block-68",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-66-part_of-running_locally-block-69",
+      "from": "running_locally-stmt-66",
+      "to": "running_locally-block-69",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-67-part_of-running_locally-block-70",
+      "from": "running_locally-stmt-67",
+      "to": "running_locally-block-70",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-68-part_of-running_locally-block-70",
+      "from": "running_locally-stmt-68",
+      "to": "running_locally-block-70",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-running_locally-stmt-69-part_of-running_locally-block-70",
+      "from": "running_locally-stmt-69",
+      "to": "running_locally-block-70",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "running_locally-stmt-1",
       "quote": "You don't need a GPU cluster to run a powerful LLM.",
+      "block_id": "running_locally-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-2",
       "quote": "A quantized 70B model runs on a MacBook.",
+      "block_id": "running_locally-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-3",
       "quote": "A 7B model in int4 fits on a phone.",
+      "block_id": "running_locally-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-4",
       "quote": "The local-LLM ecosystem in 2025 is mature enough for serious work: privacy-preserving inference, offline use, fine-tuning on consumer hardware, and even agents that never touch the cloud.",
+      "block_id": "running_locally-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-5",
       "quote": "This chapter covers the practical stack: from the hardware and file formats, through the engines and tools, to fine-tuning, and closes with the case for running locally.",
+      "block_id": "running_locally-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-6",
       "quote": "| GPU | VRAM | What it can run |",
+      "block_id": "running_locally-block-6",
       "section": "The Hardware Reality",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-7",
       "quote": "| RTX 3060 | 12 GB | 7B in int4, 13B in int3 |",
+      "block_id": "running_locally-block-7",
       "section": "The Hardware Reality",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-8",
       "quote": "| RTX 4070 Ti | 12 GB | Same |",
+      "block_id": "running_locally-block-8",
       "section": "The Hardware Reality",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-9",
       "quote": "| RTX 4090 | 24 GB | 13B int4, 30B int4 |",
+      "block_id": "running_locally-block-9",
       "section": "The Hardware Reality",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-10",
       "quote": "| RTX 5090 | 32 GB | 30B int4, 70B Q2_K |",
+      "block_id": "running_locally-block-10",
       "section": "The Hardware Reality",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-11",
       "quote": "| Apple M3 Max | 64–128 GB unified | 70B int4, 70B Q5_K_M |",
+      "block_id": "running_locally-block-11",
       "section": "The Hardware Reality",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-12",
       "quote": "| Apple M4 Max | 64–128 GB unified | Same |",
+      "block_id": "running_locally-block-12",
       "section": "The Hardware Reality",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-13",
       "quote": "The **unified memory** on Apple Silicon is the killer feature: you can use 64–128 GB for both model weights and OS, making local 70B inference practical on a laptop.",
+      "block_id": "running_locally-block-13",
       "section": "The Hardware Reality",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-14",
       "quote": "A Mac Studio M3 Ultra with 192 GB runs a 405B model in Q2_K at usable speeds.",
+      "block_id": "running_locally-block-13",
       "section": "The Hardware Reality",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-15",
-      "quote": "**GGUF** (GPT-Generated Unified Format) is the de facto standard for local LLMs, designed by Georgi Gerganov for **llama.cpp**.",
+      "quote": "GGUF supports many quantization schemes in a single file:",
+      "block_id": "running_locally-block-15",
       "section": "GGUF: The Universal Format",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-16",
-      "quote": "Every popular open model is published in GGUF.",
+      "quote": "| Type | Bits/weight | Quality | Size (70B) |",
+      "block_id": "running_locally-block-16",
       "section": "GGUF: The Universal Format",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-17",
-      "quote": "GGUF supports many quantization schemes in a single file:",
+      "quote": "| F32 | 32 | Lossless | 280 GB |",
+      "block_id": "running_locally-block-17",
       "section": "GGUF: The Universal Format",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-18",
-      "quote": "| Type | Bits/weight | Quality | Size (70B) |",
+      "quote": "| F16 / BF16 | 16 | Negligible loss | 140 GB |",
+      "block_id": "running_locally-block-18",
       "section": "GGUF: The Universal Format",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-19",
-      "quote": "| F32 | 32 | Lossless | 280 GB |",
+      "quote": "| Q8_0 | 8 | ~0.5% loss | 70 GB |",
+      "block_id": "running_locally-block-19",
       "section": "GGUF: The Universal Format",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-20",
-      "quote": "| F16 / BF16 | 16 | Negligible loss | 140 GB |",
+      "quote": "| Q6_K | 6.5 | ~1% | 60 GB |",
+      "block_id": "running_locally-block-20",
       "section": "GGUF: The Universal Format",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-21",
-      "quote": "| Q8_0 | 8 | ~0.5% loss | 70 GB |",
+      "quote": "| Q5_K_M | 5.5 | ~1.5% | 48 GB |",
+      "block_id": "running_locally-block-21",
       "section": "GGUF: The Universal Format",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-22",
-      "quote": "| Q6_K | 6.5 | ~1% | 60 GB |",
+      "quote": "| Q4_K_M | 4.5 | ~2–3% | 40 GB |",
+      "block_id": "running_locally-block-22",
       "section": "GGUF: The Universal Format",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-23",
-      "quote": "| Q5_K_M | 5.5 | ~1.5% | 48 GB |",
+      "quote": "| Q3_K_M | 3.5 | ~5% | 32 GB |",
+      "block_id": "running_locally-block-23",
       "section": "GGUF: The Universal Format",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-24",
-      "quote": "| Q4_K_M | 4.5 | ~2–3% | 40 GB |",
+      "quote": "| Q2_K | 2.5 | ~10% | 25 GB |",
+      "block_id": "running_locally-block-24",
       "section": "GGUF: The Universal Format",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-25",
-      "quote": "| Q3_K_M | 3.5 | ~5% | 32 GB |",
+      "quote": "| IQ1_S | 1.5 | Major loss | 18 GB |",
+      "block_id": "running_locally-block-25",
       "section": "GGUF: The Universal Format",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-26",
-      "quote": "| Q2_K | 2.5 | ~10% | 25 GB |",
+      "quote": "The K-quant schemes (Q2_K through Q5_K_M) use **k-quantization** with importance-aware mixed precision: most weights are quantized to the target bits, but sensitive layers get extra bits.",
+      "block_id": "running_locally-block-26",
       "section": "GGUF: The Universal Format",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-27",
-      "quote": "| IQ1_S | 1.5 | Major loss | 18 GB |",
+      "quote": "**IQ-quants** (Importance-aware Quantization) push to 1–2 bits with surprisingly good quality.",
+      "block_id": "running_locally-block-26",
       "section": "GGUF: The Universal Format",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-28",
-      "quote": "The K-quant schemes (Q2_K through Q5_K_M) use **k-quantization** with importance-aware mixed precision: most weights are quantized to the target bits, but sensitive layers get extra bits.",
+      "quote": "A rule of thumb: **Q4_K_M is the sweet spot** for most local use.",
+      "block_id": "running_locally-block-27",
       "section": "GGUF: The Universal Format",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-29",
-      "quote": "**IQ-quants** (Importance-aware Quantization) push to 1–2 bits with surprisingly good quality.",
+      "quote": "Q5_K_M for quality-sensitive work.",
+      "block_id": "running_locally-block-27",
       "section": "GGUF: The Universal Format",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-30",
-      "quote": "A rule of thumb: **Q4_K_M is the sweet spot** for most local use.",
+      "quote": "Q8_0 if you have memory to spare.",
+      "block_id": "running_locally-block-27",
       "section": "GGUF: The Universal Format",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-31",
-      "quote": "Q5_K_M for quality-sensitive work.",
-      "section": "GGUF: The Universal Format",
+      "quote": "Server mode (OpenAI-compatible API):",
+      "block_id": "running_locally-block-31",
+      "section": "llama.cpp: The Reference Engine",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-32",
-      "quote": "Q8_0 if you have memory to spare.",
-      "section": "GGUF: The Universal Format",
+      "quote": "Then point any OpenAI client at `http://localhost:8080/v1`.",
+      "block_id": "running_locally-block-32",
+      "section": "llama.cpp: The Reference Engine",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-33",
-      "quote": "**llama.cpp** ([github.com/ggerganov/llama.cpp](https://github.com/ggerganov/llama.cpp)) (\\cite[Gerganov, 2023]{gerganov2023llamacpp}) is a C++ inference engine, originally designed to run Llama 7B on a MacBook.",
+      "quote": "**Drop-in local replacement for OpenAI's API**.",
+      "block_id": "running_locally-block-32",
       "section": "llama.cpp: The Reference Engine",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-34",
-      "quote": "* All major open models (Llama, Mistral, Qwen, DeepSeek, Phi, Gemma, etc.)",
+      "quote": "Performance: a 70B Q4_K_M on M3 Max generates ~10–15 tokens/second.",
+      "block_id": "running_locally-block-33",
       "section": "llama.cpp: The Reference Engine",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-35",
-      "quote": "* CPU, CUDA, Metal (Apple GPU), ROCm (AMD), Vulkan, SYCL (Intel), OpenCL",
+      "quote": "A 7B Q4_K_M on RTX 4090: ~80–120 tokens/second.",
+      "block_id": "running_locally-block-33",
       "section": "llama.cpp: The Reference Engine",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-36",
-      "quote": "* Speculative decoding, prefix caching, multi-GPU",
+      "quote": "A 405B Q4 on M3 Ultra: ~5 tokens/second.",
+      "block_id": "running_locally-block-33",
       "section": "llama.cpp: The Reference Engine",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-37",
-      "quote": "* LoRA adapter loading at runtime",
-      "section": "llama.cpp: The Reference Engine",
+      "quote": "Ollama handles model downloads (from its registry), quantization (you can specify the quant level), and exposes an OpenAI-compatible API at `localhost:11434`.",
+      "block_id": "running_locally-block-35",
+      "section": "Ollama: One-Line Local LLMs",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-38",
-      "quote": "* Batched inference (server mode)",
-      "section": "llama.cpp: The Reference Engine",
+      "quote": "It also ships a Modelfile system for custom system prompts and parameters.",
+      "block_id": "running_locally-block-35",
+      "section": "Ollama: One-Line Local LLMs",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-39",
-      "quote": "Server mode (OpenAI-compatible API):",
-      "section": "llama.cpp: The Reference Engine",
+      "quote": "The [Ollama model library](https://ollama.com/library) has thousands of community-contributed models, including fine-tunes for specific tasks (code, math, roleplay, embeddings).",
+      "block_id": "running_locally-block-36",
+      "section": "Ollama: One-Line Local LLMs",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-40",
-      "quote": "Then point any OpenAI client at `http://localhost:8080/v1`.",
-      "section": "llama.cpp: The Reference Engine",
+      "quote": "For most people, LM Studio is the easiest entry point.",
+      "block_id": "running_locally-block-38",
+      "section": "LM Studio: GUI for Local LLMs",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-41",
-      "quote": "**Drop-in local replacement for OpenAI's API**.",
-      "section": "llama.cpp: The Reference Engine",
+      "quote": "For developers, Ollama or llama.cpp directly.",
+      "block_id": "running_locally-block-38",
+      "section": "LM Studio: GUI for Local LLMs",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-42",
-      "quote": "Performance: a 70B Q4_K_M on M3 Max generates ~10–15 tokens/second.",
-      "section": "llama.cpp: The Reference Engine",
+      "quote": "For Python notebooks: **transformers + accelerate + bitsandbytes** loads any HuggingFace model in 4–8 bits with two lines of code.",
+      "block_id": "running_locally-block-40",
+      "section": "Other Local Tools",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-43",
-      "quote": "A 7B Q4_K_M on RTX 4090: ~80–120 tokens/second.",
-      "section": "llama.cpp: The Reference Engine",
+      "quote": "The 2024–2025 democratization of fine-tuning is real:",
+      "block_id": "running_locally-block-43",
+      "section": "Fine-Tuning Locally",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-44",
-      "quote": "A 405B Q4 on M3 Ultra: ~5 tokens/second.",
-      "section": "llama.cpp: The Reference Engine",
+      "quote": "A typical local fine-tune:",
+      "block_id": "running_locally-block-44",
+      "section": "Fine-Tuning Locally",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-45",
-      "quote": "**Ollama** ([ollama.com](https://ollama.com)) (\\cite[Ollama, 2024]{ollama2024}) wraps llama.cpp in a clean interface:",
-      "section": "Ollama: One-Line Local LLMs",
+      "quote": "Pick a base model (Llama 3.1 8B, Mistral 7B, Qwen 2.5 7B).",
+      "block_id": "running_locally-block-45",
+      "section": "Fine-Tuning Locally",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-46",
-      "quote": "Ollama handles model downloads (from its registry), quantization (you can specify the quant level), and exposes an OpenAI-compatible API at `localhost:11434`.",
-      "section": "Ollama: One-Line Local LLMs",
+      "quote": "Format your data as instruction-response pairs (JSONL, Alpaca format).",
+      "block_id": "running_locally-block-46",
+      "section": "Fine-Tuning Locally",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-47",
-      "quote": "It also ships a Modelfile system for custom system prompts and parameters.",
-      "section": "Ollama: One-Line Local LLMs",
+      "quote": "Train a LoRA adapter with QLoRA on your consumer GPU (hours, not days).",
+      "block_id": "running_locally-block-47",
+      "section": "Fine-Tuning Locally",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-48",
-      "quote": "The [Ollama model library](https://ollama.com/library) has thousands of community-contributed models, including fine-tunes for specific tasks (code, math, roleplay, embeddings).",
-      "section": "Ollama: One-Line Local LLMs",
+      "quote": "Merge the adapter into the base model.",
+      "block_id": "running_locally-block-48",
+      "section": "Fine-Tuning Locally",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-49",
-      "quote": "**LM Studio** ([lmstudio.ai](https://lmstudio.ai)) (\\cite[LM Studio, 2024]{lmstudio2024}) is the desktop app version: search, download, chat, and run a local API.",
-      "section": "LM Studio: GUI for Local LLMs",
+      "quote": "Quantize to GGUF and serve with Ollama.",
+      "block_id": "running_locally-block-49",
+      "section": "Fine-Tuning Locally",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-50",
-      "quote": "Built on llama.cpp but with a polished UI.",
-      "section": "LM Studio: GUI for Local LLMs",
+      "quote": "Total time: an afternoon for a small fine-tune.",
+      "block_id": "running_locally-block-50",
+      "section": "Fine-Tuning Locally",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-51",
-      "quote": "Targets non-technical users.",
-      "section": "LM Studio: GUI for Local LLMs",
+      "quote": "A 7B model on a modern laptop:",
+      "block_id": "running_locally-block-53",
+      "section": "What You Can Realistically Do Locally",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-52",
-      "quote": "* Built-in model browser (HuggingFace integration).",
-      "section": "LM Studio: GUI for Local LLMs",
+      "quote": "A 70B model on a beefy Mac Studio:",
+      "block_id": "running_locally-block-54",
+      "section": "What You Can Realistically Do Locally",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-53",
-      "quote": "* Chat UI with conversation history.",
-      "section": "LM Studio: GUI for Local LLMs",
+      "quote": "What local cannot do (yet):",
+      "block_id": "running_locally-block-55",
+      "section": "What You Can Realistically Do Locally",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-54",
-      "quote": "* OpenAI-compatible local server.",
-      "section": "LM Studio: GUI for Local LLMs",
+      "quote": "The gap is closing: by 2026, expect frontier-quality 70B models running comfortably on laptops.",
+      "block_id": "running_locally-block-56",
+      "section": "What You Can Realistically Do Locally",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-55",
-      "quote": "* GPU/CPU control, KV-cache size, context length.",
-      "section": "LM Studio: GUI for Local LLMs",
+      "quote": "For many organizations, **local inference is mandatory**:",
+      "block_id": "running_locally-block-58",
+      "section": "The Privacy Argument",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-56",
-      "quote": "* Available on macOS, Windows, Linux.",
-      "section": "LM Studio: GUI for Local LLMs",
+      "quote": "The local-LLM ecosystem in 2025 makes this practical.",
+      "block_id": "running_locally-block-59",
+      "section": "The Privacy Argument",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-57",
-      "quote": "For most people, LM Studio is the easiest entry point.",
-      "section": "LM Studio: GUI for Local LLMs",
+      "quote": "A small fine-tune on internal data + a quantized local model = a private AI assistant that never phones home.",
+      "block_id": "running_locally-block-59",
+      "section": "The Privacy Argument",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-58",
-      "quote": "For developers, Ollama or llama.cpp directly.",
-      "section": "LM Studio: GUI for Local LLMs",
+      "quote": "| Consideration | Local | Cloud |",
+      "block_id": "running_locally-block-61",
+      "section": "Local vs Cloud: The Decision Matrix",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-59",
-      "quote": "* **Jan** (https://jan.ai): open-source desktop client, similar to LM Studio.",
-      "section": "Other Local Tools",
+      "quote": "| **Setup cost** | Hardware ($2–10K) | $0 |",
+      "block_id": "running_locally-block-62",
+      "section": "Local vs Cloud: The Decision Matrix",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-60",
-      "quote": "* **GPT4All** (Nomic): local model runner with retrieval built in.",
-      "section": "Other Local Tools",
+      "quote": "| **Per-query cost** | Electricity | Token-based pricing |",
+      "block_id": "running_locally-block-63",
+      "section": "Local vs Cloud: The Decision Matrix",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-61",
-      "quote": "* **PrivateGPT / LocalAI**: OpenAI drop-in replacements with local model backends.",
-      "section": "Other Local Tools",
+      "quote": "| **Latency** | 10–50 ms + compute | 100–1000 ms network + compute |",
+      "block_id": "running_locally-block-64",
+      "section": "Local vs Cloud: The Decision Matrix",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-62",
-      "quote": "* **mlx** (Apple): Apple's ML framework, optimized for Apple Silicon.",
-      "section": "Other Local Tools",
+      "quote": "| **Privacy** | Total | Limited by provider |",
+      "block_id": "running_locally-block-65",
+      "section": "Local vs Cloud: The Decision Matrix",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-63",
-      "quote": "* **exllamav2** (turboderp): high-throughput inference for NVIDIA GPUs.",
-      "section": "Other Local Tools",
+      "quote": "| **Model quality** | Open-source only | Frontier (GPT-4o, Claude 4, Gemini 2) |",
+      "block_id": "running_locally-block-66",
+      "section": "Local vs Cloud: The Decision Matrix",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-64",
-      "quote": "* **koboldcpp**: llama.cpp with a KoboldAI-style UI for creative writing.",
-      "section": "Other Local Tools",
+      "quote": "| **Customization** | Full fine-tune access | Limited to API |",
+      "block_id": "running_locally-block-67",
+      "section": "Local vs Cloud: The Decision Matrix",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-65",
-      "quote": "* **text-generation-webui** (oobabooga): the original local LLM web UI.",
-      "section": "Other Local Tools",
+      "quote": "| **Scalability** | Single-machine | Elastic |",
+      "block_id": "running_locally-block-68",
+      "section": "Local vs Cloud: The Decision Matrix",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-66",
-      "quote": "* **vLLM**: primarily a server, but can run locally on multi-GPU machines.",
-      "section": "Other Local Tools",
+      "quote": "| **Maintenance** | You | Provider |",
+      "block_id": "running_locally-block-69",
+      "section": "Local vs Cloud: The Decision Matrix",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-67",
-      "quote": "* **SGLang**: production-grade local server with structured generation.",
-      "section": "Other Local Tools",
+      "quote": "For most individuals and small businesses: **hybrid**.",
+      "block_id": "running_locally-block-70",
+      "section": "Local vs Cloud: The Decision Matrix",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-68",
-      "quote": "For Python notebooks: **transformers + accelerate + bitsandbytes** loads any HuggingFace model in 4–8 bits with two lines of code.",
-      "section": "Other Local Tools",
+      "quote": "Use local for privacy-sensitive workloads and high-volume routine tasks.",
+      "block_id": "running_locally-block-70",
+      "section": "Local vs Cloud: The Decision Matrix",
       "kind": "statement"
     },
     {
       "id": "running_locally-stmt-69",
-      "quote": "The 2024–2025 democratization of fine-tuning is real:",
-      "section": "Fine-Tuning Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-70",
-      "quote": "* **QLoRA** (\\cite[Dettmers et al., 2023]{dettmers2023qlora}): 4-bit base model + LoRA adapters trainable in fp16.",
-      "section": "Fine-Tuning Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-71",
-      "quote": "The paper demonstrates a 65B fine-tune on a single 48 GB GPU; 70B is an extrapolation.",
-      "section": "Fine-Tuning Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-72",
-      "quote": "* **Unsloth**: 2× faster QLoRA, kernels optimized for consumer GPUs.",
-      "section": "Fine-Tuning Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-73",
-      "quote": "* **Axolotl**: popular framework for instruction fine-tuning.",
-      "section": "Fine-Tuning Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-74",
-      "quote": "* **LoRA** (\\cite[Hu et al., 2021]{hu2021lora}) **/ QLoRA / DoRA** (\\cite[Liu et al., 2024]{liu2024dora}): rank-$r$ adapters that train a tiny fraction of parameters.",
-      "section": "Fine-Tuning Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-75",
-      "quote": "* **torchtune** (PyTorch native): clean library for fine-tuning recipes.",
-      "section": "Fine-Tuning Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-76",
-      "quote": "A typical local fine-tune:",
-      "section": "Fine-Tuning Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-77",
-      "quote": "Pick a base model (Llama 3.1 8B, Mistral 7B, Qwen 2.5 7B).",
-      "section": "Fine-Tuning Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-78",
-      "quote": "Format your data as instruction-response pairs (JSONL, Alpaca format).",
-      "section": "Fine-Tuning Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-79",
-      "quote": "Train a LoRA adapter with QLoRA on your consumer GPU (hours, not days).",
-      "section": "Fine-Tuning Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-80",
-      "quote": "Merge the adapter into the base model.",
-      "section": "Fine-Tuning Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-81",
-      "quote": "Quantize to GGUF and serve with Ollama.",
-      "section": "Fine-Tuning Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-82",
-      "quote": "Total time: an afternoon for a small fine-tune.",
-      "section": "Fine-Tuning Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-83",
-      "quote": "A 7B model on a modern laptop:",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-84",
-      "quote": "* Chat, summarization, basic reasoning",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-85",
-      "quote": "* Code completion and review (with quantization-aware models like DeepSeek-Coder)",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-86",
-      "quote": "* Lightweight RAG over personal documents",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-87",
-      "quote": "* Local agent loops with tool use",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-88",
-      "quote": "* Privacy-preserving inference for sensitive data",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-89",
-      "quote": "A 70B model on a beefy Mac Studio:",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-90",
-      "quote": "* Near-frontier quality on most tasks",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-91",
-      "quote": "* Longer contexts (32K+) at usable speeds",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-92",
-      "quote": "* Strong coding and reasoning",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-93",
-      "quote": "* Acceptable throughput for a single user",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-94",
-      "quote": "What local cannot do (yet):",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-95",
-      "quote": "* Match frontier model quality on hard reasoning (MATH, GPQA)",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-96",
-      "quote": "* Real-time voice (latency too high)",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-97",
-      "quote": "* Run on phones for serious workloads (3B max)",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-98",
-      "quote": "* Multi-user serving at scale",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-99",
-      "quote": "The gap is closing: by 2026, expect frontier-quality 70B models running comfortably on laptops.",
-      "section": "What You Can Realistically Do Locally",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-100",
-      "quote": "For many organizations, **local inference is mandatory**:",
-      "section": "The Privacy Argument",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-101",
-      "quote": "* **Healthcare**: HIPAA-compliant inference on patient data without cloud transmission.",
-      "section": "The Privacy Argument",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-102",
-      "quote": "* **Legal**: attorney-client privilege requires no third-party data sharing.",
-      "section": "The Privacy Argument",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-103",
-      "quote": "* **Finance**: proprietary trading strategies never leave the firewall.",
-      "section": "The Privacy Argument",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-104",
-      "quote": "* **Defense / government**: air-gapped deployments.",
-      "section": "The Privacy Argument",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-105",
-      "quote": "* **Personal use**: conversation logs never uploaded.",
-      "section": "The Privacy Argument",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-106",
-      "quote": "The local-LLM ecosystem in 2025 makes this practical.",
-      "section": "The Privacy Argument",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-107",
-      "quote": "A small fine-tune on internal data + a quantized local model = a private AI assistant that never phones home.",
-      "section": "The Privacy Argument",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-108",
-      "quote": "| Consideration | Local | Cloud |",
-      "section": "Local vs Cloud: The Decision Matrix",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-109",
-      "quote": "| **Setup cost** | Hardware ($2–10K) | $0 |",
-      "section": "Local vs Cloud: The Decision Matrix",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-110",
-      "quote": "| **Per-query cost** | Electricity | Token-based pricing |",
-      "section": "Local vs Cloud: The Decision Matrix",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-111",
-      "quote": "| **Latency** | 10–50 ms + compute | 100–1000 ms network + compute |",
-      "section": "Local vs Cloud: The Decision Matrix",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-112",
-      "quote": "| **Privacy** | Total | Limited by provider |",
-      "section": "Local vs Cloud: The Decision Matrix",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-113",
-      "quote": "| **Model quality** | Open-source only | Frontier (GPT-4o, Claude 4, Gemini 2) |",
-      "section": "Local vs Cloud: The Decision Matrix",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-114",
-      "quote": "| **Customization** | Full fine-tune access | Limited to API |",
-      "section": "Local vs Cloud: The Decision Matrix",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-115",
-      "quote": "| **Scalability** | Single-machine | Elastic |",
-      "section": "Local vs Cloud: The Decision Matrix",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-116",
-      "quote": "| **Maintenance** | You | Provider |",
-      "section": "Local vs Cloud: The Decision Matrix",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-117",
-      "quote": "For most individuals and small businesses: **hybrid**.",
-      "section": "Local vs Cloud: The Decision Matrix",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-118",
-      "quote": "Use local for privacy-sensitive workloads and high-volume routine tasks.",
-      "section": "Local vs Cloud: The Decision Matrix",
-      "kind": "statement"
-    },
-    {
-      "id": "running_locally-stmt-119",
       "quote": "Use cloud for hard reasoning and frontier capabilities.",
+      "block_id": "running_locally-block-70",
       "section": "Local vs Cloud: The Decision Matrix",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "running_locally-block-1",
+      "quote": "You don't need a GPU cluster to run a powerful LLM. A quantized 70B model runs on a MacBook. A 7B model in int4 fits on a phone. The local-LLM ecosystem in 2025 is mature enough for serious work: privacy-preserving inference, offline use, fine-tuning on consumer hardware, and even agents that never touch the cloud.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "running_locally-block-2",
+      "quote": "This chapter covers the practical stack: from the hardware and file formats, through the engines and tools, to fine-tuning, and closes with the case for running locally.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "running_locally-block-3",
+      "quote": "Hardware and Formats",
+      "kind": "heading",
+      "section": "Hardware and Formats"
+    },
+    {
+      "id": "running_locally-block-4",
+      "quote": "The Hardware Reality",
+      "kind": "heading",
+      "section": "The Hardware Reality"
+    },
+    {
+      "id": "running_locally-block-5",
+      "quote": "A consumer GPU in 2025:",
+      "kind": "paragraph",
+      "section": "The Hardware Reality"
+    },
+    {
+      "id": "running_locally-block-6",
+      "quote": "| GPU | VRAM | What it can run |",
+      "kind": "table-row",
+      "section": "The Hardware Reality"
+    },
+    {
+      "id": "running_locally-block-7",
+      "quote": "| RTX 3060 | 12 GB | 7B in int4, 13B in int3 |",
+      "kind": "table-row",
+      "section": "The Hardware Reality"
+    },
+    {
+      "id": "running_locally-block-8",
+      "quote": "| RTX 4070 Ti | 12 GB | Same |",
+      "kind": "table-row",
+      "section": "The Hardware Reality"
+    },
+    {
+      "id": "running_locally-block-9",
+      "quote": "| RTX 4090 | 24 GB | 13B int4, 30B int4 |",
+      "kind": "table-row",
+      "section": "The Hardware Reality"
+    },
+    {
+      "id": "running_locally-block-10",
+      "quote": "| RTX 5090 | 32 GB | 30B int4, 70B Q2_K |",
+      "kind": "table-row",
+      "section": "The Hardware Reality"
+    },
+    {
+      "id": "running_locally-block-11",
+      "quote": "| Apple M3 Max | 64–128 GB unified | 70B int4, 70B Q5_K_M |",
+      "kind": "table-row",
+      "section": "The Hardware Reality"
+    },
+    {
+      "id": "running_locally-block-12",
+      "quote": "| Apple M4 Max | 64–128 GB unified | Same |",
+      "kind": "table-row",
+      "section": "The Hardware Reality"
+    },
+    {
+      "id": "running_locally-block-13",
+      "quote": "The **unified memory** on Apple Silicon is the killer feature: you can use 64–128 GB for both model weights and OS, making local 70B inference practical on a laptop. A Mac Studio M3 Ultra with 192 GB runs a 405B model in Q2_K at usable speeds.",
+      "kind": "paragraph",
+      "section": "The Hardware Reality"
+    },
+    {
+      "id": "running_locally-block-14",
+      "quote": "GGUF: The Universal Format",
+      "kind": "heading",
+      "section": "GGUF: The Universal Format"
+    },
+    {
+      "id": "running_locally-block-15",
+      "quote": "GGUF supports many quantization schemes in a single file:",
+      "kind": "paragraph",
+      "section": "GGUF: The Universal Format"
+    },
+    {
+      "id": "running_locally-block-16",
+      "quote": "| Type | Bits/weight | Quality | Size (70B) |",
+      "kind": "table-row",
+      "section": "GGUF: The Universal Format"
+    },
+    {
+      "id": "running_locally-block-17",
+      "quote": "| F32 | 32 | Lossless | 280 GB |",
+      "kind": "table-row",
+      "section": "GGUF: The Universal Format"
+    },
+    {
+      "id": "running_locally-block-18",
+      "quote": "| F16 / BF16 | 16 | Negligible loss | 140 GB |",
+      "kind": "table-row",
+      "section": "GGUF: The Universal Format"
+    },
+    {
+      "id": "running_locally-block-19",
+      "quote": "| Q8_0 | 8 | ~0.5% loss | 70 GB |",
+      "kind": "table-row",
+      "section": "GGUF: The Universal Format"
+    },
+    {
+      "id": "running_locally-block-20",
+      "quote": "| Q6_K | 6.5 | ~1% | 60 GB |",
+      "kind": "table-row",
+      "section": "GGUF: The Universal Format"
+    },
+    {
+      "id": "running_locally-block-21",
+      "quote": "| Q5_K_M | 5.5 | ~1.5% | 48 GB |",
+      "kind": "table-row",
+      "section": "GGUF: The Universal Format"
+    },
+    {
+      "id": "running_locally-block-22",
+      "quote": "| Q4_K_M | 4.5 | ~2–3% | 40 GB |",
+      "kind": "table-row",
+      "section": "GGUF: The Universal Format"
+    },
+    {
+      "id": "running_locally-block-23",
+      "quote": "| Q3_K_M | 3.5 | ~5% | 32 GB |",
+      "kind": "table-row",
+      "section": "GGUF: The Universal Format"
+    },
+    {
+      "id": "running_locally-block-24",
+      "quote": "| Q2_K | 2.5 | ~10% | 25 GB |",
+      "kind": "table-row",
+      "section": "GGUF: The Universal Format"
+    },
+    {
+      "id": "running_locally-block-25",
+      "quote": "| IQ1_S | 1.5 | Major loss | 18 GB |",
+      "kind": "table-row",
+      "section": "GGUF: The Universal Format"
+    },
+    {
+      "id": "running_locally-block-26",
+      "quote": "The K-quant schemes (Q2_K through Q5_K_M) use **k-quantization** with importance-aware mixed precision: most weights are quantized to the target bits, but sensitive layers get extra bits. **IQ-quants** (Importance-aware Quantization) push to 1–2 bits with surprisingly good quality.",
+      "kind": "paragraph",
+      "section": "GGUF: The Universal Format"
+    },
+    {
+      "id": "running_locally-block-27",
+      "quote": "A rule of thumb: **Q4_K_M is the sweet spot** for most local use. Q5_K_M for quality-sensitive work. Q8_0 if you have memory to spare.",
+      "kind": "paragraph",
+      "section": "GGUF: The Universal Format"
+    },
+    {
+      "id": "running_locally-block-28",
+      "quote": "Engines and Tools",
+      "kind": "heading",
+      "section": "Engines and Tools"
+    },
+    {
+      "id": "running_locally-block-29",
+      "quote": "llama.cpp: The Reference Engine",
+      "kind": "heading",
+      "section": "llama.cpp: The Reference Engine"
+    },
+    {
+      "id": "running_locally-block-30",
+      "quote": "Basic CLI:",
+      "kind": "paragraph",
+      "section": "llama.cpp: The Reference Engine"
+    },
+    {
+      "id": "running_locally-block-31",
+      "quote": "Server mode (OpenAI-compatible API):",
+      "kind": "paragraph",
+      "section": "llama.cpp: The Reference Engine"
+    },
+    {
+      "id": "running_locally-block-32",
+      "quote": "Then point any OpenAI client at `http://localhost:8080/v1`. **Drop-in local replacement for OpenAI's API**.",
+      "kind": "paragraph",
+      "section": "llama.cpp: The Reference Engine"
+    },
+    {
+      "id": "running_locally-block-33",
+      "quote": "Performance: a 70B Q4_K_M on M3 Max generates ~10–15 tokens/second. A 7B Q4_K_M on RTX 4090: ~80–120 tokens/second. A 405B Q4 on M3 Ultra: ~5 tokens/second. Slow, but useful.",
+      "kind": "paragraph",
+      "section": "llama.cpp: The Reference Engine"
+    },
+    {
+      "id": "running_locally-block-34",
+      "quote": "Ollama: One-Line Local LLMs",
+      "kind": "heading",
+      "section": "Ollama: One-Line Local LLMs"
+    },
+    {
+      "id": "running_locally-block-35",
+      "quote": "Ollama handles model downloads (from its registry), quantization (you can specify the quant level), and exposes an OpenAI-compatible API at `localhost:11434`. It also ships a Modelfile system for custom system prompts and parameters.",
+      "kind": "paragraph",
+      "section": "Ollama: One-Line Local LLMs"
+    },
+    {
+      "id": "running_locally-block-36",
+      "quote": "The [Ollama model library](https://ollama.com/library) has thousands of community-contributed models, including fine-tunes for specific tasks (code, math, roleplay, embeddings).",
+      "kind": "paragraph",
+      "section": "Ollama: One-Line Local LLMs"
+    },
+    {
+      "id": "running_locally-block-37",
+      "quote": "LM Studio: GUI for Local LLMs",
+      "kind": "heading",
+      "section": "LM Studio: GUI for Local LLMs"
+    },
+    {
+      "id": "running_locally-block-38",
+      "quote": "For most people, LM Studio is the easiest entry point. For developers, Ollama or llama.cpp directly.",
+      "kind": "paragraph",
+      "section": "LM Studio: GUI for Local LLMs"
+    },
+    {
+      "id": "running_locally-block-39",
+      "quote": "Other Local Tools",
+      "kind": "heading",
+      "section": "Other Local Tools"
+    },
+    {
+      "id": "running_locally-block-40",
+      "quote": "For Python notebooks: **transformers + accelerate + bitsandbytes** loads any HuggingFace model in 4–8 bits with two lines of code.",
+      "kind": "paragraph",
+      "section": "Other Local Tools"
+    },
+    {
+      "id": "running_locally-block-41",
+      "quote": "Fine-Tuning and Customization",
+      "kind": "heading",
+      "section": "Fine-Tuning and Customization"
+    },
+    {
+      "id": "running_locally-block-42",
+      "quote": "Fine-Tuning Locally",
+      "kind": "heading",
+      "section": "Fine-Tuning Locally"
+    },
+    {
+      "id": "running_locally-block-43",
+      "quote": "The 2024–2025 democratization of fine-tuning is real:",
+      "kind": "paragraph",
+      "section": "Fine-Tuning Locally"
+    },
+    {
+      "id": "running_locally-block-44",
+      "quote": "A typical local fine-tune:",
+      "kind": "paragraph",
+      "section": "Fine-Tuning Locally"
+    },
+    {
+      "id": "running_locally-block-45",
+      "quote": "1. Pick a base model (Llama 3.1 8B, Mistral 7B, Qwen 2.5 7B).",
+      "kind": "list-item",
+      "section": "Fine-Tuning Locally"
+    },
+    {
+      "id": "running_locally-block-46",
+      "quote": "2. Format your data as instruction-response pairs (JSONL, Alpaca format).",
+      "kind": "list-item",
+      "section": "Fine-Tuning Locally"
+    },
+    {
+      "id": "running_locally-block-47",
+      "quote": "3. Train a LoRA adapter with QLoRA on your consumer GPU (hours, not days).",
+      "kind": "list-item",
+      "section": "Fine-Tuning Locally"
+    },
+    {
+      "id": "running_locally-block-48",
+      "quote": "4. Merge the adapter into the base model.",
+      "kind": "list-item",
+      "section": "Fine-Tuning Locally"
+    },
+    {
+      "id": "running_locally-block-49",
+      "quote": "5. Quantize to GGUF and serve with Ollama.",
+      "kind": "list-item",
+      "section": "Fine-Tuning Locally"
+    },
+    {
+      "id": "running_locally-block-50",
+      "quote": "Total time: an afternoon for a small fine-tune. Cost: your electricity.",
+      "kind": "paragraph",
+      "section": "Fine-Tuning Locally"
+    },
+    {
+      "id": "running_locally-block-51",
+      "quote": "The Case for Local",
+      "kind": "heading",
+      "section": "The Case for Local"
+    },
+    {
+      "id": "running_locally-block-52",
+      "quote": "What You Can Realistically Do Locally",
+      "kind": "heading",
+      "section": "What You Can Realistically Do Locally"
+    },
+    {
+      "id": "running_locally-block-53",
+      "quote": "A 7B model on a modern laptop:",
+      "kind": "paragraph",
+      "section": "What You Can Realistically Do Locally"
+    },
+    {
+      "id": "running_locally-block-54",
+      "quote": "A 70B model on a beefy Mac Studio:",
+      "kind": "paragraph",
+      "section": "What You Can Realistically Do Locally"
+    },
+    {
+      "id": "running_locally-block-55",
+      "quote": "What local cannot do (yet):",
+      "kind": "paragraph",
+      "section": "What You Can Realistically Do Locally"
+    },
+    {
+      "id": "running_locally-block-56",
+      "quote": "The gap is closing: by 2026, expect frontier-quality 70B models running comfortably on laptops.",
+      "kind": "paragraph",
+      "section": "What You Can Realistically Do Locally"
+    },
+    {
+      "id": "running_locally-block-57",
+      "quote": "The Privacy Argument",
+      "kind": "heading",
+      "section": "The Privacy Argument"
+    },
+    {
+      "id": "running_locally-block-58",
+      "quote": "For many organizations, **local inference is mandatory**:",
+      "kind": "paragraph",
+      "section": "The Privacy Argument"
+    },
+    {
+      "id": "running_locally-block-59",
+      "quote": "The local-LLM ecosystem in 2025 makes this practical. A small fine-tune on internal data + a quantized local model = a private AI assistant that never phones home.",
+      "kind": "paragraph",
+      "section": "The Privacy Argument"
+    },
+    {
+      "id": "running_locally-block-60",
+      "quote": "Local vs Cloud: The Decision Matrix",
+      "kind": "heading",
+      "section": "Local vs Cloud: The Decision Matrix"
+    },
+    {
+      "id": "running_locally-block-61",
+      "quote": "| Consideration | Local | Cloud |",
+      "kind": "table-row",
+      "section": "Local vs Cloud: The Decision Matrix"
+    },
+    {
+      "id": "running_locally-block-62",
+      "quote": "| **Setup cost** | Hardware ($2–10K) | $0 |",
+      "kind": "table-row",
+      "section": "Local vs Cloud: The Decision Matrix"
+    },
+    {
+      "id": "running_locally-block-63",
+      "quote": "| **Per-query cost** | Electricity | Token-based pricing |",
+      "kind": "table-row",
+      "section": "Local vs Cloud: The Decision Matrix"
+    },
+    {
+      "id": "running_locally-block-64",
+      "quote": "| **Latency** | 10–50 ms + compute | 100–1000 ms network + compute |",
+      "kind": "table-row",
+      "section": "Local vs Cloud: The Decision Matrix"
+    },
+    {
+      "id": "running_locally-block-65",
+      "quote": "| **Privacy** | Total | Limited by provider |",
+      "kind": "table-row",
+      "section": "Local vs Cloud: The Decision Matrix"
+    },
+    {
+      "id": "running_locally-block-66",
+      "quote": "| **Model quality** | Open-source only | Frontier (GPT-4o, Claude 4, Gemini 2) |",
+      "kind": "table-row",
+      "section": "Local vs Cloud: The Decision Matrix"
+    },
+    {
+      "id": "running_locally-block-67",
+      "quote": "| **Customization** | Full fine-tune access | Limited to API |",
+      "kind": "table-row",
+      "section": "Local vs Cloud: The Decision Matrix"
+    },
+    {
+      "id": "running_locally-block-68",
+      "quote": "| **Scalability** | Single-machine | Elastic |",
+      "kind": "table-row",
+      "section": "Local vs Cloud: The Decision Matrix"
+    },
+    {
+      "id": "running_locally-block-69",
+      "quote": "| **Maintenance** | You | Provider |",
+      "kind": "table-row",
+      "section": "Local vs Cloud: The Decision Matrix"
+    },
+    {
+      "id": "running_locally-block-70",
+      "quote": "For most individuals and small businesses: **hybrid**. Use local for privacy-sensitive workloads and high-volume routine tasks. Use cloud for hard reasoning and frontier capabilities.",
+      "kind": "paragraph",
+      "section": "Local vs Cloud: The Decision Matrix"
     }
   ]
 }

@@ -289,416 +289,1467 @@
       "quote": "built by Frank Rosenblatt's group",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-1-part_of-intro",
+      "from": "intro-block-1",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-2-part_of-intro",
+      "from": "intro-block-2",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-1-before-intro-block-2",
+      "from": "intro-block-1",
+      "to": "intro-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-2-related_to-intro-block-1",
+      "from": "intro-block-2",
+      "to": "intro-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-3-part_of-intro",
+      "from": "intro-block-3",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-2-before-intro-block-3",
+      "from": "intro-block-2",
+      "to": "intro-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-4-part_of-intro",
+      "from": "intro-block-4",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-3-before-intro-block-4",
+      "from": "intro-block-3",
+      "to": "intro-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-4-related_to-intro-block-3",
+      "from": "intro-block-4",
+      "to": "intro-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-5-part_of-intro",
+      "from": "intro-block-5",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-4-before-intro-block-5",
+      "from": "intro-block-4",
+      "to": "intro-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-5-related_to-intro-block-3",
+      "from": "intro-block-5",
+      "to": "intro-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-6-part_of-intro",
+      "from": "intro-block-6",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-5-before-intro-block-6",
+      "from": "intro-block-5",
+      "to": "intro-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-6-related_to-intro-block-3",
+      "from": "intro-block-6",
+      "to": "intro-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-7-part_of-intro",
+      "from": "intro-block-7",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-6-before-intro-block-7",
+      "from": "intro-block-6",
+      "to": "intro-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-7-related_to-intro-block-3",
+      "from": "intro-block-7",
+      "to": "intro-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-8-part_of-intro",
+      "from": "intro-block-8",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-7-before-intro-block-8",
+      "from": "intro-block-7",
+      "to": "intro-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-8-related_to-intro-block-3",
+      "from": "intro-block-8",
+      "to": "intro-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-9-part_of-intro",
+      "from": "intro-block-9",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-8-before-intro-block-9",
+      "from": "intro-block-8",
+      "to": "intro-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-10-part_of-intro",
+      "from": "intro-block-10",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-9-before-intro-block-10",
+      "from": "intro-block-9",
+      "to": "intro-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-11-part_of-intro",
+      "from": "intro-block-11",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-10-before-intro-block-11",
+      "from": "intro-block-10",
+      "to": "intro-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-11-related_to-intro-block-10",
+      "from": "intro-block-11",
+      "to": "intro-block-10",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-12-part_of-intro",
+      "from": "intro-block-12",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-11-before-intro-block-12",
+      "from": "intro-block-11",
+      "to": "intro-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-12-related_to-intro-block-10",
+      "from": "intro-block-12",
+      "to": "intro-block-10",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-13-part_of-intro",
+      "from": "intro-block-13",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-12-before-intro-block-13",
+      "from": "intro-block-12",
+      "to": "intro-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-14-part_of-intro",
+      "from": "intro-block-14",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-13-before-intro-block-14",
+      "from": "intro-block-13",
+      "to": "intro-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-14-related_to-intro-block-13",
+      "from": "intro-block-14",
+      "to": "intro-block-13",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-15-part_of-intro",
+      "from": "intro-block-15",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-14-before-intro-block-15",
+      "from": "intro-block-14",
+      "to": "intro-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-16-part_of-intro",
+      "from": "intro-block-16",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-15-before-intro-block-16",
+      "from": "intro-block-15",
+      "to": "intro-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-16-related_to-intro-block-15",
+      "from": "intro-block-16",
+      "to": "intro-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-17-part_of-intro",
+      "from": "intro-block-17",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-16-before-intro-block-17",
+      "from": "intro-block-16",
+      "to": "intro-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-17-related_to-intro-block-15",
+      "from": "intro-block-17",
+      "to": "intro-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-18-part_of-intro",
+      "from": "intro-block-18",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-17-before-intro-block-18",
+      "from": "intro-block-17",
+      "to": "intro-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-19-part_of-intro",
+      "from": "intro-block-19",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-18-before-intro-block-19",
+      "from": "intro-block-18",
+      "to": "intro-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-19-related_to-intro-block-18",
+      "from": "intro-block-19",
+      "to": "intro-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-20-part_of-intro",
+      "from": "intro-block-20",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-19-before-intro-block-20",
+      "from": "intro-block-19",
+      "to": "intro-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-20-related_to-intro-block-18",
+      "from": "intro-block-20",
+      "to": "intro-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-21-part_of-intro",
+      "from": "intro-block-21",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-20-before-intro-block-21",
+      "from": "intro-block-20",
+      "to": "intro-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-22-part_of-intro",
+      "from": "intro-block-22",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-21-before-intro-block-22",
+      "from": "intro-block-21",
+      "to": "intro-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-22-related_to-intro-block-21",
+      "from": "intro-block-22",
+      "to": "intro-block-21",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-23-part_of-intro",
+      "from": "intro-block-23",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-22-before-intro-block-23",
+      "from": "intro-block-22",
+      "to": "intro-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-23-related_to-intro-block-21",
+      "from": "intro-block-23",
+      "to": "intro-block-21",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-24-part_of-intro",
+      "from": "intro-block-24",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-23-before-intro-block-24",
+      "from": "intro-block-23",
+      "to": "intro-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-25-part_of-intro",
+      "from": "intro-block-25",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-24-before-intro-block-25",
+      "from": "intro-block-24",
+      "to": "intro-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-25-related_to-intro-block-24",
+      "from": "intro-block-25",
+      "to": "intro-block-24",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-26-part_of-intro",
+      "from": "intro-block-26",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-25-before-intro-block-26",
+      "from": "intro-block-25",
+      "to": "intro-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-27-part_of-intro",
+      "from": "intro-block-27",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-26-before-intro-block-27",
+      "from": "intro-block-26",
+      "to": "intro-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-27-related_to-intro-block-26",
+      "from": "intro-block-27",
+      "to": "intro-block-26",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-1-part_of-intro-block-1",
+      "from": "intro-stmt-1",
+      "to": "intro-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-2-part_of-intro-block-1",
+      "from": "intro-stmt-2",
+      "to": "intro-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-3-part_of-intro-block-1",
+      "from": "intro-stmt-3",
+      "to": "intro-block-1",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-4-part_of-intro-block-2",
+      "from": "intro-stmt-4",
+      "to": "intro-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-5-part_of-intro-block-2",
+      "from": "intro-stmt-5",
+      "to": "intro-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-6-part_of-intro-block-4",
+      "from": "intro-stmt-6",
+      "to": "intro-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-7-part_of-intro-block-5",
+      "from": "intro-stmt-7",
+      "to": "intro-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-8-part_of-intro-block-5",
+      "from": "intro-stmt-8",
+      "to": "intro-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-9-part_of-intro-block-5",
+      "from": "intro-stmt-9",
+      "to": "intro-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-10-part_of-intro-block-5",
+      "from": "intro-stmt-10",
+      "to": "intro-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-11-part_of-intro-block-6",
+      "from": "intro-stmt-11",
+      "to": "intro-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-12-part_of-intro-block-7",
+      "from": "intro-stmt-12",
+      "to": "intro-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-13-part_of-intro-block-8",
+      "from": "intro-stmt-13",
+      "to": "intro-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-14-part_of-intro-block-8",
+      "from": "intro-stmt-14",
+      "to": "intro-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-15-part_of-intro-block-8",
+      "from": "intro-stmt-15",
+      "to": "intro-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-16-part_of-intro-block-11",
+      "from": "intro-stmt-16",
+      "to": "intro-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-17-part_of-intro-block-11",
+      "from": "intro-stmt-17",
+      "to": "intro-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-18-part_of-intro-block-11",
+      "from": "intro-stmt-18",
+      "to": "intro-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-19-part_of-intro-block-11",
+      "from": "intro-stmt-19",
+      "to": "intro-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-20-part_of-intro-block-12",
+      "from": "intro-stmt-20",
+      "to": "intro-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-21-part_of-intro-block-12",
+      "from": "intro-stmt-21",
+      "to": "intro-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-22-part_of-intro-block-14",
+      "from": "intro-stmt-22",
+      "to": "intro-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-23-part_of-intro-block-14",
+      "from": "intro-stmt-23",
+      "to": "intro-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-24-part_of-intro-block-16",
+      "from": "intro-stmt-24",
+      "to": "intro-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-25-part_of-intro-block-17",
+      "from": "intro-stmt-25",
+      "to": "intro-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-26-part_of-intro-block-17",
+      "from": "intro-stmt-26",
+      "to": "intro-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-27-part_of-intro-block-17",
+      "from": "intro-stmt-27",
+      "to": "intro-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-28-part_of-intro-block-19",
+      "from": "intro-stmt-28",
+      "to": "intro-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-29-part_of-intro-block-20",
+      "from": "intro-stmt-29",
+      "to": "intro-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-30-part_of-intro-block-22",
+      "from": "intro-stmt-30",
+      "to": "intro-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-31-part_of-intro-block-23",
+      "from": "intro-stmt-31",
+      "to": "intro-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-32-part_of-intro-block-25",
+      "from": "intro-stmt-32",
+      "to": "intro-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-33-part_of-intro-block-25",
+      "from": "intro-stmt-33",
+      "to": "intro-block-25",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-34-part_of-intro-block-27",
+      "from": "intro-stmt-34",
+      "to": "intro-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-35-part_of-intro-block-27",
+      "from": "intro-stmt-35",
+      "to": "intro-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "intro-stmt-1",
       "quote": "Hand stencils at Cueva de las Manos, Argentina (c.",
+      "block_id": "intro-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-2",
       "quote": "Paint was sprayed through bone pipes onto hands pressed against the rock wall.",
+      "block_id": "intro-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-3",
       "quote": "Gimenez]{cuevadelasmanos_image}, [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).",
+      "block_id": "intro-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-4",
       "quote": "The Mark I Perceptron, the experimental letter-recognising machine built by Frank Rosenblatt's group and announced by the U.S.",
+      "block_id": "intro-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-5",
       "quote": "Navy]{perceptronimagedetection}, public domain.",
+      "block_id": "intro-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-6",
-      "quote": "What I was trying here is to understand AI using AI.",
+      "quote": "The universe is a process of reaching out into the multi-colored world, and drawing it together into a single, new unity.",
+      "block_id": "intro-block-4",
       "section": "A personal note: This is an experiment",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-7",
-      "quote": "I tried to follow every question I could possibly think of regarding AI to it's source, trying to find original publications and put everything in place, so one has a complete mental model of where AI came from and how it works.",
+      "quote": "What I was trying here is to understand AI using AI.",
+      "block_id": "intro-block-5",
       "section": "A personal note: This is an experiment",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-8",
-      "quote": "I go into many different, seemingly unrelated fields, but as a Whiteheadian, I assume that Reality is One, and everything is connected to everything else, and as such there are no *really* unrelated fields.",
+      "quote": "I tried to follow every question I could possibly think of regarding AI to it's source, trying to find original publications and put everything in place, so one has a complete mental model of where AI came from and how it works.",
+      "block_id": "intro-block-5",
       "section": "A personal note: This is an experiment",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-9",
-      "quote": "Often, connections arise where you didn't expect them at all; these are the connections I am trying to find, to weave picture of AI as complete as I can.",
+      "quote": "I go into many different, seemingly unrelated fields, but as a Whiteheadian, I assume that Reality is One, and everything is connected to everything else, and as such there are no *really* unrelated fields.",
+      "block_id": "intro-block-5",
       "section": "A personal note: This is an experiment",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-10",
-      "quote": "I tried my best to fact-check every claim, but since this project also my personal learning curve of a diverse set of very different, very complex sciences like Astronomy, Mathematics, Computer Science, Material Science, Cultural History, Cosmology, Chemistry, Physics and so on, and I myself am not a polymath (even though I aspire to be one to the best of my limited abilities), I may have introduced errors here and there.",
+      "quote": "Often, connections arise where you didn't expect them at all; these are the connections I am trying to find, to weave picture of AI as complete as I can.",
+      "block_id": "intro-block-5",
       "section": "A personal note: This is an experiment",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-11",
-      "quote": "What I'm trying to do here is to paint a more-or-less complete picture of how AI came to be, and how many threads were neccessary for it to come into existance.",
+      "quote": "I tried my best to fact-check every claim, but since this project also my personal learning curve of a diverse set of very different, very complex sciences like Astronomy, Mathematics, Computer Science, Material Science, Cultural History, Cosmology, Chemistry, Physics and so on, and I myself am not a polymath (even though I aspire to be one to the best of my limited abilities), I may have introduced errors here and there.",
+      "block_id": "intro-block-6",
       "section": "A personal note: This is an experiment",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-12",
-      "quote": "Similiar to the [unfinishable map](https://unfinishablemap.org/), this is a never-to-be-finished task, since the Universe is constantly changing, and so is AI.",
+      "quote": "What I'm trying to do here is to paint a more-or-less complete picture of how AI came to be, and how many threads were neccessary for it to come into existance.",
+      "block_id": "intro-block-7",
       "section": "A personal note: This is an experiment",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-13",
-      "quote": "My goal is to, as clearly and deeply as possible, draw the current state of what lead to AI systems like chatGPT.",
+      "quote": "Similiar to the [unfinishable map](https://unfinishablemap.org/), this is a never-to-be-finished task, since the Universe is constantly changing, and so is AI.",
+      "block_id": "intro-block-8",
       "section": "A personal note: This is an experiment",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-14",
-      "quote": "I go into the [history](history), starting with the invention of counting itself, and the prehistory, starting with the question [why anything at all exists and the Big Bang](untold_history_i), and many things inbetween.",
+      "quote": "My goal is to, as clearly and deeply as possible, draw the current state of what lead to AI systems like chatGPT.",
+      "block_id": "intro-block-8",
       "section": "A personal note: This is an experiment",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-15",
-      "quote": "**This is** a long, free, interactive digital textbook that traces the ideas behind modern AI from Stone Age tools and the history of mathematics all the way to how large language models actually work inside.",
-      "section": "What This Course Is — and What It Isn't",
+      "quote": "I go into the [history](history), starting with the invention of counting itself, and the prehistory, starting with the question [why anything at all exists and the Big Bang](untold_history_i), and many things inbetween.",
+      "block_id": "intro-block-8",
+      "section": "A personal note: This is an experiment",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-16",
-      "quote": "It is hands-on and often mathematically demanding: you build intuition by doing, and by the end you understand the *why* and the *how*, not just the *what*.",
-      "section": "What This Course Is — and What It Isn't",
+      "quote": "To understand a Neural Network is to understand a tapestry of ideas that kept sidetracking into unexpected fields — and the tapestry is wide: its threads begin at the **Big Bang**, pass through the forging of the elements, the first cells, and the first numbers, and run on to the first looms and the first chips.",
+      "block_id": "intro-block-11",
+      "section": "A Synthesis of Science and History",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-17",
-      "quote": "**This is not** a programming tutorial (you will not set up a dev environment), a \"5 quick tips\" article or a list of prompting tricks, or a passive overview you can skim in one evening.",
-      "section": "What This Course Is — and What It Isn't",
+      "quote": "Two pages carry that history: [The Brief History of AI](history.php) is the entry into the history of AI — the direct intellectual lineage from the first tools to the first neural models.",
+      "block_id": "intro-block-11",
+      "section": "A Synthesis of Science and History",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-18",
-      "quote": "If you are looking for a short, surface-level introduction, this is not it.",
-      "section": "What This Course Is — and What It Isn't",
+      "quote": "[The Untold History of AI](untold_history_i.php) starts at the very beginning: the question of why there is anything at all, the Big Bang, the forging of the elements, and the development of life.",
+      "block_id": "intro-block-11",
+      "section": "A Synthesis of Science and History",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-19",
-      "quote": "If you want the real, complete picture — history, mathematics, and machines together — you are in the right place.",
-      "section": "What This Course Is — and What It Isn't",
+      "quote": "The most consequential sidetracks:",
+      "block_id": "intro-block-11",
+      "section": "A Synthesis of Science and History",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-20",
-      "quote": "To understand a Neural Network is to understand a tapestry of ideas that kept sidetracking into unexpected fields — and the tapestry is wide: its threads begin at the **Big Bang**, pass through the forging of the elements, the first cells, and the first numbers, and run on to the first looms and the first chips.",
+      "quote": "For most of the last century, the sciences and the humanities have drifted into two separate worlds whose methods, vocabulary, and values are largely opaque to each other — a split \\cite[Charles Percy Snow (1959)]{twocultures} memorably named the \"two cultures\" problem.",
+      "block_id": "intro-block-12",
       "section": "A Synthesis of Science and History",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-21",
-      "quote": "Two pages carry that history: [The Brief History of AI](history.php) is the entry into the history of AI — the direct intellectual lineage from the first tools to the first neural models.",
+      "quote": "I believe reality is one, and different sciences are different ways of looking at the same world — so this course needs both ways of looking at it.",
+      "block_id": "intro-block-12",
       "section": "A Synthesis of Science and History",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-22",
-      "quote": "[The Untold History of AI](untold_history_i.php) starts at the very beginning: the question of why there is anything at all, the Big Bang, the forging of the elements, and the development of life.",
-      "section": "A Synthesis of Science and History",
+      "quote": "This is not a book to be read passively.",
+      "block_id": "intro-block-14",
+      "section": "An Interactive Playground",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-23",
-      "quote": "The most consequential sidetracks:",
-      "section": "A Synthesis of Science and History",
+      "quote": "It is a playground for exploration:",
+      "block_id": "intro-block-14",
+      "section": "An Interactive Playground",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-24",
-      "quote": "* **Astronomy and Precision:** Astronomers from the fourth century onward, mapping the stars with imperfect data, developed the very optimization tools that let modern LLMs learn from the internet.",
-      "section": "A Synthesis of Science and History",
+      "quote": "The fastest start: pick the type you're most like, or open the detailed settings and tune every topic by hand:",
+      "block_id": "intro-block-16",
+      "section": "A Course That Adapts to You",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-25",
-      "quote": "* **The Technical and The Philosophical:** I do not just look at code.",
-      "section": "A Synthesis of Science and History",
+      "quote": "Toggle individual topics to fine-tune (click several at once — it's pure set logic, and the page reacts live).",
+      "block_id": "intro-block-17",
+      "section": "A Course That Adapts to You",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-26",
-      "quote": "Concepts of logic, language, and \"Geist\" migrate from philosophical debates into billions of trainable parameters — and I follow them the whole way.",
-      "section": "A Synthesis of Science and History",
+      "quote": "The **tone** chips switch off whatever feels heavy in one click; sections that no longer match recede behind a soft banner that tells you *why*, partially-matching ones fade back but stay readable, and home-page tiles dim in step so you can always see what exists.",
+      "block_id": "intro-block-17",
+      "section": "A Course That Adapts to You",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-27",
-      "quote": "* **AI in Society:** I treat the technology as a cultural mirror, looking at how these systems meet human values, the risks of hallucinations, and the ethical responsibility of building intelligent tools.",
-      "section": "A Synthesis of Science and History",
+      "quote": "Your choices are saved in a cookie and survive reloads.",
+      "block_id": "intro-block-17",
+      "section": "A Course That Adapts to You",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-28",
-      "quote": "* **The Number and the Token:** I follow the number itself — from the Babylonians' place value and the Indian zero, through the Chinese minus sign and Leibniz's binary, to the token vocabularies modern models actually read.",
-      "section": "A Synthesis of Science and History",
+      "quote": "By the time you reach the end of this journey, you will have moved from basic arithmetic to a deep technical understanding of modern Large Language Models.",
+      "block_id": "intro-block-19",
+      "section": "What You Will Achieve",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-29",
-      "quote": "The \"token\" a Transformer predicts is a direct descendant of the first numerals, and every integer in the code you write inherits the same chain.",
-      "section": "A Synthesis of Science and History",
+      "quote": "You will see that AI is not a sudden magic invention, but the technical and philosophical culmination of centuries of human inquiry.",
+      "block_id": "intro-block-20",
+      "section": "What You Will Achieve",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-30",
-      "quote": "For most of the last century, the sciences and the humanities have drifted into two separate worlds whose methods, vocabulary, and values are largely opaque to each other — a split \\cite[Charles Percy Snow (1959)]{twocultures} memorably named the \"two cultures\" problem.",
-      "section": "A Synthesis of Science and History",
+      "quote": "To truly grasp the nature of Artificial Intelligence, I will move through various levels of abstraction, much like the framework described by \\citeauthor{hayakawa} — and I will train myself to climb up and down this \"ladder\" fluently:",
+      "block_id": "intro-block-22",
+      "section": "Navigating the Ladder of Abstraction",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-31",
-      "quote": "I believe reality is one, and different sciences are different ways of looking at the same world — so this course needs both ways of looking at it.",
-      "section": "A Synthesis of Science and History",
+      "quote": "This text is designed to carry you through those shifts: I constantly move from a philosophical \"why\" down to a mathematical \"how\", keeping even the most abstract concepts tied to concrete reality.",
+      "block_id": "intro-block-23",
+      "section": "Navigating the Ladder of Abstraction",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-32",
-      "quote": "This is not a book to be read passively.",
-      "section": "An Interactive Playground",
+      "quote": "This interactive textbook was built with the help of Google Gemini, Claude, ChatGPT and other LLM systems.",
+      "block_id": "intro-block-25",
+      "section": "Disclaimer",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-33",
-      "quote": "It is a playground for exploration:",
-      "section": "An Interactive Playground",
+      "quote": "I've done my best to verify the code and info, but please double-check before using it in production.",
+      "block_id": "intro-block-25",
+      "section": "Disclaimer",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-34",
-      "quote": "* **Learn by Doing:** Move the sliders, input your own data, click through the visualizations.",
-      "section": "An Interactive Playground",
+      "quote": "Please report errors to my email .",
+      "block_id": "intro-block-27",
+      "section": "Please report Errors!",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-35",
-      "quote": "Curiosity is the primary engine of learning here — try to see where the logic holds and where it breaks.",
-      "section": "An Interactive Playground",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-36",
-      "quote": "* **Navigating Complexity:** At times the mathematics gets heavy.",
-      "section": "An Interactive Playground",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-37",
-      "quote": "You do not need to master every equation on the first pass: skip it, play with the interactive models, and return to the theory once the numbers have an intuitive feel.",
-      "section": "An Interactive Playground",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-38",
-      "quote": "* **Pick and Skip:** Use the *table of contents* to navigate and skip all sections that are of no interest to you.",
-      "section": "An Interactive Playground",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-39",
-      "quote": "* **The Atlas:** Every person, place, institution, author, and event in the Atlas dataset is a dot on [The Atlas](atlas.php) — an interactive 3D globe you can zoom from Earth, past the Moon, all the way to the Big Bang.",
-      "section": "An Interactive Playground",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-40",
-      "quote": "* **The Starting Point:** I assume no prior knowledge beyond good English reading capability, the practical knowledge of a Stone Ager, and the willingness to put in effort.",
-      "section": "An Interactive Playground",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-41",
-      "quote": "That said, the climb is steep: I start from nothing but quickly ascend into dense mathematics and complex architectures.",
-      "section": "An Interactive Playground",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-42",
-      "quote": "You will not grasp everything on the first read, and that is fine.",
-      "section": "An Interactive Playground",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-43",
-      "quote": "Use the interactive demos to build intuition, skip what feels too heavy, and come back later.",
-      "section": "An Interactive Playground",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-44",
-      "quote": "Expect to re-read, tinker, and take your time.",
-      "section": "An Interactive Playground",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-45",
-      "quote": "This course is too long to consume in one shape, so it adapts to **you**.",
-      "section": "A Course That Adapts to You",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-46",
-      "quote": "Look for the <circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"1.6\" fill=\"currentColor\" stroke=\"none\"/> button top-right and pick your *profile* (Curious / Student / Engineer / Researcher) and *level* (High School / Undergrad / Grad / PhD); each combination loads a curated topic set.",
-      "section": "A Course That Adapts to You",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-47",
-      "quote": "**Math is split into Math I / II / III** and **Statistics into Stats I / II**, so a high-school reader is never shoved into graduate-level integrals.",
-      "section": "A Course That Adapts to You",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-48",
-      "quote": "If you identify more with *being* a certain kind of reader than with what you do, the picker also offers the **classic types** — the mathematician who wants the math but not the history, the builder, the historian, the philosopher — and, if you refuse to skip anything, the **polymath**, who loads everything.",
-      "section": "A Course That Adapts to You",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-49",
-      "quote": "You can also choose how *heavy* to go: **tone** dials mute the dense math, formal logic, linguistics, or code, and **interested layman** mode keeps only the accessible, jargon-free core.",
-      "section": "A Course That Adapts to You",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-50",
-      "quote": "The fastest start: pick the type you're most like, or open the detailed settings and tune every topic by hand:",
-      "section": "A Course That Adapts to You",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-51",
-      "quote": "Toggle individual topics to fine-tune (click several at once — it's pure set logic, and the page reacts live).",
-      "section": "A Course That Adapts to You",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-52",
-      "quote": "The **tone** chips switch off whatever feels heavy in one click; sections that no longer match recede behind a soft banner that tells you *why*, partially-matching ones fade back but stay readable, and home-page tiles dim in step so you can always see what exists.",
-      "section": "A Course That Adapts to You",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-53",
-      "quote": "Your choices are saved in a cookie and survive reloads.",
-      "section": "A Course That Adapts to You",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-54",
-      "quote": "By the time you reach the end of this journey, you will have moved from basic arithmetic to a deep technical understanding of modern Large Language Models.",
-      "section": "What You Will Achieve",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-55",
-      "quote": "* **Explain the inner workings** of Neural Networks, from the first Perceptron to the Transformer architectures that power ChatGPT.",
-      "section": "What You Will Achieve",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-56",
-      "quote": "* **Manipulate and optimize** data models using the same mathematical principles of probability and approximation used by researchers.",
-      "section": "What You Will Achieve",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-57",
-      "quote": "* **Critically evaluate** the societal and philosophical implications of AI, understanding both its technical brilliance and its inherent limitations.",
-      "section": "What You Will Achieve",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-58",
-      "quote": "You will see that AI is not a sudden magic invention, but the technical and philosophical culmination of centuries of human inquiry.",
-      "section": "What You Will Achieve",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-59",
-      "quote": "To truly grasp the nature of Artificial Intelligence, I will move through various levels of abstraction, much like the framework described by \\citeauthor{hayakawa} — and I will train myself to climb up and down this \"ladder\" fluently:",
-      "section": "Navigating the Ladder of Abstraction",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-60",
-      "quote": "* **The Concrete Base:** At the lowest rungs I deal with the \"process level\" — the raw, physical bits of data and the specific numerical weights in a matrix.",
-      "section": "Navigating the Ladder of Abstraction",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-61",
-      "quote": "* **The Intermediate Technicalities:** As I ascend, I group these specifics into functional concepts like Backpropagation or Gradient Descent — the tools that organize raw data into recognizable patterns.",
-      "section": "Navigating the Ladder of Abstraction",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-62",
-      "quote": "* **The High-Level Abstract:** At the top of the ladder I reach broad terms like \"Topology\", \"Fiber Bundles\", \"Intelligence\", \"Logic\", and \"Ethics\".",
-      "section": "Navigating the Ladder of Abstraction",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-63",
-      "quote": "They let me discuss the impact of AI on society, and they stay grounded in the mathematical rungs beneath them.",
-      "section": "Navigating the Ladder of Abstraction",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-64",
-      "quote": "This text is designed to carry you through those shifts: I constantly move from a philosophical \"why\" down to a mathematical \"how\", keeping even the most abstract concepts tied to concrete reality.",
-      "section": "Navigating the Ladder of Abstraction",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-65",
-      "quote": "This interactive textbook was built with the help of Google Gemini, Claude, ChatGPT and other LLM systems.",
-      "section": "Disclaimer",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-66",
-      "quote": "I've done my best to verify the code and info, but please double-check before using it in production.",
-      "section": "Disclaimer",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-67",
-      "quote": "Please report errors to my email .",
-      "section": "Please report Errors!",
-      "kind": "statement"
-    },
-    {
-      "id": "intro-stmt-68",
       "quote": "I try my best to keep this site as factually correct as possible, but I may get things wrong or incomplete — so I am happy to get any feedback.",
+      "block_id": "intro-block-27",
       "section": "Please report Errors!",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "intro-block-1",
+      "quote": "Hand stencils at Cueva de las Manos, Argentina (c. 7300 BC - AD 700). Paint was sprayed through bone pipes onto hands pressed against the rock wall. Photo: \\cite[Pablo A. Gimenez]{cuevadelasmanos_image}, [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "intro-block-2",
+      "quote": "The Mark I Perceptron, the experimental letter-recognising machine built by Frank Rosenblatt's group and announced by the U.S. Navy. Photo: \\cite[U.S. Navy]{perceptronimagedetection}, public domain.",
+      "kind": "paragraph",
+      "section": ""
+    },
+    {
+      "id": "intro-block-3",
+      "quote": "A personal note: This is an experiment",
+      "kind": "heading",
+      "section": "A personal note: This is an experiment"
+    },
+    {
+      "id": "intro-block-4",
+      "quote": "The universe is a process of reaching out into the multi-colored world, and drawing it together into a single, new unity.",
+      "kind": "paragraph",
+      "section": "A personal note: This is an experiment"
+    },
+    {
+      "id": "intro-block-5",
+      "quote": "What I was trying here is to understand AI using AI. I tried to follow every question I could possibly think of regarding AI to it's source, trying to find original publications and put everything in place, so one has a complete mental model of where AI came from and how it works. I go into many different, seemingly unrelated fields, but as a Whiteheadian, I assume that Reality is One, and everything is connected to everything else, and as such there are no *really* unrelated fields. Often, connections arise where you didn't expect them at all; these are the connections I am trying to find, to weave picture of AI as complete as I can.",
+      "kind": "paragraph",
+      "section": "A personal note: This is an experiment"
+    },
+    {
+      "id": "intro-block-6",
+      "quote": "I tried my best to fact-check every claim, but since this project also my personal learning curve of a diverse set of very different, very complex sciences like Astronomy, Mathematics, Computer Science, Material Science, Cultural History, Cosmology, Chemistry, Physics and so on, and I myself am not a polymath (even though I aspire to be one to the best of my limited abilities), I may have introduced errors here and there.",
+      "kind": "paragraph",
+      "section": "A personal note: This is an experiment"
+    },
+    {
+      "id": "intro-block-7",
+      "quote": "What I'm trying to do here is to paint a more-or-less complete picture of how AI came to be, and how many threads were neccessary for it to come into existance.",
+      "kind": "paragraph",
+      "section": "A personal note: This is an experiment"
+    },
+    {
+      "id": "intro-block-8",
+      "quote": "Similiar to the [unfinishable map](https://unfinishablemap.org/), this is a never-to-be-finished task, since the Universe is constantly changing, and so is AI. My goal is to, as clearly and deeply as possible, draw the current state of what lead to AI systems like chatGPT. I go into the [history](history), starting with the invention of counting itself, and the prehistory, starting with the question [why anything at all exists and the Big Bang](untold_history_i), and many things inbetween.",
+      "kind": "paragraph",
+      "section": "A personal note: This is an experiment"
+    },
+    {
+      "id": "intro-block-9",
+      "quote": "What This Course Is — and What It Isn't",
+      "kind": "heading",
+      "section": "What This Course Is — and What It Isn't"
+    },
+    {
+      "id": "intro-block-10",
+      "quote": "A Synthesis of Science and History",
+      "kind": "heading",
+      "section": "A Synthesis of Science and History"
+    },
+    {
+      "id": "intro-block-11",
+      "quote": "To understand a Neural Network is to understand a tapestry of ideas that kept sidetracking into unexpected fields — and the tapestry is wide: its threads begin at the **Big Bang**, pass through the forging of the elements, the first cells, and the first numbers, and run on to the first looms and the first chips. Two pages carry that history: [The Brief History of AI](history.php) is the entry into the history of AI — the direct intellectual lineage from the first tools to the first neural models. [The Untold History of AI](untold_history_i.php) starts at the very beginning: the question of why there is anything at all, the Big Bang, the forging of the elements, and the development of life. The most consequential sidetracks:",
+      "kind": "paragraph",
+      "section": "A Synthesis of Science and History"
+    },
+    {
+      "id": "intro-block-12",
+      "quote": "For most of the last century, the sciences and the humanities have drifted into two separate worlds whose methods, vocabulary, and values are largely opaque to each other — a split \\cite[Charles Percy Snow (1959)]{twocultures} memorably named the \"two cultures\" problem. I believe reality is one, and different sciences are different ways of looking at the same world — so this course needs both ways of looking at it.",
+      "kind": "paragraph",
+      "section": "A Synthesis of Science and History"
+    },
+    {
+      "id": "intro-block-13",
+      "quote": "An Interactive Playground",
+      "kind": "heading",
+      "section": "An Interactive Playground"
+    },
+    {
+      "id": "intro-block-14",
+      "quote": "This is not a book to be read passively. It is a playground for exploration:",
+      "kind": "paragraph",
+      "section": "An Interactive Playground"
+    },
+    {
+      "id": "intro-block-15",
+      "quote": "A Course That Adapts to You",
+      "kind": "heading",
+      "section": "A Course That Adapts to You"
+    },
+    {
+      "id": "intro-block-16",
+      "quote": "The fastest start: pick the type you're most like, or open the detailed settings and tune every topic by hand:",
+      "kind": "paragraph",
+      "section": "A Course That Adapts to You"
+    },
+    {
+      "id": "intro-block-17",
+      "quote": "Toggle individual topics to fine-tune (click several at once — it's pure set logic, and the page reacts live). The **tone** chips switch off whatever feels heavy in one click; sections that no longer match recede behind a soft banner that tells you *why*, partially-matching ones fade back but stay readable, and home-page tiles dim in step so you can always see what exists. Your choices are saved in a cookie and survive reloads.",
+      "kind": "paragraph",
+      "section": "A Course That Adapts to You"
+    },
+    {
+      "id": "intro-block-18",
+      "quote": "What You Will Achieve",
+      "kind": "heading",
+      "section": "What You Will Achieve"
+    },
+    {
+      "id": "intro-block-19",
+      "quote": "By the time you reach the end of this journey, you will have moved from basic arithmetic to a deep technical understanding of modern Large Language Models. You will be able to:",
+      "kind": "paragraph",
+      "section": "What You Will Achieve"
+    },
+    {
+      "id": "intro-block-20",
+      "quote": "You will see that AI is not a sudden magic invention, but the technical and philosophical culmination of centuries of human inquiry.",
+      "kind": "paragraph",
+      "section": "What You Will Achieve"
+    },
+    {
+      "id": "intro-block-21",
+      "quote": "Navigating the Ladder of Abstraction",
+      "kind": "heading",
+      "section": "Navigating the Ladder of Abstraction"
+    },
+    {
+      "id": "intro-block-22",
+      "quote": "To truly grasp the nature of Artificial Intelligence, I will move through various levels of abstraction, much like the framework described by \\citeauthor{hayakawa} — and I will train myself to climb up and down this \"ladder\" fluently:",
+      "kind": "paragraph",
+      "section": "Navigating the Ladder of Abstraction"
+    },
+    {
+      "id": "intro-block-23",
+      "quote": "This text is designed to carry you through those shifts: I constantly move from a philosophical \"why\" down to a mathematical \"how\", keeping even the most abstract concepts tied to concrete reality.",
+      "kind": "paragraph",
+      "section": "Navigating the Ladder of Abstraction"
+    },
+    {
+      "id": "intro-block-24",
+      "quote": "Disclaimer",
+      "kind": "heading",
+      "section": "Disclaimer"
+    },
+    {
+      "id": "intro-block-25",
+      "quote": "This interactive textbook was built with the help of Google Gemini, Claude, ChatGPT and other LLM systems. I've done my best to verify the code and info, but please double-check before using it in production.",
+      "kind": "paragraph",
+      "section": "Disclaimer"
+    },
+    {
+      "id": "intro-block-26",
+      "quote": "Please report Errors!",
+      "kind": "heading",
+      "section": "Please report Errors!"
+    },
+    {
+      "id": "intro-block-27",
+      "quote": "Please report errors to my email . I try my best to keep this site as factually correct as possible, but I may get things wrong or incomplete — so I am happy to get any feedback.",
+      "kind": "paragraph",
+      "section": "Please report Errors!"
     }
   ]
 }

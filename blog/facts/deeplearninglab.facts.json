@@ -449,662 +449,4298 @@
       "quote": "part: 3",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-1-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-1",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-2-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-2",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-1-before-deeplearninglab-block-2",
+      "from": "deeplearninglab-block-1",
+      "to": "deeplearninglab-block-2",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-2-related_to-deeplearninglab-block-1",
+      "from": "deeplearninglab-block-2",
+      "to": "deeplearninglab-block-1",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-3-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-3",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-2-before-deeplearninglab-block-3",
+      "from": "deeplearninglab-block-2",
+      "to": "deeplearninglab-block-3",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-4-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-4",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-3-before-deeplearninglab-block-4",
+      "from": "deeplearninglab-block-3",
+      "to": "deeplearninglab-block-4",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-4-related_to-deeplearninglab-block-3",
+      "from": "deeplearninglab-block-4",
+      "to": "deeplearninglab-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-5-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-5",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-4-before-deeplearninglab-block-5",
+      "from": "deeplearninglab-block-4",
+      "to": "deeplearninglab-block-5",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-5-related_to-deeplearninglab-block-3",
+      "from": "deeplearninglab-block-5",
+      "to": "deeplearninglab-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-6-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-6",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-5-before-deeplearninglab-block-6",
+      "from": "deeplearninglab-block-5",
+      "to": "deeplearninglab-block-6",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-6-related_to-deeplearninglab-block-3",
+      "from": "deeplearninglab-block-6",
+      "to": "deeplearninglab-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-7-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-7",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-6-before-deeplearninglab-block-7",
+      "from": "deeplearninglab-block-6",
+      "to": "deeplearninglab-block-7",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-7-related_to-deeplearninglab-block-3",
+      "from": "deeplearninglab-block-7",
+      "to": "deeplearninglab-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-8-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-8",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-7-before-deeplearninglab-block-8",
+      "from": "deeplearninglab-block-7",
+      "to": "deeplearninglab-block-8",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-8-related_to-deeplearninglab-block-3",
+      "from": "deeplearninglab-block-8",
+      "to": "deeplearninglab-block-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-9-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-9",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-8-before-deeplearninglab-block-9",
+      "from": "deeplearninglab-block-8",
+      "to": "deeplearninglab-block-9",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-10-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-10",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-9-before-deeplearninglab-block-10",
+      "from": "deeplearninglab-block-9",
+      "to": "deeplearninglab-block-10",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-10-related_to-deeplearninglab-block-9",
+      "from": "deeplearninglab-block-10",
+      "to": "deeplearninglab-block-9",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-11-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-11",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-10-before-deeplearninglab-block-11",
+      "from": "deeplearninglab-block-10",
+      "to": "deeplearninglab-block-11",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-11-related_to-deeplearninglab-block-9",
+      "from": "deeplearninglab-block-11",
+      "to": "deeplearninglab-block-9",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-12-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-12",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-11-before-deeplearninglab-block-12",
+      "from": "deeplearninglab-block-11",
+      "to": "deeplearninglab-block-12",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-12-related_to-deeplearninglab-block-9",
+      "from": "deeplearninglab-block-12",
+      "to": "deeplearninglab-block-9",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-13-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-13",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-12-before-deeplearninglab-block-13",
+      "from": "deeplearninglab-block-12",
+      "to": "deeplearninglab-block-13",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-13-related_to-deeplearninglab-block-9",
+      "from": "deeplearninglab-block-13",
+      "to": "deeplearninglab-block-9",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-14-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-14",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-13-before-deeplearninglab-block-14",
+      "from": "deeplearninglab-block-13",
+      "to": "deeplearninglab-block-14",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-14-related_to-deeplearninglab-block-9",
+      "from": "deeplearninglab-block-14",
+      "to": "deeplearninglab-block-9",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-15-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-15",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-14-before-deeplearninglab-block-15",
+      "from": "deeplearninglab-block-14",
+      "to": "deeplearninglab-block-15",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-15-related_to-deeplearninglab-block-9",
+      "from": "deeplearninglab-block-15",
+      "to": "deeplearninglab-block-9",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-16-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-16",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-15-before-deeplearninglab-block-16",
+      "from": "deeplearninglab-block-15",
+      "to": "deeplearninglab-block-16",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-16-related_to-deeplearninglab-block-9",
+      "from": "deeplearninglab-block-16",
+      "to": "deeplearninglab-block-9",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-17-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-17",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-16-before-deeplearninglab-block-17",
+      "from": "deeplearninglab-block-16",
+      "to": "deeplearninglab-block-17",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-17-related_to-deeplearninglab-block-9",
+      "from": "deeplearninglab-block-17",
+      "to": "deeplearninglab-block-9",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-18-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-18",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-17-before-deeplearninglab-block-18",
+      "from": "deeplearninglab-block-17",
+      "to": "deeplearninglab-block-18",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-19-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-19",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-18-before-deeplearninglab-block-19",
+      "from": "deeplearninglab-block-18",
+      "to": "deeplearninglab-block-19",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-19-related_to-deeplearninglab-block-18",
+      "from": "deeplearninglab-block-19",
+      "to": "deeplearninglab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-20-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-20",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-19-before-deeplearninglab-block-20",
+      "from": "deeplearninglab-block-19",
+      "to": "deeplearninglab-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-20-related_to-deeplearninglab-block-18",
+      "from": "deeplearninglab-block-20",
+      "to": "deeplearninglab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-21-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-21",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-20-before-deeplearninglab-block-21",
+      "from": "deeplearninglab-block-20",
+      "to": "deeplearninglab-block-21",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-21-related_to-deeplearninglab-block-18",
+      "from": "deeplearninglab-block-21",
+      "to": "deeplearninglab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-22-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-22",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-21-before-deeplearninglab-block-22",
+      "from": "deeplearninglab-block-21",
+      "to": "deeplearninglab-block-22",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-22-related_to-deeplearninglab-block-18",
+      "from": "deeplearninglab-block-22",
+      "to": "deeplearninglab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-23-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-23",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-22-before-deeplearninglab-block-23",
+      "from": "deeplearninglab-block-22",
+      "to": "deeplearninglab-block-23",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-23-related_to-deeplearninglab-block-18",
+      "from": "deeplearninglab-block-23",
+      "to": "deeplearninglab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-24-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-24",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-23-before-deeplearninglab-block-24",
+      "from": "deeplearninglab-block-23",
+      "to": "deeplearninglab-block-24",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-24-related_to-deeplearninglab-block-18",
+      "from": "deeplearninglab-block-24",
+      "to": "deeplearninglab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-25-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-25",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-24-before-deeplearninglab-block-25",
+      "from": "deeplearninglab-block-24",
+      "to": "deeplearninglab-block-25",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-25-related_to-deeplearninglab-block-18",
+      "from": "deeplearninglab-block-25",
+      "to": "deeplearninglab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-26-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-26",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-25-before-deeplearninglab-block-26",
+      "from": "deeplearninglab-block-25",
+      "to": "deeplearninglab-block-26",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-26-related_to-deeplearninglab-block-18",
+      "from": "deeplearninglab-block-26",
+      "to": "deeplearninglab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-27-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-27",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-26-before-deeplearninglab-block-27",
+      "from": "deeplearninglab-block-26",
+      "to": "deeplearninglab-block-27",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-27-related_to-deeplearninglab-block-18",
+      "from": "deeplearninglab-block-27",
+      "to": "deeplearninglab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-28-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-28",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-27-before-deeplearninglab-block-28",
+      "from": "deeplearninglab-block-27",
+      "to": "deeplearninglab-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-28-related_to-deeplearninglab-block-18",
+      "from": "deeplearninglab-block-28",
+      "to": "deeplearninglab-block-18",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-29-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-29",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-28-before-deeplearninglab-block-29",
+      "from": "deeplearninglab-block-28",
+      "to": "deeplearninglab-block-29",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-30-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-30",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-29-before-deeplearninglab-block-30",
+      "from": "deeplearninglab-block-29",
+      "to": "deeplearninglab-block-30",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-30-related_to-deeplearninglab-block-29",
+      "from": "deeplearninglab-block-30",
+      "to": "deeplearninglab-block-29",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-31-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-31",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-30-before-deeplearninglab-block-31",
+      "from": "deeplearninglab-block-30",
+      "to": "deeplearninglab-block-31",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-32-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-32",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-31-before-deeplearninglab-block-32",
+      "from": "deeplearninglab-block-31",
+      "to": "deeplearninglab-block-32",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-32-related_to-deeplearninglab-block-31",
+      "from": "deeplearninglab-block-32",
+      "to": "deeplearninglab-block-31",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-33-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-33",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-32-before-deeplearninglab-block-33",
+      "from": "deeplearninglab-block-32",
+      "to": "deeplearninglab-block-33",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-34-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-34",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-33-before-deeplearninglab-block-34",
+      "from": "deeplearninglab-block-33",
+      "to": "deeplearninglab-block-34",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-34-related_to-deeplearninglab-block-33",
+      "from": "deeplearninglab-block-34",
+      "to": "deeplearninglab-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-35-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-35",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-34-before-deeplearninglab-block-35",
+      "from": "deeplearninglab-block-34",
+      "to": "deeplearninglab-block-35",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-35-related_to-deeplearninglab-block-33",
+      "from": "deeplearninglab-block-35",
+      "to": "deeplearninglab-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-36-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-36",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-35-before-deeplearninglab-block-36",
+      "from": "deeplearninglab-block-35",
+      "to": "deeplearninglab-block-36",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-37-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-37",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-36-before-deeplearninglab-block-37",
+      "from": "deeplearninglab-block-36",
+      "to": "deeplearninglab-block-37",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-37-related_to-deeplearninglab-block-36",
+      "from": "deeplearninglab-block-37",
+      "to": "deeplearninglab-block-36",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-38-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-38",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-37-before-deeplearninglab-block-38",
+      "from": "deeplearninglab-block-37",
+      "to": "deeplearninglab-block-38",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-38-related_to-deeplearninglab-block-36",
+      "from": "deeplearninglab-block-38",
+      "to": "deeplearninglab-block-36",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-39-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-39",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-38-before-deeplearninglab-block-39",
+      "from": "deeplearninglab-block-38",
+      "to": "deeplearninglab-block-39",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-39-related_to-deeplearninglab-block-36",
+      "from": "deeplearninglab-block-39",
+      "to": "deeplearninglab-block-36",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-40-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-40",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-39-before-deeplearninglab-block-40",
+      "from": "deeplearninglab-block-39",
+      "to": "deeplearninglab-block-40",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-40-related_to-deeplearninglab-block-36",
+      "from": "deeplearninglab-block-40",
+      "to": "deeplearninglab-block-36",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-41-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-41",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-40-before-deeplearninglab-block-41",
+      "from": "deeplearninglab-block-40",
+      "to": "deeplearninglab-block-41",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-41-related_to-deeplearninglab-block-36",
+      "from": "deeplearninglab-block-41",
+      "to": "deeplearninglab-block-36",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-42-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-42",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-41-before-deeplearninglab-block-42",
+      "from": "deeplearninglab-block-41",
+      "to": "deeplearninglab-block-42",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-43-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-43",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-42-before-deeplearninglab-block-43",
+      "from": "deeplearninglab-block-42",
+      "to": "deeplearninglab-block-43",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-43-related_to-deeplearninglab-block-42",
+      "from": "deeplearninglab-block-43",
+      "to": "deeplearninglab-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-44-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-44",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-43-before-deeplearninglab-block-44",
+      "from": "deeplearninglab-block-43",
+      "to": "deeplearninglab-block-44",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-44-related_to-deeplearninglab-block-42",
+      "from": "deeplearninglab-block-44",
+      "to": "deeplearninglab-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-45-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-45",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-44-before-deeplearninglab-block-45",
+      "from": "deeplearninglab-block-44",
+      "to": "deeplearninglab-block-45",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-45-related_to-deeplearninglab-block-42",
+      "from": "deeplearninglab-block-45",
+      "to": "deeplearninglab-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-46-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-46",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-45-before-deeplearninglab-block-46",
+      "from": "deeplearninglab-block-45",
+      "to": "deeplearninglab-block-46",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-47-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-47",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-46-before-deeplearninglab-block-47",
+      "from": "deeplearninglab-block-46",
+      "to": "deeplearninglab-block-47",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-47-related_to-deeplearninglab-block-46",
+      "from": "deeplearninglab-block-47",
+      "to": "deeplearninglab-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-48-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-48",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-47-before-deeplearninglab-block-48",
+      "from": "deeplearninglab-block-47",
+      "to": "deeplearninglab-block-48",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-48-related_to-deeplearninglab-block-46",
+      "from": "deeplearninglab-block-48",
+      "to": "deeplearninglab-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-49-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-49",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-48-before-deeplearninglab-block-49",
+      "from": "deeplearninglab-block-48",
+      "to": "deeplearninglab-block-49",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-49-related_to-deeplearninglab-block-46",
+      "from": "deeplearninglab-block-49",
+      "to": "deeplearninglab-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-50-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-50",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-49-before-deeplearninglab-block-50",
+      "from": "deeplearninglab-block-49",
+      "to": "deeplearninglab-block-50",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-50-related_to-deeplearninglab-block-46",
+      "from": "deeplearninglab-block-50",
+      "to": "deeplearninglab-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-51-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-51",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-50-before-deeplearninglab-block-51",
+      "from": "deeplearninglab-block-50",
+      "to": "deeplearninglab-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-52-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-52",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-51-before-deeplearninglab-block-52",
+      "from": "deeplearninglab-block-51",
+      "to": "deeplearninglab-block-52",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-52-related_to-deeplearninglab-block-51",
+      "from": "deeplearninglab-block-52",
+      "to": "deeplearninglab-block-51",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-53-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-53",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-52-before-deeplearninglab-block-53",
+      "from": "deeplearninglab-block-52",
+      "to": "deeplearninglab-block-53",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-53-related_to-deeplearninglab-block-51",
+      "from": "deeplearninglab-block-53",
+      "to": "deeplearninglab-block-51",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-54-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-54",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-53-before-deeplearninglab-block-54",
+      "from": "deeplearninglab-block-53",
+      "to": "deeplearninglab-block-54",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-54-related_to-deeplearninglab-block-51",
+      "from": "deeplearninglab-block-54",
+      "to": "deeplearninglab-block-51",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-55-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-55",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-54-before-deeplearninglab-block-55",
+      "from": "deeplearninglab-block-54",
+      "to": "deeplearninglab-block-55",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-55-related_to-deeplearninglab-block-51",
+      "from": "deeplearninglab-block-55",
+      "to": "deeplearninglab-block-51",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-56-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-56",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-55-before-deeplearninglab-block-56",
+      "from": "deeplearninglab-block-55",
+      "to": "deeplearninglab-block-56",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-57-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-57",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-56-before-deeplearninglab-block-57",
+      "from": "deeplearninglab-block-56",
+      "to": "deeplearninglab-block-57",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-57-related_to-deeplearninglab-block-56",
+      "from": "deeplearninglab-block-57",
+      "to": "deeplearninglab-block-56",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-58-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-58",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-57-before-deeplearninglab-block-58",
+      "from": "deeplearninglab-block-57",
+      "to": "deeplearninglab-block-58",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-58-related_to-deeplearninglab-block-56",
+      "from": "deeplearninglab-block-58",
+      "to": "deeplearninglab-block-56",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-59-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-59",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-58-before-deeplearninglab-block-59",
+      "from": "deeplearninglab-block-58",
+      "to": "deeplearninglab-block-59",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-59-related_to-deeplearninglab-block-56",
+      "from": "deeplearninglab-block-59",
+      "to": "deeplearninglab-block-56",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-60-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-60",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-59-before-deeplearninglab-block-60",
+      "from": "deeplearninglab-block-59",
+      "to": "deeplearninglab-block-60",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-60-related_to-deeplearninglab-block-56",
+      "from": "deeplearninglab-block-60",
+      "to": "deeplearninglab-block-56",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-61-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-61",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-60-before-deeplearninglab-block-61",
+      "from": "deeplearninglab-block-60",
+      "to": "deeplearninglab-block-61",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-61-related_to-deeplearninglab-block-56",
+      "from": "deeplearninglab-block-61",
+      "to": "deeplearninglab-block-56",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-62-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-62",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-61-before-deeplearninglab-block-62",
+      "from": "deeplearninglab-block-61",
+      "to": "deeplearninglab-block-62",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-63-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-63",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-62-before-deeplearninglab-block-63",
+      "from": "deeplearninglab-block-62",
+      "to": "deeplearninglab-block-63",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-63-related_to-deeplearninglab-block-62",
+      "from": "deeplearninglab-block-63",
+      "to": "deeplearninglab-block-62",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-64-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-64",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-63-before-deeplearninglab-block-64",
+      "from": "deeplearninglab-block-63",
+      "to": "deeplearninglab-block-64",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-64-related_to-deeplearninglab-block-62",
+      "from": "deeplearninglab-block-64",
+      "to": "deeplearninglab-block-62",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-65-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-65",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-64-before-deeplearninglab-block-65",
+      "from": "deeplearninglab-block-64",
+      "to": "deeplearninglab-block-65",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-65-related_to-deeplearninglab-block-62",
+      "from": "deeplearninglab-block-65",
+      "to": "deeplearninglab-block-62",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-66-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-66",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-65-before-deeplearninglab-block-66",
+      "from": "deeplearninglab-block-65",
+      "to": "deeplearninglab-block-66",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-66-related_to-deeplearninglab-block-62",
+      "from": "deeplearninglab-block-66",
+      "to": "deeplearninglab-block-62",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-67-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-67",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-66-before-deeplearninglab-block-67",
+      "from": "deeplearninglab-block-66",
+      "to": "deeplearninglab-block-67",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-67-related_to-deeplearninglab-block-62",
+      "from": "deeplearninglab-block-67",
+      "to": "deeplearninglab-block-62",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-68-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-68",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-67-before-deeplearninglab-block-68",
+      "from": "deeplearninglab-block-67",
+      "to": "deeplearninglab-block-68",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-68-related_to-deeplearninglab-block-62",
+      "from": "deeplearninglab-block-68",
+      "to": "deeplearninglab-block-62",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-69-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-69",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-68-before-deeplearninglab-block-69",
+      "from": "deeplearninglab-block-68",
+      "to": "deeplearninglab-block-69",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-69-related_to-deeplearninglab-block-62",
+      "from": "deeplearninglab-block-69",
+      "to": "deeplearninglab-block-62",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-70-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-70",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-69-before-deeplearninglab-block-70",
+      "from": "deeplearninglab-block-69",
+      "to": "deeplearninglab-block-70",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-71-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-71",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-70-before-deeplearninglab-block-71",
+      "from": "deeplearninglab-block-70",
+      "to": "deeplearninglab-block-71",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-71-related_to-deeplearninglab-block-70",
+      "from": "deeplearninglab-block-71",
+      "to": "deeplearninglab-block-70",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-72-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-72",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-71-before-deeplearninglab-block-72",
+      "from": "deeplearninglab-block-71",
+      "to": "deeplearninglab-block-72",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-72-related_to-deeplearninglab-block-70",
+      "from": "deeplearninglab-block-72",
+      "to": "deeplearninglab-block-70",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-73-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-73",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-72-before-deeplearninglab-block-73",
+      "from": "deeplearninglab-block-72",
+      "to": "deeplearninglab-block-73",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-73-related_to-deeplearninglab-block-70",
+      "from": "deeplearninglab-block-73",
+      "to": "deeplearninglab-block-70",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-74-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-74",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-73-before-deeplearninglab-block-74",
+      "from": "deeplearninglab-block-73",
+      "to": "deeplearninglab-block-74",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-74-related_to-deeplearninglab-block-70",
+      "from": "deeplearninglab-block-74",
+      "to": "deeplearninglab-block-70",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-75-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-75",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-74-before-deeplearninglab-block-75",
+      "from": "deeplearninglab-block-74",
+      "to": "deeplearninglab-block-75",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-75-related_to-deeplearninglab-block-70",
+      "from": "deeplearninglab-block-75",
+      "to": "deeplearninglab-block-70",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-76-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-76",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-75-before-deeplearninglab-block-76",
+      "from": "deeplearninglab-block-75",
+      "to": "deeplearninglab-block-76",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-76-related_to-deeplearninglab-block-70",
+      "from": "deeplearninglab-block-76",
+      "to": "deeplearninglab-block-70",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-77-part_of-deeplearninglab",
+      "from": "deeplearninglab-block-77",
+      "to": "deeplearninglab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-76-before-deeplearninglab-block-77",
+      "from": "deeplearninglab-block-76",
+      "to": "deeplearninglab-block-77",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-block-77-related_to-deeplearninglab-block-70",
+      "from": "deeplearninglab-block-77",
+      "to": "deeplearninglab-block-70",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-1-part_of-deeplearninglab-block-2",
+      "from": "deeplearninglab-stmt-1",
+      "to": "deeplearninglab-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-2-part_of-deeplearninglab-block-2",
+      "from": "deeplearninglab-stmt-2",
+      "to": "deeplearninglab-block-2",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-3-part_of-deeplearninglab-block-4",
+      "from": "deeplearninglab-stmt-3",
+      "to": "deeplearninglab-block-4",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-4-part_of-deeplearninglab-block-5",
+      "from": "deeplearninglab-stmt-4",
+      "to": "deeplearninglab-block-5",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-5-part_of-deeplearninglab-block-6",
+      "from": "deeplearninglab-stmt-5",
+      "to": "deeplearninglab-block-6",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-6-part_of-deeplearninglab-block-7",
+      "from": "deeplearninglab-stmt-6",
+      "to": "deeplearninglab-block-7",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-7-part_of-deeplearninglab-block-8",
+      "from": "deeplearninglab-stmt-7",
+      "to": "deeplearninglab-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-8-part_of-deeplearninglab-block-10",
+      "from": "deeplearninglab-stmt-8",
+      "to": "deeplearninglab-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-9-part_of-deeplearninglab-block-10",
+      "from": "deeplearninglab-stmt-9",
+      "to": "deeplearninglab-block-10",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-10-part_of-deeplearninglab-block-11",
+      "from": "deeplearninglab-stmt-10",
+      "to": "deeplearninglab-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-11-part_of-deeplearninglab-block-11",
+      "from": "deeplearninglab-stmt-11",
+      "to": "deeplearninglab-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-12-part_of-deeplearninglab-block-12",
+      "from": "deeplearninglab-stmt-12",
+      "to": "deeplearninglab-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-13-part_of-deeplearninglab-block-13",
+      "from": "deeplearninglab-stmt-13",
+      "to": "deeplearninglab-block-13",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-14-part_of-deeplearninglab-block-14",
+      "from": "deeplearninglab-stmt-14",
+      "to": "deeplearninglab-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-15-part_of-deeplearninglab-block-14",
+      "from": "deeplearninglab-stmt-15",
+      "to": "deeplearninglab-block-14",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-16-part_of-deeplearninglab-block-15",
+      "from": "deeplearninglab-stmt-16",
+      "to": "deeplearninglab-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-17-part_of-deeplearninglab-block-15",
+      "from": "deeplearninglab-stmt-17",
+      "to": "deeplearninglab-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-18-part_of-deeplearninglab-block-16",
+      "from": "deeplearninglab-stmt-18",
+      "to": "deeplearninglab-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-19-part_of-deeplearninglab-block-16",
+      "from": "deeplearninglab-stmt-19",
+      "to": "deeplearninglab-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-20-part_of-deeplearninglab-block-17",
+      "from": "deeplearninglab-stmt-20",
+      "to": "deeplearninglab-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-21-part_of-deeplearninglab-block-17",
+      "from": "deeplearninglab-stmt-21",
+      "to": "deeplearninglab-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-22-part_of-deeplearninglab-block-19",
+      "from": "deeplearninglab-stmt-22",
+      "to": "deeplearninglab-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-23-part_of-deeplearninglab-block-19",
+      "from": "deeplearninglab-stmt-23",
+      "to": "deeplearninglab-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-24-part_of-deeplearninglab-block-19",
+      "from": "deeplearninglab-stmt-24",
+      "to": "deeplearninglab-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-25-part_of-deeplearninglab-block-19",
+      "from": "deeplearninglab-stmt-25",
+      "to": "deeplearninglab-block-19",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-26-part_of-deeplearninglab-block-20",
+      "from": "deeplearninglab-stmt-26",
+      "to": "deeplearninglab-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-27-part_of-deeplearninglab-block-20",
+      "from": "deeplearninglab-stmt-27",
+      "to": "deeplearninglab-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-28-part_of-deeplearninglab-block-21",
+      "from": "deeplearninglab-stmt-28",
+      "to": "deeplearninglab-block-21",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-29-part_of-deeplearninglab-block-22",
+      "from": "deeplearninglab-stmt-29",
+      "to": "deeplearninglab-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-30-part_of-deeplearninglab-block-23",
+      "from": "deeplearninglab-stmt-30",
+      "to": "deeplearninglab-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-31-part_of-deeplearninglab-block-26",
+      "from": "deeplearninglab-stmt-31",
+      "to": "deeplearninglab-block-26",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-32-part_of-deeplearninglab-block-27",
+      "from": "deeplearninglab-stmt-32",
+      "to": "deeplearninglab-block-27",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-33-part_of-deeplearninglab-block-28",
+      "from": "deeplearninglab-stmt-33",
+      "to": "deeplearninglab-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-34-part_of-deeplearninglab-block-30",
+      "from": "deeplearninglab-stmt-34",
+      "to": "deeplearninglab-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-35-part_of-deeplearninglab-block-30",
+      "from": "deeplearninglab-stmt-35",
+      "to": "deeplearninglab-block-30",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-36-part_of-deeplearninglab-block-32",
+      "from": "deeplearninglab-stmt-36",
+      "to": "deeplearninglab-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-37-part_of-deeplearninglab-block-32",
+      "from": "deeplearninglab-stmt-37",
+      "to": "deeplearninglab-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-38-part_of-deeplearninglab-block-32",
+      "from": "deeplearninglab-stmt-38",
+      "to": "deeplearninglab-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-39-part_of-deeplearninglab-block-32",
+      "from": "deeplearninglab-stmt-39",
+      "to": "deeplearninglab-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-40-part_of-deeplearninglab-block-32",
+      "from": "deeplearninglab-stmt-40",
+      "to": "deeplearninglab-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-41-part_of-deeplearninglab-block-32",
+      "from": "deeplearninglab-stmt-41",
+      "to": "deeplearninglab-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-42-part_of-deeplearninglab-block-32",
+      "from": "deeplearninglab-stmt-42",
+      "to": "deeplearninglab-block-32",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-43-part_of-deeplearninglab-block-35",
+      "from": "deeplearninglab-stmt-43",
+      "to": "deeplearninglab-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-44-part_of-deeplearninglab-block-35",
+      "from": "deeplearninglab-stmt-44",
+      "to": "deeplearninglab-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-45-part_of-deeplearninglab-block-35",
+      "from": "deeplearninglab-stmt-45",
+      "to": "deeplearninglab-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-46-part_of-deeplearninglab-block-37",
+      "from": "deeplearninglab-stmt-46",
+      "to": "deeplearninglab-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-47-part_of-deeplearninglab-block-37",
+      "from": "deeplearninglab-stmt-47",
+      "to": "deeplearninglab-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-48-part_of-deeplearninglab-block-37",
+      "from": "deeplearninglab-stmt-48",
+      "to": "deeplearninglab-block-37",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-49-part_of-deeplearninglab-block-38",
+      "from": "deeplearninglab-stmt-49",
+      "to": "deeplearninglab-block-38",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-50-part_of-deeplearninglab-block-39",
+      "from": "deeplearninglab-stmt-50",
+      "to": "deeplearninglab-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-51-part_of-deeplearninglab-block-40",
+      "from": "deeplearninglab-stmt-51",
+      "to": "deeplearninglab-block-40",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-52-part_of-deeplearninglab-block-41",
+      "from": "deeplearninglab-stmt-52",
+      "to": "deeplearninglab-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-53-part_of-deeplearninglab-block-41",
+      "from": "deeplearninglab-stmt-53",
+      "to": "deeplearninglab-block-41",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-54-part_of-deeplearninglab-block-43",
+      "from": "deeplearninglab-stmt-54",
+      "to": "deeplearninglab-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-55-part_of-deeplearninglab-block-44",
+      "from": "deeplearninglab-stmt-55",
+      "to": "deeplearninglab-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-56-part_of-deeplearninglab-block-44",
+      "from": "deeplearninglab-stmt-56",
+      "to": "deeplearninglab-block-44",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-57-part_of-deeplearninglab-block-45",
+      "from": "deeplearninglab-stmt-57",
+      "to": "deeplearninglab-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-58-part_of-deeplearninglab-block-45",
+      "from": "deeplearninglab-stmt-58",
+      "to": "deeplearninglab-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-59-part_of-deeplearninglab-block-45",
+      "from": "deeplearninglab-stmt-59",
+      "to": "deeplearninglab-block-45",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-60-part_of-deeplearninglab-block-47",
+      "from": "deeplearninglab-stmt-60",
+      "to": "deeplearninglab-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-61-part_of-deeplearninglab-block-47",
+      "from": "deeplearninglab-stmt-61",
+      "to": "deeplearninglab-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-62-part_of-deeplearninglab-block-47",
+      "from": "deeplearninglab-stmt-62",
+      "to": "deeplearninglab-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-63-part_of-deeplearninglab-block-47",
+      "from": "deeplearninglab-stmt-63",
+      "to": "deeplearninglab-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-64-part_of-deeplearninglab-block-48",
+      "from": "deeplearninglab-stmt-64",
+      "to": "deeplearninglab-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-65-part_of-deeplearninglab-block-48",
+      "from": "deeplearninglab-stmt-65",
+      "to": "deeplearninglab-block-48",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-66-part_of-deeplearninglab-block-49",
+      "from": "deeplearninglab-stmt-66",
+      "to": "deeplearninglab-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-67-part_of-deeplearninglab-block-50",
+      "from": "deeplearninglab-stmt-67",
+      "to": "deeplearninglab-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-68-part_of-deeplearninglab-block-50",
+      "from": "deeplearninglab-stmt-68",
+      "to": "deeplearninglab-block-50",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-69-part_of-deeplearninglab-block-52",
+      "from": "deeplearninglab-stmt-69",
+      "to": "deeplearninglab-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-70-part_of-deeplearninglab-block-52",
+      "from": "deeplearninglab-stmt-70",
+      "to": "deeplearninglab-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-71-part_of-deeplearninglab-block-52",
+      "from": "deeplearninglab-stmt-71",
+      "to": "deeplearninglab-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-72-part_of-deeplearninglab-block-53",
+      "from": "deeplearninglab-stmt-72",
+      "to": "deeplearninglab-block-53",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-73-part_of-deeplearninglab-block-54",
+      "from": "deeplearninglab-stmt-73",
+      "to": "deeplearninglab-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-74-part_of-deeplearninglab-block-54",
+      "from": "deeplearninglab-stmt-74",
+      "to": "deeplearninglab-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-75-part_of-deeplearninglab-block-55",
+      "from": "deeplearninglab-stmt-75",
+      "to": "deeplearninglab-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-76-part_of-deeplearninglab-block-55",
+      "from": "deeplearninglab-stmt-76",
+      "to": "deeplearninglab-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-77-part_of-deeplearninglab-block-57",
+      "from": "deeplearninglab-stmt-77",
+      "to": "deeplearninglab-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-78-part_of-deeplearninglab-block-57",
+      "from": "deeplearninglab-stmt-78",
+      "to": "deeplearninglab-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-79-part_of-deeplearninglab-block-57",
+      "from": "deeplearninglab-stmt-79",
+      "to": "deeplearninglab-block-57",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-80-part_of-deeplearninglab-block-58",
+      "from": "deeplearninglab-stmt-80",
+      "to": "deeplearninglab-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-81-part_of-deeplearninglab-block-58",
+      "from": "deeplearninglab-stmt-81",
+      "to": "deeplearninglab-block-58",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-82-part_of-deeplearninglab-block-59",
+      "from": "deeplearninglab-stmt-82",
+      "to": "deeplearninglab-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-83-part_of-deeplearninglab-block-59",
+      "from": "deeplearninglab-stmt-83",
+      "to": "deeplearninglab-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-84-part_of-deeplearninglab-block-60",
+      "from": "deeplearninglab-stmt-84",
+      "to": "deeplearninglab-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-85-part_of-deeplearninglab-block-60",
+      "from": "deeplearninglab-stmt-85",
+      "to": "deeplearninglab-block-60",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-86-part_of-deeplearninglab-block-61",
+      "from": "deeplearninglab-stmt-86",
+      "to": "deeplearninglab-block-61",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-87-part_of-deeplearninglab-block-63",
+      "from": "deeplearninglab-stmt-87",
+      "to": "deeplearninglab-block-63",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-88-part_of-deeplearninglab-block-64",
+      "from": "deeplearninglab-stmt-88",
+      "to": "deeplearninglab-block-64",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-89-part_of-deeplearninglab-block-65",
+      "from": "deeplearninglab-stmt-89",
+      "to": "deeplearninglab-block-65",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-90-part_of-deeplearninglab-block-66",
+      "from": "deeplearninglab-stmt-90",
+      "to": "deeplearninglab-block-66",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-91-part_of-deeplearninglab-block-67",
+      "from": "deeplearninglab-stmt-91",
+      "to": "deeplearninglab-block-67",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-92-part_of-deeplearninglab-block-68",
+      "from": "deeplearninglab-stmt-92",
+      "to": "deeplearninglab-block-68",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-93-part_of-deeplearninglab-block-69",
+      "from": "deeplearninglab-stmt-93",
+      "to": "deeplearninglab-block-69",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-94-part_of-deeplearninglab-block-69",
+      "from": "deeplearninglab-stmt-94",
+      "to": "deeplearninglab-block-69",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-95-part_of-deeplearninglab-block-71",
+      "from": "deeplearninglab-stmt-95",
+      "to": "deeplearninglab-block-71",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-96-part_of-deeplearninglab-block-71",
+      "from": "deeplearninglab-stmt-96",
+      "to": "deeplearninglab-block-71",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-97-part_of-deeplearninglab-block-72",
+      "from": "deeplearninglab-stmt-97",
+      "to": "deeplearninglab-block-72",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-deeplearninglab-stmt-98-part_of-deeplearninglab-block-77",
+      "from": "deeplearninglab-stmt-98",
+      "to": "deeplearninglab-block-77",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
     }
   ],
   "statements": [
     {
       "id": "deeplearninglab-stmt-1",
       "quote": "In the **Minimal Neuron** section, we saw that one neuron does something very simple: it multiplies its input by a weight, adds a bias, and then bends the result with an activation function.",
+      "block_id": "deeplearninglab-block-2",
       "section": "From a Single Neuron to a Deep Network",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-2",
       "quote": "A single neuron can draw *one* straight line through data, and nothing more.",
+      "block_id": "deeplearninglab-block-2",
       "section": "From a Single Neuron to a Deep Network",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-3",
-      "quote": "**Deep Learning** — a term first used in a different context by \\citeauthor{deeplearningfirstuse} (\\citeyear{deeplearningfirstuse}), reintroduced for neural networks by \\citeauthor{aizenberg2000}, and popularized after \\citeauthor{hinton2006} — is what happens when we stop using one neuron and start **stacking many of them in layers**, feeding the output of one layer as the input to the next.",
-      "section": "From a Single Neuron to a Deep Network",
+      "quote": "A single layer takes a vector of inputs $\\mathbf{x}$ and produces a vector of outputs $\\mathbf{h}$ (called a *hidden state*, because it sits between the input and the final answer):",
+      "block_id": "deeplearninglab-block-4",
+      "section": "One Layer at a Time",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-4",
-      "quote": "A single layer takes a vector of inputs $\\mathbf{x}$ and produces a vector of outputs $\\mathbf{h}$ (called a *hidden state*, because it sits between the input and the final answer):",
+      "quote": "Reading this from the inside out:",
+      "block_id": "deeplearninglab-block-5",
       "section": "One Layer at a Time",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-5",
-      "quote": "Reading this from the inside out:",
+      "quote": "- $\\mathbf{b}$ is a **bias vector**, one offset per neuron.",
+      "block_id": "deeplearninglab-block-6",
       "section": "One Layer at a Time",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-6",
-      "quote": "- $W$ is a **matrix of weights**.",
+      "quote": "- $\\sigma$ is the **activation function** (the \"bend\"), applied to each entry.",
+      "block_id": "deeplearninglab-block-7",
       "section": "One Layer at a Time",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-7",
-      "quote": "Each row is like one neuron's weights, and stacking many neurons side by side gives us a matrix instead of a single number.",
+      "quote": "Nothing exotic — just a matrix multiplication, an addition, and a bend.",
+      "block_id": "deeplearninglab-block-8",
       "section": "One Layer at a Time",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-8",
-      "quote": "Multiplying by $W$ mixes the inputs together in many different learned combinations at once.",
-      "section": "One Layer at a Time",
+      "quote": "\"Deep\" simply means: the output of one layer becomes the input of the next.",
+      "block_id": "deeplearninglab-block-10",
+      "section": "Stacking Layers = Function Composition",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-9",
-      "quote": "- $\\mathbf{b}$ is a **bias vector**, one offset per neuron.",
-      "section": "One Layer at a Time",
+      "quote": "In math, this is called **function composition**.",
+      "block_id": "deeplearninglab-block-10",
+      "section": "Stacking Layers = Function Composition",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-10",
-      "quote": "- $\\sigma$ is the **activation function** (the \"bend\"), applied to each entry.",
-      "section": "One Layer at a Time",
+      "quote": "There is a beautiful mathematical guarantee behind all of this, called the **Universal Approximation Theorem**.",
+      "block_id": "deeplearninglab-block-11",
+      "section": "Stacking Layers = Function Composition",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-11",
-      "quote": "Nothing exotic — just a matrix multiplication, an addition, and a bend.",
-      "section": "One Layer at a Time",
+      "quote": "It's actually a *family* of related results — notably \\citeauthor{cybenko1989} (\\citeyear{cybenko1989}) and \\citeauthor{hornik1989universal} (\\citeyear{hornik1989universal}) — and they all say roughly the same thing:",
+      "block_id": "deeplearninglab-block-11",
+      "section": "Stacking Layers = Function Composition",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-12",
-      "quote": "\"Deep\" simply means: the output of one layer becomes the input of the next.",
+      "quote": "> A network with just **one hidden layer** can approximate **any reasonable continuous function** as closely as you want, as long as it has enough neurons.",
+      "block_id": "deeplearninglab-block-12",
       "section": "Stacking Layers = Function Composition",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-13",
-      "quote": "In math, this is called **function composition**.",
+      "quote": "Formally, such a network computes:",
+      "block_id": "deeplearninglab-block-13",
       "section": "Stacking Layers = Function Composition",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-14",
-      "quote": "Each layer has its own weights $W_n$ and biases $\\mathbf{b}_n$.",
+      "quote": "It's an **existence** proof, not a **learning** proof.",
+      "block_id": "deeplearninglab-block-14",
       "section": "Stacking Layers = Function Composition",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-15",
-      "quote": "This stacking is what lets the network build a **ladder of features**: layer 1 might pick up simple things (edges, basic patterns), layer 2 combines those into shapes, and deeper layers combine those into full concepts (a face, a word, a chess position).",
+      "quote": "It says the right weights *exist*, not that gradient descent will find them.",
+      "block_id": "deeplearninglab-block-14",
       "section": "Stacking Layers = Function Composition",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-16",
-      "quote": "There is a beautiful mathematical guarantee behind all of this, called the **Universal Approximation Theorem**.",
+      "quote": "\"Enough neurons\" can mean *astronomically* many.",
+      "block_id": "deeplearninglab-block-15",
       "section": "Stacking Layers = Function Composition",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-17",
-      "quote": "It's actually a *family* of related results — notably \\citeauthor{cybenko1989} (\\citeyear{cybenko1989}) and \\citeauthor{hornik1989universal} (\\citeyear{hornik1989universal}) — and they all say roughly the same thing:",
+      "quote": "In practice, a shallow-but-huge network is almost never the right choice — **depth is dramatically more efficient** than width, as we'll see next.",
+      "block_id": "deeplearninglab-block-15",
       "section": "Stacking Layers = Function Composition",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-18",
-      "quote": "> A network with just **one hidden layer** can approximate **any reasonable continuous function** as closely as you want, as long as it has enough neurons.",
+      "quote": "And the cleanest modern characterization, \\citeauthor{petersen2024mathdl} (\\citeyear{petersen2024mathdl}), gives an exact *if and only if*: the one-hidden-layer network is a universal approximator **if and only if** the activation is not a polynomial.",
+      "block_id": "deeplearninglab-block-16",
       "section": "Stacking Layers = Function Composition",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-19",
-      "quote": "Formally, such a network computes:",
+      "quote": "That means sigmoid, ReLU, tanh, SiLU — every standard activation — qualifies, while no amount of width can compensate for a polynomial activation.",
+      "block_id": "deeplearninglab-block-16",
       "section": "Stacking Layers = Function Composition",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-20",
-      "quote": "which is just: take $n$ neurons, each one bends the input its own way ($\\psi$ with weights $a_j$ and threshold $\\theta_j$), then add up their outputs weighted by $\\beta_j$.",
+      "quote": "So the theorem is foundational, but it doesn't explain *why* deep networks work so well.",
+      "block_id": "deeplearninglab-block-17",
       "section": "Stacking Layers = Function Composition",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-21",
-      "quote": "If $n$ is large enough, this sum can match the shape of *any* well-behaved function.",
+      "quote": "For that, we need to look at what depth actually buys us.",
+      "block_id": "deeplearninglab-block-17",
       "section": "Stacking Layers = Function Composition",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-22",
-      "quote": "**Two important caveats**, because this theorem is often oversold:",
-      "section": "Stacking Layers = Function Composition",
+      "quote": "The ideas above become tangible when you watch a network learn.",
+      "block_id": "deeplearninglab-block-19",
+      "section": "Try it: train a network yourself",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-23",
-      "quote": "It's an **existence** proof, not a **learning** proof.",
-      "section": "Stacking Layers = Function Composition",
+      "quote": "Below is a real multilayer perceptron, trained with backpropagation and Adam right in your browser.",
+      "block_id": "deeplearninglab-block-19",
+      "section": "Try it: train a network yourself",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-24",
-      "quote": "It says the right weights *exist*, not that gradient descent will find them.",
-      "section": "Stacking Layers = Function Composition",
+      "quote": "The small squares in the diagram show what each neuron responds to: the first hidden layer learns simple straight cuts, deeper layers combine them into curves.",
+      "block_id": "deeplearninglab-block-19",
+      "section": "Try it: train a network yourself",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-25",
-      "quote": "\"Enough neurons\" can mean *astronomically* many.",
-      "section": "Stacking Layers = Function Composition",
+      "quote": "Try the circle without hidden layers, then add the feature x₁², x₂².",
+      "block_id": "deeplearninglab-block-19",
+      "section": "Try it: train a network yourself",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-26",
-      "quote": "In practice, a shallow-but-huge network is almost never the right choice — **depth is dramatically more efficient** than width, as we'll see next.",
-      "section": "Stacking Layers = Function Composition",
+      "quote": "Interactive lab Neural Network Playground A real multilayer perceptron, trained live in your browser.",
+      "block_id": "deeplearninglab-block-20",
+      "section": "Try it: train a network yourself",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-27",
-      "quote": "And the cleanest modern characterization, \\citeauthor{petersen2024mathdl} (\\citeyear{petersen2024mathdl}), gives an exact *if and only if*: the one-hidden-layer network is a universal approximator **if and only if** the activation is not a polynomial.",
-      "section": "Stacking Layers = Function Composition",
+      "quote": "Each little square shows what one neuron responds to.",
+      "block_id": "deeplearninglab-block-20",
+      "section": "Try it: train a network yourself",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-28",
-      "quote": "That means sigmoid, ReLU, tanh, SiLU — every standard activation — qualifies, while no amount of width can compensate for a polynomial activation.",
-      "section": "Stacking Layers = Function Composition",
+      "quote": "◎ Circle ✕ XOR ⁘ Clusters @ Spiral",
+      "block_id": "deeplearninglab-block-21",
+      "section": "Try it: train a network yourself",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-29",
-      "quote": "So the theorem is foundational, but it doesn't explain *why* deep networks work so well.",
-      "section": "Stacking Layers = Function Composition",
+      "quote": "show test points (dark outline)",
+      "block_id": "deeplearninglab-block-22",
+      "section": "Try it: train a network yourself",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-30",
-      "quote": "For that, we need to look at what depth actually buys us.",
-      "section": "Stacking Layers = Function Composition",
+      "quote": "Input features x₁ x₂ x₁², x₂² x₁·x₂ sin Activation tanh ReLU sigmoid Hidden layers 2",
+      "block_id": "deeplearninglab-block-23",
+      "section": "Try it: train a network yourself",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-31",
-      "quote": "The ideas above become tangible when you watch a network learn.",
+      "quote": "Learning rate (Adam) 0.03",
+      "block_id": "deeplearninglab-block-26",
       "section": "Try it: train a network yourself",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-32",
-      "quote": "Below is a real multilayer perceptron, trained with backpropagation and Adam right in your browser.",
+      "quote": "▶ Train +1 epoch ↺ New weights",
+      "block_id": "deeplearninglab-block-27",
       "section": "Try it: train a network yourself",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-33",
-      "quote": "The small squares in the diagram show what each neuron responds to: the first hidden layer learns simple straight cuts, deeper layers combine them into curves.",
+      "quote": "Epoch 0 Train loss – Test loss – Test accuracy –",
+      "block_id": "deeplearninglab-block-28",
       "section": "Try it: train a network yourself",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-34",
-      "quote": "Try the circle without hidden layers, then add the feature x₁², x₂².",
-      "section": "Try it: train a network yourself",
+      "quote": "Here's the honest, mechanical answer to why \"a big pile of matrix multiplications\" ends up being able to translate languages, recognize faces, and play chess better than any human.",
+      "block_id": "deeplearninglab-block-30",
+      "section": "Why Deep Learning Works (And Why It Works *So* Well)",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-35",
-      "quote": "Here's the honest, mechanical answer to why \"a big pile of matrix multiplications\" ends up being able to translate languages, recognize faces, and play chess better than any human.",
+      "quote": "It comes down to four ingredients working together: **depth**, **nonlinearity**, **backpropagation**, and the **optimizer's hidden preferences**.",
+      "block_id": "deeplearninglab-block-30",
       "section": "Why Deep Learning Works (And Why It Works *So* Well)",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-36",
-      "quote": "It comes down to four ingredients working together: **depth**, **nonlinearity**, **backpropagation**, and the **optimizer's hidden preferences**.",
-      "section": "Why Deep Learning Works (And Why It Works *So* Well)",
+      "quote": "A deep network is a **composition of many simple functions**.",
+      "block_id": "deeplearninglab-block-32",
+      "section": "The One-Paragraph Answer",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-37",
-      "quote": "A deep network is a **composition of many simple functions**.",
+      "quote": "Each function (a \"layer\") is a matrix multiplication followed by a small bend.",
+      "block_id": "deeplearninglab-block-32",
       "section": "The One-Paragraph Answer",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-38",
-      "quote": "Each function (a \"layer\") is a matrix multiplication followed by a small bend.",
+      "quote": "On its own, one layer is powerless — it can only mix, rotate, and scale.",
+      "block_id": "deeplearninglab-block-32",
       "section": "The One-Paragraph Answer",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-39",
-      "quote": "On its own, one layer is powerless — it can only mix, rotate, and scale.",
+      "quote": "But **chained together, simple steps stack into arbitrarily complex ones**.",
+      "block_id": "deeplearninglab-block-32",
       "section": "The One-Paragraph Answer",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-40",
-      "quote": "But **chained together, simple steps stack into arbitrarily complex ones**.",
+      "quote": "Then **training** (forward pass → measure error → **backprop** → **optimizer step**) tunes the weights until the whole composition implements the right input-to-output map.",
+      "block_id": "deeplearninglab-block-32",
       "section": "The One-Paragraph Answer",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-41",
-      "quote": "Then **training** (forward pass → measure error → **backprop** → **optimizer step**) tunes the weights until the whole composition implements the right input-to-output map.",
+      "quote": "The \"storage\" of knowledge is nothing more than the final tuned weights.",
+      "block_id": "deeplearninglab-block-32",
       "section": "The One-Paragraph Answer",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-42",
-      "quote": "The \"storage\" of knowledge is nothing more than the final tuned weights.",
+      "quote": "Depth gives us **expressivity**, the nonlinearity prevents **collapse**, backprop provides an **efficient learning signal**, and the optimizer has a built-in **bias toward simple, generalizing solutions** rather than memorization.",
+      "block_id": "deeplearninglab-block-32",
       "section": "The One-Paragraph Answer",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-43",
-      "quote": "Depth gives us **expressivity**, the nonlinearity prevents **collapse**, backprop provides an **efficient learning signal**, and the optimizer has a built-in **bias toward simple, generalizing solutions** rather than memorization.",
-      "section": "The One-Paragraph Answer",
+      "quote": "The nonlinearity **prevents that collapse**.",
+      "block_id": "deeplearninglab-block-35",
+      "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-44",
-      "quote": "A deep network with $L$ layers just feeds each layer's output into the next:",
+      "quote": "Each $\\sigma$ re-bends the space, so the next matrix multiplies something that has *already been transformed*.",
+      "block_id": "deeplearninglab-block-35",
       "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-45",
-      "quote": "**Here's the crucial part.** If you removed the bend $\\sigma$, the whole stack collapses:",
+      "quote": "Depth alone isn't the power — **depth with a bend in between** is.",
+      "block_id": "deeplearninglab-block-35",
       "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-46",
-      "quote": "A stack of pure linear layers is **mathematically identical to one linear layer**.",
-      "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
+      "quote": "The mechanical reason depth is so effective is **reuse**.",
+      "block_id": "deeplearninglab-block-37",
+      "section": "Why Depth Beats Width: Reuse",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-47",
-      "quote": "No matter how deep, it can only draw straight lines.",
-      "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
+      "quote": "A sub-result computed by an early layer is reused by everything downstream.",
+      "block_id": "deeplearninglab-block-37",
+      "section": "Why Depth Beats Width: Reuse",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-48",
-      "quote": "It cannot compute $x^2$, it cannot solve XOR, it cannot tell a cat from a dog.",
-      "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
+      "quote": "Depth turns \"compute, throw away, recompute\" into \"compute once, reuse everywhere.\"",
+      "block_id": "deeplearninglab-block-37",
+      "section": "Why Depth Beats Width: Reuse",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-49",
-      "quote": "The nonlinearity **prevents that collapse**.",
-      "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
+      "quote": "- A **shallow** (2-layer) network needs roughly $2^n$ neurons to capture this — **exponential** growth.",
+      "block_id": "deeplearninglab-block-38",
+      "section": "Why Depth Beats Width: Reuse",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-50",
-      "quote": "Each $\\sigma$ re-bends the space, so the next matrix multiplies something that has *already been transformed*.",
-      "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
+      "quote": "- Layer 1: edges, simple patterns.",
+      "block_id": "deeplearninglab-block-39",
+      "section": "Why Depth Beats Width: Reuse",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-51",
-      "quote": "Depth alone isn't the power — **depth with a bend in between** is.",
-      "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
+      "quote": "- Layer 2: patterns *made of* layer-1 patterns (corners, textures).",
+      "block_id": "deeplearninglab-block-40",
+      "section": "Why Depth Beats Width: Reuse",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-52",
-      "quote": "The mechanical reason depth is so effective is **reuse**.",
+      "quote": "This matches how **the real world is structured**: pixels → edges → parts → objects; sounds → phonemes → words → meaning.",
+      "block_id": "deeplearninglab-block-41",
       "section": "Why Depth Beats Width: Reuse",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-53",
-      "quote": "A sub-result computed by an early layer is reused by everything downstream.",
+      "quote": "Deep networks are compact for the same reason: the world itself is compositional.",
+      "block_id": "deeplearninglab-block-41",
       "section": "Why Depth Beats Width: Reuse",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-54",
-      "quote": "Depth turns \"compute, throw away, recompute\" into \"compute once, reuse everywhere.\"",
-      "section": "Why Depth Beats Width: Reuse",
+      "quote": "Before training, the weights are random and the network's output is garbage.",
+      "block_id": "deeplearninglab-block-43",
+      "section": "How the Knowledge Gets Into the Weights",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-55",
-      "quote": "**A concrete example.** Suppose we want to check \"is a point inside an $n$-dimensional unit box?\" — meaning each coordinate must be in $(0,1)$.",
-      "section": "Why Depth Beats Width: Reuse",
+      "quote": "The clever part is that backprop **reuses intermediate results**, walking the error signal *backward* through the network.",
+      "block_id": "deeplearninglab-block-44",
+      "section": "How the Knowledge Gets Into the Weights",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-56",
-      "quote": "- A **shallow** (2-layer) network needs roughly $2^n$ neurons to capture this — **exponential** growth.",
-      "section": "Why Depth Beats Width: Reuse",
+      "quote": "What would naively be exponential bookkeeping becomes **linear in the number of layers**.",
+      "block_id": "deeplearninglab-block-44",
+      "section": "How the Knowledge Gets Into the Weights",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-57",
-      "quote": "- A **deep** network with $n$ layers of just a few neurons each does it in $O(n)$ total neurons.",
-      "section": "Why Depth Beats Width: Reuse",
+      "quote": "Repeat millions of times.",
+      "block_id": "deeplearninglab-block-45",
+      "section": "How the Knowledge Gets Into the Weights",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-58",
-      "quote": "Each layer checks one coordinate and multiplies by the running result from the previous layer.",
-      "section": "Why Depth Beats Width: Reuse",
+      "quote": "The **trajectory of the weights through weight-space** is literally what writes the knowledge into the matrices.",
+      "block_id": "deeplearninglab-block-45",
+      "section": "How the Knowledge Gets Into the Weights",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-59",
-      "quote": "This isn't a fluke: \\citeauthor{telgarsky2016wars} proved there exist functions a deep net represents with $O(n)$ neurons that a shallow net needs $2^{\\Omega(n)}$ neurons to match.",
-      "section": "Why Depth Beats Width: Reuse",
+      "quote": "There is no separate memory — the knowledge *is* the final numbers.",
+      "block_id": "deeplearninglab-block-45",
+      "section": "How the Knowledge Gets Into the Weights",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-60",
-      "quote": "And \\citeauthor{montufar2014regions} showed that the number of distinct \"linear regions\" a ReLU network can carve out **grows exponentially with depth** — the compositional structure is exactly what buys the exponential expressivity.",
-      "section": "Why Depth Beats Width: Reuse",
+      "quote": "There's a practical problem with stacking many layers.",
+      "block_id": "deeplearninglab-block-47",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-61",
-      "quote": "And the bound is **tight**: a depth-$L$ ReLU network of width 2 produces a \"sawtooth\" with exactly $2^L$ linear regions, so the exponential growth is guaranteed, not merely possible \\cite{petersen2024mathdl}.",
-      "section": "Why Depth Beats Width: Reuse",
+      "quote": "When backprop sends the error signal backward through, say, 100 layers, it gets multiplied by many small numbers along the way.",
+      "block_id": "deeplearninglab-block-47",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-62",
-      "quote": "**What this looks like conceptually:** each layer builds features **on top of** the previous layer's features.",
-      "section": "Why Depth Beats Width: Reuse",
+      "quote": "The signal often **shrinks to nearly zero** (the \"vanishing gradient\" problem) or occasionally explodes.",
+      "block_id": "deeplearninglab-block-47",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-63",
-      "quote": "- Layer 1: edges, simple patterns.",
-      "section": "Why Depth Beats Width: Reuse",
+      "quote": "Early layers stop learning because they receive no meaningful feedback.",
+      "block_id": "deeplearninglab-block-47",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-64",
-      "quote": "- Layer 2: patterns *made of* layer-1 patterns (corners, textures).",
-      "section": "Why Depth Beats Width: Reuse",
+      "quote": "\\citeauthor{he2015resnet} introduced a stunningly simple fix: the **residual connection** (also called a skip connection).",
+      "block_id": "deeplearninglab-block-48",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-65",
-      "quote": "- Layer $k$: patterns made of $(k{-}1)$-level patterns.",
-      "section": "Why Depth Beats Width: Reuse",
+      "quote": "Instead of each layer computing an entirely new representation, it computes just a **correction** and adds it to the running state:",
+      "block_id": "deeplearninglab-block-48",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-66",
-      "quote": "This matches how **the real world is structured**: pixels → edges → parts → objects; sounds → phonemes → words → meaning.",
-      "section": "Why Depth Beats Width: Reuse",
+      "quote": "This one change transforms deep networks in three ways:",
+      "block_id": "deeplearninglab-block-49",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-67",
-      "quote": "Deep networks are compact for the same reason: the world itself is compositional.",
-      "section": "Why Depth Beats Width: Reuse",
+      "quote": "Residual connections also **flatten the loss landscape** \\cite[Li et al.]{li2018losslandscape}, making the optimization problem itself easier and pushing training toward solutions that generalize better.",
+      "block_id": "deeplearninglab-block-50",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-68",
-      "quote": "Before training, the weights are random and the network's output is garbage.",
-      "section": "How the Knowledge Gets Into the Weights",
+      "quote": "It's one of the rare tricks in deep learning that improves trainability, generalization, *and* interpretability all at once.",
+      "block_id": "deeplearninglab-block-50",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-69",
-      "quote": "Forward pass** — run input $x$ through all layers, get prediction $\\hat{y}$.",
-      "section": "How the Knowledge Gets Into the Weights",
+      "quote": "The loss $\\mathcal{L}(W)$ is a surface in a space with **millions or billions of dimensions**.",
+      "block_id": "deeplearninglab-block-52",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-70",
-      "quote": "Loss** — measure how wrong we were in a single number:",
-      "section": "How the Knowledge Gets Into the Weights",
+      "quote": "Gradient descent is a ball rolling downhill on this surface.",
+      "block_id": "deeplearninglab-block-52",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-71",
-      "quote": "Backpropagation** — figure out, for every single weight, \"if I nudge it slightly, does the error go up or down?\" Because the network is a composition, the influence of a weight in layer $\\ell$ flows through *every layer after it*.",
-      "section": "How the Knowledge Gets Into the Weights",
+      "quote": "Two facts shape what it finds.",
+      "block_id": "deeplearninglab-block-52",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-72",
-      "quote": "The **chain rule** from calculus handles this:",
-      "section": "How the Knowledge Gets Into the Weights",
+      "quote": "Then, ΛA,σ,S,L, has no spurious valleys.",
+      "block_id": "deeplearninglab-block-53",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-73",
-      "quote": "The clever part is that backprop **reuses intermediate results**, walking the error signal *backward* through the network.",
-      "section": "How the Knowledge Gets Into the Weights",
+      "quote": "This is called the **implicit bias** of the optimizer, and it's decisive.",
+      "block_id": "deeplearninglab-block-54",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-74",
-      "quote": "What would naively be exponential bookkeeping becomes **linear in the number of layers**.",
-      "section": "How the Knowledge Gets Into the Weights",
+      "quote": "Gradient descent from small initial weights, combined with a small penalty on weight size (weight decay), consistently prefers the **simplest, most compact** solution among all the ones that fit:",
+      "block_id": "deeplearninglab-block-54",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-75",
-      "quote": "Optimizer step** — nudge every weight a small amount in the direction that reduces the error:",
-      "section": "How the Knowledge Gets Into the Weights",
+      "quote": "The simple solution is usually the one that **generalizes** to unseen data, rather than memorizing.",
+      "block_id": "deeplearninglab-block-55",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-76",
-      "quote": "Repeat millions of times.",
-      "section": "How the Knowledge Gets Into the Weights",
+      "quote": "This bias is arguably the single most important reason deep learning works in the real world.",
+      "block_id": "deeplearninglab-block-55",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-77",
-      "quote": "The **trajectory of the weights through weight-space** is literally what writes the knowledge into the matrices.",
-      "section": "How the Knowledge Gets Into the Weights",
+      "quote": "**Memorization phase.** The network quickly memorizes the training examples.",
+      "block_id": "deeplearninglab-block-57",
+      "section": "Grokking: Watching Understanding Emerge",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-78",
-      "quote": "There is no separate memory — the knowledge *is* the final numbers.",
-      "section": "How the Knowledge Gets Into the Weights",
+      "quote": "Training accuracy shoots to 100%, but test accuracy stays at chance.",
+      "block_id": "deeplearninglab-block-57",
+      "section": "Grokking: Watching Understanding Emerge",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-79",
-      "quote": "There's a practical problem with stacking many layers.",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "It has learned a lookup table.",
+      "block_id": "deeplearninglab-block-57",
+      "section": "Grokking: Watching Understanding Emerge",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-80",
-      "quote": "When backprop sends the error signal backward through, say, 100 layers, it gets multiplied by many small numbers along the way.",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "**Long plateau.** Test accuracy stays terrible for a long time — sometimes tens of thousands of steps — while training accuracy stays perfect.",
+      "block_id": "deeplearninglab-block-58",
+      "section": "Grokking: Watching Understanding Emerge",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-81",
-      "quote": "The signal often **shrinks to nearly zero** (the \"vanishing gradient\" problem) or occasionally explodes.",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "It looks completely hopeless.",
+      "block_id": "deeplearninglab-block-58",
+      "section": "Grokking: Watching Understanding Emerge",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-82",
-      "quote": "Early layers stop learning because they receive no meaningful feedback.",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "**Grokking.** Then suddenly, test accuracy jumps to 100%.",
+      "block_id": "deeplearninglab-block-59",
+      "section": "Grokking: Watching Understanding Emerge",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-83",
-      "quote": "\\citeauthor{he2015resnet} introduced a stunningly simple fix: the **residual connection** (also called a skip connection).",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "The network has discovered the actual **mathematical rule** for modular multiplication, replacing its lookup table with a compact algorithm.",
+      "block_id": "deeplearninglab-block-59",
+      "section": "Grokking: Watching Understanding Emerge",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-84",
-      "quote": "Instead of each layer computing an entirely new representation, it computes just a **correction** and adds it to the running state:",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "Mechanistic analysis \\cite[Nanda et al.]{nanda2023grokking} shows exactly what happens: the network swaps its memorizing representation for a small, elegant circuit built from learned features.",
+      "block_id": "deeplearninglab-block-60",
+      "section": "Grokking: Watching Understanding Emerge",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-85",
-      "quote": "This one change transforms deep networks in three ways:",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "\\citeauthor{davies2023unifying} unified this with the older **double descent** phenomenon \\cite[Belkin et al.]{belkin2019reconciling}: generalizing solutions are learned *more slowly* than memorizing ones, but if you give the optimizer enough time (or enough parameters), the slow-but-simple solution wins.",
+      "block_id": "deeplearninglab-block-60",
+      "section": "Grokking: Watching Understanding Emerge",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-86",
-      "quote": "Gradients flow freely.** Because of the $+h_{\\ell-1}$ term, the derivative through the skip path is exactly $1$.",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "This is the deepest answer to why deep learning works so well: **the optimizer is quietly biased toward discovering the actual underlying structure of the problem**, not just fitting the data.",
+      "block_id": "deeplearninglab-block-61",
+      "section": "Grokking: Watching Understanding Emerge",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-87",
-      "quote": "The error signal has a **highway back to the earliest layers** — it can no longer be strangled by many small multiplications.",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "So, why does \"just matrix multiplication\" work?",
+      "block_id": "deeplearninglab-block-63",
+      "section": "Putting It All Together",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-88",
-      "quote": "This is what makes training networks with hundreds or even thousands of layers actually possible.",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "**A single matrix multiplication is intentionally weak.** It can only mix, rotate, scale.",
+      "block_id": "deeplearninglab-block-64",
+      "section": "Putting It All Together",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-89",
-      "quote": "Each layer only has to learn a small refinement.** Instead of every layer needing to reinvent the entire representation, layers are free to add tiny, targeted adjustments.",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "**The bend + composition is the expressivity.** Stacking bent maps produces piecewise functions of exponential complexity, and each layer combines *already-learned features* from the previous one.",
+      "block_id": "deeplearninglab-block-65",
+      "section": "Putting It All Together",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-90",
-      "quote": "If a layer has nothing useful to add, it can just learn $f_\\ell \\approx 0$ and let the input pass through unchanged.",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "**Backprop + the optimizer sculpt the weights** into implementing the specific function the data demands.",
+      "block_id": "deeplearninglab-block-66",
+      "section": "Putting It All Together",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-91",
-      "quote": "Bad layers become harmless; good layers become powerful.",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "**The implicit bias** ensures the network finds a compact, generalizing solution rather than a giant lookup table.",
+      "block_id": "deeplearninglab-block-67",
+      "section": "Putting It All Together",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-92",
-      "quote": "It creates the \"residual stream.\"** In modern transformers, this idea becomes central: the recursively updated state $h_\\ell = h_0 + \\sum_{i=1}^{\\ell} f_i(h_{i-1})$ acts like a **shared communication bus** that every layer can read from and write to.",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "**Residual connections** are what makes all of this scalable to hundreds of layers, turning depth from a liability back into a strength.",
+      "block_id": "deeplearninglab-block-68",
+      "section": "Putting It All Together",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-93",
-      "quote": "Attention heads and MLPs across the whole network exchange information by adding features into this stream and reading them out later.",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "The \"understanding\" a network appears to have doesn't live in any single multiplication.",
+      "block_id": "deeplearninglab-block-69",
+      "section": "Putting It All Together",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-94",
-      "quote": "This is why transformer analyses (see \\citeauthor{elhage2021framework}) treat the residual stream as the central object of the network — it's the substrate on which computation actually happens.",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "It lives in **the pattern of all the weights across all the layers** — a pattern shaped by the compositional structure of the world, discovered by gradient descent, and stored as the final numbers in the matrices.",
+      "block_id": "deeplearninglab-block-69",
+      "section": "Putting It All Together",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-95",
-      "quote": "Residual connections also **flatten the loss landscape** \\cite[Li et al.]{li2018losslandscape}, making the optimization problem itself easier and pushing training toward solutions that generalize better.",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "The activation function $\\sigma$ (like **ReLU** or **Sigmoid**) is the glue that makes stacking work.",
+      "block_id": "deeplearninglab-block-71",
+      "section": "The Role of Non-Linearity",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-96",
-      "quote": "It's one of the rare tricks in deep learning that improves trainability, generalization, *and* interpretability all at once.",
-      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "quote": "Without it, the whole network — no matter how deep — collapses into a single linear function, because \"a linear function of a linear function is still linear.\"",
+      "block_id": "deeplearninglab-block-71",
+      "section": "The Role of Non-Linearity",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-97",
-      "quote": "The loss $\\mathcal{L}(W)$ is a surface in a space with **millions or billions of dimensions**.",
-      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
+      "quote": "By keeping non-linear \"bends\" between the stacks, the network can warp the coordinate space in complex ways, letting it solve problems that no straight line ever could — like the classic **XOR** gate.",
+      "block_id": "deeplearninglab-block-72",
+      "section": "The Role of Non-Linearity",
       "kind": "statement"
     },
     {
       "id": "deeplearninglab-stmt-98",
-      "quote": "Gradient descent is a ball rolling downhill on this surface.",
-      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
+      "quote": "🚀 Start Training 🔄 Reset Model",
+      "block_id": "deeplearninglab-block-77",
+      "section": "The Role of Non-Linearity",
       "kind": "statement"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "deeplearninglab-block-1",
+      "quote": "From a Single Neuron to a Deep Network",
+      "kind": "heading",
+      "section": "From a Single Neuron to a Deep Network"
     },
     {
-      "id": "deeplearninglab-stmt-99",
-      "quote": "Two facts shape what it finds.",
-      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
-      "kind": "statement"
+      "id": "deeplearninglab-block-2",
+      "quote": "In the **Minimal Neuron** section, we saw that one neuron does something very simple: it multiplies its input by a weight, adds a bias, and then bends the result with an activation function. That's it. A single neuron can draw *one* straight line through data, and nothing more.",
+      "kind": "paragraph",
+      "section": "From a Single Neuron to a Deep Network"
     },
     {
-      "id": "deeplearninglab-stmt-100",
-      "quote": "**Saddle points, not local minima, are the real obstacle.** In very high dimensions, almost every flat spot is a saddle (curving up in some directions, down in others), not a true trap \\cite[Dauphin et al.]{dauphin2014saddle}.",
-      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
-      "kind": "statement"
+      "id": "deeplearninglab-block-3",
+      "quote": "One Layer at a Time",
+      "kind": "heading",
+      "section": "One Layer at a Time"
     },
     {
-      "id": "deeplearninglab-stmt-101",
-      "quote": "The **randomness in mini-batch training** acts like little kicks that knock the ball off saddles, which is why training huge networks actually works.",
-      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
-      "kind": "statement"
+      "id": "deeplearninglab-block-4",
+      "quote": "A single layer takes a vector of inputs $\\mathbf{x}$ and produces a vector of outputs $\\mathbf{h}$ (called a *hidden state*, because it sits between the input and the final answer):",
+      "kind": "paragraph",
+      "section": "One Layer at a Time"
     },
     {
-      "id": "deeplearninglab-stmt-102",
-      "quote": "And for a single-hidden-layer network with at least as many neurons as training samples, the loss landscape has **no spurious valleys at all** — every local minimum is a global minimum \\cite{petersen2024mathdl}.",
-      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
-      "kind": "statement"
+      "id": "deeplearninglab-block-5",
+      "quote": "Reading this from the inside out:",
+      "kind": "paragraph",
+      "section": "One Layer at a Time"
     },
     {
-      "id": "deeplearninglab-stmt-103",
-      "quote": "All of these obstacles (saddles, ill-conditioning, ill-chosen learning rates) are exactly what the modern optimizer zoo was built to handle.",
-      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
-      "kind": "statement"
+      "id": "deeplearninglab-block-6",
+      "quote": "- $\\mathbf{b}$ is a **bias vector**, one offset per neuron.",
+      "kind": "list-item",
+      "section": "One Layer at a Time"
     },
     {
-      "id": "deeplearninglab-stmt-104",
-      "quote": "\\citeauthor{ruder2016overview}'s 2016 overview article (\\citeyear{ruder2016overview}) is the standard practitioner-facing survey of the family — Momentum, Nesterov, Adagrad, RMSprop, Adam, AMSGrad — with derivations and the intuition behind each fix.",
-      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
-      "kind": "statement"
+      "id": "deeplearninglab-block-7",
+      "quote": "- $\\sigma$ is the **activation function** (the \"bend\"), applied to each entry.",
+      "kind": "list-item",
+      "section": "One Layer at a Time"
     },
     {
-      "id": "deeplearninglab-stmt-105",
+      "id": "deeplearninglab-block-8",
+      "quote": "That is one layer. Nothing exotic — just a matrix multiplication, an addition, and a bend.",
+      "kind": "paragraph",
+      "section": "One Layer at a Time"
+    },
+    {
+      "id": "deeplearninglab-block-9",
+      "quote": "Stacking Layers = Function Composition",
+      "kind": "heading",
+      "section": "Stacking Layers = Function Composition"
+    },
+    {
+      "id": "deeplearninglab-block-10",
+      "quote": "\"Deep\" simply means: the output of one layer becomes the input of the next. In math, this is called **function composition**. For a two-layer network:",
+      "kind": "paragraph",
+      "section": "Stacking Layers = Function Composition"
+    },
+    {
+      "id": "deeplearninglab-block-11",
+      "quote": "There is a beautiful mathematical guarantee behind all of this, called the **Universal Approximation Theorem**. It's actually a *family* of related results — notably \\citeauthor{cybenko1989} (\\citeyear{cybenko1989}) and \\citeauthor{hornik1989universal} (\\citeyear{hornik1989universal}) — and they all say roughly the same thing:",
+      "kind": "paragraph",
+      "section": "Stacking Layers = Function Composition"
+    },
+    {
+      "id": "deeplearninglab-block-12",
+      "quote": "> A network with just **one hidden layer** can approximate **any reasonable continuous function** as closely as you want, as long as it has enough neurons.",
+      "kind": "paragraph",
+      "section": "Stacking Layers = Function Composition"
+    },
+    {
+      "id": "deeplearninglab-block-13",
+      "quote": "Formally, such a network computes:",
+      "kind": "paragraph",
+      "section": "Stacking Layers = Function Composition"
+    },
+    {
+      "id": "deeplearninglab-block-14",
+      "quote": "1. It's an **existence** proof, not a **learning** proof. It says the right weights *exist*, not that gradient descent will find them.",
+      "kind": "list-item",
+      "section": "Stacking Layers = Function Composition"
+    },
+    {
+      "id": "deeplearninglab-block-15",
+      "quote": "2. \"Enough neurons\" can mean *astronomically* many. In practice, a shallow-but-huge network is almost never the right choice — **depth is dramatically more efficient** than width, as we'll see next.",
+      "kind": "list-item",
+      "section": "Stacking Layers = Function Composition"
+    },
+    {
+      "id": "deeplearninglab-block-16",
+      "quote": "And the cleanest modern characterization, \\citeauthor{petersen2024mathdl} (\\citeyear{petersen2024mathdl}), gives an exact *if and only if*: the one-hidden-layer network is a universal approximator **if and only if** the activation is not a polynomial. That means sigmoid, ReLU, tanh, SiLU — every standard activation — qualifies, while no amount of width can compensate for a polynomial activation.",
+      "kind": "paragraph",
+      "section": "Stacking Layers = Function Composition"
+    },
+    {
+      "id": "deeplearninglab-block-17",
+      "quote": "So the theorem is foundational, but it doesn't explain *why* deep networks work so well. For that, we need to look at what depth actually buys us.",
+      "kind": "paragraph",
+      "section": "Stacking Layers = Function Composition"
+    },
+    {
+      "id": "deeplearninglab-block-18",
+      "quote": "Try it: train a network yourself",
+      "kind": "heading",
+      "section": "Try it: train a network yourself"
+    },
+    {
+      "id": "deeplearninglab-block-19",
+      "quote": "The ideas above become tangible when you watch a network learn. Below is a real multilayer perceptron, trained with backpropagation and Adam right in your browser. The small squares in the diagram show what each neuron responds to: the first hidden layer learns simple straight cuts, deeper layers combine them into curves. Try the circle without hidden layers, then add the feature x₁², x₂².",
+      "kind": "paragraph",
+      "section": "Try it: train a network yourself"
+    },
+    {
+      "id": "deeplearninglab-block-20",
+      "quote": "Interactive lab Neural Network Playground A real multilayer perceptron, trained live in your browser. Each little square shows what one neuron responds to.",
+      "kind": "paragraph",
+      "section": "Try it: train a network yourself"
+    },
+    {
+      "id": "deeplearninglab-block-21",
+      "quote": "◎ Circle ✕ XOR ⁘ Clusters @ Spiral",
+      "kind": "paragraph",
+      "section": "Try it: train a network yourself"
+    },
+    {
+      "id": "deeplearninglab-block-22",
+      "quote": "show test points (dark outline)",
+      "kind": "paragraph",
+      "section": "Try it: train a network yourself"
+    },
+    {
+      "id": "deeplearninglab-block-23",
+      "quote": "Input features x₁ x₂ x₁², x₂² x₁·x₂ sin Activation tanh ReLU sigmoid Hidden layers 2",
+      "kind": "paragraph",
+      "section": "Try it: train a network yourself"
+    },
+    {
+      "id": "deeplearninglab-block-24",
+      "quote": "Neurons per layer 4",
+      "kind": "paragraph",
+      "section": "Try it: train a network yourself"
+    },
+    {
+      "id": "deeplearninglab-block-25",
+      "quote": "Noise 10 %",
+      "kind": "paragraph",
+      "section": "Try it: train a network yourself"
+    },
+    {
+      "id": "deeplearninglab-block-26",
+      "quote": "Learning rate (Adam) 0.03",
+      "kind": "paragraph",
+      "section": "Try it: train a network yourself"
+    },
+    {
+      "id": "deeplearninglab-block-27",
+      "quote": "▶ Train +1 epoch ↺ New weights",
+      "kind": "paragraph",
+      "section": "Try it: train a network yourself"
+    },
+    {
+      "id": "deeplearninglab-block-28",
+      "quote": "Epoch 0 Train loss – Test loss – Test accuracy –",
+      "kind": "paragraph",
+      "section": "Try it: train a network yourself"
+    },
+    {
+      "id": "deeplearninglab-block-29",
+      "quote": "Why Deep Learning Works (And Why It Works *So* Well)",
+      "kind": "heading",
+      "section": "Why Deep Learning Works (And Why It Works *So* Well)"
+    },
+    {
+      "id": "deeplearninglab-block-30",
+      "quote": "Here's the honest, mechanical answer to why \"a big pile of matrix multiplications\" ends up being able to translate languages, recognize faces, and play chess better than any human. It comes down to four ingredients working together: **depth**, **nonlinearity**, **backpropagation**, and the **optimizer's hidden preferences**.",
+      "kind": "paragraph",
+      "section": "Why Deep Learning Works (And Why It Works *So* Well)"
+    },
+    {
+      "id": "deeplearninglab-block-31",
+      "quote": "The One-Paragraph Answer",
+      "kind": "heading",
+      "section": "The One-Paragraph Answer"
+    },
+    {
+      "id": "deeplearninglab-block-32",
+      "quote": "A deep network is a **composition of many simple functions**. Each function (a \"layer\") is a matrix multiplication followed by a small bend. On its own, one layer is powerless — it can only mix, rotate, and scale. But **chained together, simple steps stack into arbitrarily complex ones**. Then **training** (forward pass → measure error → **backprop** → **optimizer step**) tunes the weights until the whole composition implements the right input-to-output map. The \"storage\" of knowledge is nothing more than the final tuned weights. Depth gives us **expressivity**, the nonlinearity prevents **collapse**, backprop provides an **efficient learning signal**, and the optimizer has a built-in **bias toward simple, generalizing solutions** rather than memorization.",
+      "kind": "paragraph",
+      "section": "The One-Paragraph Answer"
+    },
+    {
+      "id": "deeplearninglab-block-33",
+      "quote": "Depth = Composition, and Why the \"Bend\" Is Everything",
+      "kind": "heading",
+      "section": "Depth = Composition, and Why the \"Bend\" Is Everything"
+    },
+    {
+      "id": "deeplearninglab-block-34",
+      "quote": "One layer looks like:",
+      "kind": "paragraph",
+      "section": "Depth = Composition, and Why the \"Bend\" Is Everything"
+    },
+    {
+      "id": "deeplearninglab-block-35",
+      "quote": "The nonlinearity **prevents that collapse**. Each $\\sigma$ re-bends the space, so the next matrix multiplies something that has *already been transformed*. Depth alone isn't the power — **depth with a bend in between** is.",
+      "kind": "paragraph",
+      "section": "Depth = Composition, and Why the \"Bend\" Is Everything"
+    },
+    {
+      "id": "deeplearninglab-block-36",
+      "quote": "Why Depth Beats Width: Reuse",
+      "kind": "heading",
+      "section": "Why Depth Beats Width: Reuse"
+    },
+    {
+      "id": "deeplearninglab-block-37",
+      "quote": "The mechanical reason depth is so effective is **reuse**. A sub-result computed by an early layer is reused by everything downstream. Depth turns \"compute, throw away, recompute\" into \"compute once, reuse everywhere.\"",
+      "kind": "paragraph",
+      "section": "Why Depth Beats Width: Reuse"
+    },
+    {
+      "id": "deeplearninglab-block-38",
+      "quote": "- A **shallow** (2-layer) network needs roughly $2^n$ neurons to capture this — **exponential** growth.",
+      "kind": "list-item",
+      "section": "Why Depth Beats Width: Reuse"
+    },
+    {
+      "id": "deeplearninglab-block-39",
+      "quote": "- Layer 1: edges, simple patterns.",
+      "kind": "list-item",
+      "section": "Why Depth Beats Width: Reuse"
+    },
+    {
+      "id": "deeplearninglab-block-40",
+      "quote": "- Layer 2: patterns *made of* layer-1 patterns (corners, textures).",
+      "kind": "list-item",
+      "section": "Why Depth Beats Width: Reuse"
+    },
+    {
+      "id": "deeplearninglab-block-41",
+      "quote": "This matches how **the real world is structured**: pixels → edges → parts → objects; sounds → phonemes → words → meaning. Deep networks are compact for the same reason: the world itself is compositional.",
+      "kind": "paragraph",
+      "section": "Why Depth Beats Width: Reuse"
+    },
+    {
+      "id": "deeplearninglab-block-42",
+      "quote": "How the Knowledge Gets Into the Weights",
+      "kind": "heading",
+      "section": "How the Knowledge Gets Into the Weights"
+    },
+    {
+      "id": "deeplearninglab-block-43",
+      "quote": "Before training, the weights are random and the network's output is garbage. Training runs a loop:",
+      "kind": "paragraph",
+      "section": "How the Knowledge Gets Into the Weights"
+    },
+    {
+      "id": "deeplearninglab-block-44",
+      "quote": "The clever part is that backprop **reuses intermediate results**, walking the error signal *backward* through the network. What would naively be exponential bookkeeping becomes **linear in the number of layers**.",
+      "kind": "paragraph",
+      "section": "How the Knowledge Gets Into the Weights"
+    },
+    {
+      "id": "deeplearninglab-block-45",
+      "quote": "Repeat millions of times. The **trajectory of the weights through weight-space** is literally what writes the knowledge into the matrices. There is no separate memory — the knowledge *is* the final numbers.",
+      "kind": "paragraph",
+      "section": "How the Knowledge Gets Into the Weights"
+    },
+    {
+      "id": "deeplearninglab-block-46",
+      "quote": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "heading",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks"
+    },
+    {
+      "id": "deeplearninglab-block-47",
+      "quote": "There's a practical problem with stacking many layers. When backprop sends the error signal backward through, say, 100 layers, it gets multiplied by many small numbers along the way. The signal often **shrinks to nearly zero** (the \"vanishing gradient\" problem) or occasionally explodes. Early layers stop learning because they receive no meaningful feedback.",
+      "kind": "paragraph",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks"
+    },
+    {
+      "id": "deeplearninglab-block-48",
+      "quote": "\\citeauthor{he2015resnet} introduced a stunningly simple fix: the **residual connection** (also called a skip connection). Instead of each layer computing an entirely new representation, it computes just a **correction** and adds it to the running state:",
+      "kind": "paragraph",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks"
+    },
+    {
+      "id": "deeplearninglab-block-49",
+      "quote": "This one change transforms deep networks in three ways:",
+      "kind": "paragraph",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks"
+    },
+    {
+      "id": "deeplearninglab-block-50",
+      "quote": "Residual connections also **flatten the loss landscape** \\cite[Li et al.]{li2018losslandscape}, making the optimization problem itself easier and pushing training toward solutions that generalize better. It's one of the rare tricks in deep learning that improves trainability, generalization, *and* interpretability all at once.",
+      "kind": "paragraph",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks"
+    },
+    {
+      "id": "deeplearninglab-block-51",
+      "quote": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
+      "kind": "heading",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work"
+    },
+    {
+      "id": "deeplearninglab-block-52",
+      "quote": "The loss $\\mathcal{L}(W)$ is a surface in a space with **millions or billions of dimensions**. Gradient descent is a ball rolling downhill on this surface. Two facts shape what it finds.",
+      "kind": "paragraph",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work"
+    },
+    {
+      "id": "deeplearninglab-block-53",
       "quote": "Then, ΛA,σ,S,L, has no spurious valleys.",
-      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
-      "kind": "statement"
+      "kind": "paragraph",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work"
     },
     {
-      "id": "deeplearninglab-stmt-106",
-      "quote": "The activation function $\\sigma$ (like **ReLU** or **Sigmoid**) is the glue that makes stacking work.",
-      "section": "The Role of Non-Linearity",
-      "kind": "statement"
+      "id": "deeplearninglab-block-54",
+      "quote": "This is called the **implicit bias** of the optimizer, and it's decisive. Gradient descent from small initial weights, combined with a small penalty on weight size (weight decay), consistently prefers the **simplest, most compact** solution among all the ones that fit:",
+      "kind": "paragraph",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work"
     },
     {
-      "id": "deeplearninglab-stmt-107",
-      "quote": "Without it, the whole network — no matter how deep — collapses into a single linear function, because \"a linear function of a linear function is still linear.\"",
-      "section": "The Role of Non-Linearity",
-      "kind": "statement"
+      "id": "deeplearninglab-block-55",
+      "quote": "The simple solution is usually the one that **generalizes** to unseen data, rather than memorizing. This bias is arguably the single most important reason deep learning works in the real world.",
+      "kind": "paragraph",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work"
     },
     {
-      "id": "deeplearninglab-stmt-108",
+      "id": "deeplearninglab-block-56",
+      "quote": "Grokking: Watching Understanding Emerge",
+      "kind": "heading",
+      "section": "Grokking: Watching Understanding Emerge"
+    },
+    {
+      "id": "deeplearninglab-block-57",
+      "quote": "1. **Memorization phase.** The network quickly memorizes the training examples. Training accuracy shoots to 100%, but test accuracy stays at chance. It has learned a lookup table.",
+      "kind": "list-item",
+      "section": "Grokking: Watching Understanding Emerge"
+    },
+    {
+      "id": "deeplearninglab-block-58",
+      "quote": "2. **Long plateau.** Test accuracy stays terrible for a long time — sometimes tens of thousands of steps — while training accuracy stays perfect. It looks completely hopeless.",
+      "kind": "list-item",
+      "section": "Grokking: Watching Understanding Emerge"
+    },
+    {
+      "id": "deeplearninglab-block-59",
+      "quote": "3. **Grokking.** Then suddenly, test accuracy jumps to 100%. The network has discovered the actual **mathematical rule** for modular multiplication, replacing its lookup table with a compact algorithm.",
+      "kind": "list-item",
+      "section": "Grokking: Watching Understanding Emerge"
+    },
+    {
+      "id": "deeplearninglab-block-60",
+      "quote": "Mechanistic analysis \\cite[Nanda et al.]{nanda2023grokking} shows exactly what happens: the network swaps its memorizing representation for a small, elegant circuit built from learned features. \\citeauthor{davies2023unifying} unified this with the older **double descent** phenomenon \\cite[Belkin et al.]{belkin2019reconciling}: generalizing solutions are learned *more slowly* than memorizing ones, but if you give the optimizer enough time (or enough parameters), the slow-but-simple solution wins.",
+      "kind": "paragraph",
+      "section": "Grokking: Watching Understanding Emerge"
+    },
+    {
+      "id": "deeplearninglab-block-61",
+      "quote": "This is the deepest answer to why deep learning works so well: **the optimizer is quietly biased toward discovering the actual underlying structure of the problem**, not just fitting the data.",
+      "kind": "paragraph",
+      "section": "Grokking: Watching Understanding Emerge"
+    },
+    {
+      "id": "deeplearninglab-block-62",
+      "quote": "Putting It All Together",
+      "kind": "heading",
+      "section": "Putting It All Together"
+    },
+    {
+      "id": "deeplearninglab-block-63",
+      "quote": "So, why does \"just matrix multiplication\" work?",
+      "kind": "paragraph",
+      "section": "Putting It All Together"
+    },
+    {
+      "id": "deeplearninglab-block-64",
+      "quote": "1. **A single matrix multiplication is intentionally weak.** It can only mix, rotate, scale.",
+      "kind": "list-item",
+      "section": "Putting It All Together"
+    },
+    {
+      "id": "deeplearninglab-block-65",
+      "quote": "2. **The bend + composition is the expressivity.** Stacking bent maps produces piecewise functions of exponential complexity, and each layer combines *already-learned features* from the previous one.",
+      "kind": "list-item",
+      "section": "Putting It All Together"
+    },
+    {
+      "id": "deeplearninglab-block-66",
+      "quote": "3. **Backprop + the optimizer sculpt the weights** into implementing the specific function the data demands.",
+      "kind": "list-item",
+      "section": "Putting It All Together"
+    },
+    {
+      "id": "deeplearninglab-block-67",
+      "quote": "4. **The implicit bias** ensures the network finds a compact, generalizing solution rather than a giant lookup table.",
+      "kind": "list-item",
+      "section": "Putting It All Together"
+    },
+    {
+      "id": "deeplearninglab-block-68",
+      "quote": "5. **Residual connections** are what makes all of this scalable to hundreds of layers, turning depth from a liability back into a strength.",
+      "kind": "list-item",
+      "section": "Putting It All Together"
+    },
+    {
+      "id": "deeplearninglab-block-69",
+      "quote": "The \"understanding\" a network appears to have doesn't live in any single multiplication. It lives in **the pattern of all the weights across all the layers** — a pattern shaped by the compositional structure of the world, discovered by gradient descent, and stored as the final numbers in the matrices.",
+      "kind": "paragraph",
+      "section": "Putting It All Together"
+    },
+    {
+      "id": "deeplearninglab-block-70",
+      "quote": "The Role of Non-Linearity",
+      "kind": "heading",
+      "section": "The Role of Non-Linearity"
+    },
+    {
+      "id": "deeplearninglab-block-71",
+      "quote": "The activation function $\\sigma$ (like **ReLU** or **Sigmoid**) is the glue that makes stacking work. Without it, the whole network — no matter how deep — collapses into a single linear function, because \"a linear function of a linear function is still linear.\"",
+      "kind": "paragraph",
+      "section": "The Role of Non-Linearity"
+    },
+    {
+      "id": "deeplearninglab-block-72",
       "quote": "By keeping non-linear \"bends\" between the stacks, the network can warp the coordinate space in complex ways, letting it solve problems that no straight line ever could — like the classic **XOR** gate.",
-      "section": "The Role of Non-Linearity",
-      "kind": "statement"
+      "kind": "paragraph",
+      "section": "The Role of Non-Linearity"
     },
     {
-      "id": "deeplearninglab-stmt-109",
-      "quote": "**Tip:** Try changing the activation function of the hidden layer in the playground below and watch what happens.",
-      "section": "The Role of Non-Linearity",
-      "kind": "statement"
+      "id": "deeplearninglab-block-73",
+      "quote": "AND XOR LR: Epochs:",
+      "kind": "paragraph",
+      "section": "The Role of Non-Linearity"
+    },
+    {
+      "id": "deeplearninglab-block-74",
+      "quote": "Weights (Live):",
+      "kind": "paragraph",
+      "section": "The Role of Non-Linearity"
+    },
+    {
+      "id": "deeplearninglab-block-75",
+      "quote": "+ Add New Data Row",
+      "kind": "list-item",
+      "section": "The Role of Non-Linearity"
+    },
+    {
+      "id": "deeplearninglab-block-76",
+      "quote": "→ 0.00",
+      "kind": "paragraph",
+      "section": "The Role of Non-Linearity"
+    },
+    {
+      "id": "deeplearninglab-block-77",
+      "quote": "🚀 Start Training 🔄 Reset Model",
+      "kind": "paragraph",
+      "section": "The Role of Non-Linearity"
     }
   ]
 }
