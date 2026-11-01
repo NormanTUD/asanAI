@@ -3918,6 +3918,18 @@
    "year": "2019",
    "url": "https://arxiv.org/abs/1905.09418"
   },
+  "michel2019sixteen": {
+   "title": "Are Sixteen Heads Really Better than One?",
+   "author": "Paul Michel, Omer Levy, Graham Neubig",
+   "year": "2019",
+   "url": "https://arxiv.org/abs/1905.10650"
+  },
+  "shazeer2020talkingheads": {
+   "title": "Talking-Heads Attention",
+   "author": "Noam Shazeer, Zhenzhong Lan, Youlong Cheng, Nan Ding, Le Hou",
+   "year": "2020",
+   "url": "https://arxiv.org/abs/2003.02436"
+  },
   "bart": {
    "title": "BART: Denoising Sequence-to-Sequence Pre-training for Natural Language Generation, Translation, and Comprehension",
    "author": "Mike Lewis, Yinhan Liu, Naman Goyal, Marjan Ghazvininejad, Abdelrahman Mohamed, Omer Levy, Ves Stoyanov, Luke Zettlemoyer",
@@ -20046,6 +20058,30 @@
    "year": "2015",
    "url": "https://arxiv.org/abs/1508.04025"
   },
+  "cheng2016": {
+   "title": "Long Short-Term Memory-Networks for Machine Reading",
+   "author": "Jianpeng Cheng, Li Dong, Mirella Lapata",
+   "year": "2016",
+   "url": "https://arxiv.org/abs/1601.06733"
+  },
+  "parikh2016": {
+   "title": "A Decomposable Attention Model for Natural Language Inference",
+   "author": "Ankur P. Parikh, Oscar Täckström, Dipanjan Das, Jakob Uszkoreit",
+   "year": "2016",
+   "url": "https://arxiv.org/abs/1606.01933"
+  },
+  "lin2017selfattentive": {
+   "title": "A Structured Self-attentive Sentence Embedding",
+   "author": "Zhouhan Lin, Minwei Feng, Cicero Nogueira dos Santos, Mo Yu, Bing Xiang, Bowen Zhou, Yoshua Bengio",
+   "year": "2017",
+   "url": "https://arxiv.org/abs/1703.03130"
+  },
+  "jain2019attention": {
+   "title": "Attention is not Explanation",
+   "author": "Sarthak Jain, Byron C. Wallace",
+   "year": "2019",
+   "url": "https://arxiv.org/abs/1902.10186"
+  },
   "tsai2019kernel": {
    "title": "Transformer Dissection: A Unified Understanding of Transformer's Attention via the Lens of Kernel",
    "author": "Yao-Hung Hubert Tsai, Shaojie Bai, Makoto Yamada, Louis-Philippe Morency, Ruslan Salakhutdinov",
@@ -21826,14 +21862,17 @@
    "frontier"
   ],
   "su2021rope": [
+   "attentionlab",
    "frontier",
    "transformer"
   ],
   "peng2023yarn": [
+   "attentionlab",
    "frontier",
    "positionalembeddingslab"
   ],
   "press2022alibi": [
+   "attentionlab",
    "frontier"
   ],
   "li2023seqparallel": [
@@ -21916,6 +21955,8 @@
    "global_ai_ecosystem"
   ],
   "llama3herd2024": [
+   "attentionlab",
+   "contextwindows",
    "frontier"
   ],
   "meta2025llama4": [
@@ -22020,12 +22061,14 @@
    "inference_optimization"
   ],
   "shazeer2019mqa": [
+   "attentionlab",
    "contextwindows",
    "inference_optimization",
    "people_of_ai",
    "transformer"
   ],
   "ainslie2023gqa": [
+   "attentionlab",
    "contextwindows",
    "inference_optimization",
    "production_serving",
@@ -22167,6 +22210,7 @@
    "transformer"
   ],
   "elhage2021mathematical": [
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "intuition",
@@ -22251,6 +22295,7 @@
    "transformer"
   ],
   "brown2020gpt3": [
+   "attentionlab",
    "history",
    "optimizerlab",
    "people_of_ai",
@@ -22504,6 +22549,7 @@
   ],
   "olsson2022induction": [
    "algorithms",
+   "attentionlab",
    "fact_lookup",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -23862,10 +23908,28 @@
   "luong2015attention": [
    "attentionlab"
   ],
+  "cheng2016": [
+   "attentionlab"
+  ],
+  "parikh2016": [
+   "attentionlab"
+  ],
+  "lin2017selfattentive": [
+   "attentionlab"
+  ],
   "tsai2019kernel": [
    "attentionlab"
   ],
+  "michel2019sixteen": [
+   "attentionlab"
+  ],
   "clark2019bertattention": [
+   "attentionlab"
+  ],
+  "jain2019attention": [
+   "attentionlab"
+  ],
+  "shazeer2020talkingheads": [
    "attentionlab"
   ],
   "cuturi2013sinkhorn": [
@@ -30721,7 +30785,7 @@
    ]
   },
   "Yoshua Bengio": {
-   "count": 23,
+   "count": 24,
    "minyear": 1994,
    "maxyear": 2023,
    "keys": [
@@ -30746,6 +30810,7 @@
     "dinh2017sharpness",
     "bergstra2010random",
     "bengio2023managing",
+    "lin2017selfattentive",
     "bergstra2011algorithms",
     "bengio2012practical"
    ]
@@ -39631,12 +39696,13 @@
    ]
   },
   "Jakob Uszkoreit": {
-   "count": 2,
-   "minyear": 2017,
+   "count": 3,
+   "minyear": 2016,
    "maxyear": 2018,
    "keys": [
     "shaw2018relative",
-    "vaswani2017attention"
+    "vaswani2017attention",
+    "parikh2016"
    ]
   },
   "Ashish Vaswani": {
@@ -41516,12 +41582,13 @@
    ]
   },
   "Noam Shazeer": {
-   "count": 10,
+   "count": 11,
    "minyear": 2015,
    "maxyear": 2022,
    "keys": [
     "shazeer2017moe",
     "shazeer2018adafactor",
+    "shazeer2020talkingheads",
     "tfive",
     "raffel2020t5",
     "fedus2022switch",
@@ -41970,6 +42037,71 @@
     "schlichtkrull2018rgcn"
    ]
   },
+  "Paul Michel": {
+   "count": 1,
+   "minyear": 2019,
+   "maxyear": 2019,
+   "keys": [
+    "michel2019sixteen"
+   ]
+  },
+  "Omer Levy": {
+   "count": 7,
+   "minyear": 2018,
+   "maxyear": 2021,
+   "keys": [
+    "michel2019sixteen",
+    "bart",
+    "keyvalmem",
+    "talmor2018commonsenseqa",
+    "geva2021kv",
+    "wang2018glue",
+    "clark2019bertattention"
+   ]
+  },
+  "Graham Neubig": {
+   "count": 1,
+   "minyear": 2019,
+   "maxyear": 2019,
+   "keys": [
+    "michel2019sixteen"
+   ]
+  },
+  "Zhenzhong Lan": {
+   "count": 1,
+   "minyear": 2020,
+   "maxyear": 2020,
+   "keys": [
+    "shazeer2020talkingheads"
+   ]
+  },
+  "Youlong Cheng": {
+   "count": 2,
+   "minyear": 2019,
+   "maxyear": 2020,
+   "keys": [
+    "shazeer2020talkingheads",
+    "huang2018gpipe"
+   ]
+  },
+  "Nan Ding": {
+   "count": 1,
+   "minyear": 2020,
+   "maxyear": 2020,
+   "keys": [
+    "shazeer2020talkingheads"
+   ]
+  },
+  "Le Hou": {
+   "count": 3,
+   "minyear": 2020,
+   "maxyear": 2022,
+   "keys": [
+    "shazeer2020talkingheads",
+    "huang2022selfimprove",
+    "chung2022flan"
+   ]
+  },
   "Yinhan Liu": {
    "count": 2,
    "minyear": 2019,
@@ -41994,19 +42126,6 @@
    "keys": [
     "bart",
     "baevski2020wav2vec"
-   ]
-  },
-  "Omer Levy": {
-   "count": 6,
-   "minyear": 2018,
-   "maxyear": 2021,
-   "keys": [
-    "bart",
-    "keyvalmem",
-    "talmor2018commonsenseqa",
-    "geva2021kv",
-    "wang2018glue",
-    "clark2019bertattention"
    ]
   },
   "Ves Stoyanov": {
@@ -43147,12 +43266,13 @@
    ]
   },
   "Li Dong": {
-   "count": 2,
-   "minyear": 2022,
+   "count": 3,
+   "minyear": 2016,
    "maxyear": 2023,
    "keys": [
     "dai2022knowledgeneurons",
-    "sun2023retnet"
+    "sun2023retnet",
+    "cheng2016"
    ]
   },
   "Yaru Hao": {
@@ -43222,11 +43342,12 @@
    ]
   },
   "Byron C. Wallace": {
-   "count": 1,
-   "minyear": 2024,
+   "count": 2,
+   "minyear": 2019,
    "maxyear": 2024,
    "keys": [
-    "todd2024functionvectors"
+    "todd2024functionvectors",
+    "jain2019attention"
    ]
   },
   "nostalgebraist": {
@@ -51431,14 +51552,6 @@
     "zhou2022expertchoice"
    ]
   },
-  "Youlong Cheng": {
-   "count": 1,
-   "minyear": 2019,
-   "maxyear": 2019,
-   "keys": [
-    "huang2018gpipe"
-   ]
-  },
   "Ankur Bapna": {
    "count": 1,
    "minyear": 2019,
@@ -53160,11 +53273,12 @@
    ]
   },
   "Dipanjan Das": {
-   "count": 1,
-   "minyear": 2023,
+   "count": 2,
+   "minyear": 2016,
    "maxyear": 2023,
    "keys": [
-    "shi2023cottransfer"
+    "shi2023cottransfer",
+    "parikh2016"
    ]
   },
   "Stephanie Lin": {
@@ -53302,15 +53416,6 @@
    "maxyear": 2022,
    "keys": [
     "huang2022selfimprove"
-   ]
-  },
-  "Le Hou": {
-   "count": 2,
-   "minyear": 2022,
-   "maxyear": 2022,
-   "keys": [
-    "huang2022selfimprove",
-    "chung2022flan"
    ]
   },
   "Yuexin Wu": {
@@ -70174,6 +70279,94 @@
    "maxyear": 2015,
    "keys": [
     "luong2015attention"
+   ]
+  },
+  "Jianpeng Cheng": {
+   "count": 1,
+   "minyear": 2016,
+   "maxyear": 2016,
+   "keys": [
+    "cheng2016"
+   ]
+  },
+  "Mirella Lapata": {
+   "count": 1,
+   "minyear": 2016,
+   "maxyear": 2016,
+   "keys": [
+    "cheng2016"
+   ]
+  },
+  "Ankur P. Parikh": {
+   "count": 1,
+   "minyear": 2016,
+   "maxyear": 2016,
+   "keys": [
+    "parikh2016"
+   ]
+  },
+  "Oscar Täckström": {
+   "count": 1,
+   "minyear": 2016,
+   "maxyear": 2016,
+   "keys": [
+    "parikh2016"
+   ]
+  },
+  "Zhouhan Lin": {
+   "count": 1,
+   "minyear": 2017,
+   "maxyear": 2017,
+   "keys": [
+    "lin2017selfattentive"
+   ]
+  },
+  "Minwei Feng": {
+   "count": 1,
+   "minyear": 2017,
+   "maxyear": 2017,
+   "keys": [
+    "lin2017selfattentive"
+   ]
+  },
+  "Cicero Nogueira dos Santos": {
+   "count": 1,
+   "minyear": 2017,
+   "maxyear": 2017,
+   "keys": [
+    "lin2017selfattentive"
+   ]
+  },
+  "Mo Yu": {
+   "count": 1,
+   "minyear": 2017,
+   "maxyear": 2017,
+   "keys": [
+    "lin2017selfattentive"
+   ]
+  },
+  "Bing Xiang": {
+   "count": 1,
+   "minyear": 2017,
+   "maxyear": 2017,
+   "keys": [
+    "lin2017selfattentive"
+   ]
+  },
+  "Bowen Zhou": {
+   "count": 1,
+   "minyear": 2017,
+   "maxyear": 2017,
+   "keys": [
+    "lin2017selfattentive"
+   ]
+  },
+  "Sarthak Jain": {
+   "count": 1,
+   "minyear": 2019,
+   "maxyear": 2019,
+   "keys": [
+    "jain2019attention"
    ]
   },
   "Yao-Hung Hubert Tsai": {

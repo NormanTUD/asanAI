@@ -3183,6 +3183,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "beyond_llms",
    "embeddinglab",
    "fact_lookup",
@@ -4472,6 +4473,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "math_iii",
@@ -4841,6 +4843,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "intuition",
@@ -7021,6 +7024,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "intuition",
@@ -7189,6 +7193,7 @@
    "brown2020scaling"
   ],
   "cited_in": [
+   "attentionlab",
    "history",
    "optimizerlab",
    "people_of_ai",
@@ -7877,6 +7882,7 @@
    "su2021rope"
   ],
   "cited_in": [
+   "attentionlab",
    "frontier",
    "positionalembeddingslab",
    "transformer"
@@ -8101,6 +8107,7 @@
    "peng2023yarn"
   ],
   "cited_in": [
+   "attentionlab",
    "frontier",
    "positionalembeddingslab"
   ]
@@ -8663,11 +8670,13 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "todd2024functionvectors"
+   "todd2024functionvectors",
+   "jain2019attention"
   ],
   "cited_in": [
+   "attentionlab",
    "fact_lookup",
    "mechanistic_interpretability"
   ]
@@ -9296,6 +9305,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "deeplearninglab",
    "embeddinglab",
    "fact_lookup",
@@ -21991,6 +22001,8 @@
    "llama3herd2024"
   ],
   "cited_in": [
+   "attentionlab",
+   "contextwindows",
    "frontier"
   ]
  },
@@ -22008,6 +22020,8 @@
    "llama3herd2024"
   ],
   "cited_in": [
+   "attentionlab",
+   "contextwindows",
    "frontier"
   ]
  },
@@ -22025,6 +22039,8 @@
    "llama3herd2024"
   ],
   "cited_in": [
+   "attentionlab",
+   "contextwindows",
    "frontier"
   ]
  },
@@ -29182,6 +29198,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "fact_lookup",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -29291,6 +29308,7 @@
    "ai_existential_risk",
    "algorithms",
    "alignment",
+   "attentionlab",
    "beyond_llms",
    "embeddinglab",
    "fact_lookup",
@@ -30635,6 +30653,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "intuition",
@@ -30746,6 +30765,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "intuition",
@@ -31399,11 +31419,13 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "shi2023cottransfer"
+   "shi2023cottransfer",
+   "parikh2016"
   ],
   "cited_in": [
+   "attentionlab",
    "unexpected_capabilities"
   ]
  },
@@ -33020,6 +33042,7 @@
    "peng2023yarn"
   ],
   "cited_in": [
+   "attentionlab",
    "frontier",
    "positionalembeddingslab"
   ]
@@ -39790,6 +39813,7 @@
    "peng2023yarn"
   ],
   "cited_in": [
+   "attentionlab",
    "frontier",
    "positionalembeddingslab"
   ]
@@ -41957,6 +41981,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "beyond_llms",
    "fact_lookup",
    "mechanistic_interpretability",
@@ -42103,6 +42128,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "intuition",
@@ -42419,10 +42445,11 @@
   "city": "Mountain View, United States",
   "year": 2017.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "shaw2018relative",
-   "vaswani2017attention"
+   "vaswani2017attention",
+   "parikh2016"
   ],
   "cited_in": [
    "activationlab",
@@ -42786,6 +42813,7 @@
    "ainslie2023gqa"
   ],
   "cited_in": [
+   "attentionlab",
    "contextwindows",
    "inference_optimization",
    "production_serving",
@@ -43181,6 +43209,7 @@
    "ai_existential_risk",
    "algorithms",
    "alignment",
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "hyperparameters",
@@ -44002,6 +44031,7 @@
    "peng2023yarn"
   ],
   "cited_in": [
+   "attentionlab",
    "frontier",
    "positionalembeddingslab"
   ]
@@ -44505,6 +44535,7 @@
    "su2021rope"
   ],
   "cited_in": [
+   "attentionlab",
    "frontier",
    "positionalembeddingslab",
    "transformer"
@@ -46935,6 +46966,7 @@
    "ainslie2023gqa"
   ],
   "cited_in": [
+   "attentionlab",
    "contextwindows",
    "inference_optimization",
    "production_serving",
@@ -47990,6 +48022,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "intuition",
@@ -49919,12 +49952,14 @@
   "city": "Mountain View, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
+   "shazeer2020talkingheads",
    "huang2022selfimprove",
    "chung2022flan"
   ],
   "cited_in": [
+   "attentionlab",
    "unexpected_capabilities"
   ]
  },
@@ -50420,12 +50455,14 @@
   "city": "Beijing, China",
   "year": 2023.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "dai2022knowledgeneurons",
-   "sun2023retnet"
+   "sun2023retnet",
+   "cheng2016"
   ],
   "cited_in": [
+   "attentionlab",
    "fact_lookup"
   ]
  },
@@ -50468,6 +50505,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "intuition",
@@ -54193,6 +54231,7 @@
    "brown2020gpt3"
   ],
   "cited_in": [
+   "attentionlab",
    "history",
    "optimizerlab",
    "people_of_ai",
@@ -55153,6 +55192,7 @@
    "ainslie2023gqa"
   ],
   "cited_in": [
+   "attentionlab",
    "contextwindows",
    "inference_optimization",
    "production_serving",
@@ -56799,6 +56839,7 @@
   ],
   "cited_in": [
    "algorithms",
+   "attentionlab",
    "deeplearninglab",
    "embeddinglab",
    "fact_lookup",
@@ -56920,6 +56961,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "deeplearninglab",
    "embeddinglab",
    "fact_lookup",
@@ -57057,6 +57099,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "intuition",
@@ -57333,6 +57376,7 @@
    "brown2020scaling"
   ],
   "cited_in": [
+   "attentionlab",
    "history",
    "optimizerlab",
    "people_of_ai",
@@ -57960,6 +58004,7 @@
    "zheng2025brokentokens"
   ],
   "cited_in": [
+   "attentionlab",
    "frontier",
    "positionalembeddingslab",
    "tokenizerlab",
@@ -58062,10 +58107,11 @@
   "city": "Mountain View, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 10,
+  "works": 11,
   "keys": [
    "shazeer2017moe",
    "shazeer2018adafactor",
+   "shazeer2020talkingheads",
    "tfive",
    "raffel2020t5",
    "fedus2022switch",
@@ -58305,6 +58351,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "intuition",
@@ -58384,6 +58431,7 @@
    "press2017tying"
   ],
   "cited_in": [
+   "attentionlab",
    "frontier",
    "positionalembeddingslab",
    "transformer",
@@ -58521,8 +58569,9 @@
   "city": "Tel Aviv, Israel",
   "year": 2019.0,
   "conf": 1,
-  "works": 6,
+  "works": 7,
   "keys": [
+   "michel2019sixteen",
    "bart",
    "keyvalmem",
    "talmor2018commonsenseqa",
@@ -64970,6 +65019,7 @@
    "ai_economics",
    "algorithms",
    "alignment",
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "hyperparameters",
@@ -65811,6 +65861,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "fact_lookup",
    "mechanistic_interpretability",
    "people_of_ai",
@@ -66760,6 +66811,7 @@
    "su2021rope"
   ],
   "cited_in": [
+   "attentionlab",
    "frontier",
    "positionalembeddingslab",
    "transformer"
@@ -71091,6 +71143,7 @@
   "cited_in": [
    "ai_economics",
    "alignment",
+   "attentionlab",
    "fact_lookup",
    "history",
    "hyperparameters",
@@ -71124,6 +71177,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "evaluation",
    "fact_lookup",
    "mechanistic_interpretability",
@@ -71157,6 +71211,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "frontier",
@@ -71186,6 +71241,7 @@
    "li2018losslandscape"
   ],
   "cited_in": [
+   "attentionlab",
    "deeplearninglab",
    "embeddinglab",
    "fact_lookup",
@@ -71243,6 +71299,7 @@
    "ai_economics",
    "algorithms",
    "alignment",
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "hyperparameters",
@@ -77148,7 +77205,7 @@
   "city": "Montreal, Canada",
   "year": 2011.0,
   "conf": 1,
-  "works": 23,
+  "works": 24,
   "keys": [
    "cho2014gru",
    "bahdanau2014",
@@ -77171,6 +77228,7 @@
    "dinh2017sharpness",
    "bergstra2010random",
    "bengio2023managing",
+   "lin2017selfattentive",
    "bergstra2011algorithms",
    "bengio2012practical"
   ],
@@ -77222,11 +77280,13 @@
   "city": "Mountain View, USA",
   "year": 2018.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "shazeer2020talkingheads",
    "huang2018gpipe"
   ],
   "cited_in": [
+   "attentionlab",
    "training_infrastructure"
   ]
  },
@@ -77263,6 +77323,7 @@
    "su2021rope"
   ],
   "cited_in": [
+   "attentionlab",
    "frontier",
    "positionalembeddingslab",
    "transformer"
@@ -77684,6 +77745,7 @@
    "su2021rope"
   ],
   "cited_in": [
+   "attentionlab",
    "frontier",
    "positionalembeddingslab",
    "transformer"
@@ -77743,6 +77805,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "intuition",
@@ -78144,6 +78207,7 @@
   "cited_in": [
    "algorithms",
    "alignment",
+   "attentionlab",
    "embeddinglab",
    "fact_lookup",
    "intuition",
@@ -81190,6 +81254,74 @@
   ],
   "cited_in": [
    "philosophy"
+  ]
+ },
+ {
+  "name": "Paul Michel",
+  "canon": "Paul Michel",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "michel2019sixteen"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Graham Neubig",
+  "canon": "Graham Neubig",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "michel2019sixteen"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Zhenzhong Lan",
+  "canon": "Zhenzhong Lan",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "shazeer2020talkingheads"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Nan Ding",
+  "canon": "Nan Ding",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "shazeer2020talkingheads"
+  ],
+  "cited_in": [
+   "attentionlab"
   ]
  },
  {
@@ -84315,6 +84447,193 @@
   "works": 1,
   "keys": [
    "luong2015attention"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Jianpeng Cheng",
+  "canon": "Jianpeng Cheng",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cheng2016"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Mirella Lapata",
+  "canon": "Mirella Lapata",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cheng2016"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Ankur P. Parikh",
+  "canon": "Ankur P. Parikh",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "parikh2016"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Oscar Täckström",
+  "canon": "Oscar Täckström",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "parikh2016"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Zhouhan Lin",
+  "canon": "Zhouhan Lin",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lin2017selfattentive"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Minwei Feng",
+  "canon": "Minwei Feng",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lin2017selfattentive"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Cicero Nogueira dos Santos",
+  "canon": "Cicero Nogueira dos Santos",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lin2017selfattentive"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Mo Yu",
+  "canon": "Mo Yu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lin2017selfattentive"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Bing Xiang",
+  "canon": "Bing Xiang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lin2017selfattentive"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Bowen Zhou",
+  "canon": "Bowen Zhou",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lin2017selfattentive"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Sarthak Jain",
+  "canon": "Sarthak Jain",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jain2019attention"
   ],
   "cited_in": [
    "attentionlab"

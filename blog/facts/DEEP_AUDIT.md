@@ -1,14 +1,14 @@
 # Deep fact audit
 
 - lessons: 99
-- claims: 7247
-- statements: 16855
-- relations: 51171
-- uncovered years: 41
+- claims: 7270
+- statements: 16876
+- relations: 51219
+- uncovered years: 44
 - uncovered quantities: 5
 - uncited specific claims: 306
 - citation keys not found in lesson: 0
-- relation grounding issues: 70
+- relation grounding issues: 84
 - numeric range issues: 0
 - normalised year conflicts: 0
 
@@ -26,14 +26,14 @@
 | alignment | 30 | 26 | 97 | 0 | 0 |
 | alternative_architectures | 28 | 35 | 151 | 0 | 1 |
 | atlas | 17 | 6 | 44 | 0 | 0 |
-| attentionlab | 31 | 247 | 672 | 0 | 0 |
+| attentionlab | 48 | 265 | 710 | 3 | 0 |
 | autodiff | 9 | 104 | 372 | 0 | 0 |
 | backproplab | 10 | 24 | 99 | 0 | 0 |
 | beyond_llms | 67 | 419 | 1213 | 0 | 0 |
 | coherent_difference | 24 | 480 | 1221 | 0 | 0 |
 | coherent_world_models | 58 | 437 | 1291 | 0 | 0 |
 | computer_vision | 31 | 76 | 273 | 0 | 0 |
-| contextwindows | 54 | 141 | 605 | 0 | 0 |
+| contextwindows | 57 | 144 | 612 | 0 | 0 |
 | december | 19 | 17 | 90 | 0 | 0 |
 | deconvolution | 16 | 31 | 94 | 0 | 0 |
 | deeplearninglab | 23 | 100 | 337 | 0 | 1 |
@@ -107,7 +107,7 @@
 | training_infrastructure | 32 | 55 | 239 | 0 | 0 |
 | trainingdynamics | 23 | 29 | 140 | 0 | 0 |
 | traininglab | 15 | 7 | 67 | 0 | 0 |
-| transformer | 29 | 260 | 831 | 0 | 0 |
+| transformer | 32 | 260 | 834 | 0 | 0 |
 | unexpected_capabilities | 29 | 251 | 528 | 5 | 1 |
 | untold_history_i | 501 | 393 | 1357 | 0 | 0 |
 | untold_history_ii | 648 | 562 | 1853 | 0 | 0 |
@@ -118,6 +118,9 @@
 
 ## Uncovered years
 
+- attentionlab.php: 2020
+- attentionlab.php: 2021
+- attentionlab.php: 2022
 - evaluation.php: 2009
 - evaluation.php: 2020
 - human_mind.php: 1974
@@ -150,10 +153,7 @@
 - tokenizerlab.php: 2025
 - training_data.php: 2019
 - unexpected_capabilities.php: 1988
-- unexpected_capabilities.php: 2013
-- unexpected_capabilities.php: 2018
-- unexpected_capabilities.php: 2021
-- … and 6 more
+- … and 9 more
 
 ## Uncovered quantities
 
@@ -207,6 +207,17 @@
 
 ## Relation grounding
 
+- attentionlab.php: attentionlab-rel-parikh-influenced-transformer: endpoint not near quote: decomposable-attention
+- attentionlab.php: attentionlab-rel-parikh-influenced-transformer: endpoint not near quote: transformer
+- attentionlab.php: attentionlab-rel-lin-influenced-transformer: endpoint not near quote: transformer
+- attentionlab.php: attentionlab-rel-jain-critiques-attention: endpoint not near quote: self-attention
+- attentionlab.php: attentionlab-rel-mha-part-of-transformer: endpoint not near quote: transformer
+- attentionlab.php: attentionlab-rel-gqa-derived-from-mha: endpoint not near quote: grouped-query-attention
+- attentionlab.php: attentionlab-rel-gqa-derived-from-mha: endpoint not near quote: multi-head-attention
+- attentionlab.php: attentionlab-rel-induction-part-of-mha: endpoint not near quote: multi-head-attention
+- attentionlab.php: attentionlab-rel-talkingheads-part-of-mha: endpoint not near quote: multi-head-attention
+- attentionlab.php: attentionlab-rel-gpt3-uses-mha: endpoint not near quote: multi-head-attention
+- attentionlab.php: attentionlab-rel-llama3-uses-mha: endpoint not near quote: multi-head-attention
 - history.php: rel-history-brazen-head-roger-bacon: endpoint not near quote: brazen-head
 - history.php: rel-history-zhao-llull: endpoint not near quote: ramon-llull
 - history.php: rel-history-lovelace-analytical: endpoint not near quote: analytical-engine
@@ -230,18 +241,7 @@
 - philosophy.php: rel-phil-hard-problem-mary: endpoint not near quote: phil-mary-room
 - philosophy.php: rel-phil-sheaf-gluing: endpoint not near quote: phil-sheaf-gluing
 - philosophy.php: rel-phil-sheaf-gluing: endpoint not near quote: phil-sheaf-leray
-- untold_history_i.php: rel-untold-i-survivors-caused-primates: endpoint not near quote: kpg-mammal-survivors
-- untold_history_i.php: rel-untold-i-mesozoic-mammals-before-survivors: endpoint not near quote: mesozoic-mammals
-- untold_history_i.php: rel-untold-i-mesozoic-mammals-before-survivors: endpoint not near quote: kpg-mammal-survivors
-- untold_history_i.php: rel-untold-i-primates-caused-human-brain: endpoint not near quote: human-brain
-- untold_history_ii.php: rel-untold-ii-hertz-authored-electric-waves: endpoint not near quote: heinrich-hertz
-- untold_history_ii.php: rel-untold-ii-transistor-preceded-moore: endpoint not near quote: moores-law
-- untold_history_ii.php: rel-untold-ii-moore-supports-llm: endpoint not near quote: moores-law
-- untold_history_ii.php: rel-untold-ii-pn-junction-basis-transistor: endpoint not near quote: pn-junction
-- untold_history_ii.php: rel-untold-ii-faraday-discovered-induction: endpoint not near quote: michael-faraday
-- untold_history_ii.php: rel-untold-ii-faraday-discovered-induction: endpoint not near quote: electromagnetic-induction
-- untold_history_iii.php: rel-untold-iii-vonneumann-stored: endpoint not near quote: john-von-neumann
-- untold_history_iii.php: rel-untold-iii-z3-zuse: endpoint not near quote: konrad-zuse
+- transformer.php: transformer-rel-mqa-part-of-transformer: endpoint not near quote: transformer
 
 ## Range issues
 
