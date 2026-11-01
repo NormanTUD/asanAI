@@ -19841,8 +19841,10 @@
       "id": "rel-history-proceduralists-contradict-logicists",
       "from": "proceduralists",
       "to": "logicists",
-      "kind": "contradicts",
-      "qualifiers": {},
+      "kind": "related_to",
+      "qualifiers": {
+        "stance": "opposing-camps"
+      },
       "quote": "was the scruffy camp's counter-move to pure logic",
       "citation_keys": [],
       "confidence": "inferred"
