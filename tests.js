@@ -10887,7 +10887,7 @@ async function run_python_code_tests() {
 		return $("#pyodide_console_output").text();
 	}
 
-	async function run_and_wait_for_console (expected_text, timeout_ms, expect_busy_overlay = false) {
+	async function run_and_wait_for_console (expected_text, timeout_ms, expect_busy_overlay = false, completion_text = null) {
 		var before = pyodide_console();
 		$("#pyodide_run_btn").click();
 
@@ -10906,8 +10906,21 @@ async function run_python_code_tests() {
 
 		var finished = await wait_until(function () {
 			var text = pyodide_console();
-			return text !== before && text.includes(expected_text);
-		}, timeout_ms);
+
+			if (text === before || !text.includes(expected_text)) {
+				return false;
+			}
+
+			if (!completion_text) {
+				return true;
+			}
+
+			// Wait for a new completion line, not one left over from an earlier run.
+			var before_count = before.split(completion_text).length - 1;
+			var current_count = text.split(completion_text).length - 1;
+
+			return current_count > before_count;
+		}, timeout_ms, 50);
 
 		if(expect_busy_overlay) {
 			var overlay_hidden = !$("#pyodide_busy_overlay").is(":visible");
@@ -10952,8 +10965,8 @@ async function run_python_code_tests() {
 
 	var pyodide_was_ready = PyodideEditor.isReady();
 
-	if(!(await run_and_wait_for_console("Hello, World", 60000, !pyodide_was_ready))) {
-		err("#pyodide_console_output does not contain 'Hello, World' after clicking 'Run' for default program");
+	if(!(await run_and_wait_for_console("Hello, World", 60000, !pyodide_was_ready, "Done ("))) {
+		err("#pyodide_console_output did not show 'Hello, World' and a completed run after clicking 'Run'");
 		return false;
 	}
 
@@ -10986,8 +10999,8 @@ async function run_python_code_tests() {
 	pyodideEditorClear();
 	await delay(1000);
 
-	if(!(await run_and_wait_for_console("Table rendered", 30000))) {
-		err("#pyodide_console_output does not contain 'Table rendered' after running HTML Table example");
+	if(!(await run_and_wait_for_console("Table rendered", 30000, false, "Done ("))) {
+		err("#pyodide_console_output did not show 'Table rendered' and a completed run after running the HTML Table example");
 		return false;
 	}
 
