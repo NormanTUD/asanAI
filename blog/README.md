@@ -75,7 +75,7 @@ failed stage fails the whole run.
 uv run blog/tools/check_all.py          # local: build indexes + verify everything
 uv run blog/tools/check_all.py --fast   # no builds; quick checks + freshness smoke
 uv run blog/tools/check_all.py --ci     # CI smoke: no builds, no browser/network
-uv run blog/tools/check_all.py --full   # also render, link and typo checks
+uv run blog/tools/check_all.py --full   # also render and typo checks
 ```
 
 It also works without an explicit `uv run`, and from inside `blog/`:

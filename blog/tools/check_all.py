@@ -12,8 +12,8 @@ The runner stops at the first failing stage, so one failure fails everything.
 
 Examples:
     uv run blog/tools/check_all.py
-    uv run blog/tools/check_all.py --fast
-    uv run blog/tools/check_all.py --ci
+    python3 blog/tools/check_all.py --fast
+    ./blog/tools/check_all.py --ci
     uv run blog/tools/check_all.py --full
     uv run blog/tools/check_all.py --list
     uv run blog/tools/check_all.py --render --render-mode changed
@@ -385,6 +385,10 @@ def selected_stages(args: argparse.Namespace, console: Console) -> list[Stage]:
     only = parse_patterns(args.only)
     skip = parse_patterns(args.skip)
 
+    if args.full and not (args.ci or args.fast):
+        args.render = True
+        args.typos = True
+
     if only:
         if any("render" in pattern for pattern in only):
             args.render = True
@@ -435,18 +439,17 @@ def selected_stages(args: argparse.Namespace, console: Console) -> list[Stage]:
             )
         )
 
+    groups = {stage.group for stage in stages}
+
+    def matches(stage: Stage, pattern: str) -> bool:
+        if pattern in groups:
+            return stage.group == pattern
+        return pattern in stage.name.lower()
+
     if only:
-        stages = [
-            stage
-            for stage in stages
-            if any(pattern in stage.name.lower() or pattern in stage.group.lower() for pattern in only)
-        ]
+        stages = [stage for stage in stages if any(matches(stage, pattern) for pattern in only)]
     if skip:
-        stages = [
-            stage
-            for stage in stages
-            if not any(pattern in stage.name.lower() or pattern in stage.group.lower() for pattern in skip)
-        ]
+        stages = [stage for stage in stages if not any(matches(stage, pattern) for pattern in skip)]
     return stages
 
 
@@ -529,7 +532,7 @@ def main() -> int:
     parser.add_argument(
         "--full",
         action="store_true",
-        help="local profile plus render, link and typo checks",
+        help="local profile plus render and typo checks",
     )
     parser.add_argument(
         "--build-indexes",
