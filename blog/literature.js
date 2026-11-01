@@ -4806,6 +4806,27 @@ window.bibData = {
 		year: 2019,
 		alternativetitle: "GPT-2"
 	},
+	"openai2019betterlms": {
+		url: "https://web.archive.org/web/20191108210402/https://openai.com/blog/better-language-models/",
+		title: "Better Language Models and Their Implications",
+		author: "OpenAI",
+		year: 2019,
+		alternativetitle: "OpenAI, 2019"
+	},
+	"openai2019gpt2release": {
+		url: "https://web.archive.org/web/20191111001547/https://openai.com/blog/gpt-2-1-5b-release/",
+		title: "GPT-2: 1.5B Release",
+		author: "OpenAI",
+		year: 2019,
+		alternativetitle: "OpenAI, 2019"
+	},
+	"joler2020nooscope": {
+		url: "https://kim.hfg-karlsruhe.de/nooscope.ai/",
+		title: "The Nooscope Manifested: AI as Instrument of Knowledge Extractivism",
+		author: "Vladan Joler, Matteo Pasquinelli",
+		year: 2020,
+		alternativetitle: "Joler & Pasquinelli, 2020"
+	},
 	"rush2018annotatedtransformer": {
 		url: "https://nlp.seas.harvard.edu/2018/04/03/attention.html",
 		title: "The Annotated Transformer",
@@ -6488,6 +6509,30 @@ window.bibData = {
 		year: "2014",
 		title: "Dropout: A Simple Way to Prevent Neural Networks from Overfitting",
 		url: "https://www.jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf?utm_content=buffer79b4",
+	},
+	"hinton2012dropout": {
+		author: "Geoffrey E. Hinton, Nitish Srivastava, Alex Krizhevsky, Ilya Sutskever, Ruslan R. Salakhutdinov",
+		year: 2012,
+		title: "Improving neural networks by preventing co-adaptation of feature detectors",
+		url: "https://arxiv.org/abs/1207.0580"
+	},
+	"wan2013dropconnect": {
+		author: "Li Wan, Matthew Zeiler, Sixin Zhang, Yann LeCun, Rob Fergus",
+		year: 2013,
+		title: "Regularization of Neural Networks using DropConnect",
+		url: "https://proceedings.mlr.press/v28/wan13.html"
+	},
+	"gal2016variationaldropout": {
+		author: "Yarin Gal, Zoubin Ghahramani",
+		year: 2016,
+		title: "A Theoretically Grounded Application of Dropout in Recurrent Neural Networks",
+		url: "https://arxiv.org/abs/1512.05287"
+	},
+	"gal2016dropoutbayesian": {
+		author: "Yarin Gal, Zoubin Ghahramani",
+		year: 2016,
+		title: "Dropout as a Bayesian Approximation: Representing Model Uncertainty in Deep Learning",
+		url: "https://arxiv.org/abs/1506.02142"
 	},
 	"tibshirani1996lasso": {
 		author: "Robert Tibshirani",
